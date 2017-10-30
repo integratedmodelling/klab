@@ -88,7 +88,7 @@ public abstract interface IIdentity {
 	 * 
 	 * @return a token to use as authentication when dealing with the engine.
 	 */
-	String getSecurityKey();
+	String getToken();
 	
 	/**
 	 * Return the parent identity. Null only in IM_PARTNER identities.

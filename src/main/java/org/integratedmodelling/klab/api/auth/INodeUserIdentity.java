@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.Date;
 import java.util.Set;
 
-public interface INodeUserIdentity extends IIdentity {
+public interface INodeUserIdentity extends IUserIdentity {
 
     Type type = Type.IM_USER;
     

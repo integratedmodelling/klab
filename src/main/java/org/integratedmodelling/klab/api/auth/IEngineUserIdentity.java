@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.Date;
 import java.util.Set;
 
-public interface IEngineUserIdentity extends IIdentity {
+public interface IEngineUserIdentity extends IUserIdentity {
 
     Type type = Type.ENGINE_USER;
     
