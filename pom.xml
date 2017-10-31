@@ -8,7 +8,6 @@
   		<groupId>org.integratedmodelling</groupId>
   		<artifactId>org.integratedmodelling.kim</artifactId>
   		<version>0.9.11-SNAPSHOT</version>
-  		<type>eclipse-plugin</type>
   	</dependency>
   </dependencies>
 </project>
