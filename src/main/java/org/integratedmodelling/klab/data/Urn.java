@@ -2,6 +2,9 @@ package org.integratedmodelling.klab.data;
 
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IGeometry;
+
 /**
  * The k.LAB URN, with methods to create one from file names and concept declarations. A URN can be
  * partially resolved (using the resolve call), i.e. it will know its geometry and metadata without
@@ -12,6 +15,9 @@ import java.util.regex.Pattern;
  */
 public class Urn {
 
+    Version version;
+    IGeometry geometry;
+    
     /**
      * Pattern to validate a RFC 2141-compliant URN, just to be on the right side of things. 
      */
@@ -20,5 +26,23 @@ public class Urn {
 
     public static boolean isCompliant(String urn) {
         return URN_PATTERN.matcher(urn).matches();
+    }
+    
+    /**
+     * Available after resolution unless the version was explicitly part of the URN.
+     * 
+     * @return
+     */
+    public Version getVersion() {
+        return version;
+    }
+    
+    /**
+     * Available after resolution.
+     * 
+     * @return
+     */
+    public IGeometry getGeometry() {
+        return geometry;
     }
 }
