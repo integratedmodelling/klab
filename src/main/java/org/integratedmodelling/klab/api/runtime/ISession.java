@@ -4,6 +4,6 @@ import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 
 public interface ISession extends IEngineSessionIdentity {
 
-    ITask observe(String URN);
+    ITask observe(String urn);
     
 }

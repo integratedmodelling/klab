@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.data;
 
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kim.api.IMetadata;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 
@@ -17,6 +18,7 @@ public class Urn {
 
     Version version;
     IGeometry geometry;
+    IMetadata metadata;
     
     /**
      * Pattern to validate a RFC 2141-compliant URN, just to be on the right side of things. 
@@ -38,11 +40,20 @@ public class Urn {
     }
     
     /**
-     * Available after resolution.
+     * The Geometry, Available after resolution.
      * 
      * @return
      */
     public IGeometry getGeometry() {
         return geometry;
+    }
+    
+    /**
+     * Metadata. Available after resolution.
+     * 
+     * @return
+     */
+    public IMetadata getMetadata() {
+    	return metadata;
     }
 }
