@@ -5,23 +5,21 @@ import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.auth.KlabCertificate;
 
 public class Engine implements IEngine {
 
-	/*
-	 * Exists after engine creation; other user may be authenticated using any strategy
-	 * the engine wants to implement.
-	 */
-	IEngineUserIdentity user;
-	
-	
+	ICertificate certificate;
+
 	public Engine(ICertificate certificate) {
 		// TODO
+		this.certificate = certificate;
 	}
-	
+
 	@Override
 	public INetworkSessionIdentity getParentIdentity() {
 		// TODO Auto-generated method stub
@@ -60,19 +58,41 @@ public class Engine implements IEngine {
 
 	@Override
 	public IEngineUserIdentity getUser() {
-		return user;
+		IIdentity identity = certificate.getIdentity();
+		if (!(identity instanceof IUserIdentity)) {
+			// TODO shit all over the place
+		}
+		return identity instanceof IEngineUserIdentity ? (IEngineUserIdentity) identity
+				: null /* TODO make engine user out of other */;
 	}
-	
+
 	/**
-	 * Create an engine using the default k.LAB certificate and start it. Return after startup
-	 * is complete.
+	 * Create an engine using the default k.LAB certificate and start it. Return
+	 * after startup is complete.
 	 * 
 	 * @return a new running engine, or null if startup failed.
 	 */
 	public static IEngine start() {
-		// TODO Auto-generated method stub
-		return null;
+		Engine ret = new Engine(new KlabCertificate());
+		if (!ret.boot()) {
+			return null;
+		}
+		return ret;
 	}
 
-	
+	private boolean boot() {
+		boolean ret = false;
+		// setup logging
+		// get worldview from certificate and sync it (cache/use cached if not online, fail if offline and no cache) 
+		// init Kim listeners
+		// load worldview
+		// hop on the network
+		// sync and read components
+		// read workspace from parameters/properties
+		// run any init scripts from configuration
+		// run any init scripts from parameters
+		// init REST services unless specified otherwise
+		return ret;
+	}
+
 }
