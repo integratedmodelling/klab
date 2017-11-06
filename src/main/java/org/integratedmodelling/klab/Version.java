@@ -44,7 +44,7 @@ public class Version implements Comparable<Version> {
      * the Eclipse side of things to work properly.
      * *******************************************************************************
      */
-    public static final String CURRENT = "0.9.11";
+    public static final String CURRENT = "0.9.12";
 
     /**
      * Modifier for release (e.g. alpha, beta, RC1 etc). Should be synchronized by CI
@@ -131,8 +131,8 @@ public class Version implements Comparable<Version> {
         major = 0;
         minor = 0;
         build = 0;
-        name = ""; //$NON-NLS-1$
-        StringTokenizer st = new StringTokenizer(str, "" + SEPARATOR, false); //$NON-NLS-1$
+        name = ""; 
+        StringTokenizer st = new StringTokenizer(str, "" + SEPARATOR, false);
         // major segment
         if (!st.hasMoreTokens()) {
             return;
@@ -187,6 +187,7 @@ public class Version implements Comparable<Version> {
     /**
      * Creates version identifier object from given parts. No validation performed during
      * object instantiation, all values become parts of version identifier as they are.
+     * 
      * @param aMajor major version number
      * @param aMinor minor version number
      * @param aBuild build number
@@ -196,7 +197,7 @@ public class Version implements Comparable<Version> {
         major = aMajor;
         minor = aMinor;
         build = aBuild;
-        name = (aName == null) ? "" : aName; //$NON-NLS-1$
+        name = (aName == null) ? "" : aName; 
     }
 
     /**
