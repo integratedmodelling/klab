@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.api.observations;
 
+import java.io.Serializable;
+
 import org.integratedmodelling.kim.api.IObservable;
 import org.integratedmodelling.klab.api.runtime.IContext;
 
-public interface IObservation {
+public interface IObservation extends Serializable {
 
     /**
      * 

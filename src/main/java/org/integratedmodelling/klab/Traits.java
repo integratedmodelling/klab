@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab;
 
-public class Traits {
+import org.integratedmodelling.klab.api.services.ITraitService;
 
+public enum Traits implements ITraitService {
+    INSTANCE;
 }

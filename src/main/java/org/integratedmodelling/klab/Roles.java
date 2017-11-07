@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab;
 
-public class Roles {
+import org.integratedmodelling.klab.api.services.IRoleService;
 
+public enum Roles implements IRoleService {
+    INSTANCE;
 }

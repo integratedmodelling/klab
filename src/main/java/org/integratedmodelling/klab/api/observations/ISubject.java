@@ -13,9 +13,13 @@ public interface ISubject  extends IDirectObservation {
     
     Collection<ISubject> getSubjects();
     
+    Collection<IRelationship> getRelationships();
+    
+    Collection<IRelationship> getIncomingRelationships(ISubject subject);
+    
+    Collection<IRelationship> getOutgoingRelationships(ISubject subject);
+    
     Map<IConcept, IConfiguration> getConfigurations();
 
-    // TODO we use a structure as before, or not?
-//    Collection<I>
 
 }

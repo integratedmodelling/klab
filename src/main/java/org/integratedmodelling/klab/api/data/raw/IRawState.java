@@ -6,6 +6,6 @@ package org.integratedmodelling.klab.api.data.raw;
  * @author Ferd
  *
  */
-public interface IRawState {
+public interface IRawState extends IRawObservation {
 
 }

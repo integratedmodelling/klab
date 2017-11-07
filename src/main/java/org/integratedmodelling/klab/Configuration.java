@@ -1,0 +1,212 @@
+package org.integratedmodelling.klab;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
+
+import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.utils.FileUtils;
+
+public enum Configuration implements IConfigurationService {
+    INSTANCE;
+
+    public static final String KLAB_CLIENT_PROJECTS               = "klab.client.workspace";
+
+    /**
+     * 
+     */
+    public static final String KLAB_OFFLINE                       = "klab.offline";
+
+    /**
+     * 
+     */
+    public static final String KLAB_USE_CONTEXT_QUALITIES         = "klab.use.context.qualities";
+
+    /**
+     * 
+     */
+    public static final String KLAB_EXPORT_PATH                   = "klab.export.path";
+
+    /**
+     * 
+     */
+    public static final String KLAB_REASONING                     = "klab.reasoning";
+
+    /**
+     * 
+     */
+    public static final String KLAB_CLIENT_DEBUG                  = "thinklab.client.debug";
+
+    /**
+     * 
+     */
+    public static final String CERTFILE_PROPERTY                  = "klab.certificate";
+
+    /**
+     * 
+     */
+    public static final String KLAB_SOURCE_DISTRIBUTION           = "thinklab.source.distribution";
+
+    /**
+     * 
+     */
+    public static final String KLAB_CONNECTION_TIMEOUT            = "klab.connection.timeout";
+
+    /*
+     * these properties can be set to define what states to store during
+     * contextualization when the defaults are inadequate. They're mostly
+     * unsupported at this time.
+     */
+    /**
+     * 
+     */
+    public static final String KLAB_STORE_RAW_DATA                = "klab.store.raw";
+    /**
+     * 
+     */
+    public static final String KLAB_STORE_INTERMEDIATE_DATA       = "klab.store.intermediate";
+    /**
+     * 
+     */
+    public static final String KLAB_STORE_CONDITIONAL_DATA        = "klab.store.conditional";
+    /**
+     * 
+     */
+    public static final String KLAB_STORE_MEDIATED_DATA           = "klab.store.mediated";
+
+    /**
+     * Minutes after which a session times out. Default 60.
+     */
+    public static final String KLAB_SESSION_TIMEOUT_MINUTES       = "klab.session.timeout";
+
+    /**
+     * Absolute path of work directory. Overrides the default which is ${user.home}/THINKLAB_WORK_DIRECTORY
+     */
+    public static final String KLAB_DATA_DIRECTORY                = "klab.data.directory";
+
+    /**
+     * Name of work directory relative to ${user.home}. Ignored if THINKLAB_DATA_DIRECTORY_PROPERTY is
+     * specified.
+     */
+    public static final String KLAB_WORK_DIRECTORY                = "klab.work.directory";
+
+    /**
+     * Points to a comma-separated list of directories where components are loaded from their Maven
+     * development tree.
+     */
+    public static final String KLAB_LOCAL_COMPONENTS              = "klab.local.components";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_CERTIFICATE            = "klab.engine.certificate";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_DATADIR                = "klab.engine.datadir";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_DEBUG_PORT             = "klab.engine.debugPort";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_USE_DEBUG              = "klab.engine.useDebug";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_KLAB_DEBUG             = "klab.engine.klabDebug";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_USE_DEVELOPER_NETWORK  = "klab.engine.useDeveloperNetwork";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_USE_LOCAL_INSTALLATION = "klab.engine.useLocalInstallation";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_SHUTDOWN_ON_EXIT       = "klab.engine.shutdownOnExit";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_UPGRADE_AUTOMATICALLY  = "klab.engine.upgradeAutomatically";
+
+    /**
+     * 
+     */
+    public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY   = "klab.engine.launchAutomatically";
+
+    /**
+     * If true, instructs some calls to spoof the _dev URLs of development network nodes to look like the
+     * official one (without the suffix returned by {@link #getDeveloperNetworkURLPostfix()}). Used when
+     * external services are configured with the official node URL and the modified URL gets in the way.
+     */
+    public static final String KLAB_SPOOF_DEV_URL                 = "klab.engine.spoofdevurl";
+
+    private Properties         properties;
+    private File               dataPath;
+
+    @Override
+    public Properties getProperties() {
+
+        if (this.properties == null) {
+            /*
+             * load or create thinklab system properties
+             */
+            this.properties = new Properties();
+            File pFile = new File(dataPath + File.separator + "klab.properties");
+            if (!pFile.exists()) {
+                pFile = new File(dataPath + File.separator + "thinklab.properties");
+            }
+            try {
+                if (pFile.exists()) {
+                    FileInputStream input;
+
+                    input = new FileInputStream(pFile);
+                    this.properties.load(input);
+                    input.close();
+                } else {
+                    pFile = new File(dataPath + File.separator + "klab.properties");
+                    FileUtils.touch(pFile);
+                }
+            } catch (Exception e) {
+                throw new KlabRuntimeException(e);
+            }
+        }
+        return this.properties;
+    }
+
+    public void save() {
+
+        File td = new File(dataPath + File.separator + "klab.properties");
+
+//        String[] doNotPersist = new String[] { Project.ORIGINATING_NODE_PROPERTY };
+
+        Properties p = new Properties();
+        p.putAll(getProperties());
+
+//        for (String dn : doNotPersist) {
+//            p.remove(dn);
+//        }
+
+        try {
+            p.store(new FileOutputStream(td), null);
+        } catch (Exception e) {
+            throw new KlabRuntimeException(e);
+        }
+
+    }
+
+}

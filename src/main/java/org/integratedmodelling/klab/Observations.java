@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab;
 
-public class Observations {
+import org.integratedmodelling.klab.api.services.IObservationService;
 
+public enum Observations implements IObservationService {
+    INSTANCE;
 }

@@ -1,2 +1,0 @@
-STUB to keep the Maven build process happy (it just wants those directories and Git won't store empty ones).
-REMOVE THIS whenever there is any other content in this directory.

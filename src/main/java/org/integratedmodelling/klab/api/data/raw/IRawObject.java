@@ -4,7 +4,9 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IMetadata;
 
-public interface IRawObject extends Map<String, IRawObservation> {
+public interface IRawObject {
     
+    Map<String, IRawObservation> getObservations();
+
     IMetadata getMetadata();
 }
