@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.api.data.semantic;
 
-import org.integratedmodelling.kim.api.IConcept;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.observations.ISubject;
 
 public interface IObservationSemantics {
 
-    IConcept getObservationType();
+    IKimConcept getObservationType();
     
     ISubject getObserver();
     

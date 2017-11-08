@@ -76,7 +76,7 @@ import java.util.Stack;
 import java.util.UUID;
 
 import org.apache.commons.math3.util.Pair;
-import org.integratedmodelling.klab.Runtime;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -188,7 +188,7 @@ public class MiscUtilities {
 							ret.add(clls);
 						}
 					} catch (ClassNotFoundException e) {
-						Runtime.INSTANCE.warn("task class " + pckgname + "." + classname + " could not be created: "
+						Klab.INSTANCE.warn("task class " + pckgname + "." + classname + " could not be created: "
 								+ e.getMessage());
 					}
 				} else {

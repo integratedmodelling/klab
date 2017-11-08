@@ -1,14 +1,44 @@
 package org.integratedmodelling.klab;
 
-import org.integratedmodelling.kim.api.IWorkspace;
+import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.services.IWorkspaceService;
+import org.integratedmodelling.klab.engine.resources.OWLCore;
 
 public enum Workspaces implements IWorkspaceService {
+    
     INSTANCE;
     
-    public IWorkspace WORLDVIEW;
-    public IWorkspace COMPONENTS;
-    public IWorkspace LOCAL;
+    /**
+     * The core workspace, only containing the OWL knowledge distributed with the software, and
+     * no projects.
+     */
+    public OWLCore CORE;
     
+    /**
+     * The worldview, synchronized at startup from Git repositories specified in or through the 
+     * k.LAB certificate.
+     */
+    public IWorkspace WORLDVIEW;
+
+    /**
+     * The workspace containing components from the network (or local components if so configured),
+     * loaded on demand.
+     */
+    public IWorkspace COMPONENTS;
+
+    /**
+     * Workspace containing the k.LAB assets installed on the running instance. The files in this
+     * workspace are monitored and reloaded incrementally at each change.
+     */
+    public IWorkspace LOCAL;
+
+    public void initializeCoreKnowledge() {
+        // TODO create the core namespace 
+    }
+    
+    public void initializeWorldview(ICertificate certificate) {
+        // TODO
+    }
     
 }

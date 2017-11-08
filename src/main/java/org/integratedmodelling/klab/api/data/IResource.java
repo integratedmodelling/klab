@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.data;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IUrnService;
 
 /**
@@ -36,9 +37,11 @@ public interface IResource {
     Version getVersion();
     
     /**
-     * Fetch (if necessary) and return the root raw object represented by this resource.
+     * Fetch (if necessary) and return the root raw object represented by this resource. Use the
+     * monitor for any reporting and to manage asynchronous requests.
      * 
+     * @param monitor
      * @return
      */
-    IRawObject get();
+    IRawObject get(IMonitor monitor);
 }

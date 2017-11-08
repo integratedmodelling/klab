@@ -2,7 +2,14 @@ package org.integratedmodelling.klab;
 
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 
-public enum Runtime implements IRuntimeService {
+/**
+ * Runtime would be a better name for this, but it makes it hard to code as it conflicts
+ * with Java's Runtime which is imported by default.
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public enum Klab implements IRuntimeService {
     
     INSTANCE;
     

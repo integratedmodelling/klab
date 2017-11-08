@@ -25,9 +25,9 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IConcept;
-import org.integratedmodelling.kim.api.IMetadata;
-import org.integratedmodelling.kim.api.IModel;
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimMetadata;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -43,7 +43,7 @@ import org.integratedmodelling.klab.api.observations.ITime;
  * causal graph that is independent from the primary graph. Actions that are not caused by
  * another action are called "primary" and can be obtained in chronological order. All
  * nodes and actions are timestamped with their time of creation and hold arbitrary
- * metadata using the standard Dublin Core tags from {@link IMetadata}. Because k.LAB is
+ * metadata using the standard Dublin Core tags from {@link IKimMetadata}. Because k.LAB is
  * an intelligent system, we always have at least two agents: a User and k.LAB itself.
  * Primary actions are typically caused by users, secondary by the AI in k.LAB. Provenance
  * is used to document the model resolution strategy and to build the IReport that
@@ -134,7 +134,7 @@ public interface IProvenance {
          * 
          * @return
          */
-        IConcept getObservable();
+        IKimConcept getObservable();
 
         /**
          * @return
@@ -144,7 +144,7 @@ public interface IProvenance {
         /**
          * 
          */
-        IModel getModel();
+        IKimModel getModel();
 
         /**
          * @return
@@ -185,7 +185,7 @@ public interface IProvenance {
          * @param cls
          * @return
          */
-        Artifact trace(IConcept concept);
+        Artifact trace(IKimConcept concept);
 
         /**
          * Collect all artifacts of the passed concept (or with the passed role/trait) up
@@ -194,7 +194,7 @@ public interface IProvenance {
          * @param concept
          * @return
          */
-        Collection<Artifact> collect(IConcept concept);
+        Collection<Artifact> collect(IKimConcept concept);
 
         /**
          * Trace the nearest artifact with the passed role within the passed observation
@@ -203,7 +203,7 @@ public interface IProvenance {
          * @param cls
          * @return
          */
-        Artifact trace(IConcept role, IDirectObservation roleContext);
+        Artifact trace(IKimConcept role, IDirectObservation roleContext);
 
         /**
          * Collect all artifacts with the passed role within the passed observation up the
@@ -212,7 +212,7 @@ public interface IProvenance {
          * @param concept
          * @return
          */
-        Collection<Artifact> collect(IConcept role, IDirectObservation roleContext);
+        Collection<Artifact> collect(IKimConcept role, IDirectObservation roleContext);
 
     }
 
@@ -230,7 +230,7 @@ public interface IProvenance {
      * @param node
      * @return collect metadata from node
      */
-    public IMetadata collectMetadata(Object node);
+    public IKimMetadata collectMetadata(Object node);
 
     /**
      * Return all the primary actions in chronological order.

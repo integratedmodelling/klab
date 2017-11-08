@@ -11,11 +11,12 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.LazyStringInputStream;
 import org.integratedmodelling.kim.KnowledgeDeclarationStandaloneSetup;
-import org.integratedmodelling.kim.api.IConcept;
 import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
 import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.IConceptService;
 
 import com.google.inject.Injector;
@@ -53,7 +54,7 @@ public enum Concepts implements IConceptService {
                 if (resource.getParseResult() instanceof ObservableSemantics) {
                     KimObservable obs = Kim
                             .declareObservable((ObservableSemantics) resource.getParseResult());
-                    ret = compileToConcept(obs);
+                    ret = declare(obs);
                 }
             }
         } catch (IOException e) {
@@ -62,12 +63,24 @@ public enum Concepts implements IConceptService {
         return ret;
     }
 
-    private IConcept compileToConcept(KimObservable obs) {
+    private IConcept declare(KimObservable obs) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    private IConcept compileToConcept(ConceptDeclaration obs) {
+    private IConcept declare(ConceptDeclaration obs) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IProperty getProperty(String propertyId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public IConcept getConcept(String conceptId) {
         // TODO Auto-generated method stub
         return null;
     }

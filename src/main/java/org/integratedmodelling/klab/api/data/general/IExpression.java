@@ -1,0 +1,54 @@
+/*******************************************************************************
+ *  Copyright (C) 2007, 2015:
+ *  
+ *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
+ *    - integratedmodelling.org
+ *    - any other authors listed in @author annotations
+ *
+ *    All rights reserved. This file is part of the k.LAB software suite,
+ *    meant to enable modular, collaborative, integrated 
+ *    development of interoperable data and model components. For
+ *    details, see http://integratedmodelling.org.
+ *    
+ *    This program is free software; you can redistribute it and/or
+ *    modify it under the terms of the Affero General Public License 
+ *    Version 3 or any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but without any warranty; without even the implied warranty of
+ *    merchantability or fitness for a particular purpose.  See the
+ *    Affero General Public License for more details.
+ *  
+ *     You should have received a copy of the Affero General Public License
+ *     along with this program; if not, write to the Free Software
+ *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *     The license is also available at: https://www.gnu.org/licenses/agpl.html
+ *******************************************************************************/
+package org.integratedmodelling.klab.api.data.general;
+
+import java.util.Map;
+
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
+
+/**
+ * @author ferdinando.villa
+ *
+ */
+public interface IExpression {
+
+    /**
+     * Simple execution interface for expressions. A new expression is generated per each call
+     * to the corresponding language statement, so it can store local data about its call context.
+     * @param parameters from context or defined in a language call
+     * @param monitor 
+     * @param context usually null, may be added to determine the result of the evaluation according to
+     *        the calling context, interpreted conceptually (e.g. the expected role of the return value)
+     * @return the result of evaluating the expression
+     * @throws KlabException TODO
+     */
+    Object eval(Map<String, Object> parameters, IMonitor monitor, IConcept... context)
+            throws KlabException;
+
+}

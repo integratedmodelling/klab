@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab;
 
-import org.integratedmodelling.kim.api.IModel;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.model.KimModel;
 import org.integratedmodelling.klab.api.services.IModelService;
 
@@ -16,7 +16,7 @@ public enum Models implements IModelService {
      * @param model
      * @return
      */
-    public IModel build(KimModel model) {
+    public IKimModel build(KimModel model) {
         return null;
     }
     

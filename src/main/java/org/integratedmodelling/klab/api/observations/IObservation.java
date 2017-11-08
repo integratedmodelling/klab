@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.io.Serializable;
 
-import org.integratedmodelling.kim.api.IObservable;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.klab.api.runtime.IContext;
 
 public interface IObservation extends Serializable {
@@ -18,7 +18,7 @@ public interface IObservation extends Serializable {
      * 
      * @return the observation's observable
      */
-    IObservable getObservable();
+    IKimObservable getObservable();
 
     /**
      * Return the scale seen by this object, merging all the extents declared for the

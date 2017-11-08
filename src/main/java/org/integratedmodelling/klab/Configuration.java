@@ -4,13 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.OS;
 
 public enum Configuration implements IConfigurationService {
     INSTANCE;
+
+    private OS                 os;
 
     public static final String KLAB_CLIENT_PROJECTS               = "klab.client.workspace";
 
@@ -157,34 +161,69 @@ public enum Configuration implements IConfigurationService {
 
     private Properties         properties;
     private File               dataPath;
+    private Level              notificationLevel;
+
+    public String              KLAB_RELATIVE_WORK_PATH            = ".klab";
+
+    private Configuration() {
+
+        if (System.getProperty(KLAB_DATA_DIRECTORY) != null) {
+
+            this.dataPath = new File(System.getProperty(KLAB_DATA_DIRECTORY));
+            // this.scratchPath = new File(this.dataPath + File.separator + ".scratch");
+
+        } else {
+            String home = System.getProperty("user.home");
+            if (System.getProperty(KLAB_WORK_DIRECTORY) != null) {
+                KLAB_RELATIVE_WORK_PATH = System.getProperty(KLAB_WORK_DIRECTORY);
+            }
+            this.dataPath = new File(home + File.separator + KLAB_RELATIVE_WORK_PATH);
+            // this.scratchPath = new File(this.dataPath + File.separator + ".scratch");
+
+            /*
+             * make sure it's  available for substitution in property files etc.
+             */
+            System.setProperty(KLAB_DATA_DIRECTORY, this.dataPath.toString());
+        }
+
+        this.dataPath.mkdirs();
+        // this.scratchPath.mkdirs();
+
+        // KLAB.info("k.LAB data directory set to " + dataPath);
+
+        notificationLevel = Level.INFO;
+        if (getProperties().containsKey(KLAB_CLIENT_DEBUG)) {
+            if (getProperties().getProperty(KLAB_CLIENT_DEBUG).equals("on")) {
+                notificationLevel = Level.FINEST;
+            }
+        }
+
+        /*
+         * load or create thinklab system properties
+         */
+        this.properties = new Properties();
+        File pFile = new File(dataPath + File.separator + "klab.properties");
+        if (!pFile.exists()) {
+            pFile = new File(dataPath + File.separator + "thinklab.properties");
+        }
+        try {
+            if (pFile.exists()) {
+                FileInputStream input;
+
+                input = new FileInputStream(pFile);
+                this.properties.load(input);
+                input.close();
+            } else {
+                pFile = new File(dataPath + File.separator + "klab.properties");
+                FileUtils.touch(pFile);
+            }
+        } catch (Exception e) {
+            throw new KlabRuntimeException(e);
+        }
+    }
 
     @Override
     public Properties getProperties() {
-
-        if (this.properties == null) {
-            /*
-             * load or create thinklab system properties
-             */
-            this.properties = new Properties();
-            File pFile = new File(dataPath + File.separator + "klab.properties");
-            if (!pFile.exists()) {
-                pFile = new File(dataPath + File.separator + "thinklab.properties");
-            }
-            try {
-                if (pFile.exists()) {
-                    FileInputStream input;
-
-                    input = new FileInputStream(pFile);
-                    this.properties.load(input);
-                    input.close();
-                } else {
-                    pFile = new File(dataPath + File.separator + "klab.properties");
-                    FileUtils.touch(pFile);
-                }
-            } catch (Exception e) {
-                throw new KlabRuntimeException(e);
-            }
-        }
         return this.properties;
     }
 
@@ -192,14 +231,14 @@ public enum Configuration implements IConfigurationService {
 
         File td = new File(dataPath + File.separator + "klab.properties");
 
-//        String[] doNotPersist = new String[] { Project.ORIGINATING_NODE_PROPERTY };
+        // String[] doNotPersist = new String[] { Project.ORIGINATING_NODE_PROPERTY };
 
         Properties p = new Properties();
         p.putAll(getProperties());
 
-//        for (String dn : doNotPersist) {
-//            p.remove(dn);
-//        }
+        // for (String dn : doNotPersist) {
+        // p.remove(dn);
+        // }
 
         try {
             p.store(new FileOutputStream(td), null);
@@ -208,5 +247,43 @@ public enum Configuration implements IConfigurationService {
         }
 
     }
+
+    @Override
+    public boolean useReasoner() {
+        return true;
+    }
+
+    @Override
+    public OS getOS() {
+
+        if (this.os == null) {
+
+            String osd = System.getProperty("os.name").toLowerCase();
+
+            // TODO ALL these checks need careful checking
+            if (osd.contains("windows")) {
+                os = OS.WIN;
+            } else if (osd.contains("mac")) {
+                os = OS.MACOS;
+            } else if (osd.contains("linux") || osd.contains("unix")) {
+                os = OS.UNIX;
+            }
+        }
+
+        return this.os;
+    }
+
+    @Override
+    public File getDataPath(String subspace) {
+        File ret = new File(dataPath + File.separator + subspace);
+        ret.mkdirs();
+        return ret;
+    }
+    
+    @Override
+    public boolean isOffline() {
+        return getProperties().getProperty(KLAB_OFFLINE, "off").equals("on");
+    }
+    
 
 }

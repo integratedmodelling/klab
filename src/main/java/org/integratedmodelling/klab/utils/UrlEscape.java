@@ -26,7 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.utils;
 
-import org.integratedmodelling.klab.Runtime;
+import org.integratedmodelling.klab.Klab;
 
 /**
  * Escapes and Unescapes undesirable characters using % (URLEncoding)
@@ -214,7 +214,7 @@ public class UrlEscape {
                 }
             }
         } else {
-            Runtime.INSTANCE.warn("Unescapeurl -> Bogus parameter");
+            Klab.INSTANCE.warn("Unescapeurl -> Bogus parameter");
         }
         return esc.toString();
     }

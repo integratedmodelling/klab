@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
-public interface IProject {
+import org.integratedmodelling.kim.api.IKimProject;
+
+public interface IProject extends IKimProject {
 
 }

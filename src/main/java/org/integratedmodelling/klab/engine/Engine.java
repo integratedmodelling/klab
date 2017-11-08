@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.engine;
 
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -82,7 +84,10 @@ public class Engine implements IEngine {
 
 	private boolean boot() {
 		boolean ret = false;
+		// setup configuration
 		// setup logging
+		// read core knowledge
+		Workspaces.INSTANCE.initializeCoreKnowledge();
 		// get worldview from certificate and sync it (cache/use cached if not online, fail if offline and no cache) 
 		// init Kim listeners
 		// load worldview
