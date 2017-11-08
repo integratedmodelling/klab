@@ -3,15 +3,9 @@ package org.integratedmodelling.klab.engine.resources;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Date;
 
-import org.apache.catalina.webresources.FileResource;
-import org.apache.tomcat.jni.Directory;
-import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
-import org.integratedmodelling.klab.utils.URLUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

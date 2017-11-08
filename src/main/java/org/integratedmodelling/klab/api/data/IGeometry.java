@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.data;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 /**
  * A IGeometry describes the shape of a data source identified by a URN. Before use, it must be converted into
@@ -36,7 +37,7 @@ public interface IGeometry extends Iterable<IGeometry> {
      * 
      * @return
      */
-    List<IKimConcept> getDimensions();
+    List<IConcept> getDimensions();
 
     /**
      * Get the number of dimensions for the passed extent.
@@ -44,7 +45,7 @@ public interface IGeometry extends Iterable<IGeometry> {
      * @param extent
      * @return
      */
-    int getDimensionCount(IKimConcept extent);
+    int getDimensionCount(IConcept extent);
 
     /**
      * Get the shape for the passed extent. The array will have {@link #getDimensionCount(IKimConcept)} elements.
@@ -52,7 +53,7 @@ public interface IGeometry extends Iterable<IGeometry> {
      * @param extent
      * @return
      */
-    long[] getShape(IKimConcept extent);
+    long[] getShape(IConcept extent);
 
     /**
      * Return the regularity of each dimension of the shape for the passed extent. If the shape for this
@@ -62,6 +63,6 @@ public interface IGeometry extends Iterable<IGeometry> {
      * @param extent
      * @return
      */
-    boolean[] isRegular(IKimConcept extent);
+    boolean[] isRegular(IConcept extent);
 
 }

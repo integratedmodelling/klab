@@ -240,7 +240,7 @@ public class OWLCore extends KimWorkspace {
         public static final String EXTENT                                 = "observation:Extent";
     }
     
-    public OWLCore(String path, File directory) {
+    public OWLCore(File directory) {
         super(directory);
     }
 

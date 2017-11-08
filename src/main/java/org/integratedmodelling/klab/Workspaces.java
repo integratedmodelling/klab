@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab;
 
+import java.io.IOException;
+
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.services.IWorkspaceService;
@@ -33,8 +35,9 @@ public enum Workspaces implements IWorkspaceService {
      */
     public IWorkspace LOCAL;
 
-    public void initializeCoreKnowledge() {
-        // TODO create the core namespace 
+    public void initializeCoreKnowledge() throws IOException {
+        CORE = new OWLCore(Configuration.INSTANCE.getDataPath("knowledge"));
+        CORE.load(false);
     }
     
     public void initializeWorldview(ICertificate certificate) {
