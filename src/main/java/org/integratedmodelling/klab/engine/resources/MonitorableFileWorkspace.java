@@ -10,7 +10,7 @@ public class MonitorableFileWorkspace extends KimWorkspace implements IWorkspace
 
     DirectoryWatcher watcher = null;
     
-    public MonitorableFileWorkspace(File root, File[] overridingProjects) {
+    public MonitorableFileWorkspace(File root, File... overridingProjects) {
         super(root, overridingProjects);
     }
     

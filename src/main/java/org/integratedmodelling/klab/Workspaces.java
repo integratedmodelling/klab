@@ -87,6 +87,7 @@ public enum Workspaces implements IWorkspaceService {
      * Initialize (index but do not load) the local workspace from the passed path.
      */
     public void initializeLocalWorkspace(File workspaceRoot) {
+        local = new MonitorableFileWorkspace(workspaceRoot);
     }
 
 }

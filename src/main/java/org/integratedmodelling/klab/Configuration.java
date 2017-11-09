@@ -3,6 +3,8 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -192,33 +194,26 @@ public enum Configuration implements IConfigurationService {
         // KLAB.info("k.LAB data directory set to " + dataPath);
 
         notificationLevel = Level.INFO;
-        if (getProperties().containsKey(KLAB_CLIENT_DEBUG)) {
-            if (getProperties().getProperty(KLAB_CLIENT_DEBUG).equals("on")) {
-                notificationLevel = Level.FINEST;
-            }
-        }
 
-        /*
-         * load or create thinklab system properties
-         */
         this.properties = new Properties();
         File pFile = new File(dataPath + File.separator + "klab.properties");
         if (!pFile.exists()) {
-            pFile = new File(dataPath + File.separator + "thinklab.properties");
-        }
-        try {
-            if (pFile.exists()) {
-                FileInputStream input;
-
-                input = new FileInputStream(pFile);
-                this.properties.load(input);
-                input.close();
-            } else {
-                pFile = new File(dataPath + File.separator + "klab.properties");
+            try {
                 FileUtils.touch(pFile);
+            } catch (IOException e) {
+                throw new KlabRuntimeException("cannot write to configuration directory");
             }
+        }
+        try (InputStream input = new FileInputStream(pFile)) {
+            this.properties.load(input);
         } catch (Exception e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabRuntimeException("cannot read configuration properties");
+        }
+
+        if (this.properties.containsKey(KLAB_CLIENT_DEBUG)) {
+            if (this.properties.getProperty(KLAB_CLIENT_DEBUG, "off").equals("on")) {
+                notificationLevel = Level.FINEST;
+            }
         }
     }
 
@@ -227,6 +222,11 @@ public enum Configuration implements IConfigurationService {
         return this.properties;
     }
 
+    /*
+     * Non-API
+     * Save the properties after making changes from outside configuration. 
+     * Should be used only internally, or removed in favor of a painful setting API.
+     */
     public void save() {
 
         File td = new File(dataPath + File.separator + "klab.properties");
@@ -279,7 +279,7 @@ public enum Configuration implements IConfigurationService {
         ret.mkdirs();
         return ret;
     }
-    
+
     @Override
     public boolean isOffline() {
         return getProperties().getProperty(KLAB_OFFLINE, "off").equals("on");
@@ -289,6 +289,5 @@ public enum Configuration implements IConfigurationService {
     public File getDataPath() {
         return dataPath;
     }
-    
 
 }

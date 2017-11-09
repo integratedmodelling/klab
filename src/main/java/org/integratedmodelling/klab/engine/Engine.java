@@ -104,8 +104,6 @@ public class Engine implements IEngine {
 
         boolean ret = true;
         try {
-            // setup logging
-
             /*
              *  read core OWL knowledge from classpath
              */

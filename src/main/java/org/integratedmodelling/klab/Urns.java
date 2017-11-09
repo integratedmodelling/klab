@@ -13,8 +13,22 @@ import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
  */
 public enum Urns implements IUrnService {
     INSTANCE;
-    
+
+    @Override
     public IResource resolve(String urn) throws KlabUnknownUrnException, KlabUnauthorizedUrnException {
         return null;
     }
+
+    /**
+     * Non-API Return a full URN that is resolved to a {@link IResource} wrapping a literal or describing
+     * contents of locally available resources, such as from a file.
+     * 
+     * @param inlineResource
+     *            a POD value, filename or function call with POD value.
+     * @return
+     */
+    public String getLocalUrn(Object inlineResource) {
+        return null;
+    }
+    
 }

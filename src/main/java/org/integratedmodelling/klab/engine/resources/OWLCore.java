@@ -7,7 +7,10 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OWL;
 
@@ -258,7 +261,12 @@ public class OWLCore extends KimWorkspace implements IWorkspace {
             throw new IOException(e);
         }
         
-        ret.addAll(OWL.INSTANCE.getNamespaces());
+        for (INamespace ns : OWL.INSTANCE.getNamespaces()) {
+            Namespaces.INSTANCE.registerNamespace(ns);
+            ret.add(ns);
+        }
+        
+        Klab.INSTANCE.info(ret.size() + " ontologies read from classpath");
         
         return ret;
     }

@@ -3,8 +3,8 @@
  */
 package org.integratedmodelling.klab.test;
 
-import static org.junit.Assert.*;
-
+import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.engine.Engine;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +30,9 @@ public class EngineStartStop {
     }
 
     @Test
-    public void test() {
-        fail("Not yet implemented");
+    public void startEngine() {
+       IEngine engine = Engine.start();
+       
     }
 
 }

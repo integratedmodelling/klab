@@ -7,13 +7,12 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.INamespaceService;
-import org.integratedmodelling.klab.model.Namespace;
 
 public enum Namespaces implements INamespaceService {
     
     INSTANCE;
     
-    private Map<String,Namespace> namespaces = new HashMap<>();
+    private Map<String,INamespace> namespaces = new HashMap<>();
     
     public IKimNamespace build(KimNamespace namespace) {
         return null;
@@ -27,7 +26,7 @@ public enum Namespaces implements INamespaceService {
     /*
      * Non-API
      */
-    public void registerNamespace(Namespace namespace) {
+    public void registerNamespace(INamespace namespace) {
         namespaces.put(namespace.getName(), namespace);
     }
 

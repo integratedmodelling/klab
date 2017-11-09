@@ -23,7 +23,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
             synced = true;
             for (String url : gitUrls) {
                 try {
-                    GitUtils.clone(url, getRoot(), false);
+                    GitUtils.requireUpdatedRepository(url, getRoot());
                 } catch (KlabException e) {
                     throw new IOException(e);
                 }
