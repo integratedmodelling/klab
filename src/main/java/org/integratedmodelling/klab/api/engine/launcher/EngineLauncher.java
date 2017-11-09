@@ -590,7 +590,7 @@ public abstract class EngineLauncher {
             if (Configuration.INSTANCE.isOffline()) {
                 // we'll need these
                 properties.setProperty(Configuration.KLAB_CLIENT_PROJECTS, StringUtils
-                        .join(Workspaces.INSTANCE.LOCAL.getProjectLocations(), ","));
+                        .join(Workspaces.INSTANCE.getLocal().getProjectLocations(), ","));
             }
             if (Configuration.INSTANCE.getProperties()
                     .getProperty(Configuration.KLAB_LOCAL_COMPONENTS) != null) {
@@ -759,7 +759,7 @@ public abstract class EngineLauncher {
         if (Configuration.INSTANCE.isOffline()) {
             // we're gonna need these
             cmdLine.addArgument("-D" + Configuration.KLAB_CLIENT_PROJECTS + "="
-                    + StringUtils.join(Workspaces.INSTANCE.LOCAL.getProjectLocations(), ","));
+                    + StringUtils.join(Workspaces.INSTANCE.getLocal().getProjectLocations(), ","));
         }
         if (Configuration.INSTANCE.getProperties()
                 .getProperty(Configuration.KLAB_LOCAL_COMPONENTS) != null) {

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OWL;
 
@@ -16,7 +17,7 @@ import org.integratedmodelling.klab.owl.OWL;
  * @author ferdinando.villa
  *
  */
-public class OWLCore extends KimWorkspace {
+public class OWLCore extends KimWorkspace implements IWorkspace {
 
     boolean synced = false;
 

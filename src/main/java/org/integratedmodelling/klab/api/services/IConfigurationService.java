@@ -16,5 +16,7 @@ public interface IConfigurationService {
     File getDataPath(String subspace);
 
     boolean isOffline();
+
+    File getDataPath();
     
 }

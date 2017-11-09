@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.common.auth.KlabCertificate;
+import org.integratedmodelling.klab.auth.KlabCertificate;
 
 public class Engine implements IEngine {
 
@@ -68,42 +68,105 @@ public class Engine implements IEngine {
     }
 
     /**
-     * Create an engine using the default k.LAB certificate and start it. Return
-     * after startup is complete.
+     * Create an engine using the default k.LAB certificate and options, and start it. Return after startup is
+     * complete.
      * 
      * @return a new running engine, or null if startup failed.
      */
     public static IEngine start() {
-        Engine ret = new Engine(new KlabCertificate());
-        if (!ret.boot()) {
+        EngineStartupOptions options = new EngineStartupOptions();
+        Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
+        if (!ret.boot(options)) {
             return null;
         }
         return ret;
     }
 
-    private boolean boot() {
-        
+    /**
+     * Perform the engine boot sequence. Can only be called after a valid certificate was read. The boot
+     * sequence consists of:
+     * 
+     * <ul>
+     * <li></li>
+     * </ul>
+     * 
+     * @param options
+     *            the options read from the command line; a default is provided if no command line was used.
+     * 
+     * @return true if the boot was successful, false otherwise. Exceptions are only thrown in case of bad
+     *         usage (called before a certificate is read).
+     */
+    private boolean boot(EngineStartupOptions options) {
+
+        if (certificate == null) {
+            throw new UnsupportedOperationException("Engine.boot() was called before a vallid certificate was read. Exiting.");
+        }
+
         boolean ret = true;
         try {
-            // setup configuration
             // setup logging
-            // read core knowledge
-            Workspaces.INSTANCE.initializeCoreKnowledge();
-            // get worldview from certificate and sync it (cache/use cached if not online, fail if offline and
-            // no cache)
-            // init Kim listeners
-            // load worldview
-            // hop on the network
-            // sync and read components
-            // read workspace from parameters/properties
-            // run any init scripts from configuration
-            // run any init scripts from parameters
-            // init REST services unless specified otherwise
+
+            /*
+             *  read core OWL knowledge from classpath
+             */
+            Workspaces.INSTANCE.loadCoreKnowledge();
+
+            /*
+             * initialize but do not load the local workspace, so that we can later override the worldview if we
+             * have some worldview projects in the workspace.
+             */
+            Workspaces.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation());
+
+            /*
+             *  prime and check integrity of kboxes; init listeners for Kim reading
+             */
+
+            /*
+             *  get worldview from certificate and sync it
+             */
+            Workspaces.INSTANCE.loadWorldview(certificate);
+
+            /*
+             *  hop on the network
+             */
+
+            /*
+             *  sync and read components
+             */
+            // Workspaces.INSTANCE.loadComponents(options.get);
+
+            /*
+             * all binary content available: scan the classpath for all recognized extensions
+             */
+            scanClasspath();
+
+            /*
+             *  now we can finally load the workspace
+             */
+            Workspaces.INSTANCE.getLocal().load(false);
+
+            /*
+             *  run any init scripts from configuration
+             */
+
+            /*
+             * run any init scripts from parameters
+             */
+
+            /*
+             * if exit after scripts is requested, exit
+             */
+
         } catch (Exception e) {
             ret = false;
         }
-        
+
         return ret;
+    }
+
+    private void scanClasspath() {
+        // TODO Auto-generated method stub
+
     }
 
 }

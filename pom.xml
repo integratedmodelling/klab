@@ -15,7 +15,7 @@
 		<klab.version>0.9.11-SNAPSHOT</klab.version>
 		<jgrasstools-version>0.8.0</jgrasstools-version>
 		<jts.version>1.13</jts.version>
-		<xtext.version>2.10.0</xtext.version>
+		<xtext.version>2.12.0</xtext.version>
 		<h2gis.version>1.2.4</h2gis.version>
 
 		<!-- the five below go together. Never change one without checking the 
@@ -74,24 +74,40 @@
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext</artifactId>
-			<version>2.12.0</version>
+			<version>${xtext.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.util -->
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext.util</artifactId>
-			<version>2.12.0</version>
+			<version>${xtext.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing
+			Used in compile scope to provide simple, reentrant parser injector for repeated calls to declaration
+			parser. -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.testing</artifactId>
+			<version>${xtext.version}</version>
+			<!-- <scope>test</scope>  -->
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring-boot-version}</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>4.4.0.201606070830-r</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time-version}</version>
 		</dependency>
 
 		<!-- CLIENT DEPENDENCIES -->
@@ -105,32 +121,42 @@
 			<artifactId>commons-exec</artifactId>
 			<version>1.2</version>
 		</dependency>
+
+
 		<!-- ENGINE DEPENDENCIES -->
-		<!-- https://mvnrepository.com/artifact/org.eclipse.january/org.eclipse.january -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.january/org.eclipse.january 
+			underlying implementation for non-distributed state storage -->
 		<dependency>
 			<groupId>org.eclipse.january</groupId>
 			<artifactId>org.eclipse.january</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+
 		<dependency>
-			<groupId>org.eclipse.jgit</groupId>
-			<artifactId>org.eclipse.jgit</artifactId>
-			<version>4.4.0.201606070830-r</version>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core </artifactId>
+			<version>1.0.1</version>
+		</dependency>
+
+		<!-- OWL and DL reasoning -->
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-distribution </artifactId>
+			<version>3.4.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hermit-reasoner</groupId>
 			<artifactId>org.semanticweb.hermit</artifactId>
 			<version>1.3.8.4</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
 		<dependency>
-			<groupId>org.jgrapht</groupId>
-			<artifactId>jgrapht-core </artifactId>
-			<version>1.0.1</version>
+			<groupId>args4j</groupId>
+			<artifactId>args4j</artifactId>
+			<version>2.33</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.owlapi</groupId>
-			<artifactId>owlapi-distribution </artifactId>
-			<version>3.4.4</version>
-		</dependency>
+
+
 	</dependencies>
 </project>

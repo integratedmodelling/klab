@@ -284,6 +284,11 @@ public enum Configuration implements IConfigurationService {
     public boolean isOffline() {
         return getProperties().getProperty(KLAB_OFFLINE, "off").equals("on");
     }
+
+    @Override
+    public File getDataPath() {
+        return dataPath;
+    }
     
 
 }

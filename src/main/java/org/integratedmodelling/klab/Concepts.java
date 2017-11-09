@@ -31,6 +31,10 @@ public enum Concepts implements IConceptService {
     private Concepts() {
     }
     
+    /*
+     * TODO use InjectWith and provide a similar setup to the testing in kim.tests to obtain
+     * a reusable parser instead of injecting all this stuff at every declaration.
+     */
     public IConcept declare(String declaration) {
 
         IConcept ret = null;
@@ -84,5 +88,26 @@ public enum Concepts implements IConceptService {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    /**
+     * Quick static way to obtain a concept that is known to exist. Throws
+     * an unchecked exception if the concept isn't found.
+     * 
+     * @param conceptId
+     * @return
+     */
+    public static IConcept c(String conceptId) {
+        return null;
+    }
 
+    /**
+     * Quick static way to obtain a property that is known to exist. Throws
+     * an unchecked exception if the property isn't found.
+     * 
+     * @param propertyId
+     * @return
+     */
+    public static IProperty p(String propertyId) {
+        return null;
+    }
 }
