@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab;
 
-import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.services.IProjectService;
 
 public enum Projects implements IProjectService {
     INSTANCE;
     
-    public IKimProject get(String projectId) {
+    public IProject getProject(String projectId) {
         return null;
     }
     

@@ -33,6 +33,7 @@ public enum Concepts implements IConceptService {
      * TODO use InjectWith and provide a similar setup to the testing in kim.tests to obtain
      * a reusable parser instead of injecting all this stuff at every declaration.
      */
+    @Override
     public IConcept declare(String declaration) {
 
     	try {

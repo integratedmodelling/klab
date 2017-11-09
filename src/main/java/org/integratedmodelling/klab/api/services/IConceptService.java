@@ -9,4 +9,6 @@ public interface IConceptService {
 
     IConcept getConcept(String conceptId);
 
+    IConcept declare(String declaration);
+
 }
