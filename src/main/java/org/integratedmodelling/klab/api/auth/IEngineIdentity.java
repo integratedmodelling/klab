@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.auth;
 
-public interface IEngineIdentity extends IIdentity {
+public interface IEngineIdentity extends IServerIdentity {
 
     Type type = Type.ENGINE;
     

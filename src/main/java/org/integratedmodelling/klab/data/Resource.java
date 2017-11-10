@@ -2,11 +2,12 @@ package org.integratedmodelling.klab.data;
 
 import java.util.regex.Pattern;
 
-import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IUrnService;
 
@@ -23,7 +24,7 @@ public class Resource implements IResource {
 
     Version                     version;
     IGeometry                   geometry;
-    IKimMetadata                   metadata;
+    IMetadata                metadata;
 
     /**
      * Pattern to validate a RFC 2141-compliant URN, just to be on the right side of things.
@@ -60,10 +61,10 @@ public class Resource implements IResource {
      * 
      * @return
      */
-    public IKimMetadata getMetadata() {
+    @Override
+    public IMetadata getMetadata() {
         return metadata;
     }
-
 
     @Override
     public String getUrn() {
@@ -72,7 +73,7 @@ public class Resource implements IResource {
     }
 
     @Override
-    public IRawObject get(IMonitor monitor) {
+    public IRawObject get(IScale scale, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }

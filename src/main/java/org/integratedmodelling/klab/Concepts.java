@@ -9,6 +9,8 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.IConceptService;
+import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.KnowledgeDeclarationInjectorProvider;
 
 import com.google.inject.Inject;
@@ -62,14 +64,12 @@ public enum Concepts implements IConceptService {
 
     @Override
     public IProperty getProperty(String propertyId) {
-        // TODO Auto-generated method stub
-        return null;
+        return OWL.INSTANCE.getProperty(propertyId);
     }
     
     @Override
     public IConcept getConcept(String conceptId) {
-        // TODO Auto-generated method stub
-        return null;
+        return OWL.INSTANCE.getConcept(conceptId);
     }
     
     /**
@@ -80,7 +80,17 @@ public enum Concepts implements IConceptService {
      * @return
      */
     public static IConcept c(String conceptId) {
-        return null;
+        
+        if (conceptId == null || conceptId.isEmpty()) {
+            return null;
+        }
+
+        IConcept ret = OWL.INSTANCE.getConcept(conceptId);
+        if (ret == null) {
+            throw new KlabRuntimeException("cannot find property " + conceptId);
+        }
+        return ret;
+
     }
 
     /**
@@ -91,7 +101,17 @@ public enum Concepts implements IConceptService {
      * @return
      */
     public static IProperty p(String propertyId) {
-        return null;
+
+        if (propertyId == null || propertyId.isEmpty()) {
+            return null;
+        }
+
+        IProperty ret = OWL.INSTANCE.getProperty(propertyId);
+        if (ret == null) {
+            throw new KlabRuntimeException("cannot find property " + propertyId);
+        }
+        return ret;
+
     }
 
 }

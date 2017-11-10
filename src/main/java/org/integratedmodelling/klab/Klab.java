@@ -1,8 +1,20 @@
 package org.integratedmodelling.klab;
 
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.integratedmodelling.klab.api.services.IRuntimeService;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -18,7 +30,8 @@ public enum Klab implements IRuntimeService {
 
     INSTANCE;
 
-    Logger logger;
+    private Logger logger;
+    private Map<Class<? extends Annotation>, AnnotationHandler> annotationHandlers = new HashMap<>();
 
     private Klab() {
 
@@ -87,6 +100,50 @@ public enum Klab implements IRuntimeService {
         }
     }
 
+
+    @Override
+    public void registerAnnotationHandler(Class<? extends Annotation> annotationClass, AnnotationHandler handler) {
+        annotationHandlers.put(annotationClass, handler);
+    }
+
+    /**
+     * Single scanning loop for all registered annotations in a package. Done on
+     * the main codebase and in each component based on the declared packages.
+     * 
+     * @param packageId
+     * @throws KlabException
+     */
+    @Override
+    public List<Pair<Annotation, Class<?>>> scanPackage(String packageId) throws KlabException {
+
+        List<Pair<Annotation, Class<?>>> ret = new ArrayList<>();
+
+        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+        for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
+            provider.addIncludeFilter(new AnnotationTypeFilter(ah));
+        }
+
+        Set<BeanDefinition> beans = provider.findCandidateComponents(packageId);
+        for (BeanDefinition bd : beans) {
+
+            for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
+                try {
+                    Class<?> cls = Class.forName(bd.getBeanClassName());
+                    Annotation annotation = cls.getAnnotation(ah);
+                    if (annotation != null) {
+                        annotationHandlers.get(ah).processAnnotatedClass(annotation, cls);
+                        ret.add(new Pair<>(annotation, cls));
+                    }
+                } catch (ClassNotFoundException e) {
+                    error(e);
+                    continue;
+                }
+            }
+        }
+
+        return ret;
+    }
+    
     // functions
 
     // URNs
@@ -171,6 +228,12 @@ public enum Klab implements IRuntimeService {
         // // factory is needed
         // Hints.putSystemDefault(Hints.GRID_COVERAGE_FACTORY, CoverageFactoryFinder
         // .getGridCoverageFactory(defHints));
+    }
+
+    @Override
+    public void registerKimToolkit(Class<?> cls) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

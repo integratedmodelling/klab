@@ -1,5 +1,10 @@
 package org.integratedmodelling.klab.engine;
 
+import java.lang.annotation.Annotation;
+import java.util.Date;
+
+import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
@@ -9,12 +14,22 @@ import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.api.extensions.KimToolkit;
+import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
+import org.integratedmodelling.klab.api.extensions.SubjectType;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.monitoring.MulticastMessageBus;
+import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class Engine implements IEngine {
+public class Engine extends Server implements IEngine {
 
-    ICertificate certificate;
+    private ICertificate        certificate;
+    private String              name;
+    private Date                bootTime;
+    private MulticastMessageBus multicastBus;
 
     public Engine(ICertificate certificate) {
         // TODO
@@ -98,8 +113,13 @@ public class Engine implements IEngine {
      */
     private boolean boot(EngineStartupOptions options) {
 
+        if (options.isHelp()) {
+            System.out.println(options.usage());
+            System.exit(0);
+        }
+
         if (certificate == null) {
-            throw new UnsupportedOperationException("Engine.boot() was called before a vallid certificate was read. Exiting.");
+            throw new UnsupportedOperationException("Engine.boot() was called before a valid certificate was read. Exiting.");
         }
 
         boolean ret = true;
@@ -129,14 +149,18 @@ public class Engine implements IEngine {
              */
 
             /*
-             *  sync and read components
+             *  sync components and load binary assets
              */
             // Workspaces.INSTANCE.loadComponents(options.get);
 
             /*
-             * all binary content available: scan the classpath for all recognized extensions
+             * all binary content is now available: scan the classpath for recognized extensions
              */
             scanClasspath();
+
+            /*
+             * load component knowledge after their binary content is registered.
+             */
 
             /*
              *  now we can finally load the workspace
@@ -154,6 +178,20 @@ public class Engine implements IEngine {
             /*
              * if exit after scripts is requested, exit
              */
+            if (options.isExitAfterStartup()) {
+                System.exit(0);
+            }
+
+            /*
+             * if we have been asked to open a communication channel from a client, do so. The channel
+             * should be unique among all engines on the same network.
+             */
+            if (options.getMulticastChannel() != null) {
+                Klab.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
+                        + " communicating on port " + options.getPort());
+                this.multicastBus = new MulticastMessageBus(this, options.getMulticastChannel(), options
+                        .getPort());
+            }
 
         } catch (Exception e) {
             ret = false;
@@ -162,9 +200,50 @@ public class Engine implements IEngine {
         return ret;
     }
 
-    private void scanClasspath() {
-        // TODO Auto-generated method stub
+    private void scanClasspath() throws KlabException {
 
+        registerCommonAnnotations();
+
+        // TODO reinstate whatever must be kept plus any data services and subsystems
+        Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+                String concept = ((SubjectType) annotation).value();
+                if (ISubject.class.isAssignableFrom(cls)) {
+                    Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
+                }
+            }
+        });
+
+        Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
+            @Override
+            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+                String id = ((KlabBatchRunner) annotation).id();
+//                if (IBatchRunner.class.isAssignableFrom(cls)) {
+//                    KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
+//                }
+            }
+        });
+
+        Klab.INSTANCE.registerAnnotationHandler(KimToolkit.class, new AnnotationHandler() {
+            @Override
+            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+                Klab.INSTANCE.registerKimToolkit(cls);
+            }
+        });
+
+        Klab.INSTANCE.scanPackage("org.integratedmodelling");
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Date getBootTime() {
+        return bootTime;
     }
 
 }

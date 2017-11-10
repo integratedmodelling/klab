@@ -8,19 +8,42 @@ import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.ParserProperties;
 
 public class EngineStartupOptions implements IEngineStartupOptions {
+
+    @Option(name = "-dataDir", usage = "data directory (default: ~/.klab)", metaVar = "<DIRECTORY_PATH>")
+    File   dataDir           = null;
+
+    @Option(name = "-cert", usage = "certificate file (default: ~/.klab/im.cert)", metaVar = "<FILE_PATH>")
+    File   certificateFile   = null;
+
+    @Option(
+            name = "-workspace",
+            usage = "monitored workspace directory (default: ~/.klab/workspace, not monitored)",
+            metaVar = "<DIRECTORY_PATH>")
+    File   workspaceLocation = null;
+
+    @Option(
+            name = "-mcast",
+            usage = "multicast channel (default: multicasting off; must be unique within the local network)",
+            metaVar = "<STRING>")
+    String multicastChannel;
+
+    @Option(name = "-port", usage = "http port for REST communication (default: 8183)", metaVar = "<INT>")
+    int    port              = 8183;
     
-    @Option(name="-cert",usage="certificate file",metaVar="<CERTIFICATE_PATH>")
-    File certificateFile = null;
+    @Option(name = "-help", usage = "print command line options and exit")
+    boolean help;
     
-    @Option(name="-workspace",usage="workspace directory",metaVar="<WORKSPACE_PATH>")
-    File workspaceLocation = null;
-    
+    @Option(name = "-exit", usage = "exit after completing startup and running any scripts from command line")
+    boolean exit;
+
     /**
      * All defaults
      */
-    public EngineStartupOptions() { }
+    public EngineStartupOptions() {
+    }
 
     /**
      * Read the passed arguments and initialize all fields from them.
@@ -37,14 +60,15 @@ public class EngineStartupOptions implements IEngineStartupOptions {
         }
         return true;
     }
-    
+
     public String usage() {
-        CmdLineParser parser = new CmdLineParser(this);
+        ParserProperties properties = ParserProperties.defaults().withUsageWidth(110);
+        CmdLineParser parser = new CmdLineParser(this, properties);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(256);
         parser.printUsage(baos);
         return "Usage:\n\n" + baos.toString();
     }
-    
+
     @Override
     public File getWorkspaceLocation() {
         if (workspaceLocation == null) {
@@ -64,5 +88,33 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     public static void main(String args[]) {
         System.out.println(new EngineStartupOptions().usage());
     }
+
+    @Override
+    public String getMulticastChannel() {
+        return multicastChannel;
+    }
+
+    @Override
+    public File getDataDirectory() {
+        if (dataDir == null) {
+            dataDir = Configuration.INSTANCE.getDataPath();
+        }
+        return dataDir;
+    }
+
+    @Override
+    public int getPort() {
+        return port;
+    }
     
+    @Override
+    public boolean isHelp() {
+        return help;
+    }
+    
+    @Override
+    public boolean isExitAfterStartup() {
+        return exit;
+    }
+
 }

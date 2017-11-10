@@ -82,14 +82,14 @@
 			<artifactId>org.eclipse.xtext.util</artifactId>
 			<version>${xtext.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing
-			Used in compile scope to provide simple, reentrant parser injector for repeated calls to declaration
-			parser. -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing 
+			Used in compile scope to provide simple, reentrant parser injector for repeated 
+			calls to declaration parser. -->
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext.testing</artifactId>
 			<version>${xtext.version}</version>
-			<!-- <scope>test</scope>  -->
+			<!-- <scope>test</scope> -->
 		</dependency>
 
 		<dependency>
@@ -108,6 +108,13 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time-version}</version>
+		</dependency>
+
+		<!-- fast, duplex multicast communication between clients and engines -->
+		<dependency>
+			<groupId>org.jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>3.6.8.Final</version>
 		</dependency>
 
 		<!-- CLIENT DEPENDENCIES -->
