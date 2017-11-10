@@ -21,6 +21,9 @@ public enum Concepts implements IConceptService {
 	@Inject
 	ParseHelper<ObservableSemantics> observableParser;
 
+	@Inject
+	ParseHelper<ConceptDeclaration> declarationParser;
+
     private Concepts() {
     	IInjectorProvider injectorProvider = new KnowledgeDeclarationInjectorProvider();
 		Injector injector = injectorProvider.getInjector();
@@ -38,7 +41,7 @@ public enum Concepts implements IConceptService {
 
     	try {
 			ObservableSemantics parsed = observableParser.parse(declaration);
-			KimObservable interpreted = Kim.declareObservable(parsed);
+			KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
 			return declare(interpreted);
 		} catch (Exception e) {
 		}
@@ -90,8 +93,5 @@ public enum Concepts implements IConceptService {
     public static IProperty p(String propertyId) {
         return null;
     }
-    
-//    public static void main(String[] args) {
-//    	Concepts.INSTANCE.declare("im:Potential ratio of (not im:Large) infrastructure:City to infrastructure:City within earth:Region");
-//    }
+
 }
