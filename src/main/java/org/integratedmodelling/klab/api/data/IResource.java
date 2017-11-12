@@ -1,10 +1,10 @@
 package org.integratedmodelling.klab.api.data;
 
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
-import org.integratedmodelling.klab.api.data.services.IDataEncoder;
-import org.integratedmodelling.klab.api.data.services.IDataPublisher;
-import org.integratedmodelling.klab.api.data.services.IDataValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -20,8 +20,8 @@ import org.integratedmodelling.klab.api.services.IUrnService;
  * available under a URN that becomes a secure endpoint for their use in semantic engines.
  * 
  * Data services implemented in a k.LAB node allow bridging to multiple types of resources, providing plug-ins
- * that expose a validator ({@link IDataValidator}), a publisher/unpublisher ({@link IDataPublisher}) and an
- * encoder to IResource ({@link IDataEncoder}) for each new resource type supported. IResources have a
+ * that expose a validator ({@link IResourceValidator}), a publisher/unpublisher ({@link IResourcePublisher}) and an
+ * encoder to IResource ({@link IResourceEncoder}) for each new resource type supported. IResources have a
  * {@link IGeometry} that can be turned into a semantic {@link IScale} through a {@link IWorldview}. This way,
  * engines do not need to know the details of any specific data protocol as the contents are returned from the
  * engine in encoded form upon a request for a URN's contents in a compatible scale.

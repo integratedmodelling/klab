@@ -27,7 +27,8 @@ package org.integratedmodelling.klab.utils;
  * Copyright (C) 1999, 2005 Slava Pestov
  * Portions copyright (C) 2000 Richard S. Hall
  * Portions copyright (C) 2001 Dirk Moebius
- *
+ * Portions copyright (C) 2017 Ferdinando Villa
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -42,8 +43,6 @@ package org.integratedmodelling.klab.utils;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-//{{{ Imports
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -718,9 +717,9 @@ public class MiscUtilities {
 			}
 		}
 		return whitespace;
-	} // }}}
-
-	// {{{ getTrailingWhiteSpace() method
+	}
+	
+	
 	/**
 	 * Returns the number of trailing whitespace characters in the specified
 	 * string.
@@ -742,9 +741,8 @@ public class MiscUtilities {
 			}
 		}
 		return whitespace;
-	} // }}}
-
-	// {{{ getLeadingWhiteSpaceWidth() method
+	} 
+	
 	/**
 	 * Returns the width of the leading white space in the specified string.
 	 * 
@@ -768,88 +766,8 @@ public class MiscUtilities {
 			}
 		}
 		return whitespace;
-	} // }}}
-
-	// //{{{ getVirtualWidth() method
-	// /**
-	// * Returns the virtual column number (taking tabs into account) of the
-	// * specified offset in the segment.
-	// *
-	// * @param seg The segment
-	// * @param tabSize The tab size
-	// * @since jEdit 4.1pre1
-	// */
-	// public static int getVirtualWidth(Segment seg, int tabSize)
-	// {
-	// int virtualPosition = 0;
-	//
-	// for (int i = 0; i < seg.count; i++)
-	// {
-	// char ch = seg.array[seg.offset + i];
-	//
-	// if (ch == '\t')
-	// {
-	// virtualPosition += tabSize
-	// - (virtualPosition % tabSize);
-	// }
-	// else
-	// {
-	// ++virtualPosition;
-	// }
-	// }
-	//
-	// return virtualPosition;
-	// } //}}}
-	//
-	// //{{{ getOffsetOfVirtualColumn() method
-	// /**
-	// * Returns the array offset of a virtual column number (taking tabs
-	// * into account) in the segment.
-	// *
-	// * @param seg The segment
-	// * @param tabSize The tab size
-	// * @param column The virtual column number
-	// * @param totalVirtualWidth If this array is non-null, the total
-	// * virtual width will be stored in its first location if this method
-	// * returns -1.
-	// *
-	// * @return -1 if the column is out of bounds
-	// *
-	// * @since jEdit 4.1pre1
-	// */
-	// public static int getOffsetOfVirtualColumn(Segment seg, int tabSize,
-	// int column, int[] totalVirtualWidth)
-	// {
-	// int virtualPosition = 0;
-	//
-	// for (int i = 0; i < seg.count; i++)
-	// {
-	// char ch = seg.array[seg.offset + i];
-	//
-	// if (ch == '\t')
-	// {
-	// int tabWidth = tabSize
-	// - (virtualPosition % tabSize);
-	// if(virtualPosition >= column)
-	// return i;
-	// else
-	// virtualPosition += tabWidth;
-	// }
-	// else
-	// {
-	// if(virtualPosition >= column)
-	// return i;
-	// else
-	// ++virtualPosition;
-	// }
-	// }
-	//
-	// if(totalVirtualWidth != null)
-	// totalVirtualWidth[0] = virtualPosition;
-	// return -1;
-	// } //}}}
-
-	// {{{ createWhiteSpace() method
+	} 
+	
 	/**
 	 * Creates a string of white space with the specified length.
 	 * <p>
@@ -869,9 +787,8 @@ public class MiscUtilities {
 	 */
 	public static String createWhiteSpace(int len, int tabSize) {
 		return createWhiteSpace(len, tabSize, 0);
-	} // }}}
-
-	// {{{ createWhiteSpace() method
+	}
+	
 	/**
 	 * Creates a string of white space with the specified length.
 	 * <p>
@@ -990,9 +907,8 @@ public class MiscUtilities {
 		}
 
 		return buf.toString();
-	} // }}}
-
-	// {{{ escapesToChars() method
+	} 
+	
 	/**
 	 * Converts "\n" and "\t" escapes in the specified string to newlines and
 	 * tabs.
@@ -1029,9 +945,9 @@ public class MiscUtilities {
 			}
 		}
 		return buf.toString();
-	} // }}}
-
-	// {{{ charsToEscapes() method
+	} 
+	
+	
 	/**
 	 * Escapes newlines, tabs, backslashes, and quotes in the specified string.
 	 * 
@@ -1041,9 +957,8 @@ public class MiscUtilities {
 	 */
 	public static String charsToEscapes(String str) {
 		return charsToEscapes(str, "\n\t\\\"'");
-	} // }}}
-
-	// {{{ charsToEscapes() method
+	} 
+	
 	/**
 	 * Escapes the specified characters in the specified string.
 	 * 
@@ -1070,18 +985,9 @@ public class MiscUtilities {
 				buf.append(c);
 		}
 		return buf.toString();
-	} // }}}
+	}
+	
 
-	// {{{ compareVersions() method
-	/**
-	 * @deprecated Call <code>compareStrings()</code> instead
-	 */
-	@Deprecated
-	public static int compareVersions(String v1, String v2) {
-		return compareStrings(v1, v2, false);
-	} // }}}
-
-	// {{{ compareStrings() method
 	/**
 	 * Compares two strings.
 	 * <p>
@@ -1157,17 +1063,8 @@ public class MiscUtilities {
 		}
 
 		return char1.length - char2.length;
-	} // }}}
-
-	// {{{ stringsEqual() method
-	/**
-	 * @deprecated Call <code>objectsEqual()</code> instead.
-	 */
-	@Deprecated
-	public static boolean stringsEqual(String s1, String s2) {
-		return objectsEqual(s1, s2);
-	} // }}}
-
+	}
+	
 	// {{{ objectsEqual() method
 	/**
 	 * Returns if two strings are equal. This correctly handles null pointers,
@@ -1185,9 +1082,9 @@ public class MiscUtilities {
 			return false;
 		else
 			return o1.equals(o2);
-	} // }}}
-
-	// {{{ charsToEntities() method
+	} 
+	
+	
 	/**
 	 * Converts &lt;, &gt;, &amp; in the string to their HTML entity
 	 * equivalents.
@@ -1216,9 +1113,9 @@ public class MiscUtilities {
 			}
 		}
 		return buf.toString();
-	} // }}}
-
-	// {{{ formatFileSize() method
+	}
+	
+	
 	public static final DecimalFormat KB_FORMAT = new DecimalFormat("#.# KB");
 	public static final DecimalFormat MB_FORMAT = new DecimalFormat("#.# MB");
 
@@ -1237,9 +1134,9 @@ public class MiscUtilities {
 			return KB_FORMAT.format((double) length / 1024);
 		else
 			return MB_FORMAT.format((double) length / 1024 / 1024);
-	} // }}}
-
-	// {{{ getLongestPrefix() method
+	}
+	
+	
 	/**
 	 * Returns the longest common prefix in the given set of strings.
 	 * 
@@ -1271,9 +1168,9 @@ public class MiscUtilities {
 		}
 
 		return str.get(0).toString().substring(0, prefixLength);
-	} // }}}
-
-	// {{{ getLongestPrefix() method
+	} 
+	
+	
 	/**
 	 * Returns the longest common prefix in the given set of strings.
 	 * 
@@ -1285,9 +1182,8 @@ public class MiscUtilities {
 	 */
 	public static String getLongestPrefix(String[] str, boolean ignoreCase) {
 		return getLongestPrefix((Object[]) str, ignoreCase);
-	} // }}}
-
-	// {{{ getLongestPrefix() method
+	} 
+	
 	/**
 	 * Returns the longest common prefix in the given set of strings.
 	 * 
@@ -1320,99 +1216,8 @@ public class MiscUtilities {
 		}
 
 		return first.substring(0, prefixLength);
-	} // }}}
-		//
-		// // }}}
-		//
-		// // {{{ Sorting methods
-		//
-		// // {{{ quicksort() method
-		// /**
-		// * Sorts the specified array. Equivalent to calling
-		// * <code>Arrays.sort()</code>.
-		// * @param obj The array
-		// * @param compare Compares the objects
-		// * @since jEdit 4.0pre4
-		// */
-		// public static void quicksort(Object[] obj, Comparator compare) {
-		// Arrays.sort(obj, compare);
-		// } // }}}
-		//
-		// // {{{ quicksort() method
-		// /**
-		// * Sorts the specified vector.
-		// * @param vector The vector
-		// * @param compare Compares the objects
-		// * @since jEdit 4.0pre4
-		// */
-		// public static void quicksort(Vector vector, Comparator compare) {
-		// Collections.sort(vector, compare);
-		// } // }}}
-		//
-		// // {{{ quicksort() method
-		// /**
-		// * Sorts the specified list.
-		// * @param list The list
-		// * @param compare Compares the objects
-		// * @since jEdit 4.0pre4
-		// */
-		// public static void quicksort(List list, Comparator compare) {
-		// Collections.sort(list, compare);
-		// } // }}}
-		//
-		// // {{{ quicksort() method
-		// /**
-		// * Sorts the specified array. Equivalent to calling
-		// * <code>Arrays.sort()</code>.
-		// * @param obj The array
-		// * @param compare Compares the objects
-		// */
-		// public static void quicksort(Object[] obj, Compare compare) {
-		// Arrays.sort(obj, compare);
-		// } // }}}
-		//
-		// // {{{ quicksort() method
-		// /**
-		// * Sorts the specified vector.
-		// * @param vector The vector
-		// * @param compare Compares the objects
-		// */
-		// public static void quicksort(Vector vector, Compare compare) {
-		// Collections.sort(vector, compare);
-		// } // }}}
-		//
-		// // {{{ Compare interface
-		// /**
-		// * An interface for comparing objects. This is a hold-over from
-		// * they days when jEdit had its own sorting API due to JDK 1.1
-		// * compatibility requirements. Use <code>java.util.Comparable</code>
-		// * instead.
-		// */
-		// public interface Compare extends Comparator {
-		// int compare(Object obj1, Object obj2);
-		// } // }}}
-
-	// // {{{ StringCompare class
-	// /**
-	// * Compares strings.
-	// */
-	// public static class StringCompare implements Compare {
-	// public int compare(Object obj1, Object obj2) {
-	// return compareStrings(obj1.toString(), obj2.toString(), false);
-	// }
-	// } // }}}
-
-	// // {{{ StringICaseCompare class
-	// /**
-	// * Compares strings ignoring case.
-	// */
-	// public static class StringICaseCompare implements Compare {
-	// public int compare(Object obj1, Object obj2) {
-	// return compareStrings(obj1.toString(), obj2.toString(), true);
-	// }
-	// } // }}}
-
-	// {{{ buildToVersion() method
+	} 
+	
 	/**
 	 * Converts an internal version number (build) into a `human-readable' form.
 	 * 
@@ -1432,9 +1237,9 @@ public class MiscUtilities {
 		int bugfix = Integer.parseInt(build.substring(9, 11));
 
 		return major + "." + minor + (beta != 99 ? "pre" + beta : (bugfix != 0 ? "." + bugfix : "final"));
-	} // }}}
-
-	// {{{ parsePermissions() method
+	}
+	
+	
 	/**
 	 * Parse a Unix-style permission string (rwxrwxrwx).
 	 * 
@@ -1479,50 +1284,7 @@ public class MiscUtilities {
 		}
 
 		return permissions;
-	} // }}}
-
-	// // {{{ getEncodings() method
-	// /**
-	// * Returns a list of supported character encodings.
-	// * @since jEdit 4.2pre5
-	// */
-	// public static String[] getEncodings() {
-	// List returnValue = new ArrayList();
-	//
-	// Map map = Charset.availableCharsets();
-	// Iterator iter = map.keySet().iterator();
-	//
-	// returnValue.add(UTF_8_Y);
-	//
-	// while (iter.hasNext())
-	// returnValue.add(iter.next());
-	//
-	// return (String[]) returnValue.toArray(new String[returnValue.size()]);
-	// } // }}}
-
-	// /**
-	// * Read contents of file into string; return string.
-	// * @param file
-	// * @return
-	// * @throws ThinklabException
-	// */
-	// public static String readFileIntoString(File file) throws
-	// ThinklabException {
-	//
-	// String ret = null;
-	// FileInputStream fis = null;
-	//
-	// try {
-	// fis = new FileInputStream(file.getAbsolutePath());
-	// int x = fis.available();
-	// byte b[] = new byte[x];
-	// fis.read(b);
-	// ret = new String(b);
-	// } catch (Exception e) {
-	// throw new ThinklabException(e);
-	// }
-	// return ret;
-	// }
+	} 
 
 	/**
 	 * Analyze the passed string and determine if it specifies an existing file

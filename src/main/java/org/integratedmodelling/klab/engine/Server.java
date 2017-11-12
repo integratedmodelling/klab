@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.IServerIdentity;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.Prototype;
+import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -20,6 +21,14 @@ public abstract class Server implements IServerIdentity {
                 Extensions.INSTANCE.registerPrototype((Prototype) annotation, cls);
             }
         });
+        
+        Klab.INSTANCE.registerAnnotationHandler(ResourceAdapter.class, new AnnotationHandler() {
+            @Override
+            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+                Extensions.INSTANCE.registerResourceAdapter((ResourceAdapter) annotation, cls);
+            }
+        });
+
 
         Klab.INSTANCE.registerAnnotationHandler(Component.class, new AnnotationHandler() {
             @Override

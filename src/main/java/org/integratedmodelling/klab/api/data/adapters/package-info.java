@@ -5,4 +5,4 @@
  * @author ferdinando.villa
  *
  */
-package org.integratedmodelling.klab.api.data.services;
+package org.integratedmodelling.klab.api.data.adapters;

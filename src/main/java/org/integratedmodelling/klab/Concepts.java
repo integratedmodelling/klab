@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.owl.OWL;
-import org.integratedmodelling.klab.utils.KnowledgeDeclarationInjectorProvider;
+import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
