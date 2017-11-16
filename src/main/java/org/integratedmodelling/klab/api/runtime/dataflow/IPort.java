@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
+import java.util.Collection;
+
 public interface IPort {
 
 	/**
@@ -18,4 +20,7 @@ public interface IPort {
 	 * @return the actuator this is part of. Never null.
 	 */
 	IActuator getActuator();
+	
+	Collection<ILink> getLinks();
+
 }
