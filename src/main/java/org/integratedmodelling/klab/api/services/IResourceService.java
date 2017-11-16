@@ -4,7 +4,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
-public interface IUrnService {
+public interface IResourceService {
 
     /**
      * Resolve the passed URN to a resource. 

@@ -9,10 +9,10 @@ import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.services.IUrnService;
+import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
- * The k.LAB resource is identified by a URN. The {@link IUrnService} provides methods to create one from file
+ * The k.LAB resource is identified by a URN. The {@link IResourceService} provides methods to create one from file
  * names and concept declarations. A URN can be partially resolved (using the <code>resolve</code> API call),
  * i.e. it will know its geometry and metadata without actually building the IResource, or fully resolved to a
  * IResource (using the <code>get</code> API call).

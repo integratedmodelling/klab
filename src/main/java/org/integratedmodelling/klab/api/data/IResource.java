@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.services.IUrnService;
+import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
  * A IResource represents any information content that is identified by a URN and can be inspected and
@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.api.services.IUrnService;
  * engines do not need to know the details of any specific data protocol as the contents are returned from the
  * engine in encoded form upon a request for a URN's contents in a compatible scale.
  * 
- * Resolution of a URN (operated by the configured {@link IUrnService} returns a IResource, whose
+ * Resolution of a URN (operated by the configured {@link IResourceService} returns a IResource, whose
  * {@link #get(IScale, IMonitor)} method will yield an immutable, non-empty list of IRawObjects for a semantic
  * {@link IModel} to process into IObservations.
  * 
