@@ -9,7 +9,6 @@ public enum Extensions implements IExtensionService {
     
     INSTANCE;
 
-    @Override
     public void registerPrototype(Prototype annotation, Class<?> cls) {
         // TODO Auto-generated method stub
         /*
@@ -17,7 +16,6 @@ public enum Extensions implements IExtensionService {
          */
     }
 
-    @Override
     public void registerComponent(Component annotation, Class<?> cls) {
         // TODO Auto-generated method stub
     }
