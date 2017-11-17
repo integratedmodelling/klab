@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -47,7 +48,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  * @see {@link IWorldview#getScale(IGeometry)}
  * 
  */
-public interface IGeometry extends Iterable<IGeometry> {
+public interface IGeometry extends Iterable<IGeometry>, Serializable {
 
     /**
      * Number of objects in this geometry. Always 1 or more; if > 1, the geometry is a container and its shape

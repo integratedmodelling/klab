@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.api.data;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -10,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.monitoring.INotification;
 import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
@@ -33,10 +37,10 @@ import org.integratedmodelling.klab.api.services.IResourceService;
  * @author Ferd
  *
  */
-public interface IResource {
+public interface IResource extends Serializable {
 
     /**
-     * The URN for this resource.
+     * The URN that identifies this resource.
      * 
      * @return
      */
@@ -55,6 +59,14 @@ public interface IResource {
      * @return
      */
     Version getVersion();
+    
+    /**
+     * The data adapter type that published this resource and will be used to
+     * encode it.
+     * 
+     * @return
+     */
+    String getAdapterType();
 
     /**
      * Fetch (if necessary) and return the root raw object represented by this resource. Use the monitor for
@@ -65,7 +77,7 @@ public interface IResource {
      * @return
      */
     IRawObject get(IScale scale, IMonitor monitor);
-
+    
     /**
      * Resources come with both system-defined and user-defined metadata. User metadata will be
      * indexed by Dublin Core properties.
@@ -73,4 +85,11 @@ public interface IResource {
      * @return
      */
     IMetadata getMetadata();
+    
+    /**
+     * Get the history of changes affecting this resources.
+     * 
+     * @return
+     */
+    List<INotification> history();
 }

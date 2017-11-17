@@ -26,6 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
 /**
@@ -34,17 +35,15 @@ import java.util.StringTokenizer;
  * @author Ferd
  *
  */
-public class Version implements Comparable<Version> {
+public class Version implements Comparable<Version>, Serializable {
+
+    private static final long serialVersionUID = -3054349171116917643L;
 
     /**
      * Main version number for the whole k.LAB software stack, which is expected to have
      * synchronized release numbers. Change this whenever a new version is released.
-     * *******************************************************************************
-     * NOTE: the version number in all plugin manifests needs to be changed manually for
-     * the Eclipse side of things to work properly.
-     * *******************************************************************************
      */
-    public static final String CURRENT = "0.9.12";
+    public static final String CURRENT = "0.10.0";
 
     /**
      * Modifier for release (e.g. alpha, beta, RC1 etc). Should be synchronized by CI
@@ -54,8 +53,8 @@ public class Version implements Comparable<Version> {
 
     /*
      * next fields should be added by a script before build and not committed.
-     * ***************************************************************************** DO
-     * NOT CHANGE THE CONSTANT VALUES - the script relies on them to substitute proper
+     * *****************************************************************************
+     * DO NOT CHANGE THE CONSTANT VALUES - the script relies on them to substitute proper
      * values.
      * *****************************************************************************
      */
@@ -79,9 +78,6 @@ public class Version implements Comparable<Version> {
      * 
      */
     public static final String VERSION_DATE = "VERSION_DATE";
-
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = -3054349171116917643L;
 
     /**
      * Version identifier parts separator.

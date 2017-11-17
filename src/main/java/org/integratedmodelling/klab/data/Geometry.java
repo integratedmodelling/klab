@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.data.encoding.Encoding;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State;
 
 public class Geometry implements IGeometry {
+
+    private static final long serialVersionUID = 8430057200107796568L;
 
     public Geometry() {
         // TODO Auto-generated constructor stub
