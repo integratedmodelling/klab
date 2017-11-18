@@ -8,16 +8,5 @@ public enum Models implements IModelService {
 
     INSTANCE;
 
-    /**
-     * Build a model from its parsed, syntax-error-free representation coming
-     * from the Kim validator. May add logical errors, which are reported back when this
-     * is called from an intelligent editor.
-     * 
-     * @param model
-     * @return
-     */
-    public IKimModel build(KimModel model) {
-        return null;
-    }
-    
+
 }

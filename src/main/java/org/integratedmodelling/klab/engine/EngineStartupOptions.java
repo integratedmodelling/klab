@@ -30,7 +30,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
             metaVar = "<STRING>")
     String multicastChannel;
 
-    @Option(name = "-port", usage = "http port for REST communication (default: 8183)", metaVar = "<INT>")
+    @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int    port              = 8183;
     
     @Option(name = "-help", usage = "print command line options and exit")

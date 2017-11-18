@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine;
 import java.lang.annotation.Annotation;
 import java.util.Date;
 
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Workspaces;
@@ -19,10 +20,12 @@ import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.kim.KimValidator;
 
 public class Engine extends Server implements IEngine {
 
@@ -30,6 +33,46 @@ public class Engine extends Server implements IEngine {
     private String              name;
     private Date                bootTime;
     private MulticastMessageBus multicastBus;
+    private IMonitor            monitor;
+
+    class Monitor implements IMonitor {
+
+        @Override
+        public void info(Object info, String infoClass) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void warn(Object o) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void error(Object o) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void debug(Object o) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void send(Object o) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public IIdentity getIdentity() {
+            return Engine.this;
+        }
+
+        @Override
+        public boolean hasErrors() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+    }
 
     public Engine(ICertificate certificate) {
         // TODO
@@ -121,6 +164,19 @@ public class Engine extends Server implements IEngine {
         if (certificate == null) {
             throw new UnsupportedOperationException("Engine.boot() was called before a valid certificate was read. Exiting.");
         }
+        
+        this.monitor = new Monitor();
+        
+        /*
+         * if we have been asked to open a communication channel from a client, do so. The channel
+         * should be unique among all engines on the same network.
+         */
+        if (options.getMulticastChannel() != null) {
+            Klab.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
+                    + " communicating on port " + options.getPort());
+            this.multicastBus = new MulticastMessageBus(this, options.getMulticastChannel(), options
+                    .getPort());
+        }
 
         boolean ret = true;
         try {
@@ -128,6 +184,11 @@ public class Engine extends Server implements IEngine {
              *  read core OWL knowledge from classpath
              */
             Workspaces.INSTANCE.loadCoreKnowledge();
+
+            /*
+             * Install the k.IM validator to build concepts and model objects
+             */
+            Kim.INSTANCE.setValidator(new KimValidator(this.monitor));
 
             /*
              * initialize but do not load the local workspace, so that we can later override the worldview if we
@@ -182,16 +243,6 @@ public class Engine extends Server implements IEngine {
                 System.exit(0);
             }
 
-            /*
-             * if we have been asked to open a communication channel from a client, do so. The channel
-             * should be unique among all engines on the same network.
-             */
-            if (options.getMulticastChannel() != null) {
-                Klab.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
-                        + " communicating on port " + options.getPort());
-                this.multicastBus = new MulticastMessageBus(this, options.getMulticastChannel(), options
-                        .getPort());
-            }
 
         } catch (Exception e) {
             ret = false;
@@ -220,9 +271,9 @@ public class Engine extends Server implements IEngine {
             @Override
             public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
                 String id = ((KlabBatchRunner) annotation).id();
-//                if (IBatchRunner.class.isAssignableFrom(cls)) {
-//                    KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
-//                }
+                // if (IBatchRunner.class.isAssignableFrom(cls)) {
+                // KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
+                // }
             }
         });
 
