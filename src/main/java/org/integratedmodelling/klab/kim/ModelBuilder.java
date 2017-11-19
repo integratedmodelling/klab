@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.kim;
 
-import org.integratedmodelling.kim.model.KimModel;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -17,7 +17,7 @@ public enum ModelBuilder {
      * @param model
      * @return
      */
-    public IModel build(KimModel model, INamespace namespace, IMonitor monitor) {
+    public IModel build(IKimModel model, INamespace namespace, IMonitor monitor) {
         return null;
     }
     

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
@@ -24,8 +25,8 @@ public class Namespace extends KimNamespace implements INamespace {
     private IOntology ontology;
     private boolean internal;
 
-    public Namespace(KimNamespace namespace) {
-        super(namespace);
+    public Namespace(IKimNamespace namespace) {
+        super((KimNamespace)namespace);
     }
     
     public Namespace(String id, File file, IOntology ontology) {
