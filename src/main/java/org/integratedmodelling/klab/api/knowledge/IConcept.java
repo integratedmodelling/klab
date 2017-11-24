@@ -29,14 +29,13 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.util.Collection;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * 
  * @author Ferdinando Villa
  */
-public interface IConcept extends IKnowledge, IKimConcept {
+public interface IConcept extends IKnowledge {
 
     /**
      * Return a collection of all the direct parent classes.
