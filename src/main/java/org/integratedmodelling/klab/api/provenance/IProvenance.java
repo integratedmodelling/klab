@@ -25,10 +25,11 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISpace;
@@ -134,7 +135,7 @@ public interface IProvenance {
          * 
          * @return
          */
-        IKimConcept getObservable();
+        IConcept getObservable();
 
         /**
          * @return
@@ -142,9 +143,9 @@ public interface IProvenance {
         Agent getOwner();
 
         /**
-         * 
+         * @return
          */
-        IKimModel getModel();
+        IModel getModel();
 
         /**
          * @return
@@ -185,7 +186,7 @@ public interface IProvenance {
          * @param cls
          * @return
          */
-        Artifact trace(IKimConcept concept);
+        Artifact trace(IConcept concept);
 
         /**
          * Collect all artifacts of the passed concept (or with the passed role/trait) up
@@ -194,7 +195,7 @@ public interface IProvenance {
          * @param concept
          * @return
          */
-        Collection<Artifact> collect(IKimConcept concept);
+        Collection<Artifact> collect(IConcept concept);
 
         /**
          * Trace the nearest artifact with the passed role within the passed observation
@@ -203,7 +204,7 @@ public interface IProvenance {
          * @param cls
          * @return
          */
-        Artifact trace(IKimConcept role, IDirectObservation roleContext);
+        Artifact trace(IConcept role, IDirectObservation roleContext);
 
         /**
          * Collect all artifacts with the passed role within the passed observation up the
@@ -212,7 +213,7 @@ public interface IProvenance {
          * @param concept
          * @return
          */
-        Collection<Artifact> collect(IKimConcept role, IDirectObservation roleContext);
+        Collection<Artifact> collect(IConcept role, IDirectObservation roleContext);
 
     }
 

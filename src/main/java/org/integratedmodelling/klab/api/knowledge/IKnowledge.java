@@ -29,74 +29,83 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.util.Collection;
 
 /**
- * IKnowledge defines the methods that are common to both IConcept and IProperty. As IConcept can be both concrete and abstract, and IInstances are always concrete, IKnowledge has all the methods that pertain to IRelationships of this with other IKnowledge objects. 
- * TODO consider adding specialization and generalization methods to specialize for concepts and properties.
- * @author  Ferdinando Villa
+ * IKnowledge defines the methods that are common to both IConcept and
+ * IProperty, i.e. all assertions made in both OWL and k.IM namespaces.
+ * 
+ * @author Ferdinando Villa
  */
 public interface IKnowledge extends ISemantic {
 
-    /**
-     * All knowledge has a URI.
-     * 
-     * @return
-     */
-    String getURI();
+	/**
+	 * All knowledge has a URI.
+	 * 
+	 * @return the URI
+	 */
+	String getURI();
 
-    /**
-     * All IKnowledge objects have a simple local name 
-     * @return local name within namespace
-     */
-    String getLocalName();
-    
-    /**
-     * The concept space is the simple name of the namespace or ontology the knowledge
-     * comes from. 
-     * @return
-     */
-    String getConceptSpace();
+	/**
+	 * All IKnowledge objects have a simple local name
+	 * 
+	 * @return local name within namespace
+	 */
+	String getLocalName();
 
-    /**
-     * True if this is subsumed by the passed resource.
-     * @param concept 
-     * @return true if this knowledge is the passed knowledge
-     */
-    boolean is(ISemantic concept);
+	/**
+	 * The concept space is the simple name of the namespace or ontology the
+	 * knowledge comes from. 
+	 * 
+	 * @return the ontology's simple ID
+	 */
+	String getConceptSpace();
 
-    /**
-     * The notion of an abstract concept is extremely important in k.LAB: abstract knowledge
-     * represents questions, where concrete knowledge represents answers (observations). 
-     * @return true if concept is abstract (no instances can be created).
-     */
-    boolean isAbstract();
+	/**
+	 * True if this is subsumed by the passed resource.
+	 * 
+	 * @param concept
+	 * @return true if this knowledge is the passed knowledge
+	 */
+	boolean is(ISemantic concept);
 
-    /**
-     * Get the semantic closure in the current environment (may be using a reasoner or
-     * not).
-     * 
-     * @return the set of things we are.
-     */
-    Collection<IConcept> getSemanticClosure();
+	/**
+	 * The notion of an abstract concept is extremely important in k.LAB: abstract
+	 * knowledge represents questions, where concrete knowledge represents answers
+	 * (observations).
+	 * 
+	 * @return true if concept is abstract (no instances can be created).
+	 */
+	boolean isAbstract();
 
-    /**
-     * Return the domain of the owning namespace, or null if the 
-     * knowledge is not part of any domain.
-     * 
-     * @return the concept describing our domain.
-     */
-    IConcept getDomain();
+	/**
+	 * Get the semantic closure in the current environment (may be using a reasoner
+	 * or not).
+	 * 
+	 * @return the set of things we are.
+	 */
+	Collection<IConcept> getSemanticClosure();
 
-    /**
-     * All knowledge comes from an ontology.
-     * 
-     * @return
-     */
-    IOntology getOntology();
+	/**
+	 * Return the domain of the owning namespace, or null if the knowledge is not
+	 * part of any domain.
+	 * 
+	 * @return the concept describing our domain.
+	 */
+	IConcept getDomain();
 
-    /**
-     * All knowledge may have metadata, which may be empty but will never be null.
-     * 
-     * @return
-     */
-    IMetadata getMetadata();
+	/**
+	 * All knowledge comes from an ontology.
+	 * 
+	 * @return the actual ontology, contained in the namespace.
+	 */
+	IOntology getOntology();
+
+	/**
+	 * All knowledge may have metadata, which may be empty. The metadata will
+	 * contain the value of all annotation properties recognized by k.LAB, indexed
+	 * by the properties' k.LAB qualified name. This also applies to concepts from
+	 * OWL ontologies that did not originate in a k.LAB namespace.
+	 * 
+	 * @return metadata. Never null.
+	 */
+	IMetadata getMetadata();
 
 }

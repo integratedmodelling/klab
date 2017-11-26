@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.api.data;
 import java.io.Serializable;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 
@@ -83,7 +82,7 @@ public interface IGeometry extends Iterable<IGeometry>, Serializable {
     int getDimensionCount(IConcept extent);
 
     /**
-     * Get the shape for the passed extent. The array will have {@link #getDimensionCount(IKimConcept)}
+     * Get the shape for the passed extent. The array will have {@link #getDimensionCount(IConcept)}
      * elements.
      * 
      * @param extent

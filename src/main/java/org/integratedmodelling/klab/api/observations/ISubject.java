@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.observations;
 import java.util.Collection;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 public interface ISubject  extends IDirectObservation {
     
@@ -19,7 +19,7 @@ public interface ISubject  extends IDirectObservation {
     
     Collection<IRelationship> getOutgoingRelationships(ISubject subject);
     
-    Map<IKimConcept, IConfiguration> getConfigurations();
+    Map<IConcept, IConfiguration> getConfigurations();
 
 
 }

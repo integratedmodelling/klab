@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.kim;
 
-import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
@@ -30,8 +30,8 @@ public class KimValidator implements Kim.Validator {
 		 */
 		
 		for (IKimStatement statement : namespace.getStatements()) {
-			if (statement instanceof IKimConcept) {
-				ConceptBuilder.INSTANCE.build((IKimConcept) statement, ns, monitor);
+			if (statement instanceof IKimConceptStatement) {
+				ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
 			} else if (statement instanceof IKimModel) {
 				ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
 			} else if (statement instanceof IKimObserver) {
