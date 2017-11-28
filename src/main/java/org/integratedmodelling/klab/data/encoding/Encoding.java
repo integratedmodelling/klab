@@ -146,6 +146,7 @@ public final class Encoding {
      */
     Encoding.KlabData.StateOrBuilder getStateOrBuilder();
   }
+  
   /**
    * <pre>
    **

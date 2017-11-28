@@ -43,7 +43,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * as they are and provide observation semantics for it).
  * 
  */
-public interface IModel extends IKimModel {
+public interface IModel {
 
     /**
      * Return the semantics of all observables we are observing. The first in the list is

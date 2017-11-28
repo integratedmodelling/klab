@@ -35,6 +35,7 @@
 	<dependencies>
 
 		<!-- COMMON DEPENDENCIES -->
+		<!-- language support -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.kim</artifactId>
@@ -45,6 +46,14 @@
 			<artifactId>org.integratedmodelling.kdl</artifactId>
 			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
+
+		<!-- boilerplate be damned; see if this is 100% painless to use in Eclipse. Lombok isn't.
+		<dependency>
+			<groupId>com.google.auto.value</groupId>
+			<artifactId>auto-value</artifactId>
+			<version>1.5</version>
+			<scope>provided</scope>
+		</dependency>  -->
 
 		<dependency>
 			<groupId>com.verhas</groupId>
