@@ -25,7 +25,6 @@ package org.integratedmodelling.klab.api.model;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -43,7 +42,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * as they are and provide observation semantics for it).
  * 
  */
-public interface IModel {
+public interface IModel extends IKimObject {
 
     /**
      * Return the semantics of all observables we are observing. The first in the list is

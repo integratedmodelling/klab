@@ -14,11 +14,12 @@ import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
-public class Namespace extends KimNamespace implements INamespace {
+public class Namespace implements INamespace {
 
     private static final long serialVersionUID = -6469868584021658804L;
     
@@ -45,25 +46,7 @@ public class Namespace extends KimNamespace implements INamespace {
         // TODO Auto-generated method stub
         return null;
     }
-
-    @Override
-    public List<IKimStatement> getStatement() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<IKimStatement> getAllStatements() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IKimStatement getStatement(String name) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
     @Override
     public IProject getProject() {
         // TODO Auto-generated method stub
@@ -180,6 +163,36 @@ public class Namespace extends KimNamespace implements INamespace {
     public void setInternal(boolean b) {
         // TODO Auto-generated method stub
         this.internal = b;
+    }
+
+    @Override
+    public IKimStatement getStatement() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<IKimObject> getObjects() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<IKimObject> getAllObjects() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IKimObject getObject(String id) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 

@@ -31,8 +31,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
@@ -47,8 +45,16 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * 
  * @author  Ferd
  */
-public interface INamespace extends IKimNamespace {
+public interface INamespace extends IKimObject {
+    
+    String getName();
 
+    List<IKimObject> getObjects();
+    
+    List<IKimObject> getAllObjects();
+
+    IKimObject getObject(String id);
+    
     /**
      * Time of creation of the underlying resource if any, time when the object definition 
      * finished otherwise.
@@ -66,32 +72,6 @@ public interface INamespace extends IKimNamespace {
      * @return the domain this namespace is part of, if any.
      */
     IConcept getDomain();
-
-    /**
-     * Return all first-class objects that were explicitly created in the language statements that 
-     * produced this namespace. Implicit concepts/properties and imported objects will not be
-     * returned. Child knowledge is available through the getChildren() method in IModelObject. If
-     * all objects including children are wanted, use getAllModelObjects.
-     *  
-     * @return all the model objects in order of declaration.
-     */
-    List<IKimStatement> getStatement();
-
-    /**
-     * Return all model objects, recursing over child knowledge, as a flat list.
-     * 
-     * @return a flattened list of model objects including their children
-     */
-    List<IKimStatement> getAllStatements();
-
-    /**
-     * Get a model object by name. Will not match any implicit concepts/properties and anonymous
-     * objects.
-     * 
-     * @param mod
-     * @return the model object with the passed name, or null
-     */
-    IKimStatement getStatement(String name);
 
     /**
      * Return the project that this namespace was created from. Currently it can be null but

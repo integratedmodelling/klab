@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.model;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.KimModel;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
@@ -11,10 +12,10 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class Model extends KimModel implements IModel {
+public class Model implements IModel {
 
     private static final long serialVersionUID = 6405594042208542702L;
-
+    
     Model(KimModel model) {
         super(model);
     }
@@ -75,6 +76,12 @@ public class Model extends KimModel implements IModel {
 
     @Override
     public IDocumentation getDocumentation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IKimStatement getStatement() {
         // TODO Auto-generated method stub
         return null;
     }

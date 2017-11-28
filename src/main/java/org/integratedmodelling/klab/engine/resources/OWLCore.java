@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -20,7 +18,7 @@ import org.integratedmodelling.klab.owl.OWL;
  * @author ferdinando.villa
  *
  */
-public class OWLCore extends KimWorkspace implements IWorkspace {
+public class OWLCore implements IWorkspace {
 
     boolean synced = false;
 
@@ -249,8 +247,8 @@ public class OWLCore extends KimWorkspace implements IWorkspace {
     }
 
     @Override
-    public List<IKimNamespace> load(boolean incremental) throws IOException {
-        List<IKimNamespace> ret = new ArrayList<>();
+    public List<INamespace> load(boolean incremental) throws IOException {
+        List<INamespace> ret = new ArrayList<>();
         if (!synced) {
             synced = true;
             Resources.extractKnowledgeFromClasspath(getRoot());
