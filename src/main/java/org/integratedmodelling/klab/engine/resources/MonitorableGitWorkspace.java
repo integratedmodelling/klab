@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.GitUtils;
 
@@ -13,23 +14,27 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
     boolean synced;
     
     public MonitorableGitWorkspace(File root, Collection<String> gitUrls, File... overridingProjects) {
-        super(root, overridingProjects);
+        
+        delegate = new KimWorkspace(root, overridingProjects) {
+
+            @Override
+            public void readProjects() throws IOException {
+                
+                if (!synced) {
+                    synced = true;
+                    for (String url : gitUrls) {
+                        try {
+                            GitUtils.requireUpdatedRepository(url, getRoot());
+                        } catch (KlabException e) {
+                            throw new IOException(e);
+                        }
+                    }
+                }
+                
+                super.readProjects();
+            }
+        };
         this.gitUrls = gitUrls;
     }
     
-    protected void readProjects() throws IOException {
-        
-        if (!synced) {
-            synced = true;
-            for (String url : gitUrls) {
-                try {
-                    GitUtils.requireUpdatedRepository(url, getRoot());
-                } catch (KlabException e) {
-                    throw new IOException(e);
-                }
-            }
-        }
-        
-        super.readProjects();
-    }
 }

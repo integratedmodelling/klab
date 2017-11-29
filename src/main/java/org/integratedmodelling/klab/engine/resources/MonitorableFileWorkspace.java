@@ -9,6 +9,8 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 
     DirectoryWatcher watcher = null;
     
+    MonitorableFileWorkspace() {}
+    
     public MonitorableFileWorkspace(File root, File... overridingProjects) {
         super(root, overridingProjects);
     }

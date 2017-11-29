@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.january.IMonitor;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Reasoner;
