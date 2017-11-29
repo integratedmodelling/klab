@@ -99,6 +99,21 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
  * @version $Id: MiscUtilities.java,v 1.8 2006/11/23 02:47:31 fvilla Exp $
  */
 public class MiscUtilities {
+    
+    /**
+     * Count how many bits are set in a long. Used to quickly check the observables from compositions.
+     * 
+     * @param number
+     * @return
+     */
+    public static int countSetBits(long number) {
+        int count = 0;
+        while (number > 0) {
+            ++count;
+            number &= number - 1;
+        }
+        return count;
+    }
 
 	/**
 	 * Flatten a parameter list, potentially containing collections, into a
