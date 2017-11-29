@@ -9,6 +9,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -17,7 +18,9 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 public abstract class AbstractWorkspace implements IWorkspace {
 
     KimWorkspace delegate;
-
+    List<IProject> projects = new ArrayList<>();
+    
+    
     AbstractWorkspace() {
     }
     
@@ -30,12 +33,10 @@ public abstract class AbstractWorkspace implements IWorkspace {
         return delegate.getName();
     }
     
-    @Override
     public Collection<File> getProjectLocations() {
         return delegate.getProjectLocations();
     }
 
-    @Override
     public Collection<String> getProjectNames() {
         return delegate.getProjectNames();
     }
@@ -69,5 +70,9 @@ public abstract class AbstractWorkspace implements IWorkspace {
     
     public void setName(String s) {
         delegate.setName(s);
+    }
+    
+    public Collection<IProject> getProjects() {
+        return projects;
     }
 }

@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
+import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -222,9 +223,9 @@ public class KlabCertificate implements ICertificate {
     @Override
     public IWorldview getWorldview() {
         return new Worldview(worldview, Configuration.INSTANCE
-                .getDataPath("worldview"), worldview_repositories, Workspaces.INSTANCE.getLocal()
+                .getDataPath("worldview"), worldview_repositories, ((AbstractWorkspace)Workspaces.INSTANCE.getLocal())
                         .getProjectLocations()
-                        .toArray(new File[Workspaces.INSTANCE.getLocal().getProjectLocations().size()]));
+                        .toArray(new File[ ((AbstractWorkspace)Workspaces.INSTANCE.getLocal()).getProjectLocations().size()]));
     }
 
     @Override

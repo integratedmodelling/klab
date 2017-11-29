@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Workspaces;
+import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JavaUtils;
@@ -590,7 +591,7 @@ public abstract class EngineLauncher {
             if (Configuration.INSTANCE.isOffline()) {
                 // we'll need these
                 properties.setProperty(Configuration.KLAB_CLIENT_PROJECTS, StringUtils
-                        .join(Workspaces.INSTANCE.getLocal().getProjectLocations(), ","));
+                        .join( ((AbstractWorkspace)Workspaces.INSTANCE.getLocal()).getProjectLocations(), ","));
             }
             if (Configuration.INSTANCE.getProperties()
                     .getProperty(Configuration.KLAB_LOCAL_COMPONENTS) != null) {
@@ -759,7 +760,7 @@ public abstract class EngineLauncher {
         if (Configuration.INSTANCE.isOffline()) {
             // we're gonna need these
             cmdLine.addArgument("-D" + Configuration.KLAB_CLIENT_PROJECTS + "="
-                    + StringUtils.join(Workspaces.INSTANCE.getLocal().getProjectLocations(), ","));
+                    + StringUtils.join( ((AbstractWorkspace)Workspaces.INSTANCE.getLocal()).getProjectLocations(), ","));
         }
         if (Configuration.INSTANCE.getProperties()
                 .getProperty(Configuration.KLAB_LOCAL_COMPONENTS) != null) {

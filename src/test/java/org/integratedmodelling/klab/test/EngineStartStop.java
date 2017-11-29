@@ -3,7 +3,9 @@
  */
 package org.integratedmodelling.klab.test;
 
+import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.engine.Engine;
 import org.junit.After;
 import org.junit.Before;
@@ -32,6 +34,9 @@ public class EngineStartStop {
     @Test
     public void startEngine() {
        IEngine engine = Engine.start();
+       for (IProject project : Workspaces.INSTANCE.getLocal().getProjects()) {
+           
+       }
     }
 
 }
