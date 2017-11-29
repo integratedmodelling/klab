@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -9,6 +8,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.services.IWorkspaceService;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.OWLCore;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 public enum Workspaces implements IWorkspaceService {
 
@@ -59,7 +59,7 @@ public enum Workspaces implements IWorkspaceService {
     /*
      * Extract and load the OWL core knowledge workspace.
      */
-    public void loadCoreKnowledge() throws IOException {
+    public void loadCoreKnowledge() throws KlabException {
         coreKnowledge = new OWLCore(Configuration.INSTANCE.getDataPath("knowledge"));
         coreKnowledge.load(false);
     }
@@ -68,7 +68,7 @@ public enum Workspaces implements IWorkspaceService {
      * Create and load the components workspace. TODO needs the network to obtain components, then add/override any
      * local ones.
      */
-    public void loadComponents(File[] localComponentPaths) throws IOException {
+    public void loadComponents(File[] localComponentPaths) throws KlabException {
         components = new MonitorableFileWorkspace(Configuration.INSTANCE
                 .getDataPath("components"), localComponentPaths);
         components.load(false);
@@ -78,7 +78,7 @@ public enum Workspaces implements IWorkspaceService {
      * Create and load the worldview specified by the Git repositories pointed to
      * by the certificate.
      */
-    public void loadWorldview(ICertificate certificate) throws IOException {
+    public void loadWorldview(ICertificate certificate) throws KlabException {
         worldview = certificate.getWorldview();
         worldview.load(false);
     }

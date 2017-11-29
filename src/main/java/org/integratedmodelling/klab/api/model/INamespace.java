@@ -226,4 +226,6 @@ public interface INamespace extends IKimObject {
      */
     IDocumentation getDocumentation();
 
+    boolean isInternal();
+
 }

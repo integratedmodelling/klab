@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.INamespaceService;
 
@@ -14,7 +13,7 @@ public enum Namespaces implements INamespaceService {
     
     private Map<String,INamespace> namespaces = new HashMap<>();
     
-    public IKimNamespace build(KimNamespace namespace) {
+    public INamespace build(IKimNamespace namespace) {
         return null;
     }
 

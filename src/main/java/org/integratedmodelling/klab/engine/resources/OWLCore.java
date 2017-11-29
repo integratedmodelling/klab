@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.owl.OWL;
 
 /**
@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.owl.OWL;
  * @author ferdinando.villa
  *
  */
-public class OWLCore implements IWorkspace {
+public class OWLCore extends AbstractWorkspace {
 
     boolean synced = false;
 
@@ -127,8 +127,8 @@ public class OWLCore implements IWorkspace {
         public static final String ORIGINAL_TRAIT                         = "klab:originalTrait";
 
         /**
-         * Annotation contains the ID of the property (in same ontology) that will be used to
-         * create restrictions to adopt the trait carrying the annotation.
+         * Annotation contains the ID of the property (in same ontology) that will be used to create
+         * restrictions to adopt the trait carrying the annotation.
          */
         public static final String TRAIT_RESTRICTING_PROPERTY             = "klab:restrictingProperty";
 
@@ -157,20 +157,19 @@ public class OWLCore implements IWorkspace {
         public static final String CORE_ONTOLOGY                          = "observation";
 
         /**
-         * Only class that subsumes both observables and observations. It's bfo:entity in
-         * label.
+         * Only class that subsumes both observables and observations. It's bfo:entity in label.
          */
         public static final String CORE_PARTICULAR                        = "bfo:BFO_0000001";
 
         /**
-         * Subsumes traits, domains and configurations. BFO does not still address universals,
-         * so we provide it in observation.
+         * Subsumes traits, domains and configurations. BFO does not still address universals, so we provide
+         * it in observation.
          */
         public static final String CORE_UNIVERSAL                         = "observation:universal";
 
         /**
-         * the root domain for the ontologies. For many reasons it becomes very difficult to
-         * keep it in the imcore namespace, so we use the most general abstract in DOLCE.
+         * the root domain for the ontologies. For many reasons it becomes very difficult to keep it in the
+         * imcore namespace, so we use the most general abstract in DOLCE.
          */
         public static final String CORE_DOMAIN                            = "observation:Domain";
 
@@ -241,31 +240,31 @@ public class OWLCore implements IWorkspace {
         public static final String ABSENCE_TRAIT                          = "observation:Absence";
         public static final String EXTENT                                 = "observation:Extent";
     }
-    
+
     public OWLCore(File directory) {
         super(directory);
     }
 
     @Override
-    public List<INamespace> load(boolean incremental) throws IOException {
+    public List<INamespace> load(boolean incremental) throws KlabException {
         List<INamespace> ret = new ArrayList<>();
         if (!synced) {
             synced = true;
-            Resources.extractKnowledgeFromClasspath(getRoot());
+            try {
+                Resources.extractKnowledgeFromClasspath(getRoot());
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
         }
-        try {
-            OWL.INSTANCE.initialize(getRoot());
-        } catch (KlabException e) {
-            throw new IOException(e);
-        }
-        
+        OWL.INSTANCE.initialize(getRoot());
+
         for (INamespace ns : OWL.INSTANCE.getNamespaces()) {
             Namespaces.INSTANCE.registerNamespace(ns);
             ret.add(ns);
         }
-        
+
         Klab.INSTANCE.info(ret.size() + " ontologies read from classpath");
-        
+
         return ret;
     }
 

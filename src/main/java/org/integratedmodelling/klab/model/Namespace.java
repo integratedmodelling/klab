@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -19,20 +18,26 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
-public class Namespace implements INamespace {
+public class Namespace extends KimObject implements INamespace {
 
     private static final long serialVersionUID = -6469868584021658804L;
     
     private IOntology ontology;
-    private boolean internal;
+    private boolean internal = false;
 
     public Namespace(IKimNamespace namespace) {
         super((KimNamespace)namespace);
     }
     
     public Namespace(String id, File file, IOntology ontology) {
-        super(id, file);
+        super(null);
+        setStatement(new KimNamespace(id, file));
         this.ontology = ontology;
+    }
+    
+    @Override
+    public IKimNamespace getStatement() {
+        return (IKimNamespace)super.getStatement();
     }
 
     @Override
@@ -161,16 +166,14 @@ public class Namespace implements INamespace {
     }
 
     public void setInternal(boolean b) {
-        // TODO Auto-generated method stub
         this.internal = b;
     }
-
+    
     @Override
-    public IKimStatement getStatement() {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean isInternal() {
+        return this.internal;
     }
-
+    
     @Override
     public String getName() {
         // TODO Auto-generated method stub

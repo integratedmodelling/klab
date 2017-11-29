@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.model;
 
+import java.io.Serializable;
+
 import org.integratedmodelling.kim.api.IKimStatement;
 
 /**
@@ -9,7 +11,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
  * @author Ferd
  *
  */
-public interface IKimObject {
+public interface IKimObject extends Serializable {
     
     IKimStatement getStatement();
 

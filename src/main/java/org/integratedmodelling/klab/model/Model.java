@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class Model implements IModel {
+public class Model extends KimObject implements IModel {
 
     private static final long serialVersionUID = 6405594042208542702L;
     
