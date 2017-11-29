@@ -50,7 +50,11 @@ public abstract class AbstractWorkspace implements IWorkspace {
         List<INamespace> ret = new ArrayList<>();
         try {
             for (IKimNamespace ns : delegate.load(incremental)) {
-                ret.add(Namespaces.INSTANCE.build(ns));
+                // the validator callback inserts the namespace into the index, all we do is retrieve it
+                INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
+                if (namespace != null) {
+                    ret.add(namespace);
+                }
             }
         } catch (IOException e) {
             throw new KlabIOException(e);

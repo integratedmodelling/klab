@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.FunctionDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
+import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.model.Namespace;
@@ -42,6 +43,7 @@ public class KimValidator implements Kim.Validator {
 		/*
 		 * TODO finalize namespace and send any notification
 		 */
+		Namespaces.INSTANCE.registerNamespace(ns);
 	}
 
 	@Override
