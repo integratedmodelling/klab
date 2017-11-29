@@ -32,9 +32,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * The interface for a Property.  Most of the interface is meant to check the subtype of property we're dealing with.
- * Some of the available subtypes are standard in OWL, others (such as classification) are IMA-specific and are
+ * Some of the available subtypes are standard in OWL, others (such as classification) are k.LAB-specific and are
  * normally figured out by checking whether the property inherits by specific upper ontology ones.  Also, for now we
- * just ignore functionality, simmetry, transitivity etc, given that the reasoner  operates on the underlying OWL
+ * just ignore functionality, symmetry, transitivity etc, given that the reasoner  operates on the underlying OWL
  * model. We'll see if they're needed.
  * 
  * @author  Ferdinando Villa, Ecoinformatics Collaboratory, UVM
@@ -49,7 +49,7 @@ public interface IProperty extends IKnowledge {
      * appear as a class in the API.
      * @return true if relationship is a classification relationship.
      */
-    public abstract boolean isClassification();
+    boolean isClassification();
 
     /**
      * An equivalent of Datatype property in OWL, but extended to handle the extended literals (Reified literals)
@@ -59,69 +59,69 @@ public interface IProperty extends IKnowledge {
      * validator configured for the type, and I/O to ontologies will handle them transparently.
      * @return true if literal property: either DatatypeProperty or linking to a ReifiedLiteral
      */
-    public abstract boolean isLiteralProperty();
+    boolean isLiteralProperty();
 
     /**
      * Check if this property links to an instance (object).
      * @return true if property links to objects.
      */
-    public abstract boolean isObjectProperty();
+    boolean isObjectProperty();
 
     /**
      * 
      * @return true if annotation property
      */
-    public abstract boolean isAnnotation();
+    boolean isAnnotation();
 
     /**
      * Returns the inverse of a IProperty. Null if there is no inverse.
      * @return   the inverse IProperty
      */
-    public IProperty getInverseProperty();
+    IProperty getInverseProperty();
 
     /**
      * 
      * @return the range 
      */
-    public abstract Collection<IConcept> getRange();
+    Collection<IConcept> getRange();
 
     /**
      * TODO domain may not be unique. It would be wonderful to ignore that for simplicity. I don't think
      * multi-domain properties are good design.
      * @return the domain
      */
-    public abstract Collection<IConcept> getPropertyDomain();
+    Collection<IConcept> getPropertyDomain();
 
     /**
      * Return the (only) parent property, or throw an exception if there's more than one parent.
      * @return the parent
      * @throws KlabException 
      */
-    public abstract IProperty getParent() throws KlabException;
+    IProperty getParent() throws KlabException;
 
     /**
      * @return all direct parents
      */
-    public abstract Collection<IProperty> getParents();
+    Collection<IProperty> getParents();
 
     /**
      * @return the parent closure
      */
-    public abstract Collection<IProperty> getAllParents();
+    Collection<IProperty> getAllParents();
 
     /**
      * @return the direct children
      */
-    public abstract Collection<IProperty> getChildren();
+    Collection<IProperty> getChildren();
 
     /**
      * @return the children closure
      */
-    public abstract Collection<IProperty> getAllChildren();
+    Collection<IProperty> getAllChildren();
 
     /**
      * @return true if functional
      */
-    public abstract boolean isFunctional();
+    boolean isFunctional();
 
 }

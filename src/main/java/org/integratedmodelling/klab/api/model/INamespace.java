@@ -200,6 +200,15 @@ public interface INamespace extends IKimObject {
      * @return true if the whole namespace is void
      */
     boolean isInactive();
+    
+    /**
+     * True if the namespace does not define any knowledge that cannot be reconstructed
+     * exclusively from worldview concepts. This is equivalent to using only 'equals' 
+     * instead of 'is' in concept definitions.
+     * 
+     * @return true if canonical
+     */
+    boolean isCanonical();
 
     /**
      * A tainted namespace has concepts that do not derive directly from

@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.kim;
 
+import java.util.EnumSet;
+
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -59,9 +62,9 @@ public class KimValidator implements Kim.Validator {
 	}
 
 	@Override
-	public long classifyCoreType(String string) {
+	public EnumSet<Type> classifyCoreType(String string) {
 		// TODO Auto-generated method stub
-		return 0;
+		return EnumSet.noneOf(Type.class);
 	}
 
 }

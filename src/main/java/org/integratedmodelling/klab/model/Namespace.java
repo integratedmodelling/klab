@@ -24,6 +24,7 @@ public class Namespace extends KimObject implements INamespace {
     
     private IOntology ontology;
     private boolean internal = false;
+    private boolean canonical = false;
 
     public Namespace(IKimNamespace namespace) {
         super((KimNamespace)namespace);
@@ -198,5 +199,9 @@ public class Namespace extends KimObject implements INamespace {
         return null;
     }
 
+    @Override
+    public boolean isCanonical() {
+        return canonical;
+    }
 
 }
