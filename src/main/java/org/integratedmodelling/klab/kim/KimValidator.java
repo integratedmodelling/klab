@@ -7,7 +7,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.FunctionDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
@@ -33,7 +33,7 @@ public class KimValidator implements Kim.Validator {
 		 * TODO prepare kbox and caches to receive namespace
 		 */
 		
-		for (IKimStatement statement : namespace.getStatements()) {
+		for (IKimScope statement : namespace.getChildren()) {
 			if (statement instanceof IKimConceptStatement) {
 				ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
 			} else if (statement instanceof IKimModel) {
