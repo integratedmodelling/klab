@@ -27,6 +27,8 @@ public class KimValidator implements Kim.Validator {
 	@Override
 	public void synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 
+	    Namespaces.INSTANCE.release(namespace.getName());
+	    
 		INamespace ns = new Namespace(namespace);
 
 		/*

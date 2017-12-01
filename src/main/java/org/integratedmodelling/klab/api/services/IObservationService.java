@@ -16,4 +16,6 @@ public interface IObservationService {
      */
     IContext initialize(ISubject observation, ISession session);
 
+    void releaseNamespace(String name);
+
 }

@@ -17,4 +17,9 @@ public enum Observations implements IObservationService {
     public IContext initialize(ISubject observation, ISession session) {
         return null;
     }
+
+    @Override
+    public void releaseNamespace(String name) {
+        // TODO remove all artifacts from local kbox
+    }
 }

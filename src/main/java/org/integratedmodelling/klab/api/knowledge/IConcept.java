@@ -29,6 +29,7 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.util.Collection;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -37,6 +38,16 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IConcept extends IKnowledge {
 
+    /**
+     * The quick version of the reasoner-based {@link IKnowledge#is(ISemantic)} uses
+     * the {@link Type} enum to instantly assess the concept type without needing any
+     * costly inference.
+     * 
+     * @param type
+     * @return
+     */
+    boolean is(Type type);
+    
     /**
      * Return a collection of all the direct parent classes.
      * @return a collection of parents
@@ -160,5 +171,6 @@ public interface IConcept extends IKnowledge {
      * @return the concept definition
      */
     String getDefinition();
+
 
 }

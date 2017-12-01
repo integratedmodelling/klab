@@ -39,7 +39,7 @@ import org.semanticweb.owlapi.util.Version;
  * @author ferdinando.villa
  *
  */
-public class KLABReasoner {
+public class KlabReasoner {
 
     boolean     on;
     boolean     synchronizing = false;
@@ -61,7 +61,7 @@ public class KLABReasoner {
         return on;
     }
 
-    public KLABReasoner(OWL owl) {
+    public KlabReasoner(OWL owl) {
         overall = (Ontology) owl.requireOntology(ONTOLOGY_ID, OWL.INTERNAL_ONTOLOGY_PREFIX);
         overall.setInternal(true);
         if (Namespaces.INSTANCE.getNamespace(ONTOLOGY_ID) == null) {
@@ -131,7 +131,7 @@ public class KLABReasoner {
      * Return if concept is consistent. If reasoner is off, assume true.
      * 
      * @param c
-     * @return
+     * @return true if concept is consistent.
      */
     public boolean isSatisfiable(IConcept c) {
         return reasoner == null ? true : isSatisfiable(((Concept) c).getOWLClass());
@@ -143,6 +143,7 @@ public class KLABReasoner {
      * owl:Nothing, even if the concept is inconsistent.
      * 
      * @param main
+     * @return the parent closure of the concept
      */
     public Set<IConcept> getParentClosure(IConcept main) {
         Set<IConcept> ret = new HashSet<>();
@@ -152,7 +153,7 @@ public class KLABReasoner {
                 if (cls.isBottomEntity() || cls.isTopEntity()) {
                     continue;
                 }
-                IConcept cc = overall.getManager().getConceptFor(cls, false);
+                IConcept cc = OWL.INSTANCE.getConceptFor(cls, false);
                 if (cc != null) {
                     ret.add(cc);
                 }
@@ -170,6 +171,7 @@ public class KLABReasoner {
      * owl:Nothing, which is a child of everything.
      * 
      * @param main
+     * @return the semantic closure of the concept
      */
     public Set<IConcept> getSemanticClosure(IConcept main) {
         if (reasoner != null) {
@@ -179,7 +181,7 @@ public class KLABReasoner {
                 if (cls.isBottomEntity() || cls.isTopEntity()) {
                     continue;
                 }
-                IConcept cc = overall.getManager().getConceptFor(cls, false);
+                IConcept cc = OWL.INSTANCE.getConceptFor(cls, false);
                 if (cc != null) {
                     ret.add(cc);
                 }

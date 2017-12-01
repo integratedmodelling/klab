@@ -27,8 +27,6 @@ public class ConceptRestrictionVisitor
 
     private Set<OWLOntology>                                             onts;
     private Set<OWLClass>                                                processedClasses = new HashSet<>();
-    // private Collection<IConcept> result = null;
-    private OWL                                                          manager;
     private OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> restriction;
     private OWLClass                                                     filler;
 
@@ -37,8 +35,7 @@ public class ConceptRestrictionVisitor
     }
 
     public ConceptRestrictionVisitor(IConcept concept, IConcept filler) {
-        this.manager = ((Concept) concept)._manager;
-        this.onts = manager.manager.getOntologies();
+        this.onts = OWL.INSTANCE.manager.getOntologies();
         this.filler = ((Concept) filler)._owl;
         ((Concept) concept)._owl.accept(this);
     }

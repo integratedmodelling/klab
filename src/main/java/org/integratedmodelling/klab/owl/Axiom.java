@@ -27,8 +27,10 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Iterator;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 
 /**
@@ -42,13 +44,8 @@ public class Axiom implements IAxiom {
 
     private String   _type;
     private Object[] _args;
-
-    // private int _options;
-
-    //
-    // Public static creation members
-    //
-
+    EnumSet<Type> conceptType;
+    
     /**
      * Create a class assertion. The option integer can be used to store additional flags for the
      * concept with the ontology, which will be quicker to retrieve than annotation properties, for
@@ -57,8 +54,9 @@ public class Axiom implements IAxiom {
      * @param conceptId
      * @return class assertion
      */
-    static public IAxiom ClassAssertion(String conceptId) {
+    static public IAxiom ClassAssertion(String conceptId, EnumSet<Type> type) {
         Axiom ret = new Axiom(CLASS_ASSERTION, conceptId);
+        ret.conceptType = type;
         return ret;
     }
 

@@ -41,7 +41,7 @@ public class ShallowRestrictionVisitor
     }
 
     public ShallowRestrictionVisitor(IConcept concept, IProperty property) {
-        this.onts = ((Concept) concept)._manager.manager.getOntologies();
+        this.onts = OWL.INSTANCE.manager.getOntologies();
         this.property = ((Property) property)._owl;
         ((Concept) concept)._owl.accept(this);
     }
@@ -66,7 +66,7 @@ public class ShallowRestrictionVisitor
     private void visitRestriction(OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> desc) {
         if (desc.getProperty().equals(property)) {
             done = true;
-            result = OWL.unwrap(desc.getFiller());
+            result = OWL.INSTANCE.unwrap(desc.getFiller());
         }
     }
 

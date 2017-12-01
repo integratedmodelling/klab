@@ -34,7 +34,6 @@ public class SpecializingRestrictionVisitor
     private IProperty            property;
     private Collection<IConcept> result             = null;
     private IConcept             concept;
-    private OWL                  manager;
     private boolean              useSuperproperties = false;
     private OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> restriction;
 
@@ -48,8 +47,7 @@ public class SpecializingRestrictionVisitor
     
     public SpecializingRestrictionVisitor(IConcept concept, IProperty property,
             boolean useSuperProperties) {
-        this.manager = ((Concept) concept)._manager;
-        this.onts = manager.manager.getOntologies();
+        this.onts = OWL.INSTANCE.manager.getOntologies();
         this.property = property;
         this.concept = concept;
         this.useSuperproperties = useSuperProperties;
@@ -76,19 +74,19 @@ public class SpecializingRestrictionVisitor
 
     private void visitRestriction(OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> desc) {
         if (useSuperproperties) {
-            if (((Concept) concept)._manager
+            if (OWL.INSTANCE
                     .getPropertyFor((OWLProperty<?, ?>) desc.getProperty())
                     .is(property)) {
-                if (addNew(OWL.unwrap(desc.getFiller()))) {
+                if (addNew(OWL.INSTANCE.unwrap(desc.getFiller()))) {
                     // keep it for inspection at the end
                     this.restriction = desc;
                 }
             }
         } else {
-            if (((Concept) concept)._manager
+            if (OWL.INSTANCE
                     .getPropertyFor((OWLProperty<?, ?>) desc.getProperty())
                     .equals(property)) {
-                if (addNew(OWL.unwrap(desc.getFiller()))) {
+                if (addNew(OWL.INSTANCE.unwrap(desc.getFiller()))) {
                     // keep the restriction 
                     this.restriction = desc;
                 }

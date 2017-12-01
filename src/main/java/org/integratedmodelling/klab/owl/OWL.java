@@ -1,24 +1,23 @@
 /*******************************************************************************
  * Copyright (C) 2007, 2015:
  * 
- * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any
- * other authors listed in @author annotations
+ * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any other authors listed
+ * in @author annotations
  *
- * All rights reserved. This file is part of the k.LAB software suite, meant to enable
- * modular, collaborative, integrated development of interoperable data and model
- * components. For details, see http://integratedmodelling.org.
+ * All rights reserved. This file is part of the k.LAB software suite, meant to enable modular, collaborative,
+ * integrated development of interoperable data and model components. For details, see
+ * http://integratedmodelling.org.
  * 
- * This program is free software; you can redistribute it and/or modify it under the terms
- * of the Affero General Public License Version 3 or any later version.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the Affero
+ * General Public License Version 3 or any later version.
  *
- * This program is distributed in the hope that it will be useful, but without any
- * warranty; without even the implied warranty of merchantability or fitness for a
- * particular purpose. See the Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but without any warranty; without even the
+ * implied warranty of merchantability or fitness for a particular purpose. See the Affero General Public
+ * License for more details.
  * 
- * You should have received a copy of the Affero General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite
- * 330, Boston, MA 02111-1307, USA. The license is also available at:
- * https://www.gnu.org/licenses/agpl.html
+ * You should have received a copy of the Affero General Public License along with this program; if not, write
+ * to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. The license
+ * is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
 package org.integratedmodelling.klab.owl;
 
@@ -30,12 +29,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.january.IMonitor;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Reasoner;
@@ -69,19 +70,20 @@ import org.semanticweb.owlapi.util.AutoIRIMapper;
  * @author Ferd
  */
 public enum OWL {
-    
+
     INSTANCE;
-    
+
     public static final String                INTERNAL_ONTOLOGY_PREFIX = "http://integratedmodelling.org/ks/internal";
 
     private final HashMap<String, INamespace> namespaces               = new HashMap<>();
     private final HashMap<String, INamespace> resourceIndex            = new HashMap<>();
-    static HashMap<String, IOntology>         ontologies               = new HashMap<>();
-
-    static HashMap<String, String>            iri2ns                   = new HashMap<>();
+    HashMap<String, IOntology>                ontologies               = new HashMap<>();
+    HashMap<String, String>                   iri2ns                   = new HashMap<>();
     HashMap<String, String>                   c2ont                    = new HashMap<>();
     HashMap<SemanticType, OWLClass>           systemConcepts           = new HashMap<>();
     HashMap<String, IConcept>                 xsdMappings              = new HashMap<>();
+
+    static EnumSet<Type>                      emptyType                = EnumSet.noneOf(Type.class);
 
     /*
      * package-visible, never null.
@@ -102,7 +104,7 @@ public enum OWL {
         try {
             OWLOntology o = manager.createOntology(IRI
                     .create(prefix + "/" + id));
-            ret = new Ontology(o, id, this);
+            ret = new Ontology(o, id);
             ontologies.put(id, ret);
             iri2ns.put(((Ontology) ret).getPrefix(), id);
         } catch (OWLOntologyCreationException e) {
@@ -113,8 +115,7 @@ public enum OWL {
     }
 
     /**
-     * Get the IConcept corresponding to the OWL class passed. Throws an unchecked
-     * exception if not found.
+     * Get the IConcept corresponding to the OWL class passed. Throws an unchecked exception if not found.
      * 
      * @param owl
      * @return
@@ -158,13 +159,12 @@ public enum OWL {
     }
 
     /**
-     * Get the IProperty corresponding to the OWL class passed. Throws an unchecked
-     * exception if not found.
+     * Get the IProperty corresponding to the OWL class passed. Throws an unchecked exception if not found.
      * 
      * @param owl
      * @return
      */
-    public static IProperty getPropertyFor(OWLProperty<?, ?> owl) {
+    public IProperty getPropertyFor(OWLProperty<?, ?> owl) {
         IProperty ret = null;
         String sch = owl.getIRI().getNamespace();
         if (sch.endsWith("#")) {
@@ -233,7 +233,7 @@ public enum OWL {
         /*
          * Create the reasoner.
          */
-       Reasoner.INSTANCE.setReasoner(new KLABReasoner(this));
+        Reasoner.INSTANCE.setReasoner(new KlabReasoner(this));
 
         /*
          * all namespaces so far are internal, and just these.
@@ -279,7 +279,7 @@ public enum OWL {
             throws KlabException {
 
         if (!ontologies.containsKey(namespace)) {
-            ontologies.put(namespace, new Ontology(ontology, namespace, this));
+            ontologies.put(namespace, new Ontology(ontology, namespace));
         }
 
         /*
@@ -311,7 +311,7 @@ public enum OWL {
             if (o == null) {
                 OWLClass systemConcept = this.systemConcepts.get(st);
                 if (systemConcept != null) {
-                    result = new Concept(systemConcept, this, st.getNamespace());
+                    result = new Concept(systemConcept, st.getNamespace(), emptyType);
                 }
             } else {
                 result = o.getConcept(st.getName());
@@ -363,14 +363,14 @@ public enum OWL {
      * @param ns
      * @return the ontology
      */
-    public static Ontology getOntology(String ns) {
+    public Ontology getOntology(String ns) {
         return (Ontology) ontologies.get(ns);
     }
 
     public IConcept getRootConcept() {
         if (this.thing == null) {
             this.thing = new Concept(manager.getOWLDataFactory()
-                    .getOWLThing(), this, "owl");
+                    .getOWLThing(), "owl", emptyType);
         }
         return this.thing;
     }
@@ -406,10 +406,9 @@ public enum OWL {
     }
 
     /**
-     * Load OWL files from given directory and in its subdirectories, using a prefix
-     * mapper to resolve URLs internally and deriving ontology names from the relative
-     * paths. This uses the resolver passed at initialization only to create the
-     * namespace. It's only meant for core knowledge not seen by users.
+     * Load OWL files from given directory and in its subdirectories, using a prefix mapper to resolve URLs
+     * internally and deriving ontology names from the relative paths. This uses the resolver passed at
+     * initialization only to create the namespace. It's only meant for core knowledge not seen by users.
      *
      * @param kdir
      * @throws KlabIOException
@@ -453,7 +452,7 @@ public enum OWL {
                 OWLOntology ontology = manager
                         .loadOntologyFromOntologyDocument(input);
                 input.close();
-                Ontology ont = new Ontology(ontology, pth, this);
+                Ontology ont = new Ontology(ontology, pth);
                 ont.setResourceUrl(f.toURI().toURL().toString());
                 ontologies.put(pth, ont);
                 iri2ns.put(ont.getPrefix(), pth);
@@ -466,7 +465,7 @@ public enum OWL {
                 OWLOntology ont = manager.getOntology(e.getOntologyID()
                         .getOntologyIRI());
                 if (ont != null && ontologies.get(pth) == null) {
-                    Ontology o = new Ontology(ont, pth, this);
+                    Ontology o = new Ontology(ont, pth);
                     try {
                         o.setResourceUrl(f.toURI().toURL().toString());
                     } catch (MalformedURLException e1) {
@@ -509,7 +508,7 @@ public enum OWL {
             OWLOntology ontology = manager
                     .loadOntologyFromOntologyDocument(input);
             input.close();
-            ret = new Ontology(ontology, id, this);
+            ret = new Ontology(ontology, id);
             ret.setResourceUrl(url.toString());
             ontologies.put(id, ret);
             iri2ns.put(ret.getPrefix(), id);
@@ -522,7 +521,7 @@ public enum OWL {
             OWLOntology ont = manager.getOntology(e.getOntologyID()
                     .getOntologyIRI());
             if (ont != null && ontologies.get(id) == null) {
-                Ontology ontology = new Ontology(ont, id, this);
+                Ontology ontology = new Ontology(ont, id);
                 ontologies.put(id, ontology);
                 iri2ns.put(ontology.getPrefix(), id);
             }
@@ -613,12 +612,12 @@ public enum OWL {
     public IConcept getNothing() {
         if (this.nothing == null) {
             this.nothing = new Concept(manager.getOWLDataFactory()
-                    .getOWLNothing(), this, "owl");
+                    .getOWLNothing(), "owl", emptyType);
         }
         return this.nothing;
     }
 
-    static public Collection<IConcept> unwrap(OWLClassExpression cls) {
+    public Collection<IConcept> unwrap(OWLClassExpression cls) {
 
         Set<IConcept> ret = new HashSet<>();
         if (cls instanceof OWLObjectIntersectionOf) {
@@ -630,37 +629,35 @@ public enum OWL {
                 ret.addAll(unwrap(o));
             }
         } else if (cls instanceof OWLClass) {
-            ret.add(new Concept(cls.asOWLClass(), INSTANCE, INSTANCE
-                    .getConceptSpace(cls.asOWLClass().getIRI())));
+            ret.add(getExistingOrCreate(cls.asOWLClass()));
         }
         return ret;
     }
 
     /**
-     * Return the concept or concepts (if a union) restricted by the passed object
-     * property in the restriction closest to the passed concept in its asserted parent
-     * hierarchy.
+     * Return the concept or concepts (if a union) restricted by the passed object property in the restriction
+     * closest to the passed concept in its asserted parent hierarchy.
      * 
      * @param target
      * @param restricted
      * @return
      */
-    public static Collection<IConcept> getRestrictedClasses(IConcept target, IProperty restricted) {
+    public Collection<IConcept> getRestrictedClasses(IConcept target, IProperty restricted) {
         return new SpecializingRestrictionVisitor(target, restricted, true).getResult();
     }
 
-    public static Collection<IConcept> getRestrictedClasses(IConcept target, IProperty restricted, boolean useSuperproperties) {
+    public Collection<IConcept> getRestrictedClasses(IConcept target, IProperty restricted, boolean useSuperproperties) {
         return new SpecializingRestrictionVisitor(target, restricted, useSuperproperties)
                 .getResult();
     }
 
-    public static void restrictSome(IConcept target, IProperty property, IConcept filler) {
+    public void restrictSome(IConcept target, IProperty property, IConcept filler) {
         target.getOntology().define(Collections.singleton(Axiom
                 .SomeValuesFrom(target.getLocalName(), property.toString(), filler
                         .toString())));
     }
 
-    public static void restrictAll(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers) {
+    public void restrictAll(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers) {
 
         if (fillers.size() == 1) {
             restrictAll(target, property, fillers.iterator().next());
@@ -676,19 +673,18 @@ public enum OWL {
         for (IConcept c : fillers) {
             classes.add(((Concept) c)._owl);
         }
-        OWLDataFactory factory = ((Concept) target)._manager.manager.getOWLDataFactory();
+        OWLDataFactory factory = manager.getOWLDataFactory();
         OWLClassExpression union = how.equals(LogicalConnector.UNION)
                 ? factory.getOWLObjectUnionOf(classes)
                 : factory.getOWLObjectIntersectionOf(classes);
         OWLClassExpression restriction = factory
                 .getOWLObjectAllValuesFrom(((Property) property)._owl
                         .asOWLObjectProperty(), union);
-        ((Concept) target)._manager.manager
-                .addAxiom(((Ontology) target.getOntology()).ontology, factory
+        manager.addAxiom(((Ontology) target.getOntology()).ontology, factory
                         .getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
     }
 
-    public static void restrictSome(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers) {
+    public void restrictSome(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers) {
 
         if (fillers.size() == 1) {
             restrictSome(target, property, fillers.iterator().next());
@@ -704,25 +700,24 @@ public enum OWL {
         for (IConcept c : fillers) {
             classes.add(((Concept) c)._owl);
         }
-        OWLDataFactory factory = ((Concept) target)._manager.manager.getOWLDataFactory();
+        OWLDataFactory factory = manager.getOWLDataFactory();
         OWLClassExpression union = how.equals(LogicalConnector.UNION)
                 ? factory.getOWLObjectUnionOf(classes)
                 : factory.getOWLObjectIntersectionOf(classes);
         OWLClassExpression restriction = factory
                 .getOWLObjectSomeValuesFrom(((Property) property)._owl
                         .asOWLObjectProperty(), union);
-        ((Concept) target)._manager.manager
-                .addAxiom(((Ontology) target.getOntology()).ontology, factory
+        manager.addAxiom(((Ontology) target.getOntology()).ontology, factory
                         .getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
     }
 
-    public static void restrictAll(IConcept target, IProperty property, IConcept filler) {
+    public void restrictAll(IConcept target, IProperty property, IConcept filler) {
         target.getOntology().define(Collections.singleton(Axiom
                 .AllValuesFrom(target.getLocalName(), property.toString(), filler
                         .toString())));
     }
 
-    public static void restrictAtLeast(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, int min) {
+    public void restrictAtLeast(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, int min) {
 
         if (fillers.size() == 1) {
             restrictAtLeast(target, property, fillers.iterator().next(), min);
@@ -738,25 +733,24 @@ public enum OWL {
         for (IConcept c : fillers) {
             classes.add(((Concept) c)._owl);
         }
-        OWLDataFactory factory = ((Concept) target)._manager.manager.getOWLDataFactory();
+        OWLDataFactory factory = manager.getOWLDataFactory();
         OWLClassExpression union = how.equals(LogicalConnector.UNION)
                 ? factory.getOWLObjectUnionOf(classes)
                 : factory.getOWLObjectIntersectionOf(classes);
         OWLClassExpression restriction = factory
                 .getOWLObjectMinCardinality(min, ((Property) property)._owl
                         .asOWLObjectProperty(), union);
-        ((Concept) target)._manager.manager
-                .addAxiom(((Ontology) target.getOntology()).ontology, factory
+        manager.addAxiom(((Ontology) target.getOntology()).ontology, factory
                         .getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
     }
 
-    public static void restrictAtLeast(IConcept target, IProperty property, IConcept filler, int min) {
+    public void restrictAtLeast(IConcept target, IProperty property, IConcept filler, int min) {
         target.getOntology().define(Collections.singleton(Axiom
                 .AtLeastNValuesFrom(target.getLocalName(), property.toString(), filler
                         .toString(), min)));
     }
 
-    public static void restrictAtMost(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, int max) {
+    public void restrictAtMost(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, int max) {
 
         if (fillers.size() == 1) {
             restrictAtMost(target, property, fillers.iterator().next(), max);
@@ -770,25 +764,24 @@ public enum OWL {
         for (IConcept c : fillers) {
             classes.add(((Concept) c)._owl);
         }
-        OWLDataFactory factory = ((Concept) target)._manager.manager.getOWLDataFactory();
+        OWLDataFactory factory = manager.getOWLDataFactory();
         OWLClassExpression union = how.equals(LogicalConnector.UNION)
                 ? factory.getOWLObjectUnionOf(classes)
                 : factory.getOWLObjectIntersectionOf(classes);
         OWLClassExpression restriction = factory
                 .getOWLObjectMaxCardinality(max, ((Property) property)._owl
                         .asOWLObjectProperty(), union);
-        ((Concept) target)._manager.manager
-                .addAxiom(((Ontology) target.getOntology()).ontology, factory
+        manager.addAxiom(((Ontology) target.getOntology()).ontology, factory
                         .getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
     }
 
-    public static void restrictAtMost(IConcept target, IProperty property, IConcept filler, int max) {
+    public void restrictAtMost(IConcept target, IProperty property, IConcept filler, int max) {
         target.getOntology().define(Collections.singleton(Axiom
                 .AtMostNValuesFrom(target.getLocalName(), property.toString(), filler
                         .toString(), max)));
     }
 
-    public static void restrictExactly(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, int howmany) {
+    public void restrictExactly(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, int howmany) {
 
         if (fillers.size() == 1) {
             restrictExactly(target, property, fillers.iterator().next(), howmany);
@@ -802,49 +795,48 @@ public enum OWL {
         for (IConcept c : fillers) {
             classes.add(((Concept) c)._owl);
         }
-        OWLDataFactory factory = ((Concept) target)._manager.manager.getOWLDataFactory();
+        OWLDataFactory factory = manager.getOWLDataFactory();
         OWLClassExpression union = how.equals(LogicalConnector.UNION)
                 ? factory.getOWLObjectUnionOf(classes)
                 : factory.getOWLObjectIntersectionOf(classes);
         OWLClassExpression restriction = factory
                 .getOWLObjectExactCardinality(howmany, ((Property) property)._owl
                         .asOWLObjectProperty(), union);
-        ((Concept) target)._manager.manager
-                .addAxiom(((Ontology) target.getOntology()).ontology, factory
+        manager.addAxiom(((Ontology) target.getOntology()).ontology, factory
                         .getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
     }
 
-    public static void restrictExactly(IConcept target, IProperty property, IConcept filler, int howMany) {
+    public void restrictExactly(IConcept target, IProperty property, IConcept filler, int howMany) {
         target.getOntology().define(Collections.singleton(Axiom
                 .ExactlyNValuesFrom(target.getLocalName(), property.toString(), filler
                         .toString(), howMany)));
     }
 
     /**
-     * Return whether the restriction on type involving concept is optional. If there is
-     * no such restriction, return false.
+     * Return whether the restriction on type involving concept is optional. If there is no such restriction,
+     * return false.
      * 
      * @param type
      * @param observableRole
      * @return
      */
-    public static boolean isRestrictionOptional(IConcept type, IConcept concept) {
+    public boolean isRestrictionOptional(IConcept type, IConcept concept) {
         return new ConceptRestrictionVisitor(type, concept).isOptional();
     }
 
     /**
-     * Return whether the restriction on type involving concept is optional. If there is
-     * no such restriction, return false.
+     * Return whether the restriction on type involving concept is optional. If there is no such restriction,
+     * return false.
      * 
      * @param type
      * @param observableRole
      * @return
      */
-    public static boolean isRestrictionDenied(IConcept type, IConcept concept) {
+    public boolean isRestrictionDenied(IConcept type, IConcept concept) {
         return new ConceptRestrictionVisitor(type, concept).isDenied();
     }
 
-    public static IProperty getRestrictingProperty(IConcept type, IConcept concept) {
+    public IProperty getRestrictingProperty(IConcept type, IConcept concept) {
         ConceptRestrictionVisitor visitor = new ConceptRestrictionVisitor(type, concept);
         if (visitor.getRestriction() != null) {
             return getPropertyFor((OWLProperty<?, ?>) visitor.getRestriction()
@@ -852,4 +844,32 @@ public enum OWL {
         }
         return null;
     }
+
+    public IConcept getExistingOrCreate(OWLClass owl) {
+
+        String conceptId = owl.getIRI().getFragment();
+        String namespace = getConceptSpace(owl.getIRI());
+
+        IConcept ret = null;
+        IOntology ontology = ontologies.get(namespace);
+        if (ontology == null) {
+            throw new KlabRuntimeException("getExistingOrCreate: ontology not found: " + namespace);
+        }
+
+        ret = ontology.getConcept(conceptId);
+        if (ret == null) {
+            ret = ((Ontology) ontology).createConcept(conceptId, emptyType);
+        }
+
+        return ret;
+    }
+
+    public IConcept getIntersection(Collection<IConcept> concepts, IOntology destination) {
+        return null;
+    }
+
+    public IConcept getUnion(Collection<IConcept> concepts, IOntology destination) {
+        return null;
+    }
+
 }

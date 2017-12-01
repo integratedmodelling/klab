@@ -6,13 +6,14 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.INamespaceService;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 public enum Namespaces implements INamespaceService {
-    
+
     INSTANCE;
-    
-    private Map<String,INamespace> namespaces = new HashMap<>();
-    
+
+    private Map<String, INamespace> namespaces = new HashMap<>();
+
     public INamespace build(IKimNamespace namespace) {
         return null;
     }
@@ -29,5 +30,20 @@ public enum Namespaces implements INamespaceService {
         namespaces.put(namespace.getName(), namespace);
     }
 
-    
+    public void release(String name) {
+
+        Models.INSTANCE.releaseNamespace(name);
+        Observations.INSTANCE.releaseNamespace(name);
+
+        synchronized (namespaces) {
+            INamespace ns = namespaces.get(name);
+            if (ns != null) {
+                if (ns.getOntology() != null) {
+                    Ontologies.INSTANCE.release(ns.getOntology());
+                }
+                namespaces.remove(name);
+            }
+        }
+    }
+
 }

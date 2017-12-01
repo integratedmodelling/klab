@@ -28,6 +28,8 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 
+import org.integratedmodelling.kim.model.SemanticType;
+
 /**
  * IKnowledge defines the methods that are common to both IConcept and
  * IProperty, i.e. all assertions made in both OWL and k.IM namespaces.
@@ -36,6 +38,16 @@ import java.util.Collection;
  */
 public interface IKnowledge extends ISemantic {
 
+    /**
+     * The URN for a concept is the fully qualified name of the concept, in the
+     * form supported by {@link SemanticType}. It can be converted to a proper
+     * URN format by prefixing it with the standard k.LAB format for knowledge
+     * URNs, explained in TODO.
+     * 
+     * @return the fully qualified name, e.g. 'geography:Elevation'.
+     */
+    String getUrn();
+    
 	/**
 	 * All knowledge has a URI.
 	 * 

@@ -23,12 +23,15 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -70,19 +73,22 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
  */
 public class Concept extends Knowledge implements IConcept {
 
-    private static final long serialVersionUID = 2522694871087173632L;
-
     String            _id;
     String            _cs;
-    OWL               _manager;
     OWLClass          _owl;
     private IMetadata metadata;
+    Set<Type>         type = Collections.synchronizedSet(EnumSet.noneOf(Type.class));
 
-    Concept(OWLClass c, OWL manager, String cs) {
+    Concept(OWLClass c, String cs, Set<Type> type) {
         _owl = c;
         _id = c.getIRI().getFragment();
         _cs = cs;
-        _manager = manager;
+        this.type.addAll(type);
+    }
+
+    @Override
+    public boolean is(Type type) {
+        return this.type.contains(type);
     }
 
     @Override
@@ -137,7 +143,7 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public Ontology getOntology() {
-        return OWL.getOntology(getConceptSpace());
+        return OWL.INSTANCE.getOntology(getConceptSpace());
     }
 
     @Override
@@ -146,15 +152,15 @@ public class Concept extends Knowledge implements IConcept {
         Set<IConcept> concepts = new HashSet<>();
         synchronized (_owl) {
 
-            Set<OWLClassExpression> set = _owl.getSuperClasses(_manager.manager
+            Set<OWLClassExpression> set = _owl.getSuperClasses(OWL.INSTANCE.manager
                     .getOntologies());
             for (OWLClassExpression s : set) {
                 if (s.equals(_owl)) {
-                    org.integratedmodelling.klab.Klab.INSTANCE.error("self-referential inheritance for " + this);
+                    org.integratedmodelling.klab.Klab.INSTANCE
+                            .error("self-referential inheritance for " + this);
                     break;
                 } else if (!(s.isAnonymous() || s.asOWLClass().isBuiltIn()))
-                    concepts.add(new Concept(s.asOWLClass(), _manager, _manager
-                            .getConceptSpace(s.asOWLClass().getIRI())));
+                    concepts.add(OWL.INSTANCE.getExistingOrCreate(s.asOWLClass()));
             }
         }
 
@@ -177,25 +183,10 @@ public class Concept extends Knowledge implements IConcept {
 
         seen.add(this);
 
-        // if (reasoner != null) {
-        // NodeSet<OWLClass> parents = reasoner.getSuperClasses(_owl, false);
-        // for (OWLClass cls : parents.getFlattened()) {
-        // if (!cls.isBuiltIn())
-        // concepts.add(new Concept(cls, _manager, _manager
-        // .getConceptSpace(cls.getIRI())));
-        // }
-        //
-        // return concepts;
-        //
-        // } else {
-
         for (IConcept c : getParents()) {
             concepts.add(c);
             concepts.addAll(((Concept) c).getAllParentsInternal(seen));
         }
-        // }
-
-        // concepts.add(_manager.getRootConcept());
 
         return concepts;
     }
@@ -205,16 +196,15 @@ public class Concept extends Knowledge implements IConcept {
 
         Set<IConcept> concepts = new HashSet<>();
         synchronized (_owl) {
-            Set<OWLClassExpression> set = _owl.getSubClasses(_manager.manager
+            Set<OWLClassExpression> set = _owl.getSubClasses(OWL.INSTANCE.manager
                     .getOntologies());
 
             for (OWLClassExpression s : set) {
                 if (!(s.isAnonymous() || s.isOWLNothing() || s.isOWLThing()))
-                    concepts.add(new Concept(s.asOWLClass(), _manager, _manager
-                            .getConceptSpace(s.asOWLClass().getIRI())));
+                    concepts.add(OWL.INSTANCE.getExistingOrCreate(s.asOWLClass()));
             }
             if (set.isEmpty() && _owl.isOWLThing()) {
-                for (IOntology onto : _manager.ontologies.values()) {
+                for (IOntology onto : OWL.INSTANCE.ontologies.values()) {
                     concepts.addAll(onto.getConcepts());
                 }
             }
@@ -253,18 +243,18 @@ public class Concept extends Knowledge implements IConcept {
         synchronized (ontology) {
             for (OWLObjectProperty op : ontology
                     .getObjectPropertiesInSignature(true)) {
-                Set<OWLClassExpression> rang = op.getDomains(_manager.manager
+                Set<OWLClassExpression> rang = op.getDomains(OWL.INSTANCE.manager
                         .getOntologies());
                 if (rang.contains(_owl))
-                    properties.add(new Property(op, _manager, _manager
+                    properties.add(new Property(op, OWL.INSTANCE
                             .getConceptSpace(op.getIRI())));
             }
             for (OWLDataProperty op : ontology
                     .getDataPropertiesInSignature(true)) {
-                Set<OWLClassExpression> rang = op.getDomains(_manager.manager
+                Set<OWLClassExpression> rang = op.getDomains(OWL.INSTANCE.manager
                         .getOntologies());
                 if (rang.contains(_owl))
-                    properties.add(new Property(op, _manager, _manager
+                    properties.add(new Property(op, OWL.INSTANCE
                             .getConceptSpace(op.getIRI())));
             }
         }
@@ -297,11 +287,10 @@ public class Concept extends Knowledge implements IConcept {
                 continue;
             OWLObjectPropertyExpression zz = ((OWLRestriction<?, ? extends OWLObjectPropertyExpression, ?>) r)
                     .getProperty();
-            ret.add(new Pair<IConcept, IProperty>(new Concept(filler, _manager, _manager
-                    .getConceptSpace(filler.getIRI())), new Property(zz
-                            .asOWLObjectProperty(), _manager, _manager
-                                    .getConceptSpace(zz
-                                            .asOWLObjectProperty().getIRI()))));
+            ret.add(new Pair<IConcept, IProperty>(OWL.INSTANCE.getExistingOrCreate(filler), new Property(zz
+                    .asOWLObjectProperty(), OWL.INSTANCE
+                            .getConceptSpace(zz
+                                    .asOWLObjectProperty().getIRI()))));
         }
         return ret;
     }
@@ -319,7 +308,7 @@ public class Concept extends Knowledge implements IConcept {
                 continue;
             OWLObjectPropertyExpression zz = ((OWLRestriction<?, ? extends OWLObjectPropertyExpression, ?>) r)
                     .getProperty();
-            ret.add(new Property(zz.asOWLObjectProperty(), _manager, _manager.getConceptSpace(zz
+            ret.add(new Property(zz.asOWLObjectProperty(), OWL.INSTANCE.getConceptSpace(zz
                     .asOWLObjectProperty().getIRI())));
         }
 
@@ -349,9 +338,8 @@ public class Concept extends Knowledge implements IConcept {
             // } else {
 
             for (OWLClassExpression zio : ((Property) property)._owl
-                    .asOWLObjectProperty().getRanges(_manager.manager.getOntologies())) {
-                ret.add(new Concept(zio.asOWLClass(), _manager, _manager
-                        .getConceptSpace(zio.asOWLClass().getIRI())));
+                    .asOWLObjectProperty().getRanges(OWL.INSTANCE.manager.getOntologies())) {
+                ret.add(OWL.INSTANCE.getExistingOrCreate(zio.asOWLClass()));
             }
             // }
         } else if (property.isLiteralProperty()) {
@@ -374,15 +362,13 @@ public class Concept extends Knowledge implements IConcept {
                     OWLClassExpression ooo = ((OWLObjectAllValuesFrom) r).getFiller();
                     if (!ooo.isAnonymous()) {
                         OWLClass zz = ooo.asOWLClass();
-                        ret.add(new Concept(zz, _manager, _manager
-                                .getConceptSpace(zz.getIRI())));
+                        ret.add(OWL.INSTANCE.getExistingOrCreate(zz));
                     }
                     break;
                 } else if (r instanceof OWLObjectSomeValuesFrom) {
                     OWLClass zz = ((OWLObjectSomeValuesFrom) r).getFiller()
                             .asOWLClass();
-                    ret.add(new Concept(zz, _manager, _manager
-                            .getConceptSpace(zz.getIRI())));
+                    ret.add(OWL.INSTANCE.getExistingOrCreate(zz));
                 }
             }
         } else {
@@ -536,7 +522,7 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     public synchronized RestrictionVisitor getRestrictions() {
-        RestrictionVisitor visitor = new RestrictionVisitor(_manager.manager.getOntologies());
+        RestrictionVisitor visitor = new RestrictionVisitor(OWL.INSTANCE.manager.getOntologies());
         if (getOntology() == null) {
             return visitor;
         }
@@ -554,7 +540,7 @@ public class Concept extends Knowledge implements IConcept {
         for (OWLAnnotation annotation : _owl
                 .getAnnotations(getOntology().ontology)) {
             OWLLiteral l = (OWLLiteral) annotation.getValue();
-            ret.put(new Property(annotation.getProperty(), _manager, _manager
+            ret.put(new Property(annotation.getProperty(), OWL.INSTANCE
                     .getConceptSpace(annotation.getProperty().getIRI())), l
                             .getLiteral());
         }
@@ -629,6 +615,11 @@ public class Concept extends Knowledge implements IConcept {
             def = "(" + def + ")";
         }
         return def;
+    }
+
+    @Override
+    public String getUrn() {
+        return getConceptSpace() + ":" + _id;
     }
 
 }

@@ -1,13 +1,16 @@
 package org.integratedmodelling.klab.model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimNamespace;
+import org.integratedmodelling.klab.Ontologies;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
+import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -22,18 +25,37 @@ public class Namespace extends KimObject implements INamespace {
 
     private static final long serialVersionUID = -6469868584021658804L;
     
+    private String name;
     private IOntology ontology;
     private boolean internal = false;
     private boolean canonical = false;
+    private long timestamp = 0l;
+    
+    /*
+     * for incremental building of the knowledge
+     */
+    List<IAxiom> axioms = new ArrayList<>();
 
     public Namespace(IKimNamespace namespace) {
         super((KimNamespace)namespace);
+        this.name = namespace.getName();
+        this.ontology = Ontologies.INSTANCE.require(name);
     }
     
     public Namespace(String id, File file, IOntology ontology) {
         super(null);
         setStatement(new KimNamespace(id, file));
         this.ontology = ontology;
+        this.timestamp = file.lastModified();
+    }
+    
+    public void addAxiom(IAxiom axiom) {
+        this.axioms.add(axiom);
+    }
+    
+    public void define() {
+        this.ontology.define(this.axioms);
+        this.axioms.clear();
     }
     
     @Override
@@ -43,8 +65,7 @@ public class Namespace extends KimObject implements INamespace {
 
     @Override
     public long getTimeStamp() {
-        // TODO Auto-generated method stub
-        return 0;
+        return timestamp;
     }
 
     @Override
