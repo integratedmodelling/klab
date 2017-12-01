@@ -64,9 +64,9 @@ public class KimValidator implements Kim.Validator {
 	}
 
 	@Override
-	public EnumSet<Type> classifyCoreType(String string) {
+	public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
 		// TODO Auto-generated method stub
-		return EnumSet.noneOf(Type.class);
+		return statedType;
 	}
 
 }
