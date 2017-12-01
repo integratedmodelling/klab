@@ -7,7 +7,7 @@ public interface IWorkspaceService {
 
     IWorkspace getLocal();
 
-    IWorkspace getCoreKnowledge();
+    IWorkspace getUpperOntology();
 
     IWorldview getWorldview();
 

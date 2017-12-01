@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.services.IWorkspaceService;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
-import org.integratedmodelling.klab.engine.resources.OWLCore;
+import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public enum Workspaces implements IWorkspaceService {
@@ -17,7 +17,7 @@ public enum Workspaces implements IWorkspaceService {
     /**
      * The core workspace, only containing the OWL knowledge distributed with the software, and no projects.
      */
-    private OWLCore    coreKnowledge;
+    private CoreOntology    coreKnowledge;
 
     /**
      * The worldview, synchronized at startup from Git repositories specified in or through the k.LAB
@@ -43,7 +43,7 @@ public enum Workspaces implements IWorkspaceService {
     }
     
     @Override
-    public IWorkspace getCoreKnowledge() {
+    public CoreOntology getUpperOntology() {
         return coreKnowledge;
     }
     
@@ -60,7 +60,7 @@ public enum Workspaces implements IWorkspaceService {
      * Extract and load the OWL core knowledge workspace.
      */
     public void loadCoreKnowledge() throws KlabException {
-        coreKnowledge = new OWLCore(Configuration.INSTANCE.getDataPath("knowledge"));
+        coreKnowledge = new CoreOntology(Configuration.INSTANCE.getDataPath("knowledge"));
         coreKnowledge.load(false);
     }
 

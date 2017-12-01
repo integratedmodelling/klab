@@ -32,8 +32,8 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.engine.resources.OWLCore;
-import org.integratedmodelling.klab.engine.resources.OWLCore.NS;
+import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;

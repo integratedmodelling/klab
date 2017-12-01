@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.model.Namespace;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -34,7 +35,7 @@ import org.semanticweb.owlapi.reasoner.UnsupportedEntailmentTypeException;
 import org.semanticweb.owlapi.util.Version;
 
 /**
- * Overall reasoner. Only thread safe when the knowledge does not move.
+ * Overall reasoner. Only thread safe when the knowledge does not change.
  * 
  * @author ferdinando.villa
  *
@@ -79,7 +80,7 @@ public class KlabReasoner {
     }
     
     /**
-     * {@link IKnowledge#is(org.integratedmodelling.api.knowledge.ISemantic)} will only
+     * {@link IKnowledge#is(ISemantic)} will only
      * check for direct subsumption. This one defaults to that when the reasoner is not
      * active.
      * 

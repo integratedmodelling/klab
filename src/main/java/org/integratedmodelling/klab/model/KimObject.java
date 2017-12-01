@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.api.model.IKimObject;
 

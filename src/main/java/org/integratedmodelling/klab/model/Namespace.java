@@ -27,15 +27,19 @@ public class Namespace extends KimObject implements INamespace {
     
     private String name;
     private IOntology ontology;
+    private IProject project;
     private boolean internal = false;
     private boolean canonical = false;
     private long timestamp = 0l;
+    
+    List<IKimObject> objects = new ArrayList<>();
     
     /*
      * for incremental building of the knowledge
      */
     List<IAxiom> axioms = new ArrayList<>();
 
+    
     public Namespace(IKimNamespace namespace) {
         super((KimNamespace)namespace);
         this.name = namespace.getName();
@@ -76,8 +80,7 @@ public class Namespace extends KimObject implements INamespace {
     
     @Override
     public IProject getProject() {
-        // TODO Auto-generated method stub
-        return null;
+        return project;
     }
 
     @Override
@@ -198,14 +201,12 @@ public class Namespace extends KimObject implements INamespace {
     
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return name;
     }
 
     @Override
     public List<IKimObject> getObjects() {
-        // TODO Auto-generated method stub
-        return null;
+        return objects;
     }
 
     @Override
@@ -223,6 +224,10 @@ public class Namespace extends KimObject implements INamespace {
     @Override
     public boolean isCanonical() {
         return canonical;
+    }
+    
+    public String toString() {
+        return "[NS " + getName() + " (" + getObjects().size() + " objects)]";
     }
 
 }

@@ -3,10 +3,14 @@ package org.integratedmodelling.klab.engine.resources;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -18,11 +22,12 @@ import org.integratedmodelling.klab.owl.OWL;
  * @author ferdinando.villa
  *
  */
-public class OWLCore extends AbstractWorkspace {
+public class CoreOntology extends AbstractWorkspace {
 
     boolean synced = false;
 
     public static interface NS {
+
         // domain concepts for known extents
         public static final String SPACE_DOMAIN                           = "observation:Space";
         public static final String TIME_DOMAIN                            = "observation:Time";
@@ -172,8 +177,6 @@ public class OWLCore extends AbstractWorkspace {
          * imcore namespace, so we use the most general abstract in DOLCE.
          */
         public static final String CORE_DOMAIN                            = "observation:Domain";
-
-        // core concepts to map with the language keywords
         public static final String CORE_OBSERVABLE                        = "observation:Observable";
         public static final String CORE_OBSERVATION                       = "observation:Observation";
         public static final String CORE_OBJECT                            = "observation:DirectObservable";
@@ -181,10 +184,8 @@ public class OWLCore extends AbstractWorkspace {
         public static final String CORE_QUALITY                           = "observation:Quality";
         public static final String CORE_EVENT                             = "observation:Event";
         public static final String CORE_TRAIT                             = "observation:Trait";
-        public static final String CORE_IDENTITY_TRAIT                    = "observation:Identity";
-        // public static final String SUBJECTIVE_TRAIT = "observation:SubjectiveTrait";
-        public static final String CORE_QUANTITY                          = "observation:QuantifiableQuality";
-        public static final String CORE_NUMERIC_QUANTITY                  = "observation:ContinuousNumericallyQuantifiableQuality";
+        public static final String CORE_IDENTITY                          = "observation:Identity";
+        public static final String CORE_QUANTITY                          = "observation:ContinuousNumericallyQuantifiableQuality";
         public static final String CORE_ASSERTED_QUALITY                  = "observation:AssertedQuality";
         public static final String CORE_SUBJECT                           = "observation:Subject";
         public static final String CORE_PHYSICAL_OBJECT                   = "observation:PhysicalObject";
@@ -216,32 +217,34 @@ public class OWLCore extends AbstractWorkspace {
         public static final String CORE_TEMPERATURE                       = "observation:Temperature";
         public static final String CORE_VISCOSITY                         = "observation:Viscosity";
         public static final String CORE_AGENT                             = "observation:Agent";
-        public static final String CORE_PATTERN                           = "observation:Configuration";
+        public static final String CORE_CONFIGURATION                     = "observation:Configuration";
         public static final String CORE_RELATIONSHIP                      = "observation:Relationship";
         public static final String CORE_FUNCTIONAL_RELATIONSHIP           = "observation:FunctionalRelationship";
         public static final String CORE_STRUCTURAL_RELATIONSHIP           = "observation:StructuralRelationship";
-        public static final String TYPE                                   = "observation:Type";
-        public static final String ORDERING                               = "observation:Ordering";
-        public static final String CORE_REALM_TRAIT                       = "observation:Realm";
-        public static final String ATTRIBUTE_TRAIT                        = "observation:Attribute";
-        public static final String ROLE_TRAIT                             = "observation:Role";
+        public static final String CORE_TYPE                              = "observation:Type";
+        public static final String CORE_ORDERING                          = "observation:Ordering";
+        public static final String CORE_REALM                             = "observation:Realm";
+        public static final String CORE_ATTRIBUTE                         = "observation:Attribute";
+        public static final String CORE_ROLE                              = "observation:Role";
+        public static final String CORE_PRIORITY                          = "observation:Priority";
         public static final String CORE_COUNT                             = "observation:Numerosity";
         public static final String CORE_PROPORTION                        = "observation:Proportion";
         public static final String CORE_RATIO                             = "observation:Ratio";
         public static final String CORE_PRESENCE                          = "observation:Presence";
+        public static final String CORE_OCCURRENCE                        = "observation:Occurrence";
         public static final String CORE_VALUE                             = "observation:Value";
         public static final String CORE_DISTANCE                          = "observation:Distance";
-        public static final String BASE_AGENT                             = "observation:Agent";
-        public static final String REACTIVE_AGENT                         = "observation:ReactiveAgent";
-        public static final String DELIBERATIVE_AGENT                     = "observation:DeliberativeAgent";
-        public static final String INTERACTIVE_AGENT                      = "observation:InteractiveAgent";
+        public static final String CORE_BASE_AGENT                        = "observation:Agent";
+        public static final String CORE_REACTIVE_AGENT                    = "observation:ReactiveAgent";
+        public static final String CORE_DELIBERATIVE_AGENT                = "observation:DeliberativeAgent";
+        public static final String CORE_INTERACTIVE_AGENT                 = "observation:InteractiveAgent";
         public static final String CORE_UNCERTAINTY                       = "observation:Uncertainty";
-        public static final String OBSERVABILITY_TRAIT                    = "observation:Observability";
-        public static final String ABSENCE_TRAIT                          = "observation:Absence";
-        public static final String EXTENT                                 = "observation:Extent";
+        public static final String CORE_OBSERVABILITY_TRAIT               = "observation:Observability";
+        public static final String CORE_ABSENCE_TRAIT                     = "observation:Absence";
+        public static final String CORE_EXTENT                            = "observation:Extent";
     }
 
-    public OWLCore(File directory) {
+    public CoreOntology(File directory) {
         super(directory);
     }
 
@@ -266,6 +269,127 @@ public class OWLCore extends AbstractWorkspace {
         Klab.INSTANCE.info(ret.size() + " ontologies read from classpath");
 
         return ret;
+    }
+
+    public IConcept getCoreType(EnumSet<Type> type) {
+
+        if (type.contains(Type.NOTHING)) {
+            return OWL.INSTANCE.getNothing();
+        }
+
+        String conceptId = null;
+
+        if (type.contains(Type.PROCESS)) {
+            conceptId = NS.CORE_PROCESS;
+        } else if (type.contains(Type.SUBJECT)) {
+            conceptId = NS.CORE_SUBJECT;
+        } else if (type.contains(Type.EVENT)) {
+            conceptId = NS.CORE_EVENT;
+        } else if (type.contains(Type.RELATIONSHIP)) {
+            if (type.contains(Type.FUNCTIONAL)) {
+                conceptId = NS.CORE_FUNCTIONAL_RELATIONSHIP;
+            } else if (type.contains(Type.STRUCTURAL)) {
+                conceptId = NS.CORE_STRUCTURAL_RELATIONSHIP;
+            } else {
+                conceptId = NS.CORE_RELATIONSHIP;
+            }
+        } else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
+            conceptId = NS.CORE_EXTENSIVE_PHYSICAL_PROPERTY;
+        } else if (type.contains(Type.INTENSIVE_PROPERTY)) {
+            conceptId = NS.CORE_INTENSIVE_PHYSICAL_PROPERTY;
+        } else if (type.contains(Type.TRAIT)) {
+            if (type.contains(Type.IDENTITY)) {
+                conceptId = NS.CORE_IDENTITY;
+            } else if (type.contains(Type.ATTRIBUTE)) {
+                conceptId = NS.CORE_ATTRIBUTE;
+            } else if (type.contains(Type.REALM)) {
+                conceptId = NS.CORE_REALM;
+            } else if (type.contains(Type.ORDERING)) {
+                conceptId = NS.CORE_ORDERING;
+            }
+        } else if (type.contains(Type.ROLE)) {
+            conceptId = NS.CORE_ROLE;
+        } else if (type.contains(Type.CONFIGURATION)) {
+            conceptId = NS.CORE_CONFIGURATION;
+        } else if (type.contains(Type.CLASS)) {
+            conceptId = NS.CORE_TYPE;
+        } else if (type.contains(Type.QUANTITY)) {
+            conceptId = NS.CORE_QUANTITY;
+        } else if (type.contains(Type.DOMAIN)) {
+            conceptId = NS.CORE_DOMAIN;
+        } else if (type.contains(Type.ENERGY)) {
+            conceptId = NS.CORE_ENERGY;
+        } else if (type.contains(Type.ENTROPY)) {
+            conceptId = NS.CORE_ENTROPY;
+        } else if (type.contains(Type.LENGTH)) {
+            conceptId = NS.CORE_LENGTH;
+        } else if (type.contains(Type.MASS)) {
+            conceptId = NS.CORE_MASS;
+        } else if (type.contains(Type.VOLUME)) {
+            conceptId = NS.CORE_VOLUME;
+        } else if (type.contains(Type.WEIGHT)) {
+            conceptId = NS.CORE_WEIGHT;
+        } else if (type.contains(Type.MONEY)) {
+            conceptId = NS.CORE_MONETARY_VALUE;
+        } else if (type.contains(Type.DURATION)) {
+            conceptId = NS.CORE_DURATION;
+        } else if (type.contains(Type.AREA)) {
+            conceptId = NS.CORE_AREA;
+        } else if (type.contains(Type.ACCELERATION)) {
+            conceptId = NS.CORE_ACCELERATION;
+        } else if (type.contains(Type.PRIORITY)) {
+            conceptId = NS.CORE_PRIORITY;
+        } else if (type.contains(Type.ELECTRIC_POTENTIAL)) {
+            conceptId = NS.CORE_ELECTRIC_POTENTIAL;
+        } else if (type.contains(Type.CHARGE)) {
+            conceptId = NS.CORE_CHARGE;
+        } else if (type.contains(Type.RESISTANCE)) {
+            conceptId = NS.CORE_RESISTANCE;
+        } else if (type.contains(Type.RESISTIVITY)) {
+            conceptId = NS.CORE_RESISTIVITY;
+        } else if (type.contains(Type.PRESSURE)) {
+            conceptId = NS.CORE_PRESSURE;
+        } else if (type.contains(Type.ANGLE)) {
+            conceptId = NS.CORE_ANGLE;
+        } else if (type.contains(Type.VELOCITY)) {
+            conceptId = NS.CORE_SPEED;
+        } else if (type.contains(Type.TEMPERATURE)) {
+            conceptId = NS.CORE_TEMPERATURE;
+        } else if (type.contains(Type.VISCOSITY)) {
+            conceptId = NS.CORE_VISCOSITY;
+        } else if (type.contains(Type.AGENT)) {
+            if (type.contains(Type.DELIBERATIVE)) {
+                conceptId = NS.CORE_DELIBERATIVE_AGENT;
+            } else if (type.contains(Type.INTERACTIVE)) {
+                conceptId = NS.CORE_INTERACTIVE_AGENT;
+            } else if (type.contains(Type.REACTIVE)) {
+                conceptId = NS.CORE_REACTIVE_AGENT;
+            } else {
+                conceptId = NS.CORE_AGENT;
+            }
+        } else if (type.contains(Type.UNCERTAINTY)) {
+            conceptId = NS.CORE_UNCERTAINTY;
+        } else if (type.contains(Type.PROBABILITY)) {
+            conceptId = NS.CORE_PROBABILITY;
+        } else if (type.contains(Type.PROPORTION)) {
+            conceptId = NS.CORE_PROPORTION;
+        } else if (type.contains(Type.NUMEROSITY)) {
+            conceptId = NS.CORE_COUNT;
+        } else if (type.contains(Type.DISTANCE)) {
+            conceptId = NS.CORE_DISTANCE;
+        } else if (type.contains(Type.RATIO)) {
+            conceptId = NS.CORE_RATIO;
+        } else if (type.contains(Type.VALUE)) {
+            conceptId = NS.CORE_VALUE;
+        } else if (type.contains(Type.OCCURRENCE)) {
+            conceptId = NS.CORE_OCCURRENCE;
+        } else if (type.contains(Type.PRESENCE)) {
+            conceptId = NS.CORE_PRESENCE;
+        } else if (type.contains(Type.EXTENT)) {
+            conceptId = NS.CORE_EXTENT;
+        }
+
+        return conceptId == null ? null : Concepts.c(conceptId);
     }
 
 }

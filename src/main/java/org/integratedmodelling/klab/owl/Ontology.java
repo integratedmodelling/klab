@@ -43,7 +43,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.engine.resources.OWLCore.NS;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -334,8 +334,7 @@ public class Ontology implements IOntology {
                             .addAxiom(this.ontology, factory
                                     .getOWLDeclarationAxiom(newcl));
                     this.conceptIDs
-                            .put(axiom.getArgument(0).toString(), new Concept(newcl, axiom
-                                    .getArgument(0).toString(), ((Axiom) axiom).conceptType));
+                            .put(axiom.getArgument(0).toString(), new Concept(newcl, id, ((Axiom) axiom).conceptType));
 
                 } else if (axiom.is(IAxiom.SUBCLASS_OF)) {
 
@@ -720,6 +719,12 @@ public class Ontology implements IOntology {
 
         OWLClass ret = null;
 
+        if (c.equals("owl:Nothing")) {
+            return ((Concept)OWL.INSTANCE.getNothing())._owl;
+        } else if (c.equals("owl:Thing")) {
+            return ((Concept)OWL.INSTANCE.getRootConcept())._owl;        
+        }
+        
         if (c.contains(":")) {
 
             IConcept cc = OWL.INSTANCE.getConcept(c);
