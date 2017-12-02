@@ -87,7 +87,7 @@ public enum Concepts implements IConceptService {
 
         IConcept ret = OWL.INSTANCE.getConcept(conceptId);
         if (ret == null) {
-            throw new KlabRuntimeException("cannot find property " + conceptId);
+            throw new KlabRuntimeException("cannot find concept " + conceptId);
         }
         return ret;
 

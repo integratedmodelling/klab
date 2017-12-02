@@ -40,6 +40,8 @@ public enum ConceptBuilder {
 		IConcept main = null;
 		String mainId = concept.getName();
 		
+		System.out.println("BUILT CONCEPT " + mainId);
+		
 		namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
 		/*
