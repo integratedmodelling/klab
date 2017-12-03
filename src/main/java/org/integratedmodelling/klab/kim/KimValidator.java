@@ -11,7 +11,10 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.FunctionDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.Reasoner;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.model.Namespace;
@@ -27,14 +30,14 @@ public class KimValidator implements Kim.Validator {
 	@Override
 	public void synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 
-	    Namespaces.INSTANCE.release(namespace.getName());
-	    
+		Namespaces.INSTANCE.release(namespace.getName());
+
 		INamespace ns = new Namespace(namespace);
 
 		/*
-		 * TODO prepare kbox and caches to receive namespace
+		 * these should never throw exceptions; instead they should notify any errors,
+		 * no matter how internal, through the monitor
 		 */
-		
 		for (IKimScope statement : namespace.getChildren()) {
 			if (statement instanceof IKimConceptStatement) {
 				ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
@@ -42,13 +45,15 @@ public class KimValidator implements Kim.Validator {
 				ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
 			} else if (statement instanceof IKimObserver) {
 				ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
-			} // TODO defines
+			}
 		}
+
 		
 		/*
 		 * TODO finalize namespace and send any notification
 		 */
 		Namespaces.INSTANCE.registerNamespace(ns);
+        Reasoner.INSTANCE.addOntology(ns.getOntology());
 	}
 
 	@Override
@@ -65,7 +70,13 @@ public class KimValidator implements Kim.Validator {
 
 	@Override
 	public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
-		// TODO Auto-generated method stub
+		IConcept coreType = Concepts.INSTANCE.getConcept(string);
+		if (coreType == null) {
+			return EnumSet.noneOf(Type.class);
+		}
+		/*
+		 * TODO check type
+		 */
 		return statedType;
 	}
 

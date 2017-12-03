@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.kim.KimValidator;
 
 public class Engine extends Server implements IEngine {
@@ -38,23 +39,27 @@ public class Engine extends Server implements IEngine {
     class Monitor implements IMonitor {
 
         @Override
-        public void info(Object info, String infoClass) {
+        public void info(Object... info) {
             // TODO Auto-generated method stub
+        	System.out.println(info[0].toString());
         }
 
         @Override
-        public void warn(Object o) {
+        public void warn(Object... o) {
             // TODO Auto-generated method stub
+        	System.err.println(o[0].toString());
         }
 
         @Override
-        public void error(Object o) {
+        public void error(Object... o) {
             // TODO Auto-generated method stub
+        	System.err.println(o[0].toString());
         }
 
         @Override
-        public void debug(Object o) {
+        public void debug(Object... o) {
             // TODO Auto-generated method stub
+        	System.err.println(o[0].toString());
         }
 
         @Override
@@ -129,13 +134,14 @@ public class Engine extends Server implements IEngine {
      * Create an engine using the default k.LAB certificate and options, and start it. Return after startup is
      * complete.
      * 
-     * @return a new running engine, or null if startup failed.
+     * @return a new running engine.
+     * @throws an unchecked exception if startup fails
      */
     public static IEngine start() {
         EngineStartupOptions options = new EngineStartupOptions();
         Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
         if (!ret.boot(options)) {
-            return null;
+        	throw new KlabRuntimeException("engine failed to start");
         }
         return ret;
     }

@@ -15,14 +15,18 @@ public interface IMonitor {
      * For info to be seen by users: pass a string. Will also take an exception, but usually exceptions
      * shouldn't turn into warnings. These will be reported to the user unless the verbosity is set low. Do
      * not abuse of these - there should be only few, really necessary info messages so that things do not get
-     * lost. The class parameter is used by the client to categorize messages so they can be shown in special
-     * ways and easily identified in a list of info messages. You can leave it null or devise your own class.
+     * lost. 
+     * 
+     * In addition to the main object, you can pass a string that will be interpreted as the info message
+     * class. The class parameter is used by the client to categorize messages so they can be shown in special
+     * ways and easily identified in a list of info messages. Other objects can also be sent along with the
+     * message, according to implementation.
      * 
      * @param info
      * @param infoClass
      * 
      */
-    void info(Object info, String infoClass);
+    void info(Object... info);
 
     /**
      * Pass a string. Will also take an exception, but usually exceptions shouldn't turn into warnings. These
@@ -30,15 +34,18 @@ public interface IMonitor {
      * 
      * @param o
      */
-    void warn(Object o);
+    void warn(Object... o);
 
     /**
      * Pass a string or an exception (usually the latter as a reaction to an exception in the execution).
      * These will interrupt execution from outside, so you should return after raising one of these.
      * 
+     * In addition, you can pass a statement to communicate errors in k.IM, or other objects that can be
+     * sent and used as necessary.
+     * 
      * @param o
      */
-    void error(Object o);
+    void error(Object... o);
 
     /**
      * Any message that is just for you or is too verbose to be an info message should be sent as debug, which
@@ -47,7 +54,7 @@ public interface IMonitor {
      * 
      * @param o
      */
-    void debug(Object o);
+    void debug(Object... o);
 
     /**
      * This is to send out serializable objects or other messages. Information sent through this channel will

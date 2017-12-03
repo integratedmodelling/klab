@@ -6,7 +6,6 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.INamespaceService;
-import org.integratedmodelling.klab.exceptions.KlabException;
 
 public enum Namespaces implements INamespaceService {
 

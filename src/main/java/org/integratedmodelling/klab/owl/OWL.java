@@ -273,6 +273,7 @@ public enum OWL {
             ((Ontology) (ns.getOntology())).setInternal(true);
         }
 
+        createReasoner();
     }
 
     String importOntology(OWLOntology ontology, String resource, String namespace, boolean imported, IMonitor monitor)

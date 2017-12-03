@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.kim;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimScope;
@@ -21,82 +23,103 @@ public enum ConceptBuilder {
 
 	INSTANCE;
 
-	public IConcept build(IKimConceptStatement concept, INamespace namespace, IMonitor monitor) {
-	    Namespace ns = (Namespace)namespace;
-		IConcept ret = buildInternal(concept, ns, monitor);
-		if (concept.getParents().isEmpty()) {
-		    IConcept parent =
-		            concept.getUpperConceptDefined() != null ? 
-		                    Concepts.c(concept.getUpperConceptDefined()) :
-		                    Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
-		    ns.addAxiom(Axiom.SubClass(ret.getLocalName(), parent.getUrn()));
-		    ns.define();
+	public @Nullable IConcept build(IKimConceptStatement concept, INamespace namespace, IMonitor monitor) {
+
+		if (concept.isMacro()) {
+			return null;
 		}
-		return ret;
+		
+		Namespace ns = (Namespace) namespace;
+		try {
+			
+			IConcept ret = buildInternal(concept, ns, monitor);
+			if (concept.getParents().isEmpty()) {
+				IConcept parent = null;
+				if (concept.getUpperConceptDefined() != null) {
+					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
+					if (parent == null) {
+						monitor.error("Core concept " + concept.getUpperConceptDefined() + " unknown", concept);
+					}
+				} else {
+					parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+				}
+
+				if (parent != null) {
+					ns.addAxiom(Axiom.SubClass(ret.getLocalName(), parent.getUrn()));
+					ns.define();
+				}
+			}
+			return ret;
+			
+		} catch (Throwable e) {
+			monitor.error(e);
+		}
+		return null;
 	}
 
-	private IConcept buildInternal(IKimConceptStatement concept, Namespace namespace, IMonitor monitor) {
+	private @Nullable IConcept buildInternal(IKimConceptStatement concept, Namespace namespace, IMonitor monitor) {
 
 		IConcept main = null;
 		String mainId = concept.getName();
-		
+
 		System.out.println("BUILT CONCEPT " + mainId);
-		
+
 		namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
 		/*
-		 * basic attributes
-		 *    subjective
-		 *    deniable
-		 *    internal
-		 *    uni/bidirectional (relationship)
+		 * basic attributes subjective deniable internal uni/bidirectional
+		 * (relationship)
 		 */
 		if (concept.isAbstract()) {
-		    namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
+			namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
 		}
-		
+
 		namespace.define();
 		main = namespace.getOntology().getConcept(mainId);
-		
+
 		for (ParentConcept parent : concept.getParents()) {
-		    
-		    List<IConcept> concepts = new ArrayList<>();
-		    for (IKimConcept pdecl : parent.getConcepts()) {
-		        concepts.add(declare(pdecl, monitor));
-		    }
-		    
-		    if (concepts.size() == 1) {
-		        namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
-		    } else {
-		        IConcept expr = null;
-		        switch (parent.getConnector()) {
-		        case INTERSECTION:
-		            expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology());
-		            break;
-		        case UNION:
-                    expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology());
-		            break;
-		         default:
-		             // won't happen
-		             break;
-		        }
-                namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
-		    }
-            namespace.define();
+
+			List<IConcept> concepts = new ArrayList<>();
+			for (IKimConcept pdecl : parent.getConcepts()) {
+				concepts.add(declare(pdecl, monitor));
+			}
+
+			if (concepts.size() == 1) {
+				namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
+			} else {
+				IConcept expr = null;
+				switch (parent.getConnector()) {
+				case INTERSECTION:
+					expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology());
+					break;
+				case UNION:
+					expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology());
+					break;
+				default:
+					// won't happen
+					break;
+				}
+				namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
+			}
+			namespace.define();
 		}
-		
+
 		for (IKimScope child : concept.getChildren()) {
-		    if (child instanceof IKimConceptStatement) {
-		        IConcept childConcept = buildInternal((IKimConceptStatement)child, namespace, monitor);
-		        namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getLocalName()));
-		        namespace.define();
-		    }
+			if (child instanceof IKimConceptStatement) {
+				try {
+					IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, monitor);
+					namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getLocalName()));
+					namespace.define();
+				} catch (Throwable e) {
+					monitor.error(e);
+				}
+			}
 		}
 
 		return main;
 	}
 
-	public IConcept declare(IKimConcept concept, IMonitor monitor) {
+	public @Nullable IConcept declare(IKimConcept concept, IMonitor monitor) {
 
 		IConcept main = null;
 
