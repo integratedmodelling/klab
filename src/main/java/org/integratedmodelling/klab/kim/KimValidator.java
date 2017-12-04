@@ -47,7 +47,6 @@ public class KimValidator implements Kim.Validator {
 				ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
 			}
 		}
-
 		
 		/*
 		 * TODO finalize namespace and send any notification
@@ -70,6 +69,7 @@ public class KimValidator implements Kim.Validator {
 
 	@Override
 	public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
+	    
 		IConcept coreType = Concepts.INSTANCE.getConcept(string);
 		if (coreType == null) {
 			return EnumSet.noneOf(Type.class);

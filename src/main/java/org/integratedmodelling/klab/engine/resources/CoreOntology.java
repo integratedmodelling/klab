@@ -266,6 +266,19 @@ public class CoreOntology extends AbstractWorkspace {
             ret.add(ns);
         }
 
+        /**
+         * This test is unlikely to fail, but its purpose is primarily to preload the
+         * core ontology catalogues, so that the k.IM validator will not cause delays
+         * when checking core concepts, which makes the validator stop silently and
+         * ignore everything beyond the first delay.
+         * 
+         * DO NOT REMOVE this test.
+         */
+        IConcept dummy = Concepts.INSTANCE.getConcept(NS.OBSERVATION);
+        if (dummy == null) {
+            throw new KlabIOException("core knowlede: can't find known concepts, ontologies are probably corrupted");
+        }
+        
         Klab.INSTANCE.info(ret.size() + " ontologies read from classpath");
 
         return ret;
