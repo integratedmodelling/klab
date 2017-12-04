@@ -189,7 +189,9 @@ public class Engine extends Server implements IEngine {
             /*
              *  read core OWL knowledge from classpath
              */
-            Workspaces.INSTANCE.loadCoreKnowledge();
+            if (!Workspaces.INSTANCE.loadCoreKnowledge()) {
+                return false;
+            }
 
             /*
              * Install the k.IM validator to build concepts and model objects
@@ -209,7 +211,9 @@ public class Engine extends Server implements IEngine {
             /*
              *  get worldview from certificate and sync it
              */
-            Workspaces.INSTANCE.loadWorldview(certificate);
+            if (!Workspaces.INSTANCE.loadWorldview(certificate)) {
+                return false;
+            }
 
             /*
              *  hop on the network
@@ -232,7 +236,9 @@ public class Engine extends Server implements IEngine {
             /*
              *  now we can finally load the workspace
              */
-            Workspaces.INSTANCE.getLocal().load(false);
+            if (!Workspaces.INSTANCE.loadLocalWorkspace()) {
+                return false;
+            }
 
             /*
              *  run any init scripts from configuration

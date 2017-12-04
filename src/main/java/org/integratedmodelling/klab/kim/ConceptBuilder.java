@@ -81,7 +81,12 @@ public enum ConceptBuilder {
 
 			List<IConcept> concepts = new ArrayList<>();
 			for (IKimConcept pdecl : parent.getConcepts()) {
-				concepts.add(declare(pdecl, monitor));
+			    IConcept declared = declare(pdecl, monitor);
+			    if (declared == null) {
+			        monitor.error("parent declaration " + pdecl + " does not identify known concepts", pdecl);
+			        return null;
+			    }
+				concepts.add(declared);
 			}
 
 			if (concepts.size() == 1) {

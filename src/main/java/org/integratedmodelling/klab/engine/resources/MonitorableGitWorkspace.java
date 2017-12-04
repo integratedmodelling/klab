@@ -17,6 +17,8 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
         
         delegate = new KimWorkspace(root, overridingProjects) {
 
+            private static final long serialVersionUID = -7032365312926466996L;
+
             @Override
             public void readProjects() throws IOException {
                 

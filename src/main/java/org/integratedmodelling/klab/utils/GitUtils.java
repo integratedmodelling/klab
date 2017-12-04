@@ -79,7 +79,7 @@ public class GitUtils {
                 pullCmd.call();
 
             } catch (Throwable e) {
-                throw new KlabIOException("error pulling repository " + localRepository);
+                throw new KlabIOException("error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
             }
         } catch (IOException e) {
             throw new KlabIOException(e);
