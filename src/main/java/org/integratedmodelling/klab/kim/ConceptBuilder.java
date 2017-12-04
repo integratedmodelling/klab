@@ -63,12 +63,6 @@ public enum ConceptBuilder {
         IConcept main = null;
         String mainId = concept.getName();
 
-        if (mainId.equals("Thing")) {
-            System.out.println("BUILT CONCEPT " + mainId);
-        } else {
-            System.out.println("MADE CONCEPT " + mainId);
-        }
-        
         namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
         /*
