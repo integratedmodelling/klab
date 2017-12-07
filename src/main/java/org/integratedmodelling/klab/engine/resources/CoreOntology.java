@@ -3,8 +3,11 @@ package org.integratedmodelling.klab.engine.resources;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
@@ -24,7 +27,64 @@ import org.integratedmodelling.klab.owl.OWL;
  */
 public class CoreOntology extends AbstractWorkspace {
 
-    boolean synced = false;
+    private boolean                  synced                = false;
+    private Map<Type, IConcept>      worldviewCoreConcepts = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Type, String> coreConceptIds        = Collections.synchronizedMap(new HashMap<>());
+
+    static {
+        coreConceptIds.put(Type.PROCESS, NS.CORE_PROCESS);
+        coreConceptIds.put(Type.SUBJECT, NS.CORE_SUBJECT);
+        coreConceptIds.put(Type.EVENT, NS.CORE_EVENT);
+        coreConceptIds.put(Type.FUNCTIONAL, NS.CORE_FUNCTIONAL_RELATIONSHIP);
+        coreConceptIds.put(Type.STRUCTURAL, NS.CORE_STRUCTURAL_RELATIONSHIP);
+        coreConceptIds.put(Type.RELATIONSHIP, NS.CORE_RELATIONSHIP);
+        coreConceptIds.put(Type.EXTENSIVE_PROPERTY, NS.CORE_EXTENSIVE_PHYSICAL_PROPERTY);
+        coreConceptIds.put(Type.INTENSIVE_PROPERTY, NS.CORE_INTENSIVE_PHYSICAL_PROPERTY);
+        coreConceptIds.put(Type.IDENTITY, NS.CORE_IDENTITY);
+        coreConceptIds.put(Type.ATTRIBUTE, NS.CORE_ATTRIBUTE);
+        coreConceptIds.put(Type.REALM, NS.CORE_REALM);
+        coreConceptIds.put(Type.ORDERING, NS.CORE_ORDERING);
+        coreConceptIds.put(Type.ROLE, NS.CORE_ROLE);
+        coreConceptIds.put(Type.CONFIGURATION, NS.CORE_CONFIGURATION);
+        coreConceptIds.put(Type.CLASS, NS.CORE_TYPE);
+        coreConceptIds.put(Type.QUANTITY, NS.CORE_QUANTITY);
+        coreConceptIds.put(Type.DOMAIN, NS.CORE_DOMAIN);
+        coreConceptIds.put(Type.ENERGY, NS.CORE_ENERGY);
+        coreConceptIds.put(Type.ENTROPY, NS.CORE_ENTROPY);
+        coreConceptIds.put(Type.LENGTH, NS.CORE_LENGTH);
+        coreConceptIds.put(Type.MASS, NS.CORE_MASS);
+        coreConceptIds.put(Type.VOLUME, NS.CORE_VOLUME);
+        coreConceptIds.put(Type.WEIGHT, NS.CORE_WEIGHT);
+        coreConceptIds.put(Type.MONEY, NS.CORE_MONETARY_VALUE);
+        coreConceptIds.put(Type.DURATION, NS.CORE_DURATION);
+        coreConceptIds.put(Type.AREA, NS.CORE_AREA);
+        coreConceptIds.put(Type.ACCELERATION, NS.CORE_ACCELERATION);
+        coreConceptIds.put(Type.PRIORITY, NS.CORE_PRIORITY);
+        coreConceptIds.put(Type.ELECTRIC_POTENTIAL, NS.CORE_ELECTRIC_POTENTIAL);
+        coreConceptIds.put(Type.CHARGE, NS.CORE_CHARGE);
+        coreConceptIds.put(Type.RESISTANCE, NS.CORE_RESISTANCE);
+        coreConceptIds.put(Type.RESISTIVITY, NS.CORE_RESISTIVITY);
+        coreConceptIds.put(Type.PRESSURE, NS.CORE_PRESSURE);
+        coreConceptIds.put(Type.ANGLE, NS.CORE_ANGLE);
+        coreConceptIds.put(Type.VELOCITY, NS.CORE_SPEED);
+        coreConceptIds.put(Type.TEMPERATURE, NS.CORE_TEMPERATURE);
+        coreConceptIds.put(Type.VISCOSITY, NS.CORE_VISCOSITY);
+        coreConceptIds.put(Type.AGENT, NS.CORE_AGENT);
+        coreConceptIds.put(Type.DELIBERATIVE, NS.CORE_DELIBERATIVE_AGENT);
+        coreConceptIds.put(Type.INTERACTIVE, NS.CORE_INTERACTIVE_AGENT);
+        coreConceptIds.put(Type.REACTIVE, NS.CORE_REACTIVE_AGENT);
+        coreConceptIds.put(Type.UNCERTAINTY, NS.CORE_UNCERTAINTY);
+        coreConceptIds.put(Type.PROBABILITY, NS.CORE_PROBABILITY);
+        coreConceptIds.put(Type.PROPORTION, NS.CORE_PROPORTION);
+        coreConceptIds.put(Type.NUMEROSITY, NS.CORE_COUNT);
+        coreConceptIds.put(Type.DISTANCE, NS.CORE_DISTANCE);
+        coreConceptIds.put(Type.RATIO, NS.CORE_RATIO);
+        coreConceptIds.put(Type.VALUE, NS.CORE_VALUE);
+        coreConceptIds.put(Type.OCCURRENCE, NS.CORE_OCCURRENCE);
+        coreConceptIds.put(Type.PRESENCE, NS.CORE_PRESENCE);
+        coreConceptIds.put(Type.EXTENT, NS.CORE_EXTENT);
+        coreConceptIds.put(Type.ASSESSMENT, NS.CORE_ASSESSMENT);
+    }
 
     public static interface NS {
 
@@ -248,6 +308,13 @@ public class CoreOntology extends AbstractWorkspace {
         super(directory);
     }
 
+    public void registerCoreConcept(String coreConcept, IConcept worldviewPeer) {
+        /*
+         * TODO must handle the specialized concepts so that they inherit from the
+         * redefined ones, too.
+         */
+    }
+
     @Override
     public List<INamespace> load(boolean incremental) throws KlabException {
         List<INamespace> ret = new ArrayList<>();
@@ -267,10 +334,9 @@ public class CoreOntology extends AbstractWorkspace {
         }
 
         /**
-         * This test is unlikely to fail, but its purpose is primarily to preload the
-         * core ontology catalogues, so that the k.IM validator will not cause delays
-         * when checking core concepts, which makes the validator stop silently and
-         * ignore everything beyond the first delay.
+         * This test is unlikely to fail, but its purpose is primarily to preload the core ontology
+         * catalogues, so that the k.IM validator will not cause delays when checking core concepts, which
+         * makes the validator stop silently and ignore everything beyond the first delay.
          * 
          * DO NOT REMOVE this test.
          */
@@ -278,131 +344,154 @@ public class CoreOntology extends AbstractWorkspace {
         if (dummy == null) {
             throw new KlabIOException("core knowlede: can't find known concepts, ontologies are probably corrupted");
         }
-        
+
         Klab.INSTANCE.info(ret.size() + " ontologies read from classpath");
 
         return ret;
     }
 
-    public IConcept getCoreType(EnumSet<Type> type) {
+    public IConcept getCoreType(Set<Type> type) {
 
         if (type.contains(Type.NOTHING)) {
             return OWL.INSTANCE.getNothing();
         }
 
-        String conceptId = null;
-
+        Type coreType = getRepresentativeCoreType(type);
+        if (coreType == null) {
+            return null;
+        }
+        IConcept ret = worldviewCoreConcepts.get(coreType);
+        if (ret == null) {
+            String id = coreConceptIds.get(coreType);
+            if (id != null) {
+                ret = Concepts.c(id);
+            }
+        }
+        return ret;
+    }
+    
+    public Type getRepresentativeCoreType(Set<Type> type) {
+        
+        Type ret = null;
+        
+        /*
+         * FIXME can be made faster using a mask and a switch, although the specialized 
+         * concepts still require a bit of extra logic.
+         */
+        
         if (type.contains(Type.PROCESS)) {
-            conceptId = NS.CORE_PROCESS;
+            ret = Type.PROCESS;
         } else if (type.contains(Type.SUBJECT)) {
-            conceptId = NS.CORE_SUBJECT;
+            ret = Type.SUBJECT;
         } else if (type.contains(Type.EVENT)) {
-            conceptId = NS.CORE_EVENT;
+            ret = Type.EVENT;
         } else if (type.contains(Type.RELATIONSHIP)) {
             if (type.contains(Type.FUNCTIONAL)) {
-                conceptId = NS.CORE_FUNCTIONAL_RELATIONSHIP;
+                ret = Type.FUNCTIONAL;
             } else if (type.contains(Type.STRUCTURAL)) {
-                conceptId = NS.CORE_STRUCTURAL_RELATIONSHIP;
+                ret = Type.STRUCTURAL;
             } else {
-                conceptId = NS.CORE_RELATIONSHIP;
+                ret = Type.RELATIONSHIP;
             }
         } else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
-            conceptId = NS.CORE_EXTENSIVE_PHYSICAL_PROPERTY;
+            ret = Type.EXTENSIVE_PROPERTY;
         } else if (type.contains(Type.INTENSIVE_PROPERTY)) {
-            conceptId = NS.CORE_INTENSIVE_PHYSICAL_PROPERTY;
+            ret = Type.INTENSIVE_PROPERTY;
         } else if (type.contains(Type.TRAIT)) {
             if (type.contains(Type.IDENTITY)) {
-                conceptId = NS.CORE_IDENTITY;
+                ret = Type.IDENTITY;
             } else if (type.contains(Type.ATTRIBUTE)) {
-                conceptId = NS.CORE_ATTRIBUTE;
+                ret = Type.ATTRIBUTE;
             } else if (type.contains(Type.REALM)) {
-                conceptId = NS.CORE_REALM;
+                ret = Type.REALM;
             } else if (type.contains(Type.ORDERING)) {
-                conceptId = NS.CORE_ORDERING;
+                ret = Type.ORDERING;
             }
         } else if (type.contains(Type.ROLE)) {
-            conceptId = NS.CORE_ROLE;
+            ret = Type.ROLE;
         } else if (type.contains(Type.CONFIGURATION)) {
-            conceptId = NS.CORE_CONFIGURATION;
+            ret = Type.CONFIGURATION;
         } else if (type.contains(Type.CLASS)) {
-            conceptId = NS.CORE_TYPE;
+            ret = Type.CLASS;
         } else if (type.contains(Type.QUANTITY)) {
-            conceptId = NS.CORE_QUANTITY;
+            ret = Type.QUANTITY;
         } else if (type.contains(Type.DOMAIN)) {
-            conceptId = NS.CORE_DOMAIN;
+            ret = Type.DOMAIN;
         } else if (type.contains(Type.ENERGY)) {
-            conceptId = NS.CORE_ENERGY;
+            ret = Type.ENERGY;
         } else if (type.contains(Type.ENTROPY)) {
-            conceptId = NS.CORE_ENTROPY;
+            ret = Type.ENTROPY;
         } else if (type.contains(Type.LENGTH)) {
-            conceptId = NS.CORE_LENGTH;
+            ret = Type.LENGTH;
         } else if (type.contains(Type.MASS)) {
-            conceptId = NS.CORE_MASS;
+            ret = Type.LENGTH;
         } else if (type.contains(Type.VOLUME)) {
-            conceptId = NS.CORE_VOLUME;
+            ret = Type.VOLUME;
         } else if (type.contains(Type.WEIGHT)) {
-            conceptId = NS.CORE_WEIGHT;
+            ret = Type.WEIGHT;
         } else if (type.contains(Type.MONEY)) {
-            conceptId = NS.CORE_MONETARY_VALUE;
+            ret = Type.MONEY;
         } else if (type.contains(Type.DURATION)) {
-            conceptId = NS.CORE_DURATION;
+            ret = Type.DURATION;
         } else if (type.contains(Type.AREA)) {
-            conceptId = NS.CORE_AREA;
+            ret = Type.AREA;
         } else if (type.contains(Type.ACCELERATION)) {
-            conceptId = NS.CORE_ACCELERATION;
+            ret = Type.ACCELERATION;
         } else if (type.contains(Type.PRIORITY)) {
-            conceptId = NS.CORE_PRIORITY;
+            ret = Type.PRIORITY;
         } else if (type.contains(Type.ELECTRIC_POTENTIAL)) {
-            conceptId = NS.CORE_ELECTRIC_POTENTIAL;
+            ret = Type.ELECTRIC_POTENTIAL;
         } else if (type.contains(Type.CHARGE)) {
-            conceptId = NS.CORE_CHARGE;
+            ret = Type.CHARGE;
         } else if (type.contains(Type.RESISTANCE)) {
-            conceptId = NS.CORE_RESISTANCE;
+            ret = Type.RESISTANCE;
         } else if (type.contains(Type.RESISTIVITY)) {
-            conceptId = NS.CORE_RESISTIVITY;
+            ret = Type.RESISTIVITY;
         } else if (type.contains(Type.PRESSURE)) {
-            conceptId = NS.CORE_PRESSURE;
+            ret = Type.PRESSURE;
         } else if (type.contains(Type.ANGLE)) {
-            conceptId = NS.CORE_ANGLE;
+            ret = Type.ANGLE;
         } else if (type.contains(Type.VELOCITY)) {
-            conceptId = NS.CORE_SPEED;
+            ret = Type.VELOCITY;
         } else if (type.contains(Type.TEMPERATURE)) {
-            conceptId = NS.CORE_TEMPERATURE;
+            ret = Type.TEMPERATURE;
         } else if (type.contains(Type.VISCOSITY)) {
-            conceptId = NS.CORE_VISCOSITY;
+            ret = Type.VISCOSITY;
         } else if (type.contains(Type.AGENT)) {
             if (type.contains(Type.DELIBERATIVE)) {
-                conceptId = NS.CORE_DELIBERATIVE_AGENT;
+                ret = Type.DELIBERATIVE;
             } else if (type.contains(Type.INTERACTIVE)) {
-                conceptId = NS.CORE_INTERACTIVE_AGENT;
+                ret = Type.INTERACTIVE;
             } else if (type.contains(Type.REACTIVE)) {
-                conceptId = NS.CORE_REACTIVE_AGENT;
+                ret = Type.REACTIVE;
             } else {
-                conceptId = NS.CORE_AGENT;
+                ret = Type.AGENT;
             }
         } else if (type.contains(Type.UNCERTAINTY)) {
-            conceptId = NS.CORE_UNCERTAINTY;
+            ret = Type.UNCERTAINTY;
         } else if (type.contains(Type.PROBABILITY)) {
-            conceptId = NS.CORE_PROBABILITY;
+            ret = Type.PROBABILITY;
         } else if (type.contains(Type.PROPORTION)) {
-            conceptId = NS.CORE_PROPORTION;
+            ret = Type.PROPORTION;
         } else if (type.contains(Type.NUMEROSITY)) {
-            conceptId = NS.CORE_COUNT;
+            ret = Type.NUMEROSITY;
         } else if (type.contains(Type.DISTANCE)) {
-            conceptId = NS.CORE_DISTANCE;
+            ret = Type.DISTANCE;
         } else if (type.contains(Type.RATIO)) {
-            conceptId = NS.CORE_RATIO;
+            ret = Type.RATIO;
         } else if (type.contains(Type.VALUE)) {
-            conceptId = NS.CORE_VALUE;
+            ret = Type.VALUE;
         } else if (type.contains(Type.OCCURRENCE)) {
-            conceptId = NS.CORE_OCCURRENCE;
+            ret = Type.OCCURRENCE;
         } else if (type.contains(Type.PRESENCE)) {
-            conceptId = NS.CORE_PRESENCE;
+            ret = Type.PRESENCE;
         } else if (type.contains(Type.EXTENT)) {
-            conceptId = NS.CORE_EXTENT;
+            ret = Type.EXTENT;
+        } else if (type.contains(Type.ASSESSMENT)) {
+            ret = Type.ASSESSMENT;
         }
-
-        return conceptId == null ? null : Concepts.c(conceptId);
+        
+        return ret;
     }
 
 }
