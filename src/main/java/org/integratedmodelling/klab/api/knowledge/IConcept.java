@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -47,7 +48,7 @@ public interface IConcept extends IKnowledge {
      * @return
      */
     boolean is(Type type);
-    
+
     /**
      * Return a collection of all the direct parent classes.
      * @return a collection of parents
@@ -160,17 +161,18 @@ public interface IConcept extends IKnowledge {
     Collection<IProperty> findRestrictingProperty(IConcept target);
 
     /**
-     * Return the concept's definition in terms of primitive concepts. This will
+     * Return the concept's definition in terms of worldview concepts. This will
      * correspond to the fully qualified concept name for concepts that have been declared
-     * directly, or to a formula recursively detailing any traits, context and/or inherent
-     * types when the concept has been created by composing others. Concepts that are not
+     * directly in the worldview, or to their normalized k.IM declaration when the concept 
+     * has been created by composing other concepts. Concepts that are not
      * primary carry their definition in an annotation property. A concept definition can
-     * always be turned into the correspondent concept as long as the primary knowledge
-     * components are known.
+     * always be turned into the correspondent concept as long as the same worldview is loaded.
+     * 
+     * TODO consider adding worldview version and branch to metadata.
      * 
      * @return the concept definition
+     * @see {@link IConceptService#declare(String)} to build a concept from a definition
      */
     String getDefinition();
-
 
 }

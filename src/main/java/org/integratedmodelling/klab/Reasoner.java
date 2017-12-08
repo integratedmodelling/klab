@@ -17,5 +17,9 @@ public enum Reasoner implements IReasonerService {
     public void addOntology(IOntology ontology) {
         this.reasoner.addOntology(ontology);
     }
+
+    public IOntology getOntology() {
+        return reasoner.getOntology();
+    }
     
 }

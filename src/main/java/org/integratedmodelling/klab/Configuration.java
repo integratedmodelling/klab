@@ -13,6 +13,13 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.OS;
 
+/**
+ * TODO use a declarative approach for all properties, so that there is one place for all
+ * default settings and it's possible to override any of them through global JVM settings.
+ * 
+ * @author Ferd
+ *
+ */
 public enum Configuration implements IConfigurationService {
     INSTANCE;
 
@@ -155,6 +162,12 @@ public enum Configuration implements IConfigurationService {
     public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY   = "klab.engine.launchAutomatically";
 
     /**
+     * Create derived concepts in the common ontology owned by the reasoner (true) or in the
+     * ontology holding the main concept in the declaration (false).
+     */
+    public static final String KLAB_USE_COMMON_ONTOLOGY           = "klab.engine.useCommonOntology";
+
+    /**
      * If true, instructs some calls to spoof the _dev URLs of development network nodes to look like the
      * official one (without the suffix returned by {@link #getDeveloperNetworkURLPostfix()}). Used when
      * external services are configured with the official node URL and the modified URL gets in the way.
@@ -251,6 +264,12 @@ public enum Configuration implements IConfigurationService {
     @Override
     public boolean useReasoner() {
         return true;
+    }
+
+    @Override
+    public boolean useCommonOntology() {
+        return !(getProperties().containsKey(KLAB_USE_COMMON_ONTOLOGY)
+                && !Boolean.parseBoolean(getProperties().getProperty(KLAB_USE_COMMON_ONTOLOGY)));
     }
 
     @Override

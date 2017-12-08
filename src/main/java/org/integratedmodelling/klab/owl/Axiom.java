@@ -27,8 +27,8 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
@@ -44,7 +44,7 @@ public class Axiom implements IAxiom {
 
     private String   _type;
     private Object[] _args;
-    EnumSet<Type> conceptType;
+    Set<Type> conceptType;
     
     /**
      * Create a class assertion. The option integer can be used to store additional flags for the
@@ -52,9 +52,10 @@ public class Axiom implements IAxiom {
      * internal use (e.g. distinguish "inferred" observation concepts from asserted ones).
      * 
      * @param conceptId
+     * @param type 
      * @return class assertion
      */
-    static public IAxiom ClassAssertion(String conceptId, EnumSet<Type> type) {
+    static public IAxiom ClassAssertion(String conceptId, Set<Type> type) {
         Axiom ret = new Axiom(CLASS_ASSERTION, conceptId);
         ret.conceptType = type;
         return ret;

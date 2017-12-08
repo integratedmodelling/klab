@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.kim;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -10,11 +11,14 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.OWL;
@@ -23,7 +27,7 @@ public enum ConceptBuilder {
 
     INSTANCE;
 
-    public @Nullable IConcept build(IKimConceptStatement concept, INamespace namespace, IMonitor monitor) {
+    public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace, final IMonitor monitor) {
 
         if (concept.isMacro()) {
             return null;
@@ -58,7 +62,7 @@ public enum ConceptBuilder {
         return null;
     }
 
-    private @Nullable IConcept buildInternal(IKimConceptStatement concept, Namespace namespace, IMonitor monitor) {
+    private @Nullable IConcept buildInternal(final IKimConceptStatement concept, final Namespace namespace, final IMonitor monitor) {
 
         IConcept main = null;
         String mainId = concept.getName();
@@ -123,14 +127,105 @@ public enum ConceptBuilder {
         return main;
     }
 
-    public @Nullable IConcept declare(IKimConcept concept, IMonitor monitor) {
+    public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
 
         IConcept main = null;
 
         if (concept.getName() != null) {
-
+            main = Concepts.INSTANCE.getConcept(concept.getName());
+        } else if (concept.getObservable() != null) {
+            main = declare(concept.getObservable(), monitor);
         }
 
-        return main;
+        if (main == null) {
+            return null;
+        }
+
+        Builder builder = Observables.INSTANCE.declare(main);
+
+        /*
+         * transformations first
+         */
+
+        // semantic operator
+        if (concept.getObservationType() != null) {
+            IConcept other = null;
+            if (concept.getComparisonConcept() != null) {
+                other = declare(concept.getComparisonConcept(), monitor);
+            }
+            builder.as(concept.getObservationType(), other == null ? (IConcept[]) null
+                    : new IConcept[] { other });
+        }
+
+        if (concept.getInherent() != null) {
+            IConcept c = declare(concept.getInherent(), monitor);
+            if (c != null) {
+                builder.of(c);
+            }
+        }
+        if (concept.getContext() != null) {
+            IConcept c = declare(concept.getContext(), monitor);
+            if (c != null) {
+                builder.within(c);
+            }
+        }
+        if (concept.getCompresent() != null) {
+            IConcept c = declare(concept.getCompresent(), monitor);
+            if (c != null) {
+                builder.with(c);
+            }
+        }
+        if (concept.getCausant() != null) {
+            IConcept c = declare(concept.getCausant(), monitor);
+            if (c != null) {
+                builder.from(c);
+            }
+        }
+        if (concept.getCaused() != null) {
+            IConcept c = declare(concept.getCaused(), monitor);
+            if (c != null) {
+                builder.to(c);
+            }
+        }
+        if (concept.getMotivation() != null) {
+            IConcept c = declare(concept.getMotivation(), monitor);
+            if (c != null) {
+                builder.withGoal(c);
+            }
+        }
+
+        for (IKimConcept c : concept.getTraits()) {
+            IConcept trait = declare(c, monitor);
+            if (trait != null) {
+                builder.withTrait(trait);
+            }
+        }
+
+        for (IKimConcept c : concept.getRoles()) {
+            IConcept role = declare(c, monitor);
+            if (role != null) {
+                builder.as(role);
+            }
+        }
+
+        if (concept.isNegated()) {
+            builder.negated();
+        }
+
+        IConcept ret = null;
+        try {
+            ret = builder.build();
+
+            // TODO incremental consistency check
+
+            // set the k.IM definition in the concept
+            ret.getOntology().define(Collections.singletonList(Axiom.AnnotationAssertion(ret
+                    .getLocalName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.toString())));
+
+        } catch (Throwable e) {
+            monitor.error(e, concept);
+        }
+
+        return ret;
     }
 }

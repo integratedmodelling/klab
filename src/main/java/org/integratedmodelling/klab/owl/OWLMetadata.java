@@ -32,7 +32,6 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -50,8 +49,6 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * @author Ferd
  */
 public class OWLMetadata implements IMetadata {
-
-    private static final long serialVersionUID = 8596779276530421122L;
 
     OWLEntity                      _owl;
     OWLOntology                    _ontology;
@@ -80,6 +77,8 @@ public class OWLMetadata implements IMetadata {
                 .put("http://integratedmodelling.org/ks/observation.owl#orderingRank",  NS.ORDER_PROPERTY);
         _metadataVocabulary
                 .put("http://integratedmodelling.org/ks/klab.owl#conceptDefinition",  NS.CONCEPT_DEFINITION_PROPERTY);
+        _metadataVocabulary
+            .put("http://integratedmodelling.org/ks/klab.owl#coreObservable",  NS.CORE_OBSERVABLE_PROPERTY);
         _metadataVocabulary
                 .put("http://integratedmodelling.org/ks/klab.owl#displayLabel",  NS.DISPLAY_LABEL_PROPERTY);
         _metadataVocabulary

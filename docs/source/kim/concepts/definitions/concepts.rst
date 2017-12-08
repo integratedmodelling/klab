@@ -7,6 +7,17 @@ Defining concepts
 The main concept statement
 --------------------------
 
+Abstract status
+~~~~~~~~~~~~~~~
+
+
+Base concepts
+~~~~~~~~~~~~~
+
+A base concept is one that has been declared abstract and is at the "root level" in a namespace (that is, it is not declared as a child of another). This distinction is important in [traits], as it is not possible for an observable
+to adopt two traits that have the same base trait (see [declarations]). For this reason, declaring a concept as a child to another is not the same as declaring it at the root level.
+
+
 ...
 
 Parents ('is') vs. aliases ('equals')
@@ -28,7 +39,7 @@ Concept clauses
 
 In the following, applies to denotes the concept being defined. Targets denotes the concept that is mentioned in the clause, which must be defined.
 
-Summary table of clauses. More may be added in future versions, although the goal is the smallest useful language.
+Summary table of clauses. More may be added in future versions,  although the goal is the smallest useful language.
 
 Description clauses
 ~~~~~~~~~~~~~~~~~~~

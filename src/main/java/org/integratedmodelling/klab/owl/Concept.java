@@ -397,8 +397,9 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public boolean isAbstract() {
-        Object p = getMetadata().get(NS.IS_ABSTRACT);
-        return p != null && p.toString().equals("true");
+        return type.contains(Type.ABSTRACT);
+//        Object p = getMetadata().get(NS.IS_ABSTRACT);
+//        return p != null && p.toString().equals("true");
     }
 
     @Override
