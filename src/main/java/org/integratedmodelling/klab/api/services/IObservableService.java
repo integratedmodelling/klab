@@ -8,12 +8,68 @@ import javax.validation.constraints.NotNull;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.SemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public interface IObservableService {
 
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    IConcept getInherentType(IConcept concept);
+
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    IConcept getCompresentType(IConcept concept);
+
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    IConcept getCausantType(IConcept concept);
+
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    IConcept getCausedType(IConcept concept);
+
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    IConcept getGoalType(IConcept concept);
+
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    IConcept getContextType(IConcept concept);
+
+    /**
+     * Get all the restricted target of the "applies to" specification for this concept.
+     * 
+     * @param main
+     * @return all applicable concepts or an empty collection
+     */
+    Collection<IConcept> getApplicableObservables(IConcept main);
+
+    /**
+     * 
+     * @param c
+     * @return
+     */
+    IConcept getCoreObservable(IConcept c);
+    
     /**
      * The observable builder provides a uniform interface to create and declare concepts that incarnate all
      * the possible features for an observable. Get a builder from either
@@ -273,12 +329,5 @@ public interface IObservableService {
      */
     Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
 
-    /**
-     * Get all the restricted target of the "applies to" specification for this concept.
-     * 
-     * @param main
-     * @return all applicable concepts or an empty collection
-     */
-    Collection<IConcept> getApplicableObservables(IConcept main);
 
 }

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.services;
 
-public interface IAuthService {
+public interface IAuthenticationService {
 
     /**
      * Return the public key for certificates.

@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab;
 
-import org.integratedmodelling.klab.api.services.IAuthService;
+import org.integratedmodelling.klab.api.services.IAuthenticationService;
 
-public enum Auth implements IAuthService {
+public enum Auth implements IAuthenticationService {
     INSTANCE;
 
     /**

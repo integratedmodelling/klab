@@ -100,6 +100,10 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String HAS_IDENTITY_PROPERTY                   = "observation:hasIdentity";
         public static final String HAS_ATTRIBUTE_PROPERTY                  = "observation:hasAttribute";
         public static final String HAS_CONTEXT_PROPERTY                    = "observation:hasContext";
+        public static final String HAS_COMPRESENT_PROPERTY                 = "observation:hasCompresent";
+        public static final String HAS_CAUSANT_PROPERTY                    = "observation:hasCausant";
+        public static final String HAS_CAUSED_PROPERTY                     = "observation:hasCaused";
+        public static final String HAS_PURPOSE_PROPERTY                    = "observation:hasPurpose";
         public static final String HAS_SUBJECTIVE_TRAIT_PROPERTY           = "observation:hasSubjectiveTrait";
         public static final String IS_SUBJECTIVE                           = "observation:isSubjectiveTrait";
         public static final String IS_INHERENT_TO_PROPERTY                 = "observation:isInherentTo";
@@ -214,7 +218,6 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String PART_OF                                 = "observation:isPartOf";
         public static final String CONSTITUENT_OF                          = "observation:isConstituentOf";
         public static final String STRUCTURING_PROPERTY                    = "observation:structuringObjectProperty";
-        public static final String MAXIMUM_TRAIT_CONCEPT                   = "IM.MAXIMUM_TRAIT";
         public static final String DEPENDS_ON_PROPERTY                     = "observation:dependsOn";
         public static final String RELATES_TO_PROPERTY                     = "observation:relatesTo";
         public static final String CONTAINS_PART_PROPERTY                  = "observation:containsPart";
@@ -238,8 +241,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_UNIVERSAL                          = "observation:universal";
 
         /**
-         * the root domain for the ontologies. For many reasons it becomes very difficult to keep it in the
-         * imcore namespace, so we use the most general abstract in DOLCE.
+         * the root domain for the ontologies.
          */
         public static final String CORE_DOMAIN                             = "observation:Domain";
         public static final String CORE_OBSERVABLE                         = "observation:Observable";
@@ -316,7 +318,8 @@ public class CoreOntology extends AbstractWorkspace {
     public void registerCoreConcept(String coreConcept, IConcept worldviewPeer) {
         /*
          * TODO must handle the specialized concepts so that they inherit from the
-         * redefined ones, too.
+         * redefined ones, too. E.g. when the AGENT handler is received, it should
+         * create and install all the agent types in the same ontology.
          */
     }
 

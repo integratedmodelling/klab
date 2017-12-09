@@ -2,7 +2,6 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,12 +20,40 @@ public enum Observables implements IObservableService {
 
     INSTANCE;
 
-    public IConcept getInherentType(IConcept concept) {
+    @Override
+    public @Nullable IConcept getInherentType(IConcept concept) {
         Collection<IConcept> cls = OWL.INSTANCE
                 .getRestrictedClasses((IConcept) concept, Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
+    @Override
+    public @Nullable IConcept getCompresentType(IConcept concept) {
+        Collection<IConcept> cls = OWL.INSTANCE
+                .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
+        return cls.isEmpty() ? null : cls.iterator().next();
+    }
+    
+    @Override
+    public @Nullable IConcept getCausantType(IConcept concept) {
+        Collection<IConcept> cls = OWL.INSTANCE
+                .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_CAUSANT_PROPERTY));
+        return cls.isEmpty() ? null : cls.iterator().next();
+    }
+    
+    @Override
+    public @Nullable IConcept getCausedType(IConcept concept) {
+        Collection<IConcept> cls = OWL.INSTANCE
+                .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_CAUSED_PROPERTY));
+        return cls.isEmpty() ? null : cls.iterator().next();
+    }
+    
+    @Override
+    public @Nullable IConcept getGoalType(IConcept concept) {
+        Collection<IConcept> cls = OWL.INSTANCE
+                .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_PURPOSE_PROPERTY));
+        return cls.isEmpty() ? null : cls.iterator().next();
+    }
     /**
      * Get the context ('within') for the passed quality or trait. If the passed concept
      * is an attribute, configuration, class or realm, the context is the one specified
@@ -37,12 +64,13 @@ public enum Observables implements IObservableService {
      * @param concept
      * @return the context type, or null.
      */
+    @Override
     public @Nullable IConcept getContextType(IConcept concept) {
         return getContextType(concept, true);
     }
 
     /*
-     * FIXME logics should be revised 
+     * FIXME logics should be revised. Check documentation in docs/concepts/introduction.rst too.
      * @param concept
      * @param recurse
      * @return
@@ -172,6 +200,7 @@ public enum Observables implements IObservableService {
      * 
      * @param o1
      * @param o2
+     * @param flags 
      * @return
      */
     public boolean isCompatible(IConcept o1, IConcept o2, int flags) {
@@ -242,7 +271,7 @@ public enum Observables implements IObservableService {
         return true;
     }
 
-    
+    @Override
     public IConcept getCoreObservable(IConcept c) {
         String def = c.getMetadata().getString(NS.CORE_OBSERVABLE_PROPERTY);
         return def == null ? c : Concepts.c(def);

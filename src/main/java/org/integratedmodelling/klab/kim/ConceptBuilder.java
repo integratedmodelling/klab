@@ -7,11 +7,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Expression;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -21,6 +24,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Axiom;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 
 public enum ConceptBuilder {
@@ -51,9 +55,13 @@ public enum ConceptBuilder {
 
                 if (parent != null) {
                     ns.addAxiom(Axiom.SubClass(ret.getLocalName(), parent.getUrn()));
-                    ns.define();
                 }
             }
+
+            ns.addAxiom(Axiom.AnnotationAssertion(ret.getLocalName(), NS.BASE_DECLARATION, "true"));
+            createProperties(ret, ns);
+            ns.define();
+
             return ret;
 
         } catch (Throwable e) {
@@ -128,13 +136,17 @@ public enum ConceptBuilder {
     }
 
     public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
+        return declareInternal(concept, monitor);
+    }
+
+    private @Nullable IConcept declareInternal(final IKimConcept concept, final IMonitor monitor) {
 
         IConcept main = null;
 
         if (concept.getName() != null) {
             main = Concepts.INSTANCE.getConcept(concept.getName());
         } else if (concept.getObservable() != null) {
-            main = declare(concept.getObservable(), monitor);
+            main = declareInternal(concept.getObservable(), monitor);
         }
 
         if (main == null) {
@@ -151,58 +163,58 @@ public enum ConceptBuilder {
         if (concept.getObservationType() != null) {
             IConcept other = null;
             if (concept.getComparisonConcept() != null) {
-                other = declare(concept.getComparisonConcept(), monitor);
+                other = declareInternal(concept.getComparisonConcept(), monitor);
             }
             builder.as(concept.getObservationType(), other == null ? (IConcept[]) null
                     : new IConcept[] { other });
         }
 
         if (concept.getInherent() != null) {
-            IConcept c = declare(concept.getInherent(), monitor);
+            IConcept c = declareInternal(concept.getInherent(), monitor);
             if (c != null) {
                 builder.of(c);
             }
         }
         if (concept.getContext() != null) {
-            IConcept c = declare(concept.getContext(), monitor);
+            IConcept c = declareInternal(concept.getContext(), monitor);
             if (c != null) {
                 builder.within(c);
             }
         }
         if (concept.getCompresent() != null) {
-            IConcept c = declare(concept.getCompresent(), monitor);
+            IConcept c = declareInternal(concept.getCompresent(), monitor);
             if (c != null) {
                 builder.with(c);
             }
         }
         if (concept.getCausant() != null) {
-            IConcept c = declare(concept.getCausant(), monitor);
+            IConcept c = declareInternal(concept.getCausant(), monitor);
             if (c != null) {
                 builder.from(c);
             }
         }
         if (concept.getCaused() != null) {
-            IConcept c = declare(concept.getCaused(), monitor);
+            IConcept c = declareInternal(concept.getCaused(), monitor);
             if (c != null) {
                 builder.to(c);
             }
         }
         if (concept.getMotivation() != null) {
-            IConcept c = declare(concept.getMotivation(), monitor);
+            IConcept c = declareInternal(concept.getMotivation(), monitor);
             if (c != null) {
                 builder.withGoal(c);
             }
         }
 
         for (IKimConcept c : concept.getTraits()) {
-            IConcept trait = declare(c, monitor);
+            IConcept trait = declareInternal(c, monitor);
             if (trait != null) {
                 builder.withTrait(trait);
             }
         }
 
         for (IKimConcept c : concept.getRoles()) {
-            IConcept role = declare(c, monitor);
+            IConcept role = declareInternal(c, monitor);
             if (role != null) {
                 builder.as(role);
             }
@@ -216,16 +228,61 @@ public enum ConceptBuilder {
         try {
             ret = builder.build();
 
-            // TODO incremental consistency check
+            /*
+             * handle unions and intersections
+             */
+            if (concept.getOperands().size() > 0) {
+                List<IConcept> concepts = new ArrayList<>();
+                concepts.add(ret);
+                for (IKimConcept op : concept.getOperands()) {
+                    concepts.add(declareInternal(op, monitor));
+                }
+                ret = concept.getExpressionType() == Expression.INTERSECTION
+                        ? OWL.INSTANCE.getIntersection(concepts, ret.getOntology())
+                        : OWL.INSTANCE.getUnion(concepts, ret.getOntology());
+            }
 
             // set the k.IM definition in the concept
             ret.getOntology().define(Collections.singletonList(Axiom.AnnotationAssertion(ret
                     .getLocalName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.toString())));
+
+            // consistency check
+            if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
+                ((Concept)ret).getTypeSet().add(Type.NOTHING);
+                monitor.error("the definition of this concept has logical errors and is inconsistent", concept);
+            }
 
         } catch (Throwable e) {
             monitor.error(e, concept);
         }
 
         return ret;
+    }
+
+    private void createProperties(IConcept ret, Namespace ns) {
+
+        String pName = null;
+        String pProp = null;
+        if (ret.is(Type.ATTRIBUTE)) {
+            // hasX
+            pName = "has" + ret.getLocalName();
+            pProp = NS.HAS_ATTRIBUTE_PROPERTY;
+        } else if (ret.is(Type.REALM)) {
+            // inX
+            pName = "in" + ret.getLocalName();
+            pProp = NS.HAS_REALM_PROPERTY;
+        } else if (ret.is(Type.IDENTITY)) {
+            // isX
+            pName = "is" + ret.getLocalName();
+            pProp = NS.HAS_IDENTITY_PROPERTY;
+        }
+        if (pName != null) {
+            ns.addAxiom(Axiom.ObjectPropertyAssertion(pName));
+            ns.addAxiom(Axiom.ObjectPropertyRange(pName, ret.getLocalName()));
+            ns.addAxiom(Axiom.SubObjectProperty(pProp, pName));
+            ns.addAxiom(Axiom
+                    .AnnotationAssertion(ret.getLocalName(), NS.TRAIT_RESTRICTING_PROPERTY, ns.getName() + ":"
+                            + pName));
+        }
     }
 }

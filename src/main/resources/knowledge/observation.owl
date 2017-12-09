@@ -193,6 +193,30 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasCausant -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasCausant">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasCaused -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasCaused">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasCompresent -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasCompresent">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#hasContext -->
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasContext">
@@ -215,6 +239,14 @@ Main author</dc:contributor>
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasIdentity">
         <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasPurpose -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasPurpose">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
     </owl:ObjectProperty>
     
 

@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.SemanticOperator;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
@@ -376,8 +377,8 @@ public class ObservableBuilder implements Builder {
                 IConcept base = Traits.INSTANCE.getBaseParentTrait(t);
 
                 if (base == null) {
-                    throw new KlabValidationException("trait " + t
-                            + " cannot be understood as coming from a known declaration");
+                    throw new KlabValidationException("base declaration for trait " + t
+                            + " cannot be found");
                 }
 
                 if (!baseTraits.add(base)) {
@@ -421,7 +422,7 @@ public class ObservableBuilder implements Builder {
         uId += cleanInternalId(main.getLocalName());
 
         /*
-        * handle context and inherency
+        * handle context, inherency etc.
         */
         if (inherent != null) {
             IConcept other = Observables.INSTANCE.getInherentType(main);
@@ -451,260 +452,296 @@ public class ObservableBuilder implements Builder {
             uId += "In" + cleanInternalId(context.getLocalName());
         }
 
-        //
+        if (compresent != null) {
+            IConcept other = Observables.INSTANCE.getCompresentType(main);
+            if (other != null && !Observables.INSTANCE.isCompatible(compresent, other)) {
+                throw new KlabValidationException("cannot add compresent "
+                        + Concepts.INSTANCE.getDisplayName(compresent)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible compresent type: "
+                        + Concepts.INSTANCE.getDisplayName(other));
+            }
+            cId += "With" + cleanInternalId(compresent.getLocalName());
+            cDs += "With" + cleanInternalId(compresent.getLocalName());
+            uId += "With" + cleanInternalId(compresent.getLocalName());
+        }
 
-        // String roleDefinition = "";
-        // String roleIds = "";
-        // List<String> rids = new ArrayList<>();
-        // Set<IConcept> acceptedRoles = new HashSet<>();
-        //
-        // if (roles != null && roles.size() > 0) {
-        // for (IConcept role : roles) {
-        // if (Roles.getRoles(main).contains(role)) {
-        // throw new KlabValidationException("concept " + NS.getDisplayName(main)
-        // + " already has role " + NS.getDisplayName(role));
-        // }
-        // roleDefinition += (roleDefinition.isEmpty() ? "" : ",") + role.getDefinition();
-        // rids.add(NS.getDisplayName(role));
-        // acceptedRoles.add(role);
-        // if (role.isAbstract()) {
-        // makeAbstract = true;
-        // }
-        // }
-        // }
-        //
-        // if (rids.size() > 0) {
-        // Collections.sort(rids);
-        // for (String s : rids) {
-        // roleIds += s;
-        // }
-        // }
-        //
-        // /*
-        // * add the main identity to the ID after all traits and before any context
-        // */
-        // if (!roleIds.isEmpty()) {
-        // cId += "As" + roleIds;
-        // // only add role names to user description if roles are not from the
-        // // root of the worldview
-        // if (!rolesAreFundamental(roles)) {
-        // cDs = roleIds + NS.getDisplayName(main);
-        // }
-        // }
-        //
-        // /*
-        // * Add a lowercase prefix to the ID to ensure no conflict can exist with a
-        // * situation like "TraitConcept is Trait Concept". The name without prefix will be
-        // * in the display label annotation.
-        // */
-        // cId = "i" + cId;
-        //
-        // ret = ontology.getConcept(cId);
-        // boolean needUntransformed = byTrait != null || downTo != null;
-        // if (needUntransformed) {
-        // needUntransformed = !uId.equals(cleanInternalId(main.getLocalName()))
-        // && ontology.getConcept("i" + uId) == null;
-        // }
-        //
-        // IConcept uret = null;
-        // String untransformedDefinition = mainDefinition;
-        //
-        // if (ret == null) {
-        //
-        List<IAxiom> axioms = new ArrayList<>();
-        axioms.add(Axiom.ClassAssertion(cId, type));
-        axioms.add(Axiom.AnnotationAssertion(cId, NS.DISPLAY_LABEL_PROPERTY, cDs));
+        if (goal != null) {
+            // TODO transform as necessary
+            IConcept other = Observables.INSTANCE.getGoalType(main);
+            if (other != null && !Observables.INSTANCE.isCompatible(goal, other)) {
+                throw new KlabValidationException("cannot add goal "
+                        + Concepts.INSTANCE.getDisplayName(goal)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible goal type: "
+                        + Concepts.INSTANCE.getDisplayName(other));
+            }
+            cId += "For" + cleanInternalId(goal.getLocalName());
+            cDs += "For" + cleanInternalId(goal.getLocalName());
+            uId += "For" + cleanInternalId(goal.getLocalName());
+        }
+
+        if (caused != null) {
+            IConcept other = Observables.INSTANCE.getCausedType(main);
+            if (other != null && !Observables.INSTANCE.isCompatible(caused, other)) {
+                throw new KlabValidationException("cannot add caused "
+                        + Concepts.INSTANCE.getDisplayName(caused)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible caused type: "
+                        + Concepts.INSTANCE.getDisplayName(other));
+            }
+            cId += "To" + cleanInternalId(caused.getLocalName());
+            cDs += "To" + cleanInternalId(caused.getLocalName());
+            uId += "To" + cleanInternalId(caused.getLocalName());
+        }
+
+        if (causant != null) {
+            IConcept other = Observables.INSTANCE.getCausantType(main);
+            if (other != null && !Observables.INSTANCE.isCompatible(causant, other)) {
+                throw new KlabValidationException("cannot add causant "
+                        + Concepts.INSTANCE.getDisplayName(causant)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible causant type: "
+                        + Concepts.INSTANCE.getDisplayName(other));
+            }
+            cId += "From" + cleanInternalId(causant.getLocalName());
+            cDs += "From" + cleanInternalId(causant.getLocalName());
+            uId += "From" + cleanInternalId(causant.getLocalName());
+        }
+
+        String roleIds = "";
+        List<String> rids = new ArrayList<>();
+        Set<IConcept> acceptedRoles = new HashSet<>();
+
+        if (roles != null && roles.size() > 0) {
+            for (IConcept role : roles) {
+                if (Roles.INSTANCE.getRoles(main).contains(role)) {
+                    throw new KlabValidationException("concept " + Concepts.INSTANCE.getDisplayName(main)
+                            + " already has role " + Concepts.INSTANCE.getDisplayName(role));
+                }
+                rids.add(Concepts.INSTANCE.getDisplayName(role));
+                acceptedRoles.add(role);
+            }
+        }
+
+        if (rids.size() > 0) {
+            Collections.sort(rids);
+            for (String s : rids) {
+                roleIds += s;
+            }
+        }
 
         /*
-         * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
-         */
-        axioms.add(Axiom.AnnotationAssertion(cId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
-
-        //
-        // if (needUntransformed) {
-        // axioms.add(Axiom.ClassAssertion("i" + uId));
-        // }
-        //
-        // /*
-        // * if there is a 'by', this is the child of the class that exposes it, not the
-        // * original concept's.
-        // */
-        // axioms.add(Axiom
-        // .SubClass((byTrait == null ? main.toString() : makeTypeFor(byTrait).toString()), cId));
-        //
-        // if (needUntransformed) {
-        // axioms.add(Axiom.SubClass(main.toString(), uId));
-        // }
-        //
-        if (type.contains(Type.ABSTRACT)) {
-            axioms.add(Axiom.AnnotationAssertion(cId, NS.IS_ABSTRACT, "true"));
+        * add the main identity to the ID after all traits and before any context
+        */
+        if (!roleIds.isEmpty()) {
+            cId += "As" + roleIds;
+            // only add role names to user description if roles are not from the
+            // root of the worldview
+            if (!rolesAreFundamental(roles)) {
+                cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
+            }
         }
-        //
-        // boolean isDerived = false;
-        // if (!traitDefinition.isEmpty()) {
-        // mainDefinition += "+T(" + traitDefinition + ")";
-        // if (needUntransformed) {
-        // untransformedDefinition += "+T(" + untransformedDefinition + ")";
-        // }
-        // isDerived = true;
-        // }
-        // if (!inherentDefinition.isEmpty()) {
-        // mainDefinition += (traitDefinition.isEmpty() ? "+" : ",") + "I(" + inherentDefinition + ")";
-        // if (needUntransformed) {
-        // untransformedDefinition += (traitDefinition.isEmpty() ? "+" : ",") + "I("
-        // + inherentDefinition
-        // + ")";
-        // }
-        // isDerived = true;
-        // }
-        // if (!contextDefinition.isEmpty()) {
-        // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()) ? "+" : ",")
-        // + "C("
-        // + contextDefinition + ")";
-        // if (needUntransformed) {
-        // untransformedDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty())
-        // ? "+" : ",")
-        // + "C(" + contextDefinition + ")";
-        // }
-        // isDerived = true;
-        // }
-        // if (!roleDefinition.isEmpty()) {
-        // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
-        // && contextDefinition.isEmpty()) ? "+" : ",") + "R(" + roleDefinition + ")";
-        // isDerived = true;
-        // }
-        // if (!byDefinition.isEmpty()) {
-        // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
-        // && contextDefinition.isEmpty() && roleDefinition.isEmpty()) ? "+" : ",") + "B("
-        // + byDefinition
-        // + ")";
-        // isDerived = true;
-        // }
-        // if (!downToDefinition.isEmpty()) {
-        // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
-        // && contextDefinition.isEmpty() && roleDefinition.isEmpty() && byDefinition.isEmpty())
-        // ? "+"
-        // : ",")
-        // + "D(" + downToDefinition + ")";
-        // isDerived = true;
-        // }
-        //
 
-        //
-        
-        ontology.define(axioms);
+        /*
+        * Add a lowercase prefix to the ID to ensure no conflict can exist with a
+        * situation like "TraitConcept is Trait Concept". The name without prefix will be
+        * in the display label annotation.
+        */
+        cId = "i" + cId;
         ret = ontology.getConcept(cId);
-        
-        /*
-         * restrictions
-         */
-        
-        // if (identities.size() > 0) {
-        // Traits.restrict(ret, KLAB.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION, identities);
-        // if (needUntransformed) {
-        // Traits.restrict(uret, KLAB
-        // .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION, identities);
-        // }
-        // }
-        // if (realms.size() > 0) {
-        // Traits.restrict(ret, KLAB.p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
-        // if (needUntransformed) {
-        // Traits.restrict(uret, KLAB.p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
-        // }
-        // }
-        // if (attributes.size() > 0) {
-        // Traits.restrict(ret, KLAB
-        // .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
-        // if (needUntransformed) {
-        // Traits.restrict(uret, KLAB
-        // .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
-        // }
-        // }
-        // if (acceptedRoles.size() > 0) {
-        // OWL.restrictSome(ret, KLAB.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.INTERSECTION, acceptedRoles);
-        // }
-        // if (inherent != null) {
-        // OWL.restrictSome(ret, KLAB.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
-        // if (needUntransformed) {
-        // OWL.restrictSome(uret, KLAB.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
-        // }
-        // }
-        // if (context != null) {
-        // OWL.restrictSome(ret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
-        // if (needUntransformed) {
-        // OWL.restrictSome(uret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
-        // }
-        // }
-        // if (byTrait != null) {
-        // OWL.restrictSome(ret, KLAB.p(NS.REPRESENTED_BY_PROPERTY), byTrait);
-        // }
-        // if (downTo != null) {
-        // OWL.restrictSome(ret, KLAB.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail);
-        // }
-        
-        // TODO here - if by/downto are there, add them to axioms now and redefine ret, adding the
-        // untransformed one in the metadata.
-        
-        // String byDefinition = "";
-        // String downToDefinition = "";
-        // Set<IConcept> allowedDetail = new HashSet<>();
-        //
-        // if (byTrait != null) {
-        //
-        // if (!NS.isTrait(byTrait)) {
-        // throw new KlabValidationException("the concept in a 'by' clause must be a base abstract trait");
-        // }
-        //
-        // /*
-        // * TODO trait must be a base trait and abstract.
-        // */
-        // if (!NS.isBaseDeclaration(byTrait) || !byTrait.isAbstract()) {
-        // throw new KlabValidationException("traits used in a 'by' clause must be abstract and declared at
-        // root level");
-        // }
-        // cId += "By" + cleanInternalId(byTrait.getLocalName());
-        // cDs += "By" + cleanInternalId(byTrait.getLocalName());
-        // byDefinition = byTrait.getDefinition();
-        // makeAbstract = true;
-        // }
-        //
-        // if (downTo != null) {
-        // IConcept trait = byTrait == null ? main : byTrait;
-        // if (!NS.isTrait(trait)) {
-        // throw new KlabValidationException("cannot use 'down to' on non-trait observables");
-        // }
-        // allowedDetail.addAll(Types.getChildrenAtLevel(trait, Types.getDetailLevel(trait, downTo)));
-        // cId += "DownTo" + cleanInternalId(downTo.getLocalName());
-        // // display label stays the same
-        // downToDefinition = downTo.getDefinition();
-        // }
-        //
-        // if (needUntransformed) {
-        // axioms.add(Axiom.AnnotationAssertion("i"
-        // + uId, NS.CONCEPT_DEFINITION_PROPERTY, untransformedDefinition));
-        // axioms.add(Axiom
-        // .AnnotationAssertion("i" + cId, NS.UNTRANSFORMED_CONCEPT_PROPERTY, "i" + uId));
-        // } else if (byTrait != null || downTo != null) {
-        // // untransformed is the main concept
-        // axioms.add(Axiom
-        // .AnnotationAssertion(cId, NS.UNTRANSFORMED_CONCEPT_PROPERTY, main.toString()));
-        // }
-        
-        // if (needUntransformed) {
-        // uret = ontology.getConcept("i" + uId);
-        // }
-        // }
-        //
-        
-        
 
-        //
+        if (ret == null) {
 
+            List<IAxiom> axioms = new ArrayList<>();
+            axioms.add(Axiom.ClassAssertion(cId, type));
+            axioms.add(Axiom.AnnotationAssertion(cId, NS.DISPLAY_LABEL_PROPERTY, cDs));
+
+            /*
+             * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
+             */
+            axioms.add(Axiom.AnnotationAssertion(cId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
+
+            // /*
+            // * if there is a 'by', this is the child of the class that exposes it, not the
+            // * original concept's.
+            // */
+            // axioms.add(Axiom
+            // .SubClass((byTrait == null ? main.toString() : makeTypeFor(byTrait).toString()), cId));
+            //
+            // if (needUntransformed) {
+            // axioms.add(Axiom.SubClass(main.toString(), uId));
+            // }
+            //
+            if (type.contains(Type.ABSTRACT)) {
+                axioms.add(Axiom.AnnotationAssertion(cId, NS.IS_ABSTRACT, "true"));
+            }
+            //
+            // boolean isDerived = false;
+            // if (!traitDefinition.isEmpty()) {
+            // mainDefinition += "+T(" + traitDefinition + ")";
+            // if (needUntransformed) {
+            // untransformedDefinition += "+T(" + untransformedDefinition + ")";
+            // }
+            // isDerived = true;
+            // }
+            // if (!inherentDefinition.isEmpty()) {
+            // mainDefinition += (traitDefinition.isEmpty() ? "+" : ",") + "I(" + inherentDefinition + ")";
+            // if (needUntransformed) {
+            // untransformedDefinition += (traitDefinition.isEmpty() ? "+" : ",") + "I("
+            // + inherentDefinition
+            // + ")";
+            // }
+            // isDerived = true;
+            // }
+            // if (!contextDefinition.isEmpty()) {
+            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()) ? "+" : ",")
+            // + "C("
+            // + contextDefinition + ")";
+            // if (needUntransformed) {
+            // untransformedDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty())
+            // ? "+" : ",")
+            // + "C(" + contextDefinition + ")";
+            // }
+            // isDerived = true;
+            // }
+            // if (!roleDefinition.isEmpty()) {
+            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
+            // && contextDefinition.isEmpty()) ? "+" : ",") + "R(" + roleDefinition + ")";
+            // isDerived = true;
+            // }
+            // if (!byDefinition.isEmpty()) {
+            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
+            // && contextDefinition.isEmpty() && roleDefinition.isEmpty()) ? "+" : ",") + "B("
+            // + byDefinition
+            // + ")";
+            // isDerived = true;
+            // }
+
+            // if (!downToDefinition.isEmpty()) {
+            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
+            // && contextDefinition.isEmpty() && roleDefinition.isEmpty() && byDefinition.isEmpty())
+            // ? "+"
+            // : ",")
+            // + "D(" + downToDefinition + ")";
+            // isDerived = true;
+            // }
+            //
+
+            // Set<IConcept> allowedDetail = new HashSet<>();
+            //
+            // if (byTrait != null) {
+            //
+            // if (!NS.isTrait(byTrait)) {
+            // throw new KlabValidationException("the concept in a 'by' clause must be a base abstract
+            // trait");
+            // }
+            //
+            // /*
+            // * TODO trait must be a base trait and abstract.
+            // */
+            // if (!NS.isBaseDeclaration(byTrait) || !byTrait.isAbstract()) {
+            // throw new KlabValidationException("traits used in a 'by' clause must be abstract and declared
+            // at
+            // root level"); 
+            // }
+            // cId += "By" + cleanInternalId(byTrait.getLocalName());
+            // cDs += "By" + cleanInternalId(byTrait.getLocalName());
+            // byDefinition = byTrait.getDefinition();
+            // makeAbstract = true;
+            // }
+            //
+            // if (downTo != null) {
+            // IConcept trait = byTrait == null ? main : byTrait;
+            // if (!NS.isTrait(trait)) {
+            // throw new KlabValidationException("cannot use 'down to' on non-trait observables");
+            // }
+            // allowedDetail.addAll(Types.getChildrenAtLevel(trait, Types.getDetailLevel(trait, downTo)));
+            // cId += "DownTo" + cleanInternalId(downTo.getLocalName());
+            // // display label stays the same
+            // downToDefinition = downTo.getDefinition();
+            // }
+            //
+            // if (needUntransformed) {
+            // axioms.add(Axiom.AnnotationAssertion("i"
+            // + uId, NS.CONCEPT_DEFINITION_PROPERTY, untransformedDefinition));
+            // axioms.add(Axiom
+            // .AnnotationAssertion("i" + cId, NS.UNTRANSFORMED_CONCEPT_PROPERTY, "i" + uId));
+            // } else if (byTrait != null || downTo != null) {
+            // // untransformed is the main concept
+            // axioms.add(Axiom
+            // .AnnotationAssertion(cId, NS.UNTRANSFORMED_CONCEPT_PROPERTY, main.toString()));
+            // }
+
+            ontology.define(axioms);
+            ret = ontology.getConcept(cId);
+
+            /*
+             * restrictions
+             */
+
+            // if (identities.size() > 0) {
+            // Traits.restrict(ret, KLAB.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION,
+            // identities);
+            // if (needUntransformed) {
+            // Traits.restrict(uret, KLAB
+            // .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION, identities);
+            // }
+            // }
+            // if (realms.size() > 0) {
+            // Traits.restrict(ret, KLAB.p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
+            // if (needUntransformed) {
+            // Traits.restrict(uret, KLAB.p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
+            // }
+            // }
+            // if (attributes.size() > 0) {
+            // Traits.restrict(ret, KLAB
+            // .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
+            // if (needUntransformed) {
+            // Traits.restrict(uret, KLAB
+            // .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
+            // }
+            // }
+            // if (acceptedRoles.size() > 0) {
+            // OWL.restrictSome(ret, KLAB.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.INTERSECTION,
+            // acceptedRoles);
+            // }
+            // if (inherent != null) {
+            // OWL.restrictSome(ret, KLAB.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+            // if (needUntransformed) {
+            // OWL.restrictSome(uret, KLAB.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+            // }
+            // }
+            // if (context != null) {
+            // OWL.restrictSome(ret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
+            // if (needUntransformed) {
+            // OWL.restrictSome(uret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
+            // }
+            // }
+            // if (byTrait != null) {
+            // OWL.restrictSome(ret, KLAB.p(NS.REPRESENTED_BY_PROPERTY), byTrait);
+            // }
+            // if (downTo != null) {
+            // OWL.restrictSome(ret, KLAB.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail);
+            // }
+        }
+        
         if (negated) {
-            // TODO
+            // TODO - add Not to the ids
         }
 
+        
         return ret;
+    }
+
+    private static boolean rolesAreFundamental(Collection<IConcept> roles) {
+        for (IConcept c : roles) {
+            if (Workspaces.INSTANCE.getWorldview() != null
+                    && !c.getConceptSpace().equals(Workspaces.INSTANCE.getWorldview().getName())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isTrivial() {

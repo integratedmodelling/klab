@@ -591,6 +591,10 @@ public class Concept extends Knowledge implements IConcept {
     public IConcept getType() {
         return this;
     }
+    
+    public Set<Type> getTypeSet() {
+        return type;
+    }
 
     public OWLClassExpression getOWLClass() {
         return _owl;
