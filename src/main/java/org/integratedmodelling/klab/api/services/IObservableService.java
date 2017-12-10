@@ -3,12 +3,15 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.SemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public interface IObservableService {
@@ -69,7 +72,7 @@ public interface IObservableService {
      * @return
      */
     IConcept getCoreObservable(IConcept c);
-    
+
     /**
      * The observable builder provides a uniform interface to create and declare concepts that incarnate all
      * the possible features for an observable. Get a builder from either
@@ -248,7 +251,17 @@ public interface IObservableService {
          * @return the same builder this was called on, for chaining calls
          */
         Builder negated();
-        
+
+        /**
+         * Use this to pass a declaration being parsed and set up a monitor so that logically inconsistent declarations can
+         * be reported.
+         * 
+         * @param declaration (may be null)
+         * @param monitor
+         * @return the same builder this was called on, for chaining calls
+         */
+        Builder withDeclaration(@Nullable IKimConcept declaration, IMonitor monitor);
+
     }
 
     /**
@@ -328,6 +341,5 @@ public interface IObservableService {
      * @return a builder for the main concept
      */
     Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
-
 
 }

@@ -15,7 +15,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Option(name = "-dataDir", usage = "data directory (default: ~/.klab)", metaVar = "<DIRECTORY_PATH>")
     File   dataDir           = null;
 
-    @Option(name = "-cert", usage = "certificate file (default: ~/.klab/im.cert)", metaVar = "<FILE_PATH>")
+    @Option(name = "-cert", usage = "certificate file (default: <dataDir>/im.cert)", metaVar = "<FILE_PATH>")
     File   certificateFile   = null;
 
     @Option(

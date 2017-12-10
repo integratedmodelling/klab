@@ -21,12 +21,13 @@ import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.kim.KimValidator;
+import org.integratedmodelling.klab.utils.NotificationUtils;
 
 public class Engine extends Server implements IEngine {
 
@@ -38,28 +39,29 @@ public class Engine extends Server implements IEngine {
 
     class Monitor implements IMonitor {
 
+        
         @Override
         public void info(Object... info) {
             // TODO Auto-generated method stub
-        	System.out.println(info[0].toString());
+        	System.out.println(NotificationUtils.getMessage(info));
         }
 
         @Override
         public void warn(Object... o) {
             // TODO Auto-generated method stub
-        	System.err.println(o[0].toString());
+        	System.err.println(NotificationUtils.getMessage(o));
         }
 
         @Override
         public void error(Object... o) {
             // TODO Auto-generated method stub
-        	System.err.println(o[0].toString());
+        	System.err.println(NotificationUtils.getMessage(o));
         }
 
         @Override
         public void debug(Object... o) {
             // TODO Auto-generated method stub
-        	System.err.println(o[0].toString());
+        	System.err.println(NotificationUtils.getMessage(o));
         }
 
         @Override

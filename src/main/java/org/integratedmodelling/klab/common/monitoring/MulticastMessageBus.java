@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.api.runtime.monitoring;
+package org.integratedmodelling.klab.common.monitoring;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

@@ -58,10 +58,12 @@ public enum ConceptBuilder {
                 }
             }
 
-            ns.addAxiom(Axiom.AnnotationAssertion(ret.getLocalName(), NS.BASE_DECLARATION, "true"));
-            createProperties(ret, ns);
-            ns.define();
-
+            if (ret != null) {
+                ns.addAxiom(Axiom.AnnotationAssertion(ret.getLocalName(), NS.BASE_DECLARATION, "true"));
+                createProperties(ret, ns);
+                ns.define();
+            }
+            
             return ret;
 
         } catch (Throwable e) {
@@ -153,7 +155,7 @@ public enum ConceptBuilder {
             return null;
         }
 
-        Builder builder = Observables.INSTANCE.declare(main);
+        Builder builder = Observables.INSTANCE.declare(main).withDeclaration(concept, monitor);
 
         /*
          * transformations first
@@ -248,7 +250,7 @@ public enum ConceptBuilder {
 
             // consistency check
             if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
-                ((Concept)ret).getTypeSet().add(Type.NOTHING);
+                ((Concept) ret).getTypeSet().add(Type.NOTHING);
                 monitor.error("the definition of this concept has logical errors and is inconsistent", concept);
             }
 

@@ -10,11 +10,13 @@ public enum ObservationBuilder {
     INSTANCE;
     
     /**
-     * Build a model from its parsed, syntax-error-free representation coming
-     * from the Kim validator. May add logical errors, which are reported back when this
+     * Build an observer from its parsed, syntax-error-free representation coming
+     * from the k.IM validator. May add logical errors, which are reported back when this
      * is called from an intelligent editor.
      * 
      * @param model
+     * @param namespace 
+     * @param monitor 
      * @return
      */
     public IObserver build(IKimObserver model, INamespace namespace, IMonitor monitor) {

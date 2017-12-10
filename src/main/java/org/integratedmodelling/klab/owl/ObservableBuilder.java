@@ -8,23 +8,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.SemanticOperator;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class ObservableBuilder implements Builder {
+
+    private IMonitor                      monitor;
 
     private IOntology                     ontology;
 
@@ -48,6 +54,9 @@ public class ObservableBuilder implements Builder {
 
     private boolean                       isTrivial = true;
 
+    // This is only for reporting
+    private IKimConcept                   declaration;
+
     public ObservableBuilder(IConcept main, IOntology ontology) {
         this.main = main;
         this.ontology = ontology;
@@ -66,6 +75,12 @@ public class ObservableBuilder implements Builder {
         this.ontology = ontology;
         this.parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(parent);
         this.type = parent;
+    }
+
+    @Override
+    public Builder withDeclaration(IKimConcept declaration, IMonitor monitor) {
+        this.monitor = monitor;
+        return this;
     }
 
     @Override
@@ -573,60 +588,10 @@ public class ObservableBuilder implements Builder {
             // axioms.add(Axiom.SubClass(main.toString(), uId));
             // }
             //
+
             if (type.contains(Type.ABSTRACT)) {
                 axioms.add(Axiom.AnnotationAssertion(cId, NS.IS_ABSTRACT, "true"));
             }
-            //
-            // boolean isDerived = false;
-            // if (!traitDefinition.isEmpty()) {
-            // mainDefinition += "+T(" + traitDefinition + ")";
-            // if (needUntransformed) {
-            // untransformedDefinition += "+T(" + untransformedDefinition + ")";
-            // }
-            // isDerived = true;
-            // }
-            // if (!inherentDefinition.isEmpty()) {
-            // mainDefinition += (traitDefinition.isEmpty() ? "+" : ",") + "I(" + inherentDefinition + ")";
-            // if (needUntransformed) {
-            // untransformedDefinition += (traitDefinition.isEmpty() ? "+" : ",") + "I("
-            // + inherentDefinition
-            // + ")";
-            // }
-            // isDerived = true;
-            // }
-            // if (!contextDefinition.isEmpty()) {
-            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()) ? "+" : ",")
-            // + "C("
-            // + contextDefinition + ")";
-            // if (needUntransformed) {
-            // untransformedDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty())
-            // ? "+" : ",")
-            // + "C(" + contextDefinition + ")";
-            // }
-            // isDerived = true;
-            // }
-            // if (!roleDefinition.isEmpty()) {
-            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
-            // && contextDefinition.isEmpty()) ? "+" : ",") + "R(" + roleDefinition + ")";
-            // isDerived = true;
-            // }
-            // if (!byDefinition.isEmpty()) {
-            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
-            // && contextDefinition.isEmpty() && roleDefinition.isEmpty()) ? "+" : ",") + "B("
-            // + byDefinition
-            // + ")";
-            // isDerived = true;
-            // }
-
-            // if (!downToDefinition.isEmpty()) {
-            // mainDefinition += ((traitDefinition.isEmpty() && inherentDefinition.isEmpty()
-            // && contextDefinition.isEmpty() && roleDefinition.isEmpty() && byDefinition.isEmpty())
-            // ? "+"
-            // : ",")
-            // + "D(" + downToDefinition + ")";
-            // isDerived = true;
-            // }
-            //
 
             // Set<IConcept> allowedDetail = new HashSet<>();
             //
@@ -643,7 +608,7 @@ public class ObservableBuilder implements Builder {
             // if (!NS.isBaseDeclaration(byTrait) || !byTrait.isAbstract()) {
             // throw new KlabValidationException("traits used in a 'by' clause must be abstract and declared
             // at
-            // root level"); 
+            // root level");
             // }
             // cId += "By" + cleanInternalId(byTrait.getLocalName());
             // cDs += "By" + cleanInternalId(byTrait.getLocalName());
@@ -661,17 +626,6 @@ public class ObservableBuilder implements Builder {
             // // display label stays the same
             // downToDefinition = downTo.getDefinition();
             // }
-            //
-            // if (needUntransformed) {
-            // axioms.add(Axiom.AnnotationAssertion("i"
-            // + uId, NS.CONCEPT_DEFINITION_PROPERTY, untransformedDefinition));
-            // axioms.add(Axiom
-            // .AnnotationAssertion("i" + cId, NS.UNTRANSFORMED_CONCEPT_PROPERTY, "i" + uId));
-            // } else if (byTrait != null || downTo != null) {
-            // // untransformed is the main concept
-            // axioms.add(Axiom
-            // .AnnotationAssertion(cId, NS.UNTRANSFORMED_CONCEPT_PROPERTY, main.toString()));
-            // }
 
             ontology.define(axioms);
             ret = ontology.getConcept(cId);
@@ -680,57 +634,46 @@ public class ObservableBuilder implements Builder {
              * restrictions
              */
 
-            // if (identities.size() > 0) {
-            // Traits.restrict(ret, KLAB.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION,
-            // identities);
-            // if (needUntransformed) {
-            // Traits.restrict(uret, KLAB
-            // .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION, identities);
-            // }
-            // }
-            // if (realms.size() > 0) {
-            // Traits.restrict(ret, KLAB.p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
-            // if (needUntransformed) {
-            // Traits.restrict(uret, KLAB.p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
-            // }
-            // }
-            // if (attributes.size() > 0) {
-            // Traits.restrict(ret, KLAB
-            // .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
-            // if (needUntransformed) {
-            // Traits.restrict(uret, KLAB
-            // .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
-            // }
-            // }
-            // if (acceptedRoles.size() > 0) {
-            // OWL.restrictSome(ret, KLAB.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.INTERSECTION,
-            // acceptedRoles);
-            // }
-            // if (inherent != null) {
-            // OWL.restrictSome(ret, KLAB.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
-            // if (needUntransformed) {
-            // OWL.restrictSome(uret, KLAB.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
-            // }
-            // }
-            // if (context != null) {
-            // OWL.restrictSome(ret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
-            // if (needUntransformed) {
-            // OWL.restrictSome(uret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
-            // }
-            // }
+            if (identities.size() > 0) {
+                Traits.INSTANCE.restrict(ret, Concepts
+                        .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.INTERSECTION, identities);
+            }
+            if (realms.size() > 0) {
+                Traits.INSTANCE.restrict(ret, Concepts
+                        .p(NS.HAS_REALM_PROPERTY), LogicalConnector.INTERSECTION, realms);
+            }
+            if (attributes.size() > 0) {
+                Traits.INSTANCE.restrict(ret, Concepts
+                        .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.INTERSECTION, attributes);
+            }
+            if (acceptedRoles.size() > 0) {
+                OWL.INSTANCE.restrictSome(ret, Concepts
+                        .p(NS.HAS_ROLE_PROPERTY), LogicalConnector.INTERSECTION, acceptedRoles);
+            }
+            if (inherent != null) {
+                OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+            }
+            if (context != null) {
+                OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+            }
+
             // if (byTrait != null) {
             // OWL.restrictSome(ret, KLAB.p(NS.REPRESENTED_BY_PROPERTY), byTrait);
             // }
             // if (downTo != null) {
             // OWL.restrictSome(ret, KLAB.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail);
             // }
+
+            if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {
+                monitor.error("this declaration has logical errors and is inconsistent", declaration);
+            }
+
         }
-        
+
         if (negated) {
             // TODO - add Not to the ids
         }
 
-        
         return ret;
     }
 
