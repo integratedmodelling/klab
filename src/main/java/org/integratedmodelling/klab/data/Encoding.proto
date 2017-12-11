@@ -27,7 +27,7 @@ message KlabData {
 	}
 	
 	message LookupTable {
-		map<sint32, string> table = 1;
+		map<uint32, string> table = 1;
 	} 
 	
 	// check the externalDatasourceUrl for data too large to fit in the response.	
@@ -36,7 +36,7 @@ message KlabData {
 		string semantics = 2;
 		repeated double doubledata = 3;
 		// if this is set, it comes with a LookupTable
-		repeated sint32 tabledata = 4;
+		repeated uint32 tabledata = 4;
 		repeated sint64 intdata = 5;
 		repeated bool booleandata = 6;
 		LookupTable table = 7;

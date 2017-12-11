@@ -1,3 +1,0 @@
-Units of measurement syntax
-===========================
-

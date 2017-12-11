@@ -11,9 +11,3 @@ Welcome to k.LAB's documentation
 	Introduction <introduction>
 	A primer on semantic modeling and k.LAB <primer>
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

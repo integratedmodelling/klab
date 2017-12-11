@@ -1,19 +1,14 @@
 .. klab documentation master file, created by
    sphinx-quickstart on Sun Nov 12 13:45:34 2017.
    
-Welcome to k.LAB's documentation
-================================
+Semantic modeling in the k.IM language
+======================================
 
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
 
-	Introduction <introduction>
-	A primer on semantic modeling and k.LAB <primer>
+	Namespaces and project structure <namespaces>
+	Modeling knowledge: concepts <concepts/index>
+	Making observations: models <models/index>
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

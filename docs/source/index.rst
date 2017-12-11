@@ -1,15 +1,26 @@
-.. klab documentation master file, created by
-   sphinx-quickstart on Sun Nov 12 13:45:34 2017.
-   
-Welcome to k.LAB's documentation
-================================
+.. klab documentation master file
+
+k.LAB documentation
+===================
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Contents:
+	:numbered:
+	:maxdepth: 3
+	:caption: Contents:
 
 	Introduction <introduction>
-	A primer on semantic modeling and k.LAB <primer>
+	A primer on semantic modeling, k.IM and k.LAB <primer>
+	The k.IM language <kim/index>
+	Modeling in k.LAB <engine/index>
+	Installing and administering a k.LAB node <server/index>
+	Developer documentation <developers/index>
+
+Quick reference
+================
+
+*	:doc:`cheatsheet`
+*	:doc:`units`
+*	:doc:`faq`
 
 Indices and tables
 ==================

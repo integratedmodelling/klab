@@ -1,16 +1,10 @@
-Welcome to k.LAB's documentation
-================================
+Semantic modeling in k.IM
+=========================
 
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
 
 	Introduction <introduction>
-	A primer on semantic modeling and k.LAB <primer>
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+	Defining concepts <definitions/index>
+	Using concepts <declarations/index>
