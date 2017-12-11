@@ -10,4 +10,6 @@ Making observations: models
 
 	Introduction <introduction>
 	What's in a URN? <urns>
+	Using the k.LAB IDE <ide>
+	Using the k.LAB Web Explorer <explorer>
 

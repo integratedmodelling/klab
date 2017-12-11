@@ -11,3 +11,4 @@ Developing with k.LAB
 	Introduction <introduction>
 	Embedding a modeling engine <embedded>
 	Developing extensions <extensions>
+	Setting up a development environment <setup>

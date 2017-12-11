@@ -1,7 +1,7 @@
 .. klab documentation master file
 
-k.LAB documentation
-===================
+k.LAB documentation (version |version|)
+=======================================
 
 .. toctree::
 	:numbered:
@@ -26,5 +26,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
