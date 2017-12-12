@@ -9,4 +9,7 @@ Installing and managing a k.LAB node
    :caption: Contents:
 
 	Introduction <introduction>
+	Publishing resources and computations <publishing>
+	Supporting new data types and platforms <extension>
+	Installation, configuration and administration <administration> 
 

@@ -10,6 +10,7 @@ Making observations: models
 
 	Introduction <introduction>
 	What's in a URN? <urns>
-	Using the k.LAB IDE <ide>
-	Using the k.LAB Web Explorer <explorer>
+	Contextualizers: bridging to computations <contextualizers>
+	For modelers: using the k.LAB IDE <ide>
+	For end users: the k.LAB Web Explorer <explorer>
 
