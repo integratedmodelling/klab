@@ -47,13 +47,9 @@
 			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
 
-		<!-- boilerplate be damned; see if this is 100% painless to use in Eclipse. Lombok isn't.
-		<dependency>
-			<groupId>com.google.auto.value</groupId>
-			<artifactId>auto-value</artifactId>
-			<version>1.5</version>
-			<scope>provided</scope>
-		</dependency>  -->
+		<!-- boilerplate be damned; see if this is 100% painless to use in Eclipse. 
+			Lombok isn't. <dependency> <groupId>com.google.auto.value</groupId> <artifactId>auto-value</artifactId> 
+			<version>1.5</version> <scope>provided</scope> </dependency> -->
 
 		<dependency>
 			<groupId>com.verhas</groupId>
@@ -175,6 +171,13 @@
 			<groupId>com.hermit-reasoner</groupId>
 			<artifactId>org.semanticweb.hermit</artifactId>
 			<version>1.3.8.4</version>
+		</dependency>
+
+		<!-- spatial H2 database -->
+		<dependency>
+			<groupId>org.orbisgis</groupId>
+			<artifactId>h2spatial</artifactId>
+			<version>1.2.4</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
