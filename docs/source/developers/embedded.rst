@@ -5,14 +5,14 @@ A programmer can use the engine API to embed observation functionalities in Java
 
 .. code-block:: java
 
-    IModelingEngine engine = new ModelingEngine(new KlabCertificate()).start();
+    IModelingEngine engine = new ModelingEngine().start();
     
     try (ISession session = engine.createSession()) {
        IContext context = 
-	    session
-		   .observe("im:ariesteam:example.locations:tanzania-grr").finish()
-		   .observe("geography:Elevation").finish();
-		// visualize in k.Explorer (opens a browser window)
+          session
+             .observe("im:ariesteam:example.locations:tanzania-grr").finish()
+             .observe("geography:Elevation").finish();
+        // visualize in k.Explorer (opens a browser window)
         context.explore();
      } finally {
          engine.stop();

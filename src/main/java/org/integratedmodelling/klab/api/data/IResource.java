@@ -42,21 +42,21 @@ public interface IResource extends Serializable {
     /**
      * The URN that identifies this resource.
      * 
-     * @return
+     * @return the resource's URN.
      */
     String getUrn();
 
     /**
      * Get the geometry associated with the resource, without fetching the entire data content.
      * 
-     * @return
+     * @return the resource's geometry
      */
     IGeometry getGeometry();
 
     /**
      * Get the version associated with the resource.
      * 
-     * @return
+     * @return the resource's version.
      */
     Version getVersion();
     
@@ -64,7 +64,7 @@ public interface IResource extends Serializable {
      * The data adapter type that published this resource and will be used to
      * encode it.
      * 
-     * @return
+     * @return the ID specifying which adapter should be used to encode/decode the resource's contents.
      */
     String getAdapterType();
 
@@ -74,7 +74,7 @@ public interface IResource extends Serializable {
      * 
      * @param scale
      * @param monitor
-     * @return
+     * @return the result of decoding the resource.
      */
     IRawObject get(IScale scale, IMonitor monitor);
     
@@ -82,14 +82,14 @@ public interface IResource extends Serializable {
      * Resources come with both system-defined and user-defined metadata. User metadata will be
      * indexed by Dublin Core properties.
      * 
-     * @return
+     * @return any metadata associated with the resource. Never null.
      */
     IMetadata getMetadata();
     
     /**
      * Get the history of changes affecting this resources.
      * 
-     * @return
+     * @return the list of changes in order of time (oldest first).
      */
     List<INotification> history();
 }
