@@ -22,6 +22,9 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 # import cloud_sptheme as csp
+import sphinx_rtd_theme
+import sys
+import os
 
 # -- General configuration ------------------------------------------------
 
@@ -89,7 +92,9 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'bizstyle'
+html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 # html_theme_path = [csp.get_theme_dir()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -198,3 +203,8 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
+
+def setup(sphinx):
+        sys.path.insert(0, os.path.abspath('./etc'))
+        from KimLexer import KimLexer
+        sphinx.add_lexer('kim', KimLexer())
