@@ -9,5 +9,5 @@ Defining ontologies in k.IM
    :caption: Contents:
 
 	Introduction <introduction>
-	A primer on semantic modeling and k.LAB <primer>
+	In detail: defining concepts <concepts>
 
