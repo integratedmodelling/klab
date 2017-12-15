@@ -113,12 +113,42 @@ Trait and role inheritance
 
 	The simplest and least descriptive link between a quality or attribute and a quality. 
 
-	Applies to:
-		xxsss
+	:Applies to:
+		any observable.
 
-	Targets:
-		xxxccc
+	:Targets:
+		any base trait.
 
+In the example below, the generic religious building is required to adopt an identity
+specifying the faith of reference. Its child classes comply to the requirement by using
+the :keyword:`inherits` keyword:
+
+.. code-block:: kim
+   :emphasize-lines: 5,7-9
+
+   abstract thing WorshipBuilding
+    "Any building used for worship. Places of worship other than buildings
+     should use appropriate traits on regions or other features."
+   is infrastructure:Building for behavior:Religious behavior:Activity
+     requires identity behavior:Faith
+     has children
+        (Church inherits behavior:Christian),
+        (Synagogue inherits behavior:Jewish),
+        (Mosque inherits behavior:Muslim)
+        // etc.
+   ;
+The same forms can be used without any requirement, as long as there are no
+incompatible inheritances (for example, when a superclass of the class inheriting a concrete 
+trait already inherits a different concrete trait that descends from the same base trait).
+The same result could have been obtained in separate statements using simple 
+concept declarations instead of :keyword:`inherits`:
+
+.. code-block:: kim
+   :emphasize-lines: 2
+
+   thing Church
+     is behavior:Christian WorshipBuilding
+   ;
 :has role: 
 
 	The simplest and least descriptive link between a quality or attribute and a quality. 
