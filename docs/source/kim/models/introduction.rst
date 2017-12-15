@@ -6,7 +6,7 @@ Simply put, models define observations by linking informational artifacts to sem
 .. code-block:: kim
 	
 	// locally available resource
-	model cad as geography:Elevation;
+	model pongo:mallozzo:vacabue:spermaccione as geography:Elevation;
 
 .. literalinclude:: snippets/im.kim
 	:language: kim

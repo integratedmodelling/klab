@@ -12,3 +12,6 @@ Modeling in k.LAB: making observations
 	Setting the context <context>
 	Making observations <observing>
 	Exporting and publishing <exporting>
+	In detail: resolution and computation <resolution>
+	In detail: provenance <provenance>
+	

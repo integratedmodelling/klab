@@ -9,5 +9,7 @@ Using concepts: declarations and authorities
    :caption: Contents:
 
 	Introduction <introduction>
-	Authorities <authorities>
-	Rules of thumb and pitfalls <rules>
+	Declaring concepts <declarations>
+	Observables <observables>
+	Authorities: bridging to vocabularies <authorities>
+	Recipes <rules>

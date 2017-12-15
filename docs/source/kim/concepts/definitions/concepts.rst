@@ -245,7 +245,8 @@ For relationships
 Restrictions
 ------------
 
-
+.. literalinclude:: snippets/ses.kim
+	:language: kim
 
 Annotations recognized in concept definitions
 ---------------------------------------------

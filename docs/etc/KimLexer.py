@@ -12,7 +12,6 @@ class KimLexer(RegexLexer):
     tokens = {
         'root': [
             ('"', String, 'string'),
-            (r'[a-z]+:([A-z]|-|_)+', Name.Class),
             (r'/\*', Comment.Multiline, 'comment'),
             (r'//.*?$', Comment.Singleline),
             (words(('abstract', 'acceleration', 'according', 'affects', 'agent', 'aggregated', 'and', 'angle', 'annotation', 
@@ -32,10 +31,12 @@ class KimLexer(RegexLexer):
                 'table', 'target', 'temperature', 'text', 'thing', 'to', 'train', 'true', 'type', 'uncertainty', 'unidirectional', 
                 'unknown', 'unless', 'uses', 'using', 'value', 'velocity', 'version', 'viscosity', 'void', 'volume', 'weight', 
                 'where', 'with'), suffix=r'\b'), Keyword),
+            (r'[a-z]+:([A-z]|-|_)+', Name.Class),
             (r'[a-z]+', Name.Variable),
             (r'[A-z]+', Name.Class),
             (r'(\{|\}|\(|\)|\;|\,)', Punctuation),
             (r'[0-9]([0-9]|\.)*', Number),
+#            (r'\b[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-\.:=@;$_!*\'%/?#]*[a-z0-9+=@$/]', Literal),
             (r'\s+', Text)
         ],
         'string': [

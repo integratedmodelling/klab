@@ -26,6 +26,8 @@ import sphinx_rtd_theme
 import sys
 import os
 
+from pygments.styles import get_style_by_name
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
