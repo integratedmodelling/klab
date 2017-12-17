@@ -6,5 +6,6 @@ Semantic modeling in k.IM
    :caption: Contents:
 
 	Introduction <introduction>
+	The worldview <worldview>
 	Defining concepts <definitions/index>
 	Using concepts <declarations/index>

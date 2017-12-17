@@ -450,24 +450,24 @@ public class H2Database {
             return;
         }
 
-        storeTraits(observable.getType());
+//        storeTraits(observable.getType());
     }
 
-    private void storeTraits(IConcept c) {
-
-        if (c == null) {
-            return;
-        }
-
-        String k = c.toString();
-        String s = c.getDefinition();
-
-        if (!k.equals(s)) {
-            /*
-             * search for k; if not there, insert k,s into knowledge_structure.
-             */
-        }
-    }
+//    private void storeTraits(IConcept c) {
+//
+//        if (c == null) {
+//            return;
+//        }
+//
+//        String k = c.toString();
+//        String s = c.getDefinition();
+//
+//        if (!k.equals(s)) {
+//            /*
+//             * search for k; if not there, insert k,s into knowledge_structure.
+//             */
+//        }
+//    }
 
     /**
      * Call after component initialization and each project loading: assembles any concept

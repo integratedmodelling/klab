@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -20,6 +21,12 @@ public enum Observables implements IObservableService {
 
     INSTANCE;
 
+    @Override
+    public IObservable declare(String declaration) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     @Override
     public @Nullable IConcept getInherentType(IConcept concept) {
         Collection<IConcept> cls = OWL.INSTANCE

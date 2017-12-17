@@ -236,5 +236,13 @@ public interface INamespace extends IKimObject {
     IDocumentation getDocumentation();
 
     boolean isInternal();
+    
+    /**
+     * Metadata can be associated to models in k.IM.
+     * 
+     * @return metadata (never null).
+     */
+    IMetadata getMetadata();
+
 
 }

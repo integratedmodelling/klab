@@ -58,7 +58,7 @@ public interface IConcept extends IKnowledge {
     /**
      * Return a collection of all direct and indirect parent classes. Should use a
      * reasoner if installed, and only follow transitive superclass relationships if not.
-     * @return a collection of all the parent concepts recursively.
+     * @return a collection of all the parent concepts.
      */
     Collection<IConcept> getAllParents();
 
@@ -161,7 +161,7 @@ public interface IConcept extends IKnowledge {
     Collection<IProperty> findRestrictingProperty(IConcept target);
 
     /**
-     * Return the concept's definition in terms of worldview concepts. This will
+     * Return the concept's canonical definition in terms of worldview concepts. This will
      * correspond to the fully qualified concept name for concepts that have been declared
      * directly in the worldview, or to their normalized k.IM declaration when the concept 
      * has been created by composing other concepts. Concepts that are not

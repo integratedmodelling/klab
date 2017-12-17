@@ -79,7 +79,6 @@ public abstract class ObservableKbox extends H2Kbox {
 
     private Map<String, Long>  conceptHash      = new HashMap<>();
     private Map<Long, String>  typeHash         = new HashMap<>();
-    private Set<String>        obsoleteConcepts = new HashSet<>();
 
     /**
      * The kbox version, which is used to create the filesystem storage. Change this when
@@ -115,10 +114,6 @@ public abstract class ObservableKbox extends H2Kbox {
 
         return ret;
     }
-
-//    public String getUrnForStoredObservation(long id, IUser user) {
-//        return KLAB.ENGINE.getName() + ":" + user.getUsername() + ":" + getMainTableId() + ":" + id;
-//    }
 
     /**
      * Get the ID of the table that contains the "primary" object we provide. Used to

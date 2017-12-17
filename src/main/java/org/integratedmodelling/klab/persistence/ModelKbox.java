@@ -8,32 +8,19 @@
 //import java.util.Set;
 //
 //import org.h2gis.utilities.SpatialResultSet;
-//import org.integratedmodelling.api.engine.IModelingEngine;
-//import org.integratedmodelling.api.metadata.IModelMetadata;
-//import org.integratedmodelling.api.modelling.IObservableSemantics;
-//import org.integratedmodelling.api.modelling.resolution.IModelPrioritizer;
-//import org.integratedmodelling.api.modelling.resolution.IResolutionScope;
-//import org.integratedmodelling.api.space.ISpatialExtent;
-//import org.integratedmodelling.api.time.ITemporalExtent;
-//import org.integratedmodelling.common.beans.Model;
-//import org.integratedmodelling.common.beans.requests.ModelQuery;
-//import org.integratedmodelling.common.configuration.KLAB;
-//import org.integratedmodelling.common.space.IGeometricShape;
-//import org.integratedmodelling.engine.geospace.Geospace;
-//import org.integratedmodelling.engine.geospace.literals.ShapeValue;
-//import org.integratedmodelling.engine.kbox.sql.h2.schema.CompoundSchema;
-//import org.integratedmodelling.engine.modelling.resolver.ResolutionScope;
 //import org.integratedmodelling.klab.Configuration;
 //import org.integratedmodelling.klab.Models;
 //import org.integratedmodelling.klab.Observables;
 //import org.integratedmodelling.klab.api.knowledge.IConcept;
 //import org.integratedmodelling.klab.api.model.IModel;
+//import org.integratedmodelling.klab.api.resolution.IModelPrioritizer;
+//import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 //import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 //import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 //import org.integratedmodelling.klab.exceptions.KlabException;
 //import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 //import org.integratedmodelling.klab.persistence.h2.H2Kbox;
-//import org.integratedmodelling.klab.persistence.h2.H2Kbox.Serializer;
+//import org.integratedmodelling.klab.persistence.h2.H2Kbox.Schema;
 //import org.integratedmodelling.klab.persistence.h2.SQL;
 //import org.integratedmodelling.klab.utils.Escape;
 //
@@ -42,23 +29,23 @@
 //public class ModelKbox extends ObservableKbox {
 //
 //    private static ModelKbox _this;
-//    private boolean workRemotely = !Configuration.INSTANCE.isOffline();
+//    private boolean          workRemotely = !Configuration.INSTANCE.isOffline();
 //
-//    public static ModelKbox get() {
-//
-//        if (_this == null) {
-//            H2Kbox.set("models2_"
-//                    + KBOX_VERSION, new ModelKbox("models2_" + KBOX_VERSION, KLAB.ENGINE.getMonitor()));
-//            _this = (ModelKbox) H2Kbox.get("models2_" + KBOX_VERSION);
-//        }
-//        return _this;
-//    }
+////    public static ModelKbox get() {
+////
+////        if (_this == null) {
+////            H2Kbox.set("models2_"
+////                    + KBOX_VERSION, new ModelKbox("models2_" + KBOX_VERSION, KLAB.ENGINE.getMonitor()));
+////            _this = (ModelKbox) H2Kbox.get("models2_" + KBOX_VERSION);
+////        }
+////        return _this;
+////    }
 //
 //    private ModelKbox(String name, IMonitor monitor) {
 //
 //        super(name, monitor);
 //
-//        setSchema(Model.class, new CompoundSchema(Model.class) {
+//        setSchema(IModel.class, new Schema() {
 //
 //            @Override
 //            public String getTableName() {
@@ -98,20 +85,20 @@
 //                        + "); "
 //                        + "CREATE INDEX model_oid_index ON model(oid); "
 //                        + "CREATE SPATIAL INDEX model_space ON model(space);";
-//                
+//
 //                return ret;
 //
 //            }
 //        });
 //
-//        setSerializer(Model.class, new Serializer<Model>() {
+//        setSerializer(IModel.class, new Serializer<IModel>() {
 //
 //            private String cn(Object o) {
 //                return o == null ? "" : o.toString();
 //            }
 //
 //            @Override
-//            public String serialize(Model model, /* Schema schema, */ long primaryKey, long foreignKey) {
+//            public String serialize(IModel model, long primaryKey, long foreignKey) {
 //
 //                long tid = requireConceptId(model.getObservableConcept());
 //                long oid = requireConceptId(model.getObservationConcept());
@@ -153,12 +140,12 @@
 //                if (model.getMetadata() != null && model.getMetadata().getData().size() > 0) {
 //                    storeMetadataFor(primaryKey, model.getMetadata());
 //                }
-//                
+//
 //                return ret;
 //            }
 //        });
 //    }
-//    
+//
 //    /**
 //     * Pass the output of queryModelData to a contextual prioritizer and return the ranked
 //     * list of IModels. If we're a personal engine, also broadcast the query to the
@@ -169,10 +156,10 @@
 //     * @return models resulting from query, best first.
 //     * @throws KlabException
 //     */
-//    public List<IModel> query(IObservableSemantics observable, IResolutionScope context)
+//    public List<IModel> query(IObservable observable, IResolutionScope context)
 //            throws KlabException {
 //
-//        IModelPrioritizer<IModelMetadata> prioritizer = context.getPrioritizer();
+//        IModelPrioritizer<IModel> prioritizer = context.getPrioritizer();
 //        ModelQueryResult ret = new ModelQueryResult(prioritizer, ((ResolutionScope) context).getMonitor());
 //        Set<Model> local = new HashSet<>();
 //
@@ -212,7 +199,7 @@
 //     * @param context
 //     * @throws KlabException
 //     */
-//    public List<Model> queryModels(IObservableSemantics observable, IResolutionScope context)
+//    public List<Model> queryModels(IObservable observable, IResolutionScope context)
 //            throws KlabException {
 //
 //        List<Model> ret = new ArrayList<>();
@@ -223,11 +210,11 @@
 //
 //        String query = "SELECT model.oid FROM model WHERE ";
 //        String typequery = observableQuery(observable.getType(), context);
-//        
+//
 //        if (typequery == null) {
 //            return ret;
 //        }
-//        
+//
 //        query += "(" + scopeQuery(context, observable) + ")";
 //        query += " AND (" + typequery + ")";
 //        if (context.getScale().getSpace() != null) {
@@ -236,13 +223,13 @@
 //                query += " AND (" + sq + ")";
 //            }
 //        }
-//        
+//
 //        String tquery = timeQuery(context.getScale().getTime());
 //        if (!tquery.isEmpty()) {
 //            query += " AND (" + tquery + ");";
 //        }
 //
-////         KLAB.info(query);
+//        // KLAB.info(query);
 //
 //        final List<Long> oids = database.queryIds(query);
 //
@@ -264,17 +251,17 @@
 //    }
 //
 //    private String observableQuery(IConcept observable, IResolutionScope context) {
-//        
+//
 //        /*
 //         * remove any transformations before querying
 //         */
 //        observable = Observables.getUntransformedObservable(observable);
-//        
+//
 //        Set<Long> ids = this.getCompatibleTypeIds(observable, context);
 //        if (ids == null || ids.size() == 0) {
 //            return null;
 //        }
-//        String ret = ""; 
+//        String ret = "";
 //        for (long id : ids) {
 //            ret += (ret.isEmpty() ? "" : ", ") + id;
 //        }
@@ -331,7 +318,7 @@
 //        String spacequery = "model.space && '"
 //                + ((IGeometricShape) (space.getExtent().getShape())).getStandardizedGeometry()
 //                + "' OR ST_IsEmpty(model.space)";
-//        
+//
 //        return "(" + scalequery + ") AND (" + spacequery + ")";
 //    }
 //
@@ -351,11 +338,11 @@
 //            long start = time.getStart() == null ? -1 : time.getStart().getMillis();
 //            long end = time.getEnd() == null ? -1 : time.getEnd().getMillis();
 //            if (start > 0 && end > 0) {
-//                ret += "timestart >= " + start + " AND timeend <= " + end; 
+//                ret += "timestart >= " + start + " AND timeend <= " + end;
 //            } else if (start > 0) {
-//                ret += "timestart >= " + start; 
+//                ret += "timestart >= " + start;
 //            } else if (end > 0) {
-//                ret += "timeend <= " + end; 
+//                ret += "timeend <= " + end;
 //            }
 //            ret += ")";
 //        }
@@ -388,15 +375,15 @@
 //
 //                    long tyid = srs.getLong(7);
 //                    long obid = srs.getLong(8);
-//                    
+//
 //                    ret.setName(srs.getString(4));
-//                    
+//
 //                    IConcept mtype = getType(tyid);
 //                    IConcept otype = getType(obid);
 //
-////                    if (mtype == null || otype == null) {
-////                        return;
-////                    }
+//                    // if (mtype == null || otype == null) {
+//                    // return;
+//                    // }
 //
 //                    ret.setObservableConcept(mtype);
 //                    ret.setObservationConcept(otype);
@@ -437,7 +424,7 @@
 //            }
 //
 //        });
-//        
+//
 //        ret.setMetadata(getMetadataFor(oid));
 //
 //        return ret;
@@ -461,7 +448,7 @@
 //
 //        return database.queryIds("SELECT oid FROM model WHERE name = '" + name + "';").size() > 0;
 //    }
-//    
+//
 //    @Override
 //    protected int deleteAllObjectsWithNamespace(String namespaceId) throws KlabException {
 //        int n = 0;

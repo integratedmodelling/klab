@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.utils.Pair;
@@ -150,5 +151,12 @@ public interface IModel extends IKimObject {
      * documentation may be created or filled in from metadata.
      */
     IDocumentation getDocumentation();
+    
+    /**
+     * Metadata can be associated to models in k.IM.
+     * 
+     * @return metadata (never null).
+     */
+    IMetadata getMetadata();
     
 }

@@ -20,21 +20,16 @@
 // * 330, Boston, MA 02111-1307, USA. The license is also available at:
 // * https://www.gnu.org/licenses/agpl.html
 // *******************************************************************************/
-//package org.integratedmodelling.engine.modelling.kbox;
+//package org.integratedmodelling.klab.persistence;
 //
 //import java.util.ArrayList;
 //import java.util.Collection;
 //import java.util.Iterator;
 //import java.util.List;
 //
-//import org.integratedmodelling.api.configuration.IResourceConfiguration;
-//import org.integratedmodelling.api.modelling.IModelObject;
-//import org.integratedmodelling.api.network.INetwork;
-//import org.integratedmodelling.common.beans.requests.ObservationQuery;
-//import org.integratedmodelling.common.beans.responses.ObservationQueryResponse;
-//import org.integratedmodelling.common.client.RestTemplateHelper;
 //import org.integratedmodelling.klab.API;
 //import org.integratedmodelling.klab.api.engine.IServer;
+//import org.integratedmodelling.klab.api.model.IKimObject;
 //import org.integratedmodelling.klab.api.observations.IObservation;
 //import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 //import org.integratedmodelling.klab.common.view.View.Observation;
@@ -111,7 +106,7 @@
 //
 //    private IObservation getModel(Observation observation) {
 //
-//        IModelObject ret = null;
+//        IObservation ret = null;
 //
 //        if (observation == null) {
 //            return null;

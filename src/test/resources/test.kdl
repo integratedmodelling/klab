@@ -1,0 +1,61 @@
+@version 10.3
+// these are constraints, to ensure that this strategy applies to the context
+// of resolution. Users can remove them if publishing.
+@scale space(grid=2), time(step=2)
+@worldview im
+@klab 0.10.0
+
+/**
+ * The actors in each dataflow represent the resolution dataflow of the 
+ * context subject. Resolution will happen with a specific geometry, which
+ * should be set above as @geometry. Each actor may have its own non-standard
+ * geometry, which must be reducible to the workflow's.
+ * 
+ * Each instantiator actor will generate independent direct observations, whose
+ * resolution will generate more workflows.
+ */
+process p1 {
+		
+	// typical optimizable actuator - if used only 	once it can go inside
+	// its point of use (except it won't be executed in parallel with other
+	// leaves).
+	import number poh {
+		compute data/ziocan.tif
+	}
+	
+	/*
+	 * Exporting means that this becomes an output of the containing
+	 * actuator, implying any contextualization changes required by the
+	 * context semantics.
+	 * 
+	 * SIMPLE ONES CAN BE COMPILED INTO JAVA and transferred in compiled form
+	 * so that allows remote contextualizers to execute locally
+	 */
+	export number slope {
+		optional import number poh as zorba
+		compute 
+			harrax:popropo:ziocan:merda as sdd,
+			convert(m,mm),
+			classify (
+				ziocan:Xoio if 20
+			) as dd,
+			expr('sdd + dd + zorba')
+		semantics geography:Slope
+	} 
+	
+	export boolean elevation {
+		// import is in quality scope, so this is an internal link within the
+		// process.
+		import number slope {
+			compute convert(degree_angle,rad)
+		}
+		compute
+			// The comma-separated is a chain of transformations feeding
+			// into each other, with the first(s) as no-input ones.
+			// this can be optimized from a single actuator with only one link
+			urn1 as k1,
+			urn2 as k2,
+			expr('a + b * slope')
+	 	semantics im:Potential geography:Elevation within earth:Region
+	}
+}

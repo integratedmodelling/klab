@@ -10,12 +10,21 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.SemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public interface IObservableService {
 
+    /**
+     * Reconstruct an observable from a canonical declaration.
+     * 
+     * @param declaration
+     * @return the reconstructed observable.
+     */
+    IObservable declare(String declaration);
+    
     /**
      * 
      * @param concept

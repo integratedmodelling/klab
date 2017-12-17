@@ -46,13 +46,13 @@ public abstract class H2Kbox {
 
     public static final String            FIELD_PKEY    = "OID";
     public static final String            FIELD_FKEY    = "FID";
-    
-    protected H2Database                     database;
-    protected Map<Class<?>, Serializer>      serializers   = new HashMap<>();
-    protected Map<Class<?>, Deserializer> deserializers = new HashMap<>();
-    protected IMonitor                       monitor;
 
-    private static Map<String, H2Kbox>       kboxes        = new HashMap<>();
+    protected H2Database                  database;
+    protected Map<Class<?>, Serializer>   serializers   = new HashMap<>();
+    protected Map<Class<?>, Deserializer> deserializers = new HashMap<>();
+    protected IMonitor                    monitor;
+
+    private static Map<String, H2Kbox>    kboxes        = new HashMap<>();
 
     protected static H2Kbox set(String name, H2Kbox kbox) {
         kboxes.put(name, kbox);
@@ -165,7 +165,7 @@ public abstract class H2Kbox {
         // TODO Auto-generated method stub
 
     }
-    
+
     public void clear() throws KlabException {
         // TODO Auto-generated method stub
 

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.services.IModelService;
 
 public enum Models implements IModelService {
@@ -11,5 +12,9 @@ public enum Models implements IModelService {
         // TODO remove all artifacts from local kbox
     }
 
+    @Override
+    public void index(IModel model) {
+        
+    }
 
 }

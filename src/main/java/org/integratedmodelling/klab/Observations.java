@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -21,5 +22,10 @@ public enum Observations implements IObservationService {
     @Override
     public void releaseNamespace(String name) {
         // TODO remove all artifacts from local kbox
+    }
+    
+    @Override
+    public void index(IObserver observer) {
+        // TODO
     }
 }

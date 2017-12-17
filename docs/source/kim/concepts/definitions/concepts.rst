@@ -34,15 +34,15 @@ Children
 --------
 ...
 
-Concept clauses
----------------
+Concept predicates
+------------------
 
-In the following, applies to denotes the concept being defined. Targets denotes the concept that is mentioned in the clause, which must be defined.
+In the following, applies to denotes the concept being defined. Targets denotes the concept that is mentioned in the predicate, which must be defined when referenced.
 
-Summary table of clauses. More may be added in future versions,  although the goal is the smallest useful language.
+Summary table of predicates. More may be added in future versions,  although the goal is the smallest useful language.
 
-Description clauses
-~~~~~~~~~~~~~~~~~~~
+Description predicates
+~~~~~~~~~~~~~~~~~~~~~~
 
 Very important in k.LAB. Used in inferences, validations and to establish context.
 

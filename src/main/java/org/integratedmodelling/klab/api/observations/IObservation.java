@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.api.observations;
 
 import java.io.Serializable;
+import java.util.Optional;
 
-import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IContext;
 
 public interface IObservation extends Serializable {
@@ -14,11 +15,24 @@ public interface IObservation extends Serializable {
     String getId();
     
     /**
-     * Return the observable, including the main type and the observation type.
+     * The subject observation that contextualized this observation. This is not the same
+     * as the context observation: it allows recording different viewpoints on
+     * observations that are contextual to the same observable - e.g. qualities of the
+     * same subject seen by different child subjects in it. If null, this was made by the
+     * "root subject" that represents the session user. Later we may create a subject to
+     * represent the session user.
+     * 
+     * @return the subject that provides the viewpoint for this observation, or null if
+     *  this was a user-made observation.
+     */
+    Optional<ISubject> getObserver();
+
+    /**
+     * Return the observabless.
      * 
      * @return the observation's observable
      */
-    IKimObservable getObservable();
+    IObservable getObservable();
 
     /**
      * Return the scale seen by this object, merging all the extents declared for the
@@ -45,16 +59,5 @@ public interface IObservation extends Serializable {
      */
     IContext getContext();
 
-    /**
-     * The subject observation that contextualized this observation. This is not the same
-     * as the context observation: it allows recording different viewpoints on
-     * observations that are contextual to the same observable - e.g. qualities of the
-     * same subject seen by different child subjects in it. If null, this was made by the
-     * "root subject" that represents the session user. Later we may create a subject to
-     * represent the session user.
-     * 
-     * @return the subject that provides the viewpoint for this observation, or null if
-     *  this was a user-made observation.
-     */
-    ISubject getObserver();
+
 }

@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.model;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.model.KimModel;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -16,7 +16,7 @@ public class Model extends KimObject implements IModel {
 
     private static final long serialVersionUID = 6405594042208542702L;
     
-    Model(KimModel model) {
+    Model(IKimModel model) {
         super(model);
     }
     

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public enum Namespaces implements INamespaceService {
 
     INSTANCE;
 
-    private Map<String, INamespace> namespaces = new HashMap<>();
+    private Map<String, INamespace> namespaces = Collections.synchronizedMap(new HashMap<>());
 
     public INamespace build(IKimNamespace namespace) {
         return null;
@@ -34,14 +35,12 @@ public enum Namespaces implements INamespaceService {
         Models.INSTANCE.releaseNamespace(name);
         Observations.INSTANCE.releaseNamespace(name);
 
-        synchronized (namespaces) {
-            INamespace ns = namespaces.get(name);
-            if (ns != null) {
-                if (ns.getOntology() != null) {
-                    Ontologies.INSTANCE.release(ns.getOntology());
-                }
-                namespaces.remove(name);
+        INamespace ns = namespaces.get(name);
+        if (ns != null) {
+            if (ns.getOntology() != null) {
+                Ontologies.INSTANCE.release(ns.getOntology());
             }
+            namespaces.remove(name);
         }
     }
 
