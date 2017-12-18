@@ -39,7 +39,7 @@ public enum Klab implements IRuntimeService {
         if (logger != null) {
             /*
              * I'd rather not do this, but 100M of debug output when nobody has ever asked for
-             * it and no property files are around anywhere are a bit much to take.
+             * it and no logging property files are around to be changed is a bit much to take.
              */
             logger.setLevel(Level.INFO);
         }
