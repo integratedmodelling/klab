@@ -5,6 +5,8 @@ Before running make to generate documentation:
 	> pip install sphinx
 # Install the ReadTheDocs theme (see https://github.com/rtfd/sphinx_rtd_theme) using
 	> pip install sphinx_rtd_theme
+# Install the Sphinx http domain for REST documentation (see https://pythonhosted.org/sphinxcontrib-httpdomain) using
+    >  pip install sphinxcontrib.httpdomain
 
 Then you can run sphinx as usual, e.g.:
 

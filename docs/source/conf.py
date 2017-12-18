@@ -88,6 +88,8 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
+# add HTTP domain for REST APIs
+extensions = ['sphinxcontrib.httpdomain']
 
 # -- Options for HTML output ----------------------------------------------
 

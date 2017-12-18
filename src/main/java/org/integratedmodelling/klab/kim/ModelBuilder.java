@@ -6,19 +6,23 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public enum ModelBuilder {
-    
+
     INSTANCE;
-    
+
     /**
      * Build a model from its parsed, syntax-error-free representation coming
-     * from the Kim validator. May add logical errors, which are reported back when this
-     * is called from an intelligent editor.
+     * from the Kim validator. May add logical errors, which are reported back 
+     * through the monitor.
      * 
      * @param model
-     * @return
+     * @param namespace 
+     * @param monitor 
+     * @return a built model
      */
     public IModel build(IKimModel model, INamespace namespace, IMonitor monitor) {
+        
+        
         return null;
     }
-    
+
 }
