@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.Concepts;
@@ -17,6 +18,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
@@ -137,6 +139,25 @@ public enum ConceptBuilder {
         return main;
     }
 
+    public @Nullable IObservable declare(final IKimObservable concept, final IMonitor monitor) {
+
+        IConcept main = declareInternal(concept.getMain(), monitor);
+        
+        if (main == null) {
+            return null;
+        }
+        
+        if (concept.getBy() != null) {
+            
+        }
+        if (concept.getDownTo() != null) {
+            
+        }
+        
+        return null;
+    }
+
+    
     public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
         return declareInternal(concept, monitor);
     }

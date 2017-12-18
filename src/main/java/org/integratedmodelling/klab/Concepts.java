@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
 import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
@@ -49,16 +50,10 @@ public enum Concepts implements IConceptService {
         try {
             ObservableSemantics parsed = observableParser.parse(declaration);
             KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-            return declare(interpreted);
+            return Observables.INSTANCE.declare(interpreted);
         } catch (Exception e) {
         }
 
-        return null;
-    }
-
-    private IConcept declare(KimObservable obs) {
-        // TODO Auto-generated method stub
-        System.out.println(obs.toString());
         return null;
     }
 

@@ -11,38 +11,6 @@ Only in special situations namespaces are allowed to exist outside of projects. 
 to develop in k.IM, and it enforces this organization by providing a default workspace (equivalent with the Eclipse workspace) and wizards
 to create k.IM projects and to create and edit namespaces within them.
 
-Projects
---------
-
-A project is 
-
-Namespaces
-----------
-
-
-Namespace imports
-^^^^^^^^^^^^^^^^^^
-
-All the projects in a workspace are loaded at the same time, and the namespaces in it must properly reference each other to guarantee that all knowledge is defined in the right order. This is done using the :keyword:`using` keyword:
-
-.. code-block:: kim
-
-     namespace earth
-       "Defines fundamental natural concepts pertaining to planet Earth. Also contains
-        knowledge regarding the physical processes that act at the planetary level, such
-        as climate."
-      using im, physical, chemistry
-      in domain im:Nature;
-
-Circular references (direct or indirect) must be avoided when defining imports. 
-
-Namespaces from previously loaded workspaces are part of the "knowledge environment" for the workspace and do not need to be referenced (in fact k.LAB will raise an error if they are mentioned). The concepts from the worldview can be freely referenced in any user namespace.
-
-Statements
-----------
-
-Annotations
------------
 
 Workspaces
 ----------
@@ -54,4 +22,43 @@ During a regular k.LAB session, the engine creates four workspaces, only one of 
 #. The *component* workspace, containing all sources of knowledge and computable artifacts harvested from the network as observations are made;
 #. The *user* workspace, where projects written by the user or synchronized from network sources are found.
 
-All the projects in a workspace are loaded at the same time, and the namespaces in it must properly reference each other as discussed before. The engine monitors changes in the user workspace (and only there), automatically reloading a namespace and all those that import it when the file that defines it changes.
+All the projects in a workspace are loaded at the same time, and the namespaces in it must properly reference each other as discussed `below <imports_>`_. The engine monitors changes in the user workspace (and only there), automatically reloading a namespace and all those that import it when the file that defines it changes.
+
+
+Projects
+--------
+
+A project is 
+
+
+Namespaces
+----------
+
+
+.. _imports:
+
+Namespace imports
+^^^^^^^^^^^^^^^^^^
+
+All the projects in a workspace are loaded at the same time. If a namespace uses anything from another namespace in the same workspace, it must *import* the namespace to guarantee that all knowledge is defined in the right order. This is done using the :keyword:`using` keyword:
+
+.. code-block:: kim
+
+     namespace earth
+       "Defines fundamental natural concepts pertaining to planet Earth. Also contains
+        knowledge regarding the physical processes that act at the planetary level, such
+        as climate."
+      using im, physical, chemistry
+      in domain im:Nature;
+
+Circular references (direct or indirect) must be avoided when defining imports. The k.LAB IDE editor will raise an error if a concept from an external namespace (in the same workspace) is used without importing the namespace.
+ 
+.. note::
+
+	Namespaces from previously loaded workspaces (for example from the worldview) become part of the established "knowledge environment" for the workspace, and do not need to be referenced. In fact k.LAB will raise an error if they are imported. This means, for example, that concepts from the worldview (e.g. `geography:Elevation`) can be freely referenced in any user namespace without having to import their namespace (`geography`).
+
+Statements
+----------
+
+Annotations
+-----------

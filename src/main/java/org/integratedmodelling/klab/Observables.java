@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -61,6 +62,7 @@ public enum Observables implements IObservableService {
                 .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_PURPOSE_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
+
     /**
      * Get the context ('within') for the passed quality or trait. If the passed concept
      * is an attribute, configuration, class or realm, the context is the one specified
@@ -323,5 +325,13 @@ public enum Observables implements IObservableService {
                 ? Reasoner.INSTANCE.getOntology()
                 : null);
     }
+    
+    public IConcept declare(IKimObservable obs) {
+        // TODO Auto-generated method stub
+        System.out.println(obs.toString());
+        return null;
+    }
+    
+
 
 }

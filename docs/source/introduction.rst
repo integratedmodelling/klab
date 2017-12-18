@@ -8,6 +8,8 @@ The Wikipedia of scientific observations
 How to use this documentation
 	if (you are X) : (read this, then that)
 
-Acknowledgements
+Email for suggestions
 
-Ferdinando Villa, in Bilbao, November 2017
+Author and acknowledgements
+
+Last version: December, 2017

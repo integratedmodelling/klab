@@ -1,3 +1,5 @@
+.. _worldview:
+
 The worldview
 =============
 

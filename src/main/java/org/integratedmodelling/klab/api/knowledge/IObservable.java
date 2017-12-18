@@ -1,21 +1,62 @@
 package org.integratedmodelling.klab.api.knowledge;
 
-import java.util.Optional;
+import org.integratedmodelling.klab.api.data.mediation.ICurrency;
+import org.integratedmodelling.klab.api.data.mediation.INumericRange;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.services.IObservableService;
+/**
+ * An observable is a declared concept with additional observation semantics, including classifying concepts
+ * for discretizations, units, currencies or ranges. The declaration of non-quality concepts will always be
+ * the same as their type.
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public interface IObservable extends IConcept {
 
-public interface IObservable extends ISemantic {
-
+    /**
+     * Observables always have a name, which is unique in the context of a model where they are used.
+     * 
+     * @return the formal name of this observable
+     */
     String getName();
 
     /**
-     * The canonical declaration in terms of the worldview, using a consistent structure so that
-     * equality of declarations means equality of observables. Observables can always be reconstructed
-     * by calling {@link IObservableService#declare(IConcept)}.
+     * Return the untransformed concept, which is identical to the type returned by {@link #getType()} unless
+     * a "by" (and possibly a "down to") predicate was specified.
      * 
-     * @return the k.IM declaration
+     * @return the declared concept before any reclassification
      */
-    String getDeclaration();
+    IConcept getMain();
+
+    /**
+     * 
+     * @return the normalized 'down to' limiter concept if any was specified.
+     */
+    IConcept getDownTo();
+
+    /**
+     * 
+     * @return the 'by' classifier concept, if any was specified.
+     */
+    IConcept getBy();
+
+    /**
+     * 
+     * @return the numeric range, if any was specified.
+     */
+    INumericRange getRange();
+
+    /**
+     * 
+     * @return the unit, if any was specified.
+     */
+    IUnit getUnit();
+
+    /**
+     * 
+     * @return the currency, if any was specified.
+     */
+    ICurrency getCurrency();
 
 }

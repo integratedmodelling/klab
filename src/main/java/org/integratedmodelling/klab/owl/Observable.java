@@ -1,0 +1,240 @@
+package org.integratedmodelling.klab.owl;
+
+import java.util.Collection;
+import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.data.mediation.ICurrency;
+import org.integratedmodelling.klab.api.data.mediation.INumericRange;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IOntology;
+import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.exceptions.KlabException;
+
+public class Observable implements IObservable {
+
+    private IConcept      observable;
+    private IConcept      main;
+    private String        name;
+    private String        declaration;
+    private boolean       isAbstract;
+    private INumericRange range;
+    private IUnit         unit;
+    private ICurrency     currency;
+    private IConcept      by;
+    private IConcept      downTo;
+
+    @Override
+    public IConcept getType() {
+        return observable;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public IConcept getMain() {
+        return main;
+    }
+
+    @Override
+    public IConcept getDownTo() {
+        return downTo;
+    }
+
+    @Override
+    public IConcept getBy() {
+        return by;
+    }
+
+    @Override
+    public INumericRange getRange() {
+        return range;
+    }
+
+    @Override
+    public IUnit getUnit() {
+        return unit;
+    }
+
+    @Override
+    public ICurrency getCurrency() {
+        return currency;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public IConcept getObservable() {
+        return observable;
+    }
+
+    public void setObservable(IConcept observable) {
+        this.observable = observable;
+    }
+
+    public void setMain(IConcept main) {
+        this.main = main;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDeclaration(String declaration) {
+        this.declaration = declaration;
+    }
+
+    public void setAbstract(boolean isAbstract) {
+        this.isAbstract = isAbstract;
+    }
+
+    public void setRange(INumericRange range) {
+        this.range = range;
+    }
+
+    public void setUnit(IUnit unit) {
+        this.unit = unit;
+    }
+
+    public void setCurrency(ICurrency currency) {
+        this.currency = currency;
+    }
+
+    public void setBy(IConcept by) {
+        this.by = by;
+    }
+
+    public void setDownTo(IConcept downTo) {
+        this.downTo = downTo;
+    }
+
+    @Override
+    public boolean is(Type type) {
+        return observable.is(type);
+    }
+
+    @Override
+    public Collection<IConcept> getParents() {
+        return observable.getParents();
+    }
+
+    @Override
+    public Collection<IConcept> getAllParents() {
+        return observable.getAllParents();
+    }
+
+    @Override
+    public Collection<IConcept> getChildren() {
+        return observable.getChildren();
+    }
+
+    @Override
+    public Collection<IProperty> getProperties() {
+        return observable.getProperties();
+    }
+
+    @Override
+    public Collection<IProperty> getAllProperties() {
+        return observable.getAllProperties();
+    }
+
+    @Override
+    public Collection<IConcept> getPropertyRange(IProperty property) throws KlabException {
+        return observable.getPropertyRange(property);
+    }
+
+    @Override
+    public Object getValueOf(IProperty property) throws KlabException {
+        return observable.getValueOf(property);
+    }
+
+    @Override
+    public IConcept getParent() {
+        return observable.getParent();
+    }
+
+    @Override
+    public int getPropertiesCount(String property) {
+        return observable.getPropertiesCount(property);
+    }
+
+    @Override
+    public IConcept getLeastGeneralCommonConcept(IConcept c) {
+        return observable.getLeastGeneralCommonConcept(c);
+    }
+
+    @Override
+    public Set<IConcept> getSemanticClosure() {
+        return observable.getSemanticClosure();
+    }
+
+    @Override
+    public int[] getCardinality(IProperty property) {
+        return observable.getCardinality(property);
+    }
+
+    @Override
+    public Collection<IConcept> getDisjointConcreteChildren() {
+        return observable.getDisjointConcreteChildren();
+    }
+
+    @Override
+    public Collection<IProperty> findRestrictingProperty(IConcept target) {
+        return observable.findRestrictingProperty(target);
+    }
+
+    @Override
+    public String getDefinition() {
+        return declaration;
+    }
+
+    @Override
+    public String getUrn() {
+        return observable.getUrn();
+    }
+
+    @Override
+    public String getURI() {
+        return observable.getURI();
+    }
+
+    @Override
+    public String getLocalName() {
+        return observable.getLocalName();
+    }
+
+    @Override
+    public String getConceptSpace() {
+        return observable.getConceptSpace();
+    }
+
+    @Override
+    public boolean is(ISemantic concept) {
+        return observable.is(concept);
+    }
+
+    @Override
+    public IConcept getDomain() {
+        return observable.getDomain();
+    }
+
+    @Override
+    public IOntology getOntology() {
+        return observable.getOntology();
+    }
+
+    @Override
+    public IMetadata getMetadata() {
+        return observable.getMetadata();
+    }
+
+}
