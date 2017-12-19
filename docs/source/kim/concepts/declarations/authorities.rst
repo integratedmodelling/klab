@@ -1,2 +1,2 @@
-\Authorities: bridging to endorsed vocabularies
+Authorities: bridging to endorsed vocabularies
 ==============================================

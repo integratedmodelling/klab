@@ -1,25 +1,39 @@
-RESTful HTTP API for the k.LAB modeling engine
-==============================================
+k.LAB modeling engine HTTP API 
+==============================
 
 .. http:get:: /users/(int:user_id)/posts/(tag)
 
    The posts tagged with `tag` that the user (`user_id`) wrote.
 
-   **Example request**:
+   :query sort: one of ``hit``, ``created-at``
+   :query offset: offset number. default is 0
+   :query limit: limit number. default is 30
+   :reqheader Accept: the response content type depends on
+                      :mailheader:`Accept` header
+   :reqheader Authorization: mandatory task token
+   :resheader Content-Type: this depends on :mailheader:`Accept`
+                            header of request
+   :statuscode 200: no error
+   :statuscode 404: there's no user
 
-   .. sourcecode:: http
 
-      GET /users/123/posts/web HTTP/1.1
-      Host: example.com
-      Accept: application/json, text/javascript
+**Example request**:
 
-   **Example response**:
+..  http:example:: curl wget
 
-   .. sourcecode:: http
+    GET /users/123/posts/web.json HTTP/1.1
+    Host: example.com
+    Accept: application/json
+    Authorization: Basic YWRtaW46YWRtaW4=
+
+
+**Example response**:
+
+.. sourcecode:: http
 
       HTTP/1.1 200 OK
       Vary: Accept
-      Content-Type: text/javascript
+      Content-Type:application/json
 
       [
         {
@@ -36,13 +50,3 @@ RESTful HTTP API for the k.LAB modeling engine
         }
       ]
 
-   :query sort: one of ``hit``, ``created-at``
-   :query offset: offset number. default is 0
-   :query limit: limit number. default is 30
-   :reqheader Accept: the response content type depends on
-                      :mailheader:`Accept` header
-   :reqheader Authorization: optional OAuth token to authenticate
-   :resheader Content-Type: this depends on :mailheader:`Accept`
-                            header of request
-   :statuscode 200: no error
-   :statuscode 404: there's no user

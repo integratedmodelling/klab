@@ -1,0 +1,38 @@
+// FIXME the worldview shouldn't be required if core ontologies are used
+@worldview im
+@version 0.10.0
+@klab 0.10.0
+
+/**
+ * The generic contract for any learning process. Uses roles to detect 
+ * its model participants.
+ */
+process learningprocess {
+	
+	/**
+	 * At least 2 predictor qualities are required, tagged with the im:ExplanatoryQuality role.
+	 */
+	import 2+ value predictor {
+		// role, so the name will be ignored when validating
+		semantics observation:ExplanatoryQuality
+	}
+	
+	/** 
+	 * Archetypes are objects; at least one is required
+	 */
+	import multiple object archetype {
+		semantics observation:Archetype
+	}
+	
+	/**
+	 * The quality learned by the model
+	 */
+	export value predicted {
+		semantics observation:LearnedQuality
+	}
+	
+	/**
+	 * The semantics of the contextualized process is a learning process.
+	 */
+	semantics observation:LearningProcess
+}

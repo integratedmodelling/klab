@@ -32,6 +32,8 @@ import java.lang.annotation.Target;
  * interface. When used with no argument, implies that a KDL file with the same path name as the class' is
  * available in the class path. Otherwise the file can be named as the string argumenty using its classpath.
  * 
+ * A name and namespace may be passed to override any in the KDL root actuator.
+ * 
  * The annotated class must extend IContextualizer.
  * 
  * @author ferdinando.villa
@@ -42,6 +44,28 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Contextualizer {
 
+    /**
+     * The classpath location of the KDL contract. If missing, it must match the class
+     * that defines the contextualizer.
+     * 
+     * @return the classpath of the contract specification.
+     */
     String value() default "";
+
+    /**
+     * Pass a name to override the one in KDL if the same contract is being reused
+     * for different contextualizers.
+     * 
+     * @return the name of this contextualizer
+     */
+    String name() default "";
+
+    /**
+     * Pass a package name to override the one in KDL if the same contract is being reused
+     * for different contextualizers.
+     * 
+     * @return the namespace for this contextualizer
+     */
+    String namespace() default "";
 
 }

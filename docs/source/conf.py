@@ -88,8 +88,13 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
-# add HTTP domain for REST APIs
-extensions = ['sphinxcontrib.httpdomain']
+# add extensions for REST and Java APIs
+extensions = ['sphinxcontrib.httpdomain', 'sphinxcontrib.httpexample', 'javasphinx']
+
+# -- Javadoc sources for k.LAB ---------------------------------------------
+javadoc_url_map = {
+    'org.integratedmodelling' : ('http://www.integratedmodelling.org/klab/api/java/klab-api/', 'javadoc8')
+ }
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -110,7 +115,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['klab_static']
+html_static_path = ['static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

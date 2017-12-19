@@ -32,7 +32,7 @@ using the default configuration, looking for a file named `im.cert` in the defau
        new ModelingEngine(new KlabCertificate("/home/john/alt.cert")).start();
 
 In all cases, the start() method called on the engine (which returns the engine itself to enable more compact idioms like the above) will authorize the user, synchronize the worldview from the network, load it, connect to the k.LAB network and initialize all network
-resources according to the user's permissions. When that exits (after a short wait) without error, our engine is ready to make observations. We can only make observations within a *session*, which is a Java Closeable so it can be opened and closed automatically within a try-with-resource block:
+resources according to the user's permissions. When that exits (after a short wait) without error, the engine is ready to make observations. This happens within a *session*, which we must request. A :java:type:`ISession <org.integratedmodelling.api.runtime.ISession>` is a :java:type:`Closeable <java.io.Closeable>` so it can be opened and closed automatically within a try-with-resource block:
 
 .. code-block:: java
 
@@ -43,7 +43,7 @@ resources according to the user's permissions. When that exits (after a short wa
       // Alternatively, you can call session.close() yourself.
     }
 
-The rationale of having sessions is that an engine can serve multiple simultaneous sessions, owned by different users. In fact, createSession() can be optionally passed a previously authenticated IUser, which the web interface of the k.LAB engine allows to configure and authenticate. In embedded mode, we can simply use the shorthand method createSession() with no arguments, which will create a session owned by the same user who owns the engine and the certificate. You can retrieve this user from the engine using `engine.getUser() <http://www.integratedmodelling.org/klab/api/java/klab-api/org/integratedmodelling/api/engine/IModelingEngine.html#getUser-->`_.
+The rationale of having sessions is that an engine can serve multiple simultaneous sessions, owned by different users. In fact, createSession() can be optionally passed a previously authenticated IUser, which the web interface of the k.LAB engine allows to configure and authenticate. In embedded mode, we can simply use the shorthand method createSession() with no arguments, which will create a session owned by the same user who owns the engine and the certificate. You can retrieve this user from the engine using :java:meth:`engine.getUser() <org.integratedmodelling.api.engine.IModelingEngine#getUser>`.
 
 .....
 

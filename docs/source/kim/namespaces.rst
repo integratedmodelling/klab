@@ -28,7 +28,7 @@ All the projects in a workspace are loaded at the same time, and the namespaces 
 Projects
 --------
 
-A project is 
+A project collects namespaces within a common
 
 
 Namespaces
@@ -37,8 +37,8 @@ Namespaces
 
 .. _imports:
 
-Namespace imports
-^^^^^^^^^^^^^^^^^^
+Importing namespaces
+^^^^^^^^^^^^^^^^^^^^
 
 All the projects in a workspace are loaded at the same time. If a namespace uses anything from another namespace in the same workspace, it must *import* the namespace to guarantee that all knowledge is defined in the right order. This is done using the :keyword:`using` keyword:
 
