@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2007, 2015:
+ *  Copyright (C) 2007, 2014:
  *  
  *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
  *    - integratedmodelling.org
@@ -24,38 +24,29 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.api.data.general;
+package org.integratedmodelling.klab.api.observations.scale.time;
 
-import org.integratedmodelling.klab.api.data.mediation.IValueMediator;
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.api.data.utils.IPair;
 
-/**
- * A ranking MAY have a scale. If so, it can mediate another with another scale.
- * 
- * @author Ferd
- *
- */
-public interface IRankingScale extends IValueMediator {
+public interface ITimeDuration extends Comparable<ITimeDuration> {
 
     /**
-     * Any unbounded boundary will be the corresponding Double.(NEGATIVE_)INFINITE.
-     * 
-     * @return the range of the scale.
+     * number of milliseconds in this duration. It might be a bit too implementation-specific, but for now I'm
+     * leaving it as-is because it's a good interface to describe the one implementation that currently exists
+     * (DurationValue)
+     *
+     * @return duration in milliseconds
      */
-    Pair<Number, Number> getRange();
+    long getMilliseconds();
 
     /**
-     * Both bounds are defined
-     * 
-     * @return true if both boundaries are defined.
+     * Localize a duration to an extent starting at the current moment
+     * using the same resolution that was implied in the generating
+     * text. For example, if the duration was one year, localize to the
+     * current year (jan 1st to dec 31st). Return the start and end points
+     * of the extent.
+     *
+     * @return localization
      */
-    boolean isBounded();
-
-    /**
-     * If only integers should be used.
-     * 
-     * @return true if the scale is not meant to have values in non-integer numbers.
-     */
-    boolean isInteger();
-
+    IPair<ITimeInstant, ITimeInstant> localize();
 }

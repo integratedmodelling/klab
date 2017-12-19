@@ -26,14 +26,14 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.utils;
 
-import java.io.Serializable;
+import org.integratedmodelling.klab.api.data.utils.IPair;
 
 /**
   * Stupid generic pair class.
  * @param <T1> 
  * @param <T2> 
  */
-public class Pair<T1, T2> implements Serializable {
+public class Pair<T1, T2> implements IPair<T1, T2> {
 
     static boolean cmpObj(Object o1, Object o2) {
         return (o1 == null && o2 == null) || (o1 != null && o2 != null && o1.equals(o2));

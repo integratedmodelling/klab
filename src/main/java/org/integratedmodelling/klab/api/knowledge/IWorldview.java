@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.observations.IScale;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 /**
  * Intended to be specialized for specific worldviews, to replace the cumbersome

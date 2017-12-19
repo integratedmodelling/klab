@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.IScale;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.monitoring.INotification;
 import org.integratedmodelling.klab.api.services.IResourceService;

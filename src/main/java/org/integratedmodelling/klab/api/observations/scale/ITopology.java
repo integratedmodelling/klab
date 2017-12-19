@@ -1,0 +1,67 @@
+/*******************************************************************************
+ *  Copyright (C) 2007, 2014:
+ *  
+ *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
+ *    - integratedmodelling.org
+ *    - any other authors listed in @author annotations
+ *
+ *    All rights reserved. This file is part of the k.LAB software suite,
+ *    meant to enable modular, collaborative, integrated 
+ *    development of interoperable data and model components. For
+ *    details, see http://integratedmodelling.org.
+ *    
+ *    This program is free software; you can redistribute it and/or
+ *    modify it under the terms of the Affero General Public License 
+ *    Version 3 or any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but without any warranty; without even the implied warranty of
+ *    merchantability or fitness for a particular purpose.  See the
+ *    Affero General Public License for more details.
+ *  
+ *     You should have received a copy of the Affero General Public License
+ *     along with this program; if not, write to the Free Software
+ *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *     The license is also available at: https://www.gnu.org/licenses/agpl.html
+ *******************************************************************************/
+package org.integratedmodelling.klab.api.observations.scale;
+
+import org.integratedmodelling.klab.exceptions.KlabException;
+
+public interface ITopology<T> extends ITopologicallyComparable<T> {
+
+    public static final long INFINITE          = Long.MAX_VALUE;
+    public static final long NEGATIVE_INFINITE = Long.MIN_VALUE;
+
+    /**
+     * Return the total number of distinct subdivisions in this topology. {@link #INFINITE} is
+     * an option when applicable.
+     * 
+     * @return number of subdivisions
+     */
+    public long getMultiplicity();
+
+    /**
+     * Return a topology which represents the intersection of this with the passed
+     * one. Thinklab expects that the intersected extent can be index-remapped to
+     * a sub-extent of this by simple offsetting. This means that subdivisions need 
+     * to be "in phase" between the two extents.
+     * 
+     * @param other
+     * @return intersection of other and this
+     * @throws KlabException 
+     */
+    public T intersection(T other) throws KlabException;
+
+    /**
+     * Return a topology which represents the union of this with the passed
+     * one. As in intersection(), the union extent must be in phase with
+     * the original one.
+     * 
+     * @param other
+     * @return union of other and this
+     * @throws KlabException 
+     */
+    public T union(T other) throws KlabException;
+
+}

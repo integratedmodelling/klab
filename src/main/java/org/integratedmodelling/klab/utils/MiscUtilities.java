@@ -74,7 +74,6 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.UUID;
 
-import org.apache.commons.math3.util.Pair;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;

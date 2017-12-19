@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IContext;
 
 public interface IObservation extends Serializable {

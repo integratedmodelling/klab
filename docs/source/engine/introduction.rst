@@ -1,3 +1,0 @@
-Introduction: making observations
-=================================
-

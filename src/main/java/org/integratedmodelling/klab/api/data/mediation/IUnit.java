@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.data.mediation;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.observations.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 public interface IUnit extends IValueMediator {
 

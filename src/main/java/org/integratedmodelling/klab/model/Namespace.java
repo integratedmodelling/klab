@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IScale;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class Namespace extends KimObject implements INamespace {

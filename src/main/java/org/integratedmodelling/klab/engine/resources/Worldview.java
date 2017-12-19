@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.api.observations.IScale;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 

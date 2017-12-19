@@ -1,14 +1,14 @@
-.. klab documentation master file, created by
-   sphinx-quickstart on Sun Nov 12 13:45:34 2017.
+.. _modeling:
    
 Modeling in k.LAB: making observations
 ======================================
+
+Intro on what this means.
 
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
 
-	Introduction <introduction>
 	Setting the context <context>
 	Making observations <observing>
 	Exporting and publishing <exporting>

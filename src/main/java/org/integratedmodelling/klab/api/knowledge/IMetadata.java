@@ -3,8 +3,6 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.util.Collection;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IKimMetadata;
-
 public interface IMetadata {
 
     /**

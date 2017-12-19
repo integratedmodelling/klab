@@ -8,7 +8,7 @@ Table of contents
 
 ....
 
-These pages document :term:`k.LAB`, an open source software stack built and maintained by the `Integrated Modelling Partnership <http://www.integratedmodelling.org>`_. It provides languages, tools and interfaces for end users, modelers and network administrators, to support all aspects of *integrated semantic modelling*, from building shared :ref:`worldviews <worldview>` composed of interoperable domain ontologies to semantically describing, coding, and publishing interoperable data and models.
+These pages document :term:`k.LAB`, an open source software stack built and maintained by the `Integrated Modelling Partnership <http://www.integratedmodelling.org>`_. It provides languages, tools and interfaces for end users, modelers and network administrators, to support all aspects of *integrated semantic modelling*, from building shared :ref:`worldviews <worldview>` connecting of interoperable domain ontologies and vocabularies to semantically describing, coding, and publishing interoperable data and models.
 
 See :ref:`here <primer>` for a quick introduction to semantic modelling with k.LAB. Academic publications for information or citation are listed :doc:`here <references>`. 
 
