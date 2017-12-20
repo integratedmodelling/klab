@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.IContext;
 
 public interface IObservation extends Serializable {
@@ -54,11 +55,48 @@ public interface IObservation extends Serializable {
     
     /**
      * The overall "world" that this observation is part of, with the root subject at the
-     * top and all informations about resolution and provenance.
+     * top and all records of resolution, provenance and semantics.
      * 
      * @return
      */
     IContext getContext();
+    
+    /**
+     * True if the owning ISubject has an observation of space with more than one state
+     * value.
+     * 
+     * @return true if distributed in space
+     */
+    boolean isSpatiallyDistributed();
+
+    /**
+     * True if the owning ISubject has an observation of time with more than one state
+     * value.
+     * 
+     * @return true if distributed in time.
+     */
+    boolean isTemporallyDistributed();
+
+    /**
+     * True if the owning ISubject has any implementation of time.
+     * 
+     * @return if time is known
+     */
+    boolean isTemporal();
+
+    /**
+     * True if the owning ISubject has any implementation of space.
+     * 
+     * @return if space is known
+     */
+    boolean isSpatial();
+
+    /**
+     * Return the spatial extent, or null.
+     * 
+     * @return the observation of space
+     */
+    ISpace getSpace();
 
 
 }

@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
@@ -157,7 +158,7 @@ public interface IState extends IObservation {
     }
 
     /**
-     * Return the total number of values determined by the extents owned by the owning
+     * Return the total number of values determined by the scale of the owning
      * ISubject.
      * 
      * @return the value count. Should be 1 or more.
@@ -165,56 +166,22 @@ public interface IState extends IObservation {
     long getValueCount();
 
     /**
-     * True if the owning ISubject has an observation of space with more than one state
-     * value.
-     * 
-     * @return true if distributed in space
-     */
-    boolean isSpatiallyDistributed();
-
-    /**
-     * True if the owning ISubject has an observation of time with more than one state
-     * value.
-     * 
-     * @return true if distributed in time.
-     */
-    boolean isTemporallyDistributed();
-
-    /**
-     * True if the owning ISubject has ANY implementation of time.
-     * 
-     * @return if time is known
-     */
-    boolean isTemporal();
-
-    /**
-     * True if the owning ISubject has ANY implementation of space.
-     * 
-     * @return if space is known
-     */
-    boolean isSpatial();
-
-    /**
-     * Return the spatial extent or null.
-     * 
-     * @return the observation of space
-     */
-    ISpace getSpace();
-
-    /**
-     * Return the temporal extent or null.
+     * Return the temporal extent, or null.
      * 
      * @return the observation of time
      */
     ITime getTime();
 
     /**
-     * Get a value at the passed offset from the scale.
-     * 
-     * @param index
-     * @return the value at the passed offset
+     * Get a value at the passed locator. The locator may be just a granule of the 
+     * state's scale, or express a different topology from the same or another, 
+     * involving mediation.
+     *  
+     * @param locator a locator from our own or another compatible scale.
+     * @return the value at the passed locator, which may come from a different
+     *  scale.
      */
-    Object getValue(int index);
+    Object getValue(Locator locator);
 
 
     /**

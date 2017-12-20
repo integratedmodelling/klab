@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.data.general.IList;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -87,6 +88,7 @@ public class Ontology implements IOntology {
     OWLOntology                   ontology;
     private String                prefix;
     private Map<String, IConcept> conceptIDs   = new HashMap<>();
+    Map<String, IIndividual>      individuals  = new HashMap<>();
 
     /*
      * all properties
@@ -127,7 +129,7 @@ public class Ontology implements IOntology {
         // }
         scan();
     }
-    
+
     public String getPrefix() {
         return this.prefix;
     }
@@ -141,7 +143,8 @@ public class Ontology implements IOntology {
     private void scan() {
 
         for (OWLClass c : this.ontology.getClassesInSignature(false)) {
-            if (c.getIRI().toString().contains(this.prefix) && !this.conceptIDs.containsKey(c.getIRI().getFragment())) {
+            if (c.getIRI().toString().contains(this.prefix)
+                    && !this.conceptIDs.containsKey(c.getIRI().getFragment())) {
                 this.conceptIDs.put(c.getIRI().getFragment(), new Concept(c, this.id, OWL.emptyType));
             }
         }
@@ -322,7 +325,7 @@ public class Ontology implements IOntology {
 
         for (IAxiom axiom : axioms) {
 
-//            System.out.println(" [" + id + "] => " + axiom);
+            // System.out.println(" [" + id + "] => " + axiom);
 
             try {
 
@@ -334,7 +337,8 @@ public class Ontology implements IOntology {
                             .addAxiom(this.ontology, factory
                                     .getOWLDeclarationAxiom(newcl));
                     this.conceptIDs
-                            .put(axiom.getArgument(0).toString(), new Concept(newcl, id, ((Axiom) axiom).conceptType));
+                            .put(axiom.getArgument(0)
+                                    .toString(), new Concept(newcl, id, ((Axiom) axiom).conceptType));
 
                 } else if (axiom.is(IAxiom.SUBCLASS_OF)) {
 
@@ -720,11 +724,11 @@ public class Ontology implements IOntology {
         OWLClass ret = null;
 
         if (c.equals("owl:Nothing")) {
-            return ((Concept)OWL.INSTANCE.getNothing())._owl;
+            return ((Concept) OWL.INSTANCE.getNothing())._owl;
         } else if (c.equals("owl:Thing")) {
-            return ((Concept)OWL.INSTANCE.getRootConcept())._owl;        
+            return ((Concept) OWL.INSTANCE.getRootConcept())._owl;
         }
-        
+
         if (c.contains(":")) {
 
             IConcept cc = OWL.INSTANCE.getConcept(c);
