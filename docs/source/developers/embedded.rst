@@ -18,7 +18,7 @@ A programmer can use the engine API to embed observation functionalities in Java
         engine.stop();
     }
 
-A lot happens behind the scenes. Let us analyze the example line by line. The first call creates a modeling engine
+A lot happens behind these few lines of code. Let us analyze the example line by line. The first call creates a modeling engine
 
 .. code-block:: java
 

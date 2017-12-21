@@ -20,7 +20,7 @@ During a regular k.LAB session, the engine creates four workspaces, only one of 
 #. The *core ontology* workspace, containing upper ontologies required by the worldview;
 #. The *worldview* workspace, containing all the domain ontologies and their mapping to the core ontology;
 #. The *component* workspace, containing all sources of knowledge and computable artifacts harvested from the network as observations are made;
-#. The *user* workspace, where projects written by the user or synchronized from network sources are found.
+#. The *local* workspace, where projects written by the user or cloned from :term:`Git` or other :term:`CSV` are found.
 
 All the projects in a workspace are loaded at the same time, and the namespaces in it must properly reference each other as discussed `below <imports_>`_. The engine monitors changes in the user workspace (and only there), automatically reloading a namespace and all those that import it when the file that defines it changes.
 
