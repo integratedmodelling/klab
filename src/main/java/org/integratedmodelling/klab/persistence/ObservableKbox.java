@@ -81,10 +81,10 @@ public abstract class ObservableKbox extends H2Kbox {
     private Map<Long, String>  typeHash         = new HashMap<>();
 
     /**
-     * The kbox version, which is used to create the filesystem storage. Change this when
-     * incompatible changes are made to force kbox reset.
+     * The version is used to create storage on the file system. Change this when
+     * incompatible changes are made to force a rebuild.
      */
-    public static final String KBOX_VERSION     = "0910v8";
+    public static final String KBOX_VERSION     = "0100v0";
 
     /*
      * exposed to allow preallocating connections in big imports.

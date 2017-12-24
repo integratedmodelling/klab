@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -329,7 +330,7 @@ public class CoreOntology extends AbstractWorkspace {
         if (!synced) {
             synced = true;
             try {
-                Resources.extractKnowledgeFromClasspath(getRoot());
+                Resources.INSTANCE.extractKnowledgeFromClasspath(getRoot());
             } catch (IOException e) {
                 throw new KlabIOException(e);
             }
