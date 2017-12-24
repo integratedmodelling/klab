@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,7 +33,8 @@ public enum Klab implements IRuntimeService {
 
     private Logger logger;
     private Map<Class<? extends Annotation>, AnnotationHandler> annotationHandlers = new HashMap<>();
-
+    private IMonitor rootMonitor;
+    
     private Klab() {
 
         logger = (Logger) LoggerFactory.getLogger(this.getClass());
@@ -43,11 +45,12 @@ public enum Klab implements IRuntimeService {
              */
             logger.setLevel(Level.INFO);
         }
+        rootMonitor = new RootMonitor();
         setupExtensions();
     }
 
     @Override
-    public void info(Object o) {
+    public void info(Object... o) {
         if (logger != null) {
             logger.info(o.toString());
         } else {
@@ -56,7 +59,7 @@ public enum Klab implements IRuntimeService {
     }
 
     @Override
-    public void warn(Object o) {
+    public void warn(Object... o) {
         if (logger != null) {
             logger.warn(o.toString());
         } else {
@@ -65,7 +68,7 @@ public enum Klab implements IRuntimeService {
     }
 
     @Override
-    public void error(Object o) {
+    public void error(Object... o) {
         if (logger != null) {
             logger.error(o.toString());
         } else {
@@ -74,7 +77,7 @@ public enum Klab implements IRuntimeService {
     }
 
     @Override
-    public void debug(Object o) {
+    public void debug(Object... o) {
         if (logger != null) {
             logger.debug(o.toString());
         } else {
@@ -82,26 +85,31 @@ public enum Klab implements IRuntimeService {
         }
     }
 
-    @Override
-    public void warn(String o, Throwable e) {
-        if (logger != null) {
-            logger.warn(o, e);
-        } else {
-            System.err.println("WARN: " + o + ": " + MiscUtilities.throwableToString(e));
-        }
-    }
+//    @Override
+//    public void warn(String o, Throwable e) {
+//        if (logger != null) {
+//            logger.warn(o, e);
+//        } else {
+//            System.err.println("WARN: " + o + ": " + MiscUtilities.throwableToString(e));
+//        }
+//    }
+//
+//    @Override
+//    public void error(String o, Throwable e) {
+//        if (logger != null) {
+//            logger.error(o, e);
+//        } else {
+//            System.err.println("WARN: " + o + ": " + MiscUtilities.throwableToString(e));
+//        }
+//    }
 
-    @Override
-    public void error(String o, Throwable e) {
-        if (logger != null) {
-            logger.error(o, e);
-        } else {
-            System.err.println("WARN: " + o + ": " + MiscUtilities.throwableToString(e));
-        }
-    }
 
-
-    @Override
+    /**
+     * Register a class annotation and its handler for processing when {@link #scanPackage(String)} is called.
+     * 
+     * @param annotationClass
+     * @param handler
+     */
     public void registerAnnotationHandler(Class<? extends Annotation> annotationClass, AnnotationHandler handler) {
         annotationHandlers.put(annotationClass, handler);
     }
@@ -113,7 +121,6 @@ public enum Klab implements IRuntimeService {
      * @param packageId
      * @throws KlabException
      */
-    @Override
     public List<Pair<Annotation, Class<?>>> scanPackage(String packageId) throws KlabException {
 
         List<Pair<Annotation, Class<?>>> ret = new ArrayList<>();
@@ -230,10 +237,62 @@ public enum Klab implements IRuntimeService {
         // .getGridCoverageFactory(defHints));
     }
 
-    @Override
+
+    /**
+     * Register a class as a k.IM toolkit, providing extensions usable from Groovy or other expression
+     * language.
+     * 
+     * @param cls
+     */
     public void registerKimToolkit(Class<?> cls) {
         // TODO Auto-generated method stub
         
     }
 
+    class RootMonitor implements IMonitor {
+
+		@Override
+		public void info(Object... info) {
+			INSTANCE.info(info);
+		}
+
+		@Override
+		public void warn(Object... o) {
+			INSTANCE.warn(o);
+		}
+
+		@Override
+		public void error(Object... o) {
+			INSTANCE.error(o);
+		}
+
+		@Override
+		public void debug(Object... o) {
+			INSTANCE.debug(o);
+		}
+
+		@Override
+		public void send(Object o) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public IIdentity getIdentity() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean hasErrors() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+    	
+    }
+    
+    public IMonitor getRootMonitor() {
+    	return rootMonitor;
+    }
+    
 }

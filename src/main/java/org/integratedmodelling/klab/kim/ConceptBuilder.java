@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Observable;
 
 public enum ConceptBuilder {
 
@@ -140,12 +141,14 @@ public enum ConceptBuilder {
     }
 
     public @Nullable IObservable declare(final IKimObservable concept, final IMonitor monitor) {
-
-        IConcept main = declareInternal(concept.getMain(), monitor);
+    	
+    	IConcept main = declareInternal(concept.getMain(), monitor);
         
         if (main == null) {
             return null;
         }
+
+        Observable ret = new Observable();;
         
         if (concept.getBy() != null) {
             
@@ -154,7 +157,7 @@ public enum ConceptBuilder {
             
         }
         
-        return null;
+        return ret;
     }
 
     

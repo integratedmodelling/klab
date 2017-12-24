@@ -22,8 +22,8 @@
  * 
  * Each OWL2 ontology under the control of this subsystem, including the core
  * ontologies that are read from the classpath at startup, correspond to a
- * {@link org.integratedmodelling.kim.api.IKimNamespace}, which in turn can
- * return the correspondent {@link org.integratedmodelling.klab.api.IOntology}.
+ * {@link INamespace}, which in turn can
+ * return the correspondent {@link IOntology}.
  * The {@link org.integratedmodelling.klab.api.services.INamespaceService} is
  * the endorsed k.LAB way to access knowledge, and direct use of classes from
  * this package should not be necessary for the regular k.LAB user or developer.

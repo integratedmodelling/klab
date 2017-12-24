@@ -3,7 +3,6 @@ package org.integratedmodelling.klab;
 import java.io.File;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.services.IWorkspaceService;

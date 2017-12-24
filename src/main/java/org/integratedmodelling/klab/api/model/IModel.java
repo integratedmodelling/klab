@@ -22,18 +22,17 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.model;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IProperty;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * A Model, i.e. a semantic annotation. When unresolved (not linking to states), it is a
+ * A Model, i.e. a seo states), it is a
  * query that uses observers to produce its result observation. It must have at least one
  * observable. If it has more, they must have been given observation semantics through
  * other models in the same namespace.
@@ -62,9 +61,12 @@ public interface IModel extends IKimObject {
      * If the model has any inline data, such as a value, function or URN, return the
      * correspondent resolved resource, which will not, by now, have been fetched.
      * 
+     * The resource also contains any metadata for created objects, such as their 
+     * name (the model was previously in charge of establishing this).
+     * 
      * @return
      */
-    IResource getResource();
+    Optional<IResource> getResource();
 
     /**
      * This will only be called in models that produce objects (isReificationModel() ==
@@ -79,16 +81,7 @@ public interface IModel extends IKimObject {
      * 
      * @return the list of dereified attributes with their observers
      */
-    Collection<Pair<String, IObservable>> getAttributeObservables(boolean addInherency);
-
-    /**
-     * In reification models, return any attributes that must be matched to metadata of
-     * the resulting objects (such as name or label), along with the metadata property
-     * they represent.
-     * 
-     * @return metadata from the dereification list
-     */
-    Collection<Pair<String, IProperty>> getAttributeMetadata();
+    Map<String, IObservable> getAttributeObservables();
 
     /**
      * Get the name with which the passed observable is known within this model. The
@@ -104,7 +97,7 @@ public interface IModel extends IKimObject {
      * Return true if this model can be computed on its own and has associated data.
      * Normally this amounts to having a data/object source or an instantiator with
      * getDependencies().size() == 0, but implementations may provide faster ways to
-     * inquire (e.g. without creating the datasource).
+     * inquire (e.g. without fetching the resource).
      * 
      * Should really be named isIntensional() but let's stop the good terminology at
      * reification to keep the API readable by the non-philosopher.
@@ -121,7 +114,7 @@ public interface IModel extends IKimObject {
      * 
      * @return true if model creates direct observations
      */
-    abstract boolean isInstantiator();
+    boolean isInstantiator();
 
     /**
      * True if the model is expected to contextually reinterpret its observable using
@@ -132,7 +125,7 @@ public interface IModel extends IKimObject {
      * 
      * @return
      */
-    abstract boolean isReinterpreter();
+    boolean isReinterpreter();
 
     /**
      * Called by the resolver before a model is used so that it has a chance to verify
@@ -150,7 +143,7 @@ public interface IModel extends IKimObject {
      * @return the declared documentation, or null if none exists. In state models,
      * documentation may be created or filled in from metadata.
      */
-    IDocumentation getDocumentation();
+    Optional<IDocumentation> getDocumentation();
     
     /**
      * Metadata can be associated to models in k.IM.

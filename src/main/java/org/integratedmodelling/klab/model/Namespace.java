@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +33,11 @@ public class Namespace extends KimObject implements INamespace {
 	private IProject project;
 	private boolean internal = false;
 	private boolean canonical = false;
+	private boolean scenario = false;
 	private long timestamp = 0l;
 
 	List<IKimObject> objects = new ArrayList<>();
+	Map<String, Object> symbolTable = new HashMap<>();
 
 	/*
 	 * for incremental building of the knowledge
@@ -133,14 +136,12 @@ public class Namespace extends KimObject implements INamespace {
 
 	@Override
 	public Map<String, Object> getSymbolTable() {
-		// TODO Auto-generated method stub
-		return null;
+		return symbolTable;
 	}
 
 	@Override
 	public boolean isScenario() {
-		// TODO Auto-generated method stub
-		return false;
+		return scenario;
 	}
 
 	@Override

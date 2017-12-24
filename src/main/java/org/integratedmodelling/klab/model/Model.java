@@ -1,89 +1,131 @@
 package org.integratedmodelling.klab.model;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
+import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
 public class Model extends KimObject implements IModel {
 
-    private static final long serialVersionUID = 6405594042208542702L;
-    
-    Model(IKimModel model) {
-        super(model);
-    }
-    
-    @Override
-    public List<IObservable> getObservables() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	private static final long serialVersionUID = 6405594042208542702L;
 
-    @Override
-    public IResource getResource() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	private Optional<IResource> resource = Optional.empty();
+	private Optional<IDocumentation> documentation = Optional.empty();
+	private List<IObservable> observables = new ArrayList<>();
+	private List<IObservable> dependencies = new ArrayList<>();
+	private Map<String, IObservable> attributeObservables = new HashMap<>();
 
-    @Override
-    public Collection<Pair<String, IObservable>> getAttributeObservables(boolean addInherency) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	Model(IKimModel model, IMonitor monitor) {
 
-    @Override
-    public Collection<Pair<String, IProperty>> getAttributeMetadata() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		super(model);
 
-    @Override
-    public String getLocalNameFor(IObservable observable) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		for (IKimObservable observable : model.getObservables()) {
+			if (observable.getAttribute().isPresent()) {
+				attributeObservables.put(observable.getAttribute().get(),
+						Observables.INSTANCE.declare(observable, monitor));
+			} else {
+				observables.add(Observables.INSTANCE.declare(observable, monitor));
+			}
+		}
 
-    @Override
-    public boolean isResolved() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		for (IKimObservable dependency : model.getDependencies()) {
+			dependencies.add(Observables.INSTANCE.declare(dependency, monitor));
+		}
 
-    @Override
-    public boolean isInstantiator() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		if (model.getResourceUrn().isPresent()) {
+			try {
+				this.resource = Optional.of(Resources.INSTANCE.getResource(model.getResourceUrn().get()));
+			} catch (KlabUnknownUrnException | KlabUnauthorizedUrnException e) {
+				monitor.error(e, model);
+			}
+		}
 
-    @Override
-    public boolean isReinterpreter() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		/*
+		 * TODO contextualizers
+		 */
 
-    @Override
-    public boolean isAvailable() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		/*
+		 * TODO actions
+		 */
 
-    @Override
-    public IDocumentation getDocumentation() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		if (model.getMetadata() != null) {
+			setMetadata(new Metadata(model.getMetadata()));
+		}
 
-    @Override
-    public IKimStatement getStatement() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		/*
+		 * TODO documentation
+		 */
+	}
+
+	@Override
+	public List<IObservable> getObservables() {
+		return observables;
+	}
+
+	@Override
+	public Optional<IResource> getResource() {
+		return resource;
+	}
+
+	@Override
+	public Map<String, IObservable> getAttributeObservables() {
+		return attributeObservables;
+	}
+
+	@Override
+	public String getLocalNameFor(IObservable observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isResolved() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isInstantiator() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isReinterpreter() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Optional<IDocumentation>	 getDocumentation() {
+		return documentation;
+	}
+
+	@Override
+	public IKimStatement getStatement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

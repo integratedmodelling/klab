@@ -26,25 +26,26 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
+import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 
 public class Metadata implements IMetadata {
 
-    private static final long serialVersionUID = 3274187164080304469L;
-    protected Map<String, Object> data = null;
+    protected Map<String, Object> data = new HashMap<>();
 
     public Metadata() {
-        this.data = new HashMap<String, Object>();
     }
 
     public Metadata(Map<String, Object> data) {
-        this.data = data;
+        this.data.putAll(data);
     }
 
+    public Metadata(IKimMetadata data) {
+        this.data.putAll(data.getData());
+    }
+    
     @Override
     public void put(String id, Object value) {
         data.put(id, value);

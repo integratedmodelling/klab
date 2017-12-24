@@ -9,17 +9,16 @@ import java.util.Set;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
-import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.kim.model.KimObservable;
+import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.kim.ConceptBuilder;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
 
@@ -29,11 +28,8 @@ import com.google.inject.Injector;
 public enum Concepts implements IConceptService {
 
     INSTANCE;
-
-    @Inject
-    ParseHelper<ObservableSemantics> observableParser;
-
-    @Inject
+	
+	@Inject
     ParseHelper<ConceptDeclaration>  declarationParser;
 
     private Concepts() {
@@ -48,9 +44,9 @@ public enum Concepts implements IConceptService {
     public IConcept declare(String declaration) {
 
         try {
-            ObservableSemantics parsed = observableParser.parse(declaration);
-            KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-            return Observables.INSTANCE.declare(interpreted);
+            ConceptDeclaration parsed = declarationParser.parse(declaration);
+            KimConcept interpreted = Kim.INSTANCE.declareConcept(parsed);
+            return ConceptBuilder.INSTANCE.declare(interpreted, Klab.INSTANCE.getRootMonitor());
         } catch (Exception e) {
         }
 

@@ -39,6 +39,7 @@ Quick reference
  	Units of measurement <units>
 	Frequently asked questions <faq>
 	References <references>
+	Glossary <glossary>
 
 APIs
 ================

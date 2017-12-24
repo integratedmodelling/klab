@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.SemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -24,6 +25,16 @@ public interface IObservableService {
      * @return the reconstructed observable.
      */
     IObservable declare(String declaration);
+
+    /**
+     * Reconstruct an observable from the result of parsing a declaration.
+     * 
+     * @param observable
+     * @param monitor
+     * @return the reconstructed observable.
+     */
+    IObservable declare(IKimObservable observable, IMonitor monitor);
+
     
     /**
      * 
@@ -350,5 +361,6 @@ public interface IObservableService {
      * @return a builder for the main concept
      */
     Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
+
 
 }
