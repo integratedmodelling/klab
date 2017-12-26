@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 public interface IRoleService {
 
     /**
-     * Retrieve any roles that were stated with the concept ('with role'). This only
+     * Retrieve any roles that were declared directly with the concept. This only
      * applies to observables declared in models, as there is no other legal place to
      * declare observables with roles.
      * 

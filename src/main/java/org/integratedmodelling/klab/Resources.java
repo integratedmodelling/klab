@@ -66,11 +66,11 @@ public enum Resources implements IResourceService {
 		} else {
 
 			/*
-			 * it's a remote URN
+			 * it's a remote URN: find in cache, retrieve if not there or expired
 			 */
 		}
 
-		return null;
+		return ret;
 	}
 
 	@Override

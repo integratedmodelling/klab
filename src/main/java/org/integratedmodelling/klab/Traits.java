@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.owl.OWL;
 public enum Traits implements ITraitService {
     INSTANCE;
 
+    @Override
     public Collection<IConcept> getTraits(IKnowledge concept) {
 
         Set<IConcept> ret = new HashSet<>();
@@ -33,6 +34,7 @@ public enum Traits implements ITraitService {
         return ret;
     }
 
+    @Override
     public IConcept getBaseParentTrait(IConcept trait) {
 
         String orig = trait.getMetadata().getString(NS.ORIGINAL_TRAIT);
@@ -55,16 +57,8 @@ public enum Traits implements ITraitService {
         }
         return null;
     }
-    
 
-    /**
-     * Check if concept k carries the passed trait. Uses is() on all explicitly expressed
-     * traits.
-     * @param type 
-     * @param trait 
-     * 
-     * @return
-     */
+    @Override
     public boolean hasTrait(IConcept type, IConcept trait) {
 
         for (IConcept c : getTraits(type)) {
@@ -76,13 +70,7 @@ public enum Traits implements ITraitService {
         return false;
     }
     
-    /**
-     * Check if concept k carries a trait T so that the passed trait is-a T.
-     * @param type 
-     * @param trait 
-     *
-     * @return
-     */
+    @Override
     public boolean hasParentTrait(IConcept type, IConcept trait) {
 
         for (IConcept c : getTraits(type)) {
