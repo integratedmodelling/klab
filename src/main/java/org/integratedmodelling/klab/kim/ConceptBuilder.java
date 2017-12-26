@@ -116,6 +116,9 @@ public enum ConceptBuilder {
                 case UNION:
                     expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology());
                     break;
+                case FOLLOWS:
+                    expr = OWL.INSTANCE.getConsequentialityEvent(concepts, namespace.getOntology());
+                    break;
                 default:
                     // won't happen
                     break;

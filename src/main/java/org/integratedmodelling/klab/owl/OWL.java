@@ -35,21 +35,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.eclipse.january.IMonitor;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.utils.CamelCase;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.URLUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -565,7 +567,7 @@ public enum OWL {
         // TODO remove from _csIndex - should be harmless to leave for now
         INamespace ns = this.namespaces.get(ontology.getName());
         if (ns != null) {
-            this.resourceIndex.remove(ns.getLocalFile());
+            this.resourceIndex.remove(ns.getLocalFile().toString());
         }
         this.namespaces.remove(ontology.getName());
         ontologies.remove(ontology.getName());
@@ -641,7 +643,7 @@ public enum OWL {
      * 
      * @param target
      * @param restricted
-     * @return
+     * @return the concepts restricted in the target by the property
      */
     public Collection<IConcept> getRestrictedClasses(IConcept target, IProperty restricted) {
         return new SpecializingRestrictionVisitor(target, restricted, true).getResult();
@@ -866,11 +868,39 @@ public enum OWL {
     }
 
     public IConcept getIntersection(Collection<IConcept> concepts, IOntology destination) {
+        // TODO
         return null;
     }
 
     public IConcept getUnion(Collection<IConcept> concepts, IOntology destination) {
+        // TODO
         return null;
     }
+    
+    public IConcept getConsequentialityEvent(Collection<IConcept> concepts, IOntology destination) {
+        // TODO
+        return null;
+    }
+
+
+	public String importExternal(String url, String prefix, IMonitor monitor) throws KlabException {
+
+	    // TODO must handle the situation when the prefix is already there better than this.
+	    
+        if (iri2ns.containsKey(url)) {
+            return iri2ns.get(url);
+        }
+
+        File out = new File(Configuration.INSTANCE.getDataPath("knowledge/imports") + File.separator + prefix + ".owl");
+        try {
+            URLUtils.copyChanneled(new URL(url), out);
+            loadInternal(out, prefix, monitor);
+        } catch (MalformedURLException e) {
+            monitor.error(e);
+            return null;
+        }
+                
+		return prefix;
+	}
 
 }

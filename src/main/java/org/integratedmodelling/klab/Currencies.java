@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab;
 
-public enum Currencies {
+import org.integratedmodelling.klab.api.services.ICurrencyService;
+
+public enum Currencies implements ICurrencyService {
 
     INSTANCE;
     

@@ -199,58 +199,12 @@ public enum Observables implements IObservableService {
 		return ret;
 	}
 
-	/**
-	 * True if o1 and o2 are observables from recognized domains, have compatible
-	 * context and inherency, o1 is o2, and o1 adopts all the traits and roles that
-	 * o2 adopts.
-	 * 
-	 * @param o1
-	 * @param o2
-	 * @return
-	 */
+	@Override
 	public boolean isCompatible(IConcept o1, IConcept o2) {
 		return isCompatible(o1, o2, 0);
 	}
 
-	/**
-	 * If passed to {@link #isCompatible(IConcept, IConcept, int)}, different realms
-	 * will not determine incompatibility.
-	 */
-	static public final int ACCEPT_REALM_DIFFERENCES = 0x01;
-	/**
-	 * If passed to {@link #isCompatible(IConcept, IConcept, int)}, only types that
-	 * have the exact same core type will be accepted.
-	 */
-	static public final int REQUIRE_SAME_CORE_TYPE = 0x02;
-	/**
-	 * If passed to {@link #isCompatible(IConcept, IConcept, int)}, types with roles
-	 * that are more general of the roles in the first concept will be accepted.
-	 */
-	static public final int USE_ROLE_PARENT_CLOSURE = 0x04;
-	/**
-	 * If passed to {@link #isCompatible(IConcept, IConcept, int)}, types with
-	 * traits that are more general of the traits in the first concept will be
-	 * accepted.
-	 */
-	static public final int USE_TRAIT_PARENT_CLOSURE = 0x08;
-
-	/**
-	 * If passed to
-	 * {@link #declareObservable(IConcept, Collection, IConcept, IConcept, Collection, IConcept, IConcept, IOntology, int)}
-	 * causes acceptance of subjective traits for observables.
-	 */
-	static public final int ACCEPT_SUBJECTIVE_OBSERVABLES = 0x10;
-
-	/**
-	 * Compatibility from the point of view of observation. True if o1 and o2 are
-	 * observables from recognized domains, have compatible context and inherency,
-	 * o1 is o2, and o1 adopts all the traits and roles that o2 adopts.
-	 * 
-	 * @param o1
-	 * @param o2
-	 * @param flags
-	 * @return
-	 */
+	@Override
 	public boolean isCompatible(IConcept o1, IConcept o2, int flags) {
 
 		boolean mustBeSameCoreType = (flags & REQUIRE_SAME_CORE_TYPE) != 0;

@@ -167,12 +167,12 @@ public enum Configuration implements IConfigurationService {
      */
     public static final String KLAB_USE_COMMON_ONTOLOGY           = "klab.engine.useCommonOntology";
 
-//    /**
-//     * If true, instructs some calls to spoof the _dev URLs of development network nodes to look like the
-//     * official one (without the suffix returned by {@link #getDeveloperNetworkURLPostfix()}). Used when
-//     * external services are configured with the official node URL and the modified URL gets in the way.
-//     */
-//    public static final String KLAB_SPOOF_DEV_URL                 = "klab.engine.spoofdevurl";
+    // /**
+    // * If true, instructs some calls to spoof the _dev URLs of development network nodes to look like the
+    // * official one (without the suffix returned by {@link #getDeveloperNetworkURLPostfix()}). Used when
+    // * external services are configured with the official node URL and the modified URL gets in the way.
+    // */
+    // public static final String KLAB_SPOOF_DEV_URL = "klab.engine.spoofdevurl";
 
     private Properties         properties;
     private File               dataPath;
@@ -261,7 +261,6 @@ public enum Configuration implements IConfigurationService {
 
     }
 
-    @Override
     public boolean useReasoner() {
         return true;
     }
@@ -294,8 +293,16 @@ public enum Configuration implements IConfigurationService {
 
     @Override
     public File getDataPath(String subspace) {
-        File ret = new File(dataPath + File.separator + subspace);
-        ret.mkdirs();
+
+        String dpath = dataPath.toString();
+        File ret = dataPath;
+
+        String[] paths = subspace.split("/");
+        for (String path : paths) {
+            ret = new File(dpath + File.separator + path);
+            ret.mkdirs();
+            dpath += File.separator + path;
+        }
         return ret;
     }
 

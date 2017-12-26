@@ -503,4 +503,12 @@ public class CoreOntology extends AbstractWorkspace {
         return ret;
     }
 
+	public String importOntology(String url, String prefix) {
+ 		try {
+            return OWL.INSTANCE.importExternal(url, prefix, Klab.INSTANCE.getRootMonitor());
+        } catch (KlabException e) {
+            return null;
+        }
+	}
+
 }

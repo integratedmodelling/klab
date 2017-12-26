@@ -29,13 +29,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Properties;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -94,44 +92,44 @@ public class URLUtils {
         return reachable;
     }
 
-    /**
-     * Look for thinklab.resource.path in properties, if found scan the path to resolve
-     * the passed name as a file url. If the url is already resolved, just return it. If
-     * the path contains a http-based URL prefix just use that without checking.
-     * 
-     * @param url
-     * @param properties
-     * @return a resolved url or the original one if not resolved.
-     */
-    public static String resolveUrl(String url, Properties properties) {
-
-        String ret = url;
-
-        if (ret.contains(":/"))
-            return ret;
-
-        String prop = ".";
-
-        for (String path : prop.split(";")) {
-
-            if (path.startsWith("http") && path.contains("/")) {
-                ret = path + url;
-                break;
-            }
-
-            File pth = new File(path + File.separator + url);
-
-            if (pth.exists()) {
-                try {
-                    ret = pth.toURI().toURL().toString();
-                    break;
-                } catch (MalformedURLException e) {
-                }
-            }
-        }
-
-        return ret;
-    }
+//    /**
+//     * Look for thinklab.resource.path in properties, if found scan the path to resolve
+//     * the passed name as a file url. If the url is already resolved, just return it. If
+//     * the path contains a http-based URL prefix just use that without checking.
+//     * 
+//     * @param url
+//     * @param properties
+//     * @return a resolved url or the original one if not resolved.
+//     */
+//    public static String resolveUrl(String url, Properties properties) {
+//
+//        String ret = url;
+//
+//        if (ret.contains(":/"))
+//            return ret;
+//
+//        String prop = ".";
+//
+//        for (String path : prop.split(";")) {
+//
+//            if (path.startsWith("http") && path.contains("/")) {
+//                ret = path + url;
+//                break;
+//            }
+//
+//            File pth = new File(path + File.separator + url);
+//
+//            if (pth.exists()) {
+//                try {
+//                    ret = pth.toURI().toURL().toString();
+//                    break;
+//                } catch (MalformedURLException e) {
+//                }
+//            }
+//        }
+//
+//        return ret;
+//    }
 
     /**
      * Copy the given URL to the given local file, return number of bytes copied.
