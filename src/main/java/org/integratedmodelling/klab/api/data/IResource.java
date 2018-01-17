@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -91,5 +92,12 @@ public interface IResource extends Serializable {
      * 
      * @return the list of changes in order of time (oldest first).
      */
-    List<INotification> history();
+    List<INotification> getHistory();
+    
+    /**
+     * URNs coming with parameters will list them here.
+     * 
+     * @return parameter map, possibly empty, never null.
+     */
+    Map<String, Object> getParameters();
 }

@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.Version;
@@ -26,9 +29,11 @@ public class Resource implements IResource {
 
     private static final long   serialVersionUID = -923039635832182164L;
 
-    Version                     version;
-    IGeometry                   geometry;
-    IMetadata                   metadata;
+    private Version                     version;
+    private IGeometry                   geometry;
+    private IMetadata                   metadata;
+    private List<INotification> history = new ArrayList<>();
+    private Map<String, Object> parameters = new HashMap<>();
 
     /**
      * Pattern to validate a RFC 2141-compliant URN, just to be on the right side of things.
@@ -89,8 +94,12 @@ public class Resource implements IResource {
     }
 
     @Override
-    public List<INotification> history() {
-        // TODO Auto-generated method stub
-        return null;
+    public List<INotification> getHistory() {
+        return history;
+    }
+
+    @Override
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 }

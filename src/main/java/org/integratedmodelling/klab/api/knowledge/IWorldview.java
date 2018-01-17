@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 /**
@@ -13,11 +14,11 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 public interface IWorldview extends IWorkspace {
 
     /**
-     * Translate the geometry from a URN-specified datasource to the corresponding
+     * Translate the geometry from a {@link IResource} to the corresponding
      * IScale for the worldview.
      * 
      * @param geometry
-     * @return
+     * @return the translated geometry
      */
     IScale getScale(IGeometry geometry);
     
