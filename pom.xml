@@ -53,7 +53,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 
 		<!-- COMMON DEPENDENCIES -->
@@ -176,6 +176,15 @@
 
 
 		<!-- ENGINE DEPENDENCIES -->
+
+		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, but
+			 Spring shouldn't be needed in the embedded engine and the API is better here. -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.11</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.eclipse.january/org.eclipse.january 
 			underlying implementation for non-distributed state storage -->
 		<dependency>

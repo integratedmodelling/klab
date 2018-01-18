@@ -137,7 +137,7 @@ public class Engine extends Server implements IEngine {
      * complete.
      * 
      * @return a new running engine.
-     * @throws an unchecked exception if startup fails
+     * @throws KlabRuntimeException if startup fails
      */
     public static IEngine start() {
         EngineStartupOptions options = new EngineStartupOptions();

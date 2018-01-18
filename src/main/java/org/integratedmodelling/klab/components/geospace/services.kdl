@@ -8,17 +8,20 @@ number terrain
 {
 	optional input roughness
 		"The roughness parameter controls the smoothness of the surface produced. Values 
-	     around 0.35 best simulate elevation, while rougher surfaces are best for slope."
+	     around 0.35 (default) best simulate elevation, while rougher surfaces are best 
+         for slope."
 		default 0.37
 	
 	optional input detail 
-		"The detail parameter controls the ..."
+		"The detail parameter controls the complexity of the surface. A value around 5 (default)
+         best simulates elevation."
 		default 5
 	
 	optional input range
 		"The range parameter controls the range of values produced. By default the values
-         range from 0 to 1."
-		default (0, 3000)
+         range from 0 to 3000, a range that produce realistic-looking elevation profiles in
+         meters."
+		default 0 to 3000
 		
 	class org.integratedmodelling.klab.components.geospace.services.TerrainService
 }
