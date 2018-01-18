@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
@@ -18,30 +19,29 @@ import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
 public enum Extensions implements IExtensionService {
-    
+
     INSTANCE;
 
     Map<String, IComponent> components = new HashMap<>();
-    
+
     public void registerPrototype(Prototype annotation, Class<?> cls) {
-        
+
         // TODO Auto-generated method stub
         /*
          * Class must be a 'callable' object - contextualizer etc
          */
     }
-    
+
     @Override
     public Collection<IComponent> getComponents() {
         return components.values();
     }
-    
+
     @Override
     public IComponent getComponent(String componentId) {
         return components.get(componentId);
     }
-    
-    
+
     @Override
     public IPrototype getServicePrototype(String service) {
         return null;
@@ -50,11 +50,11 @@ public enum Extensions implements IExtensionService {
     public IComponent registerComponent(Component annotation, Class<?> cls) {
 
         IComponent ret = null;
-        
+
         /*
          * TODO store knowledge for later processing
          */
-        
+
         /*
          * TODO ingest all .kdl files in the component's path
          */
@@ -68,21 +68,33 @@ public enum Extensions implements IExtensionService {
         }
 
         return ret;
-        
+
     }
 
-	private void declareServices(IComponent component, IKdlDataflow declaration) {
-        // TODO Auto-generated method stub
-        
+    private void declareServices(IComponent component, IKdlDataflow declaration) {
+        for (IKdlActuator actuator : declaration.getActuators()) {
+            IPrototype prototype = asPrototype(actuator);
+            if (prototype != null) {
+                
+            }
+        }
     }
 
     public void registerResourceAdapter(ResourceAdapter annotation, Class<?> cls) {
-		// TODO Auto-generated method stub
-		/*
-		 * class must be a IResourceAdapter
-		 */
-	}
-    
-    
+        // TODO Auto-generated method stub
+        /*
+         * class must be a IResourceAdapter
+         */
+    }
+
+    /**
+     * Turn a KDL actuator declaration into a prototype.
+     * 
+     * @param actuator
+     * @return
+     */
+    public static IPrototype asPrototype(IKdlActuator actuator) {
+        return null;
+    }
 
 }
