@@ -1,0 +1,4 @@
+worldview im;
+
+private model geography:Elevation in m, geography:Slope in degree_angle 
+	using gis.terrain();

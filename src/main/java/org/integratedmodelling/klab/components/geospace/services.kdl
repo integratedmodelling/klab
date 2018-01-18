@@ -1,0 +1,24 @@
+@namespace gis
+@klab 0.10.0
+@version 0.10.0
+
+number terrain 
+	"The terrain function generates a random fractal surface that can be parameterized to
+	 realistically mimic various patterns of the Earth surface, such as elevation or slope."
+{
+	optional input roughness
+		"The roughness parameter controls the smoothness of the surface produced. Values 
+	     around 0.35 best simulate elevation, while rougher surfaces are best for slope."
+		default 0.37
+	
+	optional input detail 
+		"The detail parameter controls the ..."
+		default 5
+	
+	optional input range
+		"The range parameter controls the range of values produced. By default the values
+         range from 0 to 1."
+		default (0, 3000)
+		
+	class org.integratedmodelling.klab.components.geospace.services.TerrainService
+}
