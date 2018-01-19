@@ -3,11 +3,10 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.io.File;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.model.INamespace;
 
-public interface IProject extends IKimProject {
+public interface IProject {
 
     String getName();
 
@@ -33,7 +32,7 @@ public interface IProject extends IKimProject {
      * True if the project has no namespaces that define non-worldview knowledge (see
      * {@link INamespace#isCanonical()}).
      * 
-     * @return
+     * @return true if project is canonital
      */
     public boolean isCanonical();
 }

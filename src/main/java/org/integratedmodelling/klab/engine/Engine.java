@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.Date;
 
 import org.integratedmodelling.kim.model.Kim;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
@@ -147,6 +149,7 @@ public class Engine extends Server implements IEngine {
         }
         return ret;
     }
+   
 
     /**
      * Perform the engine boot sequence. Can only be called after a valid certificate was read. The boot
@@ -309,6 +312,18 @@ public class Engine extends Server implements IEngine {
     @Override
     public Date getBootTime() {
         return bootTime;
+    }
+
+    @Override
+    public IContext run(URL script) {
+        
+        // TODO Auto-generated method stub
+        
+        /*
+         * 'script' can be .kim (test namespace) or .ks (host language script)
+         */
+        
+        return null;
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimFunctionCall;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -58,7 +58,16 @@ public interface IPrototype {
         /**
          * Produces range values. Only legal in parameters
          */
-        RANGE
+        RANGE,
+        /**
+         * Produce one of a set of values. Only legal in parameters, values are specified
+         * externally.
+         */
+        ENUM,
+        /**
+         * Produce extents such as space or time topologies
+         */
+        EXTENT
     }
 
     
@@ -95,6 +104,20 @@ public interface IPrototype {
          * @return
          */
         boolean isOptional();
+        
+        /**
+         * If the argument has a set of IDs as possible values (getType() == Type.ENUM), return them here.
+         * 
+         * @return the IDs or an empty set.
+         */
+        Set<String> getEnumValues();
+        
+        /**
+         * The default value for a parameter that is not passed.
+         * 
+         * @return default value (POD, list or {@link Range}) or null.
+         */
+        Object getDefaultValue();
         
         /**
          * 

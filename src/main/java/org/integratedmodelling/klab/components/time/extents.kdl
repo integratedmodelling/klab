@@ -1,0 +1,9 @@
+@klab 0.10.0
+@version 0.10.0
+
+extent time
+	"Generates temporal extents to use in observations or to constrain models. Parameters
+	 enable the creation of single periods as well as regular and irregular time grids."
+{
+	class org.integratedmodelling.klab.components.geospace.services.TerrainService
+}

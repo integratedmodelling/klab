@@ -10,11 +10,12 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
-import org.integratedmodelling.klab.api.extensions.Prototype;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.services.IExtensionService;
+import org.integratedmodelling.klab.common.services.Prototype;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
@@ -23,8 +24,9 @@ public enum Extensions implements IExtensionService {
     INSTANCE;
 
     Map<String, IComponent> components = new HashMap<>();
+    Map<String, IPrototype> prototypes = new HashMap<>();
 
-    public void registerPrototype(Prototype annotation, Class<?> cls) {
+    public void registerPrototype(org.integratedmodelling.klab.api.extensions.Prototype annotation, Class<?> cls) {
 
         // TODO Auto-generated method stub
         /*
@@ -49,14 +51,21 @@ public enum Extensions implements IExtensionService {
 
     public IComponent registerComponent(Component annotation, Class<?> cls) {
 
-        IComponent ret = null;
+        org.integratedmodelling.klab.engine.extensions.Component ret =
+                new org.integratedmodelling.klab.engine.extensions.Component(annotation, cls);
 
+        System.out.println(StringUtils.repeat('-', 80));
+        System.out.println("* COMPONENT " + ret.getName());
+        System.out.println(StringUtils.repeat('-', 80) + "\n");
+        System.out.println("* Services");
+        System.out.println(StringUtils.repeat('-', 80));
+        
         /*
          * TODO store knowledge for later processing
          */
 
         /*
-         * TODO ingest all .kdl files in the component's path
+         * ingest all .kdl files in the component's path
          */
         for (String kdl : new Reflections(cls.getPackageName(), new ResourcesScanner())
                 .getResources(Pattern.compile(".*\\.kdl"))) {
@@ -71,12 +80,16 @@ public enum Extensions implements IExtensionService {
 
     }
 
-    private void declareServices(IComponent component, IKdlDataflow declaration) {
+    private void declareServices(org.integratedmodelling.klab.engine.extensions.Component component, IKdlDataflow declaration) {
+        
+        String namespace = declaration.getPackageName();
         for (IKdlActuator actuator : declaration.getActuators()) {
-            IPrototype prototype = asPrototype(actuator);
-            if (prototype != null) {
-                
-            }
+            IPrototype prototype = new Prototype(actuator, namespace);
+            component.addService(prototype);
+            prototypes.put(prototype.getName(), prototype);
+        
+            System.out.println(StringUtils.repeat('-', 80));
+            System.out.println(prototype.getSynopsis());
         }
     }
 
@@ -85,16 +98,6 @@ public enum Extensions implements IExtensionService {
         /*
          * class must be a IResourceAdapter
          */
-    }
-
-    /**
-     * Turn a KDL actuator declaration into a prototype.
-     * 
-     * @param actuator
-     * @return
-     */
-    public static IPrototype asPrototype(IKdlActuator actuator) {
-        return null;
     }
 
 }

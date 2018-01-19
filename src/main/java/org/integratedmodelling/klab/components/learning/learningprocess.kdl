@@ -1,5 +1,3 @@
-// FIXME the worldview shouldn't be required if core ontologies are used
-@worldview im
 @version 0.10.0
 @klab 0.10.0
 

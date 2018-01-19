@@ -37,6 +37,23 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static final int NONLETTERS = 0x0002;
     public static final int UPPERCASE  = 0x0004;
 
+
+    /**
+     * Split into lines and indent each by the given amount.
+     * 
+     * @param s
+     * @param indent
+     * @return
+     */
+    public static String leftIndent(String s, int indent) {
+        String pad = spaces(indent);
+        String[] strings = s.split("\n");
+        StringBuffer buf = new StringBuffer(s.length() + (indent*strings.length));
+        for (String ss : strings) {
+            buf.append(pad + ss.trim() + "\n");
+        }
+        return buf.toString();
+    }
     
     // convert from UTF-8 -> internal Java String format
     public static String convertFromUTF8(String s) {

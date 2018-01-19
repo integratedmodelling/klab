@@ -1,23 +1,30 @@
 package org.integratedmodelling.klab.kim;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 import org.eclipse.xtext.util.Pair;
+import org.eclipse.xtext.util.Tuples;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.kim.model.Kim.FunctionDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
+import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -75,9 +82,15 @@ public class KimValidator implements Kim.Validator {
 	}
 
 	@Override
-	public FunctionDescriptor classifyFunction(String functionId) {
-		// TODO Auto-generated method stub
-		return null;
+    public List<Pair<String, Level>> validateFunction(IKimFunctionCall functionCall, Set<Type> expectedType) {
+	    List<Pair<String, Level>> ret = new ArrayList<>();
+		IPrototype prototype = Extensions.INSTANCE.getServicePrototype(functionCall.getName());
+		if (prototype != null) {
+		    
+		} else {
+		    ret.add(Tuples.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
+		}
+		return ret;
 	}
 
 	@Override

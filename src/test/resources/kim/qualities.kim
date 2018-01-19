@@ -1,4 +1,14 @@
 worldview im;
 
-private model geography:Elevation in m, geography:Slope in degree_angle 
+@test(
+	description = "Simple quality generation using a loaded contextualizer",
+	observe = ("geography:Elevation", "geography:Slope")
+) 
+observe earth:Terrestrial earth:Region named tanzania-grr over
+  space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))");
+
+private model geography:Elevation in m 
 	using gis.terrain();
+
+private model geography:Slope in m 
+	using gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360);
