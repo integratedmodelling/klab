@@ -17,5 +17,5 @@ extent space
 		 units. Example: '1 km'."
 		default ""
 		
-	class org.integratedmodelling.klab.components.geospace.services.TerrainService
+	class org.integratedmodelling.klab.components.geospace.services.Space
 }

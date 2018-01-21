@@ -67,7 +67,7 @@ public enum Extensions implements IExtensionService {
         /*
          * ingest all .kdl files in the component's path
          */
-        for (String kdl : new Reflections(cls.getPackageName(), new ResourcesScanner())
+        for (String kdl : new Reflections(cls.getPackage().getName(), new ResourcesScanner())
                 .getResources(Pattern.compile(".*\\.kdl"))) {
             try (InputStream input = cls.getClassLoader().getResourceAsStream(kdl)) {
                 declareServices(ret, Dataflows.INSTANCE.declare(input));
