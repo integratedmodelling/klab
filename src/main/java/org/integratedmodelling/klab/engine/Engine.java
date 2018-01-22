@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -315,13 +317,18 @@ public class Engine extends Server implements IEngine {
     }
 
     @Override
-    public IContext run(URL script) {
-        
-        // TODO Auto-generated method stub
+    public IContext run(URL script) throws KlabException {
         
         /*
          * 'script' can be .kim (test namespace) or .ks (host language script)
          */
+        if (script.toString().endsWith(".kim")) {
+
+            Klab.INSTANCE.info("running test namespace " + script);
+                    
+            INamespace namespace = Models.INSTANCE.load(script);
+            // TODO find what to run
+        }
         
         return null;
     }

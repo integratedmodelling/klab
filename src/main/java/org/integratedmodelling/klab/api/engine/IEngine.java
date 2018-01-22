@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IEngine extends IEngineIdentity, IServer {
 
@@ -44,7 +45,8 @@ public interface IEngine extends IEngineIdentity, IServer {
      * @param script
      *            a URL pointing to a self-contained script. Must have no imports.
      * @return the last context computed, possibly null.
+     * @throws KlabException 
      */
-    IContext run(URL script);
+    IContext run(URL script) throws KlabException;
 
 }

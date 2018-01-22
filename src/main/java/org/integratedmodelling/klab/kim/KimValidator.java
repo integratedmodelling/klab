@@ -45,10 +45,9 @@ public class KimValidator implements Kim.Validator {
 	}
 
 	@Override
-	public void synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
+	public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 
 		Namespaces.INSTANCE.release(namespace.getName());
-
 		INamespace ns = new Namespace(namespace);
 
 		for (Pair<String, String> imp : namespace.getOwlImports()) {
@@ -79,6 +78,8 @@ public class KimValidator implements Kim.Validator {
 		 */
 		Namespaces.INSTANCE.registerNamespace(ns);
         Reasoner.INSTANCE.addOntology(ns.getOntology());
+        
+        return ns;
 	}
 
 	@Override

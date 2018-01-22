@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class ModelTests {
     }
 
     @Test
-    public void runTests() {
+    public void runTests() throws KlabException {
         /*
          * run every file in the kim/ package, under tests/resources
          */
