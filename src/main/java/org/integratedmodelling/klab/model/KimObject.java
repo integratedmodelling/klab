@@ -31,4 +31,8 @@ public abstract class KimObject implements IKimObject {
     public IMetadata getMetadata() {
         return metadata;
     }
+    
+    public String toString() {
+        return statement.toString();
+    }
 }

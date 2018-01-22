@@ -26,8 +26,10 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 
 public class KimValidator implements Kim.Validator {
@@ -48,7 +50,7 @@ public class KimValidator implements Kim.Validator {
 	public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 
 		Namespaces.INSTANCE.release(namespace.getName());
-		INamespace ns = new Namespace(namespace);
+		Namespace ns = new Namespace(namespace);
 
 		for (Pair<String, String> imp : namespace.getOwlImports()) {
 		    String prefix = Workspaces.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
@@ -64,12 +66,23 @@ public class KimValidator implements Kim.Validator {
 		 * no matter how internal, through the monitor
 		 */
 		for (IKimScope statement : namespace.getChildren()) {
+		    
+		    IKimObject object = null;
+		    
 			if (statement instanceof IKimConceptStatement) {
-				ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
+				IConcept concept = ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
+				if (concept != null) {
+	                // wrap in a concept definition to add to namespace
+				    object = new ConceptStatement((IKimConceptStatement)statement, concept);
+				}
 			} else if (statement instanceof IKimModel) {
-				ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
+			    object = ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
 			} else if (statement instanceof IKimObserver) {
-				ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
+				object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
+			}
+			
+			if (object != null) {
+			    ns.addObject(object);
 			}
 		}
 		

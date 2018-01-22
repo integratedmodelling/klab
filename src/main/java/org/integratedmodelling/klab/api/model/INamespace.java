@@ -41,18 +41,35 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
- * This class represents a namespace declared through a k.IM file.
+ * This class represents a namespace parsed from a k.IM file.
  * 
  * @author  Ferd
  */
 public interface INamespace extends IKimObject {
     
+    /**
+     * 
+     * @return
+     */
     String getName();
 
+    /**
+     * 
+     * @return
+     */
     List<IKimObject> getObjects();
     
+    /**
+     * 
+     * @return
+     */
     List<IKimObject> getAllObjects();
 
+    /**
+     * 
+     * @param id
+     * @return
+     */
     IKimObject getObject(String id);
     
     /**
@@ -211,15 +228,6 @@ public interface INamespace extends IKimObject {
     boolean isCanonical();
 
     /**
-     * A tainted namespace has concepts that do not derive directly from
-     * the worldview. A namespace that is part of a worldview is never
-     * tainted.
-     * 
-     * @return
-     */
-    boolean isTainted();
-    
-    /**
      * The doc string defined for the namespace. Should never
      * be null.
      * 
@@ -235,6 +243,10 @@ public interface INamespace extends IKimObject {
      */
     IDocumentation getDocumentation();
 
+    /**
+     * 
+     * @return
+     */
     boolean isInternal();
     
     /**
