@@ -30,7 +30,7 @@ public class Model extends KimObject implements IModel {
 	private List<IObservable> dependencies = new ArrayList<>();
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
 
-	Model(IKimModel model, IMonitor monitor) {
+	public Model(IKimModel model, IMonitor monitor) {
 
 		super(model);
 

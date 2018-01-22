@@ -49,14 +49,7 @@ public enum Models implements IModelService {
         }
     }
 
-    /**
-     * Load a single model file from a URL. Namespace must have no dependencies and name a worldview at the
-     * top.
-     * 
-     * @param url
-     * @return
-     * @throws KlabException
-     */
+    @Override
     public INamespace load(URL url) throws KlabException {
         try (InputStream stream = url.openStream()) {
             return load(stream);
@@ -65,14 +58,7 @@ public enum Models implements IModelService {
         }
     }
 
-    /**
-     * Load a single model file from a file. Namespace must have no dependencies and name a worldview at the
-     * top.
-     * 
-     * @param file
-     * @return
-     * @throws KlabException
-     */
+    @Override
     public INamespace load(File file) throws KlabException {
         try (InputStream stream = new FileInputStream(file)) {
             return load(stream);
@@ -81,14 +67,7 @@ public enum Models implements IModelService {
         }
     }
 
-    /**
-     * Load a single model file from an inputstream. Namespace must have no dependencies and name a worldview
-     * at the top.
-     * 
-     * @param input
-     * @return
-     * @throws KlabException
-     */
+    @Override
     public INamespace load(InputStream input) throws KlabException {
         INamespace ret = null;
         try {

@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.model.Observer;
 
 public enum ObservationBuilder {
     
@@ -14,12 +15,12 @@ public enum ObservationBuilder {
      * from the k.IM validator. May add logical errors, which are reported back when this
      * is called from an intelligent editor.
      * 
-     * @param model
+     * @param observer
      * @param namespace 
      * @param monitor 
      * @return
      */
-    public IObserver build(IKimObserver model, INamespace namespace, IMonitor monitor) {
-        return null;
+    public IObserver build(IKimObserver observer, INamespace namespace, IMonitor monitor) {
+        return new Observer(observer, monitor);
     }
 }

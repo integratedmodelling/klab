@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.model.Model;
 
 public enum ModelBuilder {
 
@@ -20,9 +21,7 @@ public enum ModelBuilder {
      * @return a built model
      */
     public IModel build(IKimModel model, INamespace namespace, IMonitor monitor) {
-        
-        
-        return null;
+        return new Model(model, monitor);
     }
 
 }
