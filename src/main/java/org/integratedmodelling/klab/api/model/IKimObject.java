@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.api.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
 
 /**
@@ -12,7 +14,47 @@ import org.integratedmodelling.kim.api.IKimStatement;
  *
  */
 public interface IKimObject extends Serializable {
-    
+
+    /**
+     * The object's ID is its unique name within the namespace. The fully qualified name is
+     * returned by {@link #getName()}.
+     * 
+     * @return the simple name for the object.
+     */
+    String getId();
+
+    /**
+     * Each k.IM object has a simple name, returned by {@link #getId()}. In any
+     * object except namespaces, the fully qualified name is a path starting with
+     * the namespace.
+     * 
+     * @return the object's fully qualified name.
+     */
+    String getName();
+
+    /**
+     * The statement that originated the object in k.IM. Will return null
+     * in generated object that do not start from source.
+     * 
+     * @return the k.IM statement that originated this object, or null. 
+     */
     IKimStatement getStatement();
+
+    /**
+     * If the object has child objects of the same kind, these will be
+     * returned here. For now only {@link IConceptDefinition} and {@link IObserver} 
+     * have children.
+     * 
+     * @return the list of children in order of declaration. Never null.
+     */
+    List<IKimObject> getChildren();
+
+    /**
+     * Return all the annotations attributed to the object in the originating
+     * k.IM code.
+     * 
+     * @return a list of annotations in order of declaration, or null.
+     */
+    List<IKimAnnotation> getAnnotations();
 
 }

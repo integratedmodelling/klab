@@ -42,7 +42,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
  * as they are and provide observation semantics for it).
  * 
  */
-public interface IModel extends IKimObject {
+public interface IModel extends IKimObject, INamespaceQualified {
 
     /**
      * Return the semantics of all observables we are observing. The first in the list is
@@ -85,7 +85,7 @@ public interface IModel extends IKimObject {
 
     /**
      * Get the name with which the passed observable is known within this model. The
-     * passed observable's name reported by {@link IObservableSemantics#getFormalName()}
+     * passed observable's name reported by {@link IObservable#getName()}
      * may be different as the same observation could come from a different model.
      * 
      * @param observable
@@ -119,11 +119,11 @@ public interface IModel extends IKimObject {
     /**
      * True if the model is expected to contextually reinterpret its observable using
      * a role. If the role is abstract, the model will try to establish the 
-     * correspondent concrete role using provenance at runtime. Observations will be
-     * made using an independently resolved, non-roled model unless the model is
+     * correspondent concrete role from the chain of provenance at runtime. Observations will be
+     * made using an independently resolved, non-roled model unless the model is already
      * resolved.
      * 
-     * @return
+     * @return true if the model reinterprets the observable through a role.
      */
     boolean isReinterpreter();
 
@@ -144,12 +144,12 @@ public interface IModel extends IKimObject {
      * documentation may be created or filled in from metadata.
      */
     Optional<IDocumentation> getDocumentation();
-    
+
     /**
      * Metadata can be associated to models in k.IM.
      * 
-     * @return metadata (never null).
+     * @return metadata (never null, possibly empty).
      */
     IMetadata getMetadata();
-    
+
 }

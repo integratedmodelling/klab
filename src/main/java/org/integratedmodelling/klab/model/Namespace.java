@@ -230,4 +230,9 @@ public class Namespace extends KimObject implements INamespace {
         return "[NS " + getName() + " (" + getObjects().size() + " objects)]";
     }
 
+    @Override
+    public String getId() {
+        return name;
+    }
+
 }

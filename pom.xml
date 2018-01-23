@@ -17,6 +17,8 @@
 		<jts.version>1.13</jts.version>
 		<xtext.version>2.12.0</xtext.version>
 		<h2gis.version>1.2.4</h2gis.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- the five below go together. Never change one without checking the 
 			others -->
@@ -177,8 +179,9 @@
 
 		<!-- ENGINE DEPENDENCIES -->
 
-		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, but
-			 Spring shouldn't be needed in the embedded engine and the API is better here. -->
+		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
+			but Spring shouldn't be needed in the embedded engine and the API is better 
+			here. -->
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>

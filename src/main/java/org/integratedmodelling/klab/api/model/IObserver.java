@@ -9,10 +9,10 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
  * @author Ferd
  *
  */
-public interface IObserver extends IKimObject {
+public interface IObserver extends IKimObject, INamespaceQualified {
 
     /**
-     * Metadata can be associated to models in k.IM.
+     * Metadata can be associated to observers in k.IM.
      * 
      * @return metadata (never null).
      */

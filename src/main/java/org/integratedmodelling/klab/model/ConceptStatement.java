@@ -17,5 +17,15 @@ public class ConceptStatement extends KimObject {
     public IConcept getConcept() {
         return this.concept;
     }
+
+    @Override
+    public String getId() {
+        return concept.getLocalName();
+    }
+
+    @Override
+    public String getName() {
+        return concept.getConceptSpace();
+    }
     
 }

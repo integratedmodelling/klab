@@ -41,27 +41,24 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
- * This class represents a namespace parsed from a k.IM file.
+ * This class represents a namespace parsed from a k.IM file. The {@link #getId()} and
+ * {@link #getName()} are identical in namespaces.
  * 
  * @author  Ferd
  */
 public interface INamespace extends IKimObject {
     
     /**
+     * The list of k.IM objects in order of declaration in the namespace file.
      * 
-     * @return
-     */
-    String getName();
-
-    /**
-     * 
-     * @return
+     * @return the objects
      */
     List<IKimObject> getObjects();
     
     /**
+     * Return a flattened list of all k.IM objects and their children.
      * 
-     * @return
+     * @return the flattened object tree.
      */
     List<IKimObject> getAllObjects();
 
