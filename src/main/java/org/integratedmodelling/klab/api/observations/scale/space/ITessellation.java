@@ -26,6 +26,8 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale.space;
 
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape;
+
 /**
  * An irregular tessellation topology implemented as an array of shapes, not necessarily 
  * covering a full extent but necessarily non-overlapping.
@@ -33,6 +35,6 @@ package org.integratedmodelling.klab.api.observations.scale.space;
  * @author ferdinando.villa
  *
  */
-public interface ITessellation extends Iterable<IShape> {
+public interface ITessellation extends Iterable<Shape> {
 
 }

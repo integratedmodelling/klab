@@ -65,9 +65,17 @@ public interface IPrototype {
          */
         ENUM,
         /**
-         * Produce extents such as space or time topologies
+         * Produce extents other than time or space
          */
         EXTENT,
+        /**
+         * Produce temporal extents
+         */
+        TEMPORALEXTENT,
+        /**
+         * Produce spatial extents 
+         */
+        SPATIALEXTENT,
         /**
          * Specify annotation contracts
          */

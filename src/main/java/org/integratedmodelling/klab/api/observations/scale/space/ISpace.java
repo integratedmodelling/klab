@@ -30,6 +30,144 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 public interface ISpace extends IExtent {
 
+    /**
+     * Opaque interface for a coordinate reference system. 
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface Projection {
+        
+        /**
+         * 
+         * @return
+         */
+        int getCode();
+    }
+
+    /**
+     * Anything that has coordinates is referenced.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public abstract interface Referenced {
+
+        /**
+         * 
+         * @return
+         */
+        Projection getProjection();
+    }
+    
+    /**
+     * Opaque interface for a referenced envelope.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface Envelope extends Referenced {
+
+        /**
+         * 
+         * @return
+         */
+        double getMinX();
+
+        /**
+         * 
+         * @return
+         */
+        double getMaxX();
+        
+        /**
+         * 
+         * @return
+         */
+        double getMinY();
+        
+        /**
+         * 
+         * @return
+         */
+        double getMaxY();
+        
+        /**
+         * 
+         * @return
+         */
+        Shape asShape();
+    }
+    
+    /**
+     * Opaque interface for a 2D geometry.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface Shape extends Referenced {
+
+        public enum Type {
+            EMPTY,
+            POINT,
+            LINESTRING,
+            POLYGON,
+            MULTIPOINT,
+            MULTILINESTRING,
+            MULTIPOLYGON
+        }
+
+        /**
+         * Geometry type
+         * 
+         * @return the type
+         */
+        Type getType();
+
+        /**
+         * Return a suitable measure of area. Units not guaranteed - only comparability between
+         * conformant shapes.
+         * 
+         * @return area in stable unit
+         */
+        double getArea();
+
+        /**
+         * Shapes may be empty or inconsistent.
+         * 
+         * @return true if not really a shape
+         */
+        boolean isEmpty();
+        
+        /**
+         * 
+         * @param projection
+         * @return
+         */
+        Shape transform(Projection projection);
+        
+        /**
+         * 
+         * @return
+         */
+        Envelope getEnvelope();
+        
+        /**
+         * 
+         * @param other
+         * @return
+         */
+        Shape intersection(Shape other);
+        
+        /**
+         * 
+         * @param other
+         * @return
+         */
+        Shape union(Shape other);
+        
+    }
+    
     int MIN_SCALE_RANK = 0;
     int MAX_SCALE_RANK = 21;
 
@@ -54,11 +192,11 @@ public interface ISpace extends IExtent {
     double getMaxY();
 
     /**
-     * String code of coordinate reference system. Cannot be null in Thinklab.
+     * Projection. Cannot be null.
      * 
-     * @return crs code
+     * @return coordinate reference system
      */
-    String getCRSCode();
+    Projection getProjection();
 
     /**
      * Return the grid topology if we are using one, or null.
@@ -80,7 +218,7 @@ public interface ISpace extends IExtent {
      * 
      * @return full shape
      */
-    IShape getShape();
+    Shape getShape();
 
     /**
      * Return a spatial index capable of keeping track of other extents relative to
@@ -88,7 +226,7 @@ public interface ISpace extends IExtent {
      * ones as requested.
      * 
      * @param makeNew if true, create and return a new index for this extent. If false,
-     *        return the stored index for the extent, creating it if necessary.
+     *        return the stored index for the extent, creating it only if necessary.
      * 
      * @return a spatial index set to our extent
      */

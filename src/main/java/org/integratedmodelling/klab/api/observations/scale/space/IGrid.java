@@ -31,6 +31,7 @@ import java.util.Collection;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public interface IGrid extends Iterable<Cell> {
@@ -92,7 +93,7 @@ public interface IGrid extends Iterable<Cell> {
          */
         double[] getCenter();
 
-        IShape getGeometry();
+        Shape getShape();
 
     }
 
