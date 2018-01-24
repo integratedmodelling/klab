@@ -30,11 +30,14 @@ public class Model extends KimObject implements IModel {
 	private List<IObservable> observables = new ArrayList<>();
 	private List<IObservable> dependencies = new ArrayList<>();
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
-
-	public Model(IKimModel model, IMonitor monitor) {
+	private INamespace namespace;
+	
+	public Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
 		super(model);
-
+		
+		this.namespace = namespace;
+		
 		for (IKimObservable observable : model.getObservables()) {
 			if (observable.getAttribute().isPresent()) {
 				attributeObservables.put(observable.getAttribute().get(),
@@ -143,8 +146,35 @@ public class Model extends KimObject implements IModel {
 
     @Override
     public INamespace getNamespace() {
-        // TODO Auto-generated method stub
-        return null;
+        return namespace;
+    }
+
+    public List<IObservable> getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(List<IObservable> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    public void setResource(Optional<IResource> resource) {
+        this.resource = resource;
+    }
+
+    public void setDocumentation(Optional<IDocumentation> documentation) {
+        this.documentation = documentation;
+    }
+
+    public void setObservables(List<IObservable> observables) {
+        this.observables = observables;
+    }
+
+    public void setAttributeObservables(Map<String, IObservable> attributeObservables) {
+        this.attributeObservables = attributeObservables;
+    }
+
+    public void setNamespace(INamespace namespace) {
+        this.namespace = namespace;
     }
 
 }

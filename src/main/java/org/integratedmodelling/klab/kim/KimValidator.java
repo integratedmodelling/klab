@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
@@ -19,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Namespaces;
@@ -84,6 +86,15 @@ public class KimValidator implements Kim.Validator {
 			if (object != null) {
 			    ns.addObject(object);
 			}
+		}
+		
+		/*
+		 * Execute any annotations recognized by the engine.
+		 */
+		for (IKimObject object : ns.getObjects()) {
+		    for (IKimAnnotation annotation : object.getAnnotations()) {
+		        Annotations.INSTANCE.process(annotation, object, monitor);
+		    }
 		}
 		
 		/*

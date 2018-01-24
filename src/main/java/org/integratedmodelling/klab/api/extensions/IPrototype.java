@@ -71,7 +71,11 @@ public interface IPrototype {
         /**
          * Specify annotation contracts
          */
-        ANNOTATION
+        ANNOTATION,
+        /**
+         * A list value
+         */
+        LIST
     }
 
     

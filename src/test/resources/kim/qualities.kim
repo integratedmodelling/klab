@@ -1,8 +1,9 @@
 worldview im;
 
 @test(
-	description = "Simple quality generation using a loaded contextualizer",
-	observation = ("geography:Elevation", "geography:Slope")
+	name = "tests.core.qgen-auto-1",
+	description  = "Simple quality generation using a loaded contextualizer",
+	observations = ("geography:Elevation", "geography:Slope")
 )
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))");

@@ -74,6 +74,7 @@ public class Prototype implements IPrototype {
      * Create a prototype from an actuator, which is expected to be a valid parameter and not checked.
      * 
      * @param actuator
+     * @param namespace 
      */
     public Prototype(IKdlActuator actuator, String namespace) {
 
@@ -87,7 +88,7 @@ public class Prototype implements IPrototype {
 
             Argument a = new Argument();
             a.name = arg.getName();
-            a.description = arg.getDescription() == null ? "" : StringUtils.pack(arg.getDescription());
+            a.description = arg.getDescription() == null ? "" : StringUtils.pack(arg.getDescription()).trim();
             a.type = arg.getType() == null ? null : Type.valueOf(arg.getType().name());
             a.optional = arg.isOptional();
             a.enumValues.addAll(arg.getEnumValues());

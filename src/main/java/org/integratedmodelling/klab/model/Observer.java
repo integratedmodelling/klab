@@ -14,8 +14,10 @@ public class Observer extends KimObject implements IObserver {
     private String name;
     private INamespace namespace;
 
-    public Observer(IKimObserver statement, IMonitor monitor) {
+    public Observer(IKimObserver statement, INamespace namespace, IMonitor monitor) {
         super(statement);
+        this.namespace = namespace;
+        this.name = statement.getName();
     }
 
     @Override

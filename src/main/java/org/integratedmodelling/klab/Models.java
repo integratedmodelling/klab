@@ -54,7 +54,7 @@ public enum Models implements IModelService {
         try (InputStream stream = url.openStream()) {
             return load(stream);
         } catch (Exception e) {
-            throw new KlabIOException(e);
+            throw e instanceof KlabException ? (KlabException)e : new KlabIOException(e);
         }
     }
 
@@ -63,7 +63,7 @@ public enum Models implements IModelService {
         try (InputStream stream = new FileInputStream(file)) {
             return load(stream);
         } catch (Exception e) {
-            throw new KlabIOException(e);
+            throw e instanceof KlabException ? (KlabException)e : new KlabIOException(e);
         }
     }
 
@@ -93,7 +93,7 @@ public enum Models implements IModelService {
             }
 
         } catch (Exception e) {
-            throw new KlabValidationException(e);
+            throw e instanceof KlabException ? (KlabException)e : new KlabValidationException(e);
         }
         return ret;
     }

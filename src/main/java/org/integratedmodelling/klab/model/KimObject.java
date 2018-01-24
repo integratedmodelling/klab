@@ -15,7 +15,6 @@ public abstract class KimObject implements IKimObject {
     private IKimStatement        statement;
     private IMetadata            metadata;
     protected List<IKimObject>   children         = new ArrayList<>();
-    private List<IKimAnnotation> annotations      = new ArrayList<>();
 
     public KimObject(IKimStatement statement) {
         this.statement = statement;
@@ -33,7 +32,7 @@ public abstract class KimObject implements IKimObject {
     
     @Override
     public List<IKimAnnotation> getAnnotations() {
-        return annotations;
+        return statement.getAnnotations();
     }
 
     protected void setStatement(IKimStatement statement) {

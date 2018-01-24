@@ -21,7 +21,7 @@ public enum ModelBuilder {
      * @return a built model
      */
     public IModel build(IKimModel model, INamespace namespace, IMonitor monitor) {
-        return new Model(model, monitor);
+        return new Model(model, namespace, monitor);
     }
 
 }

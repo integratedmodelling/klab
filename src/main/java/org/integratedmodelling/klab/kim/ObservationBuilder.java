@@ -21,6 +21,6 @@ public enum ObservationBuilder {
      * @return
      */
     public IObserver build(IKimObserver observer, INamespace namespace, IMonitor monitor) {
-        return new Observer(observer, monitor);
+        return new Observer(observer, namespace, monitor);
     }
 }

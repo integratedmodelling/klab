@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +44,8 @@ public enum Annotations implements IAnnotationService {
         Object process(IKimObject target, Map<String, Object> arguments, IMonitor monitor);
     }
 
-    Map<String, Handler>    handlers   = new HashMap<>();
-    Map<String, IPrototype> prototypes = new HashMap<>();
+    Map<String, Handler>    handlers   = Collections.synchronizedMap(new HashMap<>());
+    Map<String, IPrototype> prototypes = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public IPrototype getPrototype(String annotation) {
