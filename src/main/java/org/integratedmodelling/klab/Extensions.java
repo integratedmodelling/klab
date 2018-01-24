@@ -23,8 +23,8 @@ public enum Extensions implements IExtensionService {
 
     INSTANCE;
 
-    Map<String, IComponent> components = new HashMap<>();
-    Map<String, IPrototype> prototypes = new HashMap<>();
+    Map<String, IComponent> components   = new HashMap<>();
+    Map<String, IPrototype> prototypes   = new HashMap<>();
 
     public void registerPrototype(org.integratedmodelling.klab.api.extensions.Prototype annotation, Class<?> cls) {
 
@@ -51,15 +51,14 @@ public enum Extensions implements IExtensionService {
 
     public IComponent registerComponent(Component annotation, Class<?> cls) {
 
-        org.integratedmodelling.klab.engine.extensions.Component ret =
-                new org.integratedmodelling.klab.engine.extensions.Component(annotation, cls);
+        org.integratedmodelling.klab.engine.extensions.Component ret = new org.integratedmodelling.klab.engine.extensions.Component(annotation, cls);
 
         System.out.println(StringUtils.repeat('-', 80));
         System.out.println("* COMPONENT " + ret.getName());
         System.out.println(StringUtils.repeat('-', 80) + "\n");
         System.out.println("* Services");
         System.out.println(StringUtils.repeat('-', 80));
-        
+
         /*
          * TODO store knowledge for later processing
          */
@@ -81,13 +80,13 @@ public enum Extensions implements IExtensionService {
     }
 
     private void declareServices(org.integratedmodelling.klab.engine.extensions.Component component, IKdlDataflow declaration) {
-        
+
         String namespace = declaration.getPackageName();
         for (IKdlActuator actuator : declaration.getActuators()) {
             IPrototype prototype = new Prototype(actuator, namespace);
             component.addService(prototype);
             prototypes.put(prototype.getName(), prototype);
-        
+
             System.out.println(StringUtils.repeat('-', 80));
             System.out.println(prototype.getSynopsis());
         }

@@ -6,7 +6,6 @@ import java.util.List;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 
 /**
  * Spatial index with k.LAB semantics (as well as more basic functions for now). Much to
