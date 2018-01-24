@@ -68,6 +68,7 @@ public class Prototype implements IPrototype {
     private Map<String, Argument> arguments = new HashMap<>();
     private String                description;
     private Class<?>              implementation;
+    private Type                  type;
 
     /**
      * Create a prototype from an actuator, which is expected to be a valid parameter and not checked.
@@ -77,6 +78,8 @@ public class Prototype implements IPrototype {
     public Prototype(IKdlActuator actuator, String namespace) {
 
         this.name = (namespace == null ? "" : (namespace + ".")) + actuator.getName();
+        this.type = Type.valueOf(actuator.getType().name());
+        
         if (actuator.getDescription() != null) {
             this.description = StringUtils.pack(actuator.getDescription());
         }
@@ -106,6 +109,11 @@ public class Prototype implements IPrototype {
     @Override
     public String getName() {
         return name;
+    }
+    
+    @Override
+    public Type getType() {
+        return type;
     }
 
     @Override

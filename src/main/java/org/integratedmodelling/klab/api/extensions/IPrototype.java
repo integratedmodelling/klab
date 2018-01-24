@@ -67,7 +67,11 @@ public interface IPrototype {
         /**
          * Produce extents such as space or time topologies
          */
-        EXTENT
+        EXTENT,
+        /**
+         * Specify annotation contracts
+         */
+        ANNOTATION
     }
 
     
@@ -127,6 +131,8 @@ public interface IPrototype {
     }
     
     String getName();
+    
+    Type getType();
     
     Argument getArgument(String argumentId);
     

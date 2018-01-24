@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.engine;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observations;
@@ -32,6 +34,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 
 public class Engine extends Server implements IEngine {
 
@@ -179,6 +183,19 @@ public class Engine extends Server implements IEngine {
         }
         
         this.monitor = new Monitor();
+        
+        /*
+         * load annotation prototypes declared in this package
+         */
+        for (String kdl : new Reflections(getClass().getPackage().getName(), new ResourcesScanner())
+                .getResources(Pattern.compile(".*\\.kdl"))) {
+            try {
+                Annotations.INSTANCE.declareServices(getClass().getClassLoader().getResource(kdl));
+            } catch (KlabException e) {
+                Klab.INSTANCE.error(e);
+                return false;
+            }
+        }
         
         /*
          * if we have been asked to open a communication channel from a client, do so. The channel
