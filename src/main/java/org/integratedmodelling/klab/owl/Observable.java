@@ -27,6 +27,7 @@ public class Observable implements IObservable {
     private ICurrency     currency;
     private IConcept      by;
     private IConcept      downTo;
+    private Object        value;
 
     @Override
     public IConcept getType() {
@@ -235,6 +236,19 @@ public class Observable implements IObservable {
     @Override
     public IMetadata getMetadata() {
         return observable.getMetadata();
+    }
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
+
+    public String getDeclaration() {
+        return declaration;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
 }

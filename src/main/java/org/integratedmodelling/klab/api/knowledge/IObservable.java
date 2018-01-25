@@ -58,5 +58,12 @@ public interface IObservable extends IConcept {
      * @return the currency, if any was specified.
      */
     ICurrency getCurrency();
+    
+    /**
+     * If the observable was defined with an inline value (e.g. '10 as Concept'), report
+     * the POD value here. 
+     * @return
+     */
+    Object getValue();
 
 }

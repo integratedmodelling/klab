@@ -66,7 +66,7 @@ public enum ConceptBuilder {
                 createProperties(ret, ns);
                 ns.define();
             }
-            
+
             return ret;
 
         } catch (Throwable e) {
@@ -144,26 +144,29 @@ public enum ConceptBuilder {
     }
 
     public @Nullable IObservable declare(final IKimObservable concept, final IMonitor monitor) {
-    	
-    	IConcept main = declareInternal(concept.getMain(), monitor);
-        
+
+        IConcept main = declareInternal(concept.getMain(), monitor);
+
         if (main == null) {
             return null;
         }
 
-        Observable ret = new Observable();;
-        
+        Observable ret = new Observable();
+
         if (concept.getBy() != null) {
-            
+
         }
         if (concept.getDownTo() != null) {
-            
+
         }
-        
+        if (concept.getValue() != null) {
+            // TODO invoke a resolution function (in Extensions?) for values expressed through functions
+            ret.setValue(concept.getValue());
+        }
+
         return ret;
     }
 
-    
     public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
         return declareInternal(concept, monitor);
     }

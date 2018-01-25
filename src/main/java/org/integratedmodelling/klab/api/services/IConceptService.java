@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public interface IConceptService {
@@ -21,6 +23,8 @@ public interface IConceptService {
      */
     IConcept declare(String declaration) throws KlabValidationException;
 
+    IConcept declare(IKimConcept observable, IMonitor monitor);
+ 
     Collection<IConcept> getLeastGeneral(Collection<IConcept> cc);
 
     IConcept getLeastGeneralCommonConcept(Collection<IConcept> cc);
@@ -28,4 +32,5 @@ public interface IConceptService {
     IConcept getLeastGeneralCommonConcept(IConcept concept1, IConcept c);
 
     IConcept getLeastGeneralConcept(Collection<IConcept> cc);
+
 }

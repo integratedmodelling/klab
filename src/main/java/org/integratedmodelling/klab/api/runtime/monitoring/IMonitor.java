@@ -69,10 +69,10 @@ public interface IMonitor {
      * A monitor always operates and reports on behalf of some runtime identity, usually with an
      * {@link IServerIdentity} for the top-level monitors.
      * 
-     * @return
+     * @return the running identity, e.g. a session, task or engine.
      */
     IIdentity getIdentity();
-
+    
     /**
      * Tells us that errors have happened in the context we're monitoring.
      * 

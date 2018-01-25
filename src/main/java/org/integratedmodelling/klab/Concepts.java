@@ -9,12 +9,14 @@ import java.util.Set;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -53,6 +55,12 @@ public enum Concepts implements IConceptService {
         return null;
     }
 
+    @Override
+    public IConcept declare(IKimConcept observable, IMonitor monitor) {
+        return ConceptBuilder.INSTANCE.declare(observable, monitor);
+    }
+
+    
     @Override
     public IProperty getProperty(String propertyId) {
         return OWL.INSTANCE.getProperty(propertyId);

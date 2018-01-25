@@ -350,4 +350,9 @@ public class Engine extends Server implements IEngine {
         return null;
     }
 
+    @Override
+    public boolean is(Type type) {
+        return TYPE == type;
+    }
+
 }

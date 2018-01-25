@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IBehavior;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -31,6 +32,7 @@ public class Model extends KimObject implements IModel {
 	private List<IObservable> dependencies = new ArrayList<>();
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
 	private INamespace namespace;
+	private IBehavior behavior;
 	
 	public Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
@@ -39,8 +41,8 @@ public class Model extends KimObject implements IModel {
 		this.namespace = namespace;
 		
 		for (IKimObservable observable : model.getObservables()) {
-			if (observable.getAttribute().isPresent()) {
-				attributeObservables.put(observable.getAttribute().get(),
+			if (observable.hasAttributeIdentifier()) {
+				attributeObservables.put(observable.getValue().toString(),
 						Observables.INSTANCE.declare(observable, monitor));
 			} else {
 				observables.add(Observables.INSTANCE.declare(observable, monitor));
@@ -62,7 +64,8 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * TODO contextualizers
 		 */
-
+		this.behavior = new Behavior(model.getBehavior(), this);
+		
 		/*
 		 * TODO actions
 		 */
@@ -149,6 +152,7 @@ public class Model extends KimObject implements IModel {
         return namespace;
     }
 
+    @Override
     public List<IObservable> getDependencies() {
         return dependencies;
     }
@@ -175,6 +179,11 @@ public class Model extends KimObject implements IModel {
 
     public void setNamespace(INamespace namespace) {
         this.namespace = namespace;
+    }
+
+    @Override
+    public IBehavior getBehavior() {
+        return behavior;
     }
 
 }
