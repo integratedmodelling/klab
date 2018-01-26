@@ -36,16 +36,20 @@ public interface IEngine extends IEngineIdentity, IServer {
      * namespace (containing a single observation with local resolvers and annotated with test annotations) or
      * a Groovy script with batch commands for the engine. The result is always the last context computed.
      * 
-     * KDL dataflows should also be runnable through this one, although they need a context to be set 
-     * before (API to be finalized later).
+     * KDL dataflows should also be runnable through this one, although they need a context to be set before
+     * (API to be finalized later).
      * 
      * A specialized test engine will be provided that will automatically compare the context with constraints
      * set through annotations.
      * 
+     * FIXME this should (also?) return the IScriptIdentity, which is a Future<IContext> so the user does what
+     * they want with it, passing it to an executor. We may want both calls, to allow the simplest usage and
+     * the flexible one.
+     * 
      * @param script
      *            a URL pointing to a self-contained script. Must have no imports.
      * @return the last context computed, possibly null.
-     * @throws KlabException 
+     * @throws KlabException
      */
     IContext run(URL script) throws KlabException;
 

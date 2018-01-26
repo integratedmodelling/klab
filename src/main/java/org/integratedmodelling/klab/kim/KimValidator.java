@@ -48,6 +48,15 @@ public class KimValidator implements Kim.Validator {
 		this.monitor = monitor;
 	}
 
+	public KimValidator(KimValidator kimValidator, IMonitor monitor) {
+	    this(monitor);
+	    corePrefixTranslation.putAll(kimValidator.corePrefixTranslation);
+    }
+
+    public KimValidator with(IMonitor monitor) {
+	    return new KimValidator(this, monitor);
+	}
+	
 	@Override
 	public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 

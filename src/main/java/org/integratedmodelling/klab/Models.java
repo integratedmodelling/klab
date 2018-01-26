@@ -22,10 +22,12 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 
 import com.google.inject.Inject;
@@ -50,25 +52,25 @@ public enum Models implements IModelService {
     }
 
     @Override
-    public INamespace load(URL url) throws KlabException {
+    public INamespace load(URL url, IMonitor monitor) throws KlabException {
         try (InputStream stream = url.openStream()) {
-            return load(stream);
+            return load(stream, monitor);
         } catch (Exception e) {
             throw e instanceof KlabException ? (KlabException)e : new KlabIOException(e);
         }
     }
 
     @Override
-    public INamespace load(File file) throws KlabException {
+    public INamespace load(File file, IMonitor monitor) throws KlabException {
         try (InputStream stream = new FileInputStream(file)) {
-            return load(stream);
+            return load(stream, monitor);
         } catch (Exception e) {
             throw e instanceof KlabException ? (KlabException)e : new KlabIOException(e);
         }
     }
 
     @Override
-    public INamespace load(InputStream input) throws KlabException {
+    public INamespace load(InputStream input, IMonitor monitor) throws KlabException {
         INamespace ret = null;
         try {
             String definition = IOUtils.toString(input);
@@ -88,7 +90,7 @@ public enum Models implements IModelService {
                         .getNamespace(EcoreUtil.getURI(model.getNamespace()), model.getNamespace(), true);
                 
                 if (namespace != null && Kim.INSTANCE.getValidator() != null) {
-                    ret = (INamespace) Kim.INSTANCE.getValidator().synchronizeNamespaceWithRuntime(namespace);
+                    ret = (INamespace) ((KimValidator)Kim.INSTANCE.getValidator()).with(monitor).synchronizeNamespaceWithRuntime(namespace);
                 }
             }
 

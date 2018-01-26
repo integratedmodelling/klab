@@ -66,8 +66,8 @@ public interface IModel extends IActiveKimObject, INamespaceQualified {
     Optional<IResource> getResource();
 
     /**
-     * The asserted semantics for any observation needed in order to produce observations of the observables. More
-     * dependencies may be added at resolution through context-dependent inference.
+     * The asserted semantics for any observation needed in order to produce observations of the observables.
+     * More dependencies may be added at resolution through context-dependent inference.
      * 
      * @return all observables required.
      */
@@ -152,5 +152,14 @@ public interface IModel extends IActiveKimObject, INamespaceQualified {
      * @return metadata (never null, possibly empty).
      */
     IMetadata getMetadata();
+
+    /**
+     * If there is a contextualizer clause ('using') and it is not used simply as an alias for a primary
+     * resource (in which case it will be returned by {@link #getResource()}, return it here. Having a
+     * resource here usually means a post-processing call, classification, lookup table or URN.
+     * 
+     * @return the post-processor resource, if any.
+     */
+    Optional<IResource> getContextualizerResource();
 
 }

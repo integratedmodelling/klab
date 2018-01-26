@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IModelService {
@@ -68,29 +69,32 @@ public interface IModelService {
      * top.
      * 
      * @param url
+     * @param monitor 
      * @return the namespace loaded
      * @throws KlabException
      */
-    INamespace load(URL url) throws KlabException;
+    INamespace load(URL url, IMonitor monitor) throws KlabException;
 
     /**
      * Load a single model file from a file. Namespace must have no dependencies and name a worldview at the
      * top.
      * 
      * @param file
+     * @param monitor 
      * @return the namespace loaded
      * @throws KlabException
      */
-    INamespace load(File file) throws KlabException;
+    INamespace load(File file, IMonitor monitor) throws KlabException;
 
     /**
      * Load a single model file from an inputstream. Namespace must have no dependencies and name a worldview
      * at the top.
      * 
      * @param input
+     * @param monitor 
      * @return the namespace loaded
      * @throws KlabException
      */
-    INamespace load(InputStream input) throws KlabException;
+    INamespace load(InputStream input, IMonitor monitor) throws KlabException;
 
 }

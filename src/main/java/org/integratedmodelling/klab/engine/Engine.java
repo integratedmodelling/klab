@@ -25,11 +25,13 @@ import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
+import org.integratedmodelling.klab.engine.runtime.Script;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.kim.KimValidator;
@@ -43,33 +45,35 @@ public class Engine extends Server implements IEngine {
     private String              name;
     private Date                bootTime;
     private MulticastMessageBus multicastBus;
-    private IMonitor            monitor;
+    private Monitor             monitor;
+//    private IIdentity           identity = Engine.this;
 
     class Monitor implements IMonitor {
 
-        
+        private IIdentity identity = Engine.this;
+
         @Override
         public void info(Object... info) {
             // TODO Auto-generated method stub
-        	System.out.println(NotificationUtils.getMessage(info));
+            System.out.println(NotificationUtils.getMessage(info));
         }
 
         @Override
         public void warn(Object... o) {
             // TODO Auto-generated method stub
-        	System.err.println(NotificationUtils.getMessage(o));
+            System.err.println(NotificationUtils.getMessage(o));
         }
 
         @Override
         public void error(Object... o) {
             // TODO Auto-generated method stub
-        	System.err.println(NotificationUtils.getMessage(o));
+            System.err.println(NotificationUtils.getMessage(o));
         }
 
         @Override
         public void debug(Object... o) {
             // TODO Auto-generated method stub
-        	System.err.println(NotificationUtils.getMessage(o));
+            System.err.println(NotificationUtils.getMessage(o));
         }
 
         @Override
@@ -79,13 +83,19 @@ public class Engine extends Server implements IEngine {
 
         @Override
         public IIdentity getIdentity() {
-            return Engine.this;
+            return identity;
         }
 
         @Override
         public boolean hasErrors() {
             // TODO Auto-generated method stub
             return false;
+        }
+
+        public IMonitor get(IIdentity identity) {
+            Monitor ret = new Monitor();
+            ret.identity = identity;
+            return ret;
         }
     }
 
@@ -145,17 +155,17 @@ public class Engine extends Server implements IEngine {
      * complete.
      * 
      * @return a new running engine.
-     * @throws KlabRuntimeException if startup fails
+     * @throws KlabRuntimeException
+     *             if startup fails
      */
     public static IEngine start() {
         EngineStartupOptions options = new EngineStartupOptions();
         Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
         if (!ret.boot(options)) {
-        	throw new KlabRuntimeException("engine failed to start");
+            throw new KlabRuntimeException("engine failed to start");
         }
         return ret;
     }
-   
 
     /**
      * Perform the engine boot sequence. Can only be called after a valid certificate was read. The boot
@@ -181,9 +191,9 @@ public class Engine extends Server implements IEngine {
         if (certificate == null) {
             throw new UnsupportedOperationException("Engine.boot() was called before a valid certificate was read. Exiting.");
         }
-        
+
         this.monitor = new Monitor();
-        
+
         /*
          * load annotation prototypes declared in this package
          */
@@ -196,7 +206,7 @@ public class Engine extends Server implements IEngine {
                 return false;
             }
         }
-        
+
         /*
          * if we have been asked to open a communication channel from a client, do so. The channel
          * should be unique among all engines on the same network.
@@ -279,7 +289,6 @@ public class Engine extends Server implements IEngine {
                 System.exit(0);
             }
 
-
         } catch (Exception e) {
             ret = false;
         }
@@ -334,19 +343,22 @@ public class Engine extends Server implements IEngine {
     }
 
     @Override
-    public IContext run(URL script) throws KlabException {
-        
+    public IContext run(URL resource) throws KlabException {
+
         /*
          * 'script' can be .kim (test namespace) or .ks (host language script)
          */
-        if (script.toString().endsWith(".kim")) {
+        if (resource.toString().endsWith(".kim")) {
 
-            Klab.INSTANCE.info("running test namespace " + script);
-                    
-            INamespace namespace = Models.INSTANCE.load(script);
-            // TODO find what to run
+            // TODO this must create a task and a script in it.
+            IScript script = new Script(resource);
+
+            Klab.INSTANCE.info("running test namespace " + resource);
+
+            // TODO load is enough to run the annotations but it must be done within a future
+            INamespace namespace = Models.INSTANCE.load(resource, monitor.get(script));
         }
-        
+
         return null;
     }
 
