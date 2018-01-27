@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.auth;
 
-public interface IContextIdentity extends IIdentity {
+public interface IContextIdentity extends IRuntimeIdentity {
 
     Type type = Type.CONTEXT;
     

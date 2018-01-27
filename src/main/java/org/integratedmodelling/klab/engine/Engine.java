@@ -16,15 +16,12 @@ import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -32,6 +29,7 @@ import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandl
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.engine.runtime.Script;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.kim.KimValidator;
@@ -46,9 +44,9 @@ public class Engine extends Server implements IEngine {
     private Date                bootTime;
     private MulticastMessageBus multicastBus;
     private Monitor             monitor;
-//    private IIdentity           identity = Engine.this;
+    private IEngineUserIdentity user = null;
 
-    class Monitor implements IMonitor {
+    public class Monitor implements IMonitor {
 
         private IIdentity identity = Engine.this;
 
@@ -135,20 +133,25 @@ public class Engine extends Server implements IEngine {
     }
 
     @Override
-    public ISession createSession(IEngineUserIdentity user) {
-        // TODO Auto-generated method stub
-        return null;
+    public ISession createSession() {
+        return createSession(getParentIdentity(IEngineUserIdentity.class));
     }
 
     @Override
-    public IEngineUserIdentity getUser() {
-        IIdentity identity = certificate.getIdentity();
-        if (!(identity instanceof IUserIdentity)) {
-            // TODO shit all over the place
-        }
-        return identity instanceof IEngineUserIdentity ? (IEngineUserIdentity) identity
-                : null /* TODO make engine user out of other */;
+    public ISession createSession(IEngineUserIdentity user) {
+        // TODO Auto-generated method stub
+        return new Session(this, user);
     }
+
+//    @Override
+//    public IEngineUserIdentity getUser() {
+//        IIdentity identity = certificate.getIdentity();
+//        if (!(identity instanceof IUserIdentity)) {
+//            // TODO shit all over the place
+//        }
+//        return identity instanceof IEngineUserIdentity ? (IEngineUserIdentity) identity
+//                : null /* TODO make engine user out of other */;
+//    }
 
     /**
      * Create an engine using the default k.LAB certificate and options, and start it. Return after startup is
@@ -343,8 +346,10 @@ public class Engine extends Server implements IEngine {
     }
 
     @Override
-    public IContext run(URL resource) throws KlabException {
+    public IScript run(URL resource) throws KlabException {
 
+        IScript ret = null;
+        
         /*
          * 'script' can be .kim (test namespace) or .ks (host language script)
          */
@@ -353,18 +358,28 @@ public class Engine extends Server implements IEngine {
             // TODO this must create a task and a script in it.
             IScript script = new Script(resource);
 
-            Klab.INSTANCE.info("running test namespace " + resource);
+            Klab.INSTANCE.info("running namespace " + resource);
+            try (ISession session = createSession(user)) {
 
-            // TODO load is enough to run the annotations but it must be done within a future
-            INamespace namespace = Models.INSTANCE.load(resource, monitor.get(script));
+                // TODO load must be called within a Script future
+                /* ret = */ Models.INSTANCE.load(resource, ((Monitor)session.getMonitor()).get(script));
+                
+            } catch (Exception e) {
+                throw e instanceof KlabException ? (KlabException)e : new KlabException(e);
+            }
         }
 
-        return null;
+        return ret;
     }
 
     @Override
     public boolean is(Type type) {
         return TYPE == type;
+    }
+
+    @Override
+    public IMonitor getMonitor() {
+        return monitor;
     }
 
 }

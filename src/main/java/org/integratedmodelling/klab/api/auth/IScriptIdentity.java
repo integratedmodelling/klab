@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.api.auth;
 
-public interface IScriptIdentity extends IIdentity {
+public interface IScriptIdentity extends IRuntimeIdentity {
 
     Type type = Type.SCRIPT;
     
     @Override
-    ITaskIdentity getParentIdentity();
+    IEngineSessionIdentity getParentIdentity();
 }

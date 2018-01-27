@@ -1,47 +1,46 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace.Projection;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 
-public class Envelope implements ISpace.Envelope {
+public class Envelope implements IEnvelope {
+
+    private com.vividsolutions.jts.geom.Envelope envelope;
+    private IProjection                           projection;
 
     public Envelope() {
         // TODO Auto-generated constructor stub
     }
 
     @Override
-    public Projection getProjection() {
+    public IProjection getProjection() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public double getMinX() {
-        // TODO Auto-generated method stub
-        return 0;
+        return envelope.getMinX();
     }
 
     @Override
     public double getMaxX() {
-        // TODO Auto-generated method stub
-        return 0;
+        return envelope.getMaxX();
     }
 
     @Override
     public double getMinY() {
-        // TODO Auto-generated method stub
-        return 0;
+        return envelope.getMinY();
     }
 
     @Override
     public double getMaxY() {
-        // TODO Auto-generated method stub
-        return 0;
+        return envelope.getMaxY();
     }
 
     @Override
-    public Shape asShape() {
+    public IShape asShape() {
         // TODO Auto-generated method stub
         return null;
     }

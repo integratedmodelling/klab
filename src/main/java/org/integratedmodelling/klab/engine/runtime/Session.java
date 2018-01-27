@@ -1,25 +1,35 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.io.IOException;
+
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
-import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
+import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
-public class Session implements IEngineSessionIdentity {
+public class Session implements ISession {
 
-    public Session() {
-        // TODO Auto-generated constructor stub
+    IMonitor monitor;
+    String   token = NameGenerator.newName("s");
+    IEngine  engine;
+
+    public Session(IEngine engine, IEngineUserIdentity user) {
+        this.monitor = ((Monitor) engine.getMonitor()).get(this);
     }
 
     @Override
     public String getToken() {
-        // TODO Auto-generated method stub
-        return null;
+        return token;
     }
 
     @Override
     public boolean is(Type type) {
-        // TODO Auto-generated method stub
-        return false;
+        return type == Type.MODEL_SESSION;
     }
 
     @Override
@@ -30,6 +40,22 @@ public class Session implements IEngineSessionIdentity {
 
     @Override
     public IEngineIdentity getParentIdentity() {
+        return engine;
+    }
+
+    @Override
+    public IMonitor getMonitor() {
+        return monitor;
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public ITask observe(String urn) {
         // TODO Auto-generated method stub
         return null;
     }

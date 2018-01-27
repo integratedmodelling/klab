@@ -1,17 +1,27 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace.Envelope;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace.Projection;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 
-public class Shape implements ISpace.Shape {
+import com.vividsolutions.jts.geom.Geometry;
 
-    public Shape() {
+public class Shape implements IShape {
+
+    private Geometry   geometry;
+    private IProjection projection;
+
+    public static Shape fromWKT(String wkt) {
+        return null;
+    }
+
+    private Shape() {
         // TODO Auto-generated constructor stub
     }
 
     @Override
-    public Projection getProjection() {
+    public IProjection getProjection() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -23,7 +33,7 @@ public class Shape implements ISpace.Shape {
     }
 
     @Override
-    public double getArea() {
+    public double getArea(IUnit unit) {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -35,25 +45,25 @@ public class Shape implements ISpace.Shape {
     }
 
     @Override
-    public org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape transform(Projection projection) {
+    public org.integratedmodelling.klab.api.observations.scale.space.IShape transform(IProjection projection) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Envelope getEnvelope() {
+    public IEnvelope getEnvelope() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape intersection(org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape other) {
+    public org.integratedmodelling.klab.api.observations.scale.space.IShape intersection(org.integratedmodelling.klab.api.observations.scale.space.IShape other) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape union(org.integratedmodelling.klab.api.observations.scale.space.ISpace.Shape other) {
+    public org.integratedmodelling.klab.api.observations.scale.space.IShape union(org.integratedmodelling.klab.api.observations.scale.space.IShape other) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.runtime;
 import org.integratedmodelling.klab.api.auth.IContextIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class Context implements IContextIdentity {
 
@@ -29,6 +30,12 @@ public class Context implements IContextIdentity {
 
     @Override
     public IEngineSessionIdentity getParentIdentity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IMonitor getMonitor() {
         // TODO Auto-generated method stub
         return null;
     }

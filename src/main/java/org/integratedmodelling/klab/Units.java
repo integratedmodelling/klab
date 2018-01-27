@@ -23,7 +23,9 @@ public enum Units implements IUnitService {
 
     INSTANCE;
 
-    public IUnit METERS = getUnit("m");
+    public IUnit METERS        = getUnit("m");
+    public IUnit SQUARE_METERS = getUnit("m^2");
+    public IUnit CUBIC_METERS  = getUnit("m^3");
 
     @Override
     public IUnit getUnit(String string) {
@@ -47,7 +49,6 @@ public enum Units implements IUnitService {
 
         return new Unit(unit, string);
     }
-    
 
     /* (non-Javadoc)
      * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isRate()
@@ -56,8 +57,8 @@ public enum Units implements IUnitService {
     public boolean isRate(IUnit unit) {
 
         boolean ret = false;
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -76,8 +77,8 @@ public enum Units implements IUnitService {
     @Override
     public IUnit getTimeExtentUnit(IUnit unit) {
 
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -95,8 +96,8 @@ public enum Units implements IUnitService {
     @Override
     public boolean isLengthDensity(IUnit unit) {
         boolean ret = false;
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -115,8 +116,8 @@ public enum Units implements IUnitService {
     @Override
     public IUnit getLengthExtentUnit(IUnit unit) {
 
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -138,7 +139,7 @@ public enum Units implements IUnitService {
     }
 
     public javax.measure.unit.Unit<?> getPrimaryUnit(IUnit unit) {
-        return getPrimaryUnit(((Unit)unit).getUnit());
+        return getPrimaryUnit(((Unit) unit).getUnit());
     }
 
     /* (non-Javadoc)
@@ -147,8 +148,8 @@ public enum Units implements IUnitService {
     @Override
     public boolean isArealDensity(IUnit unit) {
         boolean ret = false;
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -168,8 +169,8 @@ public enum Units implements IUnitService {
     @Override
     public IUnit getArealExtentUnit(IUnit unit) {
 
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -189,8 +190,8 @@ public enum Units implements IUnitService {
     @Override
     public boolean isVolumeDensity(IUnit unit) {
         boolean ret = false;
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -210,8 +211,8 @@ public enum Units implements IUnitService {
     @Override
     public IUnit getVolumeExtentUnit(IUnit unit) {
 
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 javax.measure.unit.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
@@ -223,7 +224,7 @@ public enum Units implements IUnitService {
         }
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isUnitless()
      */
@@ -232,11 +233,11 @@ public enum Units implements IUnitService {
 
         boolean ret = false;
 
-        if (((Unit)unit).getUnit() instanceof ProductUnit<?>) {
+        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
 
             // assume no unitless unit without a distribution
             ret = true;
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit)unit).getUnit();
+            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
                 int power = pu.getUnitPow(i);
                 if (power > 0) {
@@ -279,41 +280,41 @@ public enum Units implements IUnitService {
 
     @Override
     public IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
-        Unit unit = (Unit)refUnit;
+        Unit unit = (Unit) refUnit;
 
         for (ExtentDimension dim : extentDimensions) {
             switch (dim) {
             case AREAL:
-                unit = new Unit(((Unit)unit).getUnit().divide(((Unit)getUnit("m^2")).getUnit()));
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^2")).getUnit()));
                 break;
             case CONCEPTUAL:
                 break;
             case LINEAL:
-                unit = new Unit(((Unit)unit).getUnit().divide(((Unit)getUnit("m")).getUnit()));
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m")).getUnit()));
                 break;
             case PUNTAL:
                 break;
             case TEMPORAL:
-                unit = new Unit(((Unit)unit).getUnit().divide(((Unit)getUnit("s")).getUnit()));
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("s")).getUnit()));
                 break;
             case VOLUMETRIC:
-                unit = new Unit(((Unit)unit).getUnit().divide(((Unit)getUnit("m^3")).getUnit()));
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^3")).getUnit()));
                 break;
             default:
                 break;
-            
+
             }
         }
-        
+
         return unit;
     }
-        
+
     public void dump(IUnit unit, PrintStream out) {
 
-        out.println("unit " + ((Unit)unit).getUnit());
+        out.println("unit " + ((Unit) unit).getUnit());
 
-//        if (_modifier != null)
-//            out.println("modifier: " + _modifier);
+        // if (_modifier != null)
+        // out.println("modifier: " + _modifier);
 
         out.println("is" + (isUnitless(unit) ? " " : " not ") + "unitless");
         out.println("is" + (isRate(unit) ? " " : " not ") + "a rate");

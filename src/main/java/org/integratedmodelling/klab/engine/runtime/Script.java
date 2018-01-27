@@ -5,10 +5,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.IScript;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class Script implements IScript {
 
@@ -31,12 +32,6 @@ public class Script implements IScript {
 
     @Override
     public <T extends IIdentity> T getParentIdentity(Class<? extends IIdentity> type) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ITaskIdentity getParentIdentity() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -70,6 +65,18 @@ public class Script implements IScript {
     public boolean isDone() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public IEngineSessionIdentity getParentIdentity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IMonitor getMonitor() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

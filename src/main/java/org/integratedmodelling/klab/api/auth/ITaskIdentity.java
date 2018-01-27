@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.auth;
 
-public interface ITaskIdentity extends IIdentity {
+public interface ITaskIdentity extends IRuntimeIdentity {
 
     Type type = Type.TASK;
     

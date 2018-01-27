@@ -1,35 +1,38 @@
 package org.integratedmodelling.klab.api.engine;
 
 import java.net.URL;
+import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IEngine extends IEngineIdentity, IServer {
 
     /**
+     * Return the data structure that describes the engine's capabilities.
      * 
-     * @return
+     * @return the engine's capabilities
      */
     ICapabilities getCapabilities();
 
     /**
+     * Create a new session for the user who owns the engine. 
      * 
      * @param user
-     * @return
+     * @return a new session 
      */
-    ISession createSession(IEngineUserIdentity user);
+    ISession createSession();
 
     /**
-     * Return the user that runs the engine. Other users may be authenticated by the engine in any way it
-     * wishes, with the same privileges or less.
+     * Create a new session for the named user. 
      * 
-     * @return
+     * @param user
+     * @return a new session 
      */
-    IEngineUserIdentity getUser();
+    ISession createSession(IEngineUserIdentity user);
 
     /**
      * Engines have the ability to run a single-file, self-contained 'script' that can either be a test
@@ -48,9 +51,9 @@ public interface IEngine extends IEngineIdentity, IServer {
      * 
      * @param script
      *            a URL pointing to a self-contained script. Must have no imports.
-     * @return the last context computed, possibly null.
+     * @return the running script (a {@link Future}).
      * @throws KlabException
      */
-    IContext run(URL script) throws KlabException;
+    IScript run(URL script) throws KlabException;
 
 }

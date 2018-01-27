@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.auth;
 
 /**
- * Any identity known to the IM semantic web. Since 0.9.11 identities are arranged in a parent/child hierarchy
+ * Any identity known to the IM semantic web. Since 0.10.0 identities are arranged in a parent/child hierarchy
  * through exposing their parent token, which is only null in top-level identities, i.e. IServer. Identity
  * objects are passed to the API in lieu of their raw tokens, to give quick access to the identity's metadata
  * and their lineage.
@@ -21,6 +21,7 @@ package org.integratedmodelling.klab.api.auth;
  * 								ISession
  * 				     				IContext
  * 										ITask
+ *                                  IScript
  * </pre>
  * 
  * @author Ferd
