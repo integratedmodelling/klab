@@ -11,8 +11,6 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IPort;
 
 public class Dataflow implements IDataflow {
 
-    
-    
     @Override
     public String getName() {
         // TODO Auto-generated method stub

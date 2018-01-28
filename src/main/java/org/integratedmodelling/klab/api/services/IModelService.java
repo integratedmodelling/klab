@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -26,10 +27,10 @@ public interface IModelService {
     public interface RankedModel extends IModel {
 
         /**
-         * Coverage of resolution, i.e. the portion of the scale that will be covered once the model has been
+         * Coverage resulting from resolution, i.e. the portion of the scale that will be covered once the model has been
          * used to produce the observation.
          * 
-         * @return the coverage of resolution
+         * @return the coverage of the resolution
          */
         ICoverage getCoverage();
 
@@ -39,6 +40,14 @@ public interface IModelService {
          * @return the individual ranks.
          */
         Map<String, Double> getRanks();
+
+        /**
+         * The network ID of the server that hosts this model. Null if the model
+         * is available locally.
+         * 
+         * @return network ID of server
+         */
+        Optional<String> getServer();
     }
 
     /**

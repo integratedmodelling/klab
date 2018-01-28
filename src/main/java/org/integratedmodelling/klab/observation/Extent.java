@@ -1,0 +1,49 @@
+package org.integratedmodelling.klab.observation;
+
+import java.util.Iterator;
+
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+
+public abstract class Extent implements IExtent {
+
+    public static int INAPPROPRIATE_LOCATOR = -2;
+    public static int GENERIC_LOCATOR       = -1;
+    
+    IScale scale;
+    
+    @Override
+    public Iterator<IExtent> iterator() {
+        return new Iterator<IExtent>() {
+
+            int i = 0;
+            
+            @Override
+            public boolean hasNext() {
+                return i < (getMultiplicity() - 1);
+            }
+
+            @Override
+            public IExtent next() {
+                return getExtent(i++);
+            }
+            
+        };
+    }
+    
+    public IScale getScale() {
+        return scale;
+    }
+    
+    public void setScale(IScale scale) {
+        this.scale = scale;
+    }
+    
+    /**
+     * All extents must be able to produce a deep copy of themselves.
+     * 
+     * @return a new extent identical to this.
+     */
+    public abstract Extent copy();
+   
+}

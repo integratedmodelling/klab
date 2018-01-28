@@ -1,28 +1,28 @@
 # Ontology of Descriptions and Observations for Integrated Modelling (ODO-IM)
 
 
-[![ODO-IM](https://img.shields.io/badge/ODO-0.10.0-blue.svg?style=plastic)](http://github.com/integratedmodelling/odo)
+[![ODO-IM](https://img.shields.io/badge/ODO-IM-0.10.0-blue.svg?style=plastic)](http://github.com/integratedmodelling/odo)
 
 - **Authors**: [Integrated Modelling Partnership](http://www.integratedmodelling.org); Ferdinando Villa, Ph.D.
 - **License**: [CC-BY](http://creativecommons.org/licenses/by/3.0/)
 - [**Bug reports and feature requests**](https://github.com/integratedmodelling/odo/issues)
 
-The ODO-IM ontology is a core product maintained by the [Integrated Modelling Partnership](http://www.integratedmodelling.org) (IMP). It specifies a view of the scientific process that can be implemented in software to support the IMP's goals of modular, distributed, semantically explicit and integrated scientific computing and modeling, according to the FAIR principles. ODO-IM provides five main core concepts:
+The ODO-IM ontology is a core product developed and maintained by the [Integrated Modelling Partnership](http://www.integratedmodelling.org) (IMP). It specifies a view of the scientific process that can be implemented in software to support the IMP's goals of modular, distributed, semantically explicit and integrated scientific computing and modeling, according to the FAIR principles. ODO-IM provides five main core concepts:
 
-- **Description**s describe the activities that produce scientific artifacts that describe a concept;
-- **Observation**s describe the scientific artifacts themselves, resulting from describing concepts within the context of an acknowledged root observation.
-- The **Observable** hierarchy describes the different concepts that can be the object of a Description and the subject of the resulting Observation, detailing their relationships with different types of Observations. It also provides properties that constrain an Observable's role in Description activities and restrictions that act as linguistic compositional rules, so that **Predicate**s (such as attributes, roles etc) can be independently specified and correctly composed with Observables.
+- **Description**s describe the activities that produce scientific artifacts that describe a concept. Subclasses of Description can be used to describe scientific assertions, models and computational workflows (Definitions, see below).
+- **Observation**s describe the scientific artifacts themselves, resulting from instantiating a Description within the context of an acknowledged root observation. Each concrete Description is restricted to produce a specific type of Observation.
+- The **Observable** hierarchy describes the different concepts that serve as the object of a Description and the subject of the resulting Observation. Observables can be combined with **Predicate**s (such as attributes, roles etc) with constraints specified as restrictions on ODO-IM properties.
 - **Definition**s are logical structures that can be used to carry out the Description of a specified Observable, specifying observations either by acknowledgement (through an extensional statement) or by computation (an intensional statement linking to a computational strategy and listing zero or more Observables as dependencies). Properties and restrictions constrain specific classes of Definitions to specific classes of Observables. 
 
 What ODO-IM does not include:
 
-- It does not provide semantics for units of measurement, like other observation ontologies do. The applications where ODO-IM is used do not need units as stated instances and do not use reasoning to validate units. To support applications, ODO-IM simply lists the SI base unit textually in annotation properties linked to all PhysicalProperty observables, using SI conventions. Applications can use a unit parser to translate these into data structures for validation and conversion. 
+- It does not provide semantics for units of measurement, like other observation ontologies do. The applications where ODO-IM is used do not need units as stated instances and do not use reasoning to validate units. To support applications, ODO-IM simply lists the SI base unit textually in annotation properties linked to all PhysicalProperty observables, using SI conventions. Applications can use a unit parser to translate these into data structures for validation and conversion.
 - It does not provide any detail on space, time and any other topologies implied in the definition of scale beyond their statement as extentual observables (Extent), as their specific interpretation is left to worldviews derived from ODO-IM.
-- It remains as agnostic as possible about the phenomenology underlying Observables, in an effort to preserve compatibility with an arbitrary upper ontology stated in a derived worldview. See the full documentation for minimum expressive requirements and caveats.
+- It remains as agnostic as possible about the remaining details of the phenomenology underlying Observables, in an effort to preserve maximum orthogonality with an arbitrary upper ontology stated in a derived worldview. The characterization of Observables is intentionally shallow as observables are meant to specialize types in an externally provided upper ontology to form the basis of a worldview. Such links are made in the root domain of the worldview. See the full documentation for minimum expressive requirements and caveats.
 
 ## Dependencies
 
-The ODO-IM only depends on the [PROV-O](https://www.w3.org/TR/prov-o/) provenance ontology, as Descriptions and Observations are, respectively, Activities (prov:Activity) and artifacts (prov:Entity).
+ODO-IM only depends on the [PROV-O](https://www.w3.org/TR/prov-o/) provenance ontology, as Descriptions and Observations are, respectively, Activities (prov:Activity) and artifacts (prov:Entity).
 
 ## Rationale and Usage
 

@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public interface IScale extends Iterable<IExtent> {
+public interface IScale extends IObservationTopology {
 
     /**
      * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise 'granule' or

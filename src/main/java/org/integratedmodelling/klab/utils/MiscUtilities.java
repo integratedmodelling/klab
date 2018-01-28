@@ -856,7 +856,7 @@ public class MiscUtilities {
 	public static String globToRE(String glob) {
 		final Object NEG = new Object();
 		final Object GROUP = new Object();
-		Stack state = new Stack();
+		Stack<Object> state = new Stack<Object>();
 
 		StringBuffer buf = new StringBuffer();
 		boolean backslash = false;

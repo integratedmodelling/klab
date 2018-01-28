@@ -68,7 +68,7 @@ public interface ITopologicallyComparable<T> {
      * @return the union of other and this
      * @throws KlabException
      */
-    public abstract ITopologicallyComparable<T> union(ITopologicallyComparable<?> other)
+    public abstract T union(T other)
             throws KlabException;
 
     /**
@@ -78,7 +78,7 @@ public interface ITopologicallyComparable<T> {
      * @return the intersection between this and other
      * @throws KlabException
      */
-    public abstract ITopologicallyComparable<T> intersection(ITopologicallyComparable<?> other)
+    public abstract T intersection(T other)
             throws KlabException;
 
     /**

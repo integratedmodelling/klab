@@ -17,8 +17,9 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpatialIndex;
 import org.integratedmodelling.klab.api.observations.scale.space.ITessellation;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.observation.Extent;
 
-public class Space implements ISpace {
+public class Space extends Extent implements ISpace {
 
     private IShape      shape;
     private Grid       grid;
@@ -144,19 +145,6 @@ public class Space implements ISpace {
     }
 
     @Override
-    public ITopologicallyComparable<IExtent> union(ITopologicallyComparable<?> other) throws KlabException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ITopologicallyComparable<IExtent> intersection(ITopologicallyComparable<?> other)
-            throws KlabException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public double getCoveredExtent() {
         // TODO Auto-generated method stub
         return 0;
@@ -212,6 +200,12 @@ public class Space implements ISpace {
 
     @Override
     public ISpatialIndex getIndex(boolean makeNew) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Space copy() {
         // TODO Auto-generated method stub
         return null;
     }
