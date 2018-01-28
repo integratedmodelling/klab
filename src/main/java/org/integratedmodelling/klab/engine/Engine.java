@@ -90,7 +90,7 @@ public class Engine extends Server implements IEngine {
             return false;
         }
 
-        public IMonitor get(IIdentity identity) {
+        public Monitor get(IIdentity identity) {
             Monitor ret = new Monitor();
             ret.identity = identity;
             return ret;

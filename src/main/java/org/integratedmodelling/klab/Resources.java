@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
@@ -133,6 +134,12 @@ public enum Resources implements IResourceService {
             FileUtils.copyInputStreamToFile(is, dest);
             is.close();
         }
+    }
+
+    @Override
+    public IKimObject getModelObject(String urn) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

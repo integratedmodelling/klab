@@ -9,11 +9,16 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 
 public class Task implements ITask {
 
-    public Task() {
-        // TODO Auto-generated constructor stub
+    Monitor monitor;
+    Context context;
+
+    Task(Context context) {
+        this.context = context;
+        this.monitor = context.getMonitor().get(this);
     }
 
     @Override
@@ -41,8 +46,7 @@ public class Task implements ITask {
 
     @Override
     public IMonitor getMonitor() {
-        // TODO Auto-generated method stub
-        return null;
+        return monitor;
     }
 
     @Override

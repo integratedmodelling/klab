@@ -3,12 +3,15 @@ package org.integratedmodelling.klab.engine.runtime;
 import org.integratedmodelling.klab.api.auth.IContextIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 
 public class Context implements IContextIdentity {
 
-    public Context() {
-        // TODO Auto-generated constructor stub
+    Monitor monitor;
+
+    Context(Session session) {
+        this.monitor = session.getMonitor().get(this);
     }
 
     @Override
@@ -35,9 +38,15 @@ public class Context implements IContextIdentity {
     }
 
     @Override
-    public IMonitor getMonitor() {
+    public Monitor getMonitor() {
         // TODO Auto-generated method stub
-        return null;
+        return monitor;
+    }
+
+    public Task createTask(IObserver object) {
+        Task ret = new Task(this);
+        // observe the object, hostia
+        return ret;
     }
 
 }

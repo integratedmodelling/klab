@@ -7,7 +7,7 @@ public abstract interface IRuntimeIdentity extends IIdentity {
     /**
      * A runtime identity exposes a monitor to report conditions and affect
      * contextualization.
-     * 
+     *  
      * @return
      */
     IMonitor getMonitor();

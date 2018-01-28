@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
@@ -23,20 +24,30 @@ public interface IResourceService {
      * @param file
      * @return
      */
-	IResource getLocalFileResource(File file);
+    IResource getLocalFileResource(File file);
 
-	/**
-	 * 
-	 * @param function
-	 * @return
-	 */
-	IResource getComputedResource(IKimFunctionCall function);
+    /**
+     * 
+     * @param function
+     * @return
+     */
+    IResource getComputedResource(IKimFunctionCall function);
 
-	/**
-	 * 
-	 * @param inlineResource
-	 * @return
-	 */
-	IResource getLiteralResource(Object inlineResource);
-    
+    /**
+     * 
+     * @param inlineResource
+     * @return
+     */
+    IResource getLiteralResource(Object inlineResource);
+
+    /**
+     * Retrieve a model object identified through a URN - either an observer or a
+     * model, local or remote, in the latter case triggering any necessary synchronization with
+     * the network.
+     * 
+     * @param urn
+     * @return
+     */
+    IKimObject getModelObject(String urn);
+
 }
