@@ -46,6 +46,7 @@ public class Engine extends Server implements IEngine {
     private Monitor             monitor;
     private IEngineUserIdentity user = null;
     private ExecutorService     scriptExecutor;
+    private ExecutorService     taskExecutor;
 
     public class Monitor implements IMonitor {
 
@@ -162,7 +163,21 @@ public class Engine extends Server implements IEngine {
     
     public void stop() {
     
-      // shutdown the script executor if necessary
+      // TODO shutdown all components
+        
+      // shutdown the task executor
+      if (taskExecutor != null) {
+          taskExecutor.shutdown();
+            try {
+                if (!taskExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                    taskExecutor.shutdownNow();
+                } 
+            } catch (InterruptedException e) {
+                taskExecutor.shutdownNow();
+            }
+          }
+      
+      // shutdown the script executor
       if (scriptExecutor != null) {
         scriptExecutor.shutdown();
         try {

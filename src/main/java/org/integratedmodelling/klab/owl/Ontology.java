@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +35,6 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.api.data.general.IList;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
@@ -82,7 +80,6 @@ import org.semanticweb.owlapi.model.OWLProperty;
 public class Ontology implements IOntology {
 
     String                        id;
-    List<IList>                   axioms       = new ArrayList<>();
     private Set<String>           imported     = new HashSet<>();
     private Map<String, IConcept> delegates    = new HashMap<>();
     OWLOntology                   ontology;

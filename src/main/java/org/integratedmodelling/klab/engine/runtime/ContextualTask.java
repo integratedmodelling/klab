@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.observation.Observation;
 import org.integratedmodelling.klab.observation.Subject;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * A ITask that creates one or more IObservations within a context subject.
@@ -27,6 +28,7 @@ public class ContextualTask implements ITask<IObservation> {
   Monitor     monitor;
   Observation context;
   Future<IObservation>   delegate;
+  String id = NameGenerator.shortUUID();
 
   public ContextualTask(Subject context, String urn) {
     this.context = context;
@@ -36,8 +38,7 @@ public class ContextualTask implements ITask<IObservation> {
 
   @Override
   public String getToken() {
-    // TODO Auto-generated method stub
-    return null;
+    return id;
   }
 
   @Override
@@ -52,8 +53,7 @@ public class ContextualTask implements ITask<IObservation> {
 
   @Override
   public IObservationIdentity getParentIdentity() {
-    // TODO Auto-generated method stub
-    return null;
+    return context;
   }
 
   @Override
