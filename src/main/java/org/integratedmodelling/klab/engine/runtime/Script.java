@@ -2,19 +2,20 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.runtime.IContext;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class Script implements IScript {
 
-    URL scriptUrl;
-    
+    URL            scriptUrl;
+    Future<Object> delegate;
+
     public Script(URL url) {
         this.scriptUrl = url;
     }
@@ -37,35 +38,31 @@ public class Script implements IScript {
     }
 
     @Override
-    public boolean cancel(boolean arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public IContext get() throws InterruptedException, ExecutionException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IContext get(long arg0, TimeUnit arg1)
-            throws InterruptedException, ExecutionException, TimeoutException {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return delegate.cancel(mayInterruptIfRunning);
     }
 
     @Override
     public boolean isCancelled() {
-        // TODO Auto-generated method stub
-        return false;
+        return delegate.isCancelled();
     }
 
     @Override
     public boolean isDone() {
-        // TODO Auto-generated method stub
-        return false;
+        return delegate.isDone();
     }
+
+    @Override
+    public Object get() throws InterruptedException, ExecutionException {
+        return delegate.get();
+    }
+
+    @Override
+    public Object get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        return delegate.get(timeout, unit);
+    }
+
 
     @Override
     public IEngineSessionIdentity getParentIdentity() {

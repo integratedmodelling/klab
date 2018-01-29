@@ -2,18 +2,15 @@ package org.integratedmodelling.klab.observation;
 
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.owl.Observable;
 
 public class State extends Observation implements IState {
 
-    private State(IObservable observable, IScale scale, IContext context) {
-        super(observable, scale, context);
+    private State(Observable observable, Scale scale) {
+        super(observable, scale);
         // TODO Auto-generated constructor stub
     }
 
@@ -33,12 +30,6 @@ public class State extends Observation implements IState {
     public long getValueCount() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public ITime getTime() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -66,7 +57,7 @@ public class State extends Observation implements IState {
     }
 
     @Override
-    public IState as(IObserver observer) {
+    public State as(IObservable observable) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -19,7 +19,7 @@ package org.integratedmodelling.klab.api.auth;
  *              		IEngine (has a IUser (automatically promoted to IEngineUser) but can authenticate others as IEngineUser)
  *              			IEngineUser
  * 								ISession
- * 				     				IContext
+ * 				     				IObservation
  * 										ITask
  *                                  IScript
  * </pre>
@@ -67,18 +67,18 @@ public abstract interface IIdentity {
         MODEL_SESSION,
 
         /**
-         * Identified by a context token owned by a session.
+         * Identified by an observation token owned by a session.
          */
-        CONTEXT,
+        OBSERVATION,
 
         /**
-         * Identifed by a task token owned by a context.
+         * Identifed by a task token owned by a context observation.
          */
         TASK,
 
         /**
          * A script identity identifies a script (namespace with run/test/observe annotations or imperative
-         * code) running within a task.
+         * code) running as a task within a session.
          */
         SCRIPT
     }

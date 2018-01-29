@@ -6,19 +6,21 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.owl.Observable;
 
 public class Subject extends DirectObservation implements ISubject {
 
-    private Subject(String name, IObservable observable, IScale scale, IContext context) {
-        super(name, observable, scale, context);
+    private Subject(String name, Observable observable, Scale scale) {
+        super(name, observable, scale);
         // TODO Auto-generated constructor stub
     }
 
@@ -66,6 +68,12 @@ public class Subject extends DirectObservation implements ISubject {
 
     @Override
     public Map<IConcept, IConfiguration> getConfigurations() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IIndividual instantiate(IOntology ontology) {
         // TODO Auto-generated method stub
         return null;
     }

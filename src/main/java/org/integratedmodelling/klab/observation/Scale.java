@@ -15,6 +15,8 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -28,8 +30,8 @@ public class Scale implements IScale {
     protected long                   multiplicity   = 0;
     protected int                    sIndex         = -1;
     protected int                    tIndex         = -1;
-    protected ITime                  time           = null;
-    protected ISpace                 space          = null;
+    protected Time                  time           = null;
+    protected Space                 space          = null;
     protected MultidimensionalCursor cursor;
 
     /*
@@ -225,12 +227,12 @@ public class Scale implements IScale {
             if (e.getMultiplicity() == INFINITE) {
                 multiplicity = INFINITE;
             }
-            if (e instanceof ITime) {
+            if (e instanceof Time) {
                 tIndex = idx;
-                time = (ITime) e;
-            } else if (e instanceof ISpace) {
+                time = (Time) e;
+            } else if (e instanceof Space) {
                 sIndex = idx;
-                space = (ISpace) e;
+                space = (Space) e;
             }
 
             if (multiplicity != INFINITE)
@@ -280,12 +282,12 @@ public class Scale implements IScale {
     }
 
     @Override
-    public ISpace getSpace() {
+    public Space getSpace() {
         return space;
     }
 
     @Override
-    public ITime getTime() {
+    public Time getTime() {
         return time;
     }
 

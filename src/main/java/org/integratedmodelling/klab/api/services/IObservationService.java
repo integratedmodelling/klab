@@ -1,21 +1,15 @@
 package org.integratedmodelling.klab.api.services;
 
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.runtime.IContext;
-import org.integratedmodelling.klab.api.runtime.ISession;
 
+/**
+ * Manage observations stored locally (as IObserver specifications) and provide an API to query and 
+ * retrieve those stored on the k.LAB network.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public interface IObservationService {
-
-    /**
-     * The functions that resolves a subject, returning the corresponding
-     * live context.
-     * 
-     * @param observation
-     * @param session 
-     * @return the initialized context.
-     */
-    IContext initialize(ISubject observation, ISession session);
 
     /**
      * Release all information pertaining to named namespace, both in live and 

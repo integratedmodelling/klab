@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -29,10 +29,10 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 public class Individual implements IIndividual {
 
     protected OWLIndividual individual;
-    protected IOntology   ontology;
-    protected IConcept   concept;
+    protected IOntology     ontology;
+    protected IConcept      concept;
     protected Metadata      metadata;
-    protected IContext      context;
+    protected IObservation  context;
     protected String        owlName;
 
     /*
@@ -47,7 +47,7 @@ public class Individual implements IIndividual {
      * @param observable
      * @param context
      */
-    Individual(OWLIndividual individual, IContext context, IOntology ontology) {
+    Individual(OWLIndividual individual, IObservation context, IOntology ontology) {
         this.individual = individual;
         this.owlName = individual.isNamed() ? ((OWLNamedIndividual) individual).getIRI().getFragment()
                 : NameGenerator.shortUUID();
@@ -60,11 +60,11 @@ public class Individual implements IIndividual {
      * This constructor is the only one that should be used from the API.
      * 
      * @param observable
-     * @param name 
+     * @param name
      * @param context
-     * @param ontology 
+     * @param ontology
      */
-    public Individual(IConcept observable, String name,  @Nullable IContext context, IOntology ontology) {
+    public Individual(IConcept observable, String name, @Nullable IObservation context, IOntology ontology) {
         define(observable, name, context, ontology);
     }
 
@@ -77,7 +77,7 @@ public class Individual implements IIndividual {
         this.metadata = individual.metadata;
     }
 
-    public void define(IConcept observable, String name, @Nullable IContext context, IOntology ontology) {
+    public void define(IConcept observable, String name, @Nullable IObservation context, IOntology ontology) {
         this.context = context;
         define(observable, name, context, ontology);
     }
@@ -92,11 +92,12 @@ public class Individual implements IIndividual {
         OWLDataFactory factory = ((Ontology) ontology).ontology.getOWLOntologyManager().getOWLDataFactory();
         this.individual = factory
                 .getOWLNamedIndividual(IRI
-                        .create(((Ontology)this.ontology).getOWLOntology().getOntologyID().getOntologyIRI() + "#" + name));
-        axioms.add(new AddAxiom(((Ontology)this.ontology).getOWLOntology(), factory
+                        .create(((Ontology) this.ontology).getOWLOntology().getOntologyID().getOntologyIRI()
+                                + "#" + name));
+        axioms.add(new AddAxiom(((Ontology) this.ontology).getOWLOntology(), factory
                 .getOWLClassAssertionAxiom(((Concept) concept)._owl, this.individual)));
         for (AddAxiom aa : axioms) {
-            ((Ontology)this.ontology).getOWLOntology().getOWLOntologyManager().applyChange(aa);
+            ((Ontology) this.ontology).getOWLOntology().getOWLOntologyManager().applyChange(aa);
         }
 
         ((Ontology) ontology).individuals.put(name, this);
@@ -111,7 +112,8 @@ public class Individual implements IIndividual {
     public Collection<IIndividual> getIndividuals(IProperty property) {
         List<IIndividual> ret = new ArrayList<>();
         for (OWLIndividual ind : individual
-                .getObjectPropertyValues(((Property) property)._owl.asOWLObjectProperty(), ((Ontology)this.ontology).getOWLOntology())) {
+                .getObjectPropertyValues(((Property) property)._owl
+                        .asOWLObjectProperty(), ((Ontology) this.ontology).getOWLOntology())) {
             ret.add(new Individual(ind, context, ontology));
         }
         return ret;
@@ -121,7 +123,8 @@ public class Individual implements IIndividual {
     public Collection<Object> getData(IProperty property) {
         List<Object> ret = new ArrayList<>();
         for (OWLLiteral dat : individual
-                .getDataPropertyValues(((Property) property)._owl.asOWLDataProperty(), ((Ontology)this.ontology).getOWLOntology())) {
+                .getDataPropertyValues(((Property) property)._owl
+                        .asOWLDataProperty(), ((Ontology) this.ontology).getOWLOntology())) {
             if (dat.isBoolean()) {
                 ret.add(dat.parseBoolean());
             } else if (dat.isBoolean()) {
@@ -143,7 +146,7 @@ public class Individual implements IIndividual {
     public Collection<IProperty> getObjectRelationships() {
         List<IProperty> ret = new ArrayList<>();
         Map<OWLObjectPropertyExpression, Set<OWLIndividual>> pvals = individual
-                .getObjectPropertyValues(((Ontology)this.ontology).getOWLOntology());
+                .getObjectPropertyValues(((Ontology) this.ontology).getOWLOntology());
         for (OWLObjectPropertyExpression p : pvals.keySet()) {
             IProperty prop = OWL.INSTANCE.getPropertyFor(p.asOWLObjectProperty().getIRI());
             if (prop != null) {
@@ -156,7 +159,8 @@ public class Individual implements IIndividual {
     @Override
     public Collection<IProperty> getDataRelationships() {
         List<IProperty> ret = new ArrayList<>();
-        Map<OWLDataPropertyExpression, Set<OWLLiteral>> pvals = individual.getDataPropertyValues(((Ontology)this.ontology).getOWLOntology());
+        Map<OWLDataPropertyExpression, Set<OWLLiteral>> pvals = individual
+                .getDataPropertyValues(((Ontology) this.ontology).getOWLOntology());
         for (OWLDataPropertyExpression p : pvals.keySet()) {
             IProperty prop = OWL.INSTANCE.getPropertyFor(p.asOWLDataProperty().getIRI());
             if (prop != null) {

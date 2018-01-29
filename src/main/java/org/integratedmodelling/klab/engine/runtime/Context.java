@@ -1,12 +1,11 @@
 package org.integratedmodelling.klab.engine.runtime;
 
-import org.integratedmodelling.klab.api.auth.IContextIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.auth.IObservationIdentity;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 
-public class Context implements IContextIdentity {
+public class Context implements IObservationIdentity {
 
     Monitor monitor;
 
@@ -22,7 +21,7 @@ public class Context implements IContextIdentity {
 
     @Override
     public boolean is(Type type) {
-        return type == Type.CONTEXT;
+        return type == Type.OBSERVATION;
     }
 
     @Override
@@ -41,12 +40,6 @@ public class Context implements IContextIdentity {
     public Monitor getMonitor() {
         // TODO Auto-generated method stub
         return monitor;
-    }
-
-    public Task createTask(IObserver object) {
-        Task ret = new Task(this);
-        // observe the object, hostia
-        return ret;
     }
 
 }

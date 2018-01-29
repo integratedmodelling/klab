@@ -4,12 +4,15 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.owl.Observable;
 
 public class Relationship extends DirectObservation implements IRelationship {
 
-    private Relationship(String name, IObservable observable, IScale scale, IContext context) {
-        super(name, observable, scale, context);
+    Subject source;
+    Subject target;
+    
+    private Relationship(String name, Observable observable, Scale scale) {
+        super(name, observable, scale);
         // TODO Auto-generated constructor stub
     }
 
@@ -20,15 +23,13 @@ public class Relationship extends DirectObservation implements IRelationship {
     }
 
     @Override
-    public ISubject getSource() {
-        // TODO Auto-generated method stub
-        return null;
+    public Subject getSource() {
+        return source;
     }
 
     @Override
-    public ISubject getTarget() {
-        // TODO Auto-generated method stub
-        return null;
+    public Subject getTarget() {
+        return target;
     }
 
 }

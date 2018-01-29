@@ -4,6 +4,6 @@ import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IScriptIdentity;
 
-public interface IScript extends IScriptIdentity, Future<IContext> {
+public interface IScript extends IScriptIdentity, Future<Object> {
 
 }

@@ -4,19 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.owl.Observable;
 
 public abstract class DirectObservation extends Observation implements IDirectObservation {
 
     String name;
     List<IState> states = new ArrayList<>();
     
-    protected DirectObservation(String name, IObservable observable, IScale scale, IContext context) {
-        super(observable, scale, context);
+    protected DirectObservation(String name, Observable observable, Scale scale) {
+        super(observable, scale);
         this.name = name;
     }
 

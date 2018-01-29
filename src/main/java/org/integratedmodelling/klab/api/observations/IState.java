@@ -6,14 +6,22 @@ import java.util.List;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 
+/**
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public interface IState extends IObservation {
-    
+   
+    /**
+     * 
+     * @return
+     */
     IStorage<?> getStorage();
 
 
@@ -165,13 +173,6 @@ public interface IState extends IObservation {
     long getValueCount();
 
     /**
-     * Return the temporal extent, or null.
-     * 
-     * @return the observation of time
-     */
-    ITime getTime();
-
-    /**
      * Get a value at the passed locator. The locator may be just a granule of the 
      * state's scale, or express a different topology from the same or another, 
      * involving mediation.
@@ -191,7 +192,7 @@ public interface IState extends IObservation {
     boolean isConstant();
 
     /**
-     * True if the state is expected to change in time.
+     * True if the state is expected to change in time. This depends on semantics: 
      * 
      * @return true if dynamic
      */
@@ -208,11 +209,10 @@ public interface IState extends IObservation {
      * Return either the original state or a wrapper that will allow get/set of values 
      * in a specified observation semantics.
      *  
-     * @param observer
-     * @return
+     * @param observable an observable that must be identical semantically but may have different
+     *        observation semantics, e.g. a "by" clause or different units/currencies.
+     * @return the (possibly wrapped) state
      */
-    IState as(IObserver observer);
-    
-    
+    IState as(IObservable observable);
     
 }

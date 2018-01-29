@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
@@ -8,8 +9,8 @@ import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -58,20 +59,20 @@ public class Session implements ISession {
     }
 
     @Override
-    public ITask observe(String urn) throws KlabException {
+    public Future<ISubject> observe(String urn) throws KlabException {
         // urn must specify observer
         IKimObject object = Resources.INSTANCE.getModelObject(urn);
         if (!(object instanceof IObserver)) {
             throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
         }
-        Context context = createContext();
-        return context.createTask((IObserver)object);
+        return createTask((IObserver)object);
     }
-
-    private Context createContext() {
-        Context ret = new Context(this);
-        // TODO bookkeeping, storage
+    
+    public Task<ISubject> createTask(IObserver object) {
+        Task<ISubject> ret = null; //new Task(this);
+        // observe the object, hostia
         return ret;
     }
+
 
 }

@@ -5,5 +5,5 @@ public interface ITaskIdentity extends IRuntimeIdentity {
     Type type = Type.TASK;
     
     @Override
-    IContextIdentity getParentIdentity();
+    IObservationIdentity getParentIdentity();
 }

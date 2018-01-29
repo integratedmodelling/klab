@@ -1,13 +1,11 @@
 package org.integratedmodelling.klab.observation;
 
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.owl.Observable;
 
 public class Configuration extends DirectObservation {
 
-    protected Configuration(String name, IObservable observable, IScale scale, IContext context) {
-        super(name, observable, scale, context);
+    protected Configuration(String name, Observable observable, Scale scale) {
+        super(name, observable, scale);
         // TODO Auto-generated constructor stub
     }
 

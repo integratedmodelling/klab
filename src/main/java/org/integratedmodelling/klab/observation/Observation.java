@@ -2,60 +2,44 @@ package org.integratedmodelling.klab.observation;
 
 import java.util.Optional;
 
-import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.IContext;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 public abstract class Observation implements IObservation {
 
     private static final long    serialVersionUID = -7645502752899232235L;
 
-    private IScale             scale;
-    private IObservable        observable;
+    private Scale             scale;
+    private Observable        observable;
     private String             id               = NameGenerator.shortUUID();
-    private ISubject           observer;
-    private IDirectObservation contextObservation;
-    private IContext           context;
+    private Subject           observer;
+    private DirectObservation contextObservation;
 
-    protected Observation(IObservable observable, IScale scale, IContext context) {
+    protected Observation(Observable observable, Scale scale) {
         this.observable = observable;
         this.scale = scale;
-        this.context = context;
     }
     
-    @Override
-    public String getId() {
-        return id;
-    }
-
     @Override
     public Optional<ISubject> getObserver() {
         return observer == null ? Optional.empty() : Optional.of(observer);
     }
 
     @Override
-    public IObservable getObservable() {
+    public Observable getObservable() {
         return observable;
     }
 
     @Override
-    public IScale getScale() {
+    public Scale getScale() {
         return scale;
-    }
-
-    @Override
-    public IDirectObservation getContextObservation() {
-        return contextObservation;
-    }
-
-    @Override
-    public IContext getContext() {
-        return context;
     }
 
     @Override
@@ -80,7 +64,49 @@ public abstract class Observation implements IObservation {
     }
 
     @Override
-    public ISpace getSpace() {
+    public Space getSpace() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IEngineSessionIdentity getParentIdentity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Monitor getMonitor() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getToken() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean is(Type type) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<? extends IIdentity> type) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IDirectObservation getContext() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ISubject getRoot() {
         // TODO Auto-generated method stub
         return null;
     }
