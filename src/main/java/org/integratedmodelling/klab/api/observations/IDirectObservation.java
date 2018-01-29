@@ -9,8 +9,8 @@ import java.util.Collection;
  */
 public abstract interface IDirectObservation extends IObservation {
 
-    String getName();
-    
-    Collection<IState> getStates();
-    
+  String getName();
+
+  Collection<IState> getStates();
+
 }

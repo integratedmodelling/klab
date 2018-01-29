@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;

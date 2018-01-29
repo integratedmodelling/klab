@@ -9,13 +9,13 @@ public interface IRelationship  extends IDirectObservation {
 
     /**
      * 
-     * @return
+     * @return the source subject
      */
     ISubject getSource();
     
     /**
      * 
-     * @return
+     * @return the target subject
      */
     ISubject getTarget();
     

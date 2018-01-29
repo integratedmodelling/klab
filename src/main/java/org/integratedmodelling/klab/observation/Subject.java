@@ -2,19 +2,20 @@ package org.integratedmodelling.klab.observation;
 
 import java.util.Collection;
 import java.util.Map;
-
 import javax.annotation.Nullable;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IEvent;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.engine.runtime.ContextualTask;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Subject extends DirectObservation implements ISubject {
@@ -76,6 +77,12 @@ public class Subject extends DirectObservation implements ISubject {
     public IIndividual instantiate(IOntology ontology) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public ITask<IObservation> observe(String urn) {
+      // TODO Auto-generated method stub
+      return new ContextualTask(this, urn);
     }
 
 }

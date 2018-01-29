@@ -3,12 +3,14 @@ package org.integratedmodelling.klab.engine;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Klab.AnnotationHandler;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -25,7 +27,6 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.services.IRuntimeService.AnnotationHandler;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.engine.runtime.Script;
@@ -45,6 +46,7 @@ public class Engine extends Server implements IEngine {
     private MulticastMessageBus multicastBus;
     private Monitor             monitor;
     private IEngineUserIdentity user = null;
+    private ExecutorService     scriptExecutor;
 
     public class Monitor implements IMonitor {
 
@@ -133,25 +135,25 @@ public class Engine extends Server implements IEngine {
     }
 
     @Override
-    public ISession createSession() {
+    public Session createSession() {
         return createSession(getParentIdentity(IEngineUserIdentity.class));
     }
 
     @Override
-    public ISession createSession(IEngineUserIdentity user) {
+    public Session createSession(IEngineUserIdentity user) {
         // TODO Auto-generated method stub
         return new Session(this, user);
     }
 
-//    @Override
-//    public IEngineUserIdentity getUser() {
-//        IIdentity identity = certificate.getIdentity();
-//        if (!(identity instanceof IUserIdentity)) {
-//            // TODO shit all over the place
-//        }
-//        return identity instanceof IEngineUserIdentity ? (IEngineUserIdentity) identity
-//                : null /* TODO make engine user out of other */;
-//    }
+    // @Override
+    // public IEngineUserIdentity getUser() {
+    // IIdentity identity = certificate.getIdentity();
+    // if (!(identity instanceof IUserIdentity)) {
+    // // TODO shit all over the place
+    // }
+    // return identity instanceof IEngineUserIdentity ? (IEngineUserIdentity) identity
+    // : null /* TODO make engine user out of other */;
+    // }
 
     /**
      * Create an engine using the default k.LAB certificate and options, and start it. Return after startup is
@@ -318,7 +320,7 @@ public class Engine extends Server implements IEngine {
         Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
             @Override
             public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-                String id = ((KlabBatchRunner) annotation).id();
+                // String id = ((KlabBatchRunner) annotation).id();
                 // if (IBatchRunner.class.isAssignableFrom(cls)) {
                 // KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
                 // }
@@ -349,24 +351,15 @@ public class Engine extends Server implements IEngine {
     public IScript run(URL resource) throws KlabException {
 
         IScript ret = null;
-        
+
         /*
          * 'script' can be .kim (test namespace) or .ks (host language script)
          */
         if (resource.toString().endsWith(".kim")) {
 
             // TODO this must create a task and a script in it.
-            IScript script = new Script(resource);
-
             Klab.INSTANCE.info("running namespace " + resource);
-            try (ISession session = createSession(user)) {
-
-                // TODO load must be called within a Script future
-                /* ret = */ Models.INSTANCE.load(resource, ((Monitor)session.getMonitor()).get(script));
-                
-            } catch (Exception e) {
-                throw e instanceof KlabException ? (KlabException)e : new KlabException(e);
-            }
+            return new Script(this, resource);
         }
 
         return ret;
@@ -380,6 +373,23 @@ public class Engine extends Server implements IEngine {
     @Override
     public IMonitor getMonitor() {
         return monitor;
+    }
+
+    public MulticastMessageBus getMessageBus() {
+        return multicastBus;
+    }
+
+    /**
+     * Get the Executor that will run script tasks.
+     * 
+     * @return a valid executor
+     */
+    public ExecutorService getScriptExecutor() {
+        if (scriptExecutor == null) {
+            // TODO condition both the type and the parameters of the executor to options
+            scriptExecutor = Executors.newFixedThreadPool(10);
+        }
+        return scriptExecutor;
     }
 
 }

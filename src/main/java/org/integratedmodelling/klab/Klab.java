@@ -32,6 +32,18 @@ public enum Klab implements IRuntimeService {
 
 	INSTANCE;
 
+    /**
+     * Handler to process classes with k.LAB annotations. Register using
+     * {@link #registerAnnotationHandler(Class, AnnotationHandler)}; the handlers will
+     * be called for each matching class when {@link #scanPackage(String)} is called.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface AnnotationHandler {
+        void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException;
+    }
+    
 	private Logger logger;
 	private Map<Class<? extends Annotation>, AnnotationHandler> annotationHandlers = new HashMap<>();
 	private IMonitor rootMonitor = new RootMonitor();

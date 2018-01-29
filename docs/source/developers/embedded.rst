@@ -8,12 +8,19 @@ A programmer can use the engine API to embed observation functionalities in Java
     IModelingEngine engine = new ModelingEngine().start();
 
     try (ISession session = engine.createSession()) {
-      IContext context = 
+      
+      IObservation observation = 
         session
+          // ISession.observe() returns a future ISubject
           .observe("im:ariesteam:example.locations:tanzania-grr").get()
+          /* ISubject.observe() will return a future IObservation, in this case 
+             a IState (observation of a quality within the subject) */
           .observe("geography:Elevation").get();
-        // visualize in k.Explorer (opens a browser window)
-        context.explore();
+
+        /* visualize in k.Explorer (opens a browser window). This
+           displays the entire observation tree, focused on the caller. */
+        observation.explore();
+
     } finally {
         engine.stop();
     }

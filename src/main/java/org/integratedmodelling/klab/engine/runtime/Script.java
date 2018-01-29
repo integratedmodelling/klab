@@ -1,79 +1,103 @@
 package org.integratedmodelling.klab.engine.runtime;
 
 import java.net.URL;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
+import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class Script implements IScript {
 
-    URL            scriptUrl;
-    Future<Object> delegate;
+  URL                scriptUrl;
+  FutureTask<Object> delegate;
+  IMonitor           monitor;
 
-    public Script(URL url) {
-        this.scriptUrl = url;
-    }
+  public Script(Engine engine, URL resource) {
 
-    @Override
-    public String getToken() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    this.scriptUrl = resource;
+    delegate = new FutureTask<Object>(new Callable<Object>() {
 
-    @Override
-    public boolean is(Type type) {
-        return type == Type.SCRIPT;
-    }
+      @Override
+      public Object call() throws Exception {
 
-    @Override
-    public <T extends IIdentity> T getParentIdentity(Class<? extends IIdentity> type) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        Object ret = null;
+        try (Session session = engine.createSession()) {
+          Script.this.monitor = (session.getMonitor()).get(Script.this);
+          /* ret = */ Models.INSTANCE.load(resource, monitor);
+        } catch (Exception e) {
+          throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+        }
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        return delegate.cancel(mayInterruptIfRunning);
-    }
+        return ret;
 
-    @Override
-    public boolean isCancelled() {
-        return delegate.isCancelled();
-    }
+      }
+    });
 
-    @Override
-    public boolean isDone() {
-        return delegate.isDone();
-    }
+    engine.getScriptExecutor().execute(delegate);
+  }
 
-    @Override
-    public Object get() throws InterruptedException, ExecutionException {
-        return delegate.get();
-    }
+  @Override
+  public String getToken() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Object get(long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
-        return delegate.get(timeout, unit);
-    }
+  @Override
+  public boolean is(Type type) {
+    return type == Type.SCRIPT;
+  }
+
+  @Override
+  public <T extends IIdentity> T getParentIdentity(Class<? extends IIdentity> type) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean cancel(boolean mayInterruptIfRunning) {
+    return delegate.cancel(mayInterruptIfRunning);
+  }
+
+  @Override
+  public boolean isCancelled() {
+    return delegate.isCancelled();
+  }
+
+  @Override
+  public boolean isDone() {
+    return delegate.isDone();
+  }
+
+  @Override
+  public Object get() throws InterruptedException, ExecutionException {
+    return delegate.get();
+  }
+
+  @Override
+  public Object get(long timeout, TimeUnit unit)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    return delegate.get(timeout, unit);
+  }
 
 
-    @Override
-    public IEngineSessionIdentity getParentIdentity() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public IEngineSessionIdentity getParentIdentity() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public IMonitor getMonitor() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public IMonitor getMonitor() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 }
