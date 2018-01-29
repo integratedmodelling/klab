@@ -46,9 +46,8 @@ public class ContextualTask implements ITask<IObservation> {
   }
 
   @Override
-  public <I extends IIdentity> I getParentIdentity(Class<? extends IIdentity> type) {
-    // TODO Auto-generated method stub
-    return null;
+  public <T extends IIdentity> T getParent(Class<T> type) {
+      return IIdentity.findParent(this, type);
   }
 
   @Override

@@ -84,13 +84,13 @@ import org.integratedmodelling.klab.api.model.IModel;
  * 
  * dereifying: 
  *      direct observation of <inherent type> where an attribute provides <ob type> of <type>
- * *          
+ *          
  *          
  * @author ferdinando.villa
  * @param <T> 
  *
  */
-public interface IModelPrioritizer<T extends IModel> extends Comparator<T> {
+public interface IPrioritizer<T extends IModel> extends Comparator<T> {
 
     /**
      * The default ranking strategy in the form that can be given in klab.properties for
@@ -108,7 +108,7 @@ public interface IModelPrioritizer<T extends IModel> extends Comparator<T> {
             + "im:network-remoteness 0 "
             + "im:reliability 100";
 
-    public static final String DEFAULT_STRATEGY_PROPERTY_NAME = "thinklab.ranking.strategy";
+    public static final String DEFAULT_STRATEGY_PROPERTY_NAME = "klab.ranking.strategy";
 
     /**
      * These are the fields that will be directly available in the object returned, to allow

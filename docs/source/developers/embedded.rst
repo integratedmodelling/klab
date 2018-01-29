@@ -5,7 +5,7 @@ A programmer can use the engine API to embed observation functionalities in Java
 
 .. code-block:: java
 
-    IModelingEngine engine = new ModelingEngine().start();
+    Engine engine = Engine.start();
 
     try (ISession session = engine.createSession()) {
       
@@ -25,21 +25,26 @@ A programmer can use the engine API to embed observation functionalities in Java
         engine.stop();
     }
 
-A lot happens behind these few lines of code. Let us analyze the example line by line. The first call creates a modeling engine
+A lot happens behind these few lines of code. Let us analyze the example line by line. The first call creates and boots a modeling engine, of which you will only need one:
 
 .. code-block:: java
 
-    IModelingEngine engine = new ModelingEngine().start();
+    Engine engine = Engine.start();
 
-using the default configuration, looking for a file named `im.cert` in the default k.LAB work directory (`~/.klab`), containing a valid k.LAB certificate. You can use a specific certificate by calling:
+This uses the default configuration, looking for a file named `im.cert` in the default k.LAB work directory (`~/.klab`), containing a valid k.LAB certificate. You can use a specific certificate by calling:
 
 .. code-block:: java
 
-    IModelingEngine engine = 
-       new ModelingEngine(new KlabCertificate("/home/john/alt.cert")).start();
+    Engine engine = new Engine(new KlabCertificate("/home/john/alt.cert"));
+    if (engine.boot()) {
+        // error, exit
+    }
+    // use the engine
 
-In all cases, the start() method called on the engine (which returns the engine itself to enable more compact idioms like the above) will authorize the user, synchronize the worldview from the network, load it, connect to the k.LAB network and initialize all network
-resources according to the user's permissions. When that exits (after a short wait) without error, the engine is ready to make observations. This happens within a *session*, which we must request. A :java:type:`ISession <org.integratedmodelling.api.runtime.ISession>` is a :java:type:`Closeable <java.io.Closeable>` so it can be opened and closed automatically within a try-with-resource block:
+
+In all cases, the initialization method called on the engine will authorize the user, synchronize the worldview from the network, load it, connect to the k.LAB network and initialize all network resources according to the user's permissions. When that exits (after a short wait) without error, the engine is ready to make observations. The engine makes observations within a *session*, which we must request. Operations within sessions are assumed synchronous, while you may have several concurrent sessions without problems.
+
+ A :java:type:`ISession <org.integratedmodelling.api.runtime.ISession>` is a :java:type:`Closeable <java.io.Closeable>` so it can be opened and closed automatically within a try-with-resource block:
 
 .. code-block:: java
 

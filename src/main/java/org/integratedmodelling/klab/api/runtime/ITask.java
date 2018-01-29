@@ -37,6 +37,6 @@ public interface ITask<T extends IObservation> extends ITaskIdentity, Future<T> 
    * 
    * @return all the observations made.
    */
-  Collection<IObservation> getObservations();
+  Collection<T> getObservations();
 
 }

@@ -16,73 +16,86 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.engine.runtime.ContextualTask;
+import org.integratedmodelling.klab.engine.runtime.RuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Subject extends DirectObservation implements ISubject {
 
-    private Subject(String name, Observable observable, Scale scale) {
-        super(name, observable, scale);
-        // TODO Auto-generated constructor stub
-    }
+  private RuntimeContext runtimeContext;
 
-    private static final long serialVersionUID = 2466999232658613114L;
+  private Subject(String name, Observable observable, Scale scale) {
+    super(name, observable, scale);
+    // TODO Auto-generated constructor stub
+  }
 
-    public static Subject create(String name, IObservable observable, IScale scale, @Nullable ISubject context) {
-        return null;
-    }
-    
-    @Override
-    public Collection<IEvent> getEvents() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  private static final long serialVersionUID = 2466999232658613114L;
 
-    @Override
-    public Collection<IProcess> getProcesses() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  public static Subject create(String name, IObservable observable, IScale scale,
+      @Nullable ISubject context) {
+    return null;
+  }
 
-    @Override
-    public Collection<ISubject> getSubjects() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Collection<IEvent> getEvents() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Collection<IRelationship> getRelationships() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Collection<IProcess> getProcesses() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Collection<IRelationship> getIncomingRelationships(ISubject subject) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Collection<ISubject> getSubjects() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Collection<IRelationship> getOutgoingRelationships(ISubject subject) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Collection<IRelationship> getRelationships() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Map<IConcept, IConfiguration> getConfigurations() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Collection<IRelationship> getIncomingRelationships(ISubject subject) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public IIndividual instantiate(IOntology ontology) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Collection<IRelationship> getOutgoingRelationships(ISubject subject) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public ITask<IObservation> observe(String urn) {
-      // TODO Auto-generated method stub
-      return new ContextualTask(this, urn);
-    }
+  @Override
+  public Map<IConcept, IConfiguration> getConfigurations() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
+  @Override
+  public IIndividual instantiate(IOntology ontology) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ITask<IObservation> observe(String urn) {
+    // TODO Auto-generated method stub
+    return new ContextualTask(this, urn);
+  }
+
+  /**
+   * Return the runtime context where all the 'live' bookkeeping is kept.
+   * 
+   * @return
+   */
+  public RuntimeContext getRuntimeContext() {
+    return runtimeContext;
+  }
+  
 }

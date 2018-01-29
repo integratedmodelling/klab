@@ -94,9 +94,8 @@ public abstract class Observation implements IObservation {
   }
 
   @Override
-  public <T extends IIdentity> T getParentIdentity(Class<? extends IIdentity> type) {
-    // TODO Auto-generated method stub
-    return null;
+  public <T extends IIdentity> T getParent(Class<T> type) {
+      return IIdentity.findParent(this, type);
   }
 
   @Override

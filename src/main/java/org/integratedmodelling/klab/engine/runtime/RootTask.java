@@ -9,11 +9,11 @@ import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IObservationIdentity;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.observation.Subject;
 
@@ -30,7 +30,14 @@ public class RootTask implements ITask<ISubject> {
   Future<ISubject> delegate;
 
   public RootTask(Session session, IObserver urn) {
+    
+    Engine engine = session.getParent(Engine.class);
+    
+    // TODO put all this in a runnable (maybe subject creation can be outside for
+    // consistency, as it should be fast)
+    // TODO create the subject according to semantics
     // TODO create resolver delegate and execute it
+    
   }
 
   @Override
@@ -45,11 +52,10 @@ public class RootTask implements ITask<ISubject> {
   }
 
   @Override
-  public <I extends IIdentity> I getParentIdentity(Class<? extends IIdentity> type) {
-    // TODO Auto-generated method stub
-    return null;
+  public <T extends IIdentity> T getParent(Class<T> type) {
+      return IIdentity.findParent(this, type);
   }
-
+  
   @Override
   public IObservationIdentity getParentIdentity() {
     // TODO Auto-generated method stub
@@ -94,7 +100,7 @@ public class RootTask implements ITask<ISubject> {
   }
 
   @Override
-  public Collection<IObservation> getObservations() {
+  public Collection<ISubject> getObservations() {
     return Collections.singleton(subject);
   }
 

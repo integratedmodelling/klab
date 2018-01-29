@@ -29,7 +29,7 @@ public class ModelTests {
 
     @After
     public void tearDown() throws Exception {
-      engine.shutdown();
+      engine.stop();
     }
 
     @Test

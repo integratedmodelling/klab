@@ -114,11 +114,10 @@ public class Engine extends Server implements IEngine {
         // TODO Auto-generated method stub
         return null;
     }
-
+    
     @Override
-    public <T extends IIdentity> T getParentIdentity(Class<? extends IIdentity> type) {
-        // TODO Auto-generated method stub
-        return null;
+    public <T extends IIdentity> T getParent(Class<T> type) {
+        return IIdentity.findParent(this, type);
     }
 
     @Override
@@ -135,7 +134,7 @@ public class Engine extends Server implements IEngine {
 
     @Override
     public Session createSession() {
-        return createSession(getParentIdentity(IEngineUserIdentity.class));
+        return createSession(getParent(IEngineUserIdentity.class));
     }
 
     @Override
@@ -161,7 +160,7 @@ public class Engine extends Server implements IEngine {
         return ret;
     }
     
-    public void shutdown() {
+    public void stop() {
     
       // shutdown the script executor if necessary
       if (scriptExecutor != null) {

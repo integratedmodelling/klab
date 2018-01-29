@@ -60,20 +60,21 @@ public interface ISubject extends IDirectObservation {
   Map<IConcept, IConfiguration> getConfigurations();
 
   /*
-   * --------------------------------------------------------------------------------------
-   * Runtime functions below
+   * -------------------------------------------------------------------------------------- Runtime
+   * functions below
    * --------------------------------------------------------------------------------------
    */
-  
+
   /**
    * Observe the passed URN, which may specify a concept, a model or an observer. Countable concepts
-   * will trigger instantiation. Non-countable will create the observation and resolve it, unless a
-   * suitable resolution strategy cannot be identified.
+   * will trigger instantiation (the instantiated objects will be available through
+   * {@link ITask#getObservations()}. Non-countable will create the observation and resolve it,
+   * unless a suitable resolution strategy cannot be identified.
    * 
    * @param urn
    * @return the future IObservation.
    */
-  ITask observe(String urn);
+  ITask<IObservation> observe(String urn);
 
   /**
    * Call this on the root observation to create the logical peers of an observation tree in the
