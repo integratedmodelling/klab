@@ -59,12 +59,12 @@ public class Property extends Knowledge implements IProperty {
     }
 
     @Override
-    public String getConceptSpace() {
+    public String getNamespace() {
         return _cs;
     }
 
     @Override
-    public String getLocalName() {
+    public String getName() {
         return _id;
     }
 
@@ -84,7 +84,7 @@ public class Property extends Knowledge implements IProperty {
 
     @Override
     public IOntology getOntology() {
-        return OWL.INSTANCE.getOntology(getConceptSpace());
+        return OWL.INSTANCE.getOntology(getNamespace());
     }
 
     @Override
@@ -337,7 +337,7 @@ public class Property extends Knowledge implements IProperty {
 
     @Override
     public String toString() {
-        return getConceptSpace() + ":" + _id;
+        return getNamespace() + ":" + _id;
     }
 
     @Override
@@ -383,7 +383,7 @@ public class Property extends Knowledge implements IProperty {
 
     @Override
     public String getUrn() {
-        return getConceptSpace() + ":" + _id;
+        return getNamespace() + ":" + _id;
     }
 
 }

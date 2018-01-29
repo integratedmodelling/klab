@@ -90,7 +90,7 @@ public interface IModel extends IActiveKimObject, INamespaceQualified {
 
     /**
      * Get the name with which the passed observable is known within this model. The passed observable's name
-     * reported by {@link IObservable#getName()} may be different as the same observation could come from a
+     * reported by {@link IObservable#getPippaName()} may be different as the same observation could come from a
      * different model.
      * 
      * @param observable

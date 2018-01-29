@@ -46,7 +46,7 @@ public abstract class Knowledge implements IKnowledge {
 
     @Override
     public IConcept getDomain() {
-        INamespace ns = Namespaces.INSTANCE.getNamespace(getConceptSpace());
+        INamespace ns = Namespaces.INSTANCE.getNamespace(getNamespace());
         return ns == null ? null : ns.getDomain();
     }
 

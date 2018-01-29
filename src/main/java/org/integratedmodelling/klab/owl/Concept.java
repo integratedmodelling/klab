@@ -92,14 +92,14 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     @Override
-    public String getConceptSpace() {
+    public String getNamespace() {
         if (_owl.isTopEntity())
             return "owl";
         return _cs;
     }
 
     @Override
-    public String getLocalName() {
+    public String getName() {
         return _id;
     }
 
@@ -143,7 +143,7 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public Ontology getOntology() {
-        return OWL.INSTANCE.getOntology(getConceptSpace());
+        return OWL.INSTANCE.getOntology(getNamespace());
     }
 
     @Override
@@ -285,6 +285,7 @@ public class Concept extends Knowledge implements IConcept {
 
             if (filler == null)
                 continue;
+            @SuppressWarnings("unchecked")
             OWLObjectPropertyExpression zz = ((OWLRestriction<?, ? extends OWLObjectPropertyExpression, ?>) r)
                     .getProperty();
             ret.add(new Pair<IConcept, IProperty>(OWL.INSTANCE.getExistingOrCreate(filler), new Property(zz
@@ -306,6 +307,7 @@ public class Concept extends Knowledge implements IConcept {
 
             if (filler == null || !filler.getIRI().equals(((Concept) target)._owl.getIRI()))
                 continue;
+            @SuppressWarnings("unchecked")
             OWLObjectPropertyExpression zz = ((OWLRestriction<?, ? extends OWLObjectPropertyExpression, ?>) r)
                     .getProperty();
             ret.add(new Property(zz.asOWLObjectProperty(), OWL.INSTANCE.getConceptSpace(zz
@@ -550,7 +552,7 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public String toString() {
-        return getConceptSpace() + ":" + _id;
+        return getNamespace() + ":" + _id;
     }
 
     @Override
@@ -603,7 +605,7 @@ public class Concept extends Knowledge implements IConcept {
     @Override
     public String getDefinition() {
         String def = getMetadata().getString(NS.CONCEPT_DEFINITION_PROPERTY);
-        return def == null ? (getConceptSpace() + ":" + _id) : def;
+        return def == null ? (getNamespace() + ":" + _id) : def;
     }
 
     /**
@@ -624,7 +626,7 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public String getUrn() {
-        return getConceptSpace() + ":" + _id;
+        return getNamespace() + ":" + _id;
     }
 
 }

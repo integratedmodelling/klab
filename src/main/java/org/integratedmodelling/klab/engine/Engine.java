@@ -5,8 +5,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
@@ -145,16 +144,6 @@ public class Engine extends Server implements IEngine {
         return new Session(this, user);
     }
 
-    // @Override
-    // public IEngineUserIdentity getUser() {
-    // IIdentity identity = certificate.getIdentity();
-    // if (!(identity instanceof IUserIdentity)) {
-    // // TODO shit all over the place
-    // }
-    // return identity instanceof IEngineUserIdentity ? (IEngineUserIdentity) identity
-    // : null /* TODO make engine user out of other */;
-    // }
-
     /**
      * Create an engine using the default k.LAB certificate and options, and start it. Return after startup is
      * complete.
@@ -163,13 +152,28 @@ public class Engine extends Server implements IEngine {
      * @throws KlabRuntimeException
      *             if startup fails
      */
-    public static IEngine start() {
+    public static Engine start() {
         EngineStartupOptions options = new EngineStartupOptions();
         Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
         if (!ret.boot(options)) {
             throw new KlabRuntimeException("engine failed to start");
         }
         return ret;
+    }
+    
+    public void shutdown() {
+    
+      // shutdown the script executor if necessary
+      if (scriptExecutor != null) {
+        scriptExecutor.shutdown();
+        try {
+            if (!scriptExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+              scriptExecutor.shutdownNow();
+            } 
+        } catch (InterruptedException e) {
+          scriptExecutor.shutdownNow();
+        }
+      }
     }
 
     /**

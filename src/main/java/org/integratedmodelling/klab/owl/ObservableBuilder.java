@@ -235,7 +235,7 @@ public class ObservableBuilder implements Builder {
 
     private static IConcept makeAssessment(IConcept concept) {
 
-        String cName = cleanInternalId(concept.getLocalName()) + "Assessment";
+        String cName = cleanInternalId(concept.getName()) + "Assessment";
 
         if (!concept.is(Type.QUALITY)) {
             return null;
@@ -432,9 +432,9 @@ public class ObservableBuilder implements Builder {
         /*
         * add the main identity to the ID after all traits and before any context
         */
-        cId += cleanInternalId(main.getLocalName());
-        cDs += cleanInternalId(main.getLocalName());
-        uId += cleanInternalId(main.getLocalName());
+        cId += cleanInternalId(main.getName());
+        cDs += cleanInternalId(main.getName());
+        uId += cleanInternalId(main.getName());
 
         /*
         * handle context, inherency etc.
@@ -448,9 +448,9 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible inherency: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "Of" + cleanInternalId(inherent.getLocalName());
-            cDs += "Of" + cleanInternalId(inherent.getLocalName());
-            uId += "Of" + cleanInternalId(inherent.getLocalName());
+            cId += "Of" + cleanInternalId(inherent.getName());
+            cDs += "Of" + cleanInternalId(inherent.getName());
+            uId += "Of" + cleanInternalId(inherent.getName());
         }
 
         if (context != null) {
@@ -462,9 +462,9 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible context: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "In" + cleanInternalId(context.getLocalName());
-            cDs += "In" + cleanInternalId(context.getLocalName());
-            uId += "In" + cleanInternalId(context.getLocalName());
+            cId += "In" + cleanInternalId(context.getName());
+            cDs += "In" + cleanInternalId(context.getName());
+            uId += "In" + cleanInternalId(context.getName());
         }
 
         if (compresent != null) {
@@ -476,9 +476,9 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible compresent type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "With" + cleanInternalId(compresent.getLocalName());
-            cDs += "With" + cleanInternalId(compresent.getLocalName());
-            uId += "With" + cleanInternalId(compresent.getLocalName());
+            cId += "With" + cleanInternalId(compresent.getName());
+            cDs += "With" + cleanInternalId(compresent.getName());
+            uId += "With" + cleanInternalId(compresent.getName());
         }
 
         if (goal != null) {
@@ -491,9 +491,9 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible goal type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "For" + cleanInternalId(goal.getLocalName());
-            cDs += "For" + cleanInternalId(goal.getLocalName());
-            uId += "For" + cleanInternalId(goal.getLocalName());
+            cId += "For" + cleanInternalId(goal.getName());
+            cDs += "For" + cleanInternalId(goal.getName());
+            uId += "For" + cleanInternalId(goal.getName());
         }
 
         if (caused != null) {
@@ -505,9 +505,9 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible caused type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "To" + cleanInternalId(caused.getLocalName());
-            cDs += "To" + cleanInternalId(caused.getLocalName());
-            uId += "To" + cleanInternalId(caused.getLocalName());
+            cId += "To" + cleanInternalId(caused.getName());
+            cDs += "To" + cleanInternalId(caused.getName());
+            uId += "To" + cleanInternalId(caused.getName());
         }
 
         if (causant != null) {
@@ -519,9 +519,9 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible causant type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "From" + cleanInternalId(causant.getLocalName());
-            cDs += "From" + cleanInternalId(causant.getLocalName());
-            uId += "From" + cleanInternalId(causant.getLocalName());
+            cId += "From" + cleanInternalId(causant.getName());
+            cDs += "From" + cleanInternalId(causant.getName());
+            uId += "From" + cleanInternalId(causant.getName());
         }
 
         String roleIds = "";
@@ -680,7 +680,7 @@ public class ObservableBuilder implements Builder {
     private static boolean rolesAreFundamental(Collection<IConcept> roles) {
         for (IConcept c : roles) {
             if (Workspaces.INSTANCE.getWorldview() != null
-                    && !c.getConceptSpace().equals(Workspaces.INSTANCE.getWorldview().getName())) {
+                    && !c.getNamespace().equals(Workspaces.INSTANCE.getWorldview().getName())) {
                 return false;
             }
         }

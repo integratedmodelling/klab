@@ -20,12 +20,12 @@ public class ConceptStatement extends KimObject {
 
     @Override
     public String getId() {
-        return concept.getLocalName();
+        return concept.getName();
     }
 
     @Override
     public String getName() {
-        return concept.getConceptSpace();
+        return concept.getNamespace();
     }
     
 }

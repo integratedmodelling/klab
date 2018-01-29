@@ -35,7 +35,7 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public String getName() {
+    public String getLocalName() {
         return name;
     }
 
@@ -209,13 +209,8 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public String getLocalName() {
-        return observable.getLocalName();
-    }
-
-    @Override
-    public String getConceptSpace() {
-        return observable.getConceptSpace();
+    public String getNamespace() {
+        return observable.getNamespace();
     }
 
     @Override
@@ -249,6 +244,11 @@ public class Observable implements IObservable {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    @Override
+    public String getName() {
+      return observable.getName();
     }
 
 }

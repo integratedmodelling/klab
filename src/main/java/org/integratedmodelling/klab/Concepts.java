@@ -127,7 +127,7 @@ public enum Concepts implements IConceptService {
             ret = t.getMetadata().getString(IMetadata.DC_LABEL);
         }
         if (ret == null) {
-            ret = t.getLocalName();
+            ret = t.getName();
         }
         if (ret.startsWith("i")) {
             ret = ret.substring(1);

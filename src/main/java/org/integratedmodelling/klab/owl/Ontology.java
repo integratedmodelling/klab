@@ -173,7 +173,7 @@ public class Ontology implements IOntology {
         this.delegates.put(id, concept);
         concept.getOntology()
                 .define(Collections.singleton(Axiom.AnnotationAssertion(concept
-                        .getLocalName(), NS.LOCAL_ALIAS_PROPERTY, namespace.getName() + ":"
+                        .getName(), NS.LOCAL_ALIAS_PROPERTY, namespace.getName() + ":"
                                 + id)));
     }
 
@@ -740,10 +740,10 @@ public class Ontology implements IOntology {
             /*
              * ensure ontology is imported
              */
-            if (!cc.getConceptSpace().equals(this.id)
-                    && !this.imported.contains(cc.getConceptSpace())) {
+            if (!cc.getNamespace().equals(this.id)
+                    && !this.imported.contains(cc.getNamespace())) {
 
-                this.imported.add(cc.getConceptSpace());
+                this.imported.add(cc.getNamespace());
                 IRI importIRI = ((Ontology) cc.getOntology()).ontology
                         .getOntologyID().getOntologyIRI();
                 OWLImportsDeclaration importDeclaraton = this.ontology
@@ -788,10 +788,10 @@ public class Ontology implements IOntology {
             /*
              * ensure ontology is imported
              */
-            if (!cc.getConceptSpace().equals(this.id)
-                    && !this.imported.contains(cc.getConceptSpace())) {
+            if (!cc.getNamespace().equals(this.id)
+                    && !this.imported.contains(cc.getNamespace())) {
 
-                this.imported.add(cc.getConceptSpace());
+                this.imported.add(cc.getNamespace());
                 IRI importIRI = ((Ontology) cc.getOntology()).ontology
                         .getOntologyID().getOntologyIRI();
                 OWLImportsDeclaration importDeclaraton = this.ontology

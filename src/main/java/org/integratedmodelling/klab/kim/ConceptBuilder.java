@@ -57,12 +57,12 @@ public enum ConceptBuilder {
                 }
 
                 if (parent != null) {
-                    ns.addAxiom(Axiom.SubClass(ret.getLocalName(), parent.getUrn()));
+                    ns.addAxiom(Axiom.SubClass(ret.getName(), parent.getUrn()));
                 }
             }
 
             if (ret != null) {
-                ns.addAxiom(Axiom.AnnotationAssertion(ret.getLocalName(), NS.BASE_DECLARATION, "true"));
+                ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
                 createProperties(ret, ns);
                 ns.define();
             }
@@ -132,7 +132,7 @@ public enum ConceptBuilder {
             if (child instanceof IKimConceptStatement) {
                 try {
                     IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, monitor);
-                    namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getLocalName()));
+                    namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getName()));
                     namespace.define();
                 } catch (Throwable e) {
                     monitor.error(e);
@@ -276,7 +276,7 @@ public enum ConceptBuilder {
 
             // set the k.IM definition in the concept
             ret.getOntology().define(Collections.singletonList(Axiom.AnnotationAssertion(ret
-                    .getLocalName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.toString())));
+                    .getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.toString())));
 
             // consistency check
             if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
@@ -297,23 +297,23 @@ public enum ConceptBuilder {
         String pProp = null;
         if (ret.is(Type.ATTRIBUTE)) {
             // hasX
-            pName = "has" + ret.getLocalName();
+            pName = "has" + ret.getName();
             pProp = NS.HAS_ATTRIBUTE_PROPERTY;
         } else if (ret.is(Type.REALM)) {
             // inX
-            pName = "in" + ret.getLocalName();
+            pName = "in" + ret.getName();
             pProp = NS.HAS_REALM_PROPERTY;
         } else if (ret.is(Type.IDENTITY)) {
             // isX
-            pName = "is" + ret.getLocalName();
+            pName = "is" + ret.getName();
             pProp = NS.HAS_IDENTITY_PROPERTY;
         }
         if (pName != null) {
             ns.addAxiom(Axiom.ObjectPropertyAssertion(pName));
-            ns.addAxiom(Axiom.ObjectPropertyRange(pName, ret.getLocalName()));
+            ns.addAxiom(Axiom.ObjectPropertyRange(pName, ret.getName()));
             ns.addAxiom(Axiom.SubObjectProperty(pProp, pName));
             ns.addAxiom(Axiom
-                    .AnnotationAssertion(ret.getLocalName(), NS.TRAIT_RESTRICTING_PROPERTY, ns.getName() + ":"
+                    .AnnotationAssertion(ret.getName(), NS.TRAIT_RESTRICTING_PROPERTY, ns.getName() + ":"
                             + pName));
         }
     }

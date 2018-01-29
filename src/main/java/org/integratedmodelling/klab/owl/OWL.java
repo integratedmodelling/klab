@@ -656,7 +656,7 @@ public enum OWL {
 
     public void restrictSome(IConcept target, IProperty property, IConcept filler) {
         target.getOntology().define(Collections.singleton(Axiom
-                .SomeValuesFrom(target.getLocalName(), property.toString(), filler
+                .SomeValuesFrom(target.getName(), property.toString(), filler
                         .toString())));
     }
 
@@ -716,7 +716,7 @@ public enum OWL {
 
     public void restrictAll(IConcept target, IProperty property, IConcept filler) {
         target.getOntology().define(Collections.singleton(Axiom
-                .AllValuesFrom(target.getLocalName(), property.toString(), filler
+                .AllValuesFrom(target.getName(), property.toString(), filler
                         .toString())));
     }
 
@@ -749,7 +749,7 @@ public enum OWL {
 
     public void restrictAtLeast(IConcept target, IProperty property, IConcept filler, int min) {
         target.getOntology().define(Collections.singleton(Axiom
-                .AtLeastNValuesFrom(target.getLocalName(), property.toString(), filler
+                .AtLeastNValuesFrom(target.getName(), property.toString(), filler
                         .toString(), min)));
     }
 
@@ -780,7 +780,7 @@ public enum OWL {
 
     public void restrictAtMost(IConcept target, IProperty property, IConcept filler, int max) {
         target.getOntology().define(Collections.singleton(Axiom
-                .AtMostNValuesFrom(target.getLocalName(), property.toString(), filler
+                .AtMostNValuesFrom(target.getName(), property.toString(), filler
                         .toString(), max)));
     }
 
@@ -811,7 +811,7 @@ public enum OWL {
 
     public void restrictExactly(IConcept target, IProperty property, IConcept filler, int howMany) {
         target.getOntology().define(Collections.singleton(Axiom
-                .ExactlyNValuesFrom(target.getLocalName(), property.toString(), filler
+                .ExactlyNValuesFrom(target.getName(), property.toString(), filler
                         .toString(), howMany)));
     }
 
