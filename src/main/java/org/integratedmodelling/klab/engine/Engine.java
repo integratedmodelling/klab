@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
@@ -365,6 +366,13 @@ public class Engine extends Server implements IEngine {
         return bootTime;
     }
 
+    // TODO see if this is OK here. We can use another executor for the
+    // parallel threads, and implement various modes of computation and
+    // runners.
+    public void run(IDataflow dataflow) {
+      
+    }
+    
     @Override
     public IScript run(URL resource) throws KlabException {
 
@@ -408,6 +416,19 @@ public class Engine extends Server implements IEngine {
             scriptExecutor = Executors.newFixedThreadPool(10);
         }
         return scriptExecutor;
+    }
+
+    /**
+     * Get the Executor that will run script tasks.
+     * 
+     * @return a valid executor
+     */
+    public ExecutorService getTaskExecutor() {
+        if (taskExecutor == null) {
+            // TODO condition both the type and the parameters of the executor to options
+          taskExecutor = Executors.newFixedThreadPool(30);
+        }
+        return taskExecutor;
     }
 
 }

@@ -13,12 +13,15 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class Script implements IScript {
 
   URL                scriptUrl;
   FutureTask<Object> delegate;
   IMonitor           monitor;
+  Session            session;
+  String token = NameGenerator.shortUUID();
 
   public Script(Engine engine, URL resource) {
 
@@ -30,14 +33,13 @@ public class Script implements IScript {
 
         Object ret = null;
         try (Session session = engine.createSession()) {
+          Script.this.session = session;
           Script.this.monitor = (session.getMonitor()).get(Script.this);
           /* ret = */ Models.INSTANCE.load(resource, monitor);
         } catch (Exception e) {
           throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
         }
-
         return ret;
-
       }
     });
 
@@ -46,8 +48,7 @@ public class Script implements IScript {
 
   @Override
   public String getToken() {
-    // TODO Auto-generated method stub
-    return null;
+    return token;
   }
 
   @Override
@@ -57,7 +58,7 @@ public class Script implements IScript {
 
   @Override
   public <T extends IIdentity> T getParent(Class<T> type) {
-      return IIdentity.findParent(this, type);
+    return IIdentity.findParent(this, type);
   }
 
   @Override
@@ -86,17 +87,14 @@ public class Script implements IScript {
     return delegate.get(timeout, unit);
   }
 
-
   @Override
   public IEngineSessionIdentity getParentIdentity() {
-    // TODO Auto-generated method stub
-    return null;
+    return session;
   }
 
   @Override
   public IMonitor getMonitor() {
-    // TODO Auto-generated method stub
-    return null;
+    return monitor;
   }
 
 }

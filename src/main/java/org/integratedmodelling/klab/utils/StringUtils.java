@@ -37,7 +37,6 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static final int NONLETTERS = 0x0002;
     public static final int UPPERCASE  = 0x0004;
 
-
     /**
      * Split into lines and indent each by the given amount.
      * 

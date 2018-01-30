@@ -40,8 +40,9 @@ public enum Annotations implements IAnnotationService {
          * @param monitor
          * @return any value deemed necessary. The return value is ignored for now, reserved for future
          *         applications.
+         * @throws Exception 
          */
-        Object process(IKimObject target, Map<String, Object> arguments, IMonitor monitor);
+        Object process(IKimObject target, Map<String, Object> arguments, IMonitor monitor) throws Exception;
     }
 
     Map<String, Handler>    handlers   = Collections.synchronizedMap(new HashMap<>());
@@ -57,7 +58,11 @@ public enum Annotations implements IAnnotationService {
 
         Handler handler = handlers.get(annotation.getName());
         if (handler != null) {
-            return handler.process(object, annotation.getParameters(), monitor);
+            try {
+              return handler.process(object, annotation.getParameters(), monitor);
+            } catch (Exception e) {
+              monitor.error(e);
+            }
         }
         return null;
     }

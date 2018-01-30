@@ -1,39 +1,64 @@
 package org.integratedmodelling.klab.engine.runtime;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IObservationIdentity;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
-import org.integratedmodelling.klab.observation.Observation;
 import org.integratedmodelling.klab.observation.Subject;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
- * A ITask that creates one or more IObservations within a context subject.
+ * A ITask that creates a root subject within a Session.
  * 
  * @author ferdinando.villa
  *
- * @param <T>
  */
-public class ContextualTask implements ITask<IObservation> {
+public class ObserveContextTask implements ITask<ISubject> {
 
-  Monitor     monitor;
-  Observation context;
-  Future<IObservation>   delegate;
-  String id = NameGenerator.shortUUID();
+  Monitor              monitor;
+  Subject              subject;
+  FutureTask<ISubject> delegate;
+  String               id = NameGenerator.shortUUID();
 
-  public ContextualTask(Subject context, String urn) {
-    this.context = context;
-    this.monitor = context.getRoot().getMonitor().get(this);
-    // TODO create resolver delegate and execute it
+  public ObserveContextTask(Session session, IObserver observer) {
+
+    Engine engine = session.getParent(Engine.class);
+    this.monitor = (session.getMonitor()).get(this);
+
+    delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
+
+      @Override
+      public ISubject call() throws Exception {
+
+        Subject ret = Observations.INSTANCE.createSubject(observer, monitor);
+        ResolutionScope scope = new ResolutionScope(ret);
+        if (Resolver.INSTANCE.resolve(ret, scope).isRelevant()) {
+            engine.run(Dataflows.INSTANCE.compile(scope));
+        }
+        
+        return ret;
+      }
+    });
+
+    engine.getTaskExecutor().execute(delegate);
+
+
   }
 
   @Override
@@ -48,12 +73,12 @@ public class ContextualTask implements ITask<IObservation> {
 
   @Override
   public <T extends IIdentity> T getParent(Class<T> type) {
-      return IIdentity.findParent(this, type);
+    return IIdentity.findParent(this, type);
   }
 
   @Override
   public IObservationIdentity getParentIdentity() {
-    return context;
+    return subject;
   }
 
   @Override
@@ -77,12 +102,12 @@ public class ContextualTask implements ITask<IObservation> {
   }
 
   @Override
-  public IObservation get() throws InterruptedException, ExecutionException {
+  public ISubject get() throws InterruptedException, ExecutionException {
     return delegate.get();
   }
 
   @Override
-  public IObservation get(long timeout, TimeUnit unit)
+  public ISubject get(long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
     return delegate.get(timeout, unit);
   }
@@ -94,9 +119,8 @@ public class ContextualTask implements ITask<IObservation> {
   }
 
   @Override
-  public Collection<IObservation> getObservations() {
-    // TODO Auto-generated method stub
-    return null;
+  public Collection<ISubject> getObservations() {
+    return Collections.singleton(subject);
   }
 
 }

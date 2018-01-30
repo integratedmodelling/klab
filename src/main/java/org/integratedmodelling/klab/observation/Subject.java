@@ -15,9 +15,9 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.ITask;
-import org.integratedmodelling.klab.engine.runtime.ContextualTask;
-import org.integratedmodelling.klab.engine.runtime.RuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.RuntimeContext;
 
 public class Subject extends DirectObservation implements ISubject {
 
@@ -86,7 +86,7 @@ public class Subject extends DirectObservation implements ISubject {
   @Override
   public ITask<IObservation> observe(String urn) {
     // TODO Auto-generated method stub
-    return new ContextualTask(this, urn);
+    return new ObserveInContextTask(this, urn);
   }
 
   /**

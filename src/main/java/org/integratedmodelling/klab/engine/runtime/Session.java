@@ -64,7 +64,7 @@ public class Session implements ISession {
         if (!(object instanceof IObserver)) {
             throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
         }
-        return new RootTask(this, (IObserver)object);
+        return new ObserveContextTask(this, (IObserver)object);
     }
     
 }

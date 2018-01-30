@@ -1,7 +1,7 @@
-package org.integratedmodelling.klab.engine.runtime;
+package org.integratedmodelling.klab.resolution;
 
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import com.google.common.eventbus.EventBus;
 
 /**

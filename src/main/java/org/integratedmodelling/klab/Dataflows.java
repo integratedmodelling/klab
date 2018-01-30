@@ -4,19 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
-
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
-
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -61,6 +61,18 @@ public enum Dataflows implements IDataflowService {
             throw new KlabValidationException(e);
         }
         return ret;
+    }
+
+    /**
+     * Compile a successful resolution into a runnable dataflow.
+     * 
+     * @param scope
+     * @return a dataflow, possibly empty.
+     * @throws KlabException 
+     */
+    public IDataflow compile(ResolutionScope scope) throws KlabException {
+      // TODO Auto-generated method stub
+      return null;
     }
 
 }

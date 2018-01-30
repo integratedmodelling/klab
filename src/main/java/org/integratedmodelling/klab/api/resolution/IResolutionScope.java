@@ -31,9 +31,10 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 
 /**
  * The resolution scope contains all the contextual information gathered during resolution,
- * including scale, traits and resolution criteria for all models being contextualized. The
- * resolution contexts compute the total coverage, build the provenance graph and harmonize the
- * merged scale as new models are accepted.
+ * including scale, traits and resolution criteria for all models being contextualized. During
+ * resolution, any new condition spawns a child scope that is merged with the parent upon successful
+ * resolution of the state. The resolution contexts compute the total coverage, build the provenance
+ * graph and harmonize the merged scale as new models are accepted.
  * 
  * Created and passed around during resolution, notably to the model query so that it can be used to
  * rank the outputs. Model query on network nodes gets passed enough information to build a
@@ -43,6 +44,20 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
  *
  */
 public interface IResolutionScope {
+
+  public enum Mode {
+    /**
+     * this context is resolving a model for a single instance that may already exist (if a
+     * countable created by an instantiator) or will be created upon successful resolution (a
+     * non-countable).
+     */
+    RESOLUTION,
+    /**
+     * this context is trying to resolve an observable for direct observations that have not been
+     * instantiated, i.e. it will be resolved by models that instantiate them ('model each' models).
+     */
+    INSTANTIATION
+  }
 
   /**
    * Scale of resolution. This may change as new constraints are brought in by each resolved model,
@@ -103,7 +118,7 @@ public interface IResolutionScope {
    * The provenance artifact that caused the resolution (either an observation or an observable).
    * Never null.
    * 
-   * @return
+   * @return the artifact causing the resolution
    */
   IProvenance.Artifact getProvenanceArtifact();
 
@@ -111,7 +126,7 @@ public interface IResolutionScope {
    * Checks if the passed observable is required as a dependency by any models resolved so far.
    * 
    * @param observable
-   * @return
+   * @return whether observable is required
    */
   boolean isUsed(IObservable observable);
 
@@ -126,19 +141,16 @@ public interface IResolutionScope {
    * {@link #isUsed}.
    * 
    * @param observable
-   * @return
+   * @return true if observation must be exposed as output
    */
   boolean isRequired(IObservable observable);
 
   /**
-   * If true, this context is trying to resolve an observable for direct observations that have not
-   * been instantiated, i.e. it will be resolved by models that instantiate them ('model each'
-   * models). If false, we already have an instance, and we're looking for a model that can complete
-   * its observation.
+   * Return the mode of resolution - whether we're looking for an instantiator or a 
    * 
-   * @return true if instantiation of the observable is required in this scope
+   * @return the mode of resolution
    */
-  boolean isForInstantiation();
+  Mode getMode();
 
   /**
    * true if we're downstream of an optional dependency.
@@ -152,7 +164,7 @@ public interface IResolutionScope {
    * editable parameters and optional outputs. Whenever these are available, the resolver will stop
    * and ask the user for input through the engine notification bus.
    * 
-   * @return
+   * @return whether the resolution is interactive
    */
   boolean isInteractive();
 
@@ -171,5 +183,6 @@ public interface IResolutionScope {
    * @return
    */
   IObservable getObservable();
+
 
 }

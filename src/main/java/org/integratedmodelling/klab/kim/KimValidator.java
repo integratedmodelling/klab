@@ -98,19 +98,20 @@ public class KimValidator implements Kim.Validator {
 		}
 		
 		/*
-		 * Execute any annotations recognized by the engine.
-		 */
-		for (IKimObject object : ns.getObjects()) {
-		    for (IKimAnnotation annotation : object.getAnnotations()) {
-		        Annotations.INSTANCE.process(annotation, object, monitor);
-		    }
-		}
-		
-		/*
 		 * TODO finalize namespace and send any notification
 		 */
+
 		Namespaces.INSTANCE.registerNamespace(ns);
         Reasoner.INSTANCE.addOntology(ns.getOntology());
+        
+        /*
+         * Execute any annotations recognized by the engine.
+         */
+        for (IKimObject object : ns.getObjects()) {
+            for (IKimAnnotation annotation : object.getAnnotations()) {
+                Annotations.INSTANCE.process(annotation, object, monitor);
+            }
+        }
         
         return ns;
 	}

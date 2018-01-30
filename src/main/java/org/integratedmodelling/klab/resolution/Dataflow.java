@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.resolution;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.dataflow.ILink;
@@ -36,7 +35,7 @@ public class Dataflow implements IDataflow {
     }
 
     @Override
-    public Collection<IActuator> getActuators() {
+    public List<IActuator> getActuators() {
         // TODO Auto-generated method stub
         return null;
     }
