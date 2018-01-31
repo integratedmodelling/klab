@@ -11,9 +11,9 @@
 		<java.version>1.8</java.version>
 		<!-- Careful here: geotools must be right for jgrasstools to work; JTS 
 			should be the same one that geotools needs. -->
-		<geotools.version>12.2</geotools.version>
-		<klab.version>0.9.11-SNAPSHOT</klab.version>
-		<jgrasstools-version>0.8.0</jgrasstools-version>
+		<geotools.version>19-SNAPSHOT</geotools.version>
+		<klab.version>0.10.0-SNAPSHOT</klab.version>
+		<jgrasstools-version>0.8.1</jgrasstools-version>
 		<jts.version>1.13</jts.version>
 		<xtext.version>2.12.0</xtext.version>
 		<h2gis.version>1.2.4</h2gis.version>
@@ -33,6 +33,23 @@
 		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>osgeo</id>
+			<name>Open Source Geospatial Foundation Repository</name>
+			<url>http://download.osgeo.org/webdav/geotools/</url>
+		</repository>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>boundless</id>
+			<name>Boundless Maven Repository</name>
+			<url>http://repo.boundlessgeo.com/main</url>
+		</repository>
+	</repositories>
+
 
 	<build>
 		<plugins>
@@ -235,6 +252,49 @@
 			<version>3.4.0</version>
 		</dependency>
 
+		<!-- GEOTOOLS mess starts -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geotiff</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-extension</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<!-- WFS missing after 17.x
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-wfs</artifactId>
+			<version>${geotools.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.emf</groupId>
+					<artifactId>common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.emf</groupId>
+					<artifactId>ecore</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>  -->
+		<!-- GEOTOOLS mess ends -->
 
 
 	</dependencies>

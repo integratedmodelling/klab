@@ -1,48 +1,69 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 
 public class Envelope implements IEnvelope {
 
-    private com.vividsolutions.jts.geom.Envelope envelope;
-    private IProjection                           projection;
+  ReferencedEnvelope envelope;
+  IProjection        projection;
 
-    public Envelope() {
-        // TODO Auto-generated constructor stub
-    }
+  public static Envelope create(com.vividsolutions.jts.geom.Envelope envelope,
+      Projection projection) {
+    Envelope ret = new Envelope();
+    ret.envelope = new ReferencedEnvelope(envelope, projection.getCoordinateReferenceSystem());
+    ret.projection = projection;
+    return ret;
+  }
 
-    @Override
-    public IProjection getProjection() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  private Envelope() {
+    // TODO Auto-generated constructor stub
+  }
 
-    @Override
-    public double getMinX() {
-        return envelope.getMinX();
-    }
+  @Override
+  public IProjection getProjection() {
+    return projection;
+  }
 
-    @Override
-    public double getMaxX() {
-        return envelope.getMaxX();
-    }
+  @Override
+  public double getMinX() {
+    return envelope.getMinX();
+  }
 
-    @Override
-    public double getMinY() {
-        return envelope.getMinY();
-    }
+  @Override
+  public double getMaxX() {
+    return envelope.getMaxX();
+  }
 
-    @Override
-    public double getMaxY() {
-        return envelope.getMaxY();
-    }
+  @Override
+  public double getMinY() {
+    return envelope.getMinY();
+  }
 
-    @Override
-    public IShape asShape() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public double getMaxY() {
+    return envelope.getMaxY();
+  }
+
+  @Override
+  public Shape asShape() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public static Envelope create(double minx, double maxx, double miny, double maxy,
+      Projection crs) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public double getWidth() {
+    return envelope.getWidth();
+  }
+
+  public double getHeight() {
+    return envelope.getHeight();
+  }
 
 }

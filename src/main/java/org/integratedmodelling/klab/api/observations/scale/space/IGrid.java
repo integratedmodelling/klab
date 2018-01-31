@@ -27,7 +27,7 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 import java.util.Collection;
-
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
@@ -71,13 +71,13 @@ public interface IGrid extends Iterable<Cell> {
          */
         Cell move(int xOfs, int yOfs);
 
-        double getMinX();
+        double getEast();
 
-        double getMaxX();
+        double getWest();
 
-        double getMinY();
+        double getSouth();
 
-        double getMaxY();
+        double getNorth();
 
         Integer getOffsetInGrid();
         
@@ -184,9 +184,11 @@ public interface IGrid extends Iterable<Cell> {
      * Return the cell area. Use coordinates if projection not available, else
      * return in default SI unit for area (square meters).
      * 
+     * @param unit 
+     *
      * @return
      */
-    double getCellArea(boolean forceSquareMeters);
+    double getCellArea(IUnit unit);
 
     /**
      * Convert to linear index.
@@ -206,6 +208,14 @@ public interface IGrid extends Iterable<Cell> {
      * @return true if active
      */
     boolean isActive(int x, int y);
+    
+    double getEast();
+
+    double getWest();
+
+    double getSouth();
+
+    double getNorth();
 
     /**
      * Get the linear index of the cell where the passed point is located, using 
@@ -247,16 +257,12 @@ public interface IGrid extends Iterable<Cell> {
      */
     IScale.Locator getLocator(int x, int y);
 
-    double getMinX();
-
-    double getMaxX();
-
-    double getMinY();
-
-    double getMaxY();
-
     double getCellWidth();
 
     double getCellHeight();
+
+    double[] getWorldCoordinatesAt(int x, int y);
+
+    int[] getGridCoordinatesAt(double x, double y);
 
 }
