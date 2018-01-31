@@ -116,7 +116,7 @@ public class Shape implements IShape {
   }
 
   @Override
-  public org.integratedmodelling.klab.api.observations.scale.space.IShape transform(
+  public Shape transform(
       IProjection projection) {
     if (this.projection.equals(projection)) {
       return this;
@@ -131,14 +131,14 @@ public class Shape implements IShape {
   }
 
   @Override
-  public org.integratedmodelling.klab.api.observations.scale.space.IShape intersection(
+  public Shape intersection(
       org.integratedmodelling.klab.api.observations.scale.space.IShape other) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public org.integratedmodelling.klab.api.observations.scale.space.IShape union(
+  public Shape union(
       org.integratedmodelling.klab.api.observations.scale.space.IShape other) {
     // TODO Auto-generated method stub
     return null;

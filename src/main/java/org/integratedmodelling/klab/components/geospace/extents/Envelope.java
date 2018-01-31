@@ -17,6 +17,14 @@ public class Envelope implements IEnvelope {
     return ret;
   }
 
+  public static Envelope create(ReferencedEnvelope envelope) {
+        Envelope ret = new Envelope();
+        ret.envelope = envelope;
+        ret.projection = Projection.create(envelope.getCoordinateReferenceSystem());
+        return ret;
+      }
+
+  
   private Envelope() {
     // TODO Auto-generated constructor stub
   }

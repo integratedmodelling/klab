@@ -8,66 +8,79 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class Projection implements IProjection {
 
-  private String code;
-  CoordinateReferenceSystem crs;
-  
-  private Projection(String code) {
-    this.code = code;
-    try {
-      this.crs = CRS.decode(this.code, true);
-    } catch (FactoryException e) {
-      throw new KlabRuntimeException(e);
+    private String            code;
+    CoordinateReferenceSystem crs;
+
+    private Projection(String code) {
+        this.code = code;
+        try {
+            this.crs = CRS.decode(this.code, true);
+        } catch (FactoryException e) {
+            throw new KlabRuntimeException(e);
+        }
     }
-  }
+    
+    private Projection(String code, CoordinateReferenceSystem crs) {
+        this.code = code;
+        this.crs = crs;
+    }
 
-  @Override
-  public String getCode() {
-    return code;
-  }
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-  /**
-   * Obtain the projection corresponding to the passed EPSG (or other supported authority) code, in
-   * the format "EPSG:nnnn".
-   * 
-   * @param code
-   * @return the projection, which may be invalid.
-   */
-  public static Projection create(String code) {
-    return new Projection(code);
-  }
+    /**
+     * Obtain the projection corresponding to the passed EPSG (or other supported authority) code, in
+     * the format "EPSG:nnnn".
+     * 
+     * @param code
+     * @return the projection, which may be invalid.
+     */
+    public static Projection create(String code) {
+        return new Projection(code);
+    }
 
-  public static Projection create(String authority, int code) {
-    return new Projection(authority + ":" + code);
-  }
+    public static Projection create(String authority, int code) {
+        return new Projection(authority + ":" + code);
+    }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((code == null) ? 0 : code.hashCode());
-    return result;
-  }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        return result;
+    }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Projection other = (Projection) obj;
-    if (code == null) {
-      if (other.code != null)
-        return false;
-    } else if (!code.equals(other.code))
-      return false;
-    return true;
-  }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Projection other = (Projection) obj;
+        if (code == null) {
+            if (other.code != null)
+                return false;
+        } else if (!code.equals(other.code))
+            return false;
+        return true;
+    }
 
-  public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-    return crs;
-  }
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        return crs;
+    }
 
+    static Projection create(CoordinateReferenceSystem coordinateReferenceSystem) {
+        try {
+            String code = CRS.lookupIdentifier(coordinateReferenceSystem, true);
+            return new Projection(code, coordinateReferenceSystem);
+        } catch (FactoryException e) {
+            throw new KlabRuntimeException(e);
+        }
+    }
 
 }
