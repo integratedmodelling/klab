@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
+import java.util.List;
+import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.INumericRange;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -24,8 +26,8 @@ public interface IObservable extends IConcept {
   String getLocalName();
 
   /**
-   * Return the untransformed concept, which is identical to the type returned by {@link #getType()}
-   * unless a "by" (and possibly a "down to") predicate was specified.
+   * Return the untransformed concept, which will be identical to the type returned by
+   * {@link #getType()} unless a "by" (and possibly a "down to") predicate was specified.
    * 
    * @return the declared concept before any reclassification
    */
@@ -65,7 +67,8 @@ public interface IObservable extends IConcept {
    * If the observable was defined with an inline value (e.g. '10 as Concept'), report the POD value
    * here.
    * 
-   * @return
+   * @return the inline value (a POD; a distribution, {@link Range} or {@link List} are also
+   *         possible, but so far there are no situations in which this happens.)
    */
   Object getValue();
 

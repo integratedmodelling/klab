@@ -1,9 +1,8 @@
 package org.integratedmodelling.klab.kim;
 
 import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 
 public enum ObservationBuilder {
@@ -20,7 +19,7 @@ public enum ObservationBuilder {
      * @param monitor 
      * @return
      */
-    public IObserver build(IKimObserver observer, INamespace namespace, IMonitor monitor) {
+    public Observer build(IKimObserver observer, Namespace namespace, Monitor monitor) {
         return new Observer(observer, namespace, monitor);
     }
 }

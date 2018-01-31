@@ -1,16 +1,12 @@
 package org.integratedmodelling.klab.observation;
 
 import java.util.Iterator;
-
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 public abstract class Extent implements IExtent {
 
     public static int INAPPROPRIATE_LOCATOR = -2;
     public static int GENERIC_LOCATOR       = -1;
-    
-    IScale scale;
     
     @Override
     public Iterator<IExtent> iterator() {
@@ -29,14 +25,6 @@ public abstract class Extent implements IExtent {
             }
             
         };
-    }
-    
-    public IScale getScale() {
-        return scale;
-    }
-    
-    public void setScale(IScale scale) {
-        this.scale = scale;
     }
     
     /**

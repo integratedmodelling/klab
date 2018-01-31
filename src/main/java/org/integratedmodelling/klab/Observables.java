@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -23,9 +21,9 @@ import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.kim.ConceptBuilder;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
-
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -60,7 +58,7 @@ public enum Observables implements IObservableService {
 	}
 
 	@Override
-	public IObservable declare(IKimObservable observable, IMonitor monitor) {
+	public Observable declare(IKimObservable observable, IMonitor monitor) {
 		return ConceptBuilder.INSTANCE.declare(observable, monitor);
 	}
 

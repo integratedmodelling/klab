@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.services;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Manage observations stored locally (as IObserver specifications) and provide an API to query and 
@@ -34,7 +35,8 @@ public interface IObservationService {
      * @param observer
      * @param monitor
      * @return the newly created subject
+     * @throws KlabException 
      */
-    ISubject createSubject(IObserver observer, IMonitor monitor);
+    ISubject createSubject(IObserver observer, IMonitor monitor) throws KlabException;
 
 }

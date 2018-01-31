@@ -242,10 +242,9 @@ public class Scale implements IScale {
         }
 
         // better safe than sorry. Only time can be infinite so this should be pretty safe
-        // as long as
-        // the comparator above works.
+        // as long as the comparator above works.
         if (multiplicity == INFINITE && extents.get(0).getMultiplicity() != INFINITE) {
-            throw new KlabRuntimeException("internal error: infinite dimension not the first in scale");
+            throw new KlabRuntimeException("internal error: infinite dimension is not the first in scale");
         }
 
         // recompute strided offsets for quick extent access
@@ -427,8 +426,6 @@ public class Scale implements IScale {
         } else {
             extents.add(extent);
         }
-
-        ((Extent) extent).setScale(this);
 
         sort();
     }

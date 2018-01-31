@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.observation;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -122,6 +121,34 @@ public abstract class Observation implements IObservation {
   @Override
   public void explore() {
     // TODO Auto-generated method stub
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public DirectObservation getContextObservation() {
+    return contextObservation;
+  }
+
+  public void setContextObservation(DirectObservation contextObservation) {
+    this.contextObservation = contextObservation;
+  }
+
+  public void setScale(Scale scale) {
+    this.scale = scale;
+  }
+
+  public void setObservable(Observable observable) {
+    this.observable = observable;
+  }
+
+  public void setObserver(Subject observer) {
+    this.observer = observer;
   }
 
 }

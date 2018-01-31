@@ -1,32 +1,78 @@
 package org.integratedmodelling.klab;
 
+import java.lang.reflect.Constructor;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Subject;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.IntelligentMap;
 
 public enum Observations implements IObservationService {
-    INSTANCE;
 
-    public void registerSubjectClass(String concept, Class<? extends ISubject> cls) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
-    public void releaseNamespace(String name) {
-        // TODO remove all artifacts from local kbox
-    }
-    
-    @Override
-    public void index(IObserver observer) {
-        // TODO
+  INSTANCE;
+
+  IntelligentMap<Class<? extends ISubject>> subjectClasses = new IntelligentMap<>();
+
+  /**
+   * Record a Subject class to use to instantiate a specific type of subject.
+   * 
+   * @param concept
+   * @param cls
+   */
+  public void registerSubjectClass(String concept, Class<? extends ISubject> cls) {
+    subjectClasses.put(Concepts.INSTANCE.declare(concept), cls);
+  }
+
+  @Override
+  public void releaseNamespace(String name) {
+    // TODO remove all artifacts from local kbox
+  }
+
+  @Override
+  public void index(IObserver observer) {
+    // TODO
+  }
+
+  @Override
+  public Subject createSubject(IObserver observer, IMonitor monitor) throws KlabException {
+
+    Subject result;
+    Constructor<?> constructor;
+
+    Class<?> agentClass = subjectClasses.get(observer.getObservable().getType());
+
+    if (agentClass != null) {
+      try {
+        constructor =
+            agentClass.getConstructor(String.class, IObservable.class, IScale.class);
+      } catch (Exception e) {
+        throw new KlabInternalErrorException(
+            "No viable constructor found for Java class '" + agentClass.getCanonicalName()
+                + "' for agent type '" + observer.getObservable().getLocalName() + "'");
+      }
+
+      try {
+        result = (Subject) constructor.newInstance(observer.getName(), observer.getObservable(),
+            Scale.create(observer.getBehavior().getExtents(monitor)));
+      } catch (Exception e) {
+        throw new KlabInternalErrorException(
+            "Unable to generate new instance of Java class '" + agentClass.getCanonicalName()
+                + "' for agent type '" + observer.getObservable().getLocalName() + "'");
+      }
+    } else {
+      
+      result = Subject.create(observer.getName(), (Observable)observer.getObservable(),
+            Scale.create(observer.getBehavior().getExtents(monitor)));
+      
     }
 
-    @Override
-    public Subject createSubject(IObserver observer, IMonitor monitor) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+    return result;
+  }
 }

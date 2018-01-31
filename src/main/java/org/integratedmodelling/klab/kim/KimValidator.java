@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 import org.integratedmodelling.kim.api.IKimAnnotation;
@@ -30,13 +29,13 @@ import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 
 public class KimValidator implements Kim.Validator {
 
-	IMonitor monitor;
+	Monitor monitor;
 	
 	/*
 	 * holds the mapping between the actual ontology ID and the declared one
@@ -44,16 +43,16 @@ public class KimValidator implements Kim.Validator {
 	 */
 	Map<String, String> corePrefixTranslation = new HashMap<>();
 	
-	public KimValidator(IMonitor monitor) {
+	public KimValidator(Monitor monitor) {
 		this.monitor = monitor;
 	}
 
-	public KimValidator(KimValidator kimValidator, IMonitor monitor) {
+	public KimValidator(KimValidator kimValidator, Monitor monitor) {
 	    this(monitor);
 	    corePrefixTranslation.putAll(kimValidator.corePrefixTranslation);
     }
 
-    public KimValidator with(IMonitor monitor) {
+    public KimValidator with(Monitor monitor) {
 	    return new KimValidator(this, monitor);
 	}
 	

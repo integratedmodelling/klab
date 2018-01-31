@@ -2,10 +2,8 @@ package org.integratedmodelling.klab.observation;
 
 import java.util.Collection;
 import java.util.Map;
-import javax.annotation.Nullable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IEvent;
@@ -13,7 +11,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
@@ -30,9 +27,29 @@ public class Subject extends DirectObservation implements ISubject {
 
   private static final long serialVersionUID = 2466999232658613114L;
 
-  public static Subject create(String name, IObservable observable, IScale scale,
-      @Nullable ISubject context) {
-    return null;
+  /**
+   * 
+   * @param name
+   * @param observable
+   * @param scale
+   * @return
+   */
+  public static Subject create(String name, Observable observable, Scale scale) {
+    return new Subject(name, observable, scale);
+  }
+  
+  /**
+   * 
+   * @param name
+   * @param observable
+   * @param scale
+   * @param context
+   * @return
+   */
+  public static Subject create(String name, Observable observable, Scale scale, Subject context) {
+    Subject ret = new Subject(name, observable, scale);
+    ret.setContextObservation(context);
+    return ret;
   }
 
   @Override
@@ -85,7 +102,6 @@ public class Subject extends DirectObservation implements ISubject {
 
   @Override
   public ITask<IObservation> observe(String urn) {
-    // TODO Auto-generated method stub
     return new ObserveInContextTask(this, urn);
   }
 

@@ -13,11 +13,13 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
+import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -143,18 +145,22 @@ public enum ConceptBuilder {
         return main;
     }
 
-    public @Nullable IObservable declare(final IKimObservable concept, final IMonitor monitor) {
+    public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
 
         IConcept main = declareInternal(concept.getMain(), monitor);
-
+        
         if (main == null) {
             return null;
         }
 
+        IConcept observable = main;
+
         Observable ret = new Observable();
 
+        ret.setMain(main);
+        
         if (concept.getBy() != null) {
-
+         
         }
         if (concept.getDownTo() != null) {
 
@@ -163,6 +169,18 @@ public enum ConceptBuilder {
             // TODO invoke a resolution function (in Extensions?) for values expressed through functions
             ret.setValue(concept.getValue());
         }
+        
+        /*
+         * TODO redefine observable if modifiers (by) were given
+         */
+        
+        String name = concept.getFormalName();
+        if (name == null) {
+          name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(main),'_');
+        }
+        
+        ret.setName(name);
+        ret.setObservable(observable);
 
         return ret;
     }

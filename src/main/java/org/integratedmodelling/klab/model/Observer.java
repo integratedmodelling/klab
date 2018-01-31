@@ -2,26 +2,24 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IBehavior;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.owl.Observable;
 
 public class Observer extends KimObject implements IObserver {
 
     private static final long serialVersionUID = 2777161073171784334L;
     
-    private IObservable observable;
+    private Observable observable;
     private String name;
-    private INamespace namespace;
-    private IBehavior behavior;
+    private Namespace namespace;
+    private Behavior behavior;
     private List<IObservable> states = new ArrayList<>();
 
-    public Observer(IKimObserver statement, INamespace namespace, IMonitor monitor) {
+    public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
         super(statement);
         this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
         this.namespace = namespace;
@@ -40,17 +38,17 @@ public class Observer extends KimObject implements IObserver {
     }
 
     @Override
-    public INamespace getNamespace() {
+    public Namespace getNamespace() {
         return namespace;
     }
 
     @Override
-    public IBehavior getBehavior() {
+    public Behavior getBehavior() {
         return behavior;
     }
 
     @Override
-    public IObservable getObservable() {
+    public Observable getObservable() {
         return observable;
     }
 
