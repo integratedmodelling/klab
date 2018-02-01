@@ -19,28 +19,18 @@ public class Projection implements IProjection {
   private static Projection[][] utmProjections            = new Projection[20][60];
 
   /**
-   * The haversine formula calculates great-circle distance between two points on a sphere from
-   * their longitudes and latitudes.
+   * Obtain the projection corresponding to the passed EPSG (or other supported authority) code, in
+   * the format "EPSG:nnnn".
    * 
-   * From http://rosettacode.org/wiki/Haversine_formula#Java
-   * 
-   * @param lat1 PointOne latitude
-   * @param lon1 PointOne longitude
-   * @param lat2 PointTwo latitude
-   * @param lon2 PointTwo longitude
-   * @return distance in meters
+   * @param code
+   * @return the projection, which may be invalid.
    */
-  public static double haversine(double lat1, double lon1, double lat2, double lon2) {
-    double R = 6372800; // in m
-    double dLat = Math.toRadians(lat2 - lat1);
-    double dLon = Math.toRadians(lon2 - lon1);
-    lat1 = Math.toRadians(lat1);
-    lat2 = Math.toRadians(lat2);
+  public static Projection create(String code) {
+    return new Projection(code);
+  }
 
-    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-        + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-    double c = 2 * Math.asin(Math.sqrt(a));
-    return R * c;
+  public static Projection create(String authority, int code) {
+    return new Projection(authority + ":" + code);
   }
 
   public static Projection getDefault() {
@@ -80,21 +70,6 @@ public class Projection implements IProjection {
     return code;
   }
 
-  /**
-   * Obtain the projection corresponding to the passed EPSG (or other supported authority) code, in
-   * the format "EPSG:nnnn".
-   * 
-   * @param code
-   * @return the projection, which may be invalid.
-   */
-  public static Projection create(String code) {
-    return new Projection(code);
-  }
-
-  public static Projection create(String authority, int code) {
-    return new Projection(authority + ":" + code);
-  }
-
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -131,6 +106,31 @@ public class Projection implements IProjection {
     } catch (FactoryException e) {
       throw new KlabRuntimeException(e);
     }
+  }
+
+  /**
+   * The haversine formula calculates great-circle distance between two points on a sphere from
+   * their longitudes and latitudes.
+   * 
+   * From http://rosettacode.org/wiki/Haversine_formula#Java
+   * 
+   * @param lat1 PointOne latitude
+   * @param lon1 PointOne longitude
+   * @param lat2 PointTwo latitude
+   * @param lon2 PointTwo longitude
+   * @return distance in meters
+   */
+  public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+    double R = 6372800; // in m
+    double dLat = Math.toRadians(lat2 - lat1);
+    double dLon = Math.toRadians(lon2 - lon1);
+    lat1 = Math.toRadians(lat1);
+    lat2 = Math.toRadians(lat2);
+  
+    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+        + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    double c = 2 * Math.asin(Math.sqrt(a));
+    return R * c;
   }
 
 }
