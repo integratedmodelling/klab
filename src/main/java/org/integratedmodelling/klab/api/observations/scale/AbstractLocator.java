@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2007, 2014:
+ *  Copyright (C) 2007, 2015:
  *  
  *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
  *    - integratedmodelling.org
@@ -24,17 +24,19 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.api.observations.scale.space;
+package org.integratedmodelling.klab.api.observations.scale;
 
-/**
- * An irregular tessellation topology implemented as an array of shapes, not necessarily 
- * covering a full extent but necessarily non-overlapping.
- * 
- * @author ferdinando.villa
- *
- */
-public interface ITessellation extends Iterable<IShape> {
+public abstract class AbstractLocator implements IScale.Locator {
 
-  int size();
-  
+    double weight = 1.0;
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    @Override
+    public double getWeight() {
+        return weight;
+    }
+
 }

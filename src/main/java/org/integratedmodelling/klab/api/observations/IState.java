@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.util.Collection;
 import java.util.List;
-
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -67,49 +67,6 @@ public interface IState extends IObservation {
      *
      */
     interface Mediator {
-
-        /**
-         * Aggregation mode. The default is AVERAGE for intensive properties and
-         * non-physical properties or SUM for extensive properties, but data reduction
-         * traits in the target may modify it (e.g. we may want the MAX if we tag the
-         * final observer with im:Maximum). MAJORITY will be the default for qualitative
-         * and semi-qualitative observers; at some point we may want to add fuzzy
-         * membership and other more sophisticated strategies for probabilistic observers.
-         * 
-         * @author ferdinando.villa
-         *
-         */
-        enum Aggregation {
-            NONE,
-            SUM,
-            AVERAGE,
-            MIN,
-            MAX,
-            MAJORITY,
-            MAXIMUM_LIKELIHOOD
-        }
-
-        /**
-         * These keys MAY be available after each mediation in the state's metadata. Their
-         * meaning may differ according to the observer.
-         * 
-         * @author ferdinando.villa
-         *
-         */
-        public final static String SPACE_MIN_VALUE          = "Mediator.SPACE_MIN_VALUE";
-        public final static String SPACE_MAX_VALUE          = "Mediator.SPACE_MAX_VALUE";
-        public final static String SPACE_VALUE_SUM          = "Mediator.SPACE_VALUE_SUM";
-        public final static String SPACE_VALUE_DISTRIBUTION = "Mediator.SPACE_VALUE_DISTRIBUTION";
-        public final static String SPACE_TOTAL_VALUES       = "Mediator.SPACE_TOTAL_VALUES";
-        public final static String SPACE_CONFIDENCE         = "Mediator.SPACE_CONFIDENCE";
-        public final static String SPACE_ERROR              = "Mediator.SPACE_ERROR";
-        public final static String TIME_MIN_VALUE           = "Mediator.TIME_MIN_VALUE";
-        public final static String TIME_MAX_VALUE           = "Mediator.TIME_MAX_VALUE";
-        public final static String TIME_VALUE_SUM           = "Mediator.TIME_VALUE_SUM";
-        public final static String TIME_VALUE_DISTRIBUTION  = "Mediator.TIME_VALUE_DISTRIBUTION";
-        public final static String TIME_TOTAL_VALUES        = "Mediator.TIME_TOTAL_VALUES";
-        public final static String TIME_CONFIDENCE          = "Mediator.TIME_CONFIDENCE";
-        public final static String TIME_ERROR               = "Mediator.TIME_ERROR";
 
         /**
          * The kind of aggregation that the mediation implies.

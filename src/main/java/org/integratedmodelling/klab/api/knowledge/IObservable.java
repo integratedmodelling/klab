@@ -17,6 +17,49 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 public interface IObservable extends IConcept {
 
   /**
+   * A classification of the observation activity that can produce an observation of
+   * this observable.
+   * 
+   * @author ferdinando.villa
+   *
+   */
+  public enum ObservationType {
+    /**
+     * The observation that produces a countable object
+     */
+    INSTANTIATION,
+    /**
+     * The observation that produces a configuration
+     */
+    DETECTION,
+    /**
+     * The observation that produces a dynamic account
+     */
+    SIMULATION,
+    /**
+     * The observation that produces a numeric quality
+     */
+    QUANTIFICATION,
+    /**
+     * The observation that produces a categorical quality
+     */
+    CLASSIFICATION,
+    /**
+     * The observation that produces a boolean quality (presence/absence)
+     */
+    VERIFICATION
+  }
+  
+  /**
+   * Each observable must be able to quickly assess the type of the observation that
+   * will produce an IObservation of it. This is also used to instantiate the storage
+   * for states.
+   * 
+   * @return the necessary observation type
+   */
+  ObservationType getObservationType();
+  
+  /**
    * Observables always have a name, which is unique in the context of a model where they are used,
    * and can be used within a model to refer to the observation made of it. The name can be
    * explicitly set using the 'named' k.IM clause, and is always a simple lowercase identifier.
@@ -71,5 +114,15 @@ public interface IObservable extends IConcept {
    *         possible, but so far there are no situations in which this happens.)
    */
   Object getValue();
+
+  /**
+   * If true, observer produces an extensive value over the passed extent, one
+   * that varies with the extents of computation. A true return value will
+   * cause different aggregation than the default averaging when mediating to
+   * different scales.
+   * 
+   * @return
+   */
+  boolean isExtensive(IConcept c);
 
 }

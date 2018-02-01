@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
  * Opaque, minimal interface for a 2D geometry.
@@ -47,8 +48,9 @@ public interface IShape extends IReferenced {
      * 
      * @param projection
      * @return
+     * @throws KlabValidationException 
      */
-    IShape transform(IProjection projection);
+    IShape transform(IProjection projection) throws KlabValidationException;
 
     /**
      * 

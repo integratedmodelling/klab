@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.components.geospace.generators;
+package org.integratedmodelling.klab.components.geospace.processing;
 
 import java.util.Random;
 

@@ -264,5 +264,7 @@ public interface IGrid extends Iterable<Cell> {
     double[] getWorldCoordinatesAt(int x, int y);
 
     int[] getGridCoordinatesAt(double x, double y);
+    
+    IProjection getProjection();
 
 }

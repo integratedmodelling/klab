@@ -1,30 +1,43 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKTReader;
 
 public class Shape implements IShape {
 
-  Geometry   geometry;
-  Envelope   envelope;
-  Type       type = null;
-  Projection projection;
+  Geometry                 geometry;
+  Envelope                 envelope;
+  Type                     type = null;
+  Projection               projection;
+
+  // these are used to speed up repeated point-in-polygon operations like
+  // those that RasterActivationLayer does.
+  private PreparedGeometry preparedShape;
+  private boolean          preparationAttempted;
+
+  public static Shape empty() {
+    return new Shape();
+  }
 
   public static Shape create(String wkt) throws KlabValidationException {
     Shape ret = new Shape();
@@ -34,7 +47,7 @@ public class Shape implements IShape {
     }
     return ret;
   }
-  
+
   public static Shape create(double x1, double y1, double x2, double y2, Projection projection) {
     Shape ret = new Shape();
     ret.geometry = makeCell(x1, y1, x2, y2);
@@ -53,24 +66,20 @@ public class Shape implements IShape {
 
   public static Geometry makeCell(double x1, double y1, double x2, double y2) {
 
-      Coordinate[] pts = {
-              new Coordinate(x1, y1),
-              new Coordinate(x2, y1),
-              new Coordinate(x2, y2),
-              new Coordinate(x1, y2),
-              new Coordinate(x1, y1) };
+    Coordinate[] pts = {new Coordinate(x1, y1), new Coordinate(x2, y1), new Coordinate(x2, y2),
+        new Coordinate(x1, y2), new Coordinate(x1, y1)};
 
-      return Geospace.gFactory.createPolygon(Geospace.gFactory.createLinearRing(pts), null);
+    return Geospace.gFactory.createPolygon(Geospace.gFactory.createLinearRing(pts), null);
   }
 
   public static Geometry makePoint(double x1, double y1) {
-      Coordinate coordinate = new Coordinate(x1, y1);
-      return Geospace.gFactory.createPoint(coordinate);
+    Coordinate coordinate = new Coordinate(x1, y1);
+    return Geospace.gFactory.createPoint(coordinate);
   }
 
   public static Geometry makePoint(IGrid.Cell cell) {
-      double[] xy = cell.getCenter();
-      return Geospace.gFactory.createPoint(new Coordinate(xy[0], xy[1]));
+    double[] xy = cell.getCenter();
+    return Geospace.gFactory.createPoint(new Coordinate(xy[0], xy[1]));
   }
 
   private Shape() {}
@@ -109,20 +118,27 @@ public class Shape implements IShape {
   public Shape getCentroid() {
     return create(geometry.getCentroid(), projection);
   }
-  
+
   @Override
   public boolean isEmpty() {
     return geometry == null || geometry.isEmpty();
   }
 
   @Override
-  public Shape transform(
-      IProjection projection) {
+  public Shape transform(IProjection otherProjection) throws KlabValidationException {
+
     if (this.projection.equals(projection)) {
       return this;
     }
-    // TODO
-    return null;
+    Geometry g = null;
+
+    try {
+      g = JTS.transform(geometry, CRS.findMathTransform(projection.crs, ((Projection)otherProjection).crs));
+    } catch (Exception e) {
+      throw new KlabValidationException(e);
+    }
+
+    return Shape.create(g, (Projection)otherProjection);
   }
 
   @Override
@@ -138,15 +154,55 @@ public class Shape implements IShape {
   }
 
   @Override
-  public Shape union(
-      org.integratedmodelling.klab.api.observations.scale.space.IShape other) {
+  public Shape union(org.integratedmodelling.klab.api.observations.scale.space.IShape other) {
     // TODO Auto-generated method stub
     return null;
   }
 
+  public boolean containsCoordinates(double x, double y) {
+    checkPreparedShape();
+    return preparedShape == null ? geometry.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)))
+        : preparedShape.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)));
+  }
+
+  private void checkPreparedShape() {
+    if (this.preparedShape == null && !preparationAttempted) {
+      preparationAttempted = true;
+      try {
+        this.preparedShape = PreparedGeometryFactory.prepare(geometry);
+      } catch (Throwable t) {
+        //
+      }
+    }
+  }
+
+  public PreparedGeometry getPreparedGeometry() {
+    checkPreparedShape();
+    return preparedShape;
+  }
+
+  public double getCoverage(Cell cell, boolean simpleIntersection) {
+
+    checkPreparedShape();
+    if (preparedShape == null) {
+      if (simpleIntersection) {
+        Geometry gm = makePoint(cell);
+        return gm.intersects(geometry) ? 1.0 : 0.0;
+      }
+      Geometry gm = makeCell(cell.getEast(), cell.getSouth(), cell.getWest(), cell.getNorth());
+      return gm.covers(geometry) ? 1.0 : (gm.intersection(geometry).getArea() / gm.getArea());
+    }
+    if (simpleIntersection) {
+      return preparedShape.covers(makePoint(cell)) ? 1 : 0;
+    }
+    Geometry gm = makeCell(cell.getEast(), cell.getSouth(), cell.getWest(), cell.getNorth());
+    return preparedShape.covers(gm) ? 1.0 : (gm.intersection(geometry).getArea() / gm.getArea());
+  }
+
+
   private void parseWkt(String s) throws KlabValidationException {
 
-    String pcode = Geospace.DEFAULT_PROJECTION_CODE;
+    String pcode = Projection.DEFAULT_PROJECTION_CODE;
     Geometry geometry = null;
     boolean wkt = false;
     /*
@@ -172,7 +228,6 @@ public class Shape implements IShape {
 
     this.projection = Projection.create(pcode);
     this.geometry = geometry;
-
   }
 
 }
