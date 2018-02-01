@@ -8,15 +8,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class Projection implements IProjection {
 
-  private String             code;
-  CoordinateReferenceSystem  crs;
+  private String                code;
+  CoordinateReferenceSystem     crs;
 
-  public static final String DEFAULT_METERS_PROJECTION = "EPSG:3005";
-  public static final String DEFAULT_PROJECTION_CODE   = "EPSG:4326";
-  public static final String LATLON_PROJECTION_CODE    = "EPSG:4326";
-  private static Projection  defaultProjection;
-  private static Projection  latlonProjection;
-  private Projection[][]     utmProjections            = new Projection[20][60];
+  public static final String    DEFAULT_METERS_PROJECTION = "EPSG:3005";
+  public static final String    DEFAULT_PROJECTION_CODE   = "EPSG:4326";
+  public static final String    LATLON_PROJECTION_CODE    = "EPSG:4326";
+  private static Projection     defaultProjection;
+  private static Projection     latlonProjection;
+  private static Projection[][] utmProjections            = new Projection[20][60];
 
   /**
    * The haversine formula calculates great-circle distance between two points on a sphere from

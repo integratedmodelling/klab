@@ -41,6 +41,11 @@
 			<url>http://download.osgeo.org/webdav/geotools/</url>
 		</repository>
 		<repository>
+			<id>im</id>
+			<name>Integrated Modelling Partnership Repository</name>
+			<url>http://www.integratedmodelling.org/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -187,8 +192,9 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
+		<!-- https://mvnrepository.com/artifact/org.integratedmodelling/jscience -->
 		<dependency>
-			<groupId>org.jscience</groupId>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>jscience</artifactId>
 			<version>4.3.1</version>
 		</dependency>
@@ -253,11 +259,8 @@
 		</dependency>
 
 		<!-- GEOTOOLS mess starts -->
-		<!-- <dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-metadata</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>  -->
+		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
+			<version>${geotools.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-referencing</artifactId>
@@ -283,22 +286,11 @@
 			<artifactId>gt-epsg-extension</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-		<!-- WFS missing after 17.x
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-wfs</artifactId>
-			<version>${geotools.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.emf</groupId>
-					<artifactId>common</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.emf</groupId>
-					<artifactId>ecore</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>  -->
+		<!-- WFS missing after 17.x <dependency> <groupId>org.geotools</groupId> 
+			<artifactId>gt-wfs</artifactId> <version>${geotools.version}</version> <exclusions> 
+			<exclusion> <groupId>org.eclipse.emf</groupId> <artifactId>common</artifactId> 
+			</exclusion> <exclusion> <groupId>org.eclipse.emf</groupId> <artifactId>ecore</artifactId> 
+			</exclusion> </exclusions> </dependency> -->
 		<!-- GEOTOOLS mess ends -->
 
 
