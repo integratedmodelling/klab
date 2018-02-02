@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -81,6 +80,11 @@ public class Envelope implements IEnvelope {
 
   @Override
   public Envelope transform(Projection projection, boolean b) {
+
+    if (projection.equals(this.projection)) {
+      return this;
+    }
+    
     Envelope ret = new Envelope();
     try {
       ret.envelope = this.envelope.transform(projection.crs, true);
@@ -149,6 +153,11 @@ public class Envelope implements IEnvelope {
 
   public com.vividsolutions.jts.geom.Envelope getJTSEnvelope() {
     return envelope;
+  }
+
+  @Override
+  public double[] getCenterCoordinates() {
+    return new double[] {envelope.getMedian(0), envelope.getMedian(1)};
   }
 
 }

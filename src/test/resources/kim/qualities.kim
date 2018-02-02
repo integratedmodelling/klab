@@ -6,7 +6,7 @@ worldview im;
 	observations = ("geography:Elevation", "geography:Slope")
 )
 observe earth:Terrestrial earth:Region named tanzania-grr
-	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))");
+	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 
 private model geography:Elevation in m 
 	using gis.terrain(/* defaults are OK for elevation */);

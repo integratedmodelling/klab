@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import org.geotools.referencing.CRS;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.components.geospace.utils.UTM;
+import org.integratedmodelling.klab.components.geospace.utils.WGS84;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -16,7 +18,7 @@ public class Projection implements IProjection {
   public static final String    LATLON_PROJECTION_CODE    = "EPSG:4326";
   private static Projection     defaultProjection;
   private static Projection     latlonProjection;
-  private static Projection[][] utmProjections            = new Projection[20][60];
+  private static Projection[][] utmProjections            = new Projection[2][60];
 
   /**
    * Obtain the projection corresponding to the passed EPSG (or other supported authority) code, in
@@ -47,8 +49,32 @@ public class Projection implements IProjection {
     return latlonProjection;
   }
 
+  /**
+   * Get the UTM projection most appropriate to geolocate the passed envelope, which can be in any
+   * projection.
+   * 
+   * @param envelope
+   * @return
+   */
   public static Projection getUTM(Envelope envelope) {
-    return null;
+
+    Envelope standardized = envelope.transform(getLatLon(), true);
+    double[] xy = standardized.getCenterCoordinates();
+    WGS84 wgs = new WGS84(xy[1], xy[0]);
+    UTM utm = new UTM(wgs);
+
+    int idx = 0;
+    if (wgs.getHemisphere() == 'S') {
+      idx = 1;
+    }
+
+    if (utmProjections[idx][utm.getZone()] == null) {
+      String code = "EPSG:32" + (wgs.getHemisphere() == 'S' ? "7" : "6")
+          + String.format("%02d", utm.getZone());
+      utmProjections[idx][utm.getZone()] = create(code);
+    }
+
+    return utmProjections[idx][utm.getZone()];
   }
 
   private Projection(String code) {
@@ -126,7 +152,7 @@ public class Projection implements IProjection {
     double dLon = Math.toRadians(lon2 - lon1);
     lat1 = Math.toRadians(lat1);
     lat2 = Math.toRadians(lat2);
-  
+
     double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
         + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
     double c = 2 * Math.asin(Math.sqrt(a));

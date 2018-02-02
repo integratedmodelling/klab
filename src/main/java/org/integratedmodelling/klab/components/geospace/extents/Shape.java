@@ -34,6 +34,10 @@ public class Shape implements IShape {
   // those that RasterActivationLayer does.
   private PreparedGeometry preparedShape;
   private boolean          preparationAttempted;
+  
+  // the shape in an appropriate meter projection. If metersComputed is true and metered == null, this is in meters already.
+  boolean metersComputed = false;
+  private Shape            metered;
 
   public static Shape empty() {
     return new Shape();
@@ -109,6 +113,10 @@ public class Shape implements IShape {
     return type;
   }
 
+  public double getNativeArea() {
+    return geometry.getArea();
+  }
+  
   @Override
   public double getArea(IUnit unit) {
     // TODO Auto-generated method stub
@@ -133,12 +141,13 @@ public class Shape implements IShape {
     Geometry g = null;
 
     try {
-      g = JTS.transform(geometry, CRS.findMathTransform(projection.crs, ((Projection)otherProjection).crs));
+      g = JTS.transform(geometry,
+          CRS.findMathTransform(projection.crs, ((Projection) otherProjection).crs));
     } catch (Exception e) {
       throw new KlabValidationException(e);
     }
 
-    return Shape.create(g, (Projection)otherProjection);
+    return Shape.create(g, (Projection) otherProjection);
   }
 
   @Override
@@ -161,7 +170,8 @@ public class Shape implements IShape {
 
   public boolean containsCoordinates(double x, double y) {
     checkPreparedShape();
-    return preparedShape == null ? geometry.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)))
+    return preparedShape == null
+        ? geometry.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)))
         : preparedShape.contains(Geospace.gFactory.createPoint(new Coordinate(x, y)));
   }
 

@@ -90,7 +90,22 @@ public enum Resources implements IResourceService {
 
   @Override
   public IResource getLocalFileResource(File file) {
-    return null;
+    
+    IResource ret = null;
+    
+    /**
+     * 1. create URN
+     */
+    
+    /**
+     * 2. see if it was processed before and timestamps match; if so, return existing resource
+     */
+    
+    /**
+     * 3. else, spawn resource processing thread and return temporary resource record 
+     */
+    
+    return ret;
   }
 
   @Override

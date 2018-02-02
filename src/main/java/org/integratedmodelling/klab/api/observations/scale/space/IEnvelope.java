@@ -49,4 +49,10 @@ public interface IEnvelope extends IReferenced {
      * @return
      */
     Envelope transform(Projection projection, boolean b);
+
+    /**
+     * 
+     * @return
+     */
+    double[] getCenterCoordinates();
 }
