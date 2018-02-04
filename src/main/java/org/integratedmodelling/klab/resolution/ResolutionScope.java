@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Artifact;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.observation.DirectObservation;
@@ -16,18 +17,19 @@ import org.integratedmodelling.klab.owl.Observable;
 
 public class ResolutionScope implements IResolutionScope {
 
-  private DirectObservation  subject;
-  private Observable         observable;
-  private Scale              scale;
+  private DirectObservation subject;
+  private Observable observable;
+  private Scale scale;
   private Collection<String> scenarios = new ArrayList<>();
-  private Model              model;
-  private Namespace          resolutionNamespace;
-  private Coverage           coverage;
-  private Prioritizer        prioritizer;
-  private Mode               mode = Mode.RESOLUTION;
-  private boolean            generic;
-  private boolean            interactive;
-  private boolean            optional;
+  private Model model;
+  private Namespace resolutionNamespace;
+  private Coverage coverage;
+  private Prioritizer prioritizer;
+  private Mode mode = Mode.RESOLUTION;
+  private boolean generic;
+  private boolean interactive;
+  private boolean optional;
+  private IMonitor monitor;
 
   private ResolutionScope(ResolutionScope other) {
     this.subject = other.subject;
@@ -41,22 +43,23 @@ public class ResolutionScope implements IResolutionScope {
     this.generic = other.generic;
     this.interactive = other.interactive;
     this.prioritizer = other.prioritizer;
+    this.monitor = other.monitor;
   }
 
   /**
-   * Create the resolution scope for an existing subject, where finding a resolver is optional.
-   * TODO we should probably add dependencies for all mandatory relationships.
+   * Create the resolution scope for an existing subject, where finding a resolver is optional. TODO
+   * we should probably add dependencies for all mandatory relationships.
    * 
    * @param subject
    * @param scenarios
    */
-  public ResolutionScope(Subject subject, String ...scenarios) {
+  public ResolutionScope(Subject subject, String... scenarios) {
     this.subject = subject;
     this.scale = subject.getScale();
     this.observable = subject.getObservable();
     this.optional = true;
   }
-  
+
   public ResolutionScope get(Subject subject) {
     ResolutionScope ret = new ResolutionScope(this);
     ret.subject = subject;
@@ -71,7 +74,7 @@ public class ResolutionScope implements IResolutionScope {
     return ret;
   }
 
-  
+
   @Override
   public Scale getScale() {
     return scale;
@@ -148,6 +151,11 @@ public class ResolutionScope implements IResolutionScope {
   @Override
   public Observable getObservable() {
     return observable;
+  }
+
+  @Override
+  public IMonitor getMonitor() {
+    return monitor;
   }
 
 }

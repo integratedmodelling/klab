@@ -90,7 +90,7 @@ import org.integratedmodelling.klab.api.model.IModel;
  * @param <T> 
  *
  */
-public interface IPrioritizer<T extends IModel> extends Comparator<T> {
+public interface IPrioritizer<T> extends Comparator<T> {
 
     /**
      * The default ranking strategy in the form that can be given in klab.properties for

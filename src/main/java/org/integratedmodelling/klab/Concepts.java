@@ -204,4 +204,17 @@ public enum Concepts implements IConceptService {
         return ret;
     }
 
+    /**
+     * True if concept was declared in k.IM at root level. These serve as the "official"
+     * least general "family" of concepts for several purposes - e.g. for traits, only
+     * these are seen as "general" enough to be used in an "exposes" statement.
+     * 
+     * 
+     * @param tr
+     * @return
+     */
+    public boolean isBaseDeclaration(IConcept tr) {
+        return tr.getMetadata().get(NS.BASE_DECLARATION) != null;
+    }
+    
 }

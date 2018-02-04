@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.observation.states;
 
-import org.integratedmodelling.klab.api.data.IStorage;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 
 public class Storage<T> implements IStorage<T> {
@@ -30,27 +31,8 @@ public class Storage<T> implements IStorage<T> {
     }
 
     @Override
-    public boolean isDynamic() {
+    public IGeometry getGeometry() {
         // TODO Auto-generated method stub
-        return false;
+        return null;
     }
-
-    @Override
-    public double getMin() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public double getMax() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public boolean isProbabilistic() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
 }

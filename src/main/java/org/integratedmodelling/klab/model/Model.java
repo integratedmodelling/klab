@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.integratedmodelling.kim.api.IKimContextualization;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
@@ -36,6 +35,7 @@ public class Model extends KimObject implements IModel {
     private Map<String, IObservable> attributeObservables   = new HashMap<>();
     private INamespace               namespace;
     private IBehavior                behavior;
+    private boolean                  isPrivate;
 
     public Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
@@ -63,18 +63,19 @@ public class Model extends KimObject implements IModel {
                 monitor.error(e, model);
             }
         } else if (model.getResourceFunction().isPresent()) {
-            this.resource = Optional.of(Resources.INSTANCE.getComputedResource(model.getResourceFunction().get()));
+            this.resource = Optional
+                    .of(Resources.INSTANCE.getComputedResource(model.getResourceFunction().get()));
         } else if (model.getInlineValue().isPresent()) {
             this.resource = Optional.of(Resources.INSTANCE.getLiteralResource(model.getInlineValue().get()));
         }
-        
+
         IResource ctxResource = createContextualizerResource(model.getContextualization());
         if (ctxResource != null) {
-            
+
             /*
-             * if we have a 'using' but no resource before the observable, this becomes the
-             * resource itself unless it's a post-processor, in which case it will be installed
-             * as a contextualizer resource.
+             * if we have a 'using' but no resource before the observable, this becomes the resource
+             * itself unless it's a post-processor, in which case it will be installed as a contextualizer
+             * resource.
              */
             if (this.resource == null && !model.getContextualization().isPostProcessor()) {
                 this.resource = Optional.of(ctxResource);
@@ -83,11 +84,10 @@ public class Model extends KimObject implements IModel {
             }
 
         }
-        
+
         // actions
         this.behavior = new Behavior(model.getBehavior(), this);
 
-        
         if (model.getMetadata() != null) {
             setMetadata(new Metadata(model.getMetadata()));
         }
@@ -103,12 +103,11 @@ public class Model extends KimObject implements IModel {
     private IResource createContextualizerResource(IKimContextualization contextualization) {
         return null;
     }
-    
+
     @Override
     public Optional<IResource> getContextualizerResource() {
         return contextualizerResource;
     }
-
 
     @Override
     public List<IObservable> getObservables() {
@@ -215,6 +214,12 @@ public class Model extends KimObject implements IModel {
     @Override
     public IBehavior getBehavior() {
         return behavior;
+    }
+
+    @Override
+    public boolean isPrivate() {
+        // TODO Auto-generated method stub
+        return isPrivate;
     }
 
 }

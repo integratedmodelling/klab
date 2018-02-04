@@ -50,7 +50,7 @@ public enum Configuration implements IConfigurationService {
     /**
      * 
      */
-    public static final String KLAB_CLIENT_DEBUG                  = "thinklab.client.debug";
+    public static final String KLAB_DEBUG                  = "klab.debug";
 
     /**
      * 
@@ -223,8 +223,8 @@ public enum Configuration implements IConfigurationService {
             throw new KlabRuntimeException("cannot read configuration properties");
         }
 
-        if (this.properties.containsKey(KLAB_CLIENT_DEBUG)) {
-            if (this.properties.getProperty(KLAB_CLIENT_DEBUG, "off").equals("on")) {
+        if (this.properties.containsKey(KLAB_DEBUG)) {
+            if (this.properties.getProperty(KLAB_DEBUG, "off").equals("on")) {
                 notificationLevel = Level.FINEST;
             }
         }
@@ -308,7 +308,12 @@ public enum Configuration implements IConfigurationService {
 
     @Override
     public boolean isOffline() {
-        return getProperties().getProperty(KLAB_OFFLINE, "off").equals("on");
+        return getProperties().getProperty(KLAB_OFFLINE, "false").equals("true");
+    }
+    
+    @Override
+    public boolean isDebuggingEnabled() {
+      return getProperties().getProperty(KLAB_DEBUG, "false").equals("true");
     }
 
     @Override

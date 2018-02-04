@@ -23,5 +23,11 @@ number terrain
          meters."
 		default 0 to 3000
 		
+	/*
+	 * produces 2d grid data, init only
+	 */
+	geometry S2
+	
 	class org.integratedmodelling.klab.components.geospace.services.TerrainService
+
 }

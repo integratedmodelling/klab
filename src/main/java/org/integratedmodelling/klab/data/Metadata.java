@@ -198,5 +198,11 @@ public class Metadata implements IMetadata {
     public boolean isEmpty() {
         return data == null || data.isEmpty();
     }
+    
+    public Metadata copy() {
+        Metadata ret = new Metadata();
+        ret.data.putAll(data);
+        return ret;
+    }
 
 }

@@ -13,13 +13,16 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
+import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.kim.ConceptBuilder;
+import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -319,5 +322,19 @@ public enum Observables implements IObservableService {
 	// System.out.println(obs.toString());
 	// return null;
 	// }
+	
+    /**
+     * Produce a type that exposes a single passed trait.
+     * 
+     * @param trait
+     * @return
+     */
+    public IConcept makeTypeFor(IConcept trait) {
+        if (trait.is(Type.CLASS)) {
+            return trait;
+        }
+        return Concepts.INSTANCE.declare("type of (" + trait.getDefinition() + ")");
+    }
+
 
 }

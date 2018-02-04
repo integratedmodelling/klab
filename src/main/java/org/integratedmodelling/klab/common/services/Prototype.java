@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.klab.data.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -69,6 +72,7 @@ public class Prototype implements IPrototype {
     private String                description;
     private Class<?>              implementation;
     private Type                  type;
+    private IGeometry             geometry;
 
     /**
      * Create a prototype from an actuator, which is expected to be a valid parameter and not checked.
@@ -80,7 +84,7 @@ public class Prototype implements IPrototype {
 
         this.name = (namespace == null ? "" : (namespace + ".")) + actuator.getName();
         this.type = Type.valueOf(actuator.getType().name());
-        
+
         if (actuator.getDescription() != null) {
             this.description = StringUtils.pack(actuator.getDescription());
         }
@@ -105,13 +109,17 @@ public class Prototype implements IPrototype {
                 throw new KlabRuntimeException(e);
             }
         }
+        
+        if (actuator.getGeometry() != null) {
+            this.geometry = Geometry.create(actuator.getGeometry());
+        }
     }
 
     @Override
     public String getName() {
         return name;
     }
-    
+
     @Override
     public Type getType() {
         return type;
@@ -196,6 +204,11 @@ public class Prototype implements IPrototype {
     public Collection<String> getExtentParameters() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Optional<IGeometry> getGeometry() {
+        return geometry == null ? Optional.empty() : Optional.of(geometry);
     }
 
 }

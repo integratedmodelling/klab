@@ -3,9 +3,7 @@ package org.integratedmodelling.klab.kim;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nullable;
-
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -19,8 +17,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;

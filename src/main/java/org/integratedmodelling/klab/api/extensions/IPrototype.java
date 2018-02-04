@@ -2,10 +2,12 @@ package org.integratedmodelling.klab.api.extensions;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.utils.Range;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -191,12 +193,18 @@ public interface IPrototype {
     boolean isDistributed();
 
     /**
+     * If the service specifications include a geometry for the result, return it here.
+     * @return the optional geometry
+     */
+    Optional<IGeometry> getGeometry();
+    
+    /**
      * If this is not empty, the presence of any of the named parameter determines, for a function returning
      * an extent, the multiplicity of that extent. Used to check extent dimensional correctness (e.g. in
      * units) in calls at the client side, when the actual extent cannot be created. This is used for, e.g.,
      * "grid" in spatial extents and "step" in temporal ones.
      * 
-     * @return
+     * @return the extent parameters
      */
     Collection<String> getExtentParameters();
 }

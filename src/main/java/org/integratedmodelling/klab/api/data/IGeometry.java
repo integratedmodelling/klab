@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 
 /**
@@ -25,10 +25,10 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  * 
  * If the shape is only letters with optional numbers, the topology is for a single object. Otherwise, it can
  * be prefixed by *, which distributes the geometry across multiple objects. Objects that are children of
- * another or others are defined after a slash. So for example
+ * another or others are defined after a comma. So for example
  * 
  * <pre>
- * TS3/*S2
+ * TS3,*S2
  * <pre>
  *
  * denotes a single 3-dimensional regular spatial geometry (voxel cube), referenced but not distributed in time
@@ -47,57 +47,73 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  * @see {@link IWorldview#getScale(IGeometry)}
  * 
  */
-public interface IGeometry extends Iterable<IGeometry>, Serializable {
+public interface IGeometry extends Serializable {
+
+    enum Granularity {
+        SINGLE,
+        MULTIPLE
+    }
 
     /**
-     * Number of objects in this geometry. Always 1 or more; if > 1, the geometry is a container and its shape
-     * describes the union of its objects.
-     * 
-     * @return
+     * Constant for time dimension in {@link Dimension#getType()}. 
      */
-    int size();
-
+    public static final int TIME           = 0;
     /**
-     * 
-     * @return
+     * Constant for space dimension in {@link Dimension#getType()}. 
      */
-    List<IGeometry> getChildren();
+    public static final int SPACE          = 1;
 
     /**
-     * Return all the extent concepts that are used as dimensions this geometry. The concepts will be abstract
-     * and come from the k.LAB core ontology; any shape and regularity can be connected to each. The concepts
-     * and the details of the corresponding shapes must be reinterpreted through the worldview and turned into
+     * Constant for non-dimensional (referenced but not distributed) return value of {@link Dimension#getDimensionality()}.
+     */
+    public static final int NONDIMENSIONAL = -1;
+
+    public interface Dimension {
+
+        /**
+         * Match against constants {@link IGeometry#SPACE} and {@link IGeometry#TIME}. If none of these,
+         * any other user-defined dimension is possible - conventions must be established in worldview for
+         * those.
+         * 
+         * @return the dimension type
+         */
+        int getType();
+
+        /**
+         * Whether any subdivisions in this dimension are regular or irregular.
+         * @return regularity
+         */
+        boolean isRegular();
+
+        /**
+         * Can be {@link IGeometry#NONDIMENSIONAL} or a positive (0+) integer. Non-dimensional means referenced
+         * but not distributed. 
+         * @return dimensionality of this dimension
+         */
+        int getDimensionality();
+    }
+
+    /**
+     * A geometry may imply another for component objects. E.g. spatial data may have geometry and
+     * define objects within it, with different geometry constrained by this.
+     * 
+     * @return the optional child geometry
+     */
+    Optional<IGeometry> getChild();
+
+    /**
+     * Return all the dimensions this geometry. Dimensionsare  reinterpreted through the worldview and turned into
      * the worldview's topological interpretation before a scale can be built.
      * 
-     * @return
+     * @return all dimensions
      */
-    List<IConcept> getDimensions();
+    List<Dimension> getDimensions();
 
     /**
-     * Get the number of dimensions for the passed extent.
+     * A geometry may specify one or multiple objects.
      * 
-     * @param extent
-     * @return
+     * @return the granularity
      */
-    int getDimensionCount(IConcept extent);
-
-    /**
-     * Get the shape for the passed extent. The array will have {@link #getDimensionCount(IConcept)}
-     * elements.
-     * 
-     * @param extent
-     * @return
-     */
-    long[] getShape(IConcept extent);
-
-    /**
-     * Return the regularity of each dimension of the shape for the passed extent. If the shape for this
-     * extent is regular, the value for the dimension will contain the number of equal elements; otherwise it
-     * will contain locations for each irregularly placed element.
-     * 
-     * @param extent
-     * @return
-     */
-    boolean[] isRegular(IConcept extent);
+    Granularity getGranularity();
 
 }

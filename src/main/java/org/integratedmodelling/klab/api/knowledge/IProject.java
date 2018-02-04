@@ -35,4 +35,17 @@ public interface IProject {
      * @return true if project is canonital
      */
     public boolean isCanonical();
+
+    /**
+     * True if this project originates from a remote node and not from a local workspace.
+     * 
+     * @return
+     */
+    boolean isRemote();
+
+    /**
+     * Name of originating node. Not null implies {@link #isRemote()} == true.
+     * @return
+     */
+    String getOriginatingNodeId();
 }

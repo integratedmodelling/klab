@@ -33,7 +33,7 @@ public class Component implements IComponent {
     private String          setupMethod         = null;
     private boolean         isSetupAsynchronous = false;
     private boolean         binaryAssetsLoaded;
-    private Class<?> implementation;
+    private Class<?>        implementation;
 
     public Component() {
         // TODO Auto-generated constructor stub
@@ -75,13 +75,13 @@ public class Component implements IComponent {
         }
 
         String missing = "";
-//        if (importedKnowledge != null) {
-//            for (String imp : importedKnowledge) {
-//                if (KLAB.MMANAGER.getExportedKnowledge(imp) == null) {
-//                    missing += (missing.isEmpty() ? "" : ", ") + imp;
-//                }
-//            }
-//        }
+        // if (importedKnowledge != null) {
+        // for (String imp : importedKnowledge) {
+        // if (KLAB.MMANAGER.getExportedKnowledge(imp) == null) {
+        // missing += (missing.isEmpty() ? "" : ", ") + imp;
+        // }
+        // }
+        // }
 
         if (!missing.isEmpty()) {
             throw new KlabValidationException("component " + name
@@ -104,7 +104,7 @@ public class Component implements IComponent {
 
         File toolkitPath = new File(getRoot() + File.separator + "toolkits");
         if (toolkitPath.exists() && toolkitPath.isDirectory()) {
-//            PaletteManager.get().readPalettes(toolkitPath);
+            // PaletteManager.get().readPalettes(toolkitPath);
         }
 
         Klab.INSTANCE.info("initializing component " + name);
@@ -197,63 +197,65 @@ public class Component implements IComponent {
              * getting here if the code is suspicious. This doesn't get hit in
              * development components.
              */
-//            if (getLibDirectory().exists() && getLibDirectory().isDirectory()) {
-//                for (Iterator<File> it = FileUtils.iterateFiles(getLibDirectory(), new String[] { "jar" }, false); it
-//                        .hasNext();) {
-//                    File jarFile = it.next();
-//                    ClassLoaderUtil.addFileToClassPath(jarFile, this.getClass().getClassLoader());
-//                }
-//            }
+            // if (getLibDirectory().exists() && getLibDirectory().isDirectory()) {
+            // for (Iterator<File> it = FileUtils.iterateFiles(getLibDirectory(), new String[] { "jar" },
+            // false); it
+            // .hasNext();) {
+            // File jarFile = it.next();
+            // ClassLoaderUtil.addFileToClassPath(jarFile, this.getClass().getClassLoader());
+            // }
+            // }
 
             /*
              * binary assets - usually from target/classes in development
              * components.
              */
-//            if (getBinDirectory().exists() && getBinDirectory().isDirectory()) {
-//                ClassLoaderUtil.addFileToClassPath(getBinDirectory(), this.getClass().getClassLoader());
-//            }
+            // if (getBinDirectory().exists() && getBinDirectory().isDirectory()) {
+            // ClassLoaderUtil.addFileToClassPath(getBinDirectory(), this.getClass().getClassLoader());
+            // }
 
-//            try {
-//                for (Pair<Annotation, Class<?>> decl : KLAB.ENGINE
-//                        .scanPackage(getProperties().getProperty(COMPONENT_PACKAGE_PROPERTY))) {
-//                    if (decl.getFirst() instanceof org.integratedmodelling.api.components.Component) {
-//                        this.implementation = decl.getSecond();
-//                        this.domain = ((org.integratedmodelling.api.components.Component) decl.getFirst()).worldview();
-//                        this.version = Version
-//                                .parse(((org.integratedmodelling.api.components.Component) decl.getFirst()).version()
-//                                        .toString());
-//
-//                        for (Method method : implementation.getMethods()) {
-//                            if (method.isAnnotationPresent(Initialize.class)) {
-//                                initMethod = method.getName();
-//                            }
-//                            if (method.isAnnotationPresent(Setup.class)) {
-//                                setupMethod = method.getName();
-//                                Setup setup = method.getAnnotation(Setup.class);
-//                                isSetupAsynchronous = setup.asynchronous();
-//                            }
-//                        }
-//
-//                    } else if (decl.getFirst() instanceof org.integratedmodelling.api.services.annotations.Prototype) {
-//                        IPrototype prototype = KLAB.ENGINE.getFunctionPrototype(
-//                                ((org.integratedmodelling.api.services.annotations.Prototype) decl.getFirst()).id());
-//                        ((Prototype) prototype).setComponentId(id);
-//                        this.services.add(prototype);
-//                    }
-//
-//                }
-//            } catch (KlabException e) {
-//                // don't break for now, just deactivate, log the error and move
-//                // on.
-//                Klab.INSTANCE.error(e);
-//                active = false;
-//            }
+            // try {
+            // for (Pair<Annotation, Class<?>> decl : KLAB.ENGINE
+            // .scanPackage(getProperties().getProperty(COMPONENT_PACKAGE_PROPERTY))) {
+            // if (decl.getFirst() instanceof org.integratedmodelling.api.components.Component) {
+            // this.implementation = decl.getSecond();
+            // this.domain = ((org.integratedmodelling.api.components.Component) decl.getFirst()).worldview();
+            // this.version = Version
+            // .parse(((org.integratedmodelling.api.components.Component) decl.getFirst()).version()
+            // .toString());
+            //
+            // for (Method method : implementation.getMethods()) {
+            // if (method.isAnnotationPresent(Initialize.class)) {
+            // initMethod = method.getName();
+            // }
+            // if (method.isAnnotationPresent(Setup.class)) {
+            // setupMethod = method.getName();
+            // Setup setup = method.getAnnotation(Setup.class);
+            // isSetupAsynchronous = setup.asynchronous();
+            // }
+            // }
+            //
+            // } else if (decl.getFirst() instanceof
+            // org.integratedmodelling.api.services.annotations.Prototype) {
+            // IPrototype prototype = KLAB.ENGINE.getFunctionPrototype(
+            // ((org.integratedmodelling.api.services.annotations.Prototype) decl.getFirst()).id());
+            // ((Prototype) prototype).setComponentId(id);
+            // this.services.add(prototype);
+            // }
+            //
+            // }
+            // } catch (KlabException e) {
+            // // don't break for now, just deactivate, log the error and move
+            // // on.
+            // Klab.INSTANCE.error(e);
+            // active = false;
+            // }
 
-            Klab.INSTANCE.info("component " + name + " loaded  (" + this.services.size() + " services provided)");
+            Klab.INSTANCE
+                    .info("component " + name + " loaded  (" + this.services.size() + " services provided)");
         }
     }
 
-    
     @Override
     public Collection<File> getBinaryAssets() {
         // TODO Auto-generated method stub
@@ -313,6 +315,18 @@ public class Component implements IComponent {
     public boolean isCanonical() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public boolean isRemote() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String getOriginatingNodeId() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

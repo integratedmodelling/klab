@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.observations;
 import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.klab.api.data.Aggregation;
-import org.integratedmodelling.klab.api.data.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;

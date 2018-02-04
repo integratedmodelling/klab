@@ -22,12 +22,14 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import java.util.Collection;
+
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * The resolution scope contains all the contextual information gathered during resolution,
@@ -183,6 +185,13 @@ public interface IResolutionScope {
    * @return
    */
   IObservable getObservable();
+  
+  /**
+   * Resolution is controlled by a task or script monitor.
+   * 
+   * @return the monitor
+   */
+  IMonitor getMonitor();
 
 
 }

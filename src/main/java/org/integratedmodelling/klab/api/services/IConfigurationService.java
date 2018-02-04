@@ -5,6 +5,11 @@ import java.util.Properties;
 
 import org.integratedmodelling.klab.utils.OS;
 
+/**
+ * 
+ * @author Ferd
+ *
+ */
 public interface IConfigurationService {
 
     /**
@@ -46,6 +51,13 @@ public interface IConfigurationService {
      *  such as using k.LAB only as an OWL processor)
      */
     boolean useCommonOntology();
+
+    /**
+     * True if debugging mode has been enabled.
+     * 
+     * @return debugging mode
+     */
+    boolean isDebuggingEnabled();
 
 }
 

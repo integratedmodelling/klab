@@ -59,4 +59,16 @@ public class Project implements IProject {
         return false;
     }
 
+    @Override
+    public boolean isRemote() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String getOriginatingNodeId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.klab.api.extensions.Contextualizer;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -18,8 +17,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * statements.
  * 
  * To provide a new contextualizer, extend one of the non-abstract child interfaces and provide the
- * specifications of its k.LAB identity using a KDL file, linking it to the class through a
- * {@link Contextualizer} annotation.
+ * specifications of its k.LAB identity using a KDL file specifying a component definition.
  * 
  * The engine implementation is expected to provide appropriate instantiators and resolvers for every observation
  * type.

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.observation;
 
-import org.integratedmodelling.klab.api.data.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;

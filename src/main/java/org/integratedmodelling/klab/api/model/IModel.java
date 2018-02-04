@@ -162,4 +162,12 @@ public interface IModel extends IActiveKimObject, INamespaceQualified {
      */
     Optional<IResource> getContextualizerResource();
 
+    /**
+     * If true, the model or the namespace containing it have been declared private, and only
+     * models in the same namespace can use it for resolution.
+     * 
+     * @return
+     */
+    boolean isPrivate();
+
 }

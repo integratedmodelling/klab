@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.services.ITraitService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.OWL;
 
 public enum Traits implements ITraitService {
@@ -114,6 +115,26 @@ public enum Traits implements ITraitService {
             OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base));
         }
 
+    }
+
+    /**
+     * Return the concept that defines the abstract trait of the observability of the
+     * passed observable in the context, or the concrete trait of it being actually
+     * observable. Use {@link #getNegation(IConcept)} to deny the concrete trait if
+     * necessary. Both concepts (the abstract and the concrete) are created when missing
+     * upon a single invocation.
+     * 
+     * @param observable
+     * @param isAbstract
+     * @return
+     */
+    public IConcept getObservabilityOf(IConcept observable, boolean isAbstract) {
+
+        if (observable.is(Concepts.c(NS.CORE_OBSERVABILITY_TRAIT))) {
+            return observable;
+        }
+        
+        return Concepts.INSTANCE.declare("observability of (" + observable.getDefinition() + ")");
     }
 
 
