@@ -86,10 +86,12 @@ public interface IResolutionScope {
 
   /**
    * Return an appropriately configured prioritizer to choose a model among many.
+   * @param cls 
+   * @param <T>
    * 
    * @return the prioritizer used to choose models in this scope
    */
-  IPrioritizer<IModel> getPrioritizer();
+  <T> IPrioritizer<T> getPrioritizer(Class<T> cls);
 
   /**
    * Return the namespace of reference for this context. It should never be null; if we're resolving

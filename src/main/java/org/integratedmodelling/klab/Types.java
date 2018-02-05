@@ -3,8 +3,6 @@ package org.integratedmodelling.klab;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.geotools.filter.function.Classifier;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -15,6 +13,8 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.ITypeService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.data.classification.Classification;
+import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.OWL;
@@ -322,9 +322,9 @@ public enum Types implements ITypeService {
     public IClassification createClassificationFromMetadata(IConcept rootClass, String metadataEncodingProperty, String metadataFormat)
             throws KlabValidationException {
 
-        Classification ret = new Classification(rootClass);
+        Classification ret = Classification.create(rootClass);
 
-        for (IKnowledge c : ret.getConceptSpace().getSemanticClosure()) {
+        for (IKnowledge c : ret.getConcept().getSemanticClosure()) {
 
             IMetadata m = c.getMetadata();
             Object o = m.get(metadataEncodingProperty);
@@ -342,7 +342,7 @@ public enum Types implements ITypeService {
             }
 
             if (o != null) {
-                ret.addClassifier(new Classifier(o), (IConcept) c);
+                ret.addClassifier(Classifier.create(o), (IConcept) c);
             }
         }
 

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-
 import org.apache.commons.io.IOUtils;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
@@ -24,14 +23,15 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.persistence.ModelKbox;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
-
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -45,6 +45,11 @@ public enum Models implements IModelService {
   @Inject
   IResourceValidator validator;
 
+  /*
+   * index for local models
+   */
+  private ModelKbox kbox = null;
+  
   private Models() {
     IInjectorProvider injectorProvider = new KimInjectorProvider();
     Injector injector = injectorProvider.getInjector();
@@ -106,7 +111,7 @@ public enum Models implements IModelService {
 
   @Override
   public void releaseNamespace(String name) {
-    // TODO remove all artifacts from local kbox
+      
   }
 
   @Override

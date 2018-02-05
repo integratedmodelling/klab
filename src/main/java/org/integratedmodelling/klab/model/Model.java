@@ -20,8 +20,10 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.documentation.Documentation;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
+import org.integratedmodelling.klab.observation.Scale;
 
 public class Model extends KimObject implements IModel {
 
@@ -42,7 +44,8 @@ public class Model extends KimObject implements IModel {
         super(model);
 
         this.namespace = namespace;
-
+        this.isPrivate = model.isPrivate();
+        
         for (IKimObservable observable : model.getObservables()) {
             if (observable.hasAttributeIdentifier()) {
                 attributeObservables.put(observable.getValue().toString(), Observables.INSTANCE
@@ -218,8 +221,19 @@ public class Model extends KimObject implements IModel {
 
     @Override
     public boolean isPrivate() {
-        // TODO Auto-generated method stub
-        return isPrivate;
+        return isPrivate || namespace.isPrivate();
+    }
+
+    /**
+     * Build and return the scale, if any, specified for the model (possibly along with any
+     * constraints in the namespace it contains).
+     * 
+     * @param monitor
+     * @return a new scale, possibly empty, never null.
+     * @throws KlabException
+     */
+    public Scale getCoverage(IMonitor monitor) throws KlabException {
+      return Scale.create(behavior.getExtents(monitor));
     }
 
 }

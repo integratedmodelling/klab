@@ -87,10 +87,11 @@ import org.integratedmodelling.klab.api.model.IModel;
  *          
  *          
  * @author ferdinando.villa
- * @param <T> 
+ * @param <T> the type of model bean that is compared. Usually not the actual model as beans from the network
+ *            need to be compared and building an actual model that won't be used may be expensive.
  *
  */
-public interface IPrioritizer<T> extends Comparator<T> {
+public interface IPrioritizer<T> extends Comparator<T>, List<IModel> {
 
     /**
      * The default ranking strategy in the form that can be given in klab.properties for

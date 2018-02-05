@@ -39,18 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class ModelKbox extends ObservableKbox {
 
-    private static ModelKbox _this;
     private boolean          workRemotely = !Configuration.INSTANCE.isOffline();
-
-//    public static ModelKbox get() {
-//
-//        if (_this == null) {
-//            H2Kbox.set("models2_"
-//                    + KBOX_VERSION, new ModelKbox("models2_" + KBOX_VERSION, KLAB.ENGINE.getMonitor()));
-//            _this = (ModelKbox) H2Kbox.get("models2_" + KBOX_VERSION);
-//        }
-//        return _this;
-//    }
 
     private ModelKbox(String name, IMonitor monitor) {
 
@@ -167,10 +156,10 @@ public class ModelKbox extends ObservableKbox {
      * @return models resulting from query, best first.
      * @throws KlabException
      */
-    public List<IModel> query(IObservable observable, IResolutionScope context)
+    public List<IModel> query(IObservable observable, ResolutionScope context)
             throws KlabException {
 
-        IPrioritizer<IModel> prioritizer = context.getPrioritizer();
+        IPrioritizer<Model> prioritizer = context.getPrioritizer(Model.class);
         ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
         Set<Model> local = new HashSet<>();
 
@@ -481,11 +470,11 @@ public class ModelKbox extends ObservableKbox {
 
         ArrayList<Object> toStore = new ArrayList<>();
 
-        if (o instanceof IModel) {
+        if (o instanceof org.integratedmodelling.klab.model.Model) {
 
             Klab.INSTANCE.info("storing model " + ((IModel) o).getName());
 
-            for (Model data : inferModels((IModel) o, monitor)) {
+            for (Model data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor)) {
                 toStore.add(data);
             }
 
@@ -514,7 +503,7 @@ public class ModelKbox extends ObservableKbox {
      * @param monitor 
      * @return
      */
-    public static Collection<Model> inferModels(IModel model, IMonitor monitor) {
+    public static Collection<Model> inferModels(org.integratedmodelling.klab.model.Model model, IMonitor monitor) {
         List<Model> ret = new ArrayList<>();
 
         for (Model m : getModelDescriptors(model, monitor)) {
@@ -567,7 +556,7 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    private static Collection<Model> getModelDescriptors(IModel model, IMonitor monitor) {
+    private static Collection<Model> getModelDescriptors(org.integratedmodelling.klab.model.Model model, IMonitor monitor) {
 
         List<Model> ret = new ArrayList<>();
         Scale scale = null;
@@ -660,7 +649,7 @@ public class ModelKbox extends ObservableKbox {
             m.setPrimaryObservable(first);
             first = false;
 
-            m.setMetadata(KLAB.MFACTORY.adapt(model.getMetadata(), Metadata.class));
+            m.setMetadata((Metadata)model.getMetadata());
 
             ret.add(m);
         }

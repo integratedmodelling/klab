@@ -91,11 +91,6 @@ public class ResolutionScope implements IResolutionScope {
   }
 
   @Override
-  public IPrioritizer<IModel> getPrioritizer() {
-    return prioritizer;
-  }
-
-  @Override
   public Namespace getResolutionNamespace() {
     return resolutionNamespace;
   }
@@ -156,6 +151,15 @@ public class ResolutionScope implements IResolutionScope {
   @Override
   public IMonitor getMonitor() {
     return monitor;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T> IPrioritizer<T> getPrioritizer(Class<T> cls) {
+    if (Model.class.isAssignableFrom(cls)) {
+      return (IPrioritizer<T>) prioritizer;
+    }
+    return null;
   }
 
 }

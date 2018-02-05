@@ -32,6 +32,9 @@ public class Namespace extends KimObject implements INamespace {
   private boolean           internal         = false;
   private boolean           canonical        = false;
   private boolean           scenario         = false;
+  private boolean           inactive         = false;
+  private boolean           deprecated         = false;
+  private boolean           isPrivate         = false;
   private long              timestamp        = 0l;
 
   List<IKimObject>          objects          = new ArrayList<>();
@@ -46,6 +49,10 @@ public class Namespace extends KimObject implements INamespace {
   public Namespace(IKimNamespace namespace) {
     super((KimNamespace) namespace);
     this.name = namespace.getName();
+    this.isPrivate = namespace.isPrivate();
+    this.inactive = namespace.isInactive();
+    this.scenario = namespace.isScenario();
+    this.deprecated = namespace.isDeprecated();
     this.ontology = Ontologies.INSTANCE.require(name);
   }
 
@@ -164,14 +171,12 @@ public class Namespace extends KimObject implements INamespace {
 
   @Override
   public boolean isPrivate() {
-    // TODO Auto-generated method stub
-    return false;
+    return isPrivate;
   }
 
   @Override
   public boolean isInactive() {
-    // TODO Auto-generated method stub
-    return false;
+    return inactive;
   }
 
   @Override
