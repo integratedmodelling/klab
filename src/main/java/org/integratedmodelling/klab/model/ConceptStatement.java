@@ -5,28 +5,37 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 public class ConceptStatement extends KimObject {
 
-    private static final long serialVersionUID = -1590834207034743591L;
+  private static final long serialVersionUID = -1590834207034743591L;
 
-    IConcept concept;
-    
-    public ConceptStatement(IKimStatement statement, IConcept concept) {
-        super(statement);
-        this.concept = concept;
-        setDeprecated(statement.isDeprecated());
-    }
+  IConcept                  concept;
 
-    public IConcept getConcept() {
-        return this.concept;
-    }
+  public ConceptStatement(IKimStatement statement) {
+    super(statement);
+    setDeprecated(statement.isDeprecated());
+  }
 
-    @Override
-    public String getId() {
-        return concept.getName();
-    }
+  public ConceptStatement(IKimStatement statement, IConcept concept) {
+    super(statement);
+    this.concept = concept;
+    setDeprecated(statement.isDeprecated());
+  }
 
-    @Override
-    public String getName() {
-        return concept.getNamespace();
-    }
-    
+  public IConcept getConcept() {
+    return this.concept;
+  }
+
+  @Override
+  public String getId() {
+    return concept.getName();
+  }
+
+  @Override
+  public String getName() {
+    return concept.getNamespace() + ":" + getId();
+  }
+
+  public void set(IConcept concept) {
+    this.concept = concept;
+  }
+
 }

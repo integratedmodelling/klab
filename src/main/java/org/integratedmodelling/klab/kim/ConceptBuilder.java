@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
@@ -34,6 +35,11 @@ public enum ConceptBuilder {
 
   public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace,
       final IMonitor monitor) {
+    return build(concept, namespace, null, monitor);
+  }
+  
+  public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject, 
+      final IMonitor monitor) {
 
     if (concept.isMacro()) {
       return null;
@@ -42,7 +48,7 @@ public enum ConceptBuilder {
     Namespace ns = (Namespace) namespace;
     try {
 
-      IConcept ret = buildInternal(concept, ns, monitor);
+      IConcept ret = buildInternal(concept, ns, kimObject, monitor);
       if (concept.getParents().isEmpty()) {
         IConcept parent = null;
         if (concept.getUpperConceptDefined() != null) {
@@ -63,6 +69,9 @@ public enum ConceptBuilder {
         ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
         createProperties(ret, ns);
         ns.define();
+        if (kimObject != null) {
+          kimObject.set(ret);
+        }
       }
 
       return ret;
@@ -74,7 +83,7 @@ public enum ConceptBuilder {
   }
 
   private @Nullable IConcept buildInternal(final IKimConceptStatement concept,
-      final Namespace namespace, final IMonitor monitor) {
+      final Namespace namespace, ConceptStatement kimObject, final IMonitor monitor) {
 
     IConcept main = null;
     String mainId = concept.getName();
@@ -133,9 +142,11 @@ public enum ConceptBuilder {
     for (IKimScope child : concept.getChildren()) {
       if (child instanceof IKimConceptStatement) {
         try {
-          IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, monitor);
+          ConceptStatement chobj = kimObject == null ? null : new ConceptStatement((IKimConceptStatement)child);
+          IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, kimObject, monitor);
           namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getName()));
           namespace.define();
+          kimObject.getChildren().add(chobj);
         } catch (Throwable e) {
           monitor.error(e);
         }

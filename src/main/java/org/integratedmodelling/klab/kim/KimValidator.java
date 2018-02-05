@@ -91,12 +91,11 @@ public class KimValidator implements Kim.Validator {
       IKimObject object = null;
 
       if (statement instanceof IKimConceptStatement) {
+        object = new ConceptStatement((IKimConceptStatement) statement);
         IConcept concept =
-            ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
-        if (concept != null) {
-          // wrap in a concept definition to add to namespace
-          // FIXME doesn't handle children properly - should add to build procedure
-          object = new ConceptStatement((IKimConceptStatement) statement, concept);
+            ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, (ConceptStatement) object, monitor);
+        if (concept == null) {
+          object = null;
         }
       } else if (statement instanceof IKimModel) {
         object = ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
