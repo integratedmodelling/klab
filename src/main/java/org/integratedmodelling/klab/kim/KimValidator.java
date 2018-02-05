@@ -22,128 +22,156 @@ import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 
 public class KimValidator implements Kim.Validator {
 
-	Monitor monitor;
-	
-	/*
-	 * holds the mapping between the actual ontology ID and the declared one
-	 * in root domains where "import <coreUrl> as <prefix>" was used.
-	 */
-	Map<String, String> corePrefixTranslation = new HashMap<>();
-	
-	public KimValidator(Monitor monitor) {
-		this.monitor = monitor;
-	}
+  Monitor             monitor;
 
-	public KimValidator(KimValidator kimValidator, Monitor monitor) {
-	    this(monitor);
-	    corePrefixTranslation.putAll(kimValidator.corePrefixTranslation);
+  /*
+   * holds the mapping between the actual ontology ID and the declared one in root domains where
+   * "import <coreUrl> as <prefix>" was used.
+   */
+  Map<String, String> corePrefixTranslation = new HashMap<>();
+
+  public KimValidator(Monitor monitor) {
+    this.monitor = monitor;
+  }
+
+  public KimValidator(KimValidator kimValidator, Monitor monitor) {
+    this(monitor);
+    corePrefixTranslation.putAll(kimValidator.corePrefixTranslation);
+  }
+
+  public KimValidator with(Monitor monitor) {
+    return new KimValidator(this, monitor);
+  }
+
+  @Override
+  public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
+
+    try {
+      Namespaces.INSTANCE.release(namespace.getName(), monitor);
+    } catch (KlabException e) {
+      monitor.error(e);
+    }
+    
+    Namespace ns = new Namespace(namespace);
+
+    for (Pair<String, String> imp : namespace.getOwlImports()) {
+      String prefix =
+          Workspaces.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
+      if (prefix == null) {
+        monitor.error("cannot resolve import " + imp.getFirst(), namespace);
+      } else {
+        corePrefixTranslation.put(imp.getSecond(), prefix);
+      }
     }
 
-    public KimValidator with(Monitor monitor) {
-	    return new KimValidator(this, monitor);
-	}
-	
-	@Override
-	public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
+    /*
+     * these should never throw exceptions; instead they should notify any errors, no matter how
+     * internal, through the monitor
+     */
+    for (IKimScope statement : namespace.getChildren()) {
 
-		Namespaces.INSTANCE.release(namespace.getName());
-		Namespace ns = new Namespace(namespace);
+      IKimObject object = null;
 
-		for (Pair<String, String> imp : namespace.getOwlImports()) {
-		    String prefix = Workspaces.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
-		    if (prefix == null) {
-		        monitor.error("cannot resolve import " + imp.getFirst(), namespace);
-		    } else {
-		        corePrefixTranslation.put(imp.getSecond(), prefix);
-		    }
-		}
-		
-		/*
-		 * these should never throw exceptions; instead they should notify any errors,
-		 * no matter how internal, through the monitor
-		 */
-		for (IKimScope statement : namespace.getChildren()) {
-		    
-		    IKimObject object = null;
-		    
-			if (statement instanceof IKimConceptStatement) {
-				IConcept concept = ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
-				if (concept != null) {
-	                // wrap in a concept definition to add to namespace
-				    object = new ConceptStatement((IKimConceptStatement)statement, concept);
-				}
-			} else if (statement instanceof IKimModel) {
-			    object = ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
-			} else if (statement instanceof IKimObserver) {
-				object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
-			}
-			
-			if (object != null) {
-			    ns.addObject(object);
-			}
-		}
-		
-		/*
-		 * TODO finalize namespace and send any notification
-		 */
-
-		Namespaces.INSTANCE.registerNamespace(ns);
-        Reasoner.INSTANCE.addOntology(ns.getOntology());
-        
-        /*
-         * Execute any annotations recognized by the engine.
-         */
-        for (IKimObject object : ns.getObjects()) {
-            for (IKimAnnotation annotation : object.getAnnotations()) {
-                Annotations.INSTANCE.process(annotation, object, monitor);
-            }
+      if (statement instanceof IKimConceptStatement) {
+        IConcept concept =
+            ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, monitor);
+        if (concept != null) {
+          // wrap in a concept definition to add to namespace
+          // FIXME doesn't handle children properly - should add to build procedure
+          object = new ConceptStatement((IKimConceptStatement) statement, concept);
         }
-        
-        return ns;
-	}
+      } else if (statement instanceof IKimModel) {
+        object = ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
+        if (object instanceof IModel) {
+          try {
+            Models.INSTANCE.index((IModel)object, monitor);
+          } catch (KlabException e) {
+            monitor.error("error storing valid model " + ((IModel)object).getName() + ": "+ e.getMessage());
+          }
+        }
+      } else if (statement instanceof IKimObserver) {
+        object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
+        if (object instanceof IObserver) {
+          try {
+            Observations.INSTANCE.index((IObserver)object, monitor);
+          } catch (KlabException e) {
+            monitor.error("error storing valid model " + ((IModel)object).getName() + ": "+ e.getMessage());
+          }
+        }
+      }
 
-	@Override
-    public List<Pair<String, Level>> validateFunction(IKimFunctionCall functionCall, Set<Type> expectedType) {
-	    List<Pair<String, Level>> ret = new ArrayList<>();
-		IPrototype prototype = Extensions.INSTANCE.getServicePrototype(functionCall.getName());
-		if (prototype != null) {
-		    
-		} else {
-		    ret.add(Tuples.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
-		}
-		return ret;
-	}
+      if (object != null) {
+        ns.addObject(object);
+      }
+    }
 
-	@Override
-	public UrnDescriptor classifyUrn(String urn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /*
+     * TODO finalize namespace and send any notification
+     */
 
-	@Override
-	public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
-	    
-		IConcept coreType = Concepts.INSTANCE.getConcept(string);
-		if (coreType == null) {
-			return EnumSet.noneOf(Type.class);
-		}
-		/*
-		 * TODO check type
-		 */
-		return statedType;
-	}
+    Namespaces.INSTANCE.registerNamespace(ns);
+    Reasoner.INSTANCE.addOntology(ns.getOntology());
+
+    /*
+     * Execute any annotations recognized by the engine.
+     */
+    for (IKimObject object : ns.getObjects()) {
+      for (IKimAnnotation annotation : object.getAnnotations()) {
+        Annotations.INSTANCE.process(annotation, object, monitor);
+      }
+    }
+
+    return ns;
+  }
+
+  @Override
+  public List<Pair<String, Level>> validateFunction(IKimFunctionCall functionCall,
+      Set<Type> expectedType) {
+    List<Pair<String, Level>> ret = new ArrayList<>();
+    IPrototype prototype = Extensions.INSTANCE.getServicePrototype(functionCall.getName());
+    if (prototype != null) {
+
+    } else {
+      ret.add(Tuples.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
+    }
+    return ret;
+  }
+
+  @Override
+  public UrnDescriptor classifyUrn(String urn) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
+
+    IConcept coreType = Concepts.INSTANCE.getConcept(string);
+    if (coreType == null) {
+      return EnumSet.noneOf(Type.class);
+    }
+    /*
+     * TODO check type
+     */
+    return statedType;
+  }
 
 }

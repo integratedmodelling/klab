@@ -57,4 +57,12 @@ public interface IKimObject extends Serializable {
      */
     List<IKimAnnotation> getAnnotations();
 
+    /**
+     * True if the object is declared deprecated. If so, the annotations will likely
+     * contain a 'deprecated' annotation with more information.
+     * 
+     * @return true if deprecated
+     */
+    boolean isDeprecated();
+
 }

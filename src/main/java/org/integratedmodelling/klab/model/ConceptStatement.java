@@ -12,6 +12,7 @@ public class ConceptStatement extends KimObject {
     public ConceptStatement(IKimStatement statement, IConcept concept) {
         super(statement);
         this.concept = concept;
+        setDeprecated(statement.isDeprecated());
     }
 
     public IConcept getConcept() {

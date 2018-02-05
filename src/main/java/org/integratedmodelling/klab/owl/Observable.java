@@ -257,14 +257,14 @@ public class Observable implements IObservable {
     if (observationType == null && observable != null) {
       if (by != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
         observationType = ObservationType.CLASSIFICATION;
-      } else if (observable.is(Type.COUNTABLE)) {
-        observationType = ObservationType.INSTANTIATION;
       } else if (observable.is(Type.PRESENCE)) {
         observationType = ObservationType.VERIFICATION;
+      } else if (observable.is(Type.QUALITY)) { // don't reorder these!
+        observationType = ObservationType.QUANTIFICATION;
+      } else if (observable.is(Type.COUNTABLE)) {
+        observationType = ObservationType.INSTANTIATION;
       } else if (observable.is(Type.CONFIGURATION)) {
         observationType = ObservationType.DETECTION;
-      } else if (observable.is(Type.QUANTITY)) {
-        observationType = ObservationType.QUANTIFICATION;
       } else if (observable.is(Type.PROCESS)) {
         observationType = ObservationType.SIMULATION;
       }

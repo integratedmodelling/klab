@@ -5,5 +5,5 @@ import org.integratedmodelling.klab.api.model.INamespace;
 public interface INamespaceService {
 
     INamespace getNamespace(String namespaceId);
-
+    
 }

@@ -132,17 +132,21 @@ public abstract class ObservableKbox extends H2Kbox {
      * @return
      * @throws KlabException
      */
-    protected abstract int deleteAllObjectsWithNamespace(String namespaceId) throws KlabException;
+    protected abstract int deleteAllObjectsWithNamespace(String namespaceId, IMonitor monitor) throws KlabException;
 
-    protected abstract void deleteObjectWithId(long id) throws KlabException;
+    protected abstract void deleteObjectWithId(long id, IMonitor monitor) throws KlabException;
 
-    public int clearNamespace(String namespaceId) throws KlabException {
+    protected abstract void initialize(IMonitor monitor);
+    
+    public int clearNamespace(String namespaceId, IMonitor monitor) throws KlabException {
 
+        initialize(monitor);
+      
         if (!database.hasTable(getMainTableId())) {
             return 0;
         }
 
-        int n = deleteAllObjectsWithNamespace(namespaceId);
+        int n = deleteAllObjectsWithNamespace(namespaceId, monitor);
 
         database.execute("DELETE FROM namespaces where id = '" + namespaceId + "';");
 
@@ -232,9 +236,10 @@ public abstract class ObservableKbox extends H2Kbox {
      * use it.
      * 
      * @param observable
+     * @param monitor 
      * @return
      */
-    public long requireConceptId(IConcept observable) {
+    public long requireConceptId(IConcept observable, IMonitor monitor) {
 
         long ret = getConceptId(observable);
         if (ret >= 0) {
@@ -336,8 +341,8 @@ public abstract class ObservableKbox extends H2Kbox {
         return ret;
     }
 
-    public ObservableKbox(String name, IMonitor monitor) {
-        super(name, monitor);
+    public ObservableKbox(String name) {
+        super(name);
 
         setSchema(IConcept.class, new ObservableSchema());
         setSchema(INamespace.class, new NamespaceSchema());
@@ -458,10 +463,11 @@ public abstract class ObservableKbox extends H2Kbox {
      * 
      * 
      * @param namespace
+     * @param monitor 
      * @return result action code
      * @throws KlabException 
      */
-    public int removeIfOlder(INamespace namespace) throws KlabException {
+    public int removeIfOlder(INamespace namespace, IMonitor monitor) throws KlabException {
 
         if (!database.hasTable("namespaces")) {
             return 1;
@@ -479,7 +485,7 @@ public abstract class ObservableKbox extends H2Kbox {
             if (dbTimestamp > 0) {
 
                 monitor.debug("Removing all observations in namespace " + namespace.getName());
-                int removed = clearNamespace(namespace.getName());
+                int removed = clearNamespace(namespace.getName(), monitor);
                 monitor.debug("Removed " + removed + " observations.");
             }
 

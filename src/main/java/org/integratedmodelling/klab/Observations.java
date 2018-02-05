@@ -31,12 +31,12 @@ public enum Observations implements IObservationService {
   }
 
   @Override
-  public void releaseNamespace(String name) {
+  public void releaseNamespace(String name, IMonitor monitor)  throws KlabException {
     // TODO remove all artifacts from local kbox
   }
 
   @Override
-  public void index(IObserver observer) {
+  public void index(IObserver observer, IMonitor monitor) throws KlabException {
     // TODO
   }
 

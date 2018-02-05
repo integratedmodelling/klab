@@ -109,8 +109,6 @@ public class Model {
     @JsonIgnore
     transient private IConcept  observableConcept;
     @JsonIgnore
-    transient private IConcept  observationConcept;
-    @JsonIgnore
     transient Shape   shape;
 
     /*
@@ -152,7 +150,6 @@ public class Model {
         ret.minTimeScaleFactor = minTimeScaleFactor;
         ret.maxTimeScaleFactor = maxTimeScaleFactor;
         ret.observableConcept = observableConcept;
-        ret.observationConcept = observationConcept;
         ret.shape = shape;
 
         return ret;
@@ -437,15 +434,7 @@ public class Model {
     public void setObservableConcept(IConcept observableConcept) {
         this.observableConcept = observableConcept;
     }
-
-    public IConcept getObservationConcept() {
-        return observationConcept;
-    }
-
-    public void setObservationConcept(IConcept observationConcept) {
-        this.observationConcept = observationConcept;
-    }
-
+    
     public Shape getShape() {
         return shape;
     }

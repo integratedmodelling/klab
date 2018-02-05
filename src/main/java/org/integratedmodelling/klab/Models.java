@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -39,6 +38,8 @@ public enum Models implements IModelService {
 
   INSTANCE;
 
+  private static final String KBOX_NAME = "models";
+  
   @Inject
   ParseHelper<Model> modelParser;
 
@@ -56,6 +57,7 @@ public enum Models implements IModelService {
     if (injector != null) {
       injector.injectMembers(this);
     }
+    this.kbox = ModelKbox.create(KBOX_NAME);
   }
 
   @Override
@@ -110,13 +112,13 @@ public enum Models implements IModelService {
   }
 
   @Override
-  public void releaseNamespace(String name) {
-      
+  public void releaseNamespace(String name, IMonitor monitor) throws KlabException {
+      kbox.clearNamespace(name, monitor);
   }
 
   @Override
-  public void index(IModel model) {
-
+  public void index(IModel model, IMonitor monitor) throws KlabException {
+    kbox.store(model, monitor);
   }
 
   @Override

@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.Ontologies;
+import org.integratedmodelling.klab.Projects;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -33,7 +34,6 @@ public class Namespace extends KimObject implements INamespace {
   private boolean           canonical        = false;
   private boolean           scenario         = false;
   private boolean           inactive         = false;
-  private boolean           deprecated         = false;
   private boolean           isPrivate         = false;
   private long              timestamp        = 0l;
 
@@ -52,8 +52,9 @@ public class Namespace extends KimObject implements INamespace {
     this.isPrivate = namespace.isPrivate();
     this.inactive = namespace.isInactive();
     this.scenario = namespace.isScenario();
-    this.deprecated = namespace.isDeprecated();
     this.ontology = Ontologies.INSTANCE.require(name);
+    this.project = Projects.INSTANCE.retrieveOrCreate(namespace.getProject());
+    setDeprecated(namespace.isDeprecated());
   }
 
   public Namespace(String id, @Nullable File file, IOntology ontology) {

@@ -2,52 +2,62 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.data.Metadata;
 
 public abstract class KimObject implements IKimObject {
 
-    private static final long    serialVersionUID = -4651845572772680648L;
+  private static final long  serialVersionUID = -4651845572772680648L;
 
-    private IKimStatement        statement;
-    private IMetadata            metadata;
-    protected List<IKimObject>   children         = new ArrayList<>();
+  private IKimStatement      statement;
+  private boolean            deprecated;
+  private IMetadata          metadata         = new Metadata();
+  protected List<IKimObject> children         = new ArrayList<>();
 
-    public KimObject(IKimStatement statement) {
-        this.statement = statement;
-    }
+  public KimObject(IKimStatement statement) {
+    this.statement = statement;
+  }
 
-    @Override
-    public List<IKimObject> getChildren() {
-        return children;
-    }
+  @Override
+  public List<IKimObject> getChildren() {
+    return children;
+  }
 
-    @Override
-    public IKimStatement getStatement() {
-        return statement;
-    }
-    
-    @Override
-    public List<IKimAnnotation> getAnnotations() {
-        return statement.getAnnotations();
-    }
+  @Override
+  public IKimStatement getStatement() {
+    return statement;
+  }
 
-    protected void setStatement(IKimStatement statement) {
-        this.statement = statement;
-    }
+  @Override
+  public List<IKimAnnotation> getAnnotations() {
+    return statement.getAnnotations();
+  }
 
-    public void setMetadata(IMetadata metadata) {
-        this.metadata = metadata;
-    }
+  protected void setStatement(IKimStatement statement) {
+    this.statement = statement;
+  }
 
-    public IMetadata getMetadata() {
-        return metadata;
-    }
+  public void setMetadata(IMetadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public String toString() {
-        return statement.toString();
-    }
+  public IMetadata getMetadata() {
+    return metadata;
+  }
+
+  public String toString() {
+    return statement.toString();
+  }
+
+  @Override
+  public boolean isDeprecated() {
+    return deprecated;
+  }
+
+  public void setDeprecated(boolean deprecated) {
+    this.deprecated = deprecated;
+  }
 }

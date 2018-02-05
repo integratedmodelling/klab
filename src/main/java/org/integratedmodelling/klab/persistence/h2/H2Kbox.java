@@ -47,34 +47,34 @@ public abstract class H2Kbox {
   protected H2Database                   database;
   protected Map<Class<?>, Serializer<?>> serializers   = new HashMap<>();
   protected Map<Class<?>, Deserializer>  deserializers = new HashMap<>();
-  protected IMonitor                     monitor;
+//  protected IMonitor                     monitor;
 
-  private static Map<String, H2Kbox>     kboxes        = new HashMap<>();
+//  private static Map<String, H2Kbox>     kboxes        = new HashMap<>();
 
-  protected static H2Kbox set(String name, H2Kbox kbox) {
-    kboxes.put(name, kbox);
-    return kbox;
-  }
+//  protected static H2Kbox set(String name, H2Kbox kbox) {
+//    kboxes.put(name, kbox);
+//    return kbox;
+//  }
+//
+//  protected static H2Kbox get(String name) {
+//    if (kboxes.containsKey(name)) {
+//      return kboxes.get(name);
+//    }
+//    return null;
+//  };
 
-  protected static H2Kbox get(String name) {
-    if (kboxes.containsKey(name)) {
-      return kboxes.get(name);
-    }
-    return null;
-  };
-
-  public H2Kbox(String name, IMonitor monitor) {
+  public H2Kbox(String name) {
     database = H2Database.get(name);
-    this.monitor = monitor;
+//    this.monitor = monitor;
   }
 
-  public H2Kbox(String name, File directory, IMonitor monitor) {
+  public H2Kbox(String name, File directory) {
     database = H2Database.get(directory, name);
-    this.monitor = monitor;
+//    this.monitor = monitor;
   }
 
-  public <T> List<T> query(String query, Class<T> cls) throws KlabException {
-    return querySql(query, cls);
+  public <T> List<T> query(String query, Class<T> cls, IMonitor monitor) throws KlabException {
+    return querySql(query, cls, monitor);
   }
 
   /**
@@ -86,7 +86,7 @@ public abstract class H2Kbox {
     database.recover();
   }
 
-  public <T> List<T> querySql(String query, Class<T> cls) throws KlabException {
+  public <T> List<T> querySql(String query, Class<T> cls, IMonitor monitor) throws KlabException {
 
     Deserializer deserializer = getDeserializer(cls);
 
@@ -130,7 +130,7 @@ public abstract class H2Kbox {
     return ret;
   }
 
-  public long store(Object o) throws KlabException {
+  public long store(Object o, IMonitor monitor) throws KlabException {
     return database.storeObject(o, 0l, getSerializer(o.getClass()), monitor);
   }
 
@@ -263,6 +263,12 @@ public abstract class H2Kbox {
      */
     String getTableName();
 
+  }
+
+  protected int deleteAllObjectsWithNamespace(String namespaceId, IMonitor monitor)
+      throws KlabException {
+    // TODO Auto-generated method stub
+    return 0;
   }
 
 }

@@ -54,15 +54,19 @@ public interface IModelService {
      * Release all models pertaining to named namespace, both in live and persistent storage.
      * 
      * @param name
+     * @param monitor 
+     * @throws KlabException 
      */
-    void releaseNamespace(String name);
+    void releaseNamespace(String name, IMonitor monitor) throws KlabException;
 
     /**
      * Store model in kbox.
      * 
      * @param model
+     * @param monitor 
+     * @throws KlabException 
      */
-    void index(IModel model);
+    void index(IModel model, IMonitor monitor) throws KlabException;
 
     /**
      * Resolve the passed observable to a list of ranked models.

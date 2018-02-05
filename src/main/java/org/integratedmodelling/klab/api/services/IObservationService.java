@@ -19,15 +19,19 @@ public interface IObservationService {
      * persistent storage.
      * 
      * @param name
+     * @param monitor 
+     * @throws KlabException 
      */
-    void releaseNamespace(String name);
+    void releaseNamespace(String name, IMonitor monitor) throws KlabException;
 
     /**
      * Index passed observation definition for retrieval.
      * 
      * @param observer
+     * @param monitor 
+     * @throws KlabException 
      */
-    void index(IObserver observer);
+    void index(IObserver observer, IMonitor monitor) throws KlabException;
 
     /**
      * Create a subject based on the specs in the passed observer.

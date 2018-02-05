@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
-
+import java.util.HashMap;
+import java.util.Map;
+import org.integratedmodelling.kim.api.IKimWorkspace;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
@@ -13,6 +16,8 @@ public enum Workspaces implements IWorkspaceService {
 
     INSTANCE;
 
+    Map<String, IWorkspace> workspaces = new HashMap<>();
+  
     /**
      * The core workspace, only containing the OWL knowledge distributed with the software, and no projects.
      */
@@ -35,7 +40,13 @@ public enum Workspaces implements IWorkspaceService {
      * are monitored and reloaded incrementally at each change.
      */
     private IWorkspace   local;
-
+    
+    /**
+     * Temporary, ephemeral workspace only meant to host the common project for on-demand namespaces.
+     * 
+     */
+    private IWorkspace common;
+    
     @Override
     public IWorkspace getLocal() {
         return local;
@@ -63,6 +74,7 @@ public enum Workspaces implements IWorkspaceService {
         try {
             coreKnowledge = new CoreOntology(Configuration.INSTANCE.getDataPath("knowledge"));
             coreKnowledge.load(false);
+            workspaces.put(coreKnowledge.getName(), coreKnowledge);
             return true;
         } catch (Throwable e) {
             Klab.INSTANCE.error(e.getLocalizedMessage());
@@ -79,6 +91,7 @@ public enum Workspaces implements IWorkspaceService {
             components = new MonitorableFileWorkspace(Configuration.INSTANCE
                     .getDataPath("components"), localComponentPaths);
             components.load(false);
+            workspaces.put(components.getName(), components);
             return true;
         } catch (Throwable e) {
             Klab.INSTANCE.error(e.getLocalizedMessage());
@@ -94,6 +107,8 @@ public enum Workspaces implements IWorkspaceService {
         try {
             worldview = certificate.getWorldview();
             worldview.load(false);
+            workspaces.put(worldview.getName(), worldview);
+
             return true;
         } catch (Throwable e) {
             Klab.INSTANCE.error(e.getLocalizedMessage());
@@ -101,6 +116,14 @@ public enum Workspaces implements IWorkspaceService {
         return false;
     }
 
+    public IWorkspace getCommonWorkspace() {
+      if (common == null) {
+          IKimWorkspace cw = Kim.INSTANCE.getCommonWorkspace();
+          common = new MonitorableFileWorkspace(cw.getRoot());
+      }
+      return common;
+    }
+    
     /*
      * Initialize (index but do not load) the local workspace from the passed path.
      */
@@ -121,6 +144,10 @@ public enum Workspaces implements IWorkspaceService {
             Klab.INSTANCE.error(e.getLocalizedMessage());
         }
         return false;
+    }
+
+    public IWorkspace getWorkspace(String name) {
+      return workspaces.get(name);
     }
 
 }
