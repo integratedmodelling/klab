@@ -1,21 +1,19 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState.Mediator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpatialIndex;
 import org.integratedmodelling.klab.api.observations.scale.space.ITessellation;
-import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -200,13 +198,13 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public IExtent intersection(IExtent other) throws KlabException {
+  public IExtent intersection(ITopologicallyComparable<?> other) throws KlabException {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public IExtent union(IExtent other) throws KlabException {
+  public IExtent union(ITopologicallyComparable<?> other) throws KlabException {
     if (!(other instanceof Space)) {
       throw new IllegalArgumentException(
           "cannot union a space extent with a " + other.getClass().getCanonicalName());

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -34,36 +33,40 @@ public class ObserveContextTask implements ITask<ISubject> {
   Monitor              monitor;
   Subject              subject;
   FutureTask<ISubject> delegate;
-  String               id = NameGenerator.shortUUID();
+  String               token = NameGenerator.shortUUID();
+  Session              session;
 
   public ObserveContextTask(Session session, IObserver observer) {
 
     Engine engine = session.getParent(Engine.class);
-    this.monitor = (session.getMonitor()).get(this);
+    try {
+      this.subject = Observations.INSTANCE.createSubject(observer, session.getMonitor());
+      this.monitor = (session.getMonitor()).get(this);
+      this.session = session;
 
-    delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
+      delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
 
-      @Override
-      public ISubject call() throws Exception {
+        @Override
+        public ISubject run() throws Exception {
 
-        Subject ret = Observations.INSTANCE.createSubject(observer, monitor);
-        ResolutionScope scope = new ResolutionScope(ret);
-        if (Resolver.INSTANCE.resolve(ret, scope).isRelevant()) {
+          ResolutionScope scope = new ResolutionScope(subject);
+          if (Resolver.INSTANCE.resolve(subject, scope).isRelevant()) {
             engine.run(Dataflows.INSTANCE.compile(scope));
+          }
+
+          return subject;
         }
-        
-        return ret;
-      }
-    });
+      });
 
-    engine.getTaskExecutor().execute(delegate);
-
-
+      engine.getTaskExecutor().execute(delegate);
+    } catch (Throwable e) {
+      monitor.error("error initializing context task: " + e.getMessage());
+    }
   }
 
   @Override
   public String getToken() {
-    return id;
+    return token;
   }
 
   @Override

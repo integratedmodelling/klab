@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
@@ -40,395 +41,412 @@ import org.reflections.scanners.ResourcesScanner;
 
 public class Engine extends Server implements IEngine {
 
-    private ICertificate        certificate;
-    private String              name;
-    private Date                bootTime;
-    private MulticastMessageBus multicastBus;
-    private Monitor             monitor;
-    private IEngineUserIdentity user = null;
-    private ExecutorService     scriptExecutor;
-    private ExecutorService     taskExecutor;
+  private ICertificate        certificate;
+  private String              name;
+  private Date                bootTime;
+  private MulticastMessageBus multicastBus;
+  private Monitor             monitor;
+  private IEngineUserIdentity user = null;
+  private ExecutorService     scriptExecutor;
+  private ExecutorService     taskExecutor;
 
-    public class Monitor implements IMonitor {
+  public class Monitor implements IMonitor {
 
-        private IIdentity identity = Engine.this;
+    private IIdentity identity = Engine.this;
 
-        @Override
-        public void info(Object... info) {
-            // TODO Auto-generated method stub
-            System.out.println(NotificationUtils.getMessage(info));
-        }
-
-        @Override
-        public void warn(Object... o) {
-            // TODO Auto-generated method stub
-            System.err.println(NotificationUtils.getMessage(o));
-        }
-
-        @Override
-        public void error(Object... o) {
-            // TODO Auto-generated method stub
-            System.err.println(NotificationUtils.getMessage(o));
-        }
-
-        @Override
-        public void debug(Object... o) {
-            // TODO Auto-generated method stub
-            System.err.println(NotificationUtils.getMessage(o));
-        }
-
-        @Override
-        public void send(Object o) {
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public IIdentity getIdentity() {
-            return identity;
-        }
-
-        @Override
-        public boolean hasErrors() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        public Monitor get(IIdentity identity) {
-            Monitor ret = new Monitor();
-            ret.identity = identity;
-            return ret;
-        }
-    }
-
-    public Engine(ICertificate certificate) {
-        // TODO
-        this.certificate = certificate;
+    @Override
+    public void info(Object... info) {
+      // TODO Auto-generated method stub
+      System.out.println(NotificationUtils.getMessage(info));
     }
 
     @Override
-    public INetworkSessionIdentity getParentIdentity() {
-        // TODO Auto-generated method stub
-        return null;
+    public void warn(Object... o) {
+      // TODO Auto-generated method stub
+      System.err.println(NotificationUtils.getMessage(o));
     }
 
     @Override
-    public String getToken() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public <T extends IIdentity> T getParent(Class<T> type) {
-        return IIdentity.findParent(this, type);
+    public void error(Object... o) {
+      // TODO Auto-generated method stub
+      System.err.println(NotificationUtils.getMessage(o));
     }
 
     @Override
-    public IEngineUserIdentity authenticateUser(IUserCredentials credentials) {
-        // TODO Auto-generated method stub
-        return null;
+    public void debug(Object... o) {
+      // TODO Auto-generated method stub
+      System.err.println(NotificationUtils.getMessage(o));
     }
 
     @Override
-    public ICapabilities getCapabilities() {
-        // TODO Auto-generated method stub
-        return null;
+    public void send(Object o) {
+      // TODO Auto-generated method stub
     }
 
     @Override
-    public Session createSession() {
-        return createSession(getParent(IEngineUserIdentity.class));
+    public IIdentity getIdentity() {
+      return identity;
     }
 
     @Override
-    public Session createSession(IEngineUserIdentity user) {
-        // TODO Auto-generated method stub
-        return new Session(this, user);
+    public boolean hasErrors() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    public Monitor get(IIdentity identity) {
+      Monitor ret = new Monitor();
+      ret.identity = identity;
+      return ret;
     }
 
     /**
-     * Create an engine using the default k.LAB certificate and options, and start it. Return after startup is
-     * complete.
-     * 
-     * @return a new running engine.
-     * @throws KlabRuntimeException
-     *             if startup fails
+     * Called to notify the start of any runtime job pertaining to our identity (always a
+     * {@link IRuntimeIdentity} such as a task or script).
      */
-    public static Engine start() {
-        EngineStartupOptions options = new EngineStartupOptions();
-        Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
-        if (!ret.boot(options)) {
-            throw new KlabRuntimeException("engine failed to start");
-        }
-        return ret;
+    public void notifyStart() {
+
     }
-    
-    public void stop() {
-    
-      // TODO shutdown all components
-        
-      // shutdown the task executor
-      if (taskExecutor != null) {
-          taskExecutor.shutdown();
-            try {
-                if (!taskExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                    taskExecutor.shutdownNow();
-                } 
-            } catch (InterruptedException e) {
-                taskExecutor.shutdownNow();
-            }
-          }
-      
-      // shutdown the script executor
-      if (scriptExecutor != null) {
-        scriptExecutor.shutdown();
-        try {
-            if (!scriptExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-              scriptExecutor.shutdownNow();
-            } 
-        } catch (InterruptedException e) {
-          scriptExecutor.shutdownNow();
+
+    /**
+     * Called to notify the start of any runtime job pertaining to our identity (always a
+     * {@link IRuntimeIdentity} such as a task or script).
+     */
+    public void notifyEnd() {
+
+    }
+
+  }
+
+  public Engine(ICertificate certificate) {
+    // TODO
+    this.certificate = certificate;
+  }
+
+  @Override
+  public INetworkSessionIdentity getParentIdentity() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getToken() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public <T extends IIdentity> T getParent(Class<T> type) {
+    return IIdentity.findParent(this, type);
+  }
+
+  @Override
+  public IEngineUserIdentity authenticateUser(IUserCredentials credentials) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ICapabilities getCapabilities() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Session createSession() {
+    return createSession(getParent(IEngineUserIdentity.class));
+  }
+
+  @Override
+  public Session createSession(IEngineUserIdentity user) {
+    // TODO Auto-generated method stub
+    return new Session(this, user);
+  }
+
+  /**
+   * Create an engine using the default k.LAB certificate and options, and start it. Return after
+   * startup is complete.
+   * 
+   * @return a new running engine.
+   * @throws KlabRuntimeException if startup fails
+   */
+  public static Engine start() {
+    EngineStartupOptions options = new EngineStartupOptions();
+    Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
+    if (!ret.boot(options)) {
+      throw new KlabRuntimeException("engine failed to start");
+    }
+    return ret;
+  }
+
+  public void stop() {
+
+    // TODO shutdown all components
+
+    // shutdown the task executor
+    if (taskExecutor != null) {
+      taskExecutor.shutdown();
+      try {
+        if (!taskExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+          taskExecutor.shutdownNow();
         }
+      } catch (InterruptedException e) {
+        taskExecutor.shutdownNow();
       }
     }
 
-    /**
-     * Perform the engine boot sequence. Can only be called after a valid certificate was read. The boot
-     * sequence consists of:
-     * 
-     * <ul>
-     * <li></li>
-     * </ul>
-     * 
-     * @param options
-     *            the options read from the command line; a default is provided if no command line was used.
-     * 
-     * @return true if the boot was successful, false otherwise. Exceptions are only thrown in case of bad
-     *         usage (called before a certificate is read).
+    // shutdown the script executor
+    if (scriptExecutor != null) {
+      scriptExecutor.shutdown();
+      try {
+        if (!scriptExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+          scriptExecutor.shutdownNow();
+        }
+      } catch (InterruptedException e) {
+        scriptExecutor.shutdownNow();
+      }
+    }
+  }
+
+  /**
+   * Perform the engine boot sequence. Can only be called after a valid certificate was read. The
+   * boot sequence consists of:
+   * 
+   * <ul>
+   * <li></li>
+   * </ul>
+   * 
+   * @param options the options read from the command line; a default is provided if no command line
+   *        was used.
+   * 
+   * @return true if the boot was successful, false otherwise. Exceptions are only thrown in case of
+   *         bad usage (called before a certificate is read).
+   */
+  private boolean boot(EngineStartupOptions options) {
+
+    if (options.isHelp()) {
+      System.out.println(options.usage());
+      System.exit(0);
+    }
+
+    if (certificate == null) {
+      throw new UnsupportedOperationException(
+          "Engine.boot() was called before a valid certificate was read. Exiting.");
+    }
+
+    this.monitor = new Monitor();
+
+    /*
+     * load annotation prototypes declared in this package
      */
-    private boolean boot(EngineStartupOptions options) {
-
-        if (options.isHelp()) {
-            System.out.println(options.usage());
-            System.exit(0);
-        }
-
-        if (certificate == null) {
-            throw new UnsupportedOperationException("Engine.boot() was called before a valid certificate was read. Exiting.");
-        }
-
-        this.monitor = new Monitor();
-
-        /*
-         * load annotation prototypes declared in this package
-         */
-        for (String kdl : new Reflections(getClass().getPackage().getName(), new ResourcesScanner())
-                .getResources(Pattern.compile(".*\\.kdl"))) {
-            try {
-                Annotations.INSTANCE.declareServices(getClass().getClassLoader().getResource(kdl));
-            } catch (KlabException e) {
-                Klab.INSTANCE.error(e);
-                return false;
-            }
-        }
-
-        /*
-         * if we have been asked to open a communication channel from a client, do so. The channel
-         * should be unique among all engines on the same network.
-         */
-        if (options.getMulticastChannel() != null) {
-            Klab.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
-                    + " communicating on port " + options.getPort());
-            this.multicastBus = new MulticastMessageBus(this, options.getMulticastChannel(), options
-                    .getPort());
-        }
-
-        boolean ret = true;
-        try {
-            /*
-             *  read core OWL knowledge from classpath
-             */
-            if (!Workspaces.INSTANCE.loadCoreKnowledge(this.monitor)) {
-                return false;
-            }
-
-            /*
-             * Install the k.IM validator to build concepts and model objects
-             */
-            Kim.INSTANCE.setValidator(new KimValidator(this.monitor));
-
-            /*
-             * initialize but do not load the local workspace, so that we can later override the worldview if we
-             * have some worldview projects in the workspace.
-             */
-            Workspaces.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
-
-            /*
-             *  prime and check integrity of kboxes; init listeners for Kim reading
-             */
-
-            /*
-             *  get worldview from certificate and sync it
-             */
-            if (!Workspaces.INSTANCE.loadWorldview(certificate, this.monitor)) {
-                return false;
-            }
-
-            /*
-             *  hop on the network
-             */
-
-            /*
-             *  sync components and load binary assets
-             */
-            // Workspaces.INSTANCE.loadComponents(options.get);
-
-            /*
-             * all binary content is now available: scan the classpath for recognized extensions
-             */
-            scanClasspath();
-
-            /*
-             * load component knowledge after their binary content is registered.
-             */
-
-            /*
-             *  now we can finally load the workspace
-             */
-            if (!Workspaces.INSTANCE.loadLocalWorkspace(this.monitor)) {
-                return false;
-            }
-
-            /*
-             *  run any init scripts from configuration
-             */
-
-            /*
-             * run any init scripts from parameters
-             */
-
-            /*
-             * if exit after scripts is requested, exit
-             */
-            if (options.isExitAfterStartup()) {
-                System.exit(0);
-            }
-
-        } catch (Exception e) {
-            ret = false;
-        }
-
-        return ret;
+    for (String kdl : new Reflections(getClass().getPackage().getName(), new ResourcesScanner())
+        .getResources(Pattern.compile(".*\\.kdl"))) {
+      try {
+        Annotations.INSTANCE.declareServices(getClass().getClassLoader().getResource(kdl));
+      } catch (KlabException e) {
+        Klab.INSTANCE.error(e);
+        return false;
+      }
     }
 
-    private void scanClasspath() throws KlabException {
-
-        registerCommonAnnotations();
-
-        // TODO reinstate whatever must be kept plus any data services and subsystems
-        Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-                String concept = ((SubjectType) annotation).value();
-                if (ISubject.class.isAssignableFrom(cls)) {
-                    Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
-                }
-            }
-        });
-
-        Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
-            @Override
-            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-                // String id = ((KlabBatchRunner) annotation).id();
-                // if (IBatchRunner.class.isAssignableFrom(cls)) {
-                // KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
-                // }
-            }
-        });
-
-        Klab.INSTANCE.registerAnnotationHandler(KimToolkit.class, new AnnotationHandler() {
-            @Override
-            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-                Klab.INSTANCE.registerKimToolkit(cls);
-            }
-        });
-
-        Klab.INSTANCE.scanPackage("org.integratedmodelling.klab");
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Date getBootTime() {
-        return bootTime;
-    }
-
-    // TODO see if this is OK here. We can use another executor for the
-    // parallel threads, and implement various modes of computation and
-    // runners.
-    public void run(IDataflow dataflow) {
-      
-    }
-    
-    @Override
-    public IScript run(URL resource) throws KlabException {
-
-        IScript ret = null;
-
-        /*
-         * 'script' can be .kim (test namespace) or .ks (host language script)
-         */
-        if (resource.toString().endsWith(".kim")) {
-
-            // TODO this must create a task and a script in it.
-            Klab.INSTANCE.info("running namespace " + resource);
-            return new Script(this, resource);
-        }
-
-        return ret;
-    }
-
-    @Override
-    public boolean is(Type type) {
-        return TYPE == type;
-    }
-
-    @Override
-    public IMonitor getMonitor() {
-        return monitor;
-    }
-
-    public MulticastMessageBus getMessageBus() {
-        return multicastBus;
-    }
-
-    /**
-     * Get the Executor that will run script tasks.
-     * 
-     * @return a valid executor
+    /*
+     * if we have been asked to open a communication channel from a client, do so. The channel
+     * should be unique among all engines on the same network.
      */
-    public ExecutorService getScriptExecutor() {
-        if (scriptExecutor == null) {
-            // TODO condition both the type and the parameters of the executor to options
-            scriptExecutor = Executors.newFixedThreadPool(10);
-        }
-        return scriptExecutor;
+    if (options.getMulticastChannel() != null) {
+      Klab.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
+          + " communicating on port " + options.getPort());
+      this.multicastBus =
+          new MulticastMessageBus(this, options.getMulticastChannel(), options.getPort());
     }
 
-    /**
-     * Get the Executor that will run script tasks.
-     * 
-     * @return a valid executor
-     */
-    public ExecutorService getTaskExecutor() {
-        if (taskExecutor == null) {
-            // TODO condition both the type and the parameters of the executor to options
-          taskExecutor = Executors.newFixedThreadPool(30);
-        }
-        return taskExecutor;
+    boolean ret = true;
+    try {
+      /*
+       * read core OWL knowledge from classpath
+       */
+      if (!Workspaces.INSTANCE.loadCoreKnowledge(this.monitor)) {
+        return false;
+      }
+
+      /*
+       * Install the k.IM validator to build concepts and model objects
+       */
+      Kim.INSTANCE.setValidator(new KimValidator(this.monitor));
+
+      /*
+       * initialize but do not load the local workspace, so that we can later override the worldview
+       * if we have some worldview projects in the workspace.
+       */
+      Workspaces.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
+
+      /*
+       * prime and check integrity of kboxes; init listeners for Kim reading
+       */
+
+      /*
+       * get worldview from certificate and sync it
+       */
+      if (!Workspaces.INSTANCE.loadWorldview(certificate, this.monitor)) {
+        return false;
+      }
+
+      /*
+       * hop on the network
+       */
+
+      /*
+       * sync components and load binary assets
+       */
+      // Workspaces.INSTANCE.loadComponents(options.get);
+
+      /*
+       * all binary content is now available: scan the classpath for recognized extensions
+       */
+      scanClasspath();
+
+      /*
+       * load component knowledge after their binary content is registered.
+       */
+
+      /*
+       * now we can finally load the workspace
+       */
+      if (!Workspaces.INSTANCE.loadLocalWorkspace(this.monitor)) {
+        return false;
+      }
+
+      /*
+       * run any init scripts from configuration
+       */
+
+      /*
+       * run any init scripts from parameters
+       */
+
+      /*
+       * if exit after scripts is requested, exit
+       */
+      if (options.isExitAfterStartup()) {
+        System.exit(0);
+      }
+
+    } catch (Exception e) {
+      ret = false;
     }
+
+    return ret;
+  }
+
+  private void scanClasspath() throws KlabException {
+
+    registerCommonAnnotations();
+
+    // TODO reinstate whatever must be kept plus any data services and subsystems
+    Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
+      @SuppressWarnings("unchecked")
+      @Override
+      public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+        String concept = ((SubjectType) annotation).value();
+        if (ISubject.class.isAssignableFrom(cls)) {
+          Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
+        }
+      }
+    });
+
+    Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
+      @Override
+      public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+        // String id = ((KlabBatchRunner) annotation).id();
+        // if (IBatchRunner.class.isAssignableFrom(cls)) {
+        // KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
+        // }
+      }
+    });
+
+    Klab.INSTANCE.registerAnnotationHandler(KimToolkit.class, new AnnotationHandler() {
+      @Override
+      public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+        Klab.INSTANCE.registerKimToolkit(cls);
+      }
+    });
+
+    Klab.INSTANCE.scanPackage("org.integratedmodelling.klab");
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public Date getBootTime() {
+    return bootTime;
+  }
+
+  // TODO see if this is OK here. We can use another executor for the
+  // parallel threads, and implement various modes of computation and
+  // runners.
+  public void run(IDataflow dataflow) {
+
+  }
+
+  @Override
+  public IScript run(URL resource) throws KlabException {
+
+    IScript ret = null;
+
+    /*
+     * 'script' can be .kim (test namespace) or .ks (host language script)
+     */
+    if (resource.toString().endsWith(".kim")) {
+
+      // TODO this must create a task and a script in it.
+      Klab.INSTANCE.info("running namespace " + resource);
+      return new Script(this, resource);
+    }
+
+    return ret;
+  }
+
+  @Override
+  public boolean is(Type type) {
+    return TYPE == type;
+  }
+
+  @Override
+  public IMonitor getMonitor() {
+    return monitor;
+  }
+
+  public MulticastMessageBus getMessageBus() {
+    return multicastBus;
+  }
+
+  /**
+   * Get the Executor that will run script tasks.
+   * 
+   * @return a valid executor
+   */
+  public ExecutorService getScriptExecutor() {
+    if (scriptExecutor == null) {
+      // TODO condition both the type and the parameters of the executor to options
+      scriptExecutor = Executors.newFixedThreadPool(10);
+    }
+    return scriptExecutor;
+  }
+
+  /**
+   * Get the Executor that will run script tasks.
+   * 
+   * @return a valid executor
+   */
+  public ExecutorService getTaskExecutor() {
+    if (taskExecutor == null) {
+      // TODO condition both the type and the parameters of the executor to options
+      taskExecutor = Executors.newFixedThreadPool(30);
+    }
+    return taskExecutor;
+  }
 
 }

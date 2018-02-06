@@ -54,7 +54,7 @@ public enum Observations implements IObservationService {
     if (agentClass != null) {
       try {
         constructor =
-            agentClass.getConstructor(String.class, IObservable.class, IScale.class);
+            agentClass.getConstructor(String.class, IObservable.class, IScale.class, IMonitor.class);
       } catch (Exception e) {
         throw new KlabInternalErrorException(
             "No viable constructor found for Java class '" + agentClass.getCanonicalName()
@@ -63,7 +63,7 @@ public enum Observations implements IObservationService {
 
       try {
         result = (Subject) constructor.newInstance(observer.getName(), observer.getObservable(),
-            Scale.create(observer.getBehavior().getExtents(monitor)));
+            Scale.create(observer.getBehavior().getExtents(monitor)), monitor);
       } catch (Exception e) {
         throw new KlabInternalErrorException(
             "Unable to generate new instance of Java class '" + agentClass.getCanonicalName()
@@ -72,7 +72,7 @@ public enum Observations implements IObservationService {
     } else {
       
       result = Subject.create(observer.getName(), (Observable)observer.getObservable(),
-            Scale.create(observer.getBehavior().getExtents(monitor)));
+            Scale.create(observer.getBehavior().getExtents(monitor)), monitor);
       
     }
 

@@ -85,12 +85,6 @@ public interface ITimePeriod extends ITime {
     public boolean overlaps(ITime other);
 
     /**
-     * Overriding to constrain return type
-     */
-    @Override
-    public ITime union(IExtent other) throws KlabException;
-
-    /**
      * Return duration in milliseconds.
      * 
      * @return duration in ms

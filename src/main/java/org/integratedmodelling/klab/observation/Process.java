@@ -4,12 +4,13 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Process extends DirectObservation implements IProcess {
 
-    private Process(String name, Observable observable, Scale scale) {
-        super(name, observable, scale);
+    private Process(String name, Observable observable, Scale scale, IMonitor monitor) {
+        super(name, observable, scale, monitor);
         // TODO Auto-generated constructor stub
     }
 

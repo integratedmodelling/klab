@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState.Mediator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
@@ -86,7 +87,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public IExtent union(IExtent other) throws KlabException {
+    public IExtent union(ITopologicallyComparable<?> other) throws KlabException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -134,7 +135,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public ITime intersection(IExtent other) throws KlabException {
+    public ITime intersection(ITopologicallyComparable<?> other) throws KlabException {
         // TODO Auto-generated method stub
         return null;
     }

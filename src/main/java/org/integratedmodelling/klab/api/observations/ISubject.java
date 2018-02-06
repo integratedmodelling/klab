@@ -5,10 +5,17 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.services.IOntologyService;
 
 /**
+ * A subject can be inside a root observation or (unique among observation) <i>be</i> a root
+ * observation itself. As identity, all Subjects in a session have the parent {@link ISession} as
+ * the parent identity. As observations, their lineage is accessible through the
+ * {@link IObservation} API. Only subjects can have events, processes, relationships, configurations
+ * and other subjects as children. In addition, subjects and all other direct observations can have
+ * states as children.
  * 
  * @author ferdinando.villa
  *

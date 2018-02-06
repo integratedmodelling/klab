@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.RuntimeContext;
@@ -20,8 +21,8 @@ public class Subject extends DirectObservation implements ISubject {
 
   private RuntimeContext runtimeContext;
 
-  private Subject(String name, Observable observable, Scale scale) {
-    super(name, observable, scale);
+  private Subject(String name, Observable observable, Scale scale, IMonitor monitor) {
+    super(name, observable, scale, monitor);
     // TODO Auto-generated constructor stub
   }
 
@@ -32,10 +33,11 @@ public class Subject extends DirectObservation implements ISubject {
    * @param name
    * @param observable
    * @param scale
+   * @param monitor 
    * @return
    */
-  public static Subject create(String name, Observable observable, Scale scale) {
-    return new Subject(name, observable, scale);
+  public static Subject create(String name, Observable observable, Scale scale, IMonitor monitor) {
+    return new Subject(name, observable, scale, monitor);
   }
   
   /**
@@ -44,10 +46,11 @@ public class Subject extends DirectObservation implements ISubject {
    * @param observable
    * @param scale
    * @param context
+   * @param monitor 
    * @return
    */
-  public static Subject create(String name, Observable observable, Scale scale, Subject context) {
-    Subject ret = new Subject(name, observable, scale);
+  public static Subject create(String name, Observable observable, Scale scale, Subject context, IMonitor monitor) {
+    Subject ret = new Subject(name, observable, scale, monitor);
     ret.setContextObservation(context);
     return ret;
   }

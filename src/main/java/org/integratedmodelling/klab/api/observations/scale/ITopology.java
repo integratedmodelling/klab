@@ -26,8 +26,6 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale;
 
-import org.integratedmodelling.klab.exceptions.KlabException;
-
 public interface ITopology<T> extends ITopologicallyComparable<T> {
 
     public static final long INFINITE          = Long.MAX_VALUE;
@@ -40,28 +38,5 @@ public interface ITopology<T> extends ITopologicallyComparable<T> {
      * @return number of subdivisions
      */
     public long getMultiplicity();
-
-    /**
-     * Return a topology which represents the intersection of this with the passed
-     * one. Thinklab expects that the intersected extent can be index-remapped to
-     * a sub-extent of this by simple offsetting. This means that subdivisions need 
-     * to be "in phase" between the two extents.
-     * 
-     * @param other
-     * @return intersection of other and this
-     * @throws KlabException 
-     */
-    public T intersection(T other) throws KlabException;
-
-    /**
-     * Return a topology which represents the union of this with the passed
-     * one. As in intersection(), the union extent must be in phase with
-     * the original one.
-     * 
-     * @param other
-     * @return union of other and this
-     * @throws KlabException 
-     */
-    public T union(T other) throws KlabException;
 
 }

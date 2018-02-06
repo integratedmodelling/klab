@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.owl.Observable;
@@ -17,13 +18,18 @@ public abstract class Observation implements IObservation {
 
   private Scale             scale;
   private Observable        observable;
-  private String            id               = NameGenerator.shortUUID();
+  private String            token            = NameGenerator.shortUUID();
   private Subject           observer;
   private DirectObservation contextObservation;
+  private Monitor           monitor;
 
-  protected Observation(Observable observable, Scale scale) {
+  private IIdentity parentIdentity;
+  
+  protected Observation(Observable observable, Scale scale, IMonitor monitor) {
     this.observable = observable;
     this.scale = scale;
+    this.monitor = ((Monitor) monitor).get(this);
+    this.parentIdentity = monitor.getIdentity();
   }
 
   @Override
@@ -58,43 +64,37 @@ public abstract class Observation implements IObservation {
 
   @Override
   public boolean isSpatial() {
-    // TODO Auto-generated method stub
-    return false;
+    return scale.getSpace() != null;
   }
 
   @Override
   public Space getSpace() {
-    // TODO Auto-generated method stub
-    return null;
+    return scale.getSpace();
   }
 
   @Override
   public IEngineSessionIdentity getParentIdentity() {
-    // TODO Auto-generated method stub
-    return null;
+    return parentIdentity.getParent(IEngineSessionIdentity.class);
   }
 
   @Override
   public Monitor getMonitor() {
-    // TODO Auto-generated method stub
-    return null;
+    return monitor;
   }
 
   @Override
   public String getToken() {
-    // TODO Auto-generated method stub
-    return null;
+    return token;
   }
 
   @Override
   public boolean is(Type type) {
-    // TODO Auto-generated method stub
-    return false;
+    return type == Type.OBSERVATION;
   }
 
   @Override
   public <T extends IIdentity> T getParent(Class<T> type) {
-      return IIdentity.findParent(this, type);
+    return IIdentity.findParent(this, type);
   }
 
   @Override
@@ -124,11 +124,11 @@ public abstract class Observation implements IObservation {
   }
 
   public String getId() {
-    return id;
+    return token;
   }
 
   public void setId(String id) {
-    this.id = id;
+    this.token = id;
   }
 
   public DirectObservation getContextObservation() {

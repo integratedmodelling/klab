@@ -52,12 +52,6 @@ public interface ITime extends IExtent {
     ITimePeriod collapse();
 
     /**
-     * Overriding to constrain the result type further
-     */
-    @Override
-    public ITime intersection(IExtent other) throws KlabException;
-
-    /**
      * May be null in partially specified extents.
      * 
      * @return start time

@@ -5,18 +5,19 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class State extends Observation implements IState {
 
-    private State(Observable observable, Scale scale) {
-        super(observable, scale);
+    private State(Observable observable, Scale scale, IMonitor monitor) {
+        super(observable, scale, monitor);
         // TODO Auto-generated constructor stub
     }
 
     private static final long serialVersionUID = -7075415960868285693L;
     
-    public static State create(String name, IObservable observable, ISubject context) {
+    public static State create(String name, IObservable observable, ISubject context, IMonitor monitor) {
         return null;
     }
     
