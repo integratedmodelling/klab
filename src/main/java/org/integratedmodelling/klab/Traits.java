@@ -20,122 +20,103 @@ import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.OWL;
 
 public enum Traits implements ITraitService {
-    INSTANCE;
+  INSTANCE;
 
-    @Override
-    public Collection<IConcept> getTraits(IKnowledge concept) {
+  @Override
+  public Collection<IConcept> getTraits(IKnowledge concept) {
 
-        Set<IConcept> ret = new HashSet<>();
+    Set<IConcept> ret = new HashSet<>();
 
-        if (concept instanceof IConcept) {
-            ret.addAll(OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_REALM_PROPERTY)));
-            ret.addAll(OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_IDENTITY_PROPERTY)));
-            ret.addAll(OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY)));
-        }
-        return ret;
+    if (concept instanceof IConcept) {
+      ret.addAll(
+          OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_REALM_PROPERTY)));
+      ret.addAll(OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+          Concepts.p(NS.HAS_IDENTITY_PROPERTY)));
+      ret.addAll(OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+          Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY)));
+    }
+    return ret;
+  }
+
+  @Override
+  public IConcept getBaseParentTrait(IConcept trait) {
+
+    String orig = trait.getMetadata().getString(NS.ORIGINAL_TRAIT);
+    if (orig != null) {
+      trait = Concepts.c(orig);
     }
 
-    @Override
-    public IConcept getBaseParentTrait(IConcept trait) {
-
-        String orig = trait.getMetadata().getString(NS.ORIGINAL_TRAIT);
-        if (orig != null) {
-            trait = Concepts.c(orig);
-        }
-        
-        /*
-         * there should only be one of these or none.
-         */
-        if (trait.getMetadata().get(NS.BASE_DECLARATION) != null) {
-            return trait;
-        }
-
-        for (IConcept c : trait.getAllParents()) {
-            IConcept r = getBaseParentTrait(c);
-            if (r != null) {
-                return r;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public boolean hasTrait(IConcept type, IConcept trait) {
-
-        for (IConcept c : getTraits(type)) {
-            if (c.is(trait)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-    
-    @Override
-    public boolean hasParentTrait(IConcept type, IConcept trait) {
-
-        for (IConcept c : getTraits(type)) {
-            if (trait.is(c)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-    
-    public void restrict(IConcept target, IProperty property, LogicalConnector how, Set<IConcept> fillers)
-            throws KlabValidationException {
-
-        /*
-         * divide up in bins according to base trait; take property from annotation;
-         * restrict each group.
-         */
-        Map<IConcept, List<IConcept>> pairs = new HashMap<>();
-        for (IConcept t : fillers) {
-            IConcept base = getBaseParentTrait(t);
-            if (!pairs.containsKey(base)) {
-                pairs.put(base, new ArrayList<>());
-            }
-            pairs.get(base).add(t);
-        }
-
-        for (IConcept base : pairs.keySet()) {
-
-            String prop = base.getMetadata().getString(NS.TRAIT_RESTRICTING_PROPERTY);
-            if (prop == null || Concepts.INSTANCE.getProperty(prop) == null) {
-                if (base.is(Type.SUBJECTIVE)) {
-                    /*
-                     * we can assign any subjective traits to anything
-                     */
-                    prop = NS.HAS_SUBJECTIVE_TRAIT_PROPERTY;
-                } else {
-                    throw new KlabValidationException("cannot find property to restrict for trait " + base);
-                }
-            }
-            OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base));
-        }
-
-    }
-
-    /**
-     * Return the concept that defines the abstract trait of the observability of the
-     * passed observable in the context, or the concrete trait of it being actually
-     * observable. Use {@link #getNegation(IConcept)} to deny the concrete trait if
-     * necessary. Both concepts (the abstract and the concrete) are created when missing
-     * upon a single invocation.
-     * 
-     * @param observable
-     * @param isAbstract
-     * @return
+    /*
+     * there should only be one of these or none.
      */
-    public IConcept getObservabilityOf(IConcept observable, boolean isAbstract) {
-
-        if (observable.is(Concepts.c(NS.CORE_OBSERVABILITY_TRAIT))) {
-            return observable;
-        }
-        
-        return Concepts.INSTANCE.declare("observability of (" + observable.getDefinition() + ")");
+    if (trait.getMetadata().get(NS.BASE_DECLARATION) != null) {
+      return trait;
     }
 
+    for (IConcept c : trait.getAllParents()) {
+      IConcept r = getBaseParentTrait(c);
+      if (r != null) {
+        return r;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public boolean hasTrait(IConcept type, IConcept trait) {
+
+    for (IConcept c : getTraits(type)) {
+      if (c.is(trait)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean hasParentTrait(IConcept type, IConcept trait) {
+
+    for (IConcept c : getTraits(type)) {
+      if (trait.is(c)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public void restrict(IConcept target, IProperty property, LogicalConnector how,
+      Set<IConcept> fillers) throws KlabValidationException {
+
+    /*
+     * divide up in bins according to base trait; take property from annotation; restrict each
+     * group.
+     */
+    Map<IConcept, List<IConcept>> pairs = new HashMap<>();
+    for (IConcept t : fillers) {
+      IConcept base = getBaseParentTrait(t);
+      if (!pairs.containsKey(base)) {
+        pairs.put(base, new ArrayList<>());
+      }
+      pairs.get(base).add(t);
+    }
+
+    for (IConcept base : pairs.keySet()) {
+
+      String prop = base.getMetadata().getString(NS.TRAIT_RESTRICTING_PROPERTY);
+      if (prop == null || Concepts.INSTANCE.getProperty(prop) == null) {
+        if (base.is(Type.SUBJECTIVE)) {
+          /*
+           * we can assign any subjective traits to anything
+           */
+          prop = NS.HAS_SUBJECTIVE_TRAIT_PROPERTY;
+        } else {
+          throw new KlabValidationException("cannot find property to restrict for trait " + base);
+        }
+      }
+      OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base));
+    }
+  }
 
 }

@@ -17,7 +17,9 @@ import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.kim.ConceptBuilder;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 
 /**
  * Methods to deal with classified types. <p> The following classified types can exist:
@@ -199,13 +201,13 @@ public enum Types implements ITypeService {
             }
         } else if (original.is(Type.TRAIT)) {
             if (by == null) {
-                return Observables.INSTANCE.makeTypeFor(original);
+                return ObservableBuilder.makeType(original, true);
             } else {
                 // TODO
             }
         } else if (original.is(Type.DIRECT_OBSERVABLE)) {
             if (by == null) {
-                return Observables.INSTANCE.makeTypeFor(Traits.INSTANCE.getObservabilityOf(original, true));
+                return ObservableBuilder.makeType(ObservableBuilder.makeObservability(original, true), true);
             } else {
 
             }

@@ -316,25 +316,4 @@ public enum Observables implements IObservableService {
 		return declare(main, type, Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
 	}
 
-	// @Override
-	// public IObservable declare(IKimObservable obs) {
-	// // TODO Auto-generated method stub
-	// System.out.println(obs.toString());
-	// return null;
-	// }
-	
-    /**
-     * Produce a type that exposes a single passed trait.
-     * 
-     * @param trait
-     * @return
-     */
-    public IConcept makeTypeFor(IConcept trait) {
-        if (trait.is(Type.CLASS)) {
-            return trait;
-        }
-        return Concepts.INSTANCE.declare("type of (" + trait.getDefinition() + ")");
-    }
-
-
 }

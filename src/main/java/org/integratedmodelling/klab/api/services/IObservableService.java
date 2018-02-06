@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.SemanticOperator;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -247,7 +247,7 @@ public interface IObservableService {
 		 * @param participants
 		 * @return the same builder this was called on, for chaining calls
 		 */
-		Builder as(SemanticOperator type, IConcept... participants);
+		Builder as(UnarySemanticOperator type, IConcept... participants);
 
 		/**
 		 * Add traits to the concept being built.
