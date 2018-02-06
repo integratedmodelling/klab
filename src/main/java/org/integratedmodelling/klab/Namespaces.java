@@ -10,41 +10,42 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public enum Namespaces implements INamespaceService {
 
-    INSTANCE;
+  INSTANCE;
 
-    private Map<String, INamespace> namespaces = Collections.synchronizedMap(new HashMap<>());
-    
-    @Override
-    public INamespace getNamespace(String namespaceId) {
-        return namespaces.get(namespaceId);
+  private Map<String, INamespace> namespaces = Collections.synchronizedMap(new HashMap<>());
+
+  @Override
+  public INamespace getNamespace(String namespaceId) {
+    return namespaces.get(namespaceId);
+  }
+
+  /*
+   * Non-API
+   */
+  public void registerNamespace(INamespace namespace, IMonitor monitor) {
+    Models.INSTANCE.finalizeNamespace(namespace, monitor);
+    namespaces.put(namespace.getName(), namespace);
+  }
+
+  /**
+   * Non-API. Release the named namespace, de-indexing any indexed objects it contained.
+   * 
+   * @param name
+   * @param monitor
+   * @throws KlabException
+   */
+  public void release(INamespace namespace, IMonitor monitor) throws KlabException {
+
+    Models.INSTANCE.releaseNamespace(namespace, monitor);
+    Observations.INSTANCE.releaseNamespace(namespace, monitor);
+
+    INamespace ns = namespaces.get(namespace.getName());
+    if (ns != null) {
+      if (ns.getOntology() != null) {
+        Ontologies.INSTANCE.release(ns.getOntology());
+      }
+      namespaces.remove(namespace.getName());
     }
-
-    /*
-     * Non-API
-     */
-    public void registerNamespace(INamespace namespace) {
-        namespaces.put(namespace.getName(), namespace);
-    }
-
-    /**
-     * Non-API. Release the named namespace, de-indexing any indexed objects it contained. 
-     * 
-     * @param name
-     * @param monitor
-     * @throws KlabException
-     */
-    public void release(String name, IMonitor monitor) throws KlabException {
-
-        Models.INSTANCE.releaseNamespace(name, monitor);
-        Observations.INSTANCE.releaseNamespace(name, monitor);
-
-        INamespace ns = namespaces.get(name);
-        if (ns != null) {
-            if (ns.getOntology() != null) {
-                Ontologies.INSTANCE.release(ns.getOntology());
-            }
-            namespaces.remove(name);
-        }
-    }
+  }
 
 }

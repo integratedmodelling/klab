@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
@@ -45,7 +45,7 @@ public abstract class AbstractWorkspace implements IWorkspace {
 	}
 
 	@Override
-	public List<INamespace> load(boolean incremental) throws KlabException {
+	public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
 
 		List<INamespace> ret = new ArrayList<>();
 		try {

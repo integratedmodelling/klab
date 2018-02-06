@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -10,6 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.model.Namespace;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -62,11 +62,11 @@ public class KlabReasoner {
         return on;
     }
 
-    public KlabReasoner(OWL owl) {
+    public KlabReasoner(OWL owl, IMonitor monitor) {
         overall = (Ontology) owl.requireOntology(ONTOLOGY_ID, OWL.INTERNAL_ONTOLOGY_PREFIX);
         overall.setInternal(true);
         if (Namespaces.INSTANCE.getNamespace(ONTOLOGY_ID) == null) {
-            Namespaces.INSTANCE.registerNamespace(new Namespace(ONTOLOGY_ID, null, overall));
+            Namespaces.INSTANCE.registerNamespace(new Namespace(ONTOLOGY_ID, null, overall), monitor);
         }
         if (Configuration.INSTANCE.useReasoner()) {
             this.reasoner = new Reasoner.ReasonerFactory()

@@ -221,21 +221,23 @@ public enum OWL {
 
     /**
      * Create a manager and load every OWL file under the load path.
+     * @param loadPath 
+     * @param monitor 
      * 
      * @throws KlabException
      */
-    public void initialize(File loadPath) throws KlabException {
+    public void initialize(File loadPath, IMonitor monitor) throws KlabException {
         manager = OWLManager.createOWLOntologyManager();
         this.loadPath = loadPath;
-        initialize();
+        initialize(monitor);
     }
 
-    public void createReasoner() {
+    public void createReasoner(IMonitor monitor) {
 
         /*
          * Create the reasoner.
          */
-        Reasoner.INSTANCE.setReasoner(new KlabReasoner(this));
+        Reasoner.INSTANCE.setReasoner(new KlabReasoner(this, monitor));
 
         /*
          * all namespaces so far are internal, and just these.
@@ -245,7 +247,7 @@ public enum OWL {
         }
     }
 
-    private void initialize() throws KlabException {
+    private void initialize(IMonitor monitor) throws KlabException {
 
         /*
          * FIXME manual mapping until I understand what's going on with BFO, whose
@@ -275,7 +277,7 @@ public enum OWL {
             ((Ontology) (ns.getOntology())).setInternal(true);
         }
 
-        createReasoner();
+        createReasoner(monitor);
     }
 
     String importOntology(OWLOntology ontology, String resource, String namespace, boolean imported, IMonitor monitor)

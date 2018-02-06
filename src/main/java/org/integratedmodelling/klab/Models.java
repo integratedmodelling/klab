@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
@@ -38,19 +40,20 @@ public enum Models implements IModelService {
 
   INSTANCE;
 
-  private static final String KBOX_NAME = "models";
-  
-  @Inject
-  ParseHelper<Model> modelParser;
+  private static final String KBOX_NAME      = "models";
 
   @Inject
-  IResourceValidator validator;
+  ParseHelper<Model>          modelParser;
+
+  @Inject
+  IResourceValidator          validator;
 
   /*
    * index for local models
    */
-  private ModelKbox kbox = null;
-  
+  private ModelKbox           kbox           = null;
+  Map<String, Integer>        recheckModelNS = new HashMap<>();
+
   private Models() {
     IInjectorProvider injectorProvider = new KimInjectorProvider();
     Injector injector = injectorProvider.getInjector();
@@ -100,7 +103,7 @@ public enum Models implements IModelService {
             .getNamespace(EcoreUtil.getURI(model.getNamespace()), model.getNamespace(), true);
 
         if (namespace != null && Kim.INSTANCE.getValidator() != null) {
-          ret = (Namespace) ((KimValidator) Kim.INSTANCE.getValidator()).with((Monitor)monitor)
+          ret = (Namespace) ((KimValidator) Kim.INSTANCE.getValidator()).with((Monitor) monitor)
               .synchronizeNamespaceWithRuntime(namespace);
         }
       }
@@ -112,8 +115,11 @@ public enum Models implements IModelService {
   }
 
   @Override
-  public void releaseNamespace(String name, IMonitor monitor) throws KlabException {
-      kbox.clearNamespace(name, monitor);
+  public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
+    int cmodel = kbox.removeIfOlder(namespace, monitor);
+    if (cmodel > 0) {
+      recheckModelNS.put(namespace.getName(), cmodel);
+    }
   }
 
   @Override
@@ -125,6 +131,23 @@ public enum Models implements IModelService {
   public List<RankedModel> resolve(IObservable observable, IResolutionScope scope) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  /*
+   * Non-API - finalize namespace storage in kbox for proper synchronization 
+   * @param namespace
+   * @param monitor
+   */
+  public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
+
+    Integer storingNamespace = recheckModelNS.remove(namespace.getId());
+    if (storingNamespace != null && storingNamespace > 0 && !(namespace.getProject().isRemote())) {
+        try {
+            kbox.store(namespace, monitor);
+        } catch (Exception e) {
+            monitor.error("error storing namespace", e);
+        }
+    }
   }
 
 }

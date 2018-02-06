@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IWorkspaceService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
@@ -70,10 +71,10 @@ public enum Workspaces implements IWorkspaceService {
     /*
      * Extract and load the OWL core knowledge workspace.
      */
-    public boolean loadCoreKnowledge() {
+    public boolean loadCoreKnowledge(IMonitor monitor) {
         try {
             coreKnowledge = new CoreOntology(Configuration.INSTANCE.getDataPath("knowledge"));
-            coreKnowledge.load(false);
+            coreKnowledge.load(false, monitor);
             workspaces.put(coreKnowledge.getName(), coreKnowledge);
             return true;
         } catch (Throwable e) {
@@ -86,11 +87,11 @@ public enum Workspaces implements IWorkspaceService {
      * Create and load the components workspace. TODO needs the network to obtain components, then add/override any
      * local ones.
      */
-    public boolean loadComponents(File[] localComponentPaths) {
+    public boolean loadComponents(File[] localComponentPaths, IMonitor monitor) {
         try {
             components = new MonitorableFileWorkspace(Configuration.INSTANCE
                     .getDataPath("components"), localComponentPaths);
-            components.load(false);
+            components.load(false, monitor);
             workspaces.put(components.getName(), components);
             return true;
         } catch (Throwable e) {
@@ -103,10 +104,10 @@ public enum Workspaces implements IWorkspaceService {
      * Create and load the worldview specified by the Git repositories pointed to
      * by the certificate.
      */
-    public boolean loadWorldview(ICertificate certificate) {
+    public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
         try {
             worldview = certificate.getWorldview();
-            worldview.load(false);
+            worldview.load(false, monitor);
             workspaces.put(worldview.getName(), worldview);
 
             return true;
@@ -127,7 +128,7 @@ public enum Workspaces implements IWorkspaceService {
     /*
      * Initialize (index but do not load) the local workspace from the passed path.
      */
-    public void initializeLocalWorkspace(File workspaceRoot) {
+    public void initializeLocalWorkspace(File workspaceRoot, IMonitor monitor) {
         if (local == null) {
             local = new MonitorableFileWorkspace(workspaceRoot);
         }
@@ -136,9 +137,9 @@ public enum Workspaces implements IWorkspaceService {
     /*
      * Create and load the local workspace.
      */
-    public boolean loadLocalWorkspace() {
+    public boolean loadLocalWorkspace(IMonitor monitor) {
         try {
-            getLocal().load(false);
+            getLocal().load(false, monitor);
             return true;
         } catch (Throwable e) {
             Klab.INSTANCE.error(e.getLocalizedMessage());

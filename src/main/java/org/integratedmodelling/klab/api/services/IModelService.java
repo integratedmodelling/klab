@@ -53,11 +53,11 @@ public interface IModelService {
     /**
      * Release all models pertaining to named namespace, both in live and persistent storage.
      * 
-     * @param name
+     * @param namespace
      * @param monitor 
      * @throws KlabException 
      */
-    void releaseNamespace(String name, IMonitor monitor) throws KlabException;
+    void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
     /**
      * Store model in kbox.

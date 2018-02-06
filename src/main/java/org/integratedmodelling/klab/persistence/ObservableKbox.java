@@ -342,6 +342,7 @@ public abstract class ObservableKbox extends H2Kbox {
     }
 
     public ObservableKbox(String name) {
+      
         super(name);
 
         setSchema(IConcept.class, new ObservableSchema());
@@ -413,7 +414,6 @@ public abstract class ObservableKbox extends H2Kbox {
                 }
             }
         }
-        ;
 
         Handler handler = new Handler();
         database.query("SELECT * FROM metadata WHERE fid = " + oid, handler);

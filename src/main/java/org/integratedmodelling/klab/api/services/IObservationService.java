@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.services;
 
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -18,11 +19,11 @@ public interface IObservationService {
      * Release all information pertaining to named namespace, both in live and 
      * persistent storage.
      * 
-     * @param name
+     * @param namespace
      * @param monitor 
      * @throws KlabException 
      */
-    void releaseNamespace(String name, IMonitor monitor) throws KlabException;
+    void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
     /**
      * Index passed observation definition for retrieval.

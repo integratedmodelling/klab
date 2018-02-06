@@ -40,13 +40,14 @@ import org.integratedmodelling.klab.model.Namespace;
 
 public class KimValidator implements Kim.Validator {
 
-  Monitor             monitor;
-
+  Monitor              monitor;
+  Map<String, Integer> recheckObservationNS  = new HashMap<>();
+  
   /*
    * holds the mapping between the actual ontology ID and the declared one in root domains where
    * "import <coreUrl> as <prefix>" was used.
    */
-  Map<String, String> corePrefixTranslation = new HashMap<>();
+  Map<String, String>  corePrefixTranslation = new HashMap<>();
 
   public KimValidator(Monitor monitor) {
     this.monitor = monitor;
@@ -64,14 +65,14 @@ public class KimValidator implements Kim.Validator {
   @Override
   public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 
+    Namespace ns = new Namespace(namespace);
+
     try {
-      Namespaces.INSTANCE.release(namespace.getName(), monitor);
+      Namespaces.INSTANCE.release(ns, monitor);
     } catch (KlabException e) {
       monitor.error(e);
     }
     
-    Namespace ns = new Namespace(namespace);
-
     for (Pair<String, String> imp : namespace.getOwlImports()) {
       String prefix =
           Workspaces.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
@@ -92,8 +93,8 @@ public class KimValidator implements Kim.Validator {
 
       if (statement instanceof IKimConceptStatement) {
         object = new ConceptStatement((IKimConceptStatement) statement);
-        IConcept concept =
-            ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns, (ConceptStatement) object, monitor);
+        IConcept concept = ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns,
+            (ConceptStatement) object, monitor);
         if (concept == null) {
           object = null;
         }
@@ -101,18 +102,20 @@ public class KimValidator implements Kim.Validator {
         object = ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
         if (object instanceof IModel) {
           try {
-            Models.INSTANCE.index((IModel)object, monitor);
+            Models.INSTANCE.index((IModel) object, monitor);
           } catch (KlabException e) {
-            monitor.error("error storing valid model " + ((IModel)object).getName() + ": "+ e.getMessage());
+            monitor.error(
+                "error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
           }
         }
       } else if (statement instanceof IKimObserver) {
         object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
         if (object instanceof IObserver) {
           try {
-            Observations.INSTANCE.index((IObserver)object, monitor);
+            Observations.INSTANCE.index((IObserver) object, monitor);
           } catch (KlabException e) {
-            monitor.error("error storing valid model " + ((IModel)object).getName() + ": "+ e.getMessage());
+            monitor.error(
+                "error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
           }
         }
       }
@@ -123,10 +126,11 @@ public class KimValidator implements Kim.Validator {
     }
 
     /*
-     * TODO finalize namespace and send any notification
+     * TODO finalize namespace, send any notification
      */
-
-    Namespaces.INSTANCE.registerNamespace(ns);
+    Namespaces.INSTANCE.registerNamespace(ns, monitor);
+    Observations.INSTANCE.registerNamespace(ns, monitor);
+    
     Reasoner.INSTANCE.addOntology(ns.getOntology());
 
     /*

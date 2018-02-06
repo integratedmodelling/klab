@@ -2,13 +2,16 @@ package org.integratedmodelling.klab;
 
 import java.lang.reflect.Constructor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.owl.Observable;
@@ -31,7 +34,7 @@ public enum Observations implements IObservationService {
   }
 
   @Override
-  public void releaseNamespace(String name, IMonitor monitor)  throws KlabException {
+  public void releaseNamespace(INamespace namespace, IMonitor monitor)  throws KlabException {
     // TODO remove all artifacts from local kbox
   }
 
@@ -74,5 +77,13 @@ public enum Observations implements IObservationService {
     }
 
     return result;
+  }
+
+  /*
+   * Non-API - sync namespace. TODO check equivalent in Models.
+   */
+  public void registerNamespace(Namespace ns, Monitor monitor) {
+    // TODO Auto-generated method stub
+    
   }
 }
