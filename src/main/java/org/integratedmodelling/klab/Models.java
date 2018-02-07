@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.persistence.ModelKbox;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -128,25 +130,30 @@ public enum Models implements IModelService {
   }
 
   @Override
-  public List<RankedModel> resolve(IObservable observable, IResolutionScope scope) {
-    // TODO Auto-generated method stub
-    return null;
+  public List<RankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
+    List<RankedModel> ret = new ArrayList<>();
+    for (IModel model : kbox.query(observable, (ResolutionScope) scope)) {
+      
+    }
+    return ret;
   }
 
   /*
-   * Non-API - finalize namespace storage in kbox for proper synchronization 
+   * Non-API - finalize namespace storage in kbox for proper synchronization
+   * 
    * @param namespace
+   * 
    * @param monitor
    */
   public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
 
     Integer storingNamespace = recheckModelNS.remove(namespace.getId());
     if (storingNamespace != null && storingNamespace > 0 && !(namespace.getProject().isRemote())) {
-        try {
-            kbox.store(namespace, monitor);
-        } catch (Exception e) {
-            monitor.error("error storing namespace", e);
-        }
+      try {
+        kbox.store(namespace, monitor);
+      } catch (Exception e) {
+        monitor.error("error storing namespace", e);
+      }
     }
   }
 

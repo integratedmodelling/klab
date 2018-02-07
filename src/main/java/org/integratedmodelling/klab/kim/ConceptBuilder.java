@@ -69,9 +69,6 @@ public enum ConceptBuilder {
         ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
         createProperties(ret, ns);
         ns.define();
-        if (kimObject != null) {
-          kimObject.set(ret);
-        }
       }
 
       return ret;
@@ -143,7 +140,7 @@ public enum ConceptBuilder {
       if (child instanceof IKimConceptStatement) {
         try {
           ConceptStatement chobj = kimObject == null ? null : new ConceptStatement((IKimConceptStatement)child);
-          IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, kimObject, monitor);
+          IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, chobj, monitor);
           namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getName()));
           namespace.define();
           kimObject.getChildren().add(chobj);
@@ -151,6 +148,10 @@ public enum ConceptBuilder {
           monitor.error(e);
         }
       }
+    }
+    
+    if (kimObject != null) {
+      kimObject.set(main);
     }
 
     return main;

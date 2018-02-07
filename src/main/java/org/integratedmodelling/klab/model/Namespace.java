@@ -34,7 +34,7 @@ public class Namespace extends KimObject implements INamespace {
   private boolean           canonical        = false;
   private boolean           scenario         = false;
   private boolean           inactive         = false;
-  private boolean           isPrivate         = false;
+  private boolean           isPrivate        = false;
   private long              timestamp        = 0l;
 
   List<IKimObject>          objects          = new ArrayList<>();
@@ -211,15 +211,36 @@ public class Namespace extends KimObject implements INamespace {
     return objects;
   }
 
+  /**
+   * Add each top-level object to the object list, and index it and all children by name.
+   * @param object
+   */
   public void addObject(IKimObject object) {
-    this.objectsByName.put(object.getId(), object);
+    indexObject(object);
     this.objects.add(object);
+  }
+
+  private void indexObject(IKimObject object) {
+    this.objectsByName.put(object.getId(), object);
+    for (IKimObject child : object.getChildren()) {
+      addObject(child);
+    }
   }
 
   @Override
   public List<IKimObject> getAllObjects() {
-    // TODO Auto-generated method stub
-    return null;
+    List<IKimObject> ret = new ArrayList<>();
+    for (IKimObject object : objects) {
+      addObjectToList(object, ret);
+    }
+    return ret;
+  }
+
+  private void addObjectToList(IKimObject object, List<IKimObject> ret) {
+    ret.add(object);
+    for (IKimObject child : object.getChildren()) {
+      addObjectToList(child, ret);
+    }
   }
 
   @Override

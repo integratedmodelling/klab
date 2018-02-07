@@ -145,7 +145,7 @@ public class Coverage implements ICoverage {
   }
 
   @Override
-  public ICoverage or(ICoverage coverage) throws KlabException {
+  public Coverage or(ICoverage coverage) throws KlabException {
 
     Coverage ret = new Coverage();
     ret.coverage = 1.0;
@@ -178,7 +178,7 @@ public class Coverage implements ICoverage {
   }
 
   @Override
-  public ICoverage and(ICoverage coverage) throws KlabException {
+  public Coverage and(ICoverage coverage) throws KlabException {
 
     Coverage ret = new Coverage();
     ret.coverage = 1.0;

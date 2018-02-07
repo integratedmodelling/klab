@@ -10,40 +10,41 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IPort;
 
 public class Dataflow implements IDataflow {
 
-    @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  String name;
 
-    @Override
-    public List<IPort> getInputs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public String getName() {
+    return name;
+  }
 
-    @Override
-    public List<IPort> getOutputs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public List<IPort> getInputs() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Iterator<IActuator> iterator() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public List<IPort> getOutputs() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public List<IActuator> getActuators() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public Iterator<IActuator> iterator() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public Collection<ILink> getLinks() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public List<IActuator> getActuators() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Collection<ILink> getLinks() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 }

@@ -74,8 +74,9 @@ public interface IModelService {
      * @param observable
      * @param scope
      * @return the list of candidates in decreasing rank.
+     * @throws KlabException 
      */
-    List<RankedModel> resolve(IObservable observable, IResolutionScope scope);
+    List<RankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException;
 
     /**
      * Load a single model file from a URL. Namespace must have no dependencies and name a worldview at the
