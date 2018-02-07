@@ -45,7 +45,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @author ferdinando.villa
  *
  */
-public interface IResolutionScope {
+public interface IResolutionScope extends ICoverage {
 
   public enum Mode {
     /**
@@ -110,13 +110,6 @@ public interface IResolutionScope {
    * @return the subject providing the resolution context
    */
   IDirectObservation getSubject();
-
-  /**
-   * Return the coverage for this resolution.
-   * 
-   * @return the current coverage
-   */
-  ICoverage getCoverage();
 
   /**
    * The provenance artifact that caused the resolution (either an observation or an observable).

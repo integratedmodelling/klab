@@ -50,6 +50,7 @@ public class ObservableBuilder implements Builder {
   private IConcept                      classifier;
   private IConcept                      downTo;
   private IConcept                      comparison;
+  private boolean                       optional;
 
   private List<IConcept>                traits    = new ArrayList<>();
   private List<IConcept>                roles     = new ArrayList<>();
@@ -167,14 +168,15 @@ public class ObservableBuilder implements Builder {
 
   @Override
   public Builder as(UnarySemanticOperator type, IConcept... participants) {
-    
+
     if (participants != null) {
       this.comparison = participants[0];
       if (participants.length > 1) {
-        throw new KlabRuntimeException("cannot handle more than one participant concept in semantic operator");
+        throw new KlabRuntimeException(
+            "cannot handle more than one participant concept in semantic operator");
       }
     }
-    
+
     if (resolveMain()) {
 
       switch (type) {
@@ -1185,5 +1187,11 @@ public class ObservableBuilder implements Builder {
 
   private boolean isTrivial() {
     return isTrivial;
+  }
+
+  @Override
+  public Builder optional() {
+    this.optional = true;
+    return this;
   }
 }

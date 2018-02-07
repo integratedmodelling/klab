@@ -321,7 +321,13 @@ public interface IObservableService {
 		 * @return the same builder this was called on, for chaining calls
 		 */
 		Builder negated();
-
+		
+		/**
+		 * Make the observable optional (used in dependencies)
+		 * @return
+		 */
+		Builder optional();
+		
 		/**
 		 * Use this to pass a declaration being parsed and set up a monitor so that
 		 * logically inconsistent declarations can be reported.

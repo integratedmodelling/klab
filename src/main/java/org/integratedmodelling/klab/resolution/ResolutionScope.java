@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.resolution;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Artifact;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -15,7 +14,7 @@ import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.owl.Observable;
 
-public class ResolutionScope implements IResolutionScope {
+public class ResolutionScope extends Coverage implements IResolutionScope {
 
   private DirectObservation subject;
   private Observable observable;
@@ -23,7 +22,6 @@ public class ResolutionScope implements IResolutionScope {
   private Collection<String> scenarios = new ArrayList<>();
   private Model model;
   private Namespace resolutionNamespace;
-  private Coverage coverage;
   private Prioritizer prioritizer;
   private Mode mode = Mode.RESOLUTION;
   private boolean generic;
@@ -32,6 +30,7 @@ public class ResolutionScope implements IResolutionScope {
   private IMonitor monitor;
 
   private ResolutionScope(ResolutionScope other) {
+    super(other.getScale());
     this.subject = other.subject;
     this.observable = other.observable;
     this.scale = other.scale;
@@ -54,6 +53,7 @@ public class ResolutionScope implements IResolutionScope {
    * @param scenarios
    */
   public ResolutionScope(Subject subject, String... scenarios) {
+    super(subject.getScale());
     this.subject = subject;
     this.scale = subject.getScale();
     this.observable = subject.getObservable();
@@ -98,11 +98,6 @@ public class ResolutionScope implements IResolutionScope {
   @Override
   public DirectObservation getSubject() {
     return subject;
-  }
-
-  @Override
-  public Coverage getCoverage() {
-    return coverage;
   }
 
   @Override
@@ -162,4 +157,9 @@ public class ResolutionScope implements IResolutionScope {
     return null;
   }
 
+  ResolutionScope merge(ResolutionScope scope) {
+    // TODO
+    return this;
+  }
+  
 }

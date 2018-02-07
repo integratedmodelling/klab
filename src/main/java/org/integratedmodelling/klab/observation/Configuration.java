@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.observation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 
-public class Configuration extends DirectObservation {
+public class Configuration extends CountableObservation {
 
     protected Configuration(String name, Observable observable, Scale scale, IMonitor monitor) {
         super(name, observable, scale, monitor);

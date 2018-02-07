@@ -81,7 +81,8 @@ public interface IResource extends Serializable {
     
     /**
      * Resources come with both system-defined and user-defined metadata. User metadata will be
-     * indexed by Dublin Core properties.
+     * indexed by Dublin Core properties. Other metadata fields will depend on the adapter used
+     * (for example, no-data values or metadata attributes such as name).
      * 
      * @return any metadata associated with the resource. Never null.
      */

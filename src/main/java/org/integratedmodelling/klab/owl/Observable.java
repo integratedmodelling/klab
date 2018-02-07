@@ -29,6 +29,7 @@ public class Observable implements IObservable {
   private IConcept        downTo;
   private Object          value;
   private ObservationType observationType;
+  private boolean         optional;
 
   @Override
   public IConcept getType() {
@@ -274,11 +275,20 @@ public class Observable implements IObservable {
 
   @Override
   public boolean isExtensive(IConcept extent) {
-    return 
-        observable != null &&
-        unit != null &&
-        observable.is(Type.EXTENSIVE_PROPERTY) &&
-        Units.INSTANCE.isDensity(unit, extent);
+    return observable != null && unit != null && observable.is(Type.EXTENSIVE_PROPERTY)
+        && Units.INSTANCE.isDensity(unit, extent);
+  }
+
+  public boolean isOptional() {
+    return optional;
+  }
+
+  public void setOptional(boolean optional) {
+    this.optional = optional;
+  }
+
+  public void setObservationType(ObservationType observationType) {
+    this.observationType = observationType;
   }
 
 }

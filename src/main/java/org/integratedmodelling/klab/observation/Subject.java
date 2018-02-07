@@ -17,13 +17,14 @@ import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.RuntimeContext;
 
-public class Subject extends DirectObservation implements ISubject {
+public class Subject extends CountableObservation implements ISubject {
 
   private RuntimeContext runtimeContext;
 
   private Subject(String name, Observable observable, Scale scale, IMonitor monitor) {
     super(name, observable, scale, monitor);
-    // TODO Auto-generated constructor stub
+    // resolution of the observable is optional
+    observable.setOptional(true);
   }
 
   private static final long serialVersionUID = 2466999232658613114L;

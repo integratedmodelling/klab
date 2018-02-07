@@ -37,9 +37,9 @@ public enum ConceptBuilder {
       final IMonitor monitor) {
     return build(concept, namespace, null, monitor);
   }
-  
-  public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject, 
-      final IMonitor monitor) {
+
+  public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace,
+      ConceptStatement kimObject, final IMonitor monitor) {
 
     if (concept.isMacro()) {
       return null;
@@ -86,7 +86,7 @@ public enum ConceptBuilder {
     String mainId = concept.getName();
 
     namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
-    
+
     // set the k.IM definition
     namespace.addAxiom(Axiom.AnnotationAssertion(mainId, NS.CONCEPT_DEFINITION_PROPERTY,
         namespace.getName() + ":" + concept.getName()));
@@ -139,8 +139,10 @@ public enum ConceptBuilder {
     for (IKimScope child : concept.getChildren()) {
       if (child instanceof IKimConceptStatement) {
         try {
-          ConceptStatement chobj = kimObject == null ? null : new ConceptStatement((IKimConceptStatement)child);
-          IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, chobj, monitor);
+          ConceptStatement chobj =
+              kimObject == null ? null : new ConceptStatement((IKimConceptStatement) child);
+          IConcept childConcept =
+              buildInternal((IKimConceptStatement) child, namespace, chobj, monitor);
           namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getName()));
           namespace.define();
           kimObject.getChildren().add(chobj);
@@ -149,7 +151,7 @@ public enum ConceptBuilder {
         }
       }
     }
-    
+
     if (kimObject != null) {
       kimObject.set(main);
     }
@@ -181,6 +183,8 @@ public enum ConceptBuilder {
       // TODO invoke a resolution function (in Extensions?) for values expressed through functions
       ret.setValue(concept.getValue());
     }
+
+    ret.setOptional(concept.isOptional());
 
     /*
      * TODO redefine observable if modifiers (by) were given
