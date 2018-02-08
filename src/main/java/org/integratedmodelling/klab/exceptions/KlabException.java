@@ -29,8 +29,7 @@ package org.integratedmodelling.klab.exceptions;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.provenance.IProvenance.Artifact;
+import org.integratedmodelling.klab.api.provenance.Artifact;
 
 @SuppressWarnings("javadoc")
 public class KlabException extends Exception {
@@ -72,7 +71,7 @@ public class KlabException extends Exception {
         return sw.toString();
     }
 
-    public IProvenance.Artifact getScope() {
+    public Artifact getScope() {
         return scope;
     }
 

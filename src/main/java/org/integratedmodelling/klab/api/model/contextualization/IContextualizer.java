@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.provenance.Artifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -37,6 +37,6 @@ public abstract interface IContextualizer {
    * @param provenance the provenance node, giving access to the observable and the model.
    * @param monitor a monitor for communicating with the view.
    */
-  void setRuntimeContext(IActuator actuator, IProvenance.Artifact provenance, IMonitor monitor);
+  void setRuntimeContext(IActuator actuator, Artifact provenance, IMonitor monitor);
 
 }

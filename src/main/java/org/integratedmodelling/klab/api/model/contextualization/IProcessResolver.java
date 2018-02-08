@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IProvenance.Artifact;
+import org.integratedmodelling.klab.api.provenance.Artifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 

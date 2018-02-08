@@ -26,13 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.ISemantic;
-import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 
 /**
  * The k.LAB view of provenance is made up of actions that link an actor to a result. It
@@ -64,156 +58,21 @@ public interface IProvenance {
          * @return
          */
         String getName();
-
+        
+        
         /**
-         * A node is usually a contextualization, in which case it should produce the
-         * observation being contextualized.
+         * Return the graph we're part of.
          * 
-         * @return
+         * @return the provenance graph
          */
-        IObservation getObservation();
-
-    }
-
-    /**
-     * Actions are the edges of the provenance graph. Action type determines the role of
-     * their vertices and can be translated into OPM relationships, which typically
-     * represent the inverse action.
-     * 
-     * @author Ferd
-     */
-    interface Action {
+        IProvenance getProvenance();
 
         /**
-         * If the action was caused by another action, return the action that caused it.
+         * Workflows that don't end well produce these.
          * 
-         * @return
+         * @return true if empty
          */
-        Action getCause();
-
-        /**
-         * Actions are made by agents. We keep them with the actions and out of the graph.
-         * 
-         * @return
-         */
-        Agent getAgent();
-
-    }
-
-    /**
-     * An agent in k.LAB is anything that makes observations.
-     * 
-     * @author Ferd
-     */
-    interface Agent extends Node {
-
-    }
-
-    /**
-     * An Artifact can be any of the first-class citizens in k.LAB: Observation or Model
-     * (when the model has been produced by another, such as a learning model).
-     * Observations are the final results of a successful contextualization. We also allow
-     * Observations that represent groups of observations (e.g. all the Subjects created
-     * by resolving a subject observable), to avoid creating monster graphs.
-     * 
-     * @author Ferd
-     */
-    interface Artifact extends Node {
-
-        /**
-         * @return
-         */
-        ISemantic getArtifact();
-
-        /**
-         * @return
-         */
-        Agent getConsumer();
-
-        /**
-         * 
-         * @return
-         */
-        IConcept getObservable();
-
-        /**
-         * @return
-         */
-        Agent getOwner();
-
-        /**
-         * @return
-         */
-        IModel getModel();
-
-        /**
-         * @return
-         */
-        Collection<Artifact> getAntecedents();
-
-        /**
-         * @return
-         */
-        Collection<Artifact> getConsequents();
-
-        /**
-         * Return the temporal extent implied for this artifact by the provenance chain.
-         * This includes (in order of preemption) any specific temporal constraint
-         * specified by the model, and the temporal scale of all the observations
-         * upstream. Temporal elements are merged upwards until a complete scale is
-         * defined. Returns null only if there is no time upstream of this observation.
-         * 
-         * @return
-         */
-        ITime getTime();
-
-        /**
-         * Return the spatial extent implied for this artifact by the provenance chain.
-         * This includes (in order of preemption) any specific temporal constraint
-         * specified by the model, and the temporal scale of all the observations
-         * upstream. Temporal elements are merged upwards until a complete scale is
-         * defined. Returns null only if there is no space upstream of this observation.
-         * 
-         * @return
-         */
-        ISpace getSpace();
-
-        /**
-         * Trace the nearest artifact of the passed concept (or with the passed
-         * role/trait) up the provenance chain.
-         * 
-         * @param cls
-         * @return
-         */
-        Artifact trace(IConcept concept);
-
-        /**
-         * Collect all artifacts of the passed concept (or with the passed role/trait) up
-         * the provenance chain.
-         * 
-         * @param concept
-         * @return
-         */
-        Collection<Artifact> collect(IConcept concept);
-
-        /**
-         * Trace the nearest artifact with the passed role within the passed observation
-         * up the provenance chain.
-         * 
-         * @param cls
-         * @return
-         */
-        Artifact trace(IConcept role, IDirectObservation roleContext);
-
-        /**
-         * Collect all artifacts with the passed role within the passed observation up the
-         * provenance chain.
-         * 
-         * @param concept
-         * @return
-         */
-        Collection<Artifact> collect(IConcept role, IDirectObservation roleContext);
-
+        boolean isEmpty();
     }
 
     /**
