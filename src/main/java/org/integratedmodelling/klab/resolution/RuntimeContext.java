@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.resolution;
 
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
+import org.integratedmodelling.klab.observation.Subject;
 import com.google.common.eventbus.EventBus;
 
 /**
@@ -15,8 +16,12 @@ import com.google.common.eventbus.EventBus;
  */
 public class RuntimeContext {
 
-  public ResolutionScope getRootScope() {
-    return null;
+  IProvenance provenance;
+  EventBus eventBus;
+  ConfigurationDetector configurationDetector;
+  
+  public RuntimeContext(Subject subject) {
+    
   }
   
   public IProvenance getProvenance() {

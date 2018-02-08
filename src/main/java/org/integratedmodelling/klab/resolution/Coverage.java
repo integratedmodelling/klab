@@ -26,14 +26,6 @@ public class Coverage implements ICoverage {
    */
   private static double MIN_REQUIRED_COVERAGE = 0.95;
 
-  public static final Coverage empty() {
-    return new Coverage(null, 0.0);
-  }
-
-  public static ICoverage full(IScale scale) {
-    return new Coverage(scale, 1.0);
-  }
-
   class CExt {
     IConcept                    domain;
     ITopologicallyComparable<?> original;
@@ -49,6 +41,11 @@ public class Coverage implements ICoverage {
     }
   }
 
+  
+  protected void setCoverage(double d) {
+    this.coverage = d;
+  }
+  
   /*
    * For each extent of the original scale this contains: 1. the original, unmodified extent which
    * was defined as covered or uncovered at the constructor; 2. the currently covered extent; 3. the

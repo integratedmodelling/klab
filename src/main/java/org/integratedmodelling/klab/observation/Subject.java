@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.observation;
 
 import java.util.Collection;
 import java.util.Map;
+import org.integratedmodelling.kim.utils.CollectionUtils;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -15,6 +16,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.RuntimeContext;
 
 public class Subject extends CountableObservation implements ISubject {
@@ -105,8 +107,8 @@ public class Subject extends CountableObservation implements ISubject {
   }
 
   @Override
-  public ITask<IObservation> observe(String urn) {
-    return new ObserveInContextTask(this, urn);
+  public ITask<IObservation> observe(String urn, String... scenarios) {
+    return new ObserveInContextTask(this, urn, CollectionUtils.arrayToList(scenarios));
   }
 
   /**
@@ -116,6 +118,16 @@ public class Subject extends CountableObservation implements ISubject {
    */
   public RuntimeContext getRuntimeContext() {
     return runtimeContext;
+  }
+
+  /**
+   * Each call to getResolutionScope returns a new scope for this subject.
+   * 
+   * @param scenarios
+   * @return
+   */
+  public ResolutionScope getResolutionScope(String... scenarios) {
+    return new ResolutionScope(this, scenarios);
   }
   
 }

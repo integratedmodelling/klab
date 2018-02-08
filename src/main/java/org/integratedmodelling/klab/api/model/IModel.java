@@ -24,11 +24,11 @@ package org.integratedmodelling.klab.api.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 
 /**
  * A Model is a statement that produces a computed observation. It has at least one observable. The k.LAB
@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
  * through dependencies (see {@link #getDependencies()}.
  * 
  */
-public interface IModel extends IActiveKimObject, INamespaceQualified {
+public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable {
 
     /**
      * Return the semantics of all observables we are observing. The first in the list is the actual

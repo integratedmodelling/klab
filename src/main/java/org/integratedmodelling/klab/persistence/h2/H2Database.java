@@ -185,12 +185,12 @@ public class H2Database {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
-        try {
+//        try {
           deallocateConnection();
-          pooledConnection.close();
-        } catch (SQLException e) {
-          // poh
-        }
+//          pooledConnection.close();
+//        } catch (SQLException e) {
+//          // poh
+//        }
       }
     });
     sanityCheck();
@@ -212,7 +212,7 @@ public class H2Database {
       try {
         connection.close();
       } catch (SQLException e) {
-
+        Klab.INSTANCE.warn(e);
       } finally {
         connection = null;
       }

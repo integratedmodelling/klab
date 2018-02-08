@@ -10,11 +10,11 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.resolution.Dataflow;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
 import com.google.inject.Inject;
@@ -34,7 +34,8 @@ public enum Dataflows implements IDataflowService {
             injector.injectMembers(this);
         }
     }
-
+    
+    @Override
     public IKdlDataflow declare(URL url) throws KlabException {
         try (InputStream stream = url.openStream()) {
             return declare(stream);
@@ -43,14 +44,16 @@ public enum Dataflows implements IDataflowService {
         }
     }    
     
+    @Override
     public IKdlDataflow declare(File file) throws KlabException {
         try (InputStream stream = new FileInputStream(file)) {
             return declare(stream);
         } catch (Exception e) {
             throw new KlabIOException(e);
         }
-    }    
+    }
     
+    @Override
     public IKdlDataflow declare(InputStream file) throws KlabValidationException {
         IKdlDataflow ret = null;
         try {
@@ -70,7 +73,8 @@ public enum Dataflows implements IDataflowService {
      * @return a dataflow, possibly empty.
      * @throws KlabException 
      */
-    public IDataflow compile(ResolutionScope scope) throws KlabException {
+    @Override
+    public Dataflow compile(ResolutionScope scope) throws KlabException {
       // TODO Auto-generated method stub
       return null;
     }

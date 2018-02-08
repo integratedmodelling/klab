@@ -39,6 +39,11 @@ public class Model extends KimObject implements IModel {
   private IBehavior                behavior;
   private boolean                  isPrivate;
 
+  // only for the delegate RankedModel
+  protected Model() {
+    super(null);
+  }
+  
   public Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
     super(model);

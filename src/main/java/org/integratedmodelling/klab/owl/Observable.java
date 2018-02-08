@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class Observable implements IObservable {
@@ -30,7 +31,22 @@ public class Observable implements IObservable {
   private Object          value;
   private ObservationType observationType;
   private boolean         optional;
+  private boolean         generic;
 
+  public static Observable promote(IConceptDefinition concept) {
+    return promote(concept.getConcept());
+  }
+  
+  public static Observable promote(IConcept concept) {
+    Observable ret = new Observable();
+    ret.observable = concept;
+    ret.main = concept;
+    ret.declaration = concept.getDefinition();
+    ret.isAbstract = concept.isAbstract();
+    ret.generic = concept.isAbstract();
+    return ret;
+  }
+  
   @Override
   public IConcept getType() {
     return observable;
@@ -289,6 +305,14 @@ public class Observable implements IObservable {
 
   public void setObservationType(ObservationType observationType) {
     this.observationType = observationType;
+  }
+
+  public boolean isGeneric() {
+    return generic;
+  }
+
+  public void setGeneric(boolean generic) {
+    this.generic = generic;
   }
 
 }

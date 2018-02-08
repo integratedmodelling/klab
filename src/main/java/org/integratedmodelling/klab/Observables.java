@@ -227,7 +227,7 @@ public enum Observables implements IObservableService {
 			return false;
 		}
 
-		IConcept cc1 = getContextType(o1);
+		IConcept cc1 = getContextType(o1.getType());
 		IConcept cc2 = getContextType(o2);
 
 		if ((cc1 == null && cc1 != null) || (cc1 != null && cc2 == null)) {

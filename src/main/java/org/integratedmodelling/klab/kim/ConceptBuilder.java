@@ -185,6 +185,7 @@ public enum ConceptBuilder {
     }
 
     ret.setOptional(concept.isOptional());
+    ret.setGeneric(concept.isAbstractObservable());
 
     /*
      * TODO redefine observable if modifiers (by) were given

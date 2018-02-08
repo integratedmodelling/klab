@@ -105,7 +105,7 @@ public class Engine extends Server implements IEngine {
      * {@link IRuntimeIdentity} such as a task or script).
      */
     public void notifyStart() {
-
+      System.out.println("START OF " + identity + " NOTIFIED!");
     }
 
     /**
@@ -113,7 +113,7 @@ public class Engine extends Server implements IEngine {
      * {@link IRuntimeIdentity} such as a task or script).
      */
     public void notifyEnd() {
-
+      System.out.println("END OF " + identity + " NOTIFIED!");
     }
 
   }

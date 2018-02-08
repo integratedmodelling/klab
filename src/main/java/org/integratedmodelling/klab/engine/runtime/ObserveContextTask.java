@@ -7,17 +7,16 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.IObservationIdentity;
-import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.Subject;
+import org.integratedmodelling.klab.resolution.Dataflow;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -32,26 +31,28 @@ public class ObserveContextTask implements ITask<ISubject> {
 
   Monitor              monitor;
   Subject              subject;
+  Dataflow             dataflow;
   FutureTask<ISubject> delegate;
   String               token = NameGenerator.shortUUID();
   Session              session;
 
-  public ObserveContextTask(Session session, IObserver observer) {
+  public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
 
     Engine engine = session.getParent(Engine.class);
     try {
-      this.subject = Observations.INSTANCE.createSubject(observer, session.getMonitor());
+
       this.monitor = (session.getMonitor()).get(this);
       this.session = session;
-
       delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
 
         @Override
         public ISubject run() throws Exception {
 
-          ResolutionScope scope = new ResolutionScope(subject);
-          if (Resolver.INSTANCE.resolve(subject, scope).isRelevant()) {
-            engine.run(Dataflows.INSTANCE.compile(scope));
+          ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
+          if (scope.isRelevant()) {
+            subject = (Subject) scope.getSubject();
+            dataflow = Dataflows.INSTANCE.compile(scope);
+            engine.run(dataflow);
           }
 
           return subject;
@@ -80,8 +81,8 @@ public class ObserveContextTask implements ITask<ISubject> {
   }
 
   @Override
-  public IObservationIdentity getParentIdentity() {
-    return subject;
+  public IEngineSessionIdentity getParentIdentity() {
+    return session;
   }
 
   @Override
@@ -116,9 +117,8 @@ public class ObserveContextTask implements ITask<ISubject> {
   }
 
   @Override
-  public IDataflow getDataflow() {
-    // TODO Auto-generated method stub
-    return null;
+  public Dataflow getDataflow() {
+    return dataflow;
   }
 
   @Override

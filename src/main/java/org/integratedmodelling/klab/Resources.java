@@ -7,11 +7,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
@@ -164,10 +167,11 @@ public enum Resources implements IResourceService {
   public IKimObject getModelObject(String urn) {
 
     String serverId = null;
+    IKimObject ret = null;
 
     if (urn.startsWith(Urns.KLAB_URN_PREFIX)) {
       /*
-       * remove all needed pieces until we are left with a server ID and a normal path
+       * remove all needed pieces until we are left with a server ID and a normal path, or an observable
        */
     }
 
@@ -181,9 +185,29 @@ public enum Resources implements IResourceService {
         return null;
       }
 
-      return namespace.getObject(ob);
+      ret = namespace.getObject(ob);
+
+    } else {
+      
+      /*
+       * TODO logics to synchronize the project and its requirements from the 
+       * server.
+       */
+      
     }
     
+    return ret;
+  }
+
+  @Override
+  public IResolvable getResolvableResource(String urn) {
+    IKimObject obj = getModelObject(urn);
+    if (obj instanceof IResolvable) {
+      return (IResolvable)obj;
+    }
+    if (obj instanceof IConceptDefinition) {
+      return Observable.promote((IConceptDefinition)obj);
+    }
     return null;
   }
 

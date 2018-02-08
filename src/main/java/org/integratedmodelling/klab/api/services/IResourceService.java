@@ -5,6 +5,7 @@ import java.io.File;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
@@ -46,8 +47,17 @@ public interface IResourceService {
      * the network.
      * 
      * @param urn
-     * @return
+     * @return the model object corresponding to the urn, or null if not found.
      */
     IKimObject getModelObject(String urn);
+
+    /**
+     * Retrieve a resolvable object identified by a URN, promoting any resource that is not
+     * directly resolvable to the correspondent resolvable when possible. 
+     * 
+     * @param urn
+     * @return a resolvable resource, or null if nothing can be found.
+     */
+    IResolvable getResolvableResource(String urn);
 
 }

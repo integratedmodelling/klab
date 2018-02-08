@@ -23,13 +23,13 @@ public abstract class Observation implements IObservation {
   private DirectObservation contextObservation;
   private Monitor           monitor;
 
-  private IIdentity parentIdentity;
+  private IEngineSessionIdentity parentIdentity;
   
   protected Observation(Observable observable, Scale scale, IMonitor monitor) {
     this.observable = observable;
     this.scale = scale;
     this.monitor = ((Monitor) monitor).get(this);
-    this.parentIdentity = monitor.getIdentity();
+    this.parentIdentity = monitor.getIdentity().getParent(IEngineSessionIdentity.class);
   }
 
   @Override
@@ -74,7 +74,7 @@ public abstract class Observation implements IObservation {
 
   @Override
   public IEngineSessionIdentity getParentIdentity() {
-    return parentIdentity.getParent(IEngineSessionIdentity.class);
+    return parentIdentity;
   }
 
   @Override

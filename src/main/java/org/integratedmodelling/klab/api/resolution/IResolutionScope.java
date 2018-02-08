@@ -22,13 +22,13 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import java.util.Collection;
-
+import java.util.List;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
@@ -61,6 +61,7 @@ public interface IResolutionScope extends ICoverage {
     INSTANTIATION
   }
 
+  
   /**
    * Scale of resolution. This may change as new constraints are brought in by each resolved model,
    * although it should remain fully contained in the original scale.
@@ -78,22 +79,6 @@ public interface IResolutionScope extends ICoverage {
   Collection<String> getScenarios();
 
   /**
-   * The model being resolved should only be null when resolving the "root" subject level.
-   * 
-   * @return the model being resolved
-   */
-  IModel getModel();
-
-  /**
-   * Return an appropriately configured prioritizer to choose a model among many.
-   * @param cls 
-   * @param <T>
-   * 
-   * @return the prioritizer used to choose models in this scope
-   */
-  <T> IPrioritizer<T> getPrioritizer(Class<T> cls);
-
-  /**
    * Return the namespace of reference for this context. It should never be null; if we're resolving
    * a model's dependency, it should be the model's namespace, otherwise it should be that of the
    * subject or concept we're resolving. The namespace provides semantic distance, ranking criteria,
@@ -104,57 +89,11 @@ public interface IResolutionScope extends ICoverage {
   INamespace getResolutionNamespace();
 
   /**
-   * The direct observation being resolved; if we're resolving a quality, the subject that the
-   * quality is inherent to.
-   * 
-   * @return the subject providing the resolution context
-   */
-  IDirectObservation getSubject();
-
-  /**
-   * The provenance artifact that caused the resolution (either an observation or an observable).
-   * Never null.
-   * 
-   * @return the artifact causing the resolution
-   */
-  IProvenance.Artifact getProvenanceArtifact();
-
-  /**
-   * Checks if the passed observable is required as a dependency by any models resolved so far.
-   * 
-   * @param observable
-   * @return whether observable is required
-   */
-  boolean isUsed(IObservable observable);
-
-  /**
-   * Checks if the passed observable is required in the passed scope, i.e. must be produced because
-   * the model being run tags it as a required output or another model or the user has requested it.
-   * If this returns false, producing a given output should be optional - the model may choose to
-   * produce it if considers it essential for understanding the results or if configured for maximal
-   * output, but otherwise it should not produce or publish it.
-   * 
-   * Checks the outputs of the current model if any, and compounds it with the result of
-   * {@link #isUsed}.
-   * 
-   * @param observable
-   * @return true if observation must be exposed as output
-   */
-  boolean isRequired(IObservable observable);
-
-  /**
-   * Return the mode of resolution - whether we're looking for an instantiator or a 
+   * Return the mode of resolution - whether we're looking for an instantiator or a
    * 
    * @return the mode of resolution
    */
   Mode getMode();
-
-  /**
-   * true if we're downstream of an optional dependency.
-   * 
-   * @return whether the resolution context is an optional dependency
-   */
-  boolean isOptional();
 
   /**
    * If true, we're resolving interactively, which implies giving the user a choice over values of
@@ -164,22 +103,6 @@ public interface IResolutionScope extends ICoverage {
    * @return whether the resolution is interactive
    */
   boolean isInteractive();
-
-  /**
-   * If true, the context we're resolving is for non-abstract countable observables that we want to
-   * instantiate extensively - i.e., all the subtypes, leaving the base type last if the subtypes
-   * don't provide full coverage.
-   * 
-   * @return
-   */
-  boolean isGeneric();
-
-  /**
-   * The observable being resolved in this specific context.
-   * 
-   * @return
-   */
-  IObservable getObservable();
   
   /**
    * Resolution is controlled by a task or script monitor.
@@ -187,6 +110,49 @@ public interface IResolutionScope extends ICoverage {
    * @return the monitor
    */
   IMonitor getMonitor();
+  
+   /*
+   * ----------------------------------------------------------------------------
+   * FIXME those below can probably be removed from the API
+   * ----------------------------------------------------------------------------
+   */
+  
+  /**
+   * The model being resolved should only be null when resolving the "root" subject level.
+   * 
+   * @return the model being resolved
+   */
+  IModel getModel();
 
+  /**
+   * Return the scope for the root resolution. If this is the root scope, return null.
+   * 
+   * @return the root scope
+   */
+  IResolutionScope getRoot();
+
+  /**
+   * The subject closest to the object being resolved. Only null when resolving the top subject.
+   * 
+   * @return the subject providing the resolution context
+   */
+  ISubject getSubject();
+
+  /**
+   * The observable being resolved.
+   * 
+   * @return the observable being resolved
+   */
+  IObservable getObservable();
+
+  /**
+   * Return an appropriately configured prioritizer to choose a model among many.
+   * 
+   * @param cls
+   * @param <T>
+   * 
+   * @return the prioritizer used to choose models in this scope
+   */
+  <T> IPrioritizer<T> getPrioritizer(Class<T> cls);
 
 }

@@ -45,9 +45,10 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
    * specify a {@link IObserver}.
    * 
    * @param urn specifying a (local or remote) observer
+   * @param scenarios names of any scenario namespaces to use in resolution
    * @return a Future that is observing the URN.
    * @throws KlabException
    */
-  Future<ISubject> observe(String urn) throws KlabException;
+  Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
 
 }

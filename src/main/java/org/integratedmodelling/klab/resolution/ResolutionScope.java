@@ -2,32 +2,33 @@ package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.provenance.IProvenance.Artifact;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.observation.DirectObservation;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class ResolutionScope extends Coverage implements IResolutionScope {
 
-  private DirectObservation subject;
-  private Observable observable;
-  private Scale scale;
+  private Subject            subject;
+  private Observable         observable;
+  private Scale              scale;
   private Collection<String> scenarios = new ArrayList<>();
-  private Model model;
-  private Namespace resolutionNamespace;
-  private Prioritizer prioritizer;
-  private Mode mode = Mode.RESOLUTION;
-  private boolean generic;
-  private boolean interactive;
-  private boolean optional;
-  private IMonitor monitor;
+  private Model              model;
+  private Namespace          resolutionNamespace;
+  private Prioritizer        prioritizer;
+  private Mode               mode      = Mode.RESOLUTION;
+  private boolean            generic;
+  private boolean            interactive;
+  private IMonitor           monitor;
+  private ResolutionScope    parent;
 
   private ResolutionScope(ResolutionScope other) {
     super(other.getScale());
@@ -38,16 +39,25 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     this.model = other.model;
     this.resolutionNamespace = other.resolutionNamespace;
     this.mode = other.mode;
-    this.optional = other.optional;
     this.generic = other.generic;
     this.interactive = other.interactive;
     this.prioritizer = other.prioritizer;
     this.monitor = other.monitor;
+    this.parent = other;
+  }
+
+  public static final ResolutionScope empty() {
+    return new ResolutionScope();
+  }
+
+  public static ICoverage full(IScale scale) {
+    return new Coverage(scale, 1.0);
   }
 
   /**
-   * Create the resolution scope for an existing subject, where finding a resolver is optional. TODO
-   * we should probably add dependencies for all mandatory relationships.
+   * Create the resolution scope for an existing subject, where finding a resolver is optional.
+   * Coverage is initially 100% and resolution mode is set at
+   * {@link org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode#RESOLUTION}.
    * 
    * @param subject
    * @param scenarios
@@ -56,8 +66,10 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     super(subject.getScale());
     this.subject = subject;
     this.scale = subject.getScale();
-    this.observable = subject.getObservable();
-    this.optional = true;
+  }
+
+  public ResolutionScope() {
+    super(null, 0.0);
   }
 
   public ResolutionScope get(Subject subject) {
@@ -68,10 +80,32 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return ret;
   }
 
+  /**
+   * Create a child coverage for a passed observable with the same scale but initial coverage set at
+   * 0.
+   * 
+   * @param observable
+   * @param mode
+   * @return
+   */
   public ResolutionScope get(Observable observable, Mode mode) {
     ResolutionScope ret = new ResolutionScope(this);
+    ret.observable = observable;
     ret.mode = mode;
+    this.setCoverage(0);
     return ret;
+  }
+
+  public ResolutionScope get(Model model) {
+    ResolutionScope ret = new ResolutionScope(this);
+    /*
+     * TODO if the model has its own coverage, set the scale of the returned scope to the
+     * intersection of the scales
+     * 
+     * TODO coverages should be separated for the various scale dimensions, and which ones get
+     * intersected should depend on the geometry that the model handles.
+     */
+    return this;
   }
 
 
@@ -95,47 +129,42 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return resolutionNamespace;
   }
 
-  @Override
-  public DirectObservation getSubject() {
-    return subject;
-  }
-
-  @Override
-  public Artifact getProvenanceArtifact() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public boolean isUsed(IObservable observable) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean isRequired(IObservable observable) {
-    // TODO Auto-generated method stub
-    return false;
-  }
+  // @Override
+  // public DirectObservation getSubject() {
+  // return subject;
+  // }
+  //
+  // @Override
+  // public Artifact getProvenanceArtifact() {
+  // // TODO Auto-generated method stub
+  // return null;
+  // }
+  //
+  // @Override
+  // public boolean isUsed(IObservable observable) {
+  // // TODO Auto-generated method stub
+  // return false;
+  // }
+  //
+  // @Override
+  // public boolean isRequired(IObservable observable) {
+  // // TODO Auto-generated method stub
+  // return false;
+  // }
 
   @Override
   public Mode getMode() {
     return mode;
   }
 
-  @Override
-  public boolean isOptional() {
-    return optional;
-  }
+  // @Override
+  // public boolean isOptional() {
+  // return optional;
+  // }
 
   @Override
   public boolean isInteractive() {
     return interactive;
-  }
-
-  @Override
-  public boolean isGeneric() {
-    return generic;
   }
 
   @Override
@@ -161,5 +190,41 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     // TODO
     return this;
   }
-  
+
+  @Override
+  public Subject getSubject() {
+    // TODO Auto-generated method stub
+    return subject;
+  }
+
+  @Override
+  public IResolutionScope getRoot() {
+    return parent == null ? this : parent.getRoot();
+  }
+
+  /**
+   * If passed coverage is relevant, OR the coverage with ours and update our state.
+   */
+  @Override
+  public ResolutionScope or(ICoverage child) throws KlabException {
+    if (child.isRelevant()) {
+      super.or(child);
+      // TODO
+    }
+    return this;
+  }
+
+  /**
+   * If passed coverage is relevant, OR the coverage with ours and update our state.
+   */
+  @Override
+  public ResolutionScope and(ICoverage child) throws KlabException {
+    if (child.isRelevant()) {
+      super.and(child);
+      // TODO
+    }
+
+    return this;
+  }
+
 }

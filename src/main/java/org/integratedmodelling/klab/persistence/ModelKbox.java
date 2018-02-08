@@ -184,6 +184,7 @@ public class ModelKbox extends ObservableKbox {
    * 
    * @param observable
    * @param context
+   * @return all unranked model descriptors matching the query
    * @throws KlabException
    */
   public List<Model> queryModels(IObservable observable, ResolutionScope context)
@@ -196,7 +197,7 @@ public class ModelKbox extends ObservableKbox {
     }
 
     String query = "SELECT model.oid FROM model WHERE ";
-    String typequery = observableQuery(observable, context);
+    String typequery = observableQuery(observable);
 
     if (typequery == null) {
       return ret;
@@ -237,14 +238,14 @@ public class ModelKbox extends ObservableKbox {
     return ret;
   }
 
-  private String observableQuery(IObservable observable, IResolutionScope context) {
+  private String observableQuery(IObservable observable) {
 
-    /*
-     * remove any transformations before querying
-     */
-    IConcept concept = observable.getMain();
+//    /*
+//     * remove any transformations before querying
+//     */
+//    IConcept concept = observable.getMain();
 
-    Set<Long> ids = this.getCompatibleTypeIds(concept, context);
+    Set<Long> ids = this.getCompatibleTypeIds(observable);
     if (ids == null || ids.size() == 0) {
       return null;
     }

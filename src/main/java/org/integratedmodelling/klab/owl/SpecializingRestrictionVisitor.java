@@ -51,7 +51,8 @@ public class SpecializingRestrictionVisitor
         this.property = property;
         this.concept = concept;
         this.useSuperproperties = useSuperProperties;
-        ((Concept) concept)._owl.accept(this);
+        // call to getType() ensures we get an instance of Concept, which is not guaranteed for IObservable
+        ((Concept) concept.getType())._owl.accept(this);
     }
 
     @Override
