@@ -3,28 +3,31 @@ package org.integratedmodelling.klab.observation;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 public abstract class Observation implements IObservation {
 
-  private static final long serialVersionUID = -7645502752899232235L;
+  private static final long      serialVersionUID = -7645502752899232235L;
 
-  private Scale             scale;
-  private Observable        observable;
-  private String            token            = NameGenerator.shortUUID();
-  private Subject           observer;
-  private DirectObservation contextObservation;
-  private Monitor           monitor;
+  private Scale                  scale;
+  private Observable             observable;
+  private String                 token            = NameGenerator.shortUUID();
+  private Subject                observer;
+  private DirectObservation      contextObservation;
+  private Monitor                monitor;
+  private Namespace              namespace;
 
   private IEngineSessionIdentity parentIdentity;
-  
+
   protected Observation(Observable observable, Scale scale, IMonitor monitor) {
     this.observable = observable;
     this.scale = scale;
@@ -151,4 +154,11 @@ public abstract class Observation implements IObservation {
     this.observer = observer;
   }
 
+  public Namespace getNamespace() {
+    return namespace;
+  }
+
+  public void setNamespace(INamespace namespace) {
+   this.namespace = (Namespace) namespace;
+  }
 }

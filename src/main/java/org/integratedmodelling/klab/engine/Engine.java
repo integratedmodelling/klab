@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -387,8 +388,15 @@ public class Engine extends Server implements IEngine {
   // TODO see if this is OK here. We can use another executor for the
   // parallel threads, and implement various modes of computation and
   // runners.
-  public void run(IDataflow dataflow) {
-
+  /**
+   * Run the dataflow and instantiate the artifacts, returning the root one for the
+   * dataflow.
+   * 
+   * @param dataflow
+   * @return
+   */
+  public IArtifact<?> run(IDataflow dataflow) {
+    return null;
   }
 
   @Override

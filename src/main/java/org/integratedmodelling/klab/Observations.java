@@ -45,7 +45,7 @@ public enum Observations implements IObservationService {
 
   @Override
   public Subject createSubject(IObserver observer, IMonitor monitor) throws KlabException {
-
+    
     Subject result;
     Constructor<?> constructor;
 
@@ -76,6 +76,8 @@ public enum Observations implements IObservationService {
       
     }
 
+    result.setNamespace(observer.getNamespace());
+    
     return result;
   }
 

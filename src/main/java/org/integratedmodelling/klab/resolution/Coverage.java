@@ -115,10 +115,6 @@ public class Coverage implements ICoverage {
    */
   public Coverage(IScale scale, double coverage) {
     this.scale = scale;
-    // if (coverage != 0 && coverage != 1) {
-    // throw new KlabRuntimeException("API misuse: coverage can only be initially
-    // fully covered or uncovered");
-    // }
     this.coverage = coverage;
     if (scale != null) {
       for (IExtent e : scale) {

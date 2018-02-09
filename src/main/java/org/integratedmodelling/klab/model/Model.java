@@ -36,14 +36,14 @@ public class Model extends KimObject implements IModel {
   private List<IObservable>        dependencies           = new ArrayList<>();
   private Map<String, IObservable> attributeObservables   = new HashMap<>();
   private INamespace               namespace;
-  private IBehavior                behavior;
+  private Behavior                 behavior;
   private boolean                  isPrivate;
 
   // only for the delegate RankedModel
   protected Model() {
     super(null);
   }
-  
+
   public Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
     super(model);
@@ -216,7 +216,7 @@ public class Model extends KimObject implements IModel {
   }
 
   @Override
-  public IBehavior getBehavior() {
+  public Behavior getBehavior() {
     return behavior;
   }
 

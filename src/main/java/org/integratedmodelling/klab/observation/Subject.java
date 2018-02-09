@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.ObservationalArtifact;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.RuntimeContext;
 
 public class Subject extends CountableObservation implements ISubject {
@@ -129,17 +128,6 @@ public class Subject extends CountableObservation implements ISubject {
     return runtimeContext;
   }
 
-  /**
-   * Each call to getResolutionScope returns a new scope for this subject.
-   * 
-   * @param scenarios
-   * @return
-   */
-  public ResolutionScope getResolutionScope(String... scenarios) {
-    return new ResolutionScope(this, scenarios);
-  }
-  
-
   ObservationalArtifact<Subject> provenanceDelegate;
   
   public long getTimestamp() {
@@ -205,6 +193,5 @@ public class Subject extends CountableObservation implements ISubject {
   public String toString() {
     return provenanceDelegate.toString();
   }
-
   
 }

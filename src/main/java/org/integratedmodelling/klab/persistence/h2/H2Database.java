@@ -304,6 +304,8 @@ public class H2Database {
       return;
     }
 
+    System.out.println(sql);
+    
     Connection connection = null;
     try {
       connection = getConnection();
@@ -327,6 +329,8 @@ public class H2Database {
     if (sql.contains("POINT EMPTY")) {
       System.out.println("WHAT?");
     }
+    
+    System.out.println(sql);
 
     Connection connection = null;
     Statement stmt = null;

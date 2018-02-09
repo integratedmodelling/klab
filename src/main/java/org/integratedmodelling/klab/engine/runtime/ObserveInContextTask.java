@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -48,7 +47,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
       public IObservation run() throws Exception {
 
         Engine engine = session.getParent(Engine.class);
-
+        IObservation ret = null;
         /*
          * obtain the resolvable object corresponding to the URN - either a concept or a model
          */
@@ -60,12 +59,11 @@ public class ObserveInContextTask implements ITask<IObservation> {
         }
 
         /*
-         * resolve it appropriately
+         * TODO resolve it appropriately
          */
-        ResolutionScope scope =
-            context.getResolutionScope(scenarios.toArray(new String[scenarios.size()]));
+        ResolutionScope scope = ResolutionScope.create(context, monitor, scenarios);
         if (Resolver.INSTANCE.resolve(resolvable, scope).isRelevant()) {
-          engine.run(Dataflows.INSTANCE.compile(scope));
+          ret = (IObservation)engine.run(Dataflows.INSTANCE.compile(scope));
         }
 
         /*
@@ -74,7 +72,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
          * of observations. It also gives access to the full provenance graph at each observation
          * and all the observations made to resolve it.
          */
-        return null;
+        return ret;
       }
     });
 

@@ -49,9 +49,8 @@ public class ObserveContextTask implements ITask<ISubject> {
 
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
           if (scope.isRelevant()) {
-            subject = (Subject) scope.getSubject();
             dataflow = Dataflows.INSTANCE.compile(scope);
-            engine.run(dataflow);
+            subject = (Subject) engine.run(dataflow);
           }
 
           return subject;

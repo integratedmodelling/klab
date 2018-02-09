@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.resolution;
 import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -12,7 +11,6 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
-import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.owl.Observable;
 
 /**
@@ -31,8 +29,10 @@ public enum Resolver {
    * @param resolvable
    * @param scope
    * @return the resolved scope
+   * @throws KlabException
    */
-  public ResolutionScope resolve(IResolvable resolvable, ResolutionScope scope) {
+  public ResolutionScope resolve(IResolvable resolvable, ResolutionScope scope)
+      throws KlabException {
 
     if (resolvable instanceof Observable) {
       return resolve((Observable) resolvable, scope,
@@ -59,9 +59,11 @@ public enum Resolver {
   public ResolutionScope resolve(Observer observer, IMonitor monitor, Collection<String> scenarios)
       throws KlabException {
 
-    Subject subject = Observations.INSTANCE.createSubject(observer, monitor);
-    ResolutionScope ret = subject.getResolutionScope();
-    return resolve(subject.getObservable(), ret, Mode.RESOLUTION);
+    ResolutionScope ret = ResolutionScope.create(observer, monitor, scenarios);
+    if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).isRelevant()) {
+      return ret;
+    }
+    return ResolutionScope.empty();
   }
 
   /**
@@ -70,25 +72,30 @@ public enum Resolver {
    * @param observer
    * @param scope
    * @return the merged scope
+   * @throws KlabException
    */
-  public ResolutionScope resolve(Observer observer, ResolutionScope scope) {
+  public ResolutionScope resolve(Observer observer, ResolutionScope scope) throws KlabException {
 
-    Subject subject;
-    try {
-      subject = Observations.INSTANCE.createSubject(observer, scope.getMonitor());
-    } catch (KlabException e) {
-      scope.getMonitor().error("error creating subject for " + observer + ": " + e.getMessage());
-      return ResolutionScope.empty();
+    // Subject subject;
+    // try {
+    // subject = Observations.INSTANCE.createSubject(observer, scope.getMonitor());
+    // } catch (KlabException e) {
+    // scope.getMonitor().error("error creating subject for " + observer + ": " + e.getMessage());
+    // return ResolutionScope.empty();
+    // }
+    //// subject.setContextObservation(scope.getSubject());
+    ResolutionScope ret =
+        resolve(observer.getObservable(), scope.getChildScope(observer), Mode.RESOLUTION);
+    if (ret.isRelevant()) {
+      scope.merge(ret);
     }
-    subject.setContextObservation(scope.getSubject());
-    ResolutionScope ret = subject.getResolutionScope();
-    return resolve(subject.getObservable(), ret, Mode.RESOLUTION);
+    return ret;
   }
 
   /**
    * Resolve an observable in a context by accepting as many models as necessary to resolve its
-   * observation or instantiate the target observations. Final coverage is the OR of the models
-   * found; lookup of models stops when coverage is complete.
+   * observation or instantiate the target observations. Final coverage is the OR of the coverage of
+   * all models found; lookup of models stops when coverage is complete.
    * 
    * @param observable
    * @param scope
@@ -100,7 +107,7 @@ public enum Resolver {
    */
   public ResolutionScope resolve(Observable observable, ResolutionScope scope, Mode mode) {
 
-    ResolutionScope ret = scope.get(observable, mode);
+    ResolutionScope ret = scope.getChildScope(observable, mode);
     try {
       for (IRankedModel model : Models.INSTANCE.resolve(observable, scope)) {
         ret = ret.or(resolve((RankedModel) model, ret));
@@ -113,7 +120,7 @@ public enum Resolver {
       return ResolutionScope.empty();
     }
 
-    if (!ret.isEmpty()) {
+    if (ret.isRelevant()) {
       scope.merge(ret);
     }
 
@@ -126,10 +133,11 @@ public enum Resolver {
    * @param model
    * @param scope
    * @return the merged scope, or an empty one.
+   * @throws KlabException
    */
-  public ResolutionScope resolve(Model model, ResolutionScope scope) {
+  public ResolutionScope resolve(Model model, ResolutionScope scope) throws KlabException {
 
-    ResolutionScope ret = scope.get(model);
+    ResolutionScope ret = scope.getChildScope(model);
     for (IObservable observable : model.getDependencies()) {
       ResolutionScope dep = resolve((Observable) observable, ret,
           observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
@@ -142,7 +150,7 @@ public enum Resolver {
       }
     }
 
-    if (!ret.isEmpty()) {
+    if (ret.isRelevant()) {
       scope.merge(ret);
     }
 

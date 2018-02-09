@@ -35,6 +35,15 @@ public class Behavior implements IBehavior {
         return actions.iterator();
     }
 
+    /**
+     * True if the behavior defines a scale for the containing object. Used during resolution.
+     * 
+     * @return true if scale is defined
+     */
+    public boolean hasScale() {
+      return this.extents != null && !this.extents.isEmpty();
+    }
+    
     @Override
     public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
         if (this.extents == null) {

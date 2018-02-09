@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
@@ -11,13 +10,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class ResolutionScope extends Coverage implements IResolutionScope {
 
-  private Subject            subject;
+  private Observer           observer;
   private Observable         observable;
   private Scale              scale;
   private Collection<String> scenarios = new ArrayList<>();
@@ -30,9 +30,29 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   private IMonitor           monitor;
   private ResolutionScope    parent;
 
+  private ResolutionScope(Subject observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+    super(observer.getScale());
+    this.scenarios.addAll(scenarios);
+    this.resolutionNamespace = observer.getNamespace();
+    this.monitor = monitor;
+    /*
+     * TODO must instantiate any pre-existing observables resolved in the subject.
+     */
+  }
+  
+  private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+    super(Scale.create(observer.getBehavior().getExtents(monitor)));
+    this.scenarios.addAll(scenarios);
+    this.resolutionNamespace = observer.getNamespace();
+    this.observer = observer;
+    this.monitor = monitor;
+    /*
+     * TODO instantiate all pre-existing states mentioned in the observer
+     */
+  }
+  
   private ResolutionScope(ResolutionScope other) {
     super(other.getScale());
-    this.subject = other.subject;
     this.observable = other.observable;
     this.scale = other.scale;
     this.scenarios.addAll(other.scenarios);
@@ -54,30 +74,8 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return new Coverage(scale, 1.0);
   }
 
-  /**
-   * Create the resolution scope for an existing subject, where finding a resolver is optional.
-   * Coverage is initially 100% and resolution mode is set at
-   * {@link org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode#RESOLUTION}.
-   * 
-   * @param subject
-   * @param scenarios
-   */
-  public ResolutionScope(Subject subject, String... scenarios) {
-    super(subject.getScale());
-    this.subject = subject;
-    this.scale = subject.getScale();
-  }
-
   public ResolutionScope() {
     super(null, 0.0);
-  }
-
-  public ResolutionScope get(Subject subject) {
-    ResolutionScope ret = new ResolutionScope(this);
-    ret.subject = subject;
-    ret.scale = subject.getScale();
-    ret.observable = subject.getObservable();
-    return ret;
   }
 
   /**
@@ -88,7 +86,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * @param mode
    * @return
    */
-  public ResolutionScope get(Observable observable, Mode mode) {
+  public ResolutionScope getChildScope(Observable observable, Mode mode) {
     ResolutionScope ret = new ResolutionScope(this);
     ret.observable = observable;
     ret.mode = mode;
@@ -96,19 +94,53 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return ret;
   }
 
-  public ResolutionScope get(Model model) {
+  public ResolutionScope getChildScope(Model model) throws KlabException {
+
     ResolutionScope ret = new ResolutionScope(this);
+    ret.model = model;
+    ret.resolutionNamespace = (Namespace) model.getNamespace();
     /*
-     * TODO if the model has its own coverage, set the scale of the returned scope to the
+     * If the model has its own coverage, set the scale of the child scope to the
      * intersection of the scales
      * 
      * TODO coverages should be separated for the various scale dimensions, and which ones get
      * intersected should depend on the geometry that the model handles.
      */
+    if (model.getBehavior().hasScale()) {
+      ret = ret.and(new Coverage(Scale.create(model.getBehavior().getExtents(this.monitor))));
+    }
+    
+    /*
+     * TODO add any pre-existing observables with values to the set of observed ones
+     */
+
     return this;
   }
 
+  public ResolutionScope getChildScope(Observer observer) throws KlabException {
 
+    ResolutionScope ret = new ResolutionScope(this);
+    ret.observer = observer;
+    ret.resolutionNamespace = (Namespace) observer.getNamespace();
+    /*
+     * If the model has its own coverage, set the scale of the child scope to the
+     * intersection of the scales
+     * 
+     * TODO coverages should be separated for the various scale dimensions, and which ones get
+     * intersected should depend on the geometry that the model handles.
+     */
+    if (observer.getBehavior().hasScale()) {
+      ret = ret.and(new Coverage(Scale.create(model.getBehavior().getExtents(this.monitor))));
+    }
+    
+    /*
+     * TODO empty the pre-existing observables and reinstantiate all the states predefined
+     * in the observer
+     */
+
+    return this;
+  }
+  
   @Override
   public Scale getScale() {
     return scale;
@@ -119,7 +151,6 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return scenarios;
   }
 
-  @Override
   public Model getModel() {
     return model;
   }
@@ -129,45 +160,17 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return resolutionNamespace;
   }
 
-  // @Override
-  // public DirectObservation getSubject() {
-  // return subject;
-  // }
-  //
-  // @Override
-  // public Artifact getProvenanceArtifact() {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public boolean isUsed(IObservable observable) {
-  // // TODO Auto-generated method stub
-  // return false;
-  // }
-  //
-  // @Override
-  // public boolean isRequired(IObservable observable) {
-  // // TODO Auto-generated method stub
-  // return false;
-  // }
 
   @Override
   public Mode getMode() {
     return mode;
   }
 
-  // @Override
-  // public boolean isOptional() {
-  // return optional;
-  // }
-
   @Override
   public boolean isInteractive() {
     return interactive;
   }
 
-  @Override
   public Observable getObservable() {
     return observable;
   }
@@ -178,7 +181,6 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   }
 
   @SuppressWarnings("unchecked")
-  @Override
   public <T> IPrioritizer<T> getPrioritizer(Class<T> cls) {
     if (Model.class.isAssignableFrom(cls)) {
       return (IPrioritizer<T>) prioritizer;
@@ -191,13 +193,10 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return this;
   }
 
-  @Override
-  public Subject getSubject() {
-    // TODO Auto-generated method stub
-    return subject;
-  }
+   public Observer getObserver() {
+     return observer;
+   }
 
-  @Override
   public IResolutionScope getRoot() {
     return parent == null ? this : parent.getRoot();
   }
@@ -208,6 +207,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   @Override
   public ResolutionScope or(ICoverage child) throws KlabException {
     if (child.isRelevant()) {
+      // FIXME this accomplishes nothing
       super.or(child);
       // TODO
     }
@@ -220,11 +220,41 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   @Override
   public ResolutionScope and(ICoverage child) throws KlabException {
     if (child.isRelevant()) {
+      // FIXME this accomplishes nothing
       super.and(child);
       // TODO
     }
 
     return this;
+  }
+
+  /**
+   * Get a root scope based on the definition of an observable.
+   * 
+   * @param observer
+   * @param monitor
+   * @param scenarios
+   * @return 
+   * @throws KlabException
+   */
+  public static ResolutionScope create(Observer observer, IMonitor monitor,
+      Collection<String> scenarios) throws KlabException {
+    return new ResolutionScope(observer, monitor, scenarios);
+  }
+  
+  /**
+   * Get a root scope with the scale of an existing subject used as a context for the next
+   * observations.
+   * 
+   * @param observer
+   * @param monitor
+   * @param scenarios
+   * @return
+   * @throws KlabException
+   */
+  public static ResolutionScope create(Subject observer, IMonitor monitor,
+      Collection<String> scenarios) throws KlabException {
+    return new ResolutionScope(observer, monitor, scenarios);
   }
 
 }

@@ -103,12 +103,13 @@ public interface IObservation extends IObservationIdentity, Serializable {
    * Open a k.EXPLORER window on the root observation, focused on this.
    */
   void explore();
-  
+
   /**
-   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations
-   * do not allow us to specialize in child classes. All of the concrete children implement
-   * {@link IArtifact}, which extends Iterator. By declaring this here, we can use
-   * the function from Iterator without a cast.
+   * Check if this observation (as an artifact) is part of a group and has another after it.
+   * 
+   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations do not allow us to
+   * specialize in child classes. All of the concrete children implement {@link IArtifact}, which
+   * extends Iterator. By declaring this here, we can use the function from Iterator without a cast.
    * 
    * @return true if this observation is part of a group and there is another after it.
    * 
@@ -116,10 +117,12 @@ public interface IObservation extends IObservationIdentity, Serializable {
   boolean hasNext();
 
   /**
-   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations
-   * do not allow us to specialize in child classes. All of the concrete children implement
-   * {@link IArtifact}, which extends Iterator. By declaring this here, we can use
-   * the function from Iterator without a cast.
+   * Retrieve the observation following this in a group of artifacts.
+   * 
+   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations do not allow us to
+   * specialize in child classes. All of the concrete children implement {@link IArtifact}, which
+   * extends Iterator for their specific type. By declaring this here, we can use the function from
+   * Iterator without a cast.
    * 
    * Only call this after {@link #hasNext()} has returned true.
    * 

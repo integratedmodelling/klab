@@ -110,49 +110,5 @@ public interface IResolutionScope extends ICoverage {
    * @return the monitor
    */
   IMonitor getMonitor();
-  
-   /*
-   * ----------------------------------------------------------------------------
-   * FIXME those below can probably be removed from the API
-   * ----------------------------------------------------------------------------
-   */
-  
-  /**
-   * The model being resolved should only be null when resolving the "root" subject level.
-   * 
-   * @return the model being resolved
-   */
-  IModel getModel();
-
-  /**
-   * Return the scope for the root resolution. If this is the root scope, return null.
-   * 
-   * @return the root scope
-   */
-  IResolutionScope getRoot();
-
-  /**
-   * The subject closest to the object being resolved. Only null when resolving the top subject.
-   * 
-   * @return the subject providing the resolution context
-   */
-  ISubject getSubject();
-
-  /**
-   * The observable being resolved.
-   * 
-   * @return the observable being resolved
-   */
-  IObservable getObservable();
-
-  /**
-   * Return an appropriately configured prioritizer to choose a model among many.
-   * 
-   * @param cls
-   * @param <T>
-   * 
-   * @return the prioritizer used to choose models in this scope
-   */
-  <T> IPrioritizer<T> getPrioritizer(Class<T> cls);
-
+ 
 }

@@ -10,13 +10,13 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IBehavior;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.observation.Scale;
 
@@ -161,7 +161,7 @@ public class RankedModel extends Model implements IRankedModel {
     getDelegate().setNamespace(namespace);
   }
 
-  public IBehavior getBehavior() {
+  public Behavior getBehavior() {
     return getDelegate().getBehavior();
   }
 
