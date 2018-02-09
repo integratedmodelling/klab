@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.api.observations;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IObservationIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 
 public interface IObservation extends IObservationIdentity, Serializable {
@@ -101,4 +103,28 @@ public interface IObservation extends IObservationIdentity, Serializable {
    * Open a k.EXPLORER window on the root observation, focused on this.
    */
   void explore();
+  
+  /**
+   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations
+   * do not allow us to specialize in child classes. All of the concrete children implement
+   * {@link IArtifact}, which extends Iterator. By declaring this here, we can use
+   * the function from Iterator without a cast.
+   * 
+   * @return true if this observation is part of a group and there is another after it.
+   * 
+   */
+  boolean hasNext();
+
+  /**
+   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations
+   * do not allow us to specialize in child classes. All of the concrete children implement
+   * {@link IArtifact}, which extends Iterator. By declaring this here, we can use
+   * the function from Iterator without a cast.
+   * 
+   * Only call this after {@link #hasNext()} has returned true.
+   * 
+   * @return the next observation.
+   * 
+   */
+  IObservation next();
 }

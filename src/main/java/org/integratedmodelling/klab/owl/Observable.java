@@ -314,5 +314,9 @@ public class Observable implements IObservable {
   public void setGeneric(boolean generic) {
     this.generic = generic;
   }
+  
+  public String toString() {
+    return "[" + this.declaration + "]";
+  }
 
 }

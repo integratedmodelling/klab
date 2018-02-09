@@ -10,17 +10,17 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 public abstract class ObservationalArtifact<T extends IObservation> implements IArtifact<T> {
 
   T observation;
-  
+
   public ObservationalArtifact(T observation) {
     this.observation = observation;
   }
-  
+
   @Override
   public long getTimestamp() {
     // TODO Auto-generated method stub
     return 0;
   }
-  
+
   @Override
   public boolean isEmpty() {
     // TODO Auto-generated method stub
@@ -87,4 +87,15 @@ public abstract class ObservationalArtifact<T extends IObservation> implements I
     return null;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    return o instanceof ObservationalArtifact
+        && ((ObservationalArtifact<?>) o).observation.equals(observation);
+  }
+
+  @Override
+  public int hashCode() {
+    return observation.hashCode();
+  }
+  
 }

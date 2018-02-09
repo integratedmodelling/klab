@@ -198,6 +198,7 @@ public enum ConceptBuilder {
 
     ret.setName(name);
     ret.setObservable(observable);
+    ret.setDeclaration(concept.getSourceCode());
 
     return ret;
   }

@@ -100,8 +100,8 @@ public class KlabReasoner {
             if (reasoner == null) {
                 return c1.is(c2);
             }
-            return getSubClasses(((Concept) c2).getOWLClass(), false)
-                    .containsEntity(((Concept) c1).getOWLClass().asOWLClass());
+            return getSubClasses(((Concept) c2.getType()).getOWLClass(), false)
+                    .containsEntity(((Concept) c1.getType()).getOWLClass().asOWLClass());
 
         } else if (c1 instanceof IProperty && c2 instanceof IProperty) {
 
@@ -135,7 +135,7 @@ public class KlabReasoner {
      * @return true if concept is consistent.
      */
     public boolean isSatisfiable(IConcept c) {
-        return reasoner == null ? true : isSatisfiable(((Concept) c).getOWLClass());
+        return reasoner == null ? true : isSatisfiable(((Concept) c.getType()).getOWLClass());
     }
 
     /**
@@ -149,7 +149,7 @@ public class KlabReasoner {
     public Set<IConcept> getParentClosure(IConcept main) {
         Set<IConcept> ret = new HashSet<>();
         if (reasoner != null) {
-            for (OWLClass cls : getSuperClasses(((Concept) main).getOWLClass(), false)
+            for (OWLClass cls : getSuperClasses(((Concept) main.getType()).getOWLClass(), false)
                     .getFlattened()) {
                 if (cls.isBottomEntity() || cls.isTopEntity()) {
                     continue;
@@ -177,7 +177,7 @@ public class KlabReasoner {
     public Set<IConcept> getSemanticClosure(IConcept main) {
         if (reasoner != null) {
             Set<IConcept> ret = new HashSet<>();
-            for (OWLClass cls : getSubClasses(((Concept) main).getOWLClass(), false)
+            for (OWLClass cls : getSubClasses(((Concept) main.getType()).getOWLClass(), false)
                     .getFlattened()) {
                 if (cls.isBottomEntity() || cls.isTopEntity()) {
                     continue;

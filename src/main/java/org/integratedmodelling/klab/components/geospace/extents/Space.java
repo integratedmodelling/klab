@@ -258,8 +258,7 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public ISpace getExtent() {
-    // TODO Auto-generated method stub
-    return null;
+    return create(getShape());
   }
 
   @Override
@@ -270,14 +269,12 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public IEnvelope getEnvelope() {
-    // TODO Auto-generated method stub
-    return null;
+    return envelope;
   }
 
   @Override
   public IProjection getProjection() {
-    // TODO Auto-generated method stub
-    return null;
+    return projection;
   }
 
   @Override

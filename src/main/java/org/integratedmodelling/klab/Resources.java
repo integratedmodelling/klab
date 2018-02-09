@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
@@ -179,7 +180,13 @@ public enum Resources implements IResourceService {
 
       String ns = Path.getLeading(urn, '.');
       String ob = Path.getLast(urn, '.');
+      if (ns == null && SemanticType.validate(urn)) {
+        SemanticType st = new SemanticType(urn);
+        ns = st.getNamespace();
+        ob = st.getName();
+      }
 
+      
       INamespace namespace = Namespaces.INSTANCE.getNamespace(ns);
       if (namespace == null) {
         return null;
