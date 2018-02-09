@@ -54,14 +54,6 @@ public interface IObservation extends IObservationIdentity, Serializable {
    */
   ISubject getRoot();
 
-  // /**
-  // * The overall "world" that this observation is part of, with the root subject at the
-  // * top and all records of resolution, provenance and semantics.
-  // *
-  // * @return
-  // */
-  // IContext getContext();
-
   /**
    * True if the owning ISubject has an observation of space with more than one state value.
    * 
@@ -96,11 +88,11 @@ public interface IObservation extends IObservationIdentity, Serializable {
    * @return the observation of space
    */
   ISpace getSpace();
-  
+
   /**
-   * Any observation that exists has provenance. Call this on the root observation for
-   * the entire graph.
-   *  
+   * Any observation that exists has provenance. Call this on the root observation for the entire
+   * graph.
+   * 
    * @return the provenance record leading to this
    */
   IProvenance getProvenance();

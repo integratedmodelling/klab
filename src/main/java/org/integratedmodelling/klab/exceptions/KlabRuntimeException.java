@@ -26,13 +26,13 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.exceptions;
 
-import org.integratedmodelling.klab.api.provenance.Artifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 @SuppressWarnings("javadoc")
 public class KlabRuntimeException extends RuntimeException {
 
     private static final long serialVersionUID = 4432900820629531550L;
-    private Artifact scope;
+    private IArtifact scope;
     
     public KlabRuntimeException() {
     }
@@ -41,7 +41,7 @@ public class KlabRuntimeException extends RuntimeException {
         super(message);
     }
     
-    public KlabRuntimeException(String message, Artifact scope) {
+    public KlabRuntimeException(String message, IArtifact scope) {
         super(message);
         this.scope = scope;
     }
@@ -50,7 +50,7 @@ public class KlabRuntimeException extends RuntimeException {
         super(cause);
     }
 
-    public KlabRuntimeException(Throwable cause, Artifact scope) {
+    public KlabRuntimeException(Throwable cause, IArtifact scope) {
         super(cause);
         this.scope = scope;
     }
@@ -59,7 +59,7 @@ public class KlabRuntimeException extends RuntimeException {
         super(message, cause);
     }
 
-    public Artifact getScope() {
+    public IArtifact getScope() {
         return scope;
     }
 }

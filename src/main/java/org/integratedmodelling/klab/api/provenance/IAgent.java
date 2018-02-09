@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.provenance;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
@@ -7,6 +8,8 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  * 
  * @author Ferd
  */
-public interface Agent extends Node {
+public interface IAgent extends Node {
+  
+  IIdentity getIdentity();
 
 }

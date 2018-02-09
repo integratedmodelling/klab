@@ -29,13 +29,13 @@ package org.integratedmodelling.klab.exceptions;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.integratedmodelling.klab.api.provenance.Artifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 @SuppressWarnings("javadoc")
 public class KlabException extends Exception {
 
     private static final long serialVersionUID = 5999457326224959271L;
-    private Artifact scope;
+    private IArtifact scope;
 
     public KlabException() {
         super();
@@ -55,12 +55,12 @@ public class KlabException extends Exception {
         super(arg0);
     }
     
-    public KlabException(String arg0, Artifact scope) {
+    public KlabException(String arg0, IArtifact scope) {
         super(arg0);
         this.scope = scope;
     }
 
-    public KlabException(Throwable arg0, Artifact scope) {
+    public KlabException(Throwable arg0, IArtifact scope) {
         super(arg0);
         this.scope = scope;
     }
@@ -71,7 +71,7 @@ public class KlabException extends Exception {
         return sw.toString();
     }
 
-    public Artifact getScope() {
+    public IArtifact getScope() {
         return scope;
     }
 

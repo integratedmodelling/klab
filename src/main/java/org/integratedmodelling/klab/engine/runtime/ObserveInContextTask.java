@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -136,11 +137,4 @@ public class ObserveInContextTask implements ITask<IObservation> {
     // TODO Auto-generated method stub
     return null;
   }
-
-  @Override
-  public Collection<IObservation> getObservations() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
 }

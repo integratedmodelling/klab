@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -119,11 +118,6 @@ public class ObserveContextTask implements ITask<ISubject> {
   @Override
   public Dataflow getDataflow() {
     return dataflow;
-  }
-
-  @Override
-  public Collection<ISubject> getObservations() {
-    return Collections.singleton(subject);
   }
 
 }

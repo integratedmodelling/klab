@@ -1,15 +1,14 @@
 package org.integratedmodelling.klab.api.runtime;
 
-import java.util.Collection;
 import java.util.concurrent.Future;
 import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
- * A ITask computes an observation, delegating to a Java Future that returns it when available. If
- * the task is observing a countable concept, the returned observation will be their context, and
- * the new observations made will be available through {@link #getObservations()}.
+ * A ITask computes an observational artifact, delegating to a Java Future that returns it when
+ * available. If the task is observing a countable concept, the returned observation will be their
+ * context, and the new observations made will be available through {@link #getObservations()}.
  * 
  * @author ferdinando.villa
  * @param <T> the type of observation being resolved
@@ -24,19 +23,5 @@ public interface ITask<T extends IObservation> extends ITaskIdentity, Future<T> 
    * @return the dataflow that is resolving the observable.
    */
   IDataflow getDataflow();
-
-  /**
-   * Return all the new observations made by this task. For non-countable observables, this will
-   * return the same object as {@link #get()}. For countable observables, {@link #get()} will return
-   * the context observation, and {@link #getObservations()} will return all the instantiated
-   * countables.
-   * 
-   * Only includes those observations that directly satisfy the observable semantics and the
-   * context, excluding any other observation made as a result of resolving dependencies or other
-   * side-effects of computing the dataflow.
-   * 
-   * @return all the observations made.
-   */
-  Collection<T> getObservations();
 
 }

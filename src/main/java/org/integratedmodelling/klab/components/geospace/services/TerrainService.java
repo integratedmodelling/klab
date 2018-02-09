@@ -5,7 +5,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
-import org.integratedmodelling.klab.api.provenance.Artifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -22,7 +22,7 @@ public class TerrainService implements IStateResolver {
     }
 
     @Override
-    public void setRuntimeContext(IActuator actuator, Artifact provenance, IMonitor monitor) {
+    public void setRuntimeContext(IActuator actuator, IArtifact provenance, IMonitor monitor) {
         // TODO Auto-generated method stub
         
     }

@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.api.observations;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+
 /**
  * 
  * @author ferdinando.villa
  *
  */
-public interface IRelationship  extends IDirectObservation {
+public interface IRelationship  extends IDirectObservation, IArtifact<IRelationship> {
 
     /**
      * 
