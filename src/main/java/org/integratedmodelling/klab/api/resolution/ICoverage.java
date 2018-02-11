@@ -21,6 +21,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.resolution;
 
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -82,5 +83,11 @@ public interface ICoverage {
    * @return true if coverage is enough to keep
    */
   boolean isRelevant();
+
+  /**
+   * 
+   * @return
+   */
+  IScale getScale();
 
 }

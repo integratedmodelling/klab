@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.owl.Observable;
 
 /**
  * The resolution scope contains all the contextual information gathered during resolution,
@@ -61,15 +62,6 @@ public interface IResolutionScope extends ICoverage {
     INSTANTIATION
   }
 
-  
-  /**
-   * Scale of resolution. This may change as new constraints are brought in by each resolved model,
-   * although it should remain fully contained in the original scale.
-   * 
-   * @return the scale of resolution
-   */
-  IScale getScale();
-
   /**
    * IDs of any scenarios we're resolving into. These are set in the root scope and inherited by all
    * child scopes.
@@ -89,7 +81,7 @@ public interface IResolutionScope extends ICoverage {
   INamespace getResolutionNamespace();
 
   /**
-   * Return the mode of resolution - whether we're looking for an instantiator or a
+   * Return the mode of resolution - whether we're looking for an instantiator or a resolver.
    * 
    * @return the mode of resolution
    */
@@ -103,12 +95,21 @@ public interface IResolutionScope extends ICoverage {
    * @return whether the resolution is interactive
    */
   boolean isInteractive();
-  
+
   /**
    * Resolution is controlled by a task or script monitor.
    * 
    * @return the monitor
    */
   IMonitor getMonitor();
- 
+
+  /**
+   * True if the observable has been resolved satisfactorily at the current scale, either directly
+   * or indirectly.
+   * 
+   * @param observable
+   * @return
+   */
+  boolean resolves(Observable observable);
+
 }

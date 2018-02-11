@@ -22,6 +22,10 @@ public class Observer extends KimObject implements IObserver {
     public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
         super(statement);
         this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
+        /*
+         * resolving the observable for an acknowledged observation is always optional.
+         */
+        this.observable.setOptional(true);
         this.namespace = namespace;
         this.name = statement.getName();
         this.behavior = new Behavior(statement.getBehavior(), this);

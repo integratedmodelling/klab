@@ -4,6 +4,8 @@ import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.resolution.IPrioritizer;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -14,6 +16,8 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
 
 /**
+ * The resolver provides methods to find the observation strategy for any {@link IResolvable}
+ * object. All state during resolution is held in the associate {@link IResolutionScope}.
  * 
  * @author ferdinando.villa
  *
@@ -155,5 +159,17 @@ public enum Resolver {
     }
 
     return ret;
+  }
+
+  /**
+   * Retrieve an appropriately configured model prioritizer for the passed scope.
+   * 
+   * @param context
+   * @return
+   */
+  public IPrioritizer<org.integratedmodelling.klab.data.rest.resources.Model> getPrioritizer(
+      ResolutionScope context) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

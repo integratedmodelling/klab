@@ -6,7 +6,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.persistence.Model;
+import org.integratedmodelling.klab.data.rest.resources.Model;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
 public class Prioritizer extends ImmutableList<IModel> implements IPrioritizer<Model> {

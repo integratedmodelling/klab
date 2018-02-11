@@ -28,19 +28,21 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.data.rest.resources.Model;
+import org.integratedmodelling.klab.data.rest.resources.Model.Mediation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.Scale;
-import org.integratedmodelling.klab.persistence.Model.Mediation;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.Escape;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class ModelKbox extends ObservableKbox {
 
   private boolean workRemotely = !Configuration.INSTANCE.isOffline();
-  private boolean initialized  = false;
+  private boolean initialized = false;
 
   /**
    * Create a kbox with the passed name. If the kbox exists, open it and return it.
@@ -51,7 +53,7 @@ public class ModelKbox extends ObservableKbox {
   public static ModelKbox create(String name) {
     return new ModelKbox(name);
   }
-  
+
   private ModelKbox(String name) {
     super(name);
   }
@@ -105,8 +107,9 @@ public class ModelKbox extends ObservableKbox {
               "INSERT INTO model VALUES (" + primaryKey + ", " + "'" + cn(model.getServerId())
                   + "', " + "'" + cn(model.getId()) + "', " + "'" + cn(model.getName()) + "', "
                   + "'" + cn(model.getNamespaceId()) + "', " + "'" + cn(model.getProjectId())
-                  + "', " + tid + ", " + /* observation concept is obsolete oid */ 0 + ", " + (model.isPrivateModel() ? "TRUE" : "FALSE")
-                  + ", " + (model.isResolved() ? "TRUE" : "FALSE") + ", "
+                  + "', " + tid + ", " + /* observation concept is obsolete oid */ 0 + ", "
+                  + (model.isPrivateModel() ? "TRUE" : "FALSE") + ", "
+                  + (model.isResolved() ? "TRUE" : "FALSE") + ", "
                   + (model.isReification() ? "TRUE" : "FALSE") + ", "
                   + (model.isInScenario() ? "TRUE" : "FALSE") + ", "
                   + (model.isHasDirectObjects() ? "TRUE" : "FALSE") + ", "
@@ -145,8 +148,8 @@ public class ModelKbox extends ObservableKbox {
   public List<IModel> query(IObservable observable, ResolutionScope context) throws KlabException {
 
     initialize(context.getMonitor());
-    
-    IPrioritizer<Model> prioritizer = context.getPrioritizer(Model.class);
+
+    IPrioritizer<Model> prioritizer = Resolver.INSTANCE.getPrioritizer(context);
     ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
     Set<Model> local = new HashSet<>();
 
@@ -240,10 +243,10 @@ public class ModelKbox extends ObservableKbox {
 
   private String observableQuery(IObservable observable) {
 
-//    /*
-//     * remove any transformations before querying
-//     */
-//    IConcept concept = observable.getMain();
+    // /*
+    // * remove any transformations before querying
+    // */
+    // IConcept concept = observable.getMain();
 
     Set<Long> ids = this.getCompatibleTypeIds(observable);
     if (ids == null || ids.size() == 0) {
@@ -337,7 +340,7 @@ public class ModelKbox extends ObservableKbox {
   public List<Model> retrieveAll(IMonitor monitor) throws KlabException {
 
     initialize(monitor);
-    
+
     List<Model> ret = new ArrayList<>();
     if (!database.hasTable("model")) {
       return ret;
@@ -351,7 +354,7 @@ public class ModelKbox extends ObservableKbox {
   public Model retrieveModel(long oid, IMonitor monitor) throws KlabException {
 
     initialize(monitor);
-    
+
     final Model ret = new Model();
 
     database.query("SELECT * FROM model WHERE oid = " + oid, new SQL.SimpleResultHandler() {
@@ -431,7 +434,8 @@ public class ModelKbox extends ObservableKbox {
   }
 
   @Override
-  protected int deleteAllObjectsWithNamespace(String namespaceId, IMonitor monitor) throws KlabException {
+  protected int deleteAllObjectsWithNamespace(String namespaceId, IMonitor monitor)
+      throws KlabException {
     initialize(monitor);
     int n = 0;
     for (long oid : database.queryIds(
@@ -453,7 +457,7 @@ public class ModelKbox extends ObservableKbox {
   public long store(Object o, IMonitor monitor) throws KlabException {
 
     initialize(monitor);
-    
+
     ArrayList<Object> toStore = new ArrayList<>();
 
     if (o instanceof org.integratedmodelling.klab.model.Model) {
