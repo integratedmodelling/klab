@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 
 /**
@@ -29,7 +30,7 @@ import org.integratedmodelling.klab.owl.OWL;
 public class CoreOntology extends AbstractWorkspace {
 
   private boolean                  synced                = false;
-  private Map<Type, IConcept>      worldviewCoreConcepts =
+  private Map<Type, Concept>       worldviewCoreConcepts =
       Collections.synchronizedMap(new HashMap<>());
   private static Map<Type, String> coreConceptIds        =
       Collections.synchronizedMap(new HashMap<>());
@@ -419,7 +420,7 @@ public class CoreOntology extends AbstractWorkspace {
     return ret;
   }
 
-  public IConcept getCoreType(Set<Type> type) {
+  public Concept getCoreType(Set<Type> type) {
 
     if (type.contains(Type.NOTHING)) {
       return OWL.INSTANCE.getNothing();
@@ -429,7 +430,7 @@ public class CoreOntology extends AbstractWorkspace {
     if (coreType == null) {
       return null;
     }
-    IConcept ret = worldviewCoreConcepts.get(coreType);
+    Concept ret = worldviewCoreConcepts.get(coreType);
     if (ret == null) {
       String id = coreConceptIds.get(coreType);
       if (id != null) {

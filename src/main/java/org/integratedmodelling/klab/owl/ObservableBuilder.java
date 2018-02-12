@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -34,10 +33,10 @@ public class ObservableBuilder implements Builder {
 
   private IMonitor                      monitor;
 
-  private IOntology                     ontology;
+  private Ontology                      ontology;
 
-  private IConcept                      main;
-  private IConcept                      parent;
+  private Concept                       main;
+  private Concept                       parent;
   private String                        mainId;
   private Set<Type>                     type;
   private boolean                       negated;
@@ -61,20 +60,20 @@ public class ObservableBuilder implements Builder {
   // This is only for reporting
   private IKimConcept                   declaration;
 
-  public ObservableBuilder(IConcept main, IOntology ontology) {
+  public ObservableBuilder(Concept main, Ontology ontology) {
     this.main = main;
     this.ontology = ontology;
     this.type = ((Concept) main).type;
   }
 
-  public ObservableBuilder(String main, IConcept parent, IOntology ontology) {
+  public ObservableBuilder(String main, Concept parent, Ontology ontology) {
     this.mainId = main;
     this.ontology = ontology;
     this.parent = parent;
     this.type = ((Concept) parent).type;
   }
 
-  public ObservableBuilder(String main, Set<Type> parent, IOntology ontology) {
+  public ObservableBuilder(String main, Set<Type> parent, Ontology ontology) {
     this.mainId = main;
     this.ontology = ontology;
     this.parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(parent);
@@ -268,7 +267,7 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeAssessment(IConcept concept, boolean addDefinition) {
+  public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
 
     String cName = cleanInternalId(concept.getName()) + "Assessment";
 
@@ -285,7 +284,7 @@ public class ObservableBuilder implements Builder {
      * make a ConceptAssessment if not there, and ensure it's a continuously quantifiable quality.
      * Must be in same ontology as the original concept.
      */
-    IConcept ret = concept.getOntology().getConcept(cName);
+    Concept ret = (Concept) concept.getOntology().getConcept(cName);
 
     if (ret == null) {
 
@@ -298,7 +297,7 @@ public class ObservableBuilder implements Builder {
             UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition()));
       }
       concept.getOntology().define(ax);
-      ret = concept.getOntology().getConcept(cName);
+      ret = (Concept) concept.getOntology().getConcept(cName);
       OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept);
     }
 
@@ -314,7 +313,7 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeCount(IConcept concept, boolean addDefinition) {
+  public static Concept makeCount(IConcept concept, boolean addDefinition) {
 
     /*
      * first, ensure we're counting countable things.
@@ -323,7 +322,7 @@ public class ObservableBuilder implements Builder {
       return null;
     }
     if (concept.is(Type.NUMEROSITY)) {
-      return concept;
+      return (Concept) concept;
     }
 
     String cName = cleanInternalId(concept.getName()) + "Count";
@@ -333,7 +332,7 @@ public class ObservableBuilder implements Builder {
      * make a ConceptCount if not there, and ensure it's a continuously quantifiable quality. Must
      * be in same ontology as the original concept.
      */
-    IConcept ret = concept.getOntology().getConcept(cName);
+    Concept ret = (Concept) concept.getOntology().getConcept(cName);
 
     if (ret == null) {
 
@@ -346,7 +345,7 @@ public class ObservableBuilder implements Builder {
             UnarySemanticOperator.COUNT.declaration[0] + " " + concept.getDefinition()));
       }
       concept.getOntology().define(ax);
-      ret = concept.getOntology().getConcept(cName);
+      ret = (Concept) concept.getOntology().getConcept(cName);
 
       /*
        * numerosity is inherent to the thing that's counted.
@@ -367,10 +366,10 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeDistance(IConcept concept, boolean addDefinition) {
+  public static Concept makeDistance(IConcept concept, boolean addDefinition) {
 
     if (concept.is(Type.DISTANCE)) {
-      return concept;
+      return (Concept) concept;
     }
 
     if (!concept.is(Type.COUNTABLE)) {
@@ -399,7 +398,7 @@ public class ObservableBuilder implements Builder {
       ret = concept.getOntology().getConcept(cName);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
   /**
@@ -411,10 +410,10 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makePresence(IConcept concept, boolean addDefinition) {
+  public static Concept makePresence(IConcept concept, boolean addDefinition) {
 
     if (concept.is(Type.PRESENCE)) {
-      return (IConcept) concept;
+      return (Concept) concept;
     }
 
     if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
@@ -450,7 +449,7 @@ public class ObservableBuilder implements Builder {
       OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
   /**
@@ -463,10 +462,10 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeOccurrence(IConcept concept, boolean addDefinition) {
+  public static Concept makeOccurrence(IConcept concept, boolean addDefinition) {
 
     if (concept.is(Type.OCCURRENCE)) {
-      return (IConcept) concept;
+      return (Concept) concept;
     }
 
     if (!concept.is(Type.DIRECT_OBSERVABLE)) {
@@ -497,7 +496,7 @@ public class ObservableBuilder implements Builder {
       OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
   /**
@@ -509,10 +508,10 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeObservability(IConcept concept, boolean addDefinition) {
+  public static Concept makeObservability(IConcept concept, boolean addDefinition) {
 
     if (concept.is(Type.OBSERVABILITY)) {
-      return (IConcept) concept;
+      return (Concept) concept;
     }
 
     if (!concept.is(Type.OBSERVABLE)) {
@@ -538,7 +537,7 @@ public class ObservableBuilder implements Builder {
 
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
   /**
@@ -550,10 +549,10 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeProbability(IConcept concept, boolean addDefinition) {
+  public static Concept makeProbability(IConcept concept, boolean addDefinition) {
 
     if (concept.is(Type.PROBABILITY)) {
-      return (IConcept) concept;
+      return (Concept) concept;
     }
 
     if (!concept.is(Type.EVENT)) {
@@ -583,7 +582,7 @@ public class ObservableBuilder implements Builder {
       OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
   /**
@@ -595,10 +594,10 @@ public class ObservableBuilder implements Builder {
    *        used from outside the builder
    * @return the transformed concept
    */
-  public static IConcept makeUncertainty(IConcept concept, boolean addDefinition) {
+  public static Concept makeUncertainty(IConcept concept, boolean addDefinition) {
 
     if (concept.is(Type.UNCERTAINTY)) {
-      return (IConcept) concept;
+      return (Concept) concept;
     }
 
 
@@ -620,14 +619,14 @@ public class ObservableBuilder implements Builder {
       ret = concept.getOntology().getConcept(cName);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
-  public static IConcept makeProportion(IConcept concept, @Nullable IConcept comparison,
+  public static Concept makeProportion(IConcept concept, @Nullable IConcept comparison,
       boolean addDefinition) {
 
     if (concept.is(Type.PROPORTION)) {
-      return concept;
+      return (Concept) concept;
     }
 
     if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT))
@@ -657,10 +656,10 @@ public class ObservableBuilder implements Builder {
       ret = concept.getOntology().getConcept(cName);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
-  public static IConcept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
+  public static Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
 
     /*
      * accept only two qualities of the same physical nature (TODO)
@@ -692,13 +691,13 @@ public class ObservableBuilder implements Builder {
       ret = concept.getOntology().getConcept(cName);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
-  public static IConcept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
+  public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
 
     if (concept.is(Type.VALUE)) {
-      return (IConcept) concept;
+      return (Concept) concept;
     }
 
     String cName = "ValueOf" + cleanInternalId(concept.getName())
@@ -723,13 +722,13 @@ public class ObservableBuilder implements Builder {
       ret = concept.getOntology().getConcept(cName);
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
-  public static IConcept makeType(IConcept trait, boolean addDefinition) {
+  public static Concept makeType(IConcept trait, boolean addDefinition) {
 
     if (trait.is(Type.CLASS)) {
-      return trait;
+      return (Concept) trait;
     }
 
     if (!trait.is(Type.TRAIT)) {
@@ -765,7 +764,7 @@ public class ObservableBuilder implements Builder {
       }
     }
 
-    return ret;
+    return (Concept) ret;
   }
 
   private boolean resolveMain() {
@@ -800,7 +799,7 @@ public class ObservableBuilder implements Builder {
   }
 
   @Override
-  public IConcept build() throws KlabValidationException {
+  public Concept build() throws KlabValidationException {
 
     if (errors.size() > 0) {
       String message = "";
@@ -834,7 +833,7 @@ public class ObservableBuilder implements Builder {
      */
     Set<IConcept> abstractTraitBases = new HashSet<>();
 
-    IConcept ret = main;
+    Concept ret = main;
     ArrayList<String> tids = new ArrayList<>();
     ArrayList<IConcept> keep = new ArrayList<IConcept>();
 

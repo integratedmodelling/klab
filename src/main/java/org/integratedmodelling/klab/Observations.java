@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -34,7 +36,7 @@ public enum Observations implements IObservationService {
   }
 
   @Override
-  public void releaseNamespace(INamespace namespace, IMonitor monitor)  throws KlabException {
+  public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
     // TODO remove all artifacts from local kbox
   }
 
@@ -45,7 +47,7 @@ public enum Observations implements IObservationService {
 
   @Override
   public Subject createSubject(IObserver observer, IMonitor monitor) throws KlabException {
-    
+
     Subject result;
     Constructor<?> constructor;
 
@@ -53,8 +55,8 @@ public enum Observations implements IObservationService {
 
     if (agentClass != null) {
       try {
-        constructor =
-            agentClass.getConstructor(String.class, IObservable.class, IScale.class, IMonitor.class);
+        constructor = agentClass.getConstructor(String.class, IObservable.class, IScale.class,
+            IMonitor.class);
       } catch (Exception e) {
         throw new KlabInternalErrorException(
             "No viable constructor found for Java class '" + agentClass.getCanonicalName()
@@ -70,22 +72,28 @@ public enum Observations implements IObservationService {
                 + "' for agent type '" + observer.getObservable().getLocalName() + "'");
       }
     } else {
-      
-      result = Subject.create(observer.getName(), (Observable)observer.getObservable(),
-            Scale.create(observer.getBehavior().getExtents(monitor)), monitor);
-      
+
+      result = Subject.create(observer.getName(), (Observable) observer.getObservable(),
+          Scale.create(observer.getBehavior().getExtents(monitor)), monitor);
+
     }
 
     result.setNamespace(observer.getNamespace());
-    
+
     return result;
   }
+
+  public IObservation createObservation(IObservable observable, IScale scale, IMonitor monitor, IDirectObservation context) {
+//    if ()
+    return null;
+  }
+
 
   /*
    * Non-API - sync namespace. TODO check equivalent in Models.
    */
   public void registerNamespace(Namespace ns, Monitor monitor) {
     // TODO Auto-generated method stub
-    
+
   }
 }

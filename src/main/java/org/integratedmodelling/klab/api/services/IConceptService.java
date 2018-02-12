@@ -14,7 +14,11 @@ public interface IConceptService {
   IConcept getConcept(String conceptId);
 
   /**
-   * Build a concept from its k.IM declaration.
+   * Build a concept from its k.IM declaration. The resulting concept will return a normalized
+   * version of the k.IM code in its {@link IConcept#getDefinition()} method.
+   * 
+   * See {@link IObservableService#declare(String)} for the version that accepts observable
+   * semantics as well.
    * 
    * @param declaration
    * @return the concept corresponding to a k.IM definition.

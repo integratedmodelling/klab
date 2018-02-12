@@ -2,8 +2,6 @@ package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -17,15 +15,15 @@ import org.integratedmodelling.klab.owl.Observable;
 
 public class ResolutionScope extends Coverage implements IResolutionScope {
 
-  private Observer observer;
-  private Observable observable;
-  private Collection<String> scenarios = new ArrayList<>();
-  private Set<Observable> resolved = new HashSet<>();
-  private Model model;
-  private Namespace resolutionNamespace;
-  private Mode mode = Mode.RESOLUTION;
-  private boolean interactive;
-  private IMonitor monitor;
+  private Observer           observer;
+  private Observable         observable;
+  private Collection<String> scenarios       = new ArrayList<>();
+  private DependencyGraph    dependencyGraph = new DependencyGraph();
+  private Model              model;
+  private Namespace          resolutionNamespace;
+  private Mode               mode            = Mode.RESOLUTION;
+  private boolean            interactive;
+  private IMonitor           monitor;
 
   /**
    * Get a root scope based on the definition of an observation.
@@ -173,7 +171,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   public boolean resolves(Observable observable) {
     return false;
   }
-  
+
   @Override
   public Collection<String> getScenarios() {
     return scenarios;
@@ -225,15 +223,15 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    */
   ResolutionScope merge(ResolutionScope childScope) {
     // TODO
-    
+
     /*
      * Accept the observation and merge in the model if any
      */
-    
+
     /*
      * Record the observable among the resolved for this scope.
      */
-    
+
     return this;
   }
 
@@ -242,7 +240,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   }
 
   /**
-   * If passed coverage is relevant, OR the coverage with ours and update our state.
+   * If passed coverage is relevant, OR the coverage with a copy of ours and merge the dependencies.
    */
   @Override
   public ResolutionScope or(ICoverage child) throws KlabException {
@@ -255,7 +253,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   }
 
   /**
-   * If passed coverage is relevant, OR the coverage with ours and update our state.
+   * If passed coverage is relevant, AND the coverage with ours and merge the dependencies.
    */
   @Override
   public ResolutionScope and(ICoverage child) throws KlabException {
@@ -266,6 +264,10 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     }
 
     return this;
+  }
+
+  public DependencyGraph getDependencyGraph() {
+    return dependencyGraph;
   }
 
 }

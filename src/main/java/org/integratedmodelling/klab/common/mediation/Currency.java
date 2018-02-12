@@ -40,7 +40,7 @@ public class Currency implements ICurrency {
     private String       currency;
     private DateTime     date;
     private IConcept     concept;
-    private RankingScale scale;
+    private NumericRange scale;
 
     private boolean ok = true;
 
@@ -56,7 +56,7 @@ public class Currency implements ICurrency {
 
     public void setConcept(IConcept concept, double from, double to) {
         this.concept = concept;
-        this.scale = new RankingScale(from, to);
+        this.scale = new NumericRange(from, to, false, false);
     }
 
     public boolean isOK() {

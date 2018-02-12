@@ -1,44 +1,40 @@
-package org.integratedmodelling.klab.resolution;
+package org.integratedmodelling.klab.dataflow;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.dataflow.ILink;
-import org.integratedmodelling.klab.api.runtime.dataflow.IPort;
+import org.integratedmodelling.klab.observation.Scale;
 
-public class Dataflow implements IDataflow {
+public class Dataflow extends ResolutionActuator<ISubject> implements IDataflow {
 
   String name;
-
+  Scale scale;
+  List<IActuator> actuators = new ArrayList<>();
+  
   @Override
   public String getName() {
     return name;
   }
 
   @Override
-  public List<IPort> getInputs() {
-    // TODO Auto-generated method stub
-    return null;
+  public Scale getScale() {
+    return scale;
   }
-
-  @Override
-  public List<IPort> getOutputs() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  
   @Override
   public Iterator<IActuator> iterator() {
-    // TODO Auto-generated method stub
+    // TODO use a topological iterator; put each group of parallelizable actuators within a dataflow.
     return null;
   }
 
   @Override
   public List<IActuator> getActuators() {
-    // TODO Auto-generated method stub
-    return null;
+    return actuators;
   }
 
   @Override
@@ -46,5 +42,6 @@ public class Dataflow implements IDataflow {
     // TODO Auto-generated method stub
     return null;
   }
+
 
 }

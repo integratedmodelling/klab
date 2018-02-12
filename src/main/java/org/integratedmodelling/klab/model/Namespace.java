@@ -22,13 +22,14 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.owl.Ontology;
 
 public class Namespace extends KimObject implements INamespace {
 
   private static final long serialVersionUID = -6469868584021658804L;
 
   private String            name;
-  private IOntology         ontology;
+  private Ontology          ontology;
   private IProject          project;
   private boolean           internal         = false;
   private boolean           canonical        = false;
@@ -58,7 +59,7 @@ public class Namespace extends KimObject implements INamespace {
     setDeprecated(namespace.isDeprecated());
   }
 
-  public Namespace(String id, @Nullable File file, IOntology ontology) {
+  public Namespace(String id, @Nullable File file, Ontology ontology) {
     super(null);
     setStatement(new KimNamespace(id, file));
     this.name = id;
@@ -139,7 +140,7 @@ public class Namespace extends KimObject implements INamespace {
   }
 
   @Override
-  public IOntology getOntology() {
+  public Ontology getOntology() {
     return ontology;
   }
 
@@ -214,6 +215,7 @@ public class Namespace extends KimObject implements INamespace {
 
   /**
    * Add each top-level object to the object list, and index it and all children by name.
+   * 
    * @param object
    */
   public void addObject(IKimObject object) {

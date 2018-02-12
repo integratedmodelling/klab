@@ -7,14 +7,14 @@ public interface INumericRange extends IValueMediator {
      * 
      * @return the range of the scale.
      */
-    Number getRangeMin();
+    double getLowerBound();
 
     /**
      * Any unbounded boundary will be the corresponding Double.(NEGATIVE_)INFINITE.
      * 
      * @return the range of the scale.
      */
-    Number getRangeMax();
+    double getUpperBound();
 
     /**
      * Both bounds are defined

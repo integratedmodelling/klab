@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -21,9 +20,10 @@ import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.kim.ConceptBuilder;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Property;
 import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
-
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -67,7 +67,7 @@ public enum Concepts implements IConceptService {
     }
 
     @Override
-    public IConcept getConcept(String conceptId) {
+    public Concept getConcept(String conceptId) {
         return OWL.INSTANCE.getConcept(conceptId);
     }
 
@@ -78,13 +78,13 @@ public enum Concepts implements IConceptService {
      * @param conceptId
      * @return the concept. Never null.
      */
-    public static IConcept c(String conceptId) {
+    public static Concept c(String conceptId) {
 
         if (conceptId == null || conceptId.isEmpty()) {
             return null;
         }
 
-        IConcept ret = OWL.INSTANCE.getConcept(conceptId);
+        Concept ret = OWL.INSTANCE.getConcept(conceptId);
         if (ret == null) {
             throw new KlabRuntimeException("cannot find concept " + conceptId);
         }
@@ -99,13 +99,13 @@ public enum Concepts implements IConceptService {
      * @param propertyId
      * @return the property. Never null.
      */
-    public static IProperty p(String propertyId) {
+    public static Property p(String propertyId) {
 
         if (propertyId == null || propertyId.isEmpty()) {
             return null;
         }
 
-        IProperty ret = OWL.INSTANCE.getProperty(propertyId);
+        Property ret = OWL.INSTANCE.getProperty(propertyId);
         if (ret == null) {
             throw new KlabRuntimeException("cannot find property " + propertyId);
         }

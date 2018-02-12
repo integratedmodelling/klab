@@ -92,7 +92,7 @@ public interface IObservable extends IConcept, IResolvable {
    * 
    * @return the numeric range, if any was specified.
    */
-  INumericRange getRange();
+  Range getRange();
 
   /**
    * 

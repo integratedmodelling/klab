@@ -52,7 +52,7 @@ public interface IModelService {
   void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
   /**
-   * Store model in kbox.
+   * Index the passed model in kbox.
    * 
    * @param model
    * @param monitor
@@ -85,8 +85,7 @@ public interface IModelService {
   INamespace load(URL url, IMonitor monitor) throws KlabException;
 
   /**
-   * Load a single model file from a file. Namespace must have no dependencies and name a worldview
-   * at the top.
+   * Load a single model file. Namespace must have no dependencies and name a worldview at the top.
    * 
    * @param file
    * @param monitor

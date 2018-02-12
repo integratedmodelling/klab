@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.services.IOntologyService;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Ontology;
 
 public enum Ontologies implements IOntologyService {
     INSTANCE;
@@ -11,7 +12,7 @@ public enum Ontologies implements IOntologyService {
     }
     
     @Override
-    public IOntology require(String name) {
+    public Ontology require(String name) {
         return OWL.INSTANCE.requireOntology(name, OWL.INTERNAL_ONTOLOGY_PREFIX);    
     }
     

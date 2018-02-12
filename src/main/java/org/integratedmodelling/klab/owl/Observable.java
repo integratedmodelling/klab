@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.owl;
 import java.util.Collection;
 import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.INumericRange;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -14,20 +14,22 @@ import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class Observable implements IObservable {
 
-  private IConcept        observable;
-  private IConcept        main;
+  private Concept         observable;
+  private Concept         main;
   private String          name;
   private String          declaration;
   private boolean         isAbstract;
-  private INumericRange   range;
-  private IUnit           unit;
-  private ICurrency       currency;
-  private IConcept        by;
-  private IConcept        downTo;
+  private Range           range;
+  private Unit            unit;
+  private Currency        currency;
+  private Concept         by;
+  private Concept         downTo;
   private Object          value;
   private ObservationType observationType;
   private boolean         optional;
@@ -36,17 +38,17 @@ public class Observable implements IObservable {
   public static Observable promote(IConceptDefinition concept) {
     return promote(concept.getConcept());
   }
-  
+
   public static Observable promote(IConcept concept) {
     Observable ret = new Observable();
-    ret.observable = concept;
-    ret.main = concept;
+    ret.observable = (Concept) concept;
+    ret.main = (Concept) concept;
     ret.declaration = concept.getDefinition();
     ret.isAbstract = concept.isAbstract();
     ret.generic = concept.isAbstract();
     return ret;
   }
-  
+
   @Override
   public IConcept getType() {
     return observable;
@@ -73,7 +75,7 @@ public class Observable implements IObservable {
   }
 
   @Override
-  public INumericRange getRange() {
+  public Range getRange() {
     return range;
   }
 
@@ -96,11 +98,11 @@ public class Observable implements IObservable {
     return observable;
   }
 
-  public void setObservable(IConcept observable) {
+  public void setObservable(Concept observable) {
     this.observable = observable;
   }
 
-  public void setMain(IConcept main) {
+  public void setMain(Concept main) {
     this.main = main;
   }
 
@@ -116,23 +118,23 @@ public class Observable implements IObservable {
     this.isAbstract = isAbstract;
   }
 
-  public void setRange(INumericRange range) {
+  public void setRange(Range range) {
     this.range = range;
   }
 
-  public void setUnit(IUnit unit) {
+  public void setUnit(Unit unit) {
     this.unit = unit;
   }
 
-  public void setCurrency(ICurrency currency) {
+  public void setCurrency(Currency currency) {
     this.currency = currency;
   }
 
-  public void setBy(IConcept by) {
+  public void setBy(Concept by) {
     this.by = by;
   }
 
-  public void setDownTo(IConcept downTo) {
+  public void setDownTo(Concept downTo) {
     this.downTo = downTo;
   }
 
@@ -314,7 +316,7 @@ public class Observable implements IObservable {
   public void setGeneric(boolean generic) {
     this.generic = generic;
   }
-  
+
   public String toString() {
     return "[" + this.declaration + "]";
   }

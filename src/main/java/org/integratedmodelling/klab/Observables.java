@@ -13,19 +13,18 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
-import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.kim.ConceptBuilder;
-import org.integratedmodelling.klab.owl.Axiom;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
+import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -287,17 +286,17 @@ public enum Observables implements IObservableService {
 
 	@Override
 	public Builder declare(IConcept main, IOntology ontology) {
-		return new ObservableBuilder(main, ontology);
+		return new ObservableBuilder((Concept)main, (Ontology)ontology);
 	}
 
 	@Override
 	public Builder declare(String main, IConcept parent, IOntology ontology) {
-		return new ObservableBuilder(main, parent, ontology);
+		return new ObservableBuilder(main, (Concept)parent, (Ontology)ontology);
 	}
 
 	@Override
 	public Builder declare(String main, Set<Type> type, IOntology ontology) {
-		return new ObservableBuilder(main, type, ontology);
+		return new ObservableBuilder(main, type, (Ontology)ontology);
 	}
 
 	@Override

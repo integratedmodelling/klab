@@ -33,12 +33,12 @@ public enum ConceptBuilder {
 
   INSTANCE;
 
-  public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace,
+  public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
       final IMonitor monitor) {
     return build(concept, namespace, null, monitor);
   }
 
-  public @Nullable IConcept build(final IKimConceptStatement concept, final INamespace namespace,
+  public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
       ConceptStatement kimObject, final IMonitor monitor) {
 
     if (concept.isMacro()) {
@@ -48,7 +48,7 @@ public enum ConceptBuilder {
     Namespace ns = (Namespace) namespace;
     try {
 
-      IConcept ret = buildInternal(concept, ns, kimObject, monitor);
+      Concept ret = buildInternal(concept, ns, kimObject, monitor);
       if (concept.getParents().isEmpty()) {
         IConcept parent = null;
         if (concept.getUpperConceptDefined() != null) {
@@ -79,10 +79,10 @@ public enum ConceptBuilder {
     return null;
   }
 
-  private @Nullable IConcept buildInternal(final IKimConceptStatement concept,
+  private @Nullable Concept buildInternal(final IKimConceptStatement concept,
       final Namespace namespace, ConceptStatement kimObject, final IMonitor monitor) {
 
-    IConcept main = null;
+    Concept main = null;
     String mainId = concept.getName();
 
     namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
@@ -161,13 +161,13 @@ public enum ConceptBuilder {
 
   public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
 
-    IConcept main = declareInternal(concept.getMain(), monitor);
+    Concept main = declareInternal(concept.getMain(), monitor);
 
     if (main == null) {
       return null;
     }
 
-    IConcept observable = main;
+    Concept observable = main;
 
     Observable ret = new Observable();
 
@@ -207,9 +207,9 @@ public enum ConceptBuilder {
     return declareInternal(concept, monitor);
   }
 
-  private @Nullable IConcept declareInternal(final IKimConcept concept, final IMonitor monitor) {
+  private @Nullable Concept declareInternal(final IKimConcept concept, final IMonitor monitor) {
 
-    IConcept main = null;
+    Concept main = null;
 
     if (concept.getName() != null) {
       main = Concepts.INSTANCE.getConcept(concept.getName());
@@ -292,9 +292,9 @@ public enum ConceptBuilder {
       builder.negated();
     }
 
-    IConcept ret = null;
+    Concept ret = null;
     try {
-      ret = builder.build();
+      ret = (Concept) builder.build();
 
       /*
        * handle unions and intersections

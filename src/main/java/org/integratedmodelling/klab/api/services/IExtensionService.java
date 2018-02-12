@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 /**
  * This service manages extensions, i.e. components and services that can be added to the system
  * through plug-ins. It also provides the global dictionary for service prototypes and manages their
- * execution from service calls (functions in k.IM).
+ * execution from service calls (corresponding to functions in k.IM).
  * 
  * @author ferdinando.villa
  *
@@ -45,7 +45,7 @@ public interface IExtensionService {
    * Any k.IM function call stated in k.IM and contained in a k.IM object is executed here.
    * 
    * @param functionCall
-   * @param monitor 
+   * @param monitor
    * @return the return value of the function
    * @throws KlabResourceNotFoundException if the function is unknown
    * @throws KlabException if any exception was thrown during evaluation
