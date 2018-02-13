@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import java.lang.reflect.Constructor;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
@@ -83,10 +84,13 @@ public enum Observations implements IObservationService {
     return result;
   }
 
-  public IObservation createObservation(IObservable observable, IScale scale, IMonitor monitor, IDirectObservation context) {
-//    if ()
-    return null;
-  }
+//  public IObservation createObservation(IObservable observable, IScale scale, INamespace namespace, IMonitor monitor, IDirectObservation context) {
+//    IObservation ret = null;
+//    if (observable.is(Type.SUBJECT)) {
+////      ret = createSubject(observable, namespace, monitor);
+//    } else 
+//    return null;
+//  }
 
 
   /*

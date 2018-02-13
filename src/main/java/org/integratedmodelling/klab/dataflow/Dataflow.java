@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.integratedmodelling.kdl.api.IKdlActuator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -16,10 +18,7 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   String name;
   Scale scale;
   List<IActuator> actuators = new ArrayList<>();
-  
-  public static BuilderImpl builder() {
-      return new BuilderImpl();
-  }
+  IKdlActuator.Type type;
   
   @Override
   public String getName() {
@@ -48,19 +47,10 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
     return null;
   }
   
-  public static class BuilderImpl implements Builder {
-    @Override
-    public <T extends IArtifact> IDataflow<T> build(Class<T> cls) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-  }
-
   @Override
   public T run(IMonitor monitor) {
-    // TODO Auto-generated method stub
-    return null;
+    // TODO
+    return super.compute(monitor);
   }
-
 
 }

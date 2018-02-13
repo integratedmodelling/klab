@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.dataflow;
 
 import java.util.List;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IPort;
@@ -11,7 +12,7 @@ import org.integratedmodelling.klab.owl.Observable;
 public abstract class Actuator<T extends IArtifact> implements IActuator {
 
   String     name;
-
+  String     namespace;
   Observable newObservationType;
   String     newObservationUrn;
   Scale      scale;
@@ -41,7 +42,19 @@ public abstract class Actuator<T extends IArtifact> implements IActuator {
   public Scale getScale() {
     return scale;
   }
-  
+
   public abstract T run(IMonitor monitor);
+
+  @SuppressWarnings("unchecked")
+  public T compute(IMonitor monitor) {
+
+    // TODO
+    T ret = null;
+    if (this.newObservationType != null) {
+      // ret = (T)Observations.INSTANCE.createObservation(newObservationType, this.scale, monitor,
+      // null);
+    }
+    return ret;
+  }
 
 }

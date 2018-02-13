@@ -270,4 +270,15 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return dependencyGraph;
   }
 
+  public Observable findObservable() {
+    if (observable != null) {
+      return observable;
+    } else if (observer != null) {
+      return observer.getObservable();
+    } else if (model != null) {
+      return (Observable) model.getObservables().get(0);
+    }
+    return null;
+  }
+
 }
