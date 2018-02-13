@@ -16,6 +16,10 @@ public class Dataflow extends ResolutionActuator<ISubject> implements IDataflow 
   Scale scale;
   List<IActuator> actuators = new ArrayList<>();
   
+  public static BuilderImpl builder() {
+      return new BuilderImpl();
+  }
+  
   @Override
   public String getName() {
     return name;
@@ -41,6 +45,17 @@ public class Dataflow extends ResolutionActuator<ISubject> implements IDataflow 
   public Collection<ILink> getLinks() {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  public static class BuilderImpl implements Builder {
+
+    @Override
+    public Dataflow build() {
+      Dataflow ret = new Dataflow();
+      // TODO Auto-generated method stub
+      return ret;
+    }
+    
   }
 
 

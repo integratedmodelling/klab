@@ -5,7 +5,6 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.services.IOntologyService;
@@ -21,7 +20,7 @@ import org.integratedmodelling.klab.api.services.IOntologyService;
  * @author ferdinando.villa
  *
  */
-public interface ISubject extends IDirectObservation, IArtifact<ISubject> {
+public interface ISubject extends ICountableObservation {
 
   /**
    * 

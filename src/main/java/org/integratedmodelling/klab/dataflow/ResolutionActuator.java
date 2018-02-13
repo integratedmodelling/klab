@@ -1,12 +1,14 @@
 package org.integratedmodelling.klab.dataflow;
 
-import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
-public class ResolutionActuator<T extends IArtifact<?>> extends Actuator<T> {
+public class ResolutionActuator<T extends IObservation> extends Actuator<T> {
 
-  T observation;
-  
+  T            observation;
+  IResolver<?> resolver;
+
   public ResolutionActuator() {
     // TODO Auto-generated constructor stub
   }

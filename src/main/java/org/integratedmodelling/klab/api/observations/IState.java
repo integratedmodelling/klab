@@ -10,14 +10,13 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
  * 
  * @author ferdinando.villa
  *
  */
-public interface IState extends IObservation, IArtifact<IState> {
+public interface IState extends IObservation {
    
     /**
      * 

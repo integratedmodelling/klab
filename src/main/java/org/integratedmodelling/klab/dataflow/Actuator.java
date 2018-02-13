@@ -5,14 +5,16 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IPort;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
-public abstract class Actuator<T extends IArtifact<?>> implements IActuator {
+public abstract class Actuator<T extends IArtifact> implements IActuator {
 
   String     name;
 
   Observable newObservationType;
   String     newObservationUrn;
+  Scale      scale;
 
   @Override
   public String getName() {
@@ -35,6 +37,11 @@ public abstract class Actuator<T extends IArtifact<?>> implements IActuator {
     return null;
   }
 
+  @Override
+  public Scale getScale() {
+    return scale;
+  }
+  
   public abstract T run(IMonitor monitor);
 
 }

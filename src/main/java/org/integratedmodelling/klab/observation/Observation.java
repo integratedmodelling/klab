@@ -1,11 +1,16 @@
 package org.integratedmodelling.klab.observation;
 
+import java.util.Collection;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IAgent;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -160,5 +165,80 @@ public abstract class Observation implements IObservation {
 
   public void setNamespace(INamespace namespace) {
    this.namespace = (Namespace) namespace;
+  }
+  
+
+  @Override
+  public boolean hasNext() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public IObservation next() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  // Provenance (from IArtifact's contract)
+  
+  @Override
+  public IAgent getConsumer() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IAgent getOwner() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Collection<IArtifact> getAntecedents() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Collection<IArtifact> getConsequents() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IArtifact trace(IConcept concept) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Collection<IArtifact> collect(IConcept concept) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IArtifact trace(IConcept role, IDirectObservation roleContext) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public long getTimestamp() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
@@ -24,7 +22,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  * @author Ferd
  * @param <T>
  */
-public interface IArtifact<T> extends Node, Iterator<T> {
+public interface IArtifact extends Node, Iterator<IArtifact> {
 
   /**
    * @return
@@ -39,12 +37,12 @@ public interface IArtifact<T> extends Node, Iterator<T> {
   /**
    * @return
    */
-  Collection<IArtifact<?>> getAntecedents();
+  Collection<IArtifact> getAntecedents();
 
   /**
    * @return
    */
-  Collection<IArtifact<?>> getConsequents();
+  Collection<IArtifact> getConsequents();
 
   /**
    * Trace the nearest artifact of the passed concept (or with the passed role/trait) up the
@@ -53,7 +51,7 @@ public interface IArtifact<T> extends Node, Iterator<T> {
    * @param concept
    * @return
    */
-  IArtifact<?> trace(IConcept concept);
+  IArtifact trace(IConcept concept);
 
   /**
    * Collect all artifacts of the passed concept (or with the passed role/trait) up the provenance
@@ -62,7 +60,7 @@ public interface IArtifact<T> extends Node, Iterator<T> {
    * @param concept
    * @return
    */
-  Collection<IArtifact<?>> collect(IConcept concept);
+  Collection<IArtifact> collect(IConcept concept);
 
   /**
    * Trace the nearest artifact with the passed role within the passed observation up the provenance
@@ -73,7 +71,7 @@ public interface IArtifact<T> extends Node, Iterator<T> {
    * 
    * @return
    */
-  IArtifact<?> trace(IConcept role, IDirectObservation roleContext);
+  IArtifact trace(IConcept role, IDirectObservation roleContext);
 
   /**
    * Collect all artifacts with the passed role within the passed observation up the provenance
@@ -85,6 +83,6 @@ public interface IArtifact<T> extends Node, Iterator<T> {
    * @param concept
    * @return
    */
-  Collection<IArtifact<?>> collect(IConcept role, IDirectObservation roleContext);
+  Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext);
 
 }

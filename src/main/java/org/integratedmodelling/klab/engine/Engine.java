@@ -395,7 +395,7 @@ public class Engine extends Server implements IEngine {
    * @param dataflow
    * @return
    */
-  public IArtifact<?> run(IDataflow dataflow) {
+  public IArtifact run(IDataflow dataflow) {
     return null;
   }
 

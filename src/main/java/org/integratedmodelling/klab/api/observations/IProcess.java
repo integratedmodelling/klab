@@ -7,6 +7,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * @author ferdinando.villa
  *
  */
-public interface IProcess  extends IDirectObservation, IArtifact<IProcess> {
+public interface IProcess  extends IDirectObservation {
 
 }
