@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.dataflow.ILink;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.observation.Scale;
 
-public class Dataflow extends ResolutionActuator<ISubject> implements IDataflow {
+public class Dataflow<T extends IObservation> extends Actuator<T> implements IDataflow<T> {
 
   String name;
   Scale scale;
@@ -48,14 +50,17 @@ public class Dataflow extends ResolutionActuator<ISubject> implements IDataflow 
   }
   
   public static class BuilderImpl implements Builder {
-
     @Override
-    public Dataflow build() {
-      Dataflow ret = new Dataflow();
+    public <T extends IArtifact> IDataflow<T> build(Class<T> cls) {
       // TODO Auto-generated method stub
-      return ret;
+      return null;
     }
-    
+  }
+
+  @Override
+  public T run(IMonitor monitor) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 

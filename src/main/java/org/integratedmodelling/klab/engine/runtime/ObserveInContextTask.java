@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.observation.Observation;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -45,9 +46,8 @@ public class ObserveInContextTask implements ITask<IObservation> {
 
       @Override
       public IObservation run() throws Exception {
-
-        Engine engine = session.getParent(Engine.class);
-        IObservation ret = null;
+        
+        Observation ret = null;
         /*
          * obtain the resolvable object corresponding to the URN - either a concept or a model
          */
@@ -59,11 +59,11 @@ public class ObserveInContextTask implements ITask<IObservation> {
         }
 
         /*
-         * TODO resolve it appropriately
+         * resolve and run
          */
         ResolutionScope scope = ResolutionScope.create(context, monitor, scenarios);
         if (Resolver.INSTANCE.resolve(resolvable, scope).isRelevant()) {
-          ret = (IObservation)engine.run(Dataflows.INSTANCE.compile(scope));
+          ret = Dataflows.INSTANCE.compile(scope, Observation.class).run(monitor);
         }
 
         /*

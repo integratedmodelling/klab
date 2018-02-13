@@ -385,20 +385,6 @@ public class Engine extends Server implements IEngine {
     return bootTime;
   }
 
-  // TODO see if this is OK here. We can use another executor for the
-  // parallel threads, and implement various modes of computation and
-  // runners.
-  /**
-   * Run the dataflow and instantiate the artifacts, returning the root one for the
-   * dataflow.
-   * 
-   * @param dataflow
-   * @return
-   */
-  public IArtifact run(IDataflow dataflow) {
-    return null;
-  }
-
   @Override
   public IScript run(URL resource) throws KlabException {
 

@@ -30,7 +30,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
   Monitor              monitor;
   Subject              subject;
-  Dataflow             dataflow;
+  Dataflow<Subject>   dataflow;
   FutureTask<ISubject> delegate;
   String               token = NameGenerator.shortUUID();
   Session              session;
@@ -49,8 +49,8 @@ public class ObserveContextTask implements ITask<ISubject> {
 
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
           if (scope.isRelevant()) {
-            dataflow = Dataflows.INSTANCE.compile(scope);
-            subject = (Subject) engine.run(dataflow);
+            dataflow = Dataflows.INSTANCE.compile(scope, Subject.class);
+            subject = dataflow.run(monitor);
           }
 
           return subject;

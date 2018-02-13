@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -17,6 +18,6 @@ public interface IDataflowService {
 
   IKdlDataflow declare(URL url) throws KlabException;
 
-  IDataflow compile(ResolutionScope scope) throws KlabException;
+  <T extends IObservation> IDataflow<T> compile(ResolutionScope scope, Class<T> cls) throws KlabException;
 
 }

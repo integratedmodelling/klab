@@ -16,12 +16,13 @@ import org.integratedmodelling.klab.api.services.IDataflowService;
  * piece by piece using a {@link Builder} (and serialized to KDL if necessary).
  * 
  * @author ferdinando.villa
+ * @param <T> 
  *
  */
-public interface IDataflow extends IActuator, Iterable<IActuator> {
+public interface IDataflow<T extends IArtifact> extends IActuator, Iterable<IActuator> {
 
   public interface Builder {
-    IDataflow build();
+    <T extends IArtifact> IDataflow<T> build(Class<T> cls);
   }
 
   /**
@@ -34,6 +35,6 @@ public interface IDataflow extends IActuator, Iterable<IActuator> {
 
   public Collection<ILink> getLinks();
 
-  public IArtifact run(IMonitor monitor);
+  public T run(IMonitor monitor);
 
 }
