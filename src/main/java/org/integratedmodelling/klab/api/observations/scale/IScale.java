@@ -1,13 +1,18 @@
 package org.integratedmodelling.klab.api.observations.scale;
 
 import java.util.List;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public interface IScale extends IObservationTopology {
+/**
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public interface IScale extends IObservationTopology, Iterable<ITransition> {
 
     /**
      * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise 'granule' or
@@ -186,13 +191,6 @@ public interface IScale extends IObservationTopology {
      */
     IScale harmonize(final IScale scale) throws KlabException;
 
-    // /**
-    // * Get a properly initialized cursor to ease navigating the extents and dimensions according to
-    // * each extent's inherent dimensionality.
-    // * @return the cursor
-    // */
-    // MultidimensionalCursor getCursor();
-
     /**
      * Get the offset in the specified extent that correspond to the overall offset passed.
      * 
@@ -202,6 +200,13 @@ public interface IScale extends IObservationTopology {
      */
     int getExtentOffset(IExtent extent, int overallOffset);
 
+    /**
+     * Return the list of extents ordered by contextualization priority.
+     * 
+     * @return the extents
+     */
+    List<IExtent> getExtents();
+    
     /**
      * Get the individual extent offsets corresponding to the overall offset passed.
      * 

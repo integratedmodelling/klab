@@ -123,7 +123,7 @@ public class Coverage implements ICoverage {
     this.scale = scale;
     this.coverage = coverage;
     if (scale != null) {
-      for (IExtent e : scale) {
+      for (IExtent e : scale.getExtents()) {
         ITopologicallyComparable<?> orig = e.getExtent();
         ITopologicallyComparable<?> curr = coverage > 0 ? orig : null;
         current.add(new CExt(e.getDomainConcept(), orig, curr, coverage));

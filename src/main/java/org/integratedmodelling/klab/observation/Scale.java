@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -94,7 +95,7 @@ public class Scale implements IScale {
     int[] exts = new int[getExtentCount()];
     Arrays.fill(exts, Extent.GENERIC_LOCATOR);
     int i = 0;
-    for (IExtent e : this) {
+    for (IExtent e : extents) {
       for (Locator o : locators) {
         int n = e.locate(o);
         if (n != Extent.INAPPROPRIATE_LOCATOR) {
@@ -132,7 +133,7 @@ public class Scale implements IScale {
     int[] exts = new int[getExtentCount()];
     Arrays.fill(exts, Extent.GENERIC_LOCATOR);
     int i = 0;
-    for (IExtent e : this) {
+    for (IExtent e : extents) {
       for (Locator o : locators) {
         int n = e.locate(o);
         if (n != Extent.INAPPROPRIATE_LOCATOR) {
@@ -170,7 +171,7 @@ public class Scale implements IScale {
   public int getExtentOffset(IExtent extent, int overallOffset) {
     int n = 0;
     boolean found = false;
-    for (IExtent e : this) {
+    for (IExtent e : extents) {
       if (e.getDomainConcept().equals(extent.getDomainConcept())) {
         found = true;
         break;
@@ -264,7 +265,7 @@ public class Scale implements IScale {
 
     int[] loc = new int[getExtentCount()];
     int i = 0;
-    for (IExtent e : this) {
+    for (IExtent e : extents) {
       for (Locator l : locators) {
         int idx = e.locate(l);
         if (idx >= 0) {
@@ -315,11 +316,6 @@ public class Scale implements IScale {
   @Override
   public IExtent getExtent(int index) {
     return extents.get(index);
-  }
-
-  @Override
-  public Iterator<IExtent> iterator() {
-    return extents.iterator();
   }
 
   @Override
@@ -500,7 +496,7 @@ public class Scale implements IScale {
    */
   boolean hasSameExtents(IScale scale) {
 
-    for (IExtent e : scale) {
+    for (IExtent e : scale.getExtents()) {
       if (getExtent(e.getDomainConcept()) == null) {
         return false;
       }
@@ -676,7 +672,7 @@ public class Scale implements IScale {
     ArrayList<IExtent> common = new ArrayList<>();
     HashSet<IConcept> commonConcepts = new HashSet<>();
 
-    for (IExtent e : this) {
+    for (IExtent e : extents) {
       if (other.getExtent(e.getDomainConcept()) != null) {
         common.add(e);
         commonConcepts.add(e.getDomainConcept());
@@ -686,7 +682,7 @@ public class Scale implements IScale {
     }
 
     if (adopt) {
-      for (IExtent e : other) {
+      for (IExtent e : other.getExtents()) {
         if (adopt && ret.getExtent(e.getDomainConcept()) == null
             && !commonConcepts.contains(e.getDomainConcept())) {
           ret.mergeExtent(e, true);
@@ -780,7 +776,7 @@ public class Scale implements IScale {
   public static IScale substituteExtent(IScale scale, IExtent extent) throws KlabException {
 
     List<IExtent> exts = new ArrayList<>();
-    for (IExtent e : scale) {
+    for (IExtent e : scale.getExtents()) {
       if (e.getDomainConcept().equals(extent.getDomainConcept())) {
         exts.add(extent);
       } else {
@@ -799,7 +795,7 @@ public class Scale implements IScale {
    */
   public IScale collapse(IConcept... domains) throws KlabException {
     ArrayList<IExtent> extents = new ArrayList<>();
-    for (IExtent e : this) {
+    for (IExtent e : this.extents) {
       boolean found = false;
       for (IConcept d : domains) {
         if (e.getDomainConcept().equals(d)) {
@@ -831,7 +827,7 @@ public class Scale implements IScale {
       this.cursor = dimensionScanner;
       dind = dimIndex;
       int i = 0;
-      for (IExtent e : Scale.this) {
+      for (IExtent e : Scale.this.extents) {
         if (i == dind) {
           dmax = (int) e.getMultiplicity();
           if (e instanceof ITime) {
@@ -924,6 +920,12 @@ public class Scale implements IScale {
     public boolean isActive(int offset) {
       return extent.isCovered(offset);
     }
+  }
+
+  @Override
+  public Iterator<ITransition> iterator() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

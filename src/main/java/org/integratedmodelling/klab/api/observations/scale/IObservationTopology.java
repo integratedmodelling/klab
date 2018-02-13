@@ -26,8 +26,6 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale;
 
-import java.util.Optional;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -41,7 +39,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  * 
  * @author Ferd
  */
-public abstract interface IObservationTopology extends ITopology<IScale>, Iterable<IExtent> {
+public abstract interface IObservationTopology extends ITopology<IScale> {
 
     /**
      * We deal with space and time in all natural systems, so we expose these to ease API use.

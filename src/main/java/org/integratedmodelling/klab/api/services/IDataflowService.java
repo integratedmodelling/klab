@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.net.URL;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
 
 public interface IDataflowService {
 
@@ -26,7 +26,7 @@ public interface IDataflowService {
    * @return a dataflow that will compute an artifact of the requested type when run.
    * @throws KlabException
    */
-  <T extends IArtifact> IDataflow<T> compile(ResolutionScope scope, Class<T> cls)
+  <T extends IArtifact> IDataflow<T> compile(IResolutionScope scope, Class<T> cls)
       throws KlabException;
 
 }

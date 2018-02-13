@@ -11,12 +11,12 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -68,7 +68,7 @@ public enum Dataflows implements IDataflowService {
     }
 
     @Override
-    public <T extends IArtifact> Dataflow<T> compile(ResolutionScope scope, Class<T> cls)
+    public <T extends IArtifact> Dataflow<T> compile(IResolutionScope scope, Class<T> cls)
         throws KlabException {
       // TODO Auto-generated method stub
       return null;

@@ -185,7 +185,6 @@ public enum Resources implements IResourceService {
         ns = st.getNamespace();
         ob = st.getName();
       }
-
       
       INamespace namespace = Namespaces.INSTANCE.getNamespace(ns);
       if (namespace == null) {
