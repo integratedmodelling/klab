@@ -10,8 +10,7 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -69,7 +68,7 @@ public enum Dataflows implements IDataflowService {
     }
 
     @Override
-    public <T extends IObservation> Dataflow<T> compile(ResolutionScope scope, Class<T> cls)
+    public <T extends IArtifact> Dataflow<T> compile(ResolutionScope scope, Class<T> cls)
         throws KlabException {
       // TODO Auto-generated method stub
       return null;

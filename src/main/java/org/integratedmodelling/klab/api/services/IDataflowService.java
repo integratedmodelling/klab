@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -18,6 +18,15 @@ public interface IDataflowService {
 
   IKdlDataflow declare(URL url) throws KlabException;
 
-  <T extends IObservation> IDataflow<T> compile(ResolutionScope scope, Class<T> cls) throws KlabException;
+  /**
+   * Compile a resolution scope into a dataflow computing the passed artifact type.
+   * 
+   * @param scope
+   * @param cls
+   * @return a dataflow that will compute an artifact of the requested type when run.
+   * @throws KlabException
+   */
+  <T extends IArtifact> IDataflow<T> compile(ResolutionScope scope, Class<T> cls)
+      throws KlabException;
 
 }

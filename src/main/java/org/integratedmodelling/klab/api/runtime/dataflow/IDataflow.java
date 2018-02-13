@@ -22,6 +22,15 @@ import org.integratedmodelling.klab.api.services.IDataflowService;
 public interface IDataflow<T extends IArtifact> extends IActuator, Iterable<IActuator> {
 
   public interface Builder {
+    
+    /**
+     * Build the dataflow. The class requested must match the semantics of the
+     * root actuator.
+     * 
+     * @param cls
+     * @return the dataflow specified through the builder.
+     * @throws IllegalArgumentException if the class does not match the requested semantics.
+     */
     <T extends IArtifact> IDataflow<T> build(Class<T> cls);
   }
 
@@ -29,12 +38,18 @@ public interface IDataflow<T extends IArtifact> extends IActuator, Iterable<IAct
    * All actuators in order of declaration. Iterate the dataflow itself to obtain them in dependency
    * order.
    * 
-   * @return
+   * @return all the internal actuators in order of declaration.
    */
   public List<IActuator> getActuators();
 
   public Collection<ILink> getLinks();
 
+  /**
+   * Run the dataflow and return the resulting artifact.
+   * 
+   * @param monitor
+   * @return the built artifact. May be empty, never null.
+   */
   public T run(IMonitor monitor);
 
 }

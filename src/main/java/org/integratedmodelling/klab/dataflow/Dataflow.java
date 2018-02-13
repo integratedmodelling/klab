@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -12,7 +11,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.ILink;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.observation.Scale;
 
-public class Dataflow<T extends IObservation> extends Actuator<T> implements IDataflow<T> {
+public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataflow<T> {
 
   String name;
   Scale scale;
