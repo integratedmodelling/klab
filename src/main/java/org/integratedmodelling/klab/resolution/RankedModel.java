@@ -26,11 +26,18 @@ public class RankedModel extends Model implements IRankedModel {
   
   String modelUrn;
   Model delegate;
-
+  Map<String, Object> ranks;
+  
   public RankedModel(String urn) {
     this.modelUrn = urn;
   }
   
+  public RankedModel(Model model, Map<String, Object> ranks) {
+      this.modelUrn = model.getName();
+      this.delegate = model;
+      this.ranks = ranks;
+    }
+
   private Model getDelegate() {
     if (delegate == null) {
       IKimObject m = Resources.INSTANCE.getModelObject(modelUrn);
@@ -180,9 +187,8 @@ public class RankedModel extends Model implements IRankedModel {
   }
 
   @Override
-  public Map<String, Double> getRanks() {
-    // TODO Auto-generated method stub
-    return null;
+  public Map<String, Object> getRanks() {
+    return ranks;
   }
 
 }

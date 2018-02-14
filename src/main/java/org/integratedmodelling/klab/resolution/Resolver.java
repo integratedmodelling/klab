@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.util.Collection;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -169,7 +170,6 @@ public enum Resolver {
    */
   public IPrioritizer<org.integratedmodelling.klab.data.rest.resources.Model> getPrioritizer(
       ResolutionScope context) {
-    // TODO Auto-generated method stub
-    return null;
+    return new Prioritizer(context);
   }
 }

@@ -30,7 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 
 /**
  * The object that creates a ranking of whatever object is being used to represent a model according to 
@@ -91,7 +91,7 @@ import org.integratedmodelling.klab.api.model.IModel;
  *            need to be compared and building an actual model that won't be used may be expensive.
  *
  */
-public interface IPrioritizer<T> extends Comparator<T>, List<IModel> {
+public interface IPrioritizer<T> extends Comparator<T> {
 
     /**
      * The default ranking strategy in the form that can be given in klab.properties for
@@ -137,7 +137,7 @@ public interface IPrioritizer<T> extends Comparator<T>, List<IModel> {
      * @param md
      * @return ranks from object, if any
      */
-    Map<String, Double> getRanks(T md);
+    Map<String, Object> getRanks(T md);
 
     /**
      * List the keys of each criterion in the chosen ranking strategy, in order of 

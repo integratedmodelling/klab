@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Configuration;
@@ -24,6 +25,7 @@ import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -37,6 +39,7 @@ import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.Escape;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 public class ModelKbox extends ObservableKbox {
@@ -145,7 +148,7 @@ public class ModelKbox extends ObservableKbox {
    * @return models resulting from query, best first.
    * @throws KlabException
    */
-  public List<IModel> query(IObservable observable, ResolutionScope context) throws KlabException {
+  public List<IRankedModel> query(IObservable observable, ResolutionScope context) throws KlabException {
 
     initialize(context.getMonitor());
 

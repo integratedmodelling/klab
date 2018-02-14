@@ -7,23 +7,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.ITraitService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.utils.Pair;
 
 public enum Traits implements ITraitService {
   INSTANCE;
 
   @Override
-  public Collection<IConcept> getTraits(IKnowledge concept) {
+  public Collection<IConcept> getTraits(IConcept concept) {
 
     Set<IConcept> ret = new HashSet<>();
 
@@ -119,4 +118,36 @@ public enum Traits implements ITraitService {
     }
   }
 
+  /**
+   * Analyze an observable concept and return the main observable with all the original
+   * identities and realms but no attributes; separately, return the list of the
+   * attributes that were removed.
+   * 
+   * @param observable
+   * @return attribute profile
+   * @throws KlabValidationException
+   */
+  public Pair<IConcept, Collection<IConcept>> separateAttributes(IConcept observable)
+          throws KlabValidationException {
+
+      IConcept obs = Observables.INSTANCE.getCoreObservable(observable);
+      ArrayList<IConcept> tret = new ArrayList<>();
+      ArrayList<IConcept> keep = new ArrayList<>();
+
+      for (IConcept zt : getTraits(observable)) {
+          if (zt.is(Concepts.c(NS.CORE_IDENTITY)) || zt.is(Concepts.c(NS.CORE_REALM))) {
+              keep.add(zt);
+          } else {
+              tret.add(zt);
+          }
+      }
+            
+      IConcept root = null; // Observables.declareObservable((IConcept) (obs == null ? observable
+//              : obs), keep, Observables.getContextType(observable), Observables
+//              .getInherentType(observable));
+
+      return new Pair<>(root, tret);
+  }
+
+  
 }

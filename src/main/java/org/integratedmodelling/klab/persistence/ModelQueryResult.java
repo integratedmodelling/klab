@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Projects;
@@ -37,8 +38,10 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.data.rest.resources.Model;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
@@ -52,7 +55,7 @@ import org.integratedmodelling.klab.utils.collections.ImmutableList;
  * @author ferdinando.villa
  *
  */
-public class ModelQueryResult extends ImmutableList<IModel>
+public class ModelQueryResult extends ImmutableList<IRankedModel>
     /* implements INetwork.DistributedOperation<List<Model>, List<Model>> */ {
 
   IPrioritizer<Model> comparator;
@@ -62,7 +65,7 @@ public class ModelQueryResult extends ImmutableList<IModel>
 //  ModelQuery query;
 //  RestTemplateHelper template;
 
-  public class It implements Iterator<IModel> {
+  public class It implements Iterator<IRankedModel> {
 
     Iterator<Model> _it;
 
@@ -93,7 +96,7 @@ public class ModelQueryResult extends ImmutableList<IModel>
     }
 
     @Override
-    public IModel next() {
+    public IRankedModel next() {
       return getModel(_it.next());
     }
 
@@ -119,7 +122,7 @@ public class ModelQueryResult extends ImmutableList<IModel>
     return modelData;
   }
 
-  private IModel getModel(Model md) {
+  private IRankedModel getModel(Model md) {
 
     IKimObject ret = null;
 
@@ -172,10 +175,9 @@ public class ModelQueryResult extends ImmutableList<IModel>
     }
 
     /*
-     * TODO wrap in RankedModel
+     * wrap in RankedModel
      */
-    
-    return (IModel) ret;
+    return new RankedModel((org.integratedmodelling.klab.model.Model) ret,  comparator.getRanks(md));
   }
 
   public String describeRanks(Model md, int indent, int n) {
@@ -185,7 +187,7 @@ public class ModelQueryResult extends ImmutableList<IModel>
 
     ret += filler + StringUtils.rightPad(n + ".", 4) + md.getName() + " ["
         + (md.getServerId() == null ? "local" : md.getServerId()) + "]\n";
-    Map<String, Double> ranks = comparator.getRanks(md);
+    Map<String, Object> ranks = comparator.getRanks(md);
     for (String s : comparator.listCriteria()) {
       ret += filler + "  " + StringUtils.rightPad(s, 25) + " " + ranks.get(s) + "\n";
     }
@@ -204,12 +206,12 @@ public class ModelQueryResult extends ImmutableList<IModel>
   }
 
   @Override
-  public IModel get(int arg0) {
+  public IRankedModel get(int arg0) {
     return getModel(modelData.get(arg0));
   }
 
   @Override
-  public Iterator<IModel> iterator() {
+  public Iterator<IRankedModel> iterator() {
     return new It();
   }
 

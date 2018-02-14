@@ -3,12 +3,21 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 
 public interface ITraitService {
 
-    Collection<IConcept> getTraits(IKnowledge concept);
+    /**
+     * 
+     * @param concept
+     * @return
+     */
+    Collection<IConcept> getTraits(IConcept concept);
 
+    /**
+     * 
+     * @param trait
+     * @return
+     */
     IConcept getBaseParentTrait(IConcept trait);
 
     /**
