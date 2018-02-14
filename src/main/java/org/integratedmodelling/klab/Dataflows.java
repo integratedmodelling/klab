@@ -85,7 +85,7 @@ public enum Dataflows implements IDataflowService {
       String name = rs.findObservable().getLocalName();
       Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withScale(rs.getScale());
       if (rs.findObservable().is(Type.COUNTABLE) && scope.getMode() == Mode.RESOLUTION) {
-        builder = builder.instantiating(rs.findObservable());
+        builder = builder.instantiating(rs.findObservable(), scope.getResolutionNamespace());
       }
       return (Dataflow<T>) builder.build();
     }

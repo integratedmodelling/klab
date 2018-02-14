@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 
@@ -396,7 +398,7 @@ public class CoreOntology extends AbstractWorkspace {
     OWL.INSTANCE.initialize(getRoot(), monitor);
 
     for (INamespace ns : OWL.INSTANCE.getNamespaces()) {
-      Namespaces.INSTANCE.registerNamespace(ns, monitor);
+      Namespaces.INSTANCE.registerNamespace((Namespace)ns, monitor);
       ret.add(ns);
     }
 

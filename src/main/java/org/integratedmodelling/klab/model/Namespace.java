@@ -56,6 +56,9 @@ public class Namespace extends KimObject implements INamespace {
     this.ontology = Ontologies.INSTANCE.require(name);
     this.project = Projects.INSTANCE.retrieveOrCreate(namespace.getProject());
     this.timestamp = namespace.getTimestamp();
+    if (this.timestamp == 0) {
+        this.timestamp = System.currentTimeMillis();
+    }
     setDeprecated(namespace.isDeprecated());
   }
 
