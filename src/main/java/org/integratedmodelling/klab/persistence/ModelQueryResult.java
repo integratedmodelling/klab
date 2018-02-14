@@ -130,54 +130,55 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
       return null;
     }
 
-    if (md.getServerId() != null && Resources.INSTANCE.getModelObject(md.getName()) == null) {
-      // load remote projects if necessary. After the call, the object should be
-      // available locally.
-      IProject remoteProject = Projects.INSTANCE.getProject(md.getProjectUrn());
-      if (remoteProject == null) {
-//        IServer node = KLAB.ENGINE.getNetwork().getNode(md.getServerId());
-//        if (node != null) {
-//          try {
-//            remoteProject =
-//                ResourceFactory.getProjectFromURN(node.getUrl(), md.getProjectUrn(), node.getId(),
-//                    KLAB.WORKSPACE.getDeployLocation(), ((IModelingEngine) KLAB.ENGINE).getUser());
-//            if (!(remoteProject instanceof IComponent)) {
-//              KLAB.PMANAGER.loadProject(remoteProject.getId(),
-//                  KLAB.MFACTORY.getRootParsingContext());
-//            }
-//          } catch (Exception e) {
-//            throw new KlabRuntimeException(e);
-//          }
-//        } else {
-//          throw new KlabRuntimeException(
-//              "node " + md.getServerId() + " returned from remote query has become inaccessible");
-//        }
-      }
-    }
-
-    INamespace ns = Namespaces.INSTANCE.getNamespace(md.getNamespaceId());
-    if (ns != null) {
-      ret = ns.getObject(md.getId());
-    }
-    
-    if (!(ret instanceof IModel)) {
-      return null;
-    }
-
-    if (md.getDereifyingAttribute() != null) {
-      IObservable obs = ((IModel)ret).getAttributeObservables().get(md.getDereifyingAttribute());
-      if (obs != null) {
-        throw new KlabRuntimeException("UNIMPLEMENTED! Attribute model");
-//        ret = new KIMModel((KIMObserver) obs, (KIMModel) ret, md.getDereifyingAttribute(), monitor);
-      } else {
-        return null;
-      }
-    }
-
-    /*
-     * wrap in RankedModel
-     */
-    return new RankedModel((org.integratedmodelling.klab.model.Model) ret,  comparator.getRanks(md));
+    return new RankedModel(md,  comparator.getRanks(md));
+//
+//    if (md.getServerId() != null && Resources.INSTANCE.getModelObject(md.getName()) == null) {
+//      // load remote projects if necessary. After the call, the object should be
+//      // available locally.
+//      IProject remoteProject = Projects.INSTANCE.getProject(md.getProjectUrn());
+//      if (remoteProject == null) {
+////        IServer node = KLAB.ENGINE.getNetwork().getNode(md.getServerId());
+////        if (node != null) {
+////          try {
+////            remoteProject =
+////                ResourceFactory.getProjectFromURN(node.getUrl(), md.getProjectUrn(), node.getId(),
+////                    KLAB.WORKSPACE.getDeployLocation(), ((IModelingEngine) KLAB.ENGINE).getUser());
+////            if (!(remoteProject instanceof IComponent)) {
+////              KLAB.PMANAGER.loadProject(remoteProject.getId(),
+////                  KLAB.MFACTORY.getRootParsingContext());
+////            }
+////          } catch (Exception e) {
+////            throw new KlabRuntimeException(e);
+////          }
+////        } else {
+////          throw new KlabRuntimeException(
+////              "node " + md.getServerId() + " returned from remote query has become inaccessible");
+////        }
+//      }
+//    }
+//
+//    INamespace ns = Namespaces.INSTANCE.getNamespace(md.getNamespaceId());
+//    if (ns != null) {
+//      ret = ns.getObject(md.getId());
+//    }
+//    
+//    if (!(ret instanceof IModel)) {
+//      return null;
+//    }
+//
+//    if (md.getDereifyingAttribute() != null) {
+//      IObservable obs = ((IModel)ret).getAttributeObservables().get(md.getDereifyingAttribute());
+//      if (obs != null) {
+//        throw new KlabRuntimeException("UNIMPLEMENTED! Attribute model");
+////        ret = new KIMModel((KIMObserver) obs, (KIMModel) ret, md.getDereifyingAttribute(), monitor);
+//      } else {
+//        return null;
+//      }
+//    }
+//
+//    /*
+//     * wrap in RankedModel
+//     */
   }
 
   public String describeRanks(Model md, int indent, int n) {

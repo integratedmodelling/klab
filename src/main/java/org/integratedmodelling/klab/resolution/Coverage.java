@@ -90,7 +90,6 @@ public class Coverage implements ICoverage {
     return (isForObjects || forceRelevant) ? coverage > 0 : coverage > MIN_TOTAL_COVERAGE;
   }
 
-
   @Override
   public Scale getScale() {
     return scale;

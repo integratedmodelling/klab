@@ -131,11 +131,7 @@ public enum Models implements IModelService {
 
   @Override
   public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
-    List<IRankedModel> ret = new ArrayList<>();
-    for (IModel model : kbox.query(observable, (ResolutionScope) scope)) {
-      System.out.println("FOUND MODEL " + model);
-    }
-    return ret;
+    return kbox.query(observable, (ResolutionScope) scope);
   }
 
   /*
