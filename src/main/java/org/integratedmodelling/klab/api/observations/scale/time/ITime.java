@@ -34,16 +34,6 @@ public interface ITime extends IExtent {
     int MIN_SCALE_RANK = 0;
     int MAX_SCALE_RANK = 19;
 
-    
-    @Override
-    ITime getExtent();
-
-    /**
-     * Overriding to constrain the result type further (from IExtent to ITemporalExtent)
-     */
-    @Override
-    ITime getExtent(int stateIndex);
-
     /**
      * Overriding to require that the collapsed type is ITimePeriod. This allows simpler coding against the API,
      * and is the most logical way to enforce that getValueCount() == 1.

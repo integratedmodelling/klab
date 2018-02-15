@@ -25,9 +25,7 @@ import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IScript;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
@@ -54,6 +52,7 @@ public class Engine extends Server implements IEngine {
   public class Monitor implements IMonitor {
 
     private IIdentity identity = Engine.this;
+    int errorCount = 0;
 
     @Override
     public void info(Object... info) {
@@ -71,6 +70,7 @@ public class Engine extends Server implements IEngine {
     public void error(Object... o) {
       // TODO Auto-generated method stub
       System.err.println(NotificationUtils.getMessage(o));
+      errorCount ++;
     }
 
     @Override
@@ -106,15 +106,17 @@ public class Engine extends Server implements IEngine {
      * {@link IRuntimeIdentity} such as a task or script).
      */
     public void notifyStart() {
-      System.out.println("START OF " + identity + " NOTIFIED!");
+      System.out.println(identity + " started");
     }
 
     /**
      * Called to notify the start of any runtime job pertaining to our identity (always a
      * {@link IRuntimeIdentity} such as a task or script).
+     * 
+     * @param error true for abnormal exit
      */
-    public void notifyEnd() {
-      System.out.println("END OF " + identity + " NOTIFIED!");
+    public void notifyEnd(boolean error) {
+      System.out.println(identity + ((errorCount > 0 || error) ? " finished with errors" : " finished without errors"));
     }
 
   }

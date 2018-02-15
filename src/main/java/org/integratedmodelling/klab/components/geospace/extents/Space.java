@@ -262,12 +262,6 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public ISpace getExtent(int stateIndex) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public IEnvelope getEnvelope() {
     return envelope;
   }
@@ -302,6 +296,12 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public Space copy() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Space getExtent(long stateIndex) {
     // TODO Auto-generated method stub
     return null;
   }

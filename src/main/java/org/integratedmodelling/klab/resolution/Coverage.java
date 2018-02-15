@@ -12,25 +12,45 @@ import org.integratedmodelling.klab.observation.Scale;
 public class Coverage implements ICoverage {
 
   /*
-   * do not accept a model unless its coverage is greater than this.
+   * Default - do not accept a state model unless its coverage is greater than this. Instantiator
+   * models make this 0.
+   * 
+   * TODO make this configurable
    */
-  private static double MIN_MODEL_COVERAGE = 0.01;
+  private static double MIN_MODEL_COVERAGE    = 0.01;
 
   /*
-   * default: we accept models if they cover at least an additional 20% of the whole context
+   * Default - we accept models if they cover at least an additional 20% of the whole context TODO
+   * make this configurable
    */
-  private static double MIN_TOTAL_COVERAGE = 0.20;
+  private static double MIN_TOTAL_COVERAGE    = 0.20;
 
   /*
-   * default: we stop adding models when we cover at least 95% of the whole context.
+   * Default - we stop adding models when we cover at least 95% of the whole context. TODO make this
+   * configurable
    */
   private static double MIN_REQUIRED_COVERAGE = 0.95;
 
+  // make local copies that may be modified and are inherited by children
+  private double        minModelCoverage      = MIN_MODEL_COVERAGE;
+  private double        minTotalCoverage      = MIN_TOTAL_COVERAGE;
+  private double        minRequiredCoverage   = MIN_REQUIRED_COVERAGE;
+
+  /*
+   * For each extent of the original scale this contains: 1. the original, unmodified extent which
+   * was defined as covered or uncovered at the constructor; 2. the currently covered extent; 3. the
+   * proportion of coverage for this extent combination. The total coverage is the product of all
+   * coverages.
+   */
+  List<CExt>            current               = new ArrayList<>();
+  double                coverage              = 0.0;
+  Scale                 scale;
+
   class CExt {
-    IConcept domain;
+    IConcept                    domain;
     ITopologicallyComparable<?> original;
     ITopologicallyComparable<?> current;
-    double coverage;
+    double                      coverage;
 
     CExt(IConcept domain, ITopologicallyComparable<?> original, ITopologicallyComparable<?> current,
         double coverage) {
@@ -46,22 +66,6 @@ public class Coverage implements ICoverage {
     this.coverage = d;
   }
 
-  /*
-   * For each extent of the original scale this contains: 1. the original, unmodified extent which
-   * was defined as covered or uncovered at the constructor; 2. the currently covered extent; 3. the
-   * proportion of coverage for this extent combination. The total coverage is the product of all
-   * coverages.
-   */
-  List<CExt> current = new ArrayList<>();
-  double coverage = 0.0;
-  // only kept around for the copy constructor
-  Scale scale;
-  // if coverage is that of an object source, isEmpty will only return true for zero
-  // coverage, so that points and small objects aren't lost.
-  boolean isForObjects = false;
-
-  private boolean forceRelevant;
-
   /**
    * Create coverage initialized at 1
    * 
@@ -71,23 +75,21 @@ public class Coverage implements ICoverage {
     this(scale, 1.0);
   }
 
-  public Coverage(Scale scale, boolean isForObjects) {
-    this(scale, 1.0);
-    this.isForObjects = isForObjects;
-  }
-
-  public Coverage(ICoverage coverage) {
-    this(((Coverage) coverage).scale, coverage.getCoverage());
+  public Coverage(Coverage coverage) {
+    this(coverage.scale, coverage.getCoverage());
+    this.minModelCoverage = coverage.minModelCoverage;
+    this.minRequiredCoverage = coverage.minRequiredCoverage;
+    this.minTotalCoverage = coverage.minTotalCoverage;
   }
 
   @Override
   public boolean isEmpty() {
-    return (isForObjects || forceRelevant) ? coverage <= 0 : coverage < MIN_MODEL_COVERAGE;
+    return coverage < minModelCoverage;
   }
 
   @Override
   public boolean isRelevant() {
-    return (isForObjects || forceRelevant) ? coverage > 0 : coverage > MIN_TOTAL_COVERAGE;
+    return coverage > minTotalCoverage;
   }
 
   @Override
@@ -97,19 +99,19 @@ public class Coverage implements ICoverage {
 
   @Override
   public boolean isComplete() {
-    return coverage >= MIN_REQUIRED_COVERAGE;
+    return coverage >= minRequiredCoverage;
   }
 
-  public static void setMinimumModelCoverage(double d) {
-    MIN_TOTAL_COVERAGE = d;
+  public void setMinimumModelCoverage(double d) {
+    this.minModelCoverage = d;
   }
 
-  public static void setMinimumTotalCoverage(double d) {
-    MIN_MODEL_COVERAGE = d;
+  public void setMinimumTotalCoverage(double d) {
+    this.minTotalCoverage = d;
   }
 
-  public static void setSufficientTotalCoverage(double d) {
-    MIN_REQUIRED_COVERAGE = d;
+  public void setSufficientTotalCoverage(double d) {
+    this.minRequiredCoverage = d;
   }
 
   /**
@@ -147,7 +149,7 @@ public class Coverage implements ICoverage {
 
     Coverage ret = new Coverage();
     ret.coverage = 1.0;
-    ret.isForObjects = isForObjects || ((Coverage) coverage).isForObjects;
+    // ret.isForObjects = isForObjects || ((Coverage) coverage).isForObjects;
 
     for (CExt my : current) {
       for (CExt his : ((Coverage) coverage).current) {
@@ -162,7 +164,7 @@ public class Coverage implements ICoverage {
           /*
            * only add it if the increment is enough to justify
            */
-          if ((ncoverage - my.coverage) >= MIN_REQUIRED_COVERAGE) {
+          if ((ncoverage - my.coverage) >= minRequiredCoverage) {
             ret.coverage *= ncoverage;
             ret.current.add(new CExt(my.domain, my.original, current, ncoverage));
           } else {
@@ -180,8 +182,8 @@ public class Coverage implements ICoverage {
 
     Coverage ret = new Coverage();
     ret.coverage = 1.0;
-    ret.isForObjects = isForObjects || ((Coverage) coverage).isForObjects;
-    ret.forceRelevant = forceRelevant || ((Coverage) coverage).forceRelevant;
+    // ret.isForObjects = isForObjects || ((Coverage) coverage).isForObjects;
+    // ret.forceRelevant = forceRelevant || ((Coverage) coverage).forceRelevant;
 
     for (CExt my : current) {
       for (CExt his : ((Coverage) coverage).current) {
@@ -225,10 +227,6 @@ public class Coverage implements ICoverage {
       }
     }
     return null;
-  }
-
-  public void forceRelevant() {
-    this.forceRelevant = true;
   }
 
 }

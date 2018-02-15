@@ -3,68 +3,79 @@ package org.integratedmodelling.klab.observation;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class State extends Observation implements IState {
 
-    private State(Observable observable, Scale scale, IMonitor monitor) {
-        super(observable, scale, monitor);
-    }
+  IStorage<?> storage;
 
-    private static final long serialVersionUID = -7075415960868285693L;
-    
-    public static State create(String name, IObservable observable, ISubject context, IMonitor monitor) {
-        return null;
-    }
-    
-    @Override
-    public IStorage<?> getStorage() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  private State(Observable observable, Scale scale, Subject context, IMonitor monitor) {
+    super(observable, scale, monitor);
+    setContextObservation(context);
+  }
 
-    @Override
-    public long getValueCount() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+  private static final long serialVersionUID = -7075415960868285693L;
 
-    @Override
-    public Object getValue(Locator locator) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  public static State create(Observable observable, Scale scale, Subject context,
+      IMonitor monitor) {
+    return new State(observable, scale, context, monitor);
+  }
 
-    @Override
-    public boolean isConstant() {
-        // TODO Auto-generated method stub
-        return false;
+  @Override
+  public IStorage<?> getStorage() {
+    if (storage == null) {
+      // TODO create it based on 
     }
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public boolean isDynamic() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+  @Override
+  public long getValueCount() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 
-    @Override
-    public void addChangeListener(ChangeListener listener) {
-        // TODO Auto-generated method stub
-        
-    }
+  @Override
+  public Object getValue(Locator locator) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public State as(IObservable observable) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-   
-    @Override
-    public State next() {
-      // TODO Auto-generated method stub
-      return null;
-    }
+  @Override
+  public boolean isConstant() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean isDynamic() {
+    return false;
+  }
+
+  @Override
+  public void addChangeListener(ChangeListener listener) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public State as(IObservable observable) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public State next() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public void setValue(Object value, long offset) {
+    // TODO create storage lazily if not there; if observable is numeric and value is a
+    // distribution, set up for
+    // that or promote to probabilistic.
+  }
 }

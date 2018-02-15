@@ -123,12 +123,6 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public ITime getExtent(int stateIndex) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public ITimePeriod collapse() {
         // TODO Auto-generated method stub
         return null;
@@ -168,6 +162,12 @@ public class Time extends Extent implements ITime {
     public Extent copy() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Time getExtent(long stateIndex) {
+      // TODO Auto-generated method stub
+      return null;
     }
 
 }

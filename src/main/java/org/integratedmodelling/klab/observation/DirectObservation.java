@@ -29,5 +29,5 @@ public abstract class DirectObservation extends Observation implements IDirectOb
     public Collection<IState> getStates() {
         return states;
     }
-
+    
 }

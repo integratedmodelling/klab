@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IServerIdentity;
 
 /**

@@ -83,8 +83,8 @@ public enum Dataflows implements IDataflowService {
       
       ResolutionScope rs = (ResolutionScope) scope;
       String name = rs.findObservable().getLocalName();
-      Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withScale(rs.getScale());
-      if (rs.findObservable().is(Type.COUNTABLE) && scope.getMode() == Mode.RESOLUTION) {
+      Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withScale(rs.getScale()).within(rs.getContext());
+      if (scope.getMode() == Mode.RESOLUTION) {
         builder = builder.instantiating(rs.findObservable(), scope.getResolutionNamespace());
       }
       return (Dataflow<T>) builder.build();

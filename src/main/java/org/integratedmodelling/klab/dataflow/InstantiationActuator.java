@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.dataflow;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.observation.DirectObservation;
 
 public class InstantiationActuator<T extends ICountableObservation> extends Actuator<T> {
 
@@ -13,11 +16,7 @@ public class InstantiationActuator<T extends ICountableObservation> extends Actu
     // TODO Auto-generated constructor stub
   }
 
-  @Override
-  public T run(IMonitor monitor) {
-    // TODO Auto-generated method stub
+  public T compute(DirectObservation context, IMonitor monitor) throws KlabException {
     return null;
   }
-
-
 }

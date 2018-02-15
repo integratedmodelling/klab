@@ -17,7 +17,7 @@ public interface IStorage<T> extends IRawState {
      * @param index
      * @return value at index
      */
-    T get(int index);
+    T get(long index);
 
     /**
      * Set the value at given index. Improper values are a runtime exception.
@@ -25,7 +25,7 @@ public interface IStorage<T> extends IRawState {
      * @param index
      * @param value
      */
-    void set(int index, Object value);
+    void set(long index, Object value);
 
     /**
      * Bulk set of raw data in specified position.
@@ -39,6 +39,6 @@ public interface IStorage<T> extends IRawState {
      * 
      * @return total count of states
      */
-    int size();
+    long size();
 
 }

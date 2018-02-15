@@ -51,7 +51,7 @@ public interface IExtent extends ITopology<IExtent>, Iterable<IExtent> {
      * @param stateIndex
      * @return a new extent with getValueCount() == 1.
      */
-    IExtent getExtent(int stateIndex);
+    IExtent getExtent(long stateIndex);
 
     /**
      * Return the single-valued topological value that represents the total extent

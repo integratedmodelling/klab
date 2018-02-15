@@ -30,12 +30,6 @@ public interface ISpace extends IExtent {
     int MIN_SCALE_RANK = 0;
     int MAX_SCALE_RANK = 21;
 
-    @Override
-    ISpace getExtent();
-
-    @Override
-    ISpace getExtent(int stateIndex);
-
     /**
      * Get the envelope, providing boundaries.
      * 

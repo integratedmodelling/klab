@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -76,6 +77,13 @@ public interface IDataflow<T extends IArtifact> extends IActuator, Iterable<IAct
          */
         Builder add(String actuatorName, Class<? extends IArtifact> type);
 
+        /**
+         * Pass any direct observation that serves as context for this computation.
+         * 
+         * @param context
+         * @return
+         */
+        Builder within(IDirectObservation context);
     }
 
     /**

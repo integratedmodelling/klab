@@ -26,6 +26,7 @@ import java.util.List;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -111,5 +112,13 @@ public interface IResolutionScope extends ICoverage {
    * @return
    */
   boolean resolves(Observable observable);
+
+  /**
+   * Return the context in which this resolution is happening. Null for scopes
+   * that resolve a root context.
+   * 
+   * @return the context, or null
+   */
+  IDirectObservation getContext();
 
 }

@@ -68,4 +68,9 @@ public class Session implements ISession {
     return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
   }
 
+  public String toString() { 
+    // TODO add user
+    return "<session " + getToken() + ">";
+  }
+  
 }

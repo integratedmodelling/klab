@@ -30,10 +30,11 @@ public class ObserveContextTask implements ITask<ISubject> {
 
   Monitor              monitor;
   Subject              subject;
-  Dataflow<Subject>   dataflow;
+  Dataflow<Subject>    dataflow;
   FutureTask<ISubject> delegate;
   String               token = NameGenerator.shortUUID();
   Session              session;
+  String taskDescription = "<uninitialized observation task " + token + ">";
 
   public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
 
@@ -42,6 +43,8 @@ public class ObserveContextTask implements ITask<ISubject> {
 
       this.monitor = (session.getMonitor()).get(this);
       this.session = session;
+      this.taskDescription = "<task " + token + ": observation of " + observer + ">";
+
       delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
 
         @Override
@@ -63,6 +66,11 @@ public class ObserveContextTask implements ITask<ISubject> {
     }
   }
 
+  @Override
+  public String toString() {
+    return taskDescription;
+  }
+  
   @Override
   public String getToken() {
     return token;

@@ -25,13 +25,15 @@ public abstract class MonitoredCallable<T> implements Callable<T> {
     
     ((Monitor) task.getMonitor()).notifyStart();
     T result = null;
+    boolean error = false;
     try {
       result = run();
     } catch (Throwable e) {
       task.getMonitor().error(e);
+      error = true;
       throw e;
     } finally {
-      ((Monitor) task.getMonitor()).notifyEnd();
+      ((Monitor) task.getMonitor()).notifyEnd(error);
     }
       
     return result;

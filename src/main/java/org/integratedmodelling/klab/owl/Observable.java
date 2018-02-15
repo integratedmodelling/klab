@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.owl;
 import java.util.Collection;
 import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
@@ -43,7 +44,7 @@ public class Observable implements IObservable {
     Observable ret = new Observable();
     ret.observable = (Concept) concept;
     ret.main = (Concept) concept;
-    ret.declaration = concept.getDefinition();
+    ret.declaration = concept.getDefinition().trim();
     ret.isAbstract = concept.isAbstract();
     ret.generic = concept.isAbstract();
     return ret;
@@ -56,6 +57,9 @@ public class Observable implements IObservable {
 
   @Override
   public String getLocalName() {
+    if (name == null) {
+      name = CamelCase.toLowerCase(observable.getName(), '_');
+    }
     return name;
   }
 
@@ -111,7 +115,7 @@ public class Observable implements IObservable {
   }
 
   public void setDeclaration(String declaration) {
-    this.declaration = declaration;
+    this.declaration = declaration.trim();
   }
 
   public void setAbstract(boolean isAbstract) {

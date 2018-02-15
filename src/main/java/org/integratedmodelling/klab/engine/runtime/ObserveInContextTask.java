@@ -6,6 +6,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -16,7 +17,6 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
-import org.integratedmodelling.klab.observation.Observation;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -34,20 +34,25 @@ public class ObserveInContextTask implements ITask<IObservation> {
   Subject                  context;
   FutureTask<IObservation> delegate;
   Session                  session;
-  String                   token = NameGenerator.shortUUID();
+  String                   token           = NameGenerator.shortUUID();
   String[]                 scenarios;
+  String                   taskDescription =
+      "<uninitialized contextual observation task " + token + ">";
 
   public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
+
     this.context = context;
     this.monitor = context.getRoot().getMonitor().get(this);
     this.session = context.getParent(Session.class);
+    this.taskDescription =
+        "<task " + token + ": observation of " + urn + " within " + context + ">";
 
     delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this) {
 
       @Override
       public IObservation run() throws Exception {
-        
-        Observation ret = null;
+
+        IObservation ret = null;
         /*
          * obtain the resolvable object corresponding to the URN - either a concept or a model
          */
@@ -61,22 +66,22 @@ public class ObserveInContextTask implements ITask<IObservation> {
         /*
          * resolve and run
          */
-        ResolutionScope scope = ResolutionScope.create(context, monitor, scenarios);
-        if (Resolver.INSTANCE.resolve(resolvable, scope).isRelevant()) {
-          ret = Dataflows.INSTANCE.compile(scope, Observation.class).run(monitor);
+        ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
+            ResolutionScope.create(context, monitor, scenarios));
+        if (scope.isRelevant()) {
+          ret = Dataflows.INSTANCE
+              .compile(scope, Observables.INSTANCE.getObservationClass(resolvable)).run(monitor);
         }
 
-        /*
-         * instantiation returns the context (FIXME ok?), resolution the new observation TODO the
-         * task should return a provenance Artifact/entity, which may be an observation or a group
-         * of observations. It also gives access to the full provenance graph at each observation
-         * and all the observations made to resolve it.
-         */
         return ret;
       }
     });
 
     context.getParent(Engine.class).getTaskExecutor().execute(delegate);
+  }
+
+  public String toString() {
+    return taskDescription;
   }
 
   @Override

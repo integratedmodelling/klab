@@ -16,7 +16,7 @@ public class Process extends DirectObservation implements IProcess {
 
     private static final long serialVersionUID = -5563009298178472641L;
     
-    public static Process create(String name, IObservable observable, IScale scale, ISubject context) {
+    public static Process create(String name, IObservable observable, IScale scale, ISubject context, IMonitor monitor) {
         return null;
     }
 

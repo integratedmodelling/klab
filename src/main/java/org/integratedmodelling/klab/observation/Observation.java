@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Path;
 
 public abstract class Observation implements IObservation {
 
@@ -241,4 +242,9 @@ public abstract class Observation implements IObservation {
     // TODO Auto-generated method stub
     return false;
   }
+
+  public String toString() {
+    return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() +  ": " + getObservable() + "}";
+  }
+
 }
