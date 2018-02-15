@@ -6,10 +6,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
@@ -19,6 +21,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class Component implements IComponent {
@@ -33,7 +36,8 @@ public class Component implements IComponent {
     private String          setupMethod         = null;
     private boolean         isSetupAsynchronous = false;
     private boolean         binaryAssetsLoaded;
-    private Class<?>        implementation;
+    private Class<?>        implementingClass;
+    private Object          implementation;
 
     public Component() {
         // TODO Auto-generated constructor stub
@@ -44,7 +48,7 @@ public class Component implements IComponent {
 
         this.name = annotation.id();
         this.version = Version.parse(annotation.version());
-        this.implementation = implementation;
+        this.implementingClass = implementation;
 
         try {
             // TODO scan methods and exec/store setup and initialization
@@ -91,7 +95,7 @@ public class Component implements IComponent {
         if (initialized) {
             return;
         }
-        if (implementation == null) {
+        if (implementingClass == null) {
             active = false;
             return;
         }
@@ -111,7 +115,7 @@ public class Component implements IComponent {
 
         Object executor = null;
         try {
-            executor = implementation.getDeclaredConstructor().newInstance();
+            executor = implementingClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new KlabInternalErrorException("cannot instantiate component executor for " + name);
         }
@@ -145,7 +149,7 @@ public class Component implements IComponent {
 
     public void setup() throws KlabException {
 
-        if (implementation == null) {
+        if (implementingClass == null) {
             return;
         }
         if (setupMethod == null) {
@@ -153,7 +157,7 @@ public class Component implements IComponent {
         }
         Object executor = null;
         try {
-            executor = implementation.getDeclaredConstructor().newInstance();
+            executor = implementingClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new KlabInternalErrorException("cannot instantiate component executor for " + name);
         }
@@ -256,6 +260,10 @@ public class Component implements IComponent {
         }
     }
 
+    public Optional<Class<?>> getImplementingClass() {
+        return implementingClass == null ? Optional.empty() : Optional.of(implementingClass);
+    }
+
     @Override
     public Collection<File> getBinaryAssets() {
         // TODO Auto-generated method stub
@@ -327,6 +335,23 @@ public class Component implements IComponent {
     public String getOriginatingNodeId() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * Return the implementation of the class if an implementing class is defined, creating
+     * it if necessary.
+     * 
+     * @return
+     */
+    public Object getImplementation() {
+        if (implementation == null && implementingClass != null) {
+            try {
+                implementation = implementingClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new KlabRuntimeException(e);
+            }
+        }
+        return implementation;
     }
 
 }

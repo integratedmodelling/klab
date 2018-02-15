@@ -158,7 +158,7 @@ public interface IConfigurationService {
   /**
    * Class to choose to create storage - used only to disambiguate if > 1 storage providers are available.
    */
-  public static final String STORAGE_PROVIDER_CLASS             = "klab.storage.provider.class";
+  public static final String STORAGE_PROVIDER_COMPONENT             = "klab.storage.provider.class";
 
 
   /**

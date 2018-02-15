@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
@@ -84,6 +85,8 @@ public enum Extensions implements IExtensionService {
       }
     }
 
+    this.components.put(annotation.id(), ret);
+    
     return ret;
   }
 

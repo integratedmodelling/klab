@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.observation;
 
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -14,6 +15,7 @@ public class State extends Observation implements IState {
   private State(Observable observable, Scale scale, Subject context, IMonitor monitor) {
     super(observable, scale, monitor);
     setContextObservation(context);
+    this.storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale);
   }
 
   private static final long serialVersionUID = -7075415960868285693L;
