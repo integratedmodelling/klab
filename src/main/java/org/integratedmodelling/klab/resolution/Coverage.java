@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.resolution.Coverage.CExt;
 
 public class Coverage implements ICoverage {
 
@@ -64,6 +65,19 @@ public class Coverage implements ICoverage {
 
   protected void setCoverage(double d) {
     this.coverage = d;
+  }
+
+  public void setTo(Coverage cov) {
+    this.scale = cov.scale;
+    this.coverage = cov.coverage;
+    current.clear();
+    if (scale != null) {
+      for (IExtent e : scale.getExtents()) {
+        ITopologicallyComparable<?> orig = e.getExtent();
+        ITopologicallyComparable<?> curr = coverage > 0 ? orig : null;
+        current.add(new CExt(e.getDomainConcept(), orig, curr, coverage));
+      }
+    }
   }
 
   /**
@@ -149,15 +163,14 @@ public class Coverage implements ICoverage {
 
     Coverage ret = new Coverage();
     ret.coverage = 1.0;
-    // ret.isForObjects = isForObjects || ((Coverage) coverage).isForObjects;
 
     for (CExt my : current) {
-      for (CExt his : ((Coverage) coverage).current) {
-        if (his.domain.equals(my.domain)) {
+      for (CExt its : ((Coverage) coverage).current) {
+        if (its.domain.equals(my.domain)) {
           /*
            * recompute current using the other's
            */
-          ITopologicallyComparable<?> other = his.current == null ? his.original : his.current;
+          ITopologicallyComparable<?> other = its.current == null ? its.original : its.current;
           ITopologicallyComparable<?> current = my.current.union(other);
           double ncoverage = current.getCoveredExtent() / my.original.getCoveredExtent();
 
@@ -182,13 +195,11 @@ public class Coverage implements ICoverage {
 
     Coverage ret = new Coverage();
     ret.coverage = 1.0;
-    // ret.isForObjects = isForObjects || ((Coverage) coverage).isForObjects;
-    // ret.forceRelevant = forceRelevant || ((Coverage) coverage).forceRelevant;
 
     for (CExt my : current) {
-      for (CExt his : ((Coverage) coverage).current) {
-        if (his.domain.equals(my.domain)) {
-          ITopologicallyComparable<?> other = his.current == null ? his.original : his.current;
+      for (CExt its : ((Coverage) coverage).current) {
+        if (its.domain.equals(my.domain)) {
+          ITopologicallyComparable<?> other = its.current == null ? its.original : its.current;
           ITopologicallyComparable<?> current = my.current.intersection(other);
           double ncoverage = current.getCoveredExtent() / my.original.getCoveredExtent();
           ret.coverage *= ncoverage;

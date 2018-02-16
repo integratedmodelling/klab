@@ -324,5 +324,5 @@ public class Observable implements IObservable {
   public String toString() {
     return "[" + this.declaration + "]";
   }
-
+  
 }

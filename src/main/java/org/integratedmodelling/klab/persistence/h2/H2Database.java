@@ -304,7 +304,7 @@ public class H2Database {
       return;
     }
 
-    System.out.println(sql);
+//    System.out.println(sql);
     
     Connection connection = null;
     try {
@@ -326,11 +326,11 @@ public class H2Database {
 
   public void query(String sql, SQL.ResultHandler handler) throws KlabException {
 
-    if (sql.contains("POINT EMPTY")) {
-      System.out.println("WHAT?");
-    }
+//    if (sql.contains("POINT EMPTY")) {
+//      System.out.println("WHAT?");
+//    }
     
-    System.out.println(sql);
+//    System.out.println(sql);
 
     Connection connection = null;
     Statement stmt = null;

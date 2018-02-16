@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.resolution;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -78,7 +80,8 @@ public enum Resolver {
    * @return the merged scope
    * @throws KlabException
    */
-  public ResolutionScope resolve(Observer observer, ResolutionScope parentScope) throws KlabException {
+  public ResolutionScope resolve(Observer observer, ResolutionScope parentScope)
+      throws KlabException {
 
     // Subject subject;
     // try {
@@ -112,24 +115,34 @@ public enum Resolver {
   public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
 
     ResolutionScope ret = parentScope.getChildScope(observable, mode);
-    ResolutionScope modelScope = null;
-    try {
-      for (IRankedModel model : Models.INSTANCE.resolve(observable, parentScope)) {
-        ResolutionScope mret = resolve((RankedModel) model, parentScope);
-        modelScope = modelScope == null ? mret : modelScope.or(mret);
-        if (modelScope.isComplete()) {
-          break;
+
+    // will be non-empty if this observable was resolved before, empty otherwise
+    if (ret.isEmpty()) {
+
+      ResolutionScope modelScope = null;
+      try {
+        for (IRankedModel model : Models.INSTANCE.resolve(observable, parentScope)) {
+          ResolutionScope mret = resolve((RankedModel) model, parentScope);
+          modelScope = modelScope == null ? mret : modelScope.or(mret);
+          if (modelScope.isComplete()) {
+            break;
+          }
         }
+      } catch (KlabException e) {
+        parentScope.getMonitor()
+            .error("error during resolution of " + observable + ": " + e.getMessage());
+        return ResolutionScope.empty();
       }
-    } catch (KlabException e) {
-      parentScope.getMonitor().error("error during resolution of " + observable + ": " + e.getMessage());
-      return ResolutionScope.empty();
+
+      if (modelScope == null) {
+        ret = ResolutionScope.empty();
+      } else if (modelScope.isRelevant()) {
+        ret.merge(modelScope);
+      }
     }
 
-    if (modelScope == null) {
-      ret = ResolutionScope.empty();
-    } else if (modelScope.isRelevant()) {
-      ret.merge(modelScope);
+    if (ret.isRelevant()) {
+      parentScope.merge(ret);
     }
 
     return ret.isEmpty() && observable.isOptional() ? parentScope : ret;
@@ -174,5 +187,19 @@ public enum Resolver {
   public IPrioritizer<org.integratedmodelling.klab.data.rest.resources.Model> getPrioritizer(
       ResolutionScope context) {
     return new Prioritizer(context);
+  }
+
+  /**
+   * Return the alternative observables that can resolve the passed one in the passed mode if no
+   * resolution for it is available, along with the correspondent resolution adapter class. The list
+   * should be ordered with the best alternative first.
+   * 
+   * @param observable
+   * @param mode
+   * @return 
+   */
+  public List<IObservable> getIndirectObservables(IObservable observable, Mode mode) {
+    List<IObservable> ret = new ArrayList<>(); 
+    return null;
   }
 }

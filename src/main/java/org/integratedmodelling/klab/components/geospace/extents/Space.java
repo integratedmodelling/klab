@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.Iterator;
 import java.util.Optional;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState.Mediator;
@@ -14,6 +15,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpatialIndex;
 import org.integratedmodelling.klab.api.observations.scale.space.ITessellation;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -84,8 +86,7 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public IConcept getDomainConcept() {
-    // TODO Auto-generated method stub
-    return null;
+    return Concepts.c(NS.SPACE_DOMAIN);
   }
 
   @Override
@@ -198,20 +199,56 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public IExtent intersection(ITopologicallyComparable<?> other) throws KlabException {
-    // TODO Auto-generated method stub
-    return null;
+  public IExtent intersection(ITopologicallyComparable<?> obj) throws KlabException {
+    
+
+    Space ret = new Space(this);
+
+    if (this.shape == null) {
+        return ret;
+    }
+
+    Shape other = null;
+    if (obj instanceof Space) {
+        other = ((Space) obj).getShape();
+    } else if (obj instanceof Shape) {
+        other = (Shape) obj;
+    }
+
+    if (other == null) {
+        return new Space();
+    }
+
+    Shape common = this.shape.intersection(other);
+
+    return new Space(common);
   }
 
   @Override
-  public IExtent union(ITopologicallyComparable<?> other) throws KlabException {
-    if (!(other instanceof Space)) {
-      throw new IllegalArgumentException(
-          "cannot union a space extent with a " + other.getClass().getCanonicalName());
+  public IExtent union(ITopologicallyComparable<?> obj) throws KlabException {
+
+    Space ret = new Space(this);
+
+    if (this.shape == null) {
+        return ret;
     }
-    Space e = (Space) other;
-    // TODO
-    return shape == null || e.shape == null ? EMPTY_SPACE : null;
+
+    Shape other = null;
+    if (obj instanceof Space) {
+        other = ((Space) obj).getShape();
+    } else if (obj instanceof Shape) {
+        other = (Shape) obj;
+    }
+
+    if (other == null) {
+        return new Space();
+    }
+
+    Shape common = this.shape.union(other);
+
+    ret.shape = ret.shape.intersection(common);
+
+    return ret; 
   }
 
   @Override

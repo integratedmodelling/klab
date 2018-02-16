@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -17,6 +19,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.Coverage.CExt;
 
 public class ResolutionScope extends Coverage implements IResolutionScope {
 
@@ -113,6 +116,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     super(null, 0.0);
   }
 
+
   /**
    * Create a child coverage for a passed observable with the same scale but initial coverage set at
    * 0.
@@ -122,10 +126,21 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * @return a new scope for the passed observable
    */
   public ResolutionScope getChildScope(Observable observable, Mode mode) {
+
     ResolutionScope ret = new ResolutionScope(this);
     ret.observable = observable;
     ret.mode = mode;
     ret.setCoverage(0);
+
+    /*
+     * check if we already can resolve this (directly or indirectly), and if so, set coverage so
+     * that it can be accepted as is.
+     */
+    Coverage previous = dependencyGraph.getCoverage(observable, mode);
+    if (previous.isRelevant()) {
+      ret.setTo(previous);
+    }
+
     return ret;
   }
 
@@ -254,12 +269,12 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      * my coverage becomes the child's
      */
     this.coverage = childScope.coverage;
-    
+
     /*
      * Record any resolved observables in the dependency diagram
      */
     for (IObservable o : getResolvedObservables()) {
-      // 
+      //
     }
 
     return this;
@@ -283,28 +298,33 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
   /**
    * If passed coverage is relevant, OR the coverage with a copy of ours and merge the dependencies.
+   * If not, return an empty coverage.
    */
   @Override
   public ResolutionScope or(ICoverage child) throws KlabException {
     if (child.isRelevant()) {
-      // FIXME this accomplishes nothing
-      super.or(child);
-      // TODO
+      Coverage c = super.or(child);
+      ResolutionScope rs = new ResolutionScope(this);
+      rs.setTo(c);
+      // TODO merge dependencies
+      return rs;
     }
-    return this;
+    return empty();
   }
 
   /**
-   * If passed coverage is relevant, AND the coverage with ours and merge the dependencies.
+   * If passed coverage is relevant, AND the coverage with ours and merge the dependencies. If not,
+   * return this coverage unaltered.
    */
   @Override
   public ResolutionScope and(ICoverage child) throws KlabException {
     if (child.isRelevant()) {
-      // FIXME this accomplishes nothing
-      super.and(child);
-      // TODO
+      Coverage c = super.and(child);
+      ResolutionScope rs = new ResolutionScope(this);
+      rs.setTo(c);
+      // TODO merge dependencies
+      return rs;
     }
-
     return this;
   }
 
