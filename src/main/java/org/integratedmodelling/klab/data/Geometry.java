@@ -16,6 +16,15 @@ public class Geometry implements IGeometry {
         return makeGeometry(geometry, 0);
     }
 
+    /**
+     * Create and return an empty geometry.
+     * 
+     * @return
+     */
+    public static Geometry empty() {
+        return new Geometry();
+    }
+
     /*
      * dictionary for the IDs of any dimension types that are not space or time. 
      */
@@ -47,6 +56,7 @@ public class Geometry implements IGeometry {
     private List<Dimension> dimensions  = new ArrayList<>();
     private Granularity     granularity = Granularity.SINGLE;
     private Geometry        child;
+    private boolean         scalar;
 
     @Override
     public Optional<IGeometry> getChild() {
@@ -63,6 +73,11 @@ public class Geometry implements IGeometry {
         return granularity;
     }
 
+    @Override
+    public boolean isScalar() {
+        return scalar;
+    }
+    
     private Geometry() {
     }
 
@@ -70,11 +85,17 @@ public class Geometry implements IGeometry {
      * read the geometry defined starting at the i-th character
      */
     private static Geometry makeGeometry(String geometry, int i) {
-        
+
         Geometry ret = new Geometry();
+
+        if (geometry.equals("*")) {
+            ret.scalar = true;
+            return ret;
+        }
+        
         for (int idx = i; idx < geometry.length(); idx++) {
             char c = geometry.charAt(idx);
-            if (c == '*') {
+            if (c == '#') {
                 ret.granularity = Granularity.MULTIPLE;
             } else if (c >= 'A' && c <= 'z') {
                 DimensionImpl dimensionality = ret.newDimension();
@@ -91,16 +112,16 @@ public class Geometry implements IGeometry {
                         dimensionality.type = n;
                     }
                 }
-                
+
                 dimensionality.regular = Character.isUpperCase(c);
-                
-                idx ++;
+
+                idx++;
                 if (geometry.charAt(idx) == '.') {
                     dimensionality.dimensionality = NONDIMENSIONAL;
                 } else {
                     dimensionality.dimensionality = Integer.parseInt("" + geometry.charAt(idx));
                 }
-                
+
                 ret.dimensions.add(dimensionality);
 
             } else if (c == ',') {
@@ -114,10 +135,14 @@ public class Geometry implements IGeometry {
     private DimensionImpl newDimension() {
         return new DimensionImpl();
     }
-    
-    
+
     public static void main(String[] args) {
         Geometry g1 = create("S2");
-        Geometry g2 = create("*S2T1,*T1");
+        Geometry g2 = create("#S2T1,#T1");
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return dimensions.isEmpty() && child == null;
     }
 }

@@ -88,7 +88,6 @@ public interface IPrototype {
         LIST
     }
 
-    
     /**
      * Descriptor for each argument.
      * 
@@ -102,7 +101,7 @@ public interface IPrototype {
          * @return
          */
         String getName();
-        
+
         /**
          * 
          * @return
@@ -122,36 +121,36 @@ public interface IPrototype {
          * @return
          */
         boolean isOptional();
-        
+
         /**
          * If the argument has a set of IDs as possible values (getType() == Type.ENUM), return them here.
          * 
          * @return the IDs or an empty set.
          */
         Set<String> getEnumValues();
-        
+
         /**
          * The default value for a parameter that is not passed.
          * 
          * @return default value (POD, list or {@link Range}) or null.
          */
         Object getDefaultValue();
-        
+
         /**
          * 
          * @return
          */
         Type getType();
     }
-    
+
     String getName();
-    
+
     Type getType();
-    
+
     Argument getArgument(String argumentId);
-    
+
     List<Argument> getArguments();
-    
+
     /**
      * Ensure that the arguments passed reflect the required arguments, which may be different for each
      * subcommand.
@@ -193,11 +192,13 @@ public interface IPrototype {
     boolean isDistributed();
 
     /**
-     * If the service specifications include a geometry for the result, return it here.
-     * @return the optional geometry
+     * If the service specifications include a geometry for the result, return it here. Processors that
+     * do not produce data return an empty geometry.
+     * 
+     * @return the geometry, possibly empty, never null.
      */
-    Optional<IGeometry> getGeometry();
-    
+    IGeometry getGeometry();
+
     /**
      * If this is not empty, the presence of any of the named parameter determines, for a function returning
      * an extent, the multiplicity of that extent. Used to check extent dimensional correctness (e.g. in

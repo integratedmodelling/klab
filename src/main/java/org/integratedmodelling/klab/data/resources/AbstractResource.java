@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.data;
+package org.integratedmodelling.klab.data.resources;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,20 +25,23 @@ import org.integratedmodelling.klab.api.services.IResourceService;
  * @author Ferd
  *
  */
-public class Resource implements IResource {
+public abstract class AbstractResource implements IResource {
 
     private static final long   serialVersionUID = -923039635832182164L;
 
-    private Version                     version;
-    private IGeometry                   geometry;
-    private IMetadata                   metadata;
-    private List<INotification> history = new ArrayList<>();
-    private Map<String, Object> parameters = new HashMap<>();
+    private Version             version;
+    private IMetadata           metadata;
+    private String              urn;
+    private List<INotification> history          = new ArrayList<>();
+
+    public AbstractResource(String urn) {
+        this.urn = urn;
+    }
 
     /**
      * Pattern to validate a RFC 2141-compliant URN, just to be on the right side of things.
      */
-    public final static Pattern URN_PATTERN      = Pattern
+    public final static Pattern URN_PATTERN = Pattern
             .compile("^urn:[a-z0-9][a-z0-9-]{0,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
 
     public static boolean isCompliant(String urn) {
@@ -56,16 +59,6 @@ public class Resource implements IResource {
     }
 
     /**
-     * The Geometry, Available after resolution.
-     * 
-     * @return
-     */
-    @Override
-    public IGeometry getGeometry() {
-        return geometry;
-    }
-
-    /**
      * Metadata. Available after resolution.
      * 
      * @return
@@ -77,20 +70,7 @@ public class Resource implements IResource {
 
     @Override
     public String getUrn() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IRawObject get(IScale scale, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getAdapterType() {
-        // TODO Auto-generated method stub
-        return null;
+        return urn;
     }
 
     @Override
@@ -98,8 +78,4 @@ public class Resource implements IResource {
         return history;
     }
 
-    @Override
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
 }

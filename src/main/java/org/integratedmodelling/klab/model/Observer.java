@@ -60,4 +60,16 @@ public class Observer extends KimObject implements IObserver {
     public List<IObservable> getStates() {
         return states;
     }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Observer && ((Observer)obj).getName().equals(getName());
+    }
+    
+    
 }

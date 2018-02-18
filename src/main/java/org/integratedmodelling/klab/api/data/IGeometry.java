@@ -23,19 +23,21 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  * lowercase, the topology is irregular and getShape will return each subdivision's relative size in that
  * dimension. Use the uppercase letter if there is no subdivision.
  * 
+ * The trivial case is a scalar geometry, describing scalars with no structure and specified by an asterisk.
+ * 
  * If the shape is only letters with optional numbers, the topology is for a single object. Otherwise, it can
- * be prefixed by *, which distributes the geometry across multiple objects. Objects that are children of
+ * be prefixed by #, which distributes the geometry across multiple objects. Objects that are children of
  * another or others are defined after a comma. So for example
  * 
  * <pre>
- * TS3,*S2
+ * TS3,#S2
  * <pre>
  *
  * denotes a single 3-dimensional regular spatial geometry (voxel cube), referenced but not distributed in time
  * and containing multiple sub-objects with just a 2-dimensional spatial geometry; while
  * 
  * <pre>
- * *s0
+ * #s0
  * </pre>
  * 
  * denotes a non-temporal set of irregular points in space. This notation assumes that all dimensions of a
@@ -115,5 +117,20 @@ public interface IGeometry extends Serializable {
      * @return the granularity
      */
     Granularity getGranularity();
+
+    /**
+     * An empty geometry applies to any resource that does not produce raw information but processes
+     * data instead.
+     * 
+     * @return true for a geometry that was not specified.
+     */
+    boolean isEmpty();
+
+    /**
+     * A trivial geometry describes scalar values with no structure.
+     * 
+     * @return
+     */
+    boolean isScalar();
 
 }

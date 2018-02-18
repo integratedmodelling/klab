@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
@@ -112,6 +111,8 @@ public class Prototype implements IPrototype {
         
         if (actuator.getGeometry() != null) {
             this.geometry = Geometry.create(actuator.getGeometry());
+        } else {
+            this.geometry = Geometry.empty();
         }
     }
 
@@ -207,8 +208,8 @@ public class Prototype implements IPrototype {
     }
 
     @Override
-    public Optional<IGeometry> getGeometry() {
-        return geometry == null ? Optional.empty() : Optional.of(geometry);
+    public IGeometry getGeometry() {
+        return geometry;
     }
 
 }

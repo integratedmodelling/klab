@@ -144,8 +144,13 @@ public class Model extends KimObject implements IModel {
 
   @Override
   public boolean isResolved() {
-    // TODO Auto-generated method stub
-    return false;
+      if (resource != null) {
+          return true;
+      }
+      if (contextualizerResource != null) {
+          return !contextualizerResource.get().getGeometry().isEmpty();
+      }
+      return false;
   }
 
   @Override
