@@ -40,14 +40,42 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
     /**
      * Each successful merge creates a link which is saved in the scope. At the
-     * end of the resolution, all links and their endpoints are used to build the
-     * final dependency graph.
-     * @author Ferd
-     *
+     * end of the resolution, all link are used to build the final dependency graph.
      */
     class Link {
+
+        Link(ResolutionScope target) {
+            this.target = target;
+        }
+
         ResolutionScope          target;
         List<ResolutionMediator> mediators = new ArrayList<>();
+
+        ResolutionScope getSource() {
+            return ResolutionScope.this;
+        }
+
+        @Override
+        public String toString() {
+            return getSource() + " <- " + target;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            return object == this
+                    || (object instanceof Link && ((Link) object).getSource().equals(getSource())
+                            && target.equals(((Link) object).target));
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getSource().hashCode();
+            result = prime * result + target.hashCode();
+            return result;
+        }
+
     }
 
     /*
@@ -89,7 +117,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      * this is only used to correctly merge in dependencies.
      */
     int                        mergedObservables   = 0;
-    
+
     /*
      * this controls whether indirect resolution can happen at all. Set to true and
      * not modified; may want to configure it at some point.
@@ -228,7 +256,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     public ResolutionScope getChildScope(Model model) throws KlabException {
 
         ResolutionScope ret = new ResolutionScope(this);
-        
+
         ret.model = model;
         ret.resolutionNamespace = (Namespace) model.getNamespace();
 
@@ -238,7 +266,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
         if (model.isResolved()) {
             ret.setCoverage(1.0);
         }
-        
+
         /*
          * ...and redefine it based on their own coverage if they have any.
          * 
@@ -272,11 +300,11 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
         return ret;
     }
 
-    @Override
-    public boolean resolves(Observable observable) {
-        // TODO use the dependency graph
-        return false;
-    }
+    // @Override
+    // public boolean resolves(Observable observable) {
+    // // TODO use the dependency graph
+    // return false;
+    // }
 
     @Override
     public Collection<String> getScenarios() {
@@ -316,7 +344,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
                 (observable == null ? "" : ("OBS " + observable)) +
                 (model == null ? "" : ("MOD " + model.getName())) +
                 (observer == null ? "" : ("SUB " + observer.getName()));
-        return ret + (ret.length() == 1 ? "ROOT " : " ") + coverage + ">";
+        return ret + (ret.length() == 1 ? "ROOT " : " ") + coverage + "> [" + usageCount + "]";
     }
 
     /**
@@ -339,7 +367,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
          * my coverage becomes the child's
          */
         this.coverage = childScope.coverage;
-        
+
         if (successful) {
 
             // when I am OBS and the child is MOD, make links
@@ -359,6 +387,9 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
                 childScope.usageCount++;
 
             }
+
+            links.addAll(childScope.links);
+            links.add(new Link(childScope));
 
             /*
              * Record any observables already resolved in the dependency graph so far. Must have the model's 
@@ -400,6 +431,8 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
                 if (childScope.getObservable() != null) {
                     resolvedObservables.add(childScope);
                 }
+                links.addAll(childScope.links);
+                links.add(new Link(childScope));
                 resolvedObservables.addAll(childScope.resolvedObservables);
                 setTo(c);
             }
@@ -592,6 +625,9 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      */
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -624,6 +660,13 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
             return false;
         }
         return true;
+    }
+
+    public void dump() {
+        // TODO Auto-generated method stub
+        for (Link link : links) {
+            System.out.println(link.getSource() + " <- " + link.target);
+        }
     }
 
 }

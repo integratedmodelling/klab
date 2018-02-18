@@ -105,15 +105,6 @@ public interface IResolutionScope extends ICoverage {
   IMonitor getMonitor();
 
   /**
-   * True if the observable has been resolved satisfactorily at the current scale, either directly
-   * or indirectly.
-   * 
-   * @param observable
-   * @return
-   */
-  boolean resolves(Observable observable);
-
-  /**
    * Return the context in which this resolution is happening. Null for scopes
    * that resolve a root context.
    * 

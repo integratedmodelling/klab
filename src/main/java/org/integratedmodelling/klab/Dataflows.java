@@ -82,6 +82,7 @@ public enum Dataflows implements IDataflowService {
         throws KlabException {
       
       ResolutionScope rs = (ResolutionScope) scope;
+      rs.dump();
       String name = rs.findObservable().getLocalName();
       Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withScale(rs.getScale()).within(rs.getContext());
       if (scope.getMode() == Mode.RESOLUTION) {
@@ -89,5 +90,6 @@ public enum Dataflows implements IDataflowService {
       }
       return (Dataflow<T>) builder.build();
     }
+    
 
 }
