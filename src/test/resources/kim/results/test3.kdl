@@ -13,22 +13,5 @@ number elevation {
 		import number aspect as aspetto
 		compute gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360)
 	}
-	compute state.distribute('[slope * 12.44 * aspect]')
-}
-
-// wrong naive version:
-number elevation {
-	observe new geography:Elevation in degree_angle
-	number slope {
-		/**
-		 * Should start in this scope, then be found when compiling aspect for
-		 * elevation and brought up into elevation, substituting the actuator
-		 * in slope with a link to it.
-		 */
-		number aspetto {
-			compute 10
-		}
-		compute gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360)
-	}
-	compute state.distribute('[slope * 12.44]')
+	compute state.distribute('[(slope * 12.44) + aspect]')
 }

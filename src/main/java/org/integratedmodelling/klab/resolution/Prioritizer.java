@@ -474,6 +474,7 @@ public class Prioritizer implements IPrioritizer<Model> {
     /*
      * scale coherency -> coherency of domains adopted by context vs. the object n = # of
      * domains shared (based on the isSpatial/isTemporal fields) normalize to 100
+     * TODO reimplement this with the geometry
      */
     public double computeScaleCoherency(Model model, IResolutionScope context) {
         // TODO Auto-generated method stub

@@ -8,6 +8,7 @@ worldview im;
 //		assert.nodata.percentage(state="geography:Elevation", max=0)
 //		assert.nodata.percentage(state="geography:Slope", max=0)
 //		assert.match(state="geography:Aspect", exact=10)
+//		assert.match(state="geography:Elevation", min=10)
 //	),
 //	resultdataflow = 'results/test3.kdl'
 //)
@@ -18,7 +19,7 @@ private model geography:Elevation in m
 	observing 
 		geography:Slope in degree_angle,
 		geography:Aspect in degree_angle
-	on definition set to [slope * 12.44 * aspect];
+	on definition set to [(slope * 12.44) + aspect];
 
 private model geography:Slope in degree_angle 
 	observing geography:Aspect in degree_angle named aspetto
