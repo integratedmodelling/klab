@@ -3,7 +3,6 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.model.SemanticType;
@@ -15,6 +14,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.data.resources.FunctionResource;
+import org.integratedmodelling.klab.data.resources.LiteralResource;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -122,7 +122,7 @@ public enum Resources implements IResourceService {
 
     @Override
     public IResource getLiteralResource(Object inlineResource) {
-        return null;
+      return new LiteralResource(inlineResource);
     }
 
     /**

@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.dataflow;
 
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;

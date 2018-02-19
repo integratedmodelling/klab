@@ -10,16 +10,15 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.DataflowBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.resolution.DataflowCompiler;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
 import com.google.inject.Inject;
@@ -76,19 +75,10 @@ public enum Dataflows implements IDataflowService {
       return new DataflowBuilder<T>(name, cls);
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends IArtifact> Dataflow<T> compile(IResolutionScope scope, Class<T> cls)
         throws KlabException {
-      
-      ResolutionScope rs = (ResolutionScope) scope;
-      rs.dump();
-      String name = rs.findObservable().getLocalName();
-      Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withScale(rs.getScale()).within(rs.getContext());
-      if (scope.getMode() == Mode.RESOLUTION) {
-        builder = builder.instantiating(rs.findObservable(), scope.getResolutionNamespace());
-      }
-      return (Dataflow<T>) builder.build();
+      return DataflowCompiler.INSTANCE.compile((ResolutionScope)scope, cls);
     }
     
 

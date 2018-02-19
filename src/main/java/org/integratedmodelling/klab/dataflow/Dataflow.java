@@ -17,7 +17,8 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
 
   List<IActuator>   actuators = new ArrayList<>();
   DirectObservation context;
-
+  double coverage;
+  
   @Override
   public Iterator<IActuator> iterator() {
     // TODO use a topological iterator; put each group of parallelizable actuators within a
@@ -45,6 +46,8 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   @SuppressWarnings("unchecked")
   public T compute(DirectObservation context, IMonitor monitor) throws KlabException {
 
+      // make context with topological order built from links; call an internal function
+    
       // TODO
       T ret = null;
       if (this.newObservationType != null) {

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.List;
 import org.integratedmodelling.kdl.api.IKdlActuator;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IPort;

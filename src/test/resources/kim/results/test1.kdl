@@ -1,0 +1,32 @@
+@dataflow obsid.n
+@author 'k.LAB DATE'
+@worldview im
+@klab 0.10.0
+// scale is for the current contextualization and is one per dataflow, possibly subset in
+// specific actuators
+@scale space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km")
+
+// this must exec within a @context spec
+number slope {
+
+	observe new geography:Slope in degree_angle
+	
+	// puts elevation in the contextualization scope for slope, ensuring
+	// sequential execution
+	number elevation {
+		
+		observe new geography:Elevation in m
+	
+		// multi-models are declared here and merged in computation
+		number elevation_1 {} over space()
+		number elevation_2 {} over space()
+	
+		compute merge(elevation_1, elevation_2)
+	}
+	
+	// creates the link - should only be necessary for external links
+	// import number elevation as elevation
+	
+	// possible? would really simplify things.
+	compute state.distribute('(elevation - elevation.min)/(elevation.min - elevation.max) * 90')
+}

@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -65,6 +67,14 @@ public interface IDataflow<T extends IArtifact> extends IActuator, Iterable<IAct
          * @return this builder
          */
         Builder withScale(IScale scale);
+        
+        /**
+         * Notify the coverage resulting from resolution
+         * 
+         * @param coverage
+         * @return this builder
+         */
+        Builder withCoverage(double coverage);
 
         /**
          * Add a child actuator with the passed name and type. Use the returned builder to
@@ -84,6 +94,15 @@ public interface IDataflow<T extends IArtifact> extends IActuator, Iterable<IAct
          * @return
          */
         Builder within(IDirectObservation context);
+
+        /**
+         * Notify a dependency between two resolvables, possibly with a partial coverage
+         * 
+         * @param source the resolvable that provides the resolution
+         * @param target the resolvable that is resolved by source
+         * @param coverage the coverage handled by this dependency
+         */
+        void addDependency(IResolvable source, IResolvable target, ICoverage coverage);
     }
 
     /**
