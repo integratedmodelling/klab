@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -30,17 +31,8 @@ public enum Extensions implements IExtensionService {
 
   INSTANCE;
 
-  Map<String, IComponent> components = new HashMap<>();
-  Map<String, Prototype>  prototypes = new HashMap<>();
-
-  public void registerPrototype(org.integratedmodelling.klab.api.extensions.Prototype annotation,
-      Class<?> cls) {
-
-    // TODO Auto-generated method stub
-    /*
-     * Class must be a 'callable' object - contextualizer etc
-     */
-  }
+  Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
+  Map<String, Prototype>  prototypes = Collections.synchronizedMap(new HashMap<>());
 
   @Override
   public Collection<IComponent> getComponents() {
