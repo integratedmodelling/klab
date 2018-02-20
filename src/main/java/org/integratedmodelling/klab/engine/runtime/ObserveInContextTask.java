@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.observation.Subject;
@@ -34,7 +35,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
   Subject                  context;
   FutureTask<IObservation> delegate;
   Session                  session;
-  String                   token           = NameGenerator.shortUUID();
+  String                   token           = "t" + NameGenerator.shortUUID();
   String[]                 scenarios;
   String                   taskDescription =
       "<uninitialized contextual observation task " + token + ">";
@@ -69,8 +70,12 @@ public class ObserveInContextTask implements ITask<IObservation> {
         ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
             ResolutionScope.create(context, monitor, scenarios));
         if (scope.isRelevant()) {
-          ret = Dataflows.INSTANCE
-              .compile(scope, Observables.INSTANCE.getObservationClass(resolvable)).run(monitor);
+          Dataflow<? extends IObservation> dataflow =
+              Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope,
+                  Observables.INSTANCE.getObservationClass(resolvable));
+          System.out.println(dataflow.getKdlCode());
+          ret = dataflow.run(monitor);
+
         }
 
         return ret;

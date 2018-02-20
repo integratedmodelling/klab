@@ -1,41 +1,22 @@
 package org.integratedmodelling.klab.dataflow;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
-import org.integratedmodelling.klab.api.runtime.dataflow.ILink;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.DirectObservation;
 
 public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataflow<T> {
 
-  List<IActuator>   actuators = new ArrayList<>();
+  public Dataflow(Class<? extends T> cls) {
+    super(cls);
+  }
+
+  String description;
   DirectObservation context;
   double coverage;
-  
-  @Override
-  public Iterator<IActuator> iterator() {
-    // TODO use a topological iterator; put each group of parallelizable actuators within a
-    // dataflow.
-    return null;
-  }
-
-  @Override
-  public List<IActuator> getActuators() {
-    return actuators;
-  }
-
-  @Override
-  public Collection<ILink> getLinks() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 
   @Override
   public T run(IMonitor monitor) throws KlabException {
@@ -46,18 +27,50 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   @SuppressWarnings("unchecked")
   public T compute(DirectObservation context, IMonitor monitor) throws KlabException {
 
-      // make context with topological order built from links; call an internal function
-    
-      // TODO
-      T ret = null;
-      if (this.newObservationType != null) {
-          ret = (T) Observations.INSTANCE
-                  .createObservation(newObservationType, this.scale, this.namespace, monitor, context);
-      }
-
-      // TODO compute children
+      // TODO compute children in parallel; chain resulting artifacts
       
-      return ret;
+      return null;
   }
+
+  @Override
+  protected String encode(int offset) {
+
+    String ret = "";
+    
+    if (offset == 0) {
+      ret += "@klab " + Version.CURRENT + "\n";
+      ret += "@dataflow " + name + "\n";
+      ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
+      if (context != null) {
+        ret += "@context " + context.getUrn() + "\n";
+      }
+      ret += "\n";
+    }
+
+    ret += super.encode(offset);
+    
+    return ret;
+  }
+
+  /**
+   * Return the source code of the dataflow.
+   * 
+   * @return the source code as a string.
+   */
+  @Override
+  public String getKdlCode() {
+    return encode(0);
+  }
+
+  /**
+   * Called by tasks
+   * @param name
+   * @param description 
+   */
+  public void setName(String name, String description) {
+    this.name = name;
+    this.description = description;
+  }
+  
 
 }

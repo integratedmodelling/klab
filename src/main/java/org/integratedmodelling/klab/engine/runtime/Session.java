@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 public class Session implements ISession {
 
   Monitor monitor;
-  String  token = NameGenerator.newName("s");
+  String  token = "s" + NameGenerator.shortUUID();
   Engine  engine;
 
   public Session(Engine engine, IEngineUserIdentity user) {

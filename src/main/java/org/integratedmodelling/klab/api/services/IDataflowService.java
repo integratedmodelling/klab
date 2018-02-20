@@ -7,7 +7,6 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow.Builder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -22,21 +21,13 @@ public interface IDataflowService {
   /**
    * Compile a resolution scope into a dataflow computing the passed artifact type.
    * 
+   * @param name 
    * @param scope
    * @param cls
    * @return a dataflow that will compute an artifact of the requested type when run.
    * @throws KlabException
    */
-  <T extends IArtifact> IDataflow<T> compile(IResolutionScope scope, Class<T> cls)
+  <T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope, Class<T> cls)
       throws KlabException;
-
-  /**
-   * Declare a new dataflow by returning a builder for it.
-   * 
-   * @param name
-   * @param cls
-   * @return
-   */
-  <T extends IArtifact> Builder declare(String name, Class<T> cls);
 
 }

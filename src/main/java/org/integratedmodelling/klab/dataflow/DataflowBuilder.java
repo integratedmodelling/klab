@@ -2,10 +2,13 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
@@ -16,11 +19,13 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow.Builder;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.observation.DirectObservation;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.Coverage;
 import org.integratedmodelling.klab.utils.graph.GraphPartitioner;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -28,6 +33,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 public class DataflowBuilder<T extends IArtifact> implements Builder {
 
   String                                     name;
+  String                                     alias;
   Observable                                 newObservable;
   String                                     newUrn;
   List<DataflowBuilder<?>>                   children        = new ArrayList<>();
@@ -37,13 +43,14 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
   Class<T>                                   cls;
   DirectObservation                          context;
   double                                     coverage;
+
   DirectedGraph<IResolvable, DependencyEdge> dependencyGraph =
       new DefaultDirectedGraph<>(DependencyEdge.class);
 
   static class DependencyEdge {
-    ICoverage coverage;
+    Coverage coverage;
 
-    DependencyEdge(ICoverage coverage) {
+    DependencyEdge(Coverage coverage) {
       this.coverage = coverage;
     }
   }
@@ -69,6 +76,7 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
 
   @Override
   public Builder instantiating(IObservable observable) {
+
     this.newObservable = (Observable) observable;
     if (IState.class.isAssignableFrom(this.cls)) {
       if (!observable.is(IKimConcept.Type.QUALITY)) {
@@ -112,13 +120,10 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
   }
 
   @Override
-  public <K extends IArtifact> IDataflow<K> build() {
-
-
-    System.out.println("-------------------------------------------------");
+  public IActuator build() {
 
     // generate the outer dataflow
-    Dataflow<K> ret = new Dataflow<K>();
+    Dataflow<?> ret = new Dataflow<T>(cls);
     ret.name = this.name;
     ret.type = this.type;
     ret.scale = this.scale;
@@ -138,44 +143,154 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
         }.getDisconnectedSubgraphs(dependencyGraph);
 
     /*
-     * At the root level, in order to have parallel computation we need completely independent
-     * resolutions. At the moment having >1 subgraphs can't happen unless we allow users to observe
-     * more than one concept at a time, which is not supported in the current API.
+     * At the root level, in order to have parallel computation we need >1 completely independent
+     * resolutions. At the moment having >1 subgraphs can't happen, unless we allow users to observe
+     * more than one concept at a time, which is not supported in the current API but is a useful
+     * use case: to do that today, >1 concepts should be added as dependencies for a dummy model,
+     * which prevents parallelization.
      */
     for (DirectedGraph<IResolvable, DependencyEdge> graph : subgraphs) {
-      CompilationContext compilationContext = new CompilationContext();
       for (Observable root : getRootObservables(graph)) {
-        /* Node node = */ compileActuator(root, compilationContext);
-        // children.add(node.getBuilder());
+        Node node = compileActuator(root, graph, new HashMap<>());
+        ret.actuators.add(node.getActuator());
       }
     }
-
-    // generate them
-    for (Builder builder : children) {
-      // TODO these may be other than dataflows
-      ret.actuators.add(builder.build());
-    }
-
-    System.out.println("-------------------------------------------------");
 
     return ret;
   }
 
-  private void /* Node */ compileActuator(Observable observable,
-      /* Node parent, */ CompilationContext compilationContext) {
+  class Node {
+    // has either of:
+    // 1. specs for an actuator, or
+    Actuator<?> original;
+    // 2. specs for a reference to an actuator
+    Actuator<?> reference;
 
-    System.out.println("ROOT is " + observable);
+    List<Node>         children = new ArrayList<>();
+
+    Actuator<?> getActuator() {
+      return original == null ? reference : original;
+    }
+    
+    public String toString() {
+      return getActuator() == null ? "(empty)" : getActuator().toString();
+    }
+
+  }
+
+
+  /*
+   * Catalog matches each observable to the current node that has the actual actuator specs.
+   */
+  private Node compileActuator(Observable observable,
+      DirectedGraph<IResolvable, DependencyEdge> graph, Map<Observable, Node> catalog) {
+
+    Node previous = catalog.get(observable);
+    Node ret = new Node();
+
+    if (previous == null) {
+
+      ret.original = Actuator.create(Observables.INSTANCE.getObservationClass(observable));
+      ret.original.name = observable.getLocalName();
+
+      /*
+       * go through models
+       */
+
+      boolean hasPartials = graph.incomingEdgesOf(observable).size() > 1;
+      List<Node> strategy = new ArrayList<>();
+      for (DependencyEdge d : graph.incomingEdgesOf(observable)) {
+
+        Model model = (Model) graph.getEdgeSource(d);
+        
+        if (!model.isInstantiator()) {
+          ret.original.newObservationType = observable;
+        }
+        
+        Coverage coverage = d.coverage;
+
+        for (DependencyEdge o : graph.incomingEdgesOf(model)) {
+
+          Node child = compileActuator((Observable) graph.getEdgeSource(o), graph, catalog);
+
+//          DataflowBuilder<?> depBuilder = child.getBuilder();
+          if (hasPartials) {
+            // add scale and name suffix
+          }
+
+          // add any needed mediator to depBuilder to match observable with the one coming from
+          // the model
+
+          // if needed, set alias to name of dependency
+          String alias = ((Observable) graph.getEdgeSource(o)).getLocalName();
+          // SBAGLIATO DIO CANE
+//          if (!alias.equals(observable.getLocalName())) {
+//            depBuilder.alias = alias;
+//          }
+
+          strategy.add(child);
+        }
+      }
+
+      if (hasPartials) {
+        // add them all
+        for (Node child : strategy) {
+          ret.children.add(child);
+        }
+        // TODO add merge step
+      } else {
+        // take all computation and mediation from strategy.get(0)
+      }
+
+    } else {
+
+      /*
+       * float the previous actuator to our level, swapping it with a reference to replace the
+       * original one created downstream, using same alias
+       */
+      previous.reference = previous.original.getReference();
+
+      /*
+       * swap any mediators to match observable with the referenced one
+       */
+
+      /*
+       * the actuator in this node becomes our own
+       */
+      ret.original = previous.original;
+      previous.original = null;
+    }
 
     /*
-     * 1. get the existing actuator node with builder 2. if null: ret = actuator node with builder:
-     * foreach model incoming compile observable to actuator if >1 model wrap into partial
-     * computations add merge in computation else add generators in computation else ret = new
-     * actuator node with original builder substitute builder in original node with a reference to
-     * ret
-     * 
-     * 3. add mediators from model observable to this observable to computation 4. check naming and
-     * use as <name> if reference 5. link to parent if any and return node
+     * the new node is either added to the catalog or takes place of the previous
      */
+    catalog.put(observable, ret);
+
+    return ret;
+  }
+
+  private void forObservable(Observable observable) {
+
+    this.name = observable.getLocalName();
+
+    switch (observable.getObservationType()) {
+      case CLASSIFICATION:
+        this.type = Type.CONCEPT;
+        break;
+      case DETECTION:
+      case INSTANTIATION:
+        this.type = Type.OBJECT;
+        break;
+      case QUANTIFICATION:
+        this.type = Type.NUMBER;
+        break;
+      case SIMULATION:
+        this.type = Type.PROCESS;
+        break;
+      case VERIFICATION:
+        this.type = Type.BOOLEAN;
+        break;
+    }
 
   }
 
@@ -201,7 +316,7 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
   public void addDependency(IResolvable source, IResolvable target, ICoverage coverage) {
     dependencyGraph.addVertex(source);
     dependencyGraph.addVertex(target);
-    dependencyGraph.addEdge(source, target, new DependencyEdge(coverage));
+    dependencyGraph.addEdge(source, target, new DependencyEdge((Coverage) coverage));
   }
 
   private List<Observable> getRootObservables(DirectedGraph<IResolvable, DependencyEdge> graph) {
@@ -213,9 +328,12 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
     }
     return ret;
   }
-
-  class CompilationContext {
-
-  }
-
+//
+//  @Override
+//  public Builder add(Builder child) {
+//    children.add((DataflowBuilder<?>) child);
+//    return this;
+//  }
+  
 }
+

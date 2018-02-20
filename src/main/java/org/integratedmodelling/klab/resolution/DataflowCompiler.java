@@ -12,10 +12,8 @@ public enum DataflowCompiler {
   INSTANCE;
   
   @SuppressWarnings("unchecked")
-  public <T extends IArtifact> Dataflow<T> compile(ResolutionScope scope, Class<T> cls)
+  public <T extends IArtifact> Dataflow<T> compile(String name, ResolutionScope scope, Class<T> cls)
       throws KlabException {
-    
-    String name = scope.findObservable().getLocalName();
     
     Dataflow.Builder builder = new DataflowBuilder<T>(name, cls)
         .withScale(scope.getScale())

@@ -71,15 +71,9 @@ public enum Dataflows implements IDataflowService {
     }
 
     @Override
-    public <T extends IArtifact> Dataflow.Builder declare(String name, Class<T> cls) {
-      return new DataflowBuilder<T>(name, cls);
-    }
-    
-    @Override
-    public <T extends IArtifact> Dataflow<T> compile(IResolutionScope scope, Class<T> cls)
+    public <T extends IArtifact> Dataflow<T> compile(String name, IResolutionScope scope, Class<T> cls)
         throws KlabException {
-      return DataflowCompiler.INSTANCE.compile((ResolutionScope)scope, cls);
+      return DataflowCompiler.INSTANCE.compile(name, (ResolutionScope)scope, cls);
     }
     
-
 }

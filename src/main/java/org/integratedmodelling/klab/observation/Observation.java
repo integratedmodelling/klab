@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -26,14 +27,18 @@ public abstract class Observation implements IObservation {
 
   private Scale                  scale;
   private Observable             observable;
-  private String                 token            = NameGenerator.shortUUID();
+  private String                 token            = "o" + NameGenerator.shortUUID();
   private Subject                observer;
   private DirectObservation      contextObservation;
   private Monitor                monitor;
   private Namespace              namespace;
-
+  
   private IEngineSessionIdentity parentIdentity;
 
+  public String getUrn() {
+    return "local:observation:" + getParent(Session.class).getToken() + ":" + getToken();
+  }
+  
   protected Observation(Observable observable, Scale scale, IMonitor monitor) {
     this.observable = observable;
     this.scale = scale;

@@ -25,6 +25,12 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 public interface IArtifact extends Node, Iterator<IArtifact> {
 
   /**
+   * 
+   * @return
+   */
+  String getUrn();
+  
+  /**
    * @return
    */
   IAgent getConsumer();

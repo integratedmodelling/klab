@@ -4,8 +4,8 @@ import java.util.List;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 /**
- * Each node in a dataflow is an actuator. The dataflow itself is a subclass of actuator that can
- * have children.
+ * Each node in a dataflow is an actuator. Some actuators may be references, in which case the
+ * original actuator will always come before them.
  * 
  * @author ferdinando.villa
  *
@@ -13,29 +13,39 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 public interface IActuator {
 
   /**
+   * All actuators have a name. References may provide a different name for the same actuator.
    * 
-   * @return
+   * @return the name
    */
   String getName();
 
-  /**
-   * 
-   * @return
-   */
-  List<IPort> getInputs();
 
   /**
+   * All child actuators in order of declaration.
    * 
-   * @return
+   * @return all the internal actuators in order of declaration.
    */
-  List<IPort> getOutputs();
+  public List<IActuator> getActuators();
 
   /**
-   * Each actuator may have a specific scale, although all are constrained by the one of the
-   * containing dataflow.
+   * Return the subset of actuators that reference others in the same dataflow.
    * 
-   * @return the scale. Only those for which a scale was specifically given will return a non-empty
-   *         scale.
+   * @return all imported actuators
+   */
+  List<IActuator> getInputs();
+
+  /**
+   * Return all actuators that have been declared as exported.
+   * 
+   * @return all exported actuators
+   */
+  List<IActuator> getOutputs();
+
+  /**
+   * Each actuator may have a specific scale.
+   * 
+   * @return the scale. Only the root dataflow and those actuators for which a scale was
+   *         specifically given will return a non-empty scale.
    */
   IScale getScale();
 }

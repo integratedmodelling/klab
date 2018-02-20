@@ -29,12 +29,12 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 public class ObserveContextTask implements ITask<ISubject> {
 
   Monitor              monitor;
-  Subject              subject;
-  Dataflow<Subject>    dataflow;
+  ISubject             subject;
+  Dataflow<ISubject>   dataflow;
   FutureTask<ISubject> delegate;
-  String               token = NameGenerator.shortUUID();
+  String               token           = "t" + NameGenerator.shortUUID();
   Session              session;
-  String taskDescription = "<uninitialized observation task " + token + ">";
+  String               taskDescription = "<uninitialized observation task " + token + ">";
 
   public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
 
@@ -52,7 +52,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
           if (scope.isRelevant()) {
-            dataflow = Dataflows.INSTANCE.compile(scope, Subject.class);
+            dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope, ISubject.class);
             subject = dataflow.run(monitor);
           }
 
@@ -70,7 +70,7 @@ public class ObserveContextTask implements ITask<ISubject> {
   public String toString() {
     return taskDescription;
   }
-  
+
   @Override
   public String getToken() {
     return token;
@@ -123,7 +123,7 @@ public class ObserveContextTask implements ITask<ISubject> {
   }
 
   @Override
-  public Dataflow getDataflow() {
+  public Dataflow<ISubject> getDataflow() {
     return dataflow;
   }
 
