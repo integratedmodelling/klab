@@ -112,6 +112,10 @@ public class Model extends KimObject implements IModel {
     }
   }
 
+  public String toString() {
+    return "[" + getName() + "]";
+  }
+
   private IResource createContextualizerResource(IKimContextualization contextualization) {
     return null;
   }

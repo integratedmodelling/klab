@@ -190,9 +190,30 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
 
     if (previous == null) {
 
+      /*
+       * create the original actuator
+       */
       ret.original = Actuator.create(Observables.INSTANCE.getObservationClass(observable));
       ret.original.name = observable.getLocalName();
-
+      switch (observable.getObservationType()) {
+        case CLASSIFICATION:
+          ret.original.type = Type.CONCEPT;
+          break;
+        case DETECTION:
+        case INSTANTIATION:
+          ret.original.type = Type.OBJECT;
+          break;
+        case QUANTIFICATION:
+          ret.original.type = Type.NUMBER;
+          break;
+        case SIMULATION:
+          ret.original.type = Type.PROCESS;
+          break;
+        case VERIFICATION:
+          ret.original.type = Type.BOOLEAN;
+          break;
+      }
+      
       /*
        * go through models
        */
@@ -267,31 +288,6 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
     catalog.put(observable, ret);
 
     return ret;
-  }
-
-  private void forObservable(Observable observable) {
-
-    this.name = observable.getLocalName();
-
-    switch (observable.getObservationType()) {
-      case CLASSIFICATION:
-        this.type = Type.CONCEPT;
-        break;
-      case DETECTION:
-      case INSTANTIATION:
-        this.type = Type.OBJECT;
-        break;
-      case QUANTIFICATION:
-        this.type = Type.NUMBER;
-        break;
-      case SIMULATION:
-        this.type = Type.PROCESS;
-        break;
-      case VERIFICATION:
-        this.type = Type.BOOLEAN;
-        break;
-    }
-
   }
 
   @Override

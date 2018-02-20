@@ -53,6 +53,7 @@ public class ObserveContextTask implements ITask<ISubject> {
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
           if (scope.isRelevant()) {
             dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope, ISubject.class);
+            System.out.println(dataflow.getKdlCode());
             subject = dataflow.run(monitor);
           }
 

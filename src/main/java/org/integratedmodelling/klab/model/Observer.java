@@ -31,6 +31,10 @@ public class Observer extends KimObject implements IObserver {
         this.behavior = new Behavior(statement.getBehavior(), this);
     }
 
+    public String toString() {
+      return "[" + getName() + "]";
+    }
+    
     @Override
     public String getId() {
         return name;
