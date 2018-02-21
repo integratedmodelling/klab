@@ -137,6 +137,14 @@ public enum ConceptBuilder {
       }
       namespace.define();
     }
+    
+    if (concept.getParents().isEmpty()) {
+        // core derivation
+        Concept coreType = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+        if (coreType != null) {
+            namespace.addAxiom(Axiom.SubClass(coreType.getUrn(), mainId));
+        }
+    }
 
     for (IKimScope child : concept.getChildren()) {
       if (child instanceof IKimConceptStatement) {

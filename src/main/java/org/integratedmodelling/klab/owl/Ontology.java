@@ -819,7 +819,12 @@ public class Ontology implements IOntology {
 
     IConcept ret = getConcept(newName);
     if (ret == null) {
-      ArrayList<IAxiom> ax = new ArrayList<>();
+        
+        if (newName.equals("Attribute")) {
+            System.out.println("HOLLALALL");
+        }
+        
+        ArrayList<IAxiom> ax = new ArrayList<>();
       ax.add(Axiom.ClassAssertion(newName, type));
       define(ax);
       ret = getConcept(newName);
