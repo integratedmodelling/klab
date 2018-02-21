@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.data.resources;
 
 import java.util.Map;
-
+import java.util.Optional;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -29,7 +30,7 @@ public class FunctionResource extends AbstractResource {
     private static final long serialVersionUID = 7943409920767158427L;
 
     @Override
-    public String getAdapterType() {
+    public Optional<IResourceAdapter>  getAdapter() {
         // TODO use a special adapter ID? Or just return the adapter, given it must exist?
         return null;
     }
@@ -48,6 +49,11 @@ public class FunctionResource extends AbstractResource {
     @Override
     public Map<String, Object> getParameters() {
         return functionCall.getParameters();
+    }
+
+    @Override
+    public IKimFunctionCall getComputation() {
+      return functionCall;
     }
 
 }

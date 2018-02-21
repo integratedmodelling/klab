@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -360,7 +361,6 @@ public enum Observables implements IObservableService {
       return getObservationClass(((IModel) resolvable).getObservables().get(0));
     }
     return null;
-  }
-
+  }  
 
 }

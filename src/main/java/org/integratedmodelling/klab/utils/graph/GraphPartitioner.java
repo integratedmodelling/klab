@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
  * Use to partition a jgrapht directed graph into all the disconnected subgraphs it contains. There
@@ -17,8 +18,14 @@ import org.jgrapht.DirectedGraph;
  * @param <V>
  * @param <E>
  */
-public abstract class GraphPartitioner<V, E> {
+public class GraphPartitioner<V, E> {
 
+  Class<? extends E> cls;
+  
+  public GraphPartitioner(Class<? extends E> cls) {
+    this.cls = cls;
+  }
+  
   public Collection<DirectedGraph<V, E>> getDisconnectedSubgraphs(DirectedGraph<V, E> from) {
     List<DirectedGraph<V, E>> subGraphs = new ArrayList<>();
 
@@ -41,7 +48,9 @@ public abstract class GraphPartitioner<V, E> {
     return subGraphs;
   }
 
-  public abstract DirectedGraph<V, E> getNewGraph();
+  public DirectedGraph<V, E> getNewGraph() {
+    return new DefaultDirectedGraph<>(cls);
+  }
 
   private void dfsCopy(V v, DirectedGraph<V, E> from, DirectedGraph<V, E> to, Set<V> visited) {
 

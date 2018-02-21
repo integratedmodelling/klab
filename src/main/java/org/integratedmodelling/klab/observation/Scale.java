@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -88,6 +89,14 @@ public class Scale implements IScale {
   }
 
 
+  public List<IKimFunctionCall> getKimSpecification() {
+    List<IKimFunctionCall> ret = new ArrayList<>();
+    for (IExtent extent : extents) {
+      ret.add(((Extent)extent).getKimSpecification());
+    }
+    return ret;
+  }
+  
   @Override
   public final Index getIndex(int sliceIndex, int sliceNumber, Locator... locators) {
 

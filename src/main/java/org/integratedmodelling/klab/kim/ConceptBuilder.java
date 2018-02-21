@@ -13,8 +13,10 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -174,13 +176,26 @@ public enum ConceptBuilder {
     ret.setMain(main);
 
     if (concept.getBy() != null) {
-
+      // TODO modify observable AND declaration
     }
+    
     if (concept.getDownTo() != null) {
-
+      // TODO modify observable AND declaration
     }
+    
+    String declaration = observable.getDefinition();
+    
+    if (concept.getUnit() != null) {
+      ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
+      declaration += " in " + ret.getUnit();
+    }
+
+    if (concept.getCurrency() != null) {
+      ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getUnit()));
+      declaration += " in " + ret.getCurrency();
+    }
+    
     if (concept.getValue() != null) {
-      // TODO invoke a resolution function (in Extensions?) for values expressed through functions
       ret.setValue(concept.getValue());
     }
 
@@ -198,8 +213,19 @@ public enum ConceptBuilder {
 
     ret.setName(name);
     ret.setObservable(observable);
-    ret.setDeclaration(concept.getSourceCode());
 
+    /*
+     * set default unit if any is appropriate
+     */
+    if (ret.getUnit() == null) {
+      ret.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
+      if (ret.getUnit() != null) {
+        declaration += " in " + ret.getUnit();
+      }
+    }
+
+    ret.setDeclaration(declaration);
+    
     return ret;
   }
 

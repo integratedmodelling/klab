@@ -158,24 +158,23 @@ public enum Observations implements IObservationService {
     return result;
   }
 
-  public IObservation createObservation(IObservable observable, IScale scale, String namespace,
+  public IObservation createObservation(IObservable observable, IScale scale, INamespace namespace,
       IMonitor monitor, IDirectObservation context) throws KlabException {
     IObservation ret = null;
     if (observable.is(Type.SUBJECT)) {
       ret = createSubject((Observable) observable, observable.getLocalName(), (Scale) scale,
-          Namespaces.INSTANCE.getNamespace(namespace), (Monitor) monitor,
-          (DirectObservation) context);
+          (Namespace)namespace, (Monitor) monitor, (DirectObservation) context);
     } else if (observable.is(Type.EVENT)) {
       ret = createEvent((Observable) observable, observable.getLocalName(), (Scale) scale,
-          Namespaces.INSTANCE.getNamespace(namespace), (Monitor) monitor, (Subject) context);
+          (Namespace)namespace, (Monitor) monitor, (Subject) context);
     } else if (observable.is(Type.PROCESS)) {
       ret = createProcess((Observable) observable, observable.getLocalName(), (Scale) scale,
-          Namespaces.INSTANCE.getNamespace(namespace), (Monitor) monitor, (Subject) context);
+          (Namespace)namespace, (Monitor) monitor, (Subject) context);
     } else if (observable.is(Type.RELATIONSHIP)) {
 
     } else if (observable.is(Type.QUALITY)) {
       ret = createState((Observable) observable, (Scale) scale,
-          Namespaces.INSTANCE.getNamespace(namespace), (Monitor) monitor, (Subject) context);
+          (Namespace)namespace, (Monitor) monitor, (Subject) context);
     } else if (observable.is(Type.CONFIGURATION)) {
 
     }

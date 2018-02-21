@@ -18,8 +18,8 @@ import org.integratedmodelling.klab.dataflow.DataflowBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.resolution.DataflowCompiler;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -70,10 +70,24 @@ public enum Dataflows implements IDataflowService {
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends IArtifact> Dataflow<T> compile(String name, IResolutionScope scope, Class<T> cls)
         throws KlabException {
-      return DataflowCompiler.INSTANCE.compile(name, (ResolutionScope)scope, cls);
+
+      Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withCoverage(scope.getCoverage())
+          .within(scope.getContext());
+
+      if (((ResolutionScope)scope).getObserver() != null) {
+        builder = builder.withResolvable(((ResolutionScope)scope).getObserver());
+      }
+
+      for (Link link : ((ResolutionScope)scope).getLinks()) {
+        builder = builder.withDependency(link.getTarget().getResolvable(),
+            link.getSource().getResolvable(), link.getTarget());
+      }
+
+      return (Dataflow<T>) builder.build(scope.getMonitor());
     }
     
 }

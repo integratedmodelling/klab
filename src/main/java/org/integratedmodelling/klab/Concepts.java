@@ -71,6 +71,21 @@ public enum Concepts implements IConceptService {
         return OWL.INSTANCE.getConcept(conceptId);
     }
 
+    @Override
+    public Object getMetadata(IConcept concept, String field) {
+        Object ret = concept.getMetadata().get(field);
+        if (ret != null) {
+            return ret;
+        }
+        for (IConcept c : concept.getParents()) {
+            ret = getMetadata(c, field);
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return null;
+    }
+
     /**
      * Quick static way to obtain a concept that is known to exist. Throws
      * an unchecked exception if the concept isn't found.

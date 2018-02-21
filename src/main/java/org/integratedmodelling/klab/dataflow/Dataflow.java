@@ -10,8 +10,8 @@ import org.integratedmodelling.klab.observation.DirectObservation;
 
 public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataflow<T> {
 
-  public Dataflow(Class<? extends T> cls) {
-    super(cls);
+  public Dataflow(IMonitor monitor, Class<? extends T> cls) {
+    super(monitor, cls);
   }
 
   String            description;
@@ -27,14 +27,17 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   @SuppressWarnings("unchecked")
   public T compute(DirectObservation context, IMonitor monitor) throws KlabException {
 
-    // TODO use futures and compute all children in parallel; chain resulting artifacts. Not really important at the moment.
+    // TODO use futures and compute all children in parallel; chain resulting artifacts. Not really
+    // important at the moment.
     T ret = null;
+
     for (IActuator actuator : actuators) {
-      // TODO this is the top-level execution so it should order by dependency and run the children appropriately. 
-      Object o = ((Actuator<?>)actuator).compute(context, monitor);
+      // TODO this is the top-level execution so it should order by dependency and run the children
+      // appropriately.
+      Object o = ((Actuator<?>) actuator).compute(context, monitor);
       if (o != null) {
         if (ret == null) {
-          ret = (T)o;
+          ret = (T) o;
         } else {
           // chain it
         }
@@ -58,7 +61,9 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
       ret += "\n";
     }
 
-    ret += super.encode(offset);
+    for (IActuator actuator : actuators) {
+      ret += ((Actuator<?>) actuator).encode(offset) + "\n";
+    }
 
     return ret;
   }

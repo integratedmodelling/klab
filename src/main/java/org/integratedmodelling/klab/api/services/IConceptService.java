@@ -36,4 +36,14 @@ public interface IConceptService {
 
   IConcept getLeastGeneralConcept(Collection<IConcept> cc);
 
+  /**
+   * Finds a metadata field in the inheritance chain of a concept. {@link IConcept#getMetadata()}
+   * only retrieves metadata for the concept it's called on.
+   * 
+   * @param concept
+   * @param field
+   * @return the metadata field or null
+   */
+  Object getMetadata(IConcept concept, String field);
+
 }

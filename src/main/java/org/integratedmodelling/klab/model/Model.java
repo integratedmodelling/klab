@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IKimContextualization;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.klab.Observables;
@@ -13,11 +14,11 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IBehavior;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.data.resources.AbstractResource;
 import org.integratedmodelling.klab.documentation.Documentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
@@ -117,6 +118,14 @@ public class Model extends KimObject implements IModel {
   }
 
   private IResource createContextualizerResource(IKimContextualization contextualization) {
+    if (contextualization.getFunction() != null) {
+      return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
+    } else if (contextualization.getRemoteUrn() != null) {
+      return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
+    } 
+    // TODO the rest - classifications (normal or according to), lookup table etc
+    // TODO figure out and validate the postprocessor thing
+    // TODO these may become multiple
     return null;
   }
 
@@ -244,6 +253,26 @@ public class Model extends KimObject implements IModel {
    */
   public Scale getCoverage(IMonitor monitor) throws KlabException {
     return Scale.create(behavior.getExtents(monitor));
+  }
+  
+  /**
+   * Return all the computational steps required to compute the model, encoded as
+   * function calls.
+   * 
+   * @return the computations for the model
+   */
+  public List<IKimFunctionCall> getComputation() {
+    List<IKimFunctionCall> ret = new ArrayList<>();
+    if (resource.isPresent()) {
+      ret.add(((AbstractResource)resource.get()).getComputation());
+    }
+    if (contextualizerResource.isPresent()) {
+      ret.add(((AbstractResource)contextualizerResource.get()).getComputation());
+    }
+    /*
+     * TODO any other contextualization spec
+     */
+   return ret;
   }
 
 }

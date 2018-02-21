@@ -16,7 +16,7 @@ public class ActuatorReference<T extends IArtifact> extends Actuator<T> implemen
   }
   
   private ActuatorReference(Actuator<T> original, Class<? extends T> cls) {
-    super(cls);
+    super(original.monitor, cls);
     this.original = original;
   }
 
@@ -38,7 +38,7 @@ public class ActuatorReference<T extends IArtifact> extends Actuator<T> implemen
     String ofs = StringUtils.repeat(" ", offset);
     String ret = ofs + "import " + original.type.name().toLowerCase() + " " + name;
 
-    if (!computation.isEmpty()) {
+    if (!computationStrategy.isEmpty() || !mediationStrategy.isEmpty()) {
       ret += encodeBody(offset, ofs); 
     }
     

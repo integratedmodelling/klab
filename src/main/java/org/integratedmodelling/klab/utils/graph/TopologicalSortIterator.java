@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.utils;
+package org.integratedmodelling.klab.utils.graph;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

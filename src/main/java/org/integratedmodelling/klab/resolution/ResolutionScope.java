@@ -46,7 +46,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * 
    * Class is used by the dataflow compiler, so it's package private.
    */
-  class Link {
+  public class Link {
 
     ResolutionScope target;
 
@@ -54,11 +54,11 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
       this.target = target;
     }
 
-    ResolutionScope getSource() {
+    public ResolutionScope getSource() {
       return ResolutionScope.this;
     }
 
-    ResolutionScope getTarget() {
+    public ResolutionScope getTarget() {
       return target;
     }
 
@@ -225,6 +225,10 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     super(null, 0.0);
   }
 
+  public Collection<Link> getLinks() {
+    return links;
+  }
+  
   /**
    * Create a child coverage for a passed observable with the same scale but initial coverage set at
    * 0.
@@ -342,7 +346,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   }
 
   // for the dataflow compiler
-  IResolvable getResolvable() {
+  public IResolvable getResolvable() {
     return observable != null ? observable
         : (model != null ? model : (observer != null ? observer : null));
   }

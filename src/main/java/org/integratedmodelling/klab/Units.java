@@ -2,11 +2,9 @@ package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
 import java.util.Collection;
-
 import javax.measure.unit.Dimension;
 import javax.measure.unit.ProductUnit;
 import javax.measure.unit.UnitFormat;
-
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -28,7 +26,7 @@ public enum Units implements IUnitService {
     public IUnit CUBIC_METERS  = getUnit("m^3");
 
     @Override
-    public IUnit getUnit(String string) {
+    public Unit getUnit(String string) {
 
         Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
         javax.measure.unit.Unit<?> unit = null;
@@ -322,5 +320,20 @@ public enum Units implements IUnitService {
         out.println("is" + (isArealDensity(unit) ? " " : " not ") + "an areal density");
         out.println("is" + (isVolumeDensity(unit) ? " " : " not ") + "a volumetric density");
     }
+
+    /**
+     * Get the default unit for the passed concept. Only returns a unit if the concept is
+     * a physical property.
+     * 
+     * @param concept
+     * @return the default SI unit or null
+     */
+    @Override
+    public Unit getDefaultUnitFor(IConcept concept) {
+      Object unit = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
+      return unit == null ? null : getUnit(unit.toString());
+    }
+
+
 
 }

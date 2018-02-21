@@ -1,7 +1,11 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.model.KimFunctionCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -29,6 +33,7 @@ public class Space extends Extent implements ISpace {
   private Projection    projection;
   private ITessellation features;
   private boolean       consistent  = false;
+  private String        gridSpecs   = null;
 
   private static Space  EMPTY_SPACE = new Space(Shape.empty());
 
@@ -36,9 +41,15 @@ public class Space extends Extent implements ISpace {
     return new Space(shape);
   }
 
+  public static final Space empty() {
+    return EMPTY_SPACE;
+  }
+  
   public static Space create(Shape shape, double resolutionInMeters) throws KlabException {
     Grid grid = Grid.create(shape, resolutionInMeters);
-    return new Space(shape, grid);
+    Space ret = new Space(shape, grid);
+    ret.gridSpecs = resolutionInMeters + " m";
+    return ret;
   }
 
   private Space() {
@@ -50,6 +61,7 @@ public class Space extends Extent implements ISpace {
     this.grid = extent.grid;
     this.envelope = extent.envelope;
     this.projection = extent.projection;
+    this.gridSpecs = extent.gridSpecs;
   }
 
   private Space(Shape shape, Grid grid) {
@@ -115,15 +127,15 @@ public class Space extends Extent implements ISpace {
      * TODO figure out mandatory vs. not. These are all false, which probably shouldn't be - either
      * pass to merge or be smarter.
      */
-//    if (oth.grid != null) {
-//      ret.set(oth.grid, force);
-//    } else if (oth.features != null) {
-//      ret.set(oth.features, oth.shape, force);
-//    } else if (oth.shape != null) {
-//      ret.set(oth.shape, force);
-//    } else if (oth.gridResolution > 0.0) {
-//      ret.setGridResolution(oth.gridResolution, force);
-//    }
+    // if (oth.grid != null) {
+    // ret.set(oth.grid, force);
+    // } else if (oth.features != null) {
+    // ret.set(oth.features, oth.shape, force);
+    // } else if (oth.shape != null) {
+    // ret.set(oth.shape, force);
+    // } else if (oth.gridResolution > 0.0) {
+    // ret.setGridResolution(oth.gridResolution, force);
+    // }
     return ret;
   }
 
@@ -200,23 +212,23 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public IExtent intersection(ITopologicallyComparable<?> obj) throws KlabException {
-    
+
 
     Space ret = new Space(this);
 
     if (this.shape == null) {
-        return ret;
+      return ret;
     }
 
     Shape other = null;
     if (obj instanceof Space) {
-        other = ((Space) obj).getShape();
+      other = ((Space) obj).getShape();
     } else if (obj instanceof Shape) {
-        other = (Shape) obj;
+      other = (Shape) obj;
     }
 
     if (other == null) {
-        return new Space();
+      return new Space();
     }
 
     Shape common = this.shape.intersection(other);
@@ -230,25 +242,25 @@ public class Space extends Extent implements ISpace {
     Space ret = new Space(this);
 
     if (this.shape == null) {
-        return ret;
+      return ret;
     }
 
     Shape other = null;
     if (obj instanceof Space) {
-        other = ((Space) obj).getShape();
+      other = ((Space) obj).getShape();
     } else if (obj instanceof Shape) {
-        other = (Shape) obj;
+      other = (Shape) obj;
     }
 
     if (other == null) {
-        return new Space();
+      return new Space();
     }
 
     Shape common = this.shape.union(other);
 
     ret.shape = ret.shape.intersection(common);
 
-    return ret; 
+    return ret;
   }
 
   @Override
@@ -341,6 +353,18 @@ public class Space extends Extent implements ISpace {
   public Space getExtent(long stateIndex) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public IKimFunctionCall getKimSpecification() {
+    List<Object> args = new ArrayList<>(4);
+    args.add("shape");
+    args.add(shape.toString());
+    if (gridSpecs != null) {
+      args.add("grid");
+      args.add(gridSpecs);
+    }
+    return new KimFunctionCall("space", args.toArray());
   }
 
 }

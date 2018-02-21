@@ -1,45 +1,33 @@
 package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
-import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.ICountableObservation;
+import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IProcess;
-import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow.Builder;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.DirectObservation;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.Coverage;
-import org.integratedmodelling.klab.utils.graph.GraphPartitioner;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class DataflowBuilder<T extends IArtifact> implements Builder {
 
   String                                     name;
-  String                                     alias;
-  Observable                                 newObservable;
-  String                                     newUrn;
-  List<DataflowBuilder<?>>                   children        = new ArrayList<>();
-  Scale                                      scale;
-  IKdlActuator.Type                          type;
-  INamespace                                 namespace;
   Class<T>                                   cls;
   DirectObservation                          context;
   double                                     coverage;
@@ -48,6 +36,7 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
       new DefaultDirectedGraph<>(DependencyEdge.class);
 
   static class DependencyEdge {
+
     Coverage coverage;
 
     DependencyEdge(Coverage coverage) {
@@ -57,133 +46,84 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
 
   public DataflowBuilder(String name, Class<T> type) {
     this.name = name;
-    this.type = setType(type);
-  }
-
-  private Type setType(Class<T> type) {
-    this.cls = type;
-    // TODO Auto-generated method stub
-    if (ICountableObservation.class.isAssignableFrom(type)) {
-      return Type.OBJECT;
-    } else if (IProcess.class.isAssignableFrom(type)) {
-      return Type.PROCESS;
-    } else if (!IState.class.isAssignableFrom(type)) {
-      throw new IllegalArgumentException(
-          "Cannot use " + type.getCanonicalName() + " as the returned type for a k.LAB dataflow");
-    }
-    return null;
   }
 
   @Override
-  public Builder instantiating(IObservable observable) {
+  public Dataflow<?> build(IMonitor monitor) {
 
-    this.newObservable = (Observable) observable;
-    if (IState.class.isAssignableFrom(this.cls)) {
-      if (!observable.is(IKimConcept.Type.QUALITY)) {
-        throw new IllegalArgumentException(
-            "Observable " + observable + " is incompatible with the dataflow type");
-      }
-      switch (observable.getObservationType()) {
-        case CLASSIFICATION:
-          this.type = Type.CONCEPT;
-          break;
-        case QUANTIFICATION:
-          this.type = Type.NUMBER;
-          break;
-        case VERIFICATION:
-          this.type = Type.BOOLEAN;
-          break;
-        default:
-          throw new IllegalArgumentException(
-              "Observable " + observable + " is incompatible with the dataflow type");
-      }
-    } else if (!(observable.is(IKimConcept.Type.QUALITY) && this.type == Type.PROCESS)
-        && !(observable.is(IKimConcept.Type.COUNTABLE) && this.type == Type.OBJECT)) {
-      throw new IllegalArgumentException(
-          "Observable " + observable + " is incompatible with the dataflow type");
-    }
-    return this;
-  }
-
-  @Override
-  public Builder withScale(IScale scale) {
-    this.scale = (Scale) scale;
-    return this;
-  }
-
-  @Override
-  public Builder add(String actuatorName, Class<? extends IArtifact> type) {
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    DataflowBuilder<?> builder = new DataflowBuilder(actuatorName, type);
-    this.children.add(builder);
-    return builder;
-  }
-
-  @Override
-  public IActuator build() {
-
-    // generate the outer dataflow
-    Dataflow<?> ret = new Dataflow<T>(cls);
+    Dataflow<?> ret = new Dataflow<T>(monitor, cls);
     ret.name = this.name;
-    ret.type = this.type;
-    ret.scale = this.scale;
-    ret.newObservationType = newObservable;
     ret.context = this.context;
-    ret.namespace = this.namespace == null ? null : this.namespace.getId();
     ret.coverage = this.coverage;
 
-    Collection<DirectedGraph<IResolvable, DependencyEdge>> subgraphs =
-        new GraphPartitioner<IResolvable, DependencyEdge>() {
-
-          @Override
-          public DirectedGraph<IResolvable, DependencyEdge> getNewGraph() {
-            return new DefaultDirectedGraph<>(DependencyEdge.class);
-          }
-
-        }.getDisconnectedSubgraphs(dependencyGraph);
-
-    /*
-     * At the root level, in order to have parallel computation we need >1 completely independent
-     * resolutions. At the moment having >1 subgraphs can't happen, unless we allow users to observe
-     * more than one concept at a time, which is not supported in the current API but is a useful
-     * use case: to do that today, >1 concepts should be added as dependencies for a dummy model,
-     * which prevents parallelization.
-     */
-    for (DirectedGraph<IResolvable, DependencyEdge> graph : subgraphs) {
-      for (Observable root : getRootObservables(graph)) {
-        Node node = compileActuator(root, graph, new HashMap<>());
-        ret.actuators.add(node.getActuator());
-      }
+    for (IResolvable root : getRootResolvables(dependencyGraph)) {
+      
+      Node node = compileActuator(root, dependencyGraph, new HashMap<>(), monitor);
+      node.getActuator().createObservation = root instanceof IObserver
+          || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
+      
+      ret.actuators.add(node.getActuatorTree());
     }
 
     return ret;
   }
 
+  /**
+   * Compilation builds a tree of nodes, each containing either an actuator or a reference. During
+   * compilation, those may be rearranged so that an actuator needed in an outside scope is floated
+   * to the containing scope and substituted with a reference to it.
+   * 
+   * The final actuator hierarchy is built by calling {@link #getActuatorTree()} on the root node.
+   * 
+   * @author ferdinando.villa
+   *
+   */
   class Node {
-    // has either of:
-    // 1. specs for an actuator, or
-    Actuator<?> original;
-    // 2. specs for a reference to an actuator
-    Actuator<?> reference;
 
-    List<Node>         children = new ArrayList<>();
+    Actuator<?>            original;
+    Actuator<?>            reference;
+    List<Node>             children  = new ArrayList<>();
+    List<IKimFunctionCall> mediators = new ArrayList<>();
 
+    /*
+     * get the actuator in the node, ignoring the children
+     */
     Actuator<?> getActuator() {
       return original == null ? reference : original;
     }
-    
+
+    /*
+     * get the finished actuator with all the children and the mediation strategy
+     */
+    Actuator<?> getActuatorTree() {
+      Actuator<?> ret = getActuator();
+      ret.mediationStrategy.addAll(mediators);
+      for (Node child : children) {
+        ret.actuators.add(child.getActuatorTree());
+      }
+      return ret;
+    }
+
     public String toString() {
-      return getActuator() == null ? "(empty)" : getActuator().toString();
+      return getActuator() == null ? "(empty node)" : getActuator().toString();
     }
 
   }
 
-
   /*
-   * Catalog matches each observable to the current node that has the actual actuator specs.
+   * The catalog matches each resolvable to the node that currently holds the actuator and not a
+   * reference.
+   * 
+   * We pass the root observable to decide whether we should build an observation for it in case
+   * this is a resolution model.
    */
-  private Node compileActuator(Observable observable,
-      DirectedGraph<IResolvable, DependencyEdge> graph, Map<Observable, Node> catalog) {
+  private Node compileActuator(IResolvable resolvable,
+      DirectedGraph<IResolvable, DependencyEdge> graph, Map<Observable, Node> catalog,
+      IMonitor monitor) {
+
+    Observer observer = resolvable instanceof Observer ? (Observer) resolvable : null;
+    Observable observable = resolvable instanceof Observable ? (Observable) resolvable
+        : (observer == null ? null : observer.getObservable());
 
     Node previous = catalog.get(observable);
     Node ret = new Node();
@@ -193,8 +133,9 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
       /*
        * create the original actuator
        */
-      ret.original = Actuator.create(Observables.INSTANCE.getObservationClass(observable));
+      ret.original = Actuator.create(monitor, Observables.INSTANCE.getObservationClass(observable));
       ret.original.name = observable.getLocalName();
+
       switch (observable.getObservationType()) {
         case CLASSIFICATION:
           ret.original.type = Type.CONCEPT;
@@ -213,74 +154,68 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
           ret.original.type = Type.BOOLEAN;
           break;
       }
-      
+
+      if (observer != null) {
+        try {
+          ret.original.scale = Scale.create(observer.getBehavior().getExtents(monitor));
+        } catch (KlabException e) {
+          throw new KlabRuntimeException(e);
+        }
+        ret.original.namespace = observer.getNamespace();
+        ret.original.observable = observable;
+      }
+
       /*
        * go through models
        */
-
-      boolean hasPartials = graph.incomingEdgesOf(observable).size() > 1;
-      List<Node> strategy = new ArrayList<>();
-      for (DependencyEdge d : graph.incomingEdgesOf(observable)) {
+      boolean hasPartials = graph.incomingEdgesOf(resolvable).size() > 1;
+      for (DependencyEdge d : graph.incomingEdgesOf(resolvable)) {
 
         Model model = (Model) graph.getEdgeSource(d);
-        
-        if (!model.isInstantiator()) {
-          ret.original.newObservationType = observable;
-        }
-        
-        Coverage coverage = d.coverage;
+        ret.original.observable = observable;
 
         for (DependencyEdge o : graph.incomingEdgesOf(model)) {
 
-          Node child = compileActuator((Observable) graph.getEdgeSource(o), graph, catalog);
+          Node child = compileActuator(graph.getEdgeSource(o), graph, catalog, monitor);
 
-//          DataflowBuilder<?> depBuilder = child.getBuilder();
           if (hasPartials) {
             // add scale and name suffix
+            Coverage coverage = d.coverage;
           }
 
-          // add any needed mediator to depBuilder to match observable with the one coming from
-          // the model
-
           // if needed, set alias to name of dependency
-          String alias = ((Observable) graph.getEdgeSource(o)).getLocalName();
-          // SBAGLIATO DIO CANE
-//          if (!alias.equals(observable.getLocalName())) {
-//            depBuilder.alias = alias;
-//          }
 
-          strategy.add(child);
+          ret.children.add(child);
         }
+
+        // TODO ehm - if the observable comes from a model that was already computed from another
+        // observable, we have no choice than connecting to another port of that same actuator and
+        // that must export it - ONLY if needed in the dataflow.
+        ret.original.computationStrategy.addAll(model.getComputation());
+      
       }
 
       if (hasPartials) {
-        // add them all
-        for (Node child : strategy) {
-          ret.children.add(child);
-        }
-        // TODO add merge step
+        // TODO add merge step to mediators
       } else {
         // take all computation and mediation from strategy.get(0)
       }
 
     } else {
-
       /*
        * float the previous actuator to our level, swapping it with a reference to replace the
-       * original one created downstream, using same alias
+       * original one created downstream. The actuator in this node becomes our own and gets aliased
+       * to the name of this observable
        */
       previous.reference = previous.original.getReference();
-
-      /*
-       * swap any mediators to match observable with the referenced one
-       */
-
-      /*
-       * the actuator in this node becomes our own
-       */
       ret.original = previous.original;
+      ret.original.alias = observable.getLocalName();
       previous.original = null;
     }
+
+    /*
+     * add mediation strategy to our node
+     */
 
     /*
      * the new node is either added to the catalog or takes place of the previous
@@ -297,39 +232,34 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
   }
 
   @Override
-  public Builder instantiating(IObservable observable, INamespace namespace) {
-    this.namespace = namespace;
-    return instantiating(observable);
-  }
-
-  @Override
   public Builder withCoverage(double coverage) {
     this.coverage = coverage;
     return this;
   }
 
   @Override
-  public void addDependency(IResolvable source, IResolvable target, ICoverage coverage) {
+  public Builder withDependency(IResolvable source, IResolvable target, ICoverage coverage) {
     dependencyGraph.addVertex(source);
     dependencyGraph.addVertex(target);
     dependencyGraph.addEdge(source, target, new DependencyEdge((Coverage) coverage));
+    return this;
   }
 
-  private List<Observable> getRootObservables(DirectedGraph<IResolvable, DependencyEdge> graph) {
-    List<Observable> ret = new ArrayList<>();
+  private List<IResolvable> getRootResolvables(DirectedGraph<IResolvable, DependencyEdge> graph) {
+    List<IResolvable> ret = new ArrayList<>();
     for (IResolvable res : graph.vertexSet()) {
-      if (res instanceof Observable && graph.outgoingEdgesOf(res).size() == 0) {
-        ret.add((Observable) res);
+      if (graph.outgoingEdgesOf(res).size() == 0) {
+        ret.add(res);
       }
     }
     return ret;
   }
-//
-//  @Override
-//  public Builder add(Builder child) {
-//    children.add((DataflowBuilder<?>) child);
-//    return this;
-//  }
-  
+
+  @Override
+  public Builder withResolvable(IResolvable resolvable) {
+    dependencyGraph.addVertex(resolvable);
+    return this;
+  }
+
 }
 

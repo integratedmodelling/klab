@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -190,6 +191,11 @@ public class RankedModel extends Model implements IRankedModel {
         return getDelegate().toString() + "\n\n" + describeRanks();
     }
 
+    @Override
+    public List<IKimFunctionCall> getComputation() {
+      return getDelegate().getComputation();
+    }
+    
     public String describeRanks() {
         return describeRanks(0, 3);
     }

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.Collection;
 import java.util.Set;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.kim.utils.Range;
@@ -20,6 +19,12 @@ import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
+/**
+ * Equality only compares the main concept, assuming that everything else can be mediated.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class Observable implements IObservable {
 
     private Concept         observable;
@@ -48,6 +53,10 @@ public class Observable implements IObservable {
         ret.declaration = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.isAbstract();
+        ret.unit = (Unit)Units.INSTANCE.getDefaultUnitFor(concept);
+        if (ret.unit != null) {
+          ret.declaration += " in " + ret.unit;
+        }
         return ret;
     }
 
@@ -330,16 +339,16 @@ public class Observable implements IObservable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((by == null) ? 0 : by.hashCode());
-        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
-        result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
+//        result = prime * result + ((by == null) ? 0 : by.hashCode());
+//        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+//        result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
         result = prime * result + ((main == null) ? 0 : main.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((observable == null) ? 0 : observable.hashCode());
-        result = prime * result + (optional ? 1231 : 1237);
-        result = prime * result + ((range == null) ? 0 : range.hashCode());
-        result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
+//        result = prime * result + ((name == null) ? 0 : name.hashCode());
+//        result = prime * result + ((observable == null) ? 0 : observable.hashCode());
+//        result = prime * result + (optional ? 1231 : 1237);
+//        result = prime * result + ((range == null) ? 0 : range.hashCode());
+//        result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+//        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
 
@@ -355,27 +364,27 @@ public class Observable implements IObservable {
             return false;
         }
         Observable other = (Observable) obj;
-        if (by == null) {
-            if (other.by != null) {
-                return false;
-            }
-        } else if (!by.equals(other.by)) {
-            return false;
-        }
-        if (currency == null) {
-            if (other.currency != null) {
-                return false;
-            }
-        } else if (!currency.equals(other.currency)) {
-            return false;
-        }
-        if (downTo == null) {
-            if (other.downTo != null) {
-                return false;
-            }
-        } else if (!downTo.equals(other.downTo)) {
-            return false;
-        }
+//        if (by == null) {
+//            if (other.by != null) {
+//                return false;
+//            }
+//        } else if (!by.equals(other.by)) {
+//            return false;
+//        }
+//        if (currency == null) {
+//            if (other.currency != null) {
+//                return false;
+//            }
+//        } else if (!currency.equals(other.currency)) {
+//            return false;
+//        }
+//        if (downTo == null) {
+//            if (other.downTo != null) {
+//                return false;
+//            }
+//        } else if (!downTo.equals(other.downTo)) {
+//            return false;
+//        }
         if (main == null) {
             if (other.main != null) {
                 return false;
@@ -383,44 +392,44 @@ public class Observable implements IObservable {
         } else if (!main.equals(other.main)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (observable == null) {
-            if (other.observable != null) {
-                return false;
-            }
-        } else if (!observable.equals(other.observable)) {
-            return false;
-        }
-        if (optional != other.optional) {
-            return false;
-        }
-        if (range == null) {
-            if (other.range != null) {
-                return false;
-            }
-        } else if (!range.equals(other.range)) {
-            return false;
-        }
-        if (unit == null) {
-            if (other.unit != null) {
-                return false;
-            }
-        } else if (!unit.equals(other.unit)) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
+//        if (name == null) {
+//            if (other.name != null) {
+//                return false;
+//            }
+//        } else if (!getName().equals(other.getName())) {
+//            return false;
+//        }
+//        if (observable == null) {
+//            if (other.observable != null) {
+//                return false;
+//            }
+//        } else if (!observable.equals(other.observable)) {
+//            return false;
+//        }
+//        if (optional != other.optional) {
+//            return false;
+//        }
+//        if (range == null) {
+//            if (other.range != null) {
+//                return false;
+//            }
+//        } else if (!range.equals(other.range)) {
+//            return false;
+//        }
+//        if (unit == null) {
+//            if (other.unit != null) {
+//                return false;
+//            }
+//        } else if (!unit.equals(other.unit)) {
+//            return false;
+//        }
+//        if (value == null) {
+//            if (other.value != null) {
+//                return false;
+//            }
+//        } else if (!value.equals(other.value)) {
+//            return false;
+//        }
         return true;
     }
 

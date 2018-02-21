@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.observation;
 
 import java.util.Iterator;
+import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 public abstract class Extent implements IExtent {
@@ -33,5 +34,12 @@ public abstract class Extent implements IExtent {
      * @return a new extent identical to this.
      */
     public abstract Extent copy();
+
+    /**
+     * All extents must have a two-way street between k.IM code functions and themselves.
+     * 
+     * @return the k.IM function call specifying this extent.
+     */
+    public abstract IKimFunctionCall getKimSpecification();
    
 }

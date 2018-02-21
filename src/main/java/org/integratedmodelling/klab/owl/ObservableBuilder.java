@@ -687,6 +687,17 @@ public class ObservableBuilder implements Builder {
                     : (UnarySemanticOperator.RATIO.declaration[1] + " ("
                         + comparison.getDefinition() + ")"))));
       }
+      
+      // unit for ratios of physical properties
+      if ((concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY))
+          && (comparison.is(Type.EXTENSIVE_PROPERTY) || comparison.is(Type.INTENSIVE_PROPERTY))) {
+        Object unit1 = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
+        Object unit2 = Concepts.INSTANCE.getMetadata(comparison, NS.SI_UNIT_PROPERTY);
+        if (unit1 != null && unit2 != null) {
+          String unit = unit1 + "/" + unit2;
+          ax.add(Axiom.AnnotationAssertion(cName, NS.SI_UNIT_PROPERTY, unit));
+        }
+      }
       concept.getOntology().define(ax);
       ret = concept.getOntology().getConcept(cName);
     }

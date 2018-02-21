@@ -35,4 +35,6 @@ public interface IUnitService {
 
     boolean isRate(IUnit unit);
 
+    IUnit getDefaultUnitFor(IConcept concept);
+
 }

@@ -48,6 +48,11 @@ public class Shape implements IShape {
     return new Shape();
   }
 
+  @Override
+  public String toString() {
+    return projection.getCode() + " " + geometry;
+  }
+  
   public static Shape create(String wkt) throws KlabValidationException {
     Shape ret = new Shape();
     ret.parseWkt(wkt);
