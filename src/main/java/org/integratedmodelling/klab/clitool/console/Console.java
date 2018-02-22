@@ -38,8 +38,9 @@ public enum Console implements IConsole {
 
   INSTANCE;
   
-  Engine             client;
+  Engine             engine;
   DragonConsoleFrame terminal;
+  ISession session;
 
 
   // class SessionListener implements ISession.Listener {
@@ -192,7 +193,8 @@ public enum Console implements IConsole {
             @Override
             public void run() {
 
-              client = Engine.start(options);
+              engine = Engine.start(options);
+              session = engine.createSession();
 
               // client.addListener(new IModelingEngine.Listener() {
               //
@@ -328,8 +330,7 @@ public enum Console implements IConsole {
 
   @Override
   public ISession getSession() {
-    // TODO Auto-generated method stub
-    return null;
+    return session;
   }
 
   @Override

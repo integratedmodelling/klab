@@ -14,14 +14,14 @@ public class Help implements ICommand {
     String output = "";
     for (String pack : Console.INSTANCE.getPackages()) {
       if (!pack.equals("main")) {
-        output += pack + ":\n\n";
+        output += pack + ":\n" + StringUtils.repeat('-', pack.length() + 1) + "\n\n";
       }
       for (IPrototype prototype : Console.INSTANCE.getCommandProcessor().getPrototypes(pack)) {
         String synopsis = prototype.getSynopsis();
         if (!pack.equals("main")) {
-          StringUtils.leftIndent(synopsis, 3);
+          synopsis = StringUtils.leftIndent(synopsis, 3);
         }
-        output += (output.isEmpty() ? "" : "\n\n") + synopsis;
+        output += "* " + synopsis + "\n";
       }
     }
     return output;
