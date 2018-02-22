@@ -2,9 +2,7 @@ package org.integratedmodelling.klab.api.extensions;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-
 import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -85,7 +83,11 @@ public interface IPrototype {
         /**
          * A list value
          */
-        LIST
+        LIST,
+        /**
+         * No value - used only for options in command prototypes
+         */
+        VOID
     }
 
     /**
@@ -101,6 +103,15 @@ public interface IPrototype {
          * @return
          */
         String getName();
+        
+        
+        /**
+         * Short name for options. May be computed automatically if not given (KDL has no semantic
+         * support for this).
+         *
+         * @return 
+         */
+        String getShortName();
 
         /**
          * 

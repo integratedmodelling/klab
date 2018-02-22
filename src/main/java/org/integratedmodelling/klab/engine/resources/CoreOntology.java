@@ -439,10 +439,7 @@ public class CoreOntology extends AbstractWorkspace {
         ret = Concepts.c(id);
       }
     }
-    
-    if (ret != null && ret.toString().equals("Attribute:Attribute")) {
-        System.out.println("DOCCODOFI");
-    }
+
     return ret;
   }
 

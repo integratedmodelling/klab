@@ -2,20 +2,24 @@ package org.integratedmodelling.klab;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.model.KimFunctionCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.klab.api.extensions.IPrototype.Argument;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.common.services.Prototype;
@@ -23,9 +27,14 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.springframework.asm.Type;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpecBuilder;
 
 public enum Extensions implements IExtensionService {
 
@@ -78,7 +87,7 @@ public enum Extensions implements IExtensionService {
     }
 
     this.components.put(annotation.id(), ret);
-    
+
     return ret;
   }
 
@@ -92,13 +101,13 @@ public enum Extensions implements IExtensionService {
       throw new KlabResourceNotFoundException(
           "cannot find function implementation for " + functionCall.getName());
     }
-    
+
     Class<?> cls = prototype.getExecutorClass();
-    
+
     if (cls != null) {
       if (IExpression.class.isAssignableFrom(cls)) {
         try {
-          IExpression expr = (IExpression)cls.getDeclaredConstructor().newInstance();
+          IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
           ret = expr.eval(functionCall.getParameters(), monitor);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
             | InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -114,7 +123,7 @@ public enum Extensions implements IExtensionService {
         }
       }
     }
-    
+
     return ret;
   }
 
@@ -139,4 +148,8 @@ public enum Extensions implements IExtensionService {
      */
   }
 
+  public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
+    
+  }
+  
 }

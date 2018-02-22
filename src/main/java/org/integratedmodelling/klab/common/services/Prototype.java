@@ -22,6 +22,7 @@ public class Prototype implements IPrototype {
     class Argument implements IPrototype.Argument {
 
         String      name;
+        String      shortName;
         String      description  = "";
         boolean     option;
         boolean     optional;
@@ -62,6 +63,19 @@ public class Prototype implements IPrototype {
         @Override
         public Object getDefaultValue() {
             return defaultValue;
+        }
+
+        @Override
+        public String getShortName() {
+          if (shortName == null) {
+            shortName = computeShortName();
+          }
+          return shortName;
+        }
+
+        private String computeShortName() {
+          // TODO Auto-generated method stub
+          return name;
         }
 
     }

@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.extensions.SubjectType;
@@ -174,7 +175,10 @@ public class Engine extends Server implements IEngine {
    * @throws KlabRuntimeException if startup fails
    */
   public static Engine start() {
-    EngineStartupOptions options = new EngineStartupOptions();
+    return start(new EngineStartupOptions());
+  }
+
+  public static Engine start(IEngineStartupOptions options) {
     Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
     if (!ret.boot(options)) {
       throw new KlabRuntimeException("engine failed to start");
@@ -182,6 +186,7 @@ public class Engine extends Server implements IEngine {
     return ret;
   }
 
+  
   public void stop() {
 
     // TODO shutdown all components
@@ -225,7 +230,7 @@ public class Engine extends Server implements IEngine {
    * @return true if the boot was successful, false otherwise. Exceptions are only thrown in case of
    *         bad usage (called before a certificate is read).
    */
-  private boolean boot(EngineStartupOptions options) {
+  private boolean boot(IEngineStartupOptions options) {
 
     if (options.isHelp()) {
       System.out.println(options.usage());

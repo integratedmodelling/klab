@@ -120,6 +120,7 @@ public enum OWL {
    * found.
    * 
    * @param owl
+   * @param complainIfNotFound 
    * @return
    */
   public Concept getConceptFor(OWLClass owl, boolean complainIfNotFound) {
@@ -168,9 +169,13 @@ public enum OWL {
    * @return
    */
   public IProperty getPropertyFor(OWLProperty<?, ?> owl) {
+    
     IProperty ret = null;
     String sch = owl.getIRI().getNamespace();
     if (sch.endsWith("#")) {
+      sch = sch.substring(0, sch.length() - 1);
+    }
+    if (sch.endsWith("/")) {
       sch = sch.substring(0, sch.length() - 1);
     }
     IOntology ontology = getOntology(iri2ns.get(sch));
@@ -180,7 +185,7 @@ public enum OWL {
 
     if (ret == null) {
       throw new KlabRuntimeException(
-          "internal: OWL entity " + owl + " not corresponding to a known ontology");
+          "internal: OWL entity " + owl + " does not correspond to a known ontology");
     }
 
     return ret;
@@ -417,6 +422,7 @@ public enum OWL {
    * seen by users.
    *
    * @param kdir
+   * @throws KlabException 
    * @throws KlabIOException
    */
   public void load(File kdir) throws KlabException {
@@ -428,26 +434,38 @@ public enum OWL {
     // null in error
     if (files != null) {
       for (File fl : files) {
-        loadInternal(fl, "", null);
+        loadInternal(fl, "", false, null);
       }
     } else {
       throw new KlabIOException(
-          "Errors reading core ontologies: system will be nonfunctional. Check server distribution.");
+          "Errors reading core ontologies: system will be nonfunctional.");
     }
   }
 
-  private void loadInternal(File f, String path, IMonitor monitor) throws KlabException {
+  /**
+   * 
+   * @param f
+   * @param path
+   * @param forcePath disregard directory structure and use passed path as prefix for ontology
+   * @param monitor
+   * @throws KlabException
+   */
+  private void loadInternal(File f, String path, boolean forcePath, IMonitor monitor) throws KlabException {
 
     String pth = path == null ? ""
         : (path + (path.isEmpty() ? "" : ".")
             + CamelCase.toLowerCase(MiscUtilities.getFileBaseName(f.toString()), '-'));
 
+    if (forcePath) {
+      pth = path;
+    }
+    
     if (f.isDirectory()) {
-
-      for (File fl : f.listFiles()) {
-        loadInternal(fl, pth, monitor);
+      if (!MiscUtilities.getFileBaseName(f.toString()).startsWith(".")) {
+        for (File fl : f.listFiles()) {
+          loadInternal(fl, pth, false, monitor);
+        }
       }
-
     } else if (MiscUtilities.getFileExtension(f.toString()).equals("owl")) {
 
       InputStream input;
@@ -875,11 +893,11 @@ public enum OWL {
       return iri2ns.get(url);
     }
 
-    File out = new File(
-        Configuration.INSTANCE.getDataPath("knowledge/imports") + File.separator + prefix + ".owl");
+    File out = new File(Configuration.INSTANCE.getDataPath("knowledge/.imports") + File.separator
+        + prefix + ".owl");
     try {
       URLUtils.copyChanneled(new URL(url), out);
-      loadInternal(out, prefix, monitor);
+      loadInternal(out, prefix, true, monitor);
     } catch (MalformedURLException e) {
       monitor.error(e);
       return null;

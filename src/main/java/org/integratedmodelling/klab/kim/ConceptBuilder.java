@@ -143,6 +143,7 @@ public enum ConceptBuilder {
         Concept coreType = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
         if (coreType != null) {
             namespace.addAxiom(Axiom.SubClass(coreType.getUrn(), mainId));
+            namespace.define();
         }
     }
 

@@ -27,4 +27,11 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * @return
      */
     boolean isExitAfterStartup();
+
+    /**
+     * Return a string description of the options.
+     * 
+     * @return usage string
+     */
+    String usage();
 }

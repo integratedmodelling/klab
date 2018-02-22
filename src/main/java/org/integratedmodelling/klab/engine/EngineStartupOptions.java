@@ -2,7 +2,8 @@ package org.integratedmodelling.klab.engine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.kohsuke.args4j.CmdLineException;
@@ -39,10 +40,18 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Option(name = "-exit", usage = "exit after completing startup and running any scripts from command line")
     boolean exit;
 
+    private List<String> arguments = new ArrayList<>();
+
+    
+    
     /**
      * All defaults
      */
     public EngineStartupOptions() {
+    }
+    
+    public List<String> getArguments() {
+      return this.arguments;
     }
 
     /**
