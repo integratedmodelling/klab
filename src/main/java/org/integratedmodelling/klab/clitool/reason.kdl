@@ -13,7 +13,7 @@
 void children
 	"List the asserted or inferred hierarchy of a concept."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.Help
+	class org.integratedmodelling.klab.clitool.console.commands.reason.Children
 }
 
 void parents
@@ -22,9 +22,6 @@ void parents
 	class org.integratedmodelling.klab.clitool.console.commands.Help
 }
 
-/**
- * Batch run: use CL parameters to enable multiple batch contexts
- */
 //annotation run for observers
 //	"Mark a context for batch execution, specifying the observations to be made in it."
 //{

@@ -10,7 +10,8 @@ public interface ICommand {
    * @param call
    * @param session
    * @return
+   * @throws Exception 
    */
-  public Object execute(IKimFunctionCall call, ISession session);
+  public Object execute(IKimFunctionCall call, ISession session) throws Exception;
 
 }

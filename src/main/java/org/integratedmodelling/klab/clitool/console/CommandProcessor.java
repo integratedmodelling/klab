@@ -83,7 +83,7 @@ public class CommandProcessor
           commands.put(prototype.getName(), prototype);
         }
       } catch (Exception e) {
-        throw new KlabRuntimeException("cannot parse command specifications");
+        throw new KlabRuntimeException("cannot parse command specifications: " + e.getMessage());
       }
     }
   }
@@ -102,6 +102,7 @@ public class CommandProcessor
 
     input = input.trim();
     String cpack = getCurrentPackage();
+    boolean inline = false;
 
     // enable one-off package use with package prefix
     if (input.contains(".") || input.contains(" ")) {
@@ -115,6 +116,7 @@ public class CommandProcessor
       if (packages.containsKey(pname)) {
         cpack = pname;
         input = input.substring(pname.length() + 1).trim();
+        inline = true;
       }
     }
     
@@ -163,7 +165,7 @@ public class CommandProcessor
             terminal.error(e);
           }
         }
-        terminal.reportCommandResult(input, ok);
+        terminal.reportCommandResult((inline ? (cpack + " ") : "") + input, ok);
 
       } catch (KlabException e) {
         terminal.error(e);
@@ -239,7 +241,11 @@ public class CommandProcessor
         ret.getParameters().put(s.getName(), options.valueOf(s.getName()));
       }
     }
-
+    
+    List<Object> aaa = new ArrayList<>(options.nonOptionArguments());
+    ret.getParameters().put("arguments", aaa);
+    
+    
     // TODO later
     // int n = 0;
     // int argn = 0;

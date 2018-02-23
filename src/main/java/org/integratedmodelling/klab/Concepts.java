@@ -10,6 +10,7 @@ import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
+import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -46,10 +47,17 @@ public enum Concepts implements IConceptService {
     public IConcept declare(String declaration) {
 
         try {
-            ConceptDeclaration parsed = declarationParser.parse(declaration);
-            KimConcept interpreted = Kim.INSTANCE.declareConcept(parsed);
+            Object parsed = declarationParser.parse(declaration);
+            ConceptDeclaration dcl = null;
+            if (parsed instanceof ConceptDeclaration) {
+              dcl = (ConceptDeclaration)parsed;
+            } else if (parsed instanceof ObservableSemantics) {
+              dcl = ((ObservableSemantics)parsed).getDeclaration();
+            }
+            KimConcept interpreted = Kim.INSTANCE.declareConcept(dcl);
             return ConceptBuilder.INSTANCE.declare(interpreted, Klab.INSTANCE.getRootMonitor());
         } catch (Exception e) {
+          Klab.INSTANCE.error(e);
         }
 
         return null;
