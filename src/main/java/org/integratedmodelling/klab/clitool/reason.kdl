@@ -19,7 +19,7 @@ void children
 void parents
 	"List the semantic closure of a concept."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.Help
+	class org.integratedmodelling.klab.clitool.console.commands.reason.Parents
 }
 
 //annotation run for observers

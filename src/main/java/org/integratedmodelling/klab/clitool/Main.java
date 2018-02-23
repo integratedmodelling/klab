@@ -19,7 +19,6 @@ public class Main {
 
     if (options.getArguments().size() == 0) {
       TermConsole console = new TermConsole();
-      CliRuntime.INSTANCE.initialize(console, options);
       console.start(options);
     } else {
       SysConsole console = new SysConsole();

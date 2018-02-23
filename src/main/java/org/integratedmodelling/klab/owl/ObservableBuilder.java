@@ -1077,7 +1077,8 @@ public class ObservableBuilder implements Builder {
       List<IAxiom> axioms = new ArrayList<>();
       axioms.add(Axiom.ClassAssertion(cId, type));
       axioms.add(Axiom.AnnotationAssertion(cId, NS.DISPLAY_LABEL_PROPERTY, cDs));
-
+      axioms.add(Axiom.SubClass(main.getUrn(), cId));
+      
       /*
        * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
        */

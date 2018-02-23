@@ -63,7 +63,7 @@ public enum ConceptBuilder {
         }
 
         if (parent != null) {
-          ns.addAxiom(Axiom.SubClass(ret.getName(), parent.getUrn()));
+          ns.addAxiom(Axiom.SubClass(parent.getUrn(), ret.getName()));
         }
       }
 
@@ -136,15 +136,6 @@ public enum ConceptBuilder {
         namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
       }
       namespace.define();
-    }
-    
-    if (concept.getParents().isEmpty()) {
-        // core derivation
-        Concept coreType = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
-        if (coreType != null) {
-            namespace.addAxiom(Axiom.SubClass(coreType.getUrn(), mainId));
-            namespace.define();
-        }
     }
 
     for (IKimScope child : concept.getChildren()) {
@@ -329,6 +320,7 @@ public enum ConceptBuilder {
 
     Concept ret = null;
     try {
+        
       ret = (Concept) builder.build();
 
       /*
