@@ -22,26 +22,19 @@
 package org.integratedmodelling.klab.clitool.console;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsoleFrame;
-import org.integratedmodelling.klab.engine.Engine;
 
-public enum Console implements IConsole {
+public class TermConsole implements IConsole {
 
-  INSTANCE;
-  
-  Engine             engine;
   DragonConsoleFrame terminal;
-  ISession session;
-
 
   // class SessionListener implements ISession.Listener {
   //
@@ -183,7 +176,7 @@ public enum Console implements IConsole {
           }
           terminal = new DragonConsoleFrame("k.LAB v" + Version.CURRENT + buildInfo, false,
               new CommandHistory());
-          terminal.console.setCommandProcessor(new CommandProcessor(Console.this, new Monitor()));
+          terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
           terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
           terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n\n");
           terminal.setVisible(true);
@@ -193,8 +186,8 @@ public enum Console implements IConsole {
             @Override
             public void run() {
 
-              engine = Engine.start(options);
-              session = engine.createSession();
+              CliRuntime.INSTANCE.initialize(TermConsole.this, options);
+              terminal.console.setCommandProcessor(CliRuntime.INSTANCE.getCommandProcessor());
 
               // client.addListener(new IModelingEngine.Listener() {
               //
@@ -322,24 +315,6 @@ public enum Console implements IConsole {
     if (terminal.console.getHistory() != null) {
       terminal.console.getHistory().append(input);
     }
-  }
-
-  public CommandProcessor getCommandProcessor() {
-    return (CommandProcessor) terminal.console.getCommandProcessor();
-  }
-
-  @Override
-  public ISession getSession() {
-    return session;
-  }
-
-  @Override
-  public String getCurrentPackage() {
-    return getCommandProcessor().getCurrentPackage();
-  }
-
-  public List<String> getPackages() {
-    return getCommandProcessor().getPackages();
   }
 
 }

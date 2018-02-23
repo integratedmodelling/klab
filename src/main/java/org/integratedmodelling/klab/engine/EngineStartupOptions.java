@@ -40,6 +40,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Option(name = "-exit", usage = "exit after completing startup and running any scripts from command line")
     boolean exit;
 
+    
     private List<String> arguments = new ArrayList<>();
 
     

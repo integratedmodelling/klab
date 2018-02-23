@@ -41,6 +41,7 @@ import org.integratedmodelling.kim.model.KimFunctionCall;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.Main;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.clitool.api.IConsole;
@@ -100,24 +101,52 @@ public class CommandProcessor
   public void processCommand(String input) {
 
     input = input.trim();
+    String cpack = getCurrentPackage();
 
+    // enable one-off package use with package prefix
+    if (input.contains(".") || input.contains(" ")) {
+      String pname = "";
+      for (int i = 0; i < input.length(); i++) {
+        if (input.charAt(i) == '.' || input.charAt(i) == ' ') {
+          break;
+        }
+        pname += input.charAt(i);
+      }
+      if (packages.containsKey(pname)) {
+        cpack = pname;
+        input = input.substring(pname.length() + 1).trim();
+      }
+    }
+    
+    /*
+     * TODO verify if command starts with a first token that is a package name or
+     * includes <package.command>; in that case, exec the package's command without
+     * pushing it on the stack.
+     */
+    
     if (input.equals("exit")) {
+      
       if (currentPackage.size() == 1) {
         System.exit(0);
       } else {
         currentPackage.pop();
         terminal.setPrompt((getCurrentPackage().equals("main") ? ">" : getCurrentPackage()) + "> "); 
       }
+      
     } else if (input.equals("quit")) {
+    
       System.exit(0);
+    
     } else if (packages.containsKey(input) && !input.equals("main")) {
+    
       currentPackage.push(input);
       terminal.setPrompt(getCurrentPackage() + "> "); 
+
     } else if (input.length() > 0) {
 
       IKimFunctionCall command = null;
       try {
-        command = parseCommandLine(input, terminal.getCurrentPackage());
+        command = parseCommandLine(input, cpack);
         boolean ok = command != null;
         if (command == null) {
           terminal.warning("Command '" + input + "' incorrect or unknown");
@@ -127,7 +156,7 @@ public class CommandProcessor
              * TODO run asynchronously if command requires it.
              */
             terminal.echo((getCurrentPackage().equals("main") ? "" : getCurrentPackage()) + "> " + input);
-            Object ret = execute(command, terminal.getCurrentPackage());
+            Object ret = execute(command, cpack);
             terminal.outputResult(input, ret);
           } catch (Throwable e) {
             ok = false;
@@ -149,8 +178,8 @@ public class CommandProcessor
         || !ICommand.class.isAssignableFrom(prototype.getExecutorClass())) {
       terminal.error("command " + command.getName() + " unknown or not executable");
     }
-    ICommand executor = (ICommand) prototype.getExecutorClass().newInstance();
-    return executor.execute(command, terminal.getSession());
+    ICommand executor = (ICommand) prototype.getExecutorClass().getDeclaredConstructor().newInstance();
+    return executor.execute(command, CliRuntime.INSTANCE.getSession());
   }
 
   /**

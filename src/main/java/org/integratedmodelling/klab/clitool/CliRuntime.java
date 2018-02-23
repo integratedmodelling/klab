@@ -1,0 +1,55 @@
+package org.integratedmodelling.klab.clitool;
+
+import java.io.IOException;
+import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.clitool.api.IConsole;
+import org.integratedmodelling.klab.clitool.console.CommandProcessor;
+import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.runtime.Session;
+
+public enum CliRuntime {
+
+  INSTANCE;
+
+  Engine           engine;
+  Session          session;
+  CommandProcessor commandProcessor;
+  IConsole         console;
+
+  public ISession getSession() {
+    return session;
+  }
+
+  public CommandProcessor getCommandProcessor() {
+    return commandProcessor;
+  }
+
+  public IConsole getConsole() {
+    return console;
+  }
+
+  public void initialize(IConsole console, IEngineStartupOptions options) {
+
+    this.engine = Engine.start(options);
+    this.session = engine.createSession();
+    this.console = console;
+    this.commandProcessor = new CommandProcessor(console, session.getMonitor());
+
+  }
+
+  public void shutdown() {
+    if (this.session != null) {
+      try {
+        this.session.close();
+      } catch (IOException e) {
+        Klab.INSTANCE.error(e);
+      }
+      this.engine.stop();
+    }
+
+  }
+
+
+}
