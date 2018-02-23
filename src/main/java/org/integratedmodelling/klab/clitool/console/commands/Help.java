@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.clitool.console.commands;
 
 import org.integratedmodelling.kim.api.IKimFunctionCall;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.clitool.console.Console;

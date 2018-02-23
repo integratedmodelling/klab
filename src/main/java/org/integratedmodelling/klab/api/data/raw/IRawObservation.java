@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.data.raw;
 
-import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry;
 
 public interface IRawObservation {
 

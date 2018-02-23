@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Setup;

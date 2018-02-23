@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -22,17 +28,163 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/antlr-runtime-3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/aopalliance-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/apache-mime4j-core-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/args4j-2.33.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/automaton-1.11-8.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/axiom-api-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/axiom-c14n-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/axiom-dom-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/axiom-impl-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/bcpg-jdk15on-1.52.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/bcprov-jdk15on-1.52.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/classmate-1.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-codec-1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-collections-3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-exec-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-io-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-lang-2.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-logging-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-math3-3.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-pool-1.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/commons-pool2-2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/cts-1.3.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/ejml-core-0.32.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/ejml-ddense-0.32.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/GeographicLib-Java-1.44.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/geronimo-activation_1.1_spec-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/geronimo-javamail_1.4_spec-1.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gson-2.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-api-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-coverage-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-data-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-epsg-extension-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-epsg-hsql-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-geotiff-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-main-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-metadata-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-opengis-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-referencing-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/gt-shapefile-19-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/guava-19.0-rc3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/guice-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/h2-1.4.190.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/h2spatial-1.2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/h2spatial-api-1.2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/hibernate-validator-5.2.4.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/hsqldb-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/httpclient-4.3.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/httpcore-4.3.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/imageio-ext-geocore-1.1.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/imageio-ext-streams-1.1.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/imageio-ext-tiff-1.1.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/imageio-ext-utilities-1.1.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-annotations-2.8.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-core-2.8.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-databind-2.8.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jai_codec-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jai_core-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jai_imageio-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/JavaEWAH-0.7.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/javassist-3.21.0-GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/javax.inject-1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/javolution-5.2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jaxen-1.1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jboss-logging-3.2.1.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jcl-over-slf4j-1.7.21.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jdom2-2.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgrapht-core-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgridshift-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgroups-3.6.8.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/joda-time-2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jopt-simple-4.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jsch-0.1.53.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jscience-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/json-simple-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jsr-275-1.0-beta-2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jsr305-3.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-affine-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-algebra-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-bandcombine-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-bandmerge-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-bandselect-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-binarize-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-border-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-buffer-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-classifier-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-colorconvert-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-colorindexer-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-crop-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-errordiffusion-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-format-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-imagefunction-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-iterators-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-lookup-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-mosaic-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-nullop-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-orderdither-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-piecewise-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-rescale-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-rlookup-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-scale-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-stats-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-translate-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-utilities-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-utils-1.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-vectorbin-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-warp-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-zonal-1.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jt-zonalstats-1.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jts-1.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jts-core-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jts-example-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jts-io-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jul-to-slf4j-1.7.21.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/license3j-1.0.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/log4j-1.2.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/log4j-over-slf4j-1.7.21.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/logback-classic-1.1.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/logback-core-1.1.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/maven-invoker-2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/org.eclipse.january-2.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/org.eclipse.jgit-4.4.0.201606070830-r.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/org.osgi.core-1.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/org.semanticweb.hermit-1.3.8.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-api-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-apibinding-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-contract-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-distribution-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-impl-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-parsers-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/owlapi-tools-3.4.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/plexus-component-annotations-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/plexus-utils-3.0.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/protobuf-java-3.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/reflections-0.9.11.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/slf4j-api-1.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/snakeyaml-1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spatial-utilities-1.2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-aop-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-beans-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-boot-1.4.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-boot-autoconfigure-1.4.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-boot-starter-1.4.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-boot-starter-logging-1.4.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-boot-starter-tomcat-1.4.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-boot-starter-web-1.4.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-context-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-core-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-expression-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-web-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/spring-webmvc-4.3.4.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/stax2-api-3.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/tomcat-embed-core-8.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/tomcat-embed-el-8.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/tomcat-embed-websocket-8.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/unit-api-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/validation-api-1.1.0.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/woodstox-core-asl-4.1.4.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

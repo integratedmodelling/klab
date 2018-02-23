@@ -2,8 +2,7 @@ package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
 import java.util.Collection;
-
-import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 

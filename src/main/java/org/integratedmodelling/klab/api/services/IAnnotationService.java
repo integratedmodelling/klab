@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 

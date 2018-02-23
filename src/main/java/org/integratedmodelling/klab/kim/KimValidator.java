@@ -17,6 +17,8 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.klab.Annotations;
@@ -27,7 +29,6 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Workspaces;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -42,7 +43,7 @@ public class KimValidator implements Kim.Validator {
 
   Monitor              monitor;
   Map<String, Integer> recheckObservationNS  = new HashMap<>();
-  
+
   /*
    * holds the mapping between the actual ontology ID and the declared one in root domains where
    * "import <coreUrl> as <prefix>" was used.
@@ -72,7 +73,7 @@ public class KimValidator implements Kim.Validator {
     } catch (KlabException e) {
       monitor.error(e);
     }
-    
+
     for (Pair<String, String> imp : namespace.getOwlImports()) {
       String prefix =
           Workspaces.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
@@ -130,7 +131,7 @@ public class KimValidator implements Kim.Validator {
      */
     Namespaces.INSTANCE.registerNamespace(ns, monitor);
     Observations.INSTANCE.registerNamespace(ns, monitor);
-    
+
     Reasoner.INSTANCE.addOntology(ns.getOntology());
 
     /*
@@ -147,11 +148,11 @@ public class KimValidator implements Kim.Validator {
 
   @Override
   public List<Pair<String, Level>> validateFunction(IKimFunctionCall functionCall,
-      Set<Type> expectedType) {
+      IPrototype.Type expectedType) {
     List<Pair<String, Level>> ret = new ArrayList<>();
     IPrototype prototype = Extensions.INSTANCE.getServicePrototype(functionCall.getName());
     if (prototype != null) {
-
+      return prototype.validate(functionCall);
     } else {
       ret.add(Tuples.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
     }
@@ -175,6 +176,29 @@ public class KimValidator implements Kim.Validator {
      * TODO check type
      */
     return statedType;
+  }
+
+  @Override
+  public boolean isFunctionKnown(String functionName) {
+    return Extensions.INSTANCE.getServicePrototype(functionName) != null;
+  }
+
+  @Override
+  public boolean isAnnotationKnown(String annotationName) {
+    return Annotations.INSTANCE.getPrototype(annotationName) != null;
+  }
+
+  @Override
+  public List<Pair<String, Level>> validateAnnotation(IKimFunctionCall annotationCall,
+      IKimStatement target) {
+    List<Pair<String, Level>> ret = new ArrayList<>();
+    IPrototype prototype = Annotations.INSTANCE.getPrototype(annotationCall.getName());
+    if (prototype != null) {
+      return prototype.validate(annotationCall);
+    }
+    // Annotations w/o prototype are allowed
+    return ret;
+
   }
 
 }

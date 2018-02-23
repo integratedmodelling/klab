@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;

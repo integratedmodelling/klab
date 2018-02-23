@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;

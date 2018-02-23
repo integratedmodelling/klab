@@ -2,8 +2,7 @@ package org.integratedmodelling.klab.api.extensions.component;
 
 import java.io.File;
 import java.util.Collection;
-
-import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 
 public interface IComponent extends IProject {

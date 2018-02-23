@@ -34,20 +34,20 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype.Argument;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.model.KimFunctionCall;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
-import org.integratedmodelling.klab.api.extensions.IPrototype.Argument;
-import org.integratedmodelling.klab.api.extensions.IPrototype.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.clitool.Main;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.clitool.api.IConsole;
-import org.integratedmodelling.klab.common.services.Prototype;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import joptsimple.OptionParser;
@@ -205,7 +205,7 @@ public class CommandProcessor
     // TODO catch UnrecognizedOptionException (from joptsimple) and propagate
     OptionSet options = parser.parse(args);
 
-    for (Argument s : prototype.getArguments()) {
+    for (Argument s : prototype.listArguments()) {
       if (options.has(s.getName())) {
         ret.getParameters().put(s.getName(), options.valueOf(s.getName()));
       }
@@ -248,7 +248,7 @@ public class CommandProcessor
 
     OptionParser parser = new OptionParser();
 
-    for (Argument odesc : prototype.getArguments()) {
+    for (Argument odesc : prototype.listArguments()) {
 
       OptionSpecBuilder b =
           parser.acceptsAll(Arrays.asList(new String[] {odesc.getShortName(), odesc.getName()}),

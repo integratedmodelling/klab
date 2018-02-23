@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Date;
@@ -9,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
 import org.integratedmodelling.klab.Observations;
@@ -52,8 +55,8 @@ public class Engine extends Server implements IEngine {
 
   public class Monitor implements IMonitor {
 
-    private IIdentity identity = Engine.this;
-    int errorCount = 0;
+    private IIdentity identity   = Engine.this;
+    int               errorCount = 0;
 
     @Override
     public void info(Object... info) {
@@ -71,7 +74,7 @@ public class Engine extends Server implements IEngine {
     public void error(Object... o) {
       // TODO Auto-generated method stub
       System.err.println(NotificationUtils.getMessage(o));
-      errorCount ++;
+      errorCount++;
     }
 
     @Override
@@ -117,7 +120,8 @@ public class Engine extends Server implements IEngine {
      * @param error true for abnormal exit
      */
     public void notifyEnd(boolean error) {
-      System.out.println(identity + ((errorCount > 0 || error) ? " finished with errors" : " finished without errors"));
+      System.out.println(identity
+          + ((errorCount > 0 || error) ? " finished with errors" : " finished without errors"));
     }
 
   }
@@ -186,7 +190,7 @@ public class Engine extends Server implements IEngine {
     return ret;
   }
 
-  
+
   public void stop() {
 
     // TODO shutdown all components
@@ -266,7 +270,14 @@ public class Engine extends Server implements IEngine {
           + " communicating on port " + options.getPort());
       this.multicastBus =
           new MulticastMessageBus(this, options.getMulticastChannel(), options.getPort());
+
+      /*
+       * TODO send 'boot started' message
+       */
+
     }
+
+
 
     boolean ret = true;
     try {
@@ -333,6 +344,18 @@ public class Engine extends Server implements IEngine {
        */
 
       /*
+       * save cache of function prototypes and resolved URNs for clients
+       */
+      saveClientInformation();
+
+      /*
+       * if anything is connected, send 'boot finished' message.
+       */
+      if (multicastBus != null) {
+        // TODO
+      }
+
+      /*
        * if exit after scripts is requested, exit
        */
       if (options.isExitAfterStartup()) {
@@ -344,6 +367,16 @@ public class Engine extends Server implements IEngine {
     }
 
     return ret;
+  }
+
+  /**
+   * Save JSON files for prototypes and URN resolution data for any clients to use in validation.
+   */
+  private void saveClientInformation() {
+    Extensions.INSTANCE.exportPrototypes(new File(
+        Configuration.INSTANCE.getDataPath("language") + File.separator + "prototypes.json"));
+    Annotations.INSTANCE.exportPrototypes(new File(
+        Configuration.INSTANCE.getDataPath("language") + File.separator + "annotations.json"));
   }
 
   private void scanClasspath() throws KlabException {

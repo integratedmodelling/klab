@@ -1,8 +1,7 @@
 package org.integratedmodelling.klab.data.encoding;
 
 import javax.annotation.Nullable;
-
-import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.knowledge.IConcept;

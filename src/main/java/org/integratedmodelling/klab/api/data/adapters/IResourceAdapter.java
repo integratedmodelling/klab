@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
-import org.integratedmodelling.klab.api.extensions.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Shutdown;

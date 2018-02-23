@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,30 +12,24 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
-import org.integratedmodelling.kim.model.KimFunctionCall;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
-import org.integratedmodelling.klab.api.extensions.IPrototype;
-import org.integratedmodelling.klab.api.extensions.IPrototype.Argument;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
-import org.integratedmodelling.klab.common.services.Prototype;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-import org.springframework.asm.Type;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpecBuilder;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum Extensions implements IExtensionService {
 
@@ -42,7 +37,7 @@ public enum Extensions implements IExtensionService {
 
   Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
   Map<String, Prototype>  prototypes = Collections.synchronizedMap(new HashMap<>());
-
+  
   @Override
   public Collection<IComponent> getComponents() {
     return components.values();
@@ -150,6 +145,16 @@ public enum Extensions implements IExtensionService {
 
   public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
     
+  }
+
+  public void exportPrototypes(File file) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
+      mapper.writerFor(type).writeValue(file, this.prototypes);
+    } catch (IOException e) {
+      Klab.INSTANCE.error(e);
+    }
   }
   
 }

@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.model.KimFunctionCall;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.Geometry;
 
 public class LiteralResource extends AbstractResource {
 
