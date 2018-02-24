@@ -12,12 +12,14 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Reasoner;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -26,6 +28,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 
@@ -153,6 +156,19 @@ public enum KimKnowledgeProcessor {
                 } catch (Throwable e) {
                     monitor.error(e);
                 }
+            }
+        }
+        
+        for (KimConcept inherited : concept.getTraitsInherited()) {
+            IConcept trait = declare(inherited, monitor);
+            if (trait == null) {
+                monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);
+                return null;
+            }
+            try {
+                Traits.INSTANCE.addTrait(main, trait);
+            } catch (KlabValidationException e) {
+                monitor.error(e, inherited);
             }
         }
 

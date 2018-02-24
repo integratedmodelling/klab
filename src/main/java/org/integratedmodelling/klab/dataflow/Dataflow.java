@@ -15,13 +15,13 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   }
 
   String            description;
-  DirectObservation context;
-  double            coverage;
+  private DirectObservation context;
+  private double            coverage;
 
   @Override
   public T run(IMonitor monitor) throws KlabException {
     // TODO enough?
-    return compute(context, monitor);
+    return compute(getContext(), monitor);
   }
 
   @SuppressWarnings("unchecked")
@@ -53,10 +53,10 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
 
     if (offset == 0) {
       ret += "@klab " + Version.CURRENT + "\n";
-      ret += "@dataflow " + name + "\n";
+      ret += "@dataflow " + getName() + "\n";
       ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
-      if (context != null) {
-        ret += "@context " + context.getUrn() + "\n";
+      if (getContext() != null) {
+        ret += "@context " + getContext().getUrn() + "\n";
       }
       ret += "\n";
     }
@@ -88,6 +88,22 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
     this.name = name;
     this.description = description;
   }
+
+public double getCoverage() {
+    return coverage;
+}
+
+public void setCoverage(double coverage) {
+    this.coverage = coverage;
+}
+
+public DirectObservation getContext() {
+    return context;
+}
+
+public void setContext(DirectObservation context) {
+    this.context = context;
+}
 
 
 }

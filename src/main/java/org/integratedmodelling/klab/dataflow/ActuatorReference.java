@@ -36,9 +36,9 @@ public class ActuatorReference<T extends IArtifact> extends Actuator<T> implemen
   protected String encode(int offset) {
     
     String ofs = StringUtils.repeat(" ", offset);
-    String ret = ofs + "import " + original.type.name().toLowerCase() + " " + name;
+    String ret = ofs + "import " + original.getType().name().toLowerCase() + " " + getName();
 
-    if (!computationStrategy.isEmpty() || !mediationStrategy.isEmpty()) {
+    if (!getComputationStrategy().isEmpty() || !getMediationStrategy().isEmpty()) {
       ret += encodeBody(offset, ofs); 
     }
     

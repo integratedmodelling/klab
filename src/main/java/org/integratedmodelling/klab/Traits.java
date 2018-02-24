@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,8 +16,11 @@ import org.integratedmodelling.klab.api.services.ITraitService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
+
+import com.google.common.collect.Sets;
 
 public enum Traits implements ITraitService {
     INSTANCE;
@@ -82,7 +86,7 @@ public enum Traits implements ITraitService {
         return false;
     }
 
-    public void restrict(IConcept target, IProperty property, LogicalConnector how, Set<IConcept> fillers)
+    public void restrict(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers)
             throws KlabValidationException {
 
         /*
@@ -111,7 +115,7 @@ public enum Traits implements ITraitService {
                     throw new KlabValidationException("cannot find property to restrict for trait " + base);
                 }
             }
-            System.out.println("TRAIT " + pairs.get(base) + " for " + target + " with " + prop);
+            // System.out.println("TRAIT " + pairs.get(base) + " for " + target + " with " + prop);
             OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base));
         }
     }
@@ -145,6 +149,20 @@ public enum Traits implements ITraitService {
         // .getInherentType(observable));
 
         return new Pair<>(root, tret);
+    }
+
+    public void addTrait(Concept main, IConcept trait) throws KlabValidationException {
+        IProperty property = null;
+        if (trait.is(Type.IDENTITY)) {
+            property = Concepts.p(NS.HAS_IDENTITY_PROPERTY);
+        } else if (trait.is(Type.REALM)) {
+            property = Concepts.p(NS.HAS_REALM_PROPERTY);
+        } else if (trait.is(Type.ATTRIBUTE)) {
+            property = Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY);
+        }
+        if (property != null) {
+            restrict(main, property, LogicalConnector.UNION, Collections.singleton(trait));
+        }
     }
 
 }

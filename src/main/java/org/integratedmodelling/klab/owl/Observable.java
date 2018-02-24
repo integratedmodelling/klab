@@ -20,15 +20,15 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * Equality only compares the main concept, assuming that everything else can be mediated.
+ * Equality ignores differences of name, value, optional and generic status.
  * 
  * @author ferdinando.villa
  *
  */
 public class Observable extends Concept implements IObservable {
 
-    private Concept         observable;
-    private Concept         main;
+    protected Concept       observable;
+    protected Concept       main;
     private String          name;
     private String          declaration;
     private boolean         isAbstract;
@@ -46,23 +46,41 @@ public class Observable extends Concept implements IObservable {
         super(concept);
         this.observable = this.main = concept;
     }
-    
+
     public static Observable promote(IConceptDefinition concept) {
         return promote(concept.getConcept());
     }
 
     public static Observable promote(IConcept concept) {
-        Observable ret = new Observable((Concept)concept);
+        Observable ret = new Observable((Concept) concept);
         ret.observable = (Concept) concept;
         ret.main = (Concept) concept;
         ret.declaration = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.isAbstract();
-        ret.unit = (Unit)Units.INSTANCE.getDefaultUnitFor(concept);
+        ret.unit = (Unit) Units.INSTANCE.getDefaultUnitFor(concept);
         if (ret.unit != null) {
-          ret.declaration += " in " + ret.unit;
+            ret.declaration += " in " + ret.unit;
         }
         return ret;
+    }
+
+    public Observable(Observable observable) {
+        super(observable);
+        this.observable = observable.observable;
+        this.main = observable.main;
+        this.name = observable.name;
+        this.declaration = observable.declaration;
+        this.isAbstract = observable.isAbstract;
+        this.range = observable.range;
+        this.unit = observable.unit;
+        this.currency = observable.currency;
+        this.by = observable.by;
+        this.downTo = observable.downTo;
+        this.value = observable.value;
+        this.observationType = observable.observationType;
+        this.optional = observable.optional;
+        this.generic = observable.generic;
     }
 
     @Override
@@ -344,15 +362,15 @@ public class Observable extends Concept implements IObservable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-//        result = prime * result + ((by == null) ? 0 : by.hashCode());
-//        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
-//        result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
+        result = prime * result + ((by == null) ? 0 : by.hashCode());
+        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+        result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
         result = prime * result + ((main == null) ? 0 : main.hashCode());
 //        result = prime * result + ((name == null) ? 0 : name.hashCode());
-//        result = prime * result + ((observable == null) ? 0 : observable.hashCode());
+        result = prime * result + ((observable == null) ? 0 : observable.hashCode());
 //        result = prime * result + (optional ? 1231 : 1237);
-//        result = prime * result + ((range == null) ? 0 : range.hashCode());
-//        result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+        result = prime * result + ((range == null) ? 0 : range.hashCode());
+        result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 //        result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
@@ -369,27 +387,27 @@ public class Observable extends Concept implements IObservable {
             return false;
         }
         Observable other = (Observable) obj;
-//        if (by == null) {
-//            if (other.by != null) {
-//                return false;
-//            }
-//        } else if (!by.equals(other.by)) {
-//            return false;
-//        }
-//        if (currency == null) {
-//            if (other.currency != null) {
-//                return false;
-//            }
-//        } else if (!currency.equals(other.currency)) {
-//            return false;
-//        }
-//        if (downTo == null) {
-//            if (other.downTo != null) {
-//                return false;
-//            }
-//        } else if (!downTo.equals(other.downTo)) {
-//            return false;
-//        }
+        if (by == null) {
+            if (other.by != null) {
+                return false;
+            }
+        } else if (!by.equals(other.by)) {
+            return false;
+        }
+        if (currency == null) {
+            if (other.currency != null) {
+                return false;
+            }
+        } else if (!currency.equals(other.currency)) {
+            return false;
+        }
+        if (downTo == null) {
+            if (other.downTo != null) {
+                return false;
+            }
+        } else if (!downTo.equals(other.downTo)) {
+            return false;
+        }
         if (main == null) {
             if (other.main != null) {
                 return false;
@@ -404,30 +422,30 @@ public class Observable extends Concept implements IObservable {
 //        } else if (!getName().equals(other.getName())) {
 //            return false;
 //        }
-//        if (observable == null) {
-//            if (other.observable != null) {
-//                return false;
-//            }
-//        } else if (!observable.equals(other.observable)) {
-//            return false;
-//        }
+        if (observable == null) {
+            if (other.observable != null) {
+                return false;
+            }
+        } else if (!observable.equals(other.observable)) {
+            return false;
+        }
 //        if (optional != other.optional) {
 //            return false;
 //        }
-//        if (range == null) {
-//            if (other.range != null) {
-//                return false;
-//            }
-//        } else if (!range.equals(other.range)) {
-//            return false;
-//        }
-//        if (unit == null) {
-//            if (other.unit != null) {
-//                return false;
-//            }
-//        } else if (!unit.equals(other.unit)) {
-//            return false;
-//        }
+        if (range == null) {
+            if (other.range != null) {
+                return false;
+            }
+        } else if (!range.equals(other.range)) {
+            return false;
+        }
+        if (unit == null) {
+            if (other.unit != null) {
+                return false;
+            }
+        } else if (!unit.equals(other.unit)) {
+            return false;
+        }
 //        if (value == null) {
 //            if (other.value != null) {
 //                return false;
