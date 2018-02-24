@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 
 public class KimValidator implements Kim.Validator {
 
@@ -94,7 +95,7 @@ public class KimValidator implements Kim.Validator {
 
       if (statement instanceof IKimConceptStatement) {
         object = new ConceptStatement((IKimConceptStatement) statement);
-        IConcept concept = ConceptBuilder.INSTANCE.build((IKimConceptStatement) statement, ns,
+        IConcept concept = KimKnowledgeProcessor.INSTANCE.build((IKimConceptStatement) statement, ns,
             (ConceptStatement) object, monitor);
         if (concept == null) {
           object = null;

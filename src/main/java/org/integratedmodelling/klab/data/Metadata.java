@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 
@@ -125,7 +125,7 @@ public class Metadata implements IMetadata {
     public IConcept getConcept(String field) {
         Object o = data.get(field);
         return o != null && o instanceof IConcept ? (IConcept) o
-                : (o instanceof String ? Concepts.INSTANCE.declare(o.toString()) : null);
+                : (o instanceof String ? Observables.INSTANCE.declare(o.toString()) : null);
     }
 
     @Override

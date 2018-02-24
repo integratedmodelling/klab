@@ -344,7 +344,7 @@ public interface IObservableService {
    * @param main
    * @return a builder for the main concept
    */
-  Builder declare(IConcept main);
+//  Builder declare(IConcept main);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -359,7 +359,7 @@ public interface IObservableService {
    * @param parent
    * @return a builder for the main concept
    */
-  Builder declare(String main, @NotNull IConcept parent);
+//  Builder declare(String main, @NotNull IConcept parent);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -374,7 +374,7 @@ public interface IObservableService {
    * @param type
    * @return a builder for the main concept
    */
-  Builder declare(String main, @NotNull Set<Type> type);
+//  Builder declare(String main, @NotNull Set<Type> type);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -384,7 +384,7 @@ public interface IObservableService {
    * @param ontology
    * @return a builder for the main concept
    */
-  Builder declare(IConcept main, IOntology ontology);
+//  Builder declare(IConcept main, IOntology ontology);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -397,7 +397,7 @@ public interface IObservableService {
    * @param ontology
    * @return a builder for the main concept
    */
-  Builder declare(String main, @NotNull IConcept parent, IOntology ontology);
+//  Builder declare(String main, @NotNull IConcept parent, IOntology ontology);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -410,7 +410,7 @@ public interface IObservableService {
    * @param ontology
    * @return a builder for the main concept
    */
-  Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
+//  Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
 
   /**
    * True if o1 and o2 are observables from recognized domains, have compatible context and

@@ -24,9 +24,9 @@ public interface IConceptService {
    * @return the concept corresponding to a k.IM definition.
    * @throws KlabValidationException if the declaration contains errors or unknown concepts.
    */
-  IConcept declare(String declaration) throws KlabValidationException;
+//  IConcept declare(String declaration) throws KlabValidationException;
 
-  IConcept declare(IKimConcept observable, IMonitor monitor);
+//  IConcept declare(IKimConcept observable, IMonitor monitor);
 
   Collection<IConcept> getLeastGeneral(Collection<IConcept> cc);
 

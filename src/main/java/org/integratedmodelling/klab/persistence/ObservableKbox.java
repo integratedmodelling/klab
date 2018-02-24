@@ -32,13 +32,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.integratedmodelling.klab.Concepts;
+
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -92,7 +91,7 @@ public abstract class ObservableKbox extends H2Kbox {
 
   public IConcept getType(long id) {
     if (typeHash.containsKey(id)) {
-      return Concepts.INSTANCE.declare(typeHash.get(id));
+      return Observables.INSTANCE.declare(typeHash.get(id));
     }
     return null;
   }

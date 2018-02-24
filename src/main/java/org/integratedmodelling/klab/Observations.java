@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import java.lang.reflect.Constructor;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -38,7 +39,7 @@ public enum Observations implements IObservationService {
    * @param cls
    */
   public void registerSubjectClass(String concept, Class<? extends ISubject> cls) {
-    subjectClasses.put(Concepts.INSTANCE.declare(concept), cls);
+    subjectClasses.put(Observables.INSTANCE.declare(concept), cls);
   }
 
   @Override

@@ -30,8 +30,8 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.kim.ConceptBuilder;
 import org.integratedmodelling.klab.owl.Concept;
+import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -62,7 +62,7 @@ public enum Observables implements IObservableService {
     try {
       ObservableSemantics parsed = observableParser.parse(declaration);
       KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-      return ConceptBuilder.INSTANCE.declare(interpreted, monitor);
+      return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
     } catch (Exception e) {
       monitor.error(e, declaration);
     }
@@ -72,7 +72,7 @@ public enum Observables implements IObservableService {
 
   @Override
   public Observable declare(IKimObservable observable, IMonitor monitor) {
-    return ConceptBuilder.INSTANCE.declare(observable, monitor);
+    return KimKnowledgeProcessor.INSTANCE.declare(observable, monitor);
   }
 
   @Override
@@ -300,38 +300,38 @@ public enum Observables implements IObservableService {
     return OWL.INSTANCE.getRestrictedClasses((IConcept) main, Concepts.p(NS.APPLIES_TO_PROPERTY));
   }
 
-  @Override
-  public Builder declare(IConcept main, IOntology ontology) {
-    return new ObservableBuilder((Concept) main, (Ontology) ontology);
-  }
+  //  @Override
+//  public Builder declare(IConcept main, IOntology ontology) {
+//    return new ObservableBuilder((Concept) main, (Ontology) ontology);
+//  }
 
-  @Override
-  public Builder declare(String main, IConcept parent, IOntology ontology) {
-    return new ObservableBuilder(main, (Concept) parent, (Ontology) ontology);
-  }
+//  @Override
+//  public Builder declare(String main, IConcept parent, IOntology ontology) {
+//    return new ObservableBuilder(main, (Concept) parent, (Ontology) ontology);
+//  }
 
-  @Override
-  public Builder declare(String main, Set<Type> type, IOntology ontology) {
-    return new ObservableBuilder(main, type, (Ontology) ontology);
-  }
+//  @Override
+//  public Builder declare(String main, Set<Type> type, IOntology ontology) {
+//    return new ObservableBuilder(main, type, (Ontology) ontology);
+//  }
 
-  @Override
-  public Builder declare(IConcept main) {
-    return declare(main,
-        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
-  }
+//  @Override
+//  public Builder declare(IConcept main) {
+//    return declare(main,
+//        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
+//  }
 
-  @Override
-  public Builder declare(String main, IConcept parent) {
-    return declare(main, parent,
-        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
-  }
+//  @Override
+//  public Builder declare(String main, IConcept parent) {
+//    return declare(main, parent,
+//        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
+//  }
 
-  @Override
-  public Builder declare(String main, Set<Type> type) {
-    return declare(main, type,
-        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
-  }
+//  @Override
+//  public Builder declare(String main, Set<Type> type) {
+//    return declare(main, type,
+//        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
+//  }
 
   @Override
   public Class<? extends IObservation> getObservationClass(IObservable observable) {

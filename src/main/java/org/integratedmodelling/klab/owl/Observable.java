@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.Collection;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.kim.utils.Range;
@@ -11,7 +12,6 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author ferdinando.villa
  *
  */
-public class Observable implements IObservable {
+public class Observable extends Concept implements IObservable {
 
     private Concept         observable;
     private Concept         main;
@@ -42,12 +42,17 @@ public class Observable implements IObservable {
     private boolean         optional;
     private boolean         generic;
 
+    Observable(Concept concept) {
+        super(concept);
+        this.observable = this.main = concept;
+    }
+    
     public static Observable promote(IConceptDefinition concept) {
         return promote(concept.getConcept());
     }
 
     public static Observable promote(IConcept concept) {
-        Observable ret = new Observable();
+        Observable ret = new Observable((Concept)concept);
         ret.observable = (Concept) concept;
         ret.main = (Concept) concept;
         ret.declaration = concept.getDefinition().trim();
@@ -258,7 +263,7 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public IOntology getOntology() {
+    public Ontology getOntology() {
         return observable.getOntology();
     }
 

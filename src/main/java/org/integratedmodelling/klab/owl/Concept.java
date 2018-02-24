@@ -86,6 +86,13 @@ public class Concept extends Knowledge implements IConcept {
         this.type.addAll(type);
     }
 
+    protected Concept(Concept concept) {
+        _owl = concept._owl;
+        _id = concept._owl.getIRI().getFragment();
+        _cs = concept._cs;
+        this.type.addAll(concept.type);
+    }
+
     @Override
     public boolean is(Type type) {
         return this.type.contains(type);
@@ -400,8 +407,8 @@ public class Concept extends Knowledge implements IConcept {
     @Override
     public boolean isAbstract() {
         return type.contains(Type.ABSTRACT);
-//        Object p = getMetadata().get(NS.IS_ABSTRACT);
-//        return p != null && p.toString().equals("true");
+        // Object p = getMetadata().get(NS.IS_ABSTRACT);
+        // return p != null && p.toString().equals("true");
     }
 
     @Override
@@ -593,7 +600,7 @@ public class Concept extends Knowledge implements IConcept {
     public IConcept getType() {
         return this;
     }
-    
+
     public Set<Type> getTypeSet() {
         return type;
     }

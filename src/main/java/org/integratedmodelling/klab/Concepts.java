@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -13,6 +14,7 @@ import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
 import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
+import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -20,11 +22,13 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.kim.ConceptBuilder;
 import org.integratedmodelling.klab.owl.Concept;
+import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.Property;
 import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -43,30 +47,30 @@ public enum Concepts implements IConceptService {
         }
     }
 
-    @Override
-    public IConcept declare(String declaration) {
+//    @Override
+//    public IConcept declare(String declaration) {
+//
+//        try {
+//            Object parsed = declarationParser.parse(declaration);
+//            if (parsed instanceof ConceptDeclaration) {
+//              KimConcept dcl = Kim.INSTANCE.declareConcept((ConceptDeclaration)parsed);
+//              return ConceptBuilder.INSTANCE.declare(dcl, Klab.INSTANCE.getRootMonitor());
+//            } else if (parsed instanceof ObservableSemantics) {
+//              KimObservable dcl = Kim.INSTANCE.declareObservable((ObservableSemantics)parsed);
+//              Observable observable = Observables.INSTANCE.declare(dcl, Klab.INSTANCE.getRootMonitor());
+//              return observable.getObservable();
+//            }
+//        } catch (Exception e) {
+//          Klab.INSTANCE.error(e);
+//        }
+//
+//        return null;
+//    }
 
-        try {
-            Object parsed = declarationParser.parse(declaration);
-            ConceptDeclaration dcl = null;
-            if (parsed instanceof ConceptDeclaration) {
-              dcl = (ConceptDeclaration)parsed;
-            } else if (parsed instanceof ObservableSemantics) {
-              dcl = ((ObservableSemantics)parsed).getDeclaration();
-            }
-            KimConcept interpreted = Kim.INSTANCE.declareConcept(dcl);
-            return ConceptBuilder.INSTANCE.declare(interpreted, Klab.INSTANCE.getRootMonitor());
-        } catch (Exception e) {
-          Klab.INSTANCE.error(e);
-        }
-
-        return null;
-    }
-
-    @Override
-    public IConcept declare(IKimConcept observable, IMonitor monitor) {
-        return ConceptBuilder.INSTANCE.declare(observable, monitor);
-    }
+//    @Override
+//    public IConcept declare(IKimConcept observable, IMonitor monitor) {
+//        return ConceptBuilder.INSTANCE.declare(observable, monitor);
+//    }
 
     
     @Override

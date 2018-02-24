@@ -13,14 +13,33 @@
 void children
 	"List the asserted or inferred hierarchy of a concept."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.reason.Children
+	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowChildren
 }
 
 void parents
 	"List the semantic closure of a concept."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.reason.Parents
+	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowParents
 }
+
+void type
+	"List the enum types for a concept."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowType
+}
+
+void traits
+	"List the traits for a concept."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowTraits
+}
+
+void restrictions
+	"List the OWL restrictions for a concept."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowRestrictions
+}
+
 
 //annotation run for observers
 //	"Mark a context for batch execution, specifying the observations to be made in it."
