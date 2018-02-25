@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.semanticweb.owlapi.rdf.util.RDFConstants;
 
 public class ObservableBuilder implements Builder {
 
@@ -279,40 +280,39 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
 
-        String cName = cleanInternalId(concept.getName()) + "Assessment";
+        String cName = getCleanId(concept) + "Assessment";
 
         if (!concept.is(Type.QUALITY)) {
             return null;
         }
 
-        /*
-         * make new type. Abstract quality also goes away.
-         */
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name());
+        String definition = UnarySemanticOperator.ASSESSMENT.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        /*
-         * make a ConceptAssessment if not there, and ensure it's a continuously quantifiable quality.
-         * Must be in same ontology as the original concept.
-         */
-        Concept ret = (Concept) concept.getOntology().getConcept(cName);
+        if (conceptId == null) {
 
-        if (ret == null) {
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
             if (addDefinition) {
                 ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.ASSESSMENT.declaration[0]
-                                + " " + concept.getDefinition()));
+                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = (Concept) concept.getOntology().getConcept(cName);
+            ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
             OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept);
         }
 
-        return ret;
+        return ontology.getConcept(conceptId);
     }
 
     /**
@@ -333,28 +333,33 @@ public class ObservableBuilder implements Builder {
             return null;
         }
 
-        String cName = cleanInternalId(concept.getName()) + "Count";
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name());
+        String cName = getCleanId(concept) + "Count";
 
         /*
          * make a ConceptCount if not there, and ensure it's a continuously quantifiable quality. Must
          * be in same ontology as the original concept.
          */
-        Concept ret = (Concept) concept.getOntology().getConcept(cName);
+        String definition = UnarySemanticOperator.COUNT.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        if (ret == null) {
+        if (conceptId == null) {
 
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name());
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_COUNT, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_COUNT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
                 ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.COUNT.declaration[0]
-                                + " " + concept.getDefinition()));
+                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = (Concept) concept.getOntology().getConcept(cName);
+            ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
 
             /*
              * numerosity is inherent to the thing that's counted.
@@ -362,7 +367,7 @@ public class ObservableBuilder implements Builder {
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
         }
 
-        return ret;
+        return ontology.getConcept(conceptId);
 
     }
 
@@ -381,30 +386,30 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("cannot compute the distance to a non-countable observable");
         }
 
-        String cName = "DistanceTo" + cleanInternalId(concept.getName());
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name());
+        String cName = "DistanceTo" + getCleanId(concept);
+        String definition = UnarySemanticOperator.DISTANCE.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        /*
-         * make a ConceptCount if not there, and ensure it's a continuously quantifiable quality. Must
-         * be in same ontology as the original concept.
-         */
-        IConcept ret = concept.getOntology().getConcept(cName);
+        if (conceptId == null) {
 
-        if (ret == null) {
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name());
+
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_DISTANCE, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_DISTANCE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.DISTANCE.declaration[0]
-                                + " " + concept.getDefinition()));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     /**
@@ -423,27 +428,27 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("presence can be observed only for subjects, events, processes and relationships");
         }
 
-        String cName = cleanInternalId(concept.getName()) + "Presence";
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name());
+        String cName = getCleanId(concept) + "Presence";
+        String definition = UnarySemanticOperator.PRESENCE.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        /*
-         * make a ConceptCount if not there, and ensure it's a continuously quantifiable quality. Must
-         * be in same ontology as the original concept.
-         */
-        IConcept ret = concept.getOntology().getConcept(cName);
+        if (conceptId == null) {
 
-        if (ret == null) {
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name());
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_PRESENCE, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_PRESENCE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.PRESENCE.declaration[0]
-                                + " " + concept.getDefinition()));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
 
             /*
              * presence is inherent to the thing that's present.
@@ -451,7 +456,7 @@ public class ObservableBuilder implements Builder {
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     /**
@@ -470,23 +475,28 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
         }
 
-        String cName = cleanInternalId(concept.getName()) + "Occurrence";
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name());
+        String cName = getCleanId(concept) + "Occurrence";
+        String definition = UnarySemanticOperator.OCCURRENCE.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        if (ret == null) {
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_OCCURRENCE, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_OCCURRENCE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.OCCURRENCE.declaration[0]
-                                + " " + concept.getDefinition()));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
 
             /*
              * probability is inherent to the event that's possible.
@@ -494,7 +504,7 @@ public class ObservableBuilder implements Builder {
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     /**
@@ -512,27 +522,30 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("observabilities can only be defined for observables");
         }
 
-        String cName = cleanInternalId(concept.getName()) + "Observability";
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name());
+        String cName = getCleanId(concept) + "Observability";
+        String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        if (ret == null) {
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_OBSERVABILITY_TRAIT, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_OBSERVABILITY_TRAIT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.OBSERVABILITY.declaration[0]
-                                + " " + concept.getDefinition()));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
-
+            ontology.define(ax);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     /**
@@ -550,23 +563,29 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("probabilities can only be observed only for events");
         }
 
-        String cName = cleanInternalId(concept.getName()) + "Probability";
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name());
+        String cName = getCleanId(concept) + "Probability";
+        String definition = UnarySemanticOperator.PROBABILITY.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        if (ret == null) {
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_PROBABILITY, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_PROBABILITY, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
                 ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.PROBABILITY.declaration[0]
-                                + " " + concept.getDefinition()));
+                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
 
             /*
              * probability is inherent to the event that's possible.
@@ -574,7 +593,7 @@ public class ObservableBuilder implements Builder {
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     /**
@@ -588,26 +607,30 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeUncertainty(IConcept concept, boolean addDefinition) {
 
-        String cName = cleanInternalId(concept.getName()) + "Uncertainty";
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name());
+        String cName = getCleanId(concept) + "Uncertainty";
+        String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
 
-        if (ret == null) {
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_UNCERTAINTY, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_UNCERTAINTY, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
                 ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.UNCERTAINTY.declaration[0]
-                                + " " + concept.getDefinition()));
+                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     public static Concept makeProportion(IConcept concept, @Nullable IConcept comparison, boolean addDefinition) {
@@ -617,30 +640,36 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("proportion must be of qualities or traits to qualities");
         }
 
-        String cName = cleanInternalId(concept.getName()) + "ProportionIn"
-                + (comparison == null ? "" : cleanInternalId(comparison.getName()));
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROPORTION.name());
+        String cName = getCleanId(concept) + "ProportionIn"
+                + (comparison == null ? "" : getCleanId(comparison));
 
-        if (ret == null) {
+        String definition = UnarySemanticOperator.PROPORTION.declaration[0]
+                + " (" + concept.getDefinition() + ")"
+                + (comparison == null ? ""
+                        : (UnarySemanticOperator.PROPORTION.declaration[1] + " ("
+                                + comparison.getDefinition() + ")"));
+
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROPORTION.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_PROPORTION, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_PROPORTION, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.PROPORTION.declaration[0]
-                                + " (" + concept.getDefinition() + ")"
-                                + (comparison == null ? ""
-                                        : (UnarySemanticOperator.PROPORTION.declaration[1] + " ("
-                                                + comparison.getDefinition() + ")"))));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     public static Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
@@ -652,24 +681,31 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("ratios must be between qualities of the same nature or traits to qualities");
         }
 
-        String cName = cleanInternalId(concept.getName()) + "To" + cleanInternalId(comparison.getName())
+        String cName = getCleanId(concept) + "To" + getCleanId(comparison)
                 + "Ratio";
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name());
 
-        if (ret == null) {
+        String definition = UnarySemanticOperator.RATIO.declaration[0]
+                + " (" + concept.getDefinition() + ")"
+                + (comparison == null ? ""
+                        : (UnarySemanticOperator.RATIO.declaration[1] + " ("
+                                + comparison.getDefinition() + ")"));
+
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_RATIO, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_RATIO, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.RATIO.declaration[0]
-                                + " (" + concept.getDefinition() + ")"
-                                + (comparison == null ? ""
-                                        : (UnarySemanticOperator.RATIO.declaration[1] + " ("
-                                                + comparison.getDefinition() + ")"))));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
 
             // unit for ratios of physical properties
@@ -679,43 +715,50 @@ public class ObservableBuilder implements Builder {
                 Object unit2 = Concepts.INSTANCE.getMetadata(comparison, NS.SI_UNIT_PROPERTY);
                 if (unit1 != null && unit2 != null) {
                     String unit = unit1 + "/" + unit2;
-                    ax.add(Axiom.AnnotationAssertion(cName, NS.SI_UNIT_PROPERTY, unit));
+                    ax.add(Axiom.AnnotationAssertion(conceptId, NS.SI_UNIT_PROPERTY, unit));
                 }
             }
-            concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
+            ontology.define(ax);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
 
     public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
 
-        String cName = "ValueOf" + cleanInternalId(concept.getName())
-                + (comparison == null ? "" : ("Over" + cleanInternalId(comparison.getName())));
+        String cName = "ValueOf" + getCleanId(concept)
+                + (comparison == null ? "" : ("Over" + getCleanId(comparison)));
 
-        IConcept ret = concept.getOntology().getConcept(cName);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.VALUE.name());
+        String definition = UnarySemanticOperator.VALUE.declaration[0]
+                + " (" + concept.getDefinition() + ")"
+                + (comparison == null ? ""
+                        : (UnarySemanticOperator.VALUE.declaration[1] + " ("
+                                + comparison.getDefinition() + ")"));
 
-        if (ret == null) {
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.VALUE.name());
+
             ArrayList<IAxiom> ax = new ArrayList<>();
-            ax.add(Axiom.ClassAssertion(cName, newType));
-            ax.add(Axiom.SubClass(NS.CORE_VALUE, cName));
-            ax.add(Axiom.AnnotationAssertion(cName, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_VALUE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(cName, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.VALUE.declaration[0]
-                                + " (" + concept.getDefinition() + ")"
-                                + (comparison == null ? ""
-                                        : (UnarySemanticOperator.VALUE.declaration[1] + " ("
-                                                + comparison.getDefinition() + ")"))));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             concept.getOntology().define(ax);
-            ret = concept.getOntology().getConcept(cName);
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
     }
+
+    // TODO USE FULL DEFINITION AND CODE WHEN CREATING ALL THE make() CONCEPTS!
 
     public static Concept makeType(IConcept trait, boolean addDefinition) {
 
@@ -723,24 +766,32 @@ public class ObservableBuilder implements Builder {
             throw new KlabRuntimeException("types can only be declared for traits");
         }
 
-        String traitID = cleanInternalId(trait.getName()) + "Type";
-        IConcept ret = trait.getOntology().getConcept(traitID);
-        EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.TYPE.name());
+        String traitID = getCleanId(trait) + "Type";
+        String definition = UnarySemanticOperator.TYPE.declaration[0]
+                + " " + trait.getDefinition();
 
-        if (ret == null) {
+        Ontology ontology = (Ontology) trait.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.TYPE.name());
 
             List<IAxiom> axioms = new ArrayList<>();
-            axioms.add(Axiom.ClassAssertion(traitID, newType));
-            axioms.add(Axiom.SubClass(NS.CORE_TYPE, traitID));
-            axioms.add(Axiom.AnnotationAssertion(traitID, NS.BASE_DECLARATION, "true"));
-            axioms.add(Axiom.AnnotationAssertion(traitID, NS.IS_TYPE_DELEGATE, "true"));
+            axioms.add(Axiom.ClassAssertion(conceptId, newType));
+            axioms.add(Axiom.SubClass(NS.CORE_TYPE, conceptId));
+            axioms.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_TYPE_DELEGATE, "true"));
+            axioms.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", traitID));
             if (addDefinition) {
                 axioms.add(Axiom
-                        .AnnotationAssertion(traitID, NS.CONCEPT_DEFINITION_PROPERTY, UnarySemanticOperator.TYPE.declaration[0]
-                                + " " + trait.getDefinition()));
+                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
-            trait.getOntology().define(axioms);
-            ret = trait.getOntology().getConcept(traitID);
+            ontology.define(axioms);
+            IConcept ret = ontology.getConcept(conceptId);
+
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), trait);
 
             /*
@@ -752,7 +803,8 @@ public class ObservableBuilder implements Builder {
             }
         }
 
-        return (Concept) ret;
+        return ontology.getConcept(conceptId);
+
     }
 
     private boolean resolveMain() {
@@ -778,11 +830,6 @@ public class ObservableBuilder implements Builder {
         }
 
         return main != null;
-    }
-
-    // just remove the starting 'i' if any.
-    private static String cleanInternalId(String s) {
-        return s.startsWith("i") ? s.substring(1) : s;
     }
 
     @Override
@@ -907,7 +954,7 @@ public class ObservableBuilder implements Builder {
                     abstractTraitBases.remove(base);
                 }
 
-                tids.add(Concepts.INSTANCE.getDisplayName(t));
+                tids.add(getCleanId(t));
 
             }
         }
@@ -919,18 +966,19 @@ public class ObservableBuilder implements Builder {
         if (tids.size() > 0) {
             Collections.sort(tids);
             for (String s : tids) {
-                cId += cleanInternalId(s);
-                cDs += cleanInternalId(s);
-                uId += cleanInternalId(s);
+                cId += s;
+                cDs += s;
+                uId += s;
             }
         }
 
         /*
          * add the main identity to the ID after all traits and before any context
          */
-        cId += cleanInternalId(main.getName());
-        cDs += cleanInternalId(main.getName());
-        uId += cleanInternalId(main.getName());
+        String cleanId = getCleanId(main);
+        cId += cleanId;
+        cDs += cleanId;
+        uId += cleanId;
 
         /*
          * handle context, inherency etc.
@@ -944,9 +992,10 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible inherency: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "Of" + cleanInternalId(inherent.getName());
-            cDs += "Of" + cleanInternalId(inherent.getName());
-            uId += "Of" + cleanInternalId(inherent.getName());
+            cleanId = getCleanId(inherent);
+            cId += "Of" + cleanId;
+            cDs += "Of" + cleanId;
+            uId += "Of" + cleanId;
         }
 
         if (context != null) {
@@ -958,9 +1007,10 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible context: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "In" + cleanInternalId(context.getName());
-            cDs += "In" + cleanInternalId(context.getName());
-            uId += "In" + cleanInternalId(context.getName());
+            cleanId = getCleanId(context);
+            cId += "In" + cleanId;
+            cDs += "In" + cleanId;
+            uId += "In" + cleanId;
         }
 
         if (compresent != null) {
@@ -972,9 +1022,10 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible compresent type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "With" + cleanInternalId(compresent.getName());
-            cDs += "With" + cleanInternalId(compresent.getName());
-            uId += "With" + cleanInternalId(compresent.getName());
+            cleanId = getCleanId(compresent);
+            cId += "With" + cleanId;
+            cDs += "With" + cleanId;
+            uId += "With" + cleanId;
         }
 
         if (goal != null) {
@@ -987,9 +1038,10 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible goal type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "For" + cleanInternalId(goal.getName());
-            cDs += "For" + cleanInternalId(goal.getName());
-            uId += "For" + cleanInternalId(goal.getName());
+            cleanId = getCleanId(goal);
+            cId += "For" + cleanId;
+            cDs += "For" + cleanId;
+            uId += "For" + cleanId;
         }
 
         if (caused != null) {
@@ -1001,9 +1053,10 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible caused type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "To" + cleanInternalId(caused.getName());
-            cDs += "To" + cleanInternalId(caused.getName());
-            uId += "To" + cleanInternalId(caused.getName());
+            cleanId = getCleanId(caused);
+            cId += "To" + cleanId;
+            cDs += "To" + cleanId;
+            uId += "To" + cleanId;
         }
 
         if (causant != null) {
@@ -1015,9 +1068,10 @@ public class ObservableBuilder implements Builder {
                         + " as it already has an incompatible causant type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
-            cId += "From" + cleanInternalId(causant.getName());
-            cDs += "From" + cleanInternalId(causant.getName());
-            uId += "From" + cleanInternalId(causant.getName());
+            cleanId = getCleanId(causant);
+            cId += "From" + cleanId;
+            cDs += "From" + cleanId;
+            uId += "From" + cleanId;
         }
 
         String roleIds = "";
@@ -1057,7 +1111,7 @@ public class ObservableBuilder implements Builder {
         List<IAxiom> axioms = new ArrayList<>();
         axioms.add(Axiom.ClassAssertion(conceptId, type));
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.DISPLAY_LABEL_PROPERTY, cDs));
-        axioms.add(Axiom.AnnotationAssertion(conceptId, IMetadata.DC_LABEL, cId));
+        axioms.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cId));
         axioms.add(Axiom.SubClass(main.getUrn(), conceptId));
 
         /*
@@ -1166,6 +1220,14 @@ public class ObservableBuilder implements Builder {
         }
 
         return ret;
+    }
+
+    private static String getCleanId(IConcept main) {
+        String id = main.getMetadata().getString(IMetadata.DC_LABEL);
+        if (id == null) {
+            id = main.getName();
+        }
+        return id;
     }
 
     private static boolean rolesAreFundamental(Collection<IConcept> roles) {

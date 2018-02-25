@@ -24,7 +24,12 @@ package org.integratedmodelling.klab.clitool.contrib.console;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
 import org.integratedmodelling.klab.clitool.console.CommandHistory;
 
 /**
@@ -74,10 +79,15 @@ public class DragonConsoleFrame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle(title);
         this.setResizable(true);
-
         this.add(console);
         this.pack();
         console.setInputFocus();
+
+        try {
+            this.setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("icons/logo_white_64.jpg")));
+        } catch (IOException e) {
+            // OK, next time.
+        }
 
         this.centerWindow();
     }

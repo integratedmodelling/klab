@@ -754,6 +754,16 @@ public class Ontology implements IOntology {
 
         OWLAnnotationProperty ret = null;
 
+        if (c.equals("rdfs:label")) {
+            return this.ontology.getOWLOntologyManager().getOWLDataFactory().getRDFSLabel();
+        } else if (c.equals("rdfs:comment")) {
+            return this.ontology.getOWLOntologyManager().getOWLDataFactory().getRDFSComment();
+        }  else if (c.equals("rdfs:seealso")) {
+            return this.ontology.getOWLOntologyManager().getOWLDataFactory().getRDFSSeeAlso();
+        } else if (c.equals("rdfs:isdefinedby")) {
+            return this.ontology.getOWLOntologyManager().getOWLDataFactory().getRDFSIsDefinedBy();
+        }
+        
         if (c.contains(":")) {
 
             IProperty cc = OWL.INSTANCE.getProperty(c);
