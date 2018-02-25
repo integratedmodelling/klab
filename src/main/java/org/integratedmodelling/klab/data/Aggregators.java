@@ -27,7 +27,6 @@ public enum Aggregators {
 
           return sum / n;
       }
-
   }
 
   public static class Sum implements IAggregator {

@@ -240,8 +240,9 @@ public interface IObservableService {
      * @param type
      * @param participants
      * @return the same builder this was called on, for chaining calls
+     * @throws KlabValidationException 
      */
-    Builder as(UnarySemanticOperator type, IConcept... participants);
+    Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException;
 
     /**
      * Add traits to the concept being built.

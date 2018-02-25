@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -167,7 +168,7 @@ public class ObservableBuilder implements Builder {
     }
 
     @Override
-    public Builder as(UnarySemanticOperator type, IConcept... participants) {
+    public Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException {
 
         if (participants != null) {
             this.comparison = participants[0];
@@ -180,39 +181,39 @@ public class ObservableBuilder implements Builder {
 
             switch (type) {
             case ASSESSMENT:
-                this.main = makeAssessment(this.main, false);
+                reset(makeAssessment(build(), false));
                 break;
             case COUNT:
-                this.main = makeCount(this.main, false);
+                reset(makeCount(build(), false));
                 break;
             case DISTANCE:
-                this.main = makeDistance(this.main, false);
+                reset(makeDistance(build(), false));
                 break;
             case OCCURRENCE:
-                this.main = makeOccurrence(this.main, false);
+                reset(makeOccurrence(build(), false));
                 break;
             case PRESENCE:
-                this.main = makePresence(this.main, false);
+                reset(makePresence(build(), false));
                 break;
             case PROBABILITY:
-                this.main = makeProbability(this.main, false);
+                reset(makeProbability(build(), false));
                 break;
             case PROPORTION:
-                this.main = makeProportion(this.main, this.comparison, false);
+                reset(makeProportion(build(), this.comparison, false));
                 break;
             case RATIO:
-                this.main = makeRatio(this.main, this.comparison, false);
+                reset(makeRatio(build(), this.comparison, false));
                 break;
             case UNCERTAINTY:
-                this.main = makeUncertainty(this.main, false);
+                reset(makeUncertainty(build(), false));
                 break;
             case VALUE:
-                this.main = makeValue(this.main, this.comparison, false);
+                reset(makeValue(build(), this.comparison, false));
                 break;
             case OBSERVABILITY:
                 break;
             case TYPE:
-                this.main = makeType(this.main, false);
+                reset(makeType(build(), false));
                 break;
             default:
                 break;
@@ -220,6 +221,15 @@ public class ObservableBuilder implements Builder {
         }
 
         return this;
+    }
+
+    private void reset(Concept main) {
+        this.main = main;
+        this.type = main.type;
+        traits.clear();
+        roles.clear();
+        comparison = context = inherent = classifier = downTo = caused = compresent = inherent = parent = null;
+        isTrivial = true;
     }
 
     @Override
@@ -316,9 +326,6 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeCount(IConcept concept, boolean addDefinition) {
 
-        if (concept.is(Type.NUMEROSITY)) {
-            return (Concept) concept;
-        }
         /*
          * first, ensure we're counting countable things.
          */
@@ -370,10 +377,6 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeDistance(IConcept concept, boolean addDefinition) {
 
-        if (concept.is(Type.DISTANCE)) {
-            return (Concept) concept;
-        }
-
         if (!concept.is(Type.COUNTABLE)) {
             throw new KlabRuntimeException("cannot compute the distance to a non-countable observable");
         }
@@ -414,10 +417,6 @@ public class ObservableBuilder implements Builder {
      * @return the transformed concept
      */
     public static Concept makePresence(IConcept concept, boolean addDefinition) {
-
-        if (concept.is(Type.PRESENCE)) {
-            return (Concept) concept;
-        }
 
         if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
                 || concept.is(Type.ROLE)) {
@@ -467,10 +466,6 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeOccurrence(IConcept concept, boolean addDefinition) {
 
-        if (concept.is(Type.OCCURRENCE)) {
-            return (Concept) concept;
-        }
-
         if (!concept.is(Type.DIRECT_OBSERVABLE)) {
             throw new KlabRuntimeException("occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
         }
@@ -513,10 +508,6 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeObservability(IConcept concept, boolean addDefinition) {
 
-        if (concept.is(Type.OBSERVABILITY)) {
-            return (Concept) concept;
-        }
-
         if (!concept.is(Type.OBSERVABLE)) {
             throw new KlabRuntimeException("observabilities can only be defined for observables");
         }
@@ -554,10 +545,6 @@ public class ObservableBuilder implements Builder {
      * @return the transformed concept
      */
     public static Concept makeProbability(IConcept concept, boolean addDefinition) {
-
-        if (concept.is(Type.PROBABILITY)) {
-            return (Concept) concept;
-        }
 
         if (!concept.is(Type.EVENT)) {
             throw new KlabRuntimeException("probabilities can only be observed only for events");
@@ -601,10 +588,6 @@ public class ObservableBuilder implements Builder {
      */
     public static Concept makeUncertainty(IConcept concept, boolean addDefinition) {
 
-        if (concept.is(Type.UNCERTAINTY)) {
-            return (Concept) concept;
-        }
-
         String cName = cleanInternalId(concept.getName()) + "Uncertainty";
         IConcept ret = concept.getOntology().getConcept(cName);
         EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name());
@@ -628,10 +611,6 @@ public class ObservableBuilder implements Builder {
     }
 
     public static Concept makeProportion(IConcept concept, @Nullable IConcept comparison, boolean addDefinition) {
-
-        if (concept.is(Type.PROPORTION)) {
-            return (Concept) concept;
-        }
 
         if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT))
                 && (comparison != null && !comparison.is(Type.QUALITY))) {
@@ -712,10 +691,6 @@ public class ObservableBuilder implements Builder {
 
     public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
 
-        if (concept.is(Type.VALUE)) {
-            return (Concept) concept;
-        }
-
         String cName = "ValueOf" + cleanInternalId(concept.getName())
                 + (comparison == null ? "" : ("Over" + cleanInternalId(comparison.getName())));
 
@@ -743,10 +718,6 @@ public class ObservableBuilder implements Builder {
     }
 
     public static Concept makeType(IConcept trait, boolean addDefinition) {
-
-        if (trait.is(Type.CLASS)) {
-            return (Concept) trait;
-        }
 
         if (!trait.is(Type.TRAIT)) {
             throw new KlabRuntimeException("types can only be declared for traits");
@@ -836,6 +807,16 @@ public class ObservableBuilder implements Builder {
             return main;
         }
 
+        /*
+         * retrieve the ID for the declaration; if present, just return the corresponding concept
+         */
+        String conceptId = this.ontology.getIdForDefinition(declaration.getDefinition());
+        if (conceptId != null) {
+            return this.ontology.getConcept(conceptId);
+        }
+
+        conceptId = this.ontology.createIdForDefinition(declaration.getDefinition());
+
         Set<IConcept> identities = new HashSet<>();
         Set<IConcept> attributes = new HashSet<>();
         Set<IConcept> realms = new HashSet<>();
@@ -868,7 +849,8 @@ public class ObservableBuilder implements Builder {
         }
 
         /*
-         * name and display label for the finished concept
+         * name and display label for the finished concept. NOTE: since 0.10.0 these are no longer guaranteed 
+         * unique. The authoritative name is the ontology-attributed ID.
          */
         String cId = "";
         String cDs = "";
@@ -1072,119 +1054,111 @@ public class ObservableBuilder implements Builder {
             }
         }
 
+        List<IAxiom> axioms = new ArrayList<>();
+        axioms.add(Axiom.ClassAssertion(conceptId, type));
+        axioms.add(Axiom.AnnotationAssertion(conceptId, NS.DISPLAY_LABEL_PROPERTY, cDs));
+        axioms.add(Axiom.AnnotationAssertion(conceptId, IMetadata.DC_LABEL, cId));
+        axioms.add(Axiom.SubClass(main.getUrn(), conceptId));
+
         /*
-         * Add a lowercase prefix to the ID to ensure no conflict can exist with a situation like
-         * "TraitConcept is Trait Concept". The name without prefix will be in the display label
-         * annotation.
+         * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
          */
-        cId = "i" + cId;
-        ret = ontology.getConcept(cId);
+        axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
+        ret.getOntology().define(Collections.singletonList(Axiom
+                .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration
+                        .getDefinition())));
 
-        if (ret == null) {
+        // /*
+        // * if there is a 'by', this is the child of the class that exposes it, not the
+        // * original concept's.
+        // */
+        // axioms.add(Axiom
+        // .SubClass((byTrait == null ? main.toString() : makeTypeFor(byTrait).toString()), cId));
+        //
+        // if (needUntransformed) {
+        // axioms.add(Axiom.SubClass(main.toString(), uId));
+        // }
+        //
 
-            List<IAxiom> axioms = new ArrayList<>();
-            axioms.add(Axiom.ClassAssertion(cId, type));
-            axioms.add(Axiom.AnnotationAssertion(cId, NS.DISPLAY_LABEL_PROPERTY, cDs));
-            axioms.add(Axiom.SubClass(main.getUrn(), cId));
+        if (type.contains(Type.ABSTRACT)) {
+            axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_ABSTRACT, "true"));
+        }
 
-            /*
-             * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
-             */
-            axioms.add(Axiom.AnnotationAssertion(cId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
+        // Set<IConcept> allowedDetail = new HashSet<>();
+        //
+        // if (byTrait != null) {
+        //
+        // if (!NS.isTrait(byTrait)) {
+        // throw new KlabValidationException("the concept in a 'by' clause must be a base abstract
+        // trait");
+        // }
+        //
+        // /*
+        // * TODO trait must be a base trait and abstract.
+        // */
+        // if (!NS.isBaseDeclaration(byTrait) || !byTrait.isAbstract()) {
+        // throw new KlabValidationException("traits used in a 'by' clause must be abstract and
+        // declared
+        // at
+        // root level");
+        // }
+        // cId += "By" + cleanInternalId(byTrait.getLocalName());
+        // cDs += "By" + cleanInternalId(byTrait.getLocalName());
+        // byDefinition = byTrait.getDefinition();
+        // makeAbstract = true;
+        // }
+        //
+        // if (downTo != null) {
+        // IConcept trait = byTrait == null ? main : byTrait;
+        // if (!NS.isTrait(trait)) {
+        // throw new KlabValidationException("cannot use 'down to' on non-trait observables");
+        // }
+        // allowedDetail.addAll(Types.getChildrenAtLevel(trait, Types.getDetailLevel(trait, downTo)));
+        // cId += "DownTo" + cleanInternalId(downTo.getLocalName());
+        // // display label stays the same
+        // downToDefinition = downTo.getDefinition();
+        // }
 
-            // /*
-            // * if there is a 'by', this is the child of the class that exposes it, not the
-            // * original concept's.
-            // */
-            // axioms.add(Axiom
-            // .SubClass((byTrait == null ? main.toString() : makeTypeFor(byTrait).toString()), cId));
-            //
-            // if (needUntransformed) {
-            // axioms.add(Axiom.SubClass(main.toString(), uId));
-            // }
-            //
+        ontology.define(axioms);
+        ret = ontology.getConcept(conceptId);
 
-            if (type.contains(Type.ABSTRACT)) {
-                axioms.add(Axiom.AnnotationAssertion(cId, NS.IS_ABSTRACT, "true"));
-            }
+        /*
+         * restrictions
+         */
 
-            // Set<IConcept> allowedDetail = new HashSet<>();
-            //
-            // if (byTrait != null) {
-            //
-            // if (!NS.isTrait(byTrait)) {
-            // throw new KlabValidationException("the concept in a 'by' clause must be a base abstract
-            // trait");
-            // }
-            //
-            // /*
-            // * TODO trait must be a base trait and abstract.
-            // */
-            // if (!NS.isBaseDeclaration(byTrait) || !byTrait.isAbstract()) {
-            // throw new KlabValidationException("traits used in a 'by' clause must be abstract and
-            // declared
-            // at
-            // root level");
-            // }
-            // cId += "By" + cleanInternalId(byTrait.getLocalName());
-            // cDs += "By" + cleanInternalId(byTrait.getLocalName());
-            // byDefinition = byTrait.getDefinition();
-            // makeAbstract = true;
-            // }
-            //
-            // if (downTo != null) {
-            // IConcept trait = byTrait == null ? main : byTrait;
-            // if (!NS.isTrait(trait)) {
-            // throw new KlabValidationException("cannot use 'down to' on non-trait observables");
-            // }
-            // allowedDetail.addAll(Types.getChildrenAtLevel(trait, Types.getDetailLevel(trait, downTo)));
-            // cId += "DownTo" + cleanInternalId(downTo.getLocalName());
-            // // display label stays the same
-            // downToDefinition = downTo.getDefinition();
-            // }
+        if (identities.size() > 0) {
+            Traits.INSTANCE.restrict(ret, Concepts
+                    .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
+        }
+        if (realms.size() > 0) {
+            Traits.INSTANCE.restrict(ret, Concepts
+                    .p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
+        }
+        if (attributes.size() > 0) {
+            Traits.INSTANCE.restrict(ret, Concepts
+                    .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
+        }
+        if (acceptedRoles.size() > 0) {
+            OWL.INSTANCE.restrictSome(ret, Concepts
+                    .p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
+        }
+        if (inherent != null) {
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+        }
+        if (context != null) {
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+        }
 
-            ontology.define(axioms);
-            ret = ontology.getConcept(cId);
+        // if (byTrait != null) {
+        // OWL.restrictSome(ret, KLAB.p(NS.REPRESENTED_BY_PROPERTY), byTrait);
+        // }
+        // if (downTo != null) {
+        // OWL.restrictSome(ret, KLAB.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION,
+        // allowedDetail);
+        // }
 
-            /*
-             * restrictions
-             */
-
-            if (identities.size() > 0) {
-                Traits.INSTANCE.restrict(ret, Concepts
-                        .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
-            }
-            if (realms.size() > 0) {
-                Traits.INSTANCE.restrict(ret, Concepts
-                        .p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
-            }
-            if (attributes.size() > 0) {
-                Traits.INSTANCE.restrict(ret, Concepts
-                        .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
-            }
-            if (acceptedRoles.size() > 0) {
-                OWL.INSTANCE.restrictSome(ret, Concepts
-                        .p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
-            }
-            if (inherent != null) {
-                OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
-            }
-            if (context != null) {
-                OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
-            }
-
-            // if (byTrait != null) {
-            // OWL.restrictSome(ret, KLAB.p(NS.REPRESENTED_BY_PROPERTY), byTrait);
-            // }
-            // if (downTo != null) {
-            // OWL.restrictSome(ret, KLAB.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION,
-            // allowedDetail);
-            // }
-
-            if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {
-                monitor.error("this declaration has logical errors and is inconsistent", declaration);
-            }
-
+        if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {
+            monitor.error("this declaration has logical errors and is inconsistent", declaration);
         }
 
         if (negated) {
@@ -1212,5 +1186,9 @@ public class ObservableBuilder implements Builder {
     public Builder optional() {
         this.optional = true;
         return this;
+    }
+
+    public Concept getMainConcept() {
+        return main;
     }
 }

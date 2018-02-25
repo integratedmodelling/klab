@@ -176,7 +176,7 @@ public enum KimKnowledgeProcessor {
             kimObject.set(main);
         }
 
-        return main;
+        return main; 
     }
 
     public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
@@ -228,7 +228,6 @@ public enum KimKnowledgeProcessor {
         }
 
         ret.setName(name);
-        ret.setObservable(observable);
 
         /*
          * set default unit if any is appropriate
@@ -272,16 +271,6 @@ public enum KimKnowledgeProcessor {
         /*
          * transformations first
          */
-
-        // semantic operator
-        if (concept.getObservationType() != null) {
-            IConcept other = null;
-            if (concept.getComparisonConcept() != null) {
-                other = declareInternal(concept.getComparisonConcept(), monitor);
-            }
-            builder.as(concept.getObservationType(), other == null ? (IConcept[]) null
-                    : new IConcept[] { other });
-        }
 
         if (concept.getInherent() != null) {
             IConcept c = declareInternal(concept.getInherent(), monitor);
@@ -337,6 +326,20 @@ public enum KimKnowledgeProcessor {
         if (concept.isNegated()) {
             builder.negated();
         }
+        
+        // semantic operator goes last as it builds the operand and resets all predicates
+        if (concept.getObservationType() != null) {
+            IConcept other = null;
+            if (concept.getComparisonConcept() != null) {
+                other = declareInternal(concept.getComparisonConcept(), monitor);
+            }
+            try {
+                builder.as(concept.getObservationType(), other == null ? (IConcept[]) null
+                        : new IConcept[] { other });
+            } catch (KlabValidationException e) {
+                monitor.error(e);
+            }
+        }
 
         Concept ret = null;
         try {
@@ -359,7 +362,7 @@ public enum KimKnowledgeProcessor {
 
             // set the k.IM definition in the concept FIXME this must only happen if the concept wasn't there - within build() and repeat if mods are made
             ret.getOntology().define(Collections.singletonList(Axiom
-                    .AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.toString())));
+                    .AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.getDefinition())));
 
             // consistency check
             if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
