@@ -15,6 +15,12 @@ void help
 	class org.integratedmodelling.klab.clitool.console.commands.Help
 }
 
+void run
+	"Run scripts from a file or URL."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.Run
+}
+
 /**
  * Batch run: use CL parameters to enable multiple batch contexts
  */

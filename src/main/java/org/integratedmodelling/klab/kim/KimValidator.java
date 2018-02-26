@@ -149,11 +149,14 @@ public class KimValidator implements Kim.Validator {
 
   @Override
   public List<Pair<String, Level>> validateFunction(IKimFunctionCall functionCall,
-      IPrototype.Type expectedType) {
+      Set<IPrototype.Type> expectedType) {
     List<Pair<String, Level>> ret = new ArrayList<>();
-    IPrototype prototype = Extensions.INSTANCE.getServicePrototype(functionCall.getName());
+    IPrototype prototype = Extensions.INSTANCE.getPrototype(functionCall.getName());
     if (prototype != null) {
-      return prototype.validate(functionCall);
+      ret.addAll(prototype.validate(functionCall));
+      if (expectedType != null) {
+        
+      }
     } else {
       ret.add(Tuples.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
     }
@@ -181,7 +184,7 @@ public class KimValidator implements Kim.Validator {
 
   @Override
   public boolean isFunctionKnown(String functionName) {
-    return Extensions.INSTANCE.getServicePrototype(functionName) != null;
+    return Extensions.INSTANCE.getPrototype(functionName) != null;
   }
 
   @Override
@@ -200,6 +203,16 @@ public class KimValidator implements Kim.Validator {
     // Annotations w/o prototype are allowed
     return ret;
 
+  }
+
+  @Override
+  public IPrototype getFunctionPrototype(String functionId) {
+    return Extensions.INSTANCE.getPrototype(functionId);
+  }
+
+  @Override
+  public IPrototype getAnnotationPrototype(String functionId) {
+    return Annotations.INSTANCE.getPrototype(functionId);
   }
 
 }

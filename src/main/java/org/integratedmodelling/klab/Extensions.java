@@ -49,7 +49,7 @@ public enum Extensions implements IExtensionService {
   }
 
   @Override
-  public Prototype getServicePrototype(String service) {
+  public Prototype getPrototype(String service) {
     return prototypes.get(service);
   }
 
@@ -91,7 +91,7 @@ public enum Extensions implements IExtensionService {
 
     Object ret = null;
 
-    Prototype prototype = getServicePrototype(functionCall.getName());
+    Prototype prototype = getPrototype(functionCall.getName());
     if (prototype == null) {
       throw new KlabResourceNotFoundException(
           "cannot find function implementation for " + functionCall.getName());

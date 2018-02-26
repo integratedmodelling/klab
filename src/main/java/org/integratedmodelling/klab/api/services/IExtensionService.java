@@ -39,7 +39,7 @@ public interface IExtensionService {
    * @param service id
    * @return a prototype, or null if the service is unknown.
    */
-  IPrototype getServicePrototype(String service);
+  IPrototype getPrototype(String service);
 
   /**
    * Any k.IM function call stated in k.IM and contained in a k.IM object is executed here.

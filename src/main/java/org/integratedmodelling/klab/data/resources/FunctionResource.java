@@ -20,7 +20,7 @@ public class FunctionResource extends AbstractResource {
     public FunctionResource(String urn, IKimFunctionCall call) {
         super(urn);
         this.functionCall = call;
-        IPrototype prototype = Extensions.INSTANCE.getServicePrototype(call.getName());
+        IPrototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
         if (prototype == null) {
             throw new KlabRuntimeException("function " + call.getName() + " is unknown");
         }
