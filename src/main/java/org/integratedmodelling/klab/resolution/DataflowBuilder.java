@@ -82,10 +82,12 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
     class Node {
 
         Observable             observable;
+        Observable             originalObservable;
         Actuator<?>            original;
         Actuator<?>            reference;
         List<Node>             children  = new ArrayList<>();
         List<IKimFunctionCall> mediators = new ArrayList<>();
+        int                    refcount  = 0;
 
         /*
          * get the actuator in the node, ignoring the children
@@ -166,7 +168,7 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
 
             ret.observable = observable;
             ret.original.setObservable(observable);
-            
+
             /*
              * go through models
              */
@@ -211,6 +213,8 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
             previous.reference = previous.original.getReference();
             ret.original = previous.original;
             ret.original.setAlias(observable.getLocalName());
+            ret.refcount = previous.refcount + 1;
+            previous.refcount = 1;
             previous.original = null;
         }
 
