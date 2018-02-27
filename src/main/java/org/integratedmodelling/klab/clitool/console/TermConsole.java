@@ -21,8 +21,10 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.clitool.console;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -178,7 +180,8 @@ public class TermConsole implements IConsole {
               new CommandHistory());
           terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
           terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
-          terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n\n");
+          terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
+          terminal.console.append("Operating directory: " + new File(".").getAbsolutePath() + "\n");
           terminal.setVisible(true);
           terminal.console.setPrompt(">> ");
 
