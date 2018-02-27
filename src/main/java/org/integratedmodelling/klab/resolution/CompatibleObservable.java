@@ -4,12 +4,13 @@ import org.integratedmodelling.klab.owl.Observable;
 
 /**
  * A specialized observable that redefines its equality methods so that only one compatible
- * observable per type will be found in a set. Equality is assessed based on the main observable
- * only, and
+ * observable per type will be found in a set. Equality is assessed based only on the equality of
+ * the observable concept, independent of any mediations, units etc (which are guaranteed compatible
+ * by the semantics).
  * 
- * Use with great care as this breaks the simmetry contract of equality. A classified observable
- * does not equal() an unclassified one (or one classified at a lower detail) but the opposite is
- * true.
+ * A set of compatible observables can be further reduced using
+ * {@link Observable#canResolve(Observable)} to optimize when classifications can be encoded
+ * directly instead of calling other models.
  * 
  * @author Ferd
  *
@@ -24,14 +25,14 @@ public class CompatibleObservable extends Observable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((main == null) ? 0 : main.hashCode());
+    result = prime * result + ((observable == null) ? 0 : observable.hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Observable) {
-      return this.canResolve((Observable)obj);
+      return this.observable.equals(((Observable) obj).getObservable());
     }
     return false;
   }

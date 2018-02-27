@@ -11,14 +11,43 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+/**
+ * Services related to dataflows and the KDL language.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public interface IDataflowService {
 
-  IKdlDataflow declare(InputStream file) throws KlabValidationException;
+  /**
+   * Read and return the dataflow specifications corresponding to the passed
+   * input, which is expected to contain valid KDL.
+   * 
+   * @param input
+   * @return the parsed dataflow.
+   * @throws KlabException
+   */
+  IKdlDataflow declare(InputStream input) throws KlabException;
 
+  /**
+   * Read and return the dataflow specifications corresponding to the passed
+   * input file, which is expected to contain valid KDL.
+   * 
+   * @param file
+   * @return the parsed dataflow.
+   * @throws KlabException
+   */
   IKdlDataflow declare(File file) throws KlabException;
 
+  /**
+   * Read and return the dataflow specifications corresponding to the passed
+   * input URL, which is expected to contain valid KDL.
+   * 
+   * @param url
+   * @return the parsed dataflow.
+   * @throws KlabException
+   */
   IKdlDataflow declare(URL url) throws KlabException;
 
   /**

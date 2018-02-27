@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IActiveKimObject;
 import org.integratedmodelling.klab.api.model.IBehavior;
@@ -64,6 +65,12 @@ public class Behavior implements IBehavior {
     public List<IAction> getActions(Trigger trigger) {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public boolean respondsTo(IConcept eventType) {
+      // TODO Auto-generated method stub
+      return false;
     }
 
 }

@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.eclipse.xtext.testing.IInjectorProvider;
-import org.eclipse.xtext.testing.util.ParseHelper;
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -18,50 +15,10 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Property;
-import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 public enum Concepts implements IConceptService {
 
   INSTANCE;
-
-  @Inject
-  ParseHelper<ConceptDeclaration> declarationParser;
-
-  private Concepts() {
-    IInjectorProvider injectorProvider = new KnowledgeDeclarationInjectorProvider();
-    Injector injector = injectorProvider.getInjector();
-    if (injector != null) {
-      injector.injectMembers(this);
-    }
-  }
-
-  // @Override
-  // public IConcept declare(String declaration) {
-  //
-  // try {
-  // Object parsed = declarationParser.parse(declaration);
-  // if (parsed instanceof ConceptDeclaration) {
-  // KimConcept dcl = Kim.INSTANCE.declareConcept((ConceptDeclaration)parsed);
-  // return ConceptBuilder.INSTANCE.declare(dcl, Klab.INSTANCE.getRootMonitor());
-  // } else if (parsed instanceof ObservableSemantics) {
-  // KimObservable dcl = Kim.INSTANCE.declareObservable((ObservableSemantics)parsed);
-  // Observable observable = Observables.INSTANCE.declare(dcl, Klab.INSTANCE.getRootMonitor());
-  // return observable.getObservable();
-  // }
-  // } catch (Exception e) {
-  // Klab.INSTANCE.error(e);
-  // }
-  //
-  // return null;
-  // }
-
-  // @Override
-  // public IConcept declare(IKimConcept observable, IMonitor monitor) {
-  // return ConceptBuilder.INSTANCE.declare(observable, monitor);
-  // }
-
 
   @Override
   public IProperty getProperty(String propertyId) {

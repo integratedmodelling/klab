@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.model;
 import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.kim.api.IKimAction;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -41,4 +42,13 @@ public interface IBehavior extends Iterable<IAction> {
      */
     List<IAction> getActions(IKimAction.Trigger trigger);
 
+    /**
+     * Quickly assess whether the passed event type has any associated actions. This may be
+     * called many times so if the operation requires significant reasoning, the results
+     * should be cached.
+     * 
+     * @param eventType
+     * @return true if the event concept has actions associated
+     */
+    boolean respondsTo(IConcept eventType);
 }

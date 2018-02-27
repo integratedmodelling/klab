@@ -195,6 +195,7 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
           ret.children.add(child);
         }
 
+        // NO use triggers separately 
         ret.original.getComputationStrategy()
             .addAll(model.getComputation(Transition.initialization()));
         ret.originalObservable = model.getCompatibleOutput(observable);
