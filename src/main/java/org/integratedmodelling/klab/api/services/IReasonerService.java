@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Set;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 public interface IReasonerService {

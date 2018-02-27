@@ -24,7 +24,6 @@ package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.xtext.util.Triple;
 import org.eclipse.xtext.util.Tuples;
 

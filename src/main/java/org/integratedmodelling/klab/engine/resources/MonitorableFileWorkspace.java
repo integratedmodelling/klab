@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
-
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.utils.DirectoryWatcher;
 

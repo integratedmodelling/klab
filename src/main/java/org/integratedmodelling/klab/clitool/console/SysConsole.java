@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.clitool.console;
 
-import java.util.List;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 
 public class SysConsole implements IConsole {

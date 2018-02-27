@@ -12,13 +12,13 @@ import org.eclipse.xtext.util.Tuples;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.klab.Annotations;
@@ -148,7 +148,7 @@ public class KimValidator implements Kim.Validator {
   }
 
   @Override
-  public List<Pair<String, Level>> validateFunction(IKimFunctionCall functionCall,
+  public List<Pair<String, Level>> validateFunction(IServiceCall functionCall,
       Set<IPrototype.Type> expectedType) {
     List<Pair<String, Level>> ret = new ArrayList<>();
     IPrototype prototype = Extensions.INSTANCE.getPrototype(functionCall.getName());
@@ -193,7 +193,7 @@ public class KimValidator implements Kim.Validator {
   }
 
   @Override
-  public List<Pair<String, Level>> validateAnnotation(IKimFunctionCall annotationCall,
+  public List<Pair<String, Level>> validateAnnotation(IServiceCall annotationCall,
       IKimStatement target) {
     List<Pair<String, Level>> ret = new ArrayList<>();
     IPrototype prototype = Annotations.INSTANCE.getPrototype(annotationCall.getName());

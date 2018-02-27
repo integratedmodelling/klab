@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.clitool.api;
 
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.runtime.ISession;
 
 public interface ICommand {
@@ -12,6 +12,6 @@ public interface ICommand {
    * @return
    * @throws Exception 
    */
-  public Object execute(IKimFunctionCall call, ISession session) throws Exception;
+  public Object execute(IServiceCall call, ISession session) throws Exception;
 
 }

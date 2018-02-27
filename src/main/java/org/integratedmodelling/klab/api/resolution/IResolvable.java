@@ -8,5 +8,5 @@ package org.integratedmodelling.klab.api.resolution;
  *
  */
 public interface IResolvable {
-  
+
 }

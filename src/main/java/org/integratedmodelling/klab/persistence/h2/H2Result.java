@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.MatchedSorter;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
@@ -134,7 +133,7 @@ public class H2Result<T> extends ImmutableList<T> {
      * metadata. Quite obscure.
      */
     @Override
-    public <T> T[] toArray(T[] arg0) {
+    public <K> K[] toArray(K[] arg0) {
 
         if (arg0.getClass().getComponentType().equals(Long.TYPE))
             return results.toArray(arg0);

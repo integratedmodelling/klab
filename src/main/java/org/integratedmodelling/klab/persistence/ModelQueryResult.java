@@ -26,16 +26,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.Projects;
-import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;

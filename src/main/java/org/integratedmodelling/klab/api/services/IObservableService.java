@@ -1,12 +1,13 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -240,7 +241,7 @@ public interface IObservableService {
      * @param type
      * @param participants
      * @return the same builder this was called on, for chaining calls
-     * @throws KlabValidationException 
+     * @throws KlabValidationException
      */
     Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException;
 
@@ -345,7 +346,7 @@ public interface IObservableService {
    * @param main
    * @return a builder for the main concept
    */
-//  Builder declare(IConcept main);
+  // Builder declare(IConcept main);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -360,7 +361,7 @@ public interface IObservableService {
    * @param parent
    * @return a builder for the main concept
    */
-//  Builder declare(String main, @NotNull IConcept parent);
+  // Builder declare(String main, @NotNull IConcept parent);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -375,7 +376,7 @@ public interface IObservableService {
    * @param type
    * @return a builder for the main concept
    */
-//  Builder declare(String main, @NotNull Set<Type> type);
+  // Builder declare(String main, @NotNull Set<Type> type);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -385,7 +386,7 @@ public interface IObservableService {
    * @param ontology
    * @return a builder for the main concept
    */
-//  Builder declare(IConcept main, IOntology ontology);
+  // Builder declare(IConcept main, IOntology ontology);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -398,7 +399,7 @@ public interface IObservableService {
    * @param ontology
    * @return a builder for the main concept
    */
-//  Builder declare(String main, @NotNull IConcept parent, IOntology ontology);
+  // Builder declare(String main, @NotNull IConcept parent, IOntology ontology);
 
   /**
    * Get a builder for a declaration of named observable, which will allow adding traits and clauses
@@ -411,7 +412,7 @@ public interface IObservableService {
    * @param ontology
    * @return a builder for the main concept
    */
-//  Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
+  // Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
 
   /**
    * True if o1 and o2 are observables from recognized domains, have compatible context and
@@ -451,4 +452,20 @@ public interface IObservableService {
    * @return
    */
   Class<? extends IObservation> getObservationClass(IResolvable resolvable);
+
+  /**
+   * Return any mediators needed to turn an observable into a compatible one.
+   * 
+   * Only guaranteed equality coming in is that to.canResolve(from). If this is not true, the
+   * function throws an IllegalArgumentException.
+   * 
+   * If from.observable.equals(to.observable), it's a unit or currency mediation. Otherwise it will
+   * involve classification (by/downTo) or other transformation.
+   * 
+   * @param from
+   * @param to
+   * @throws IllegalArgumentException if observables are incompatible
+   * @return a list of mediators, never null, possibly empty
+   */
+  List<IServiceCall> computeMediators(IObservable from, IObservable to);
 }

@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 

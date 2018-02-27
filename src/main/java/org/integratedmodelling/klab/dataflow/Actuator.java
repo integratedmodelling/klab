@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -34,8 +34,8 @@ public class Actuator<T extends IArtifact> implements IActuator {
      * mediation. We keep them separated because the compiler needs to rearrange mediators and
      * references as needed. Then both get executed to produce the final list of contextualizers.
      */
-    private List<IKimFunctionCall> computationStrategy = new ArrayList<>();
-    private List<IKimFunctionCall> mediationStrategy   = new ArrayList<>();
+    private List<IServiceCall> computationStrategy = new ArrayList<>();
+    private List<IServiceCall> mediationStrategy   = new ArrayList<>();
 
     private Class<? extends T>     cls;
 
@@ -125,7 +125,7 @@ public class Actuator<T extends IArtifact> implements IActuator {
             ret += ((Actuator<?>) actuator).encode(offset + 3) + "\n";
         }
 
-        List<IKimFunctionCall> computation = new ArrayList<>();
+        List<IServiceCall> computation = new ArrayList<>();
         computation.addAll(getComputationStrategy());
         computation.addAll(getMediationStrategy());
 
@@ -140,7 +140,7 @@ public class Actuator<T extends IArtifact> implements IActuator {
         }
 
         if (getScale() != null && !getScale().isEmpty()) {
-            List<IKimFunctionCall> scaleSpecs = getScale().getKimSpecification();
+            List<IServiceCall> scaleSpecs = getScale().getKimSpecification();
             if (!scaleSpecs.isEmpty()) {
                 ret += " over";
                 for (int i = 0; i < scaleSpecs.size(); i++) {
@@ -161,11 +161,11 @@ public class Actuator<T extends IArtifact> implements IActuator {
         return ActuatorReference.create(this, cls);
     }
 
-    public List<IKimFunctionCall> getComputationStrategy() {
+    public List<IServiceCall> getComputationStrategy() {
         return computationStrategy;
     }
 
-    public void setComputationStrategy(List<IKimFunctionCall> computationStrategy) {
+    public void setComputationStrategy(List<IServiceCall> computationStrategy) {
         this.computationStrategy = computationStrategy;
     }
 
@@ -209,11 +209,11 @@ public class Actuator<T extends IArtifact> implements IActuator {
         this.name = name;
     }
 
-    public List<IKimFunctionCall> getMediationStrategy() {
+    public List<IServiceCall> getMediationStrategy() {
         return mediationStrategy;
     }
 
-    public void setMediationStrategy(List<IKimFunctionCall> mediationStrategy) {
+    public void setMediationStrategy(List<IServiceCall> mediationStrategy) {
         this.mediationStrategy = mediationStrategy;
     }
 

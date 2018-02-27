@@ -22,9 +22,7 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Coordinate;
 
 public abstract class Area {

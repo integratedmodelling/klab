@@ -27,7 +27,6 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
-
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**

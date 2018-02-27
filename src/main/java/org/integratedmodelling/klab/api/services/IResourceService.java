@@ -1,8 +1,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
-
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -32,7 +31,7 @@ public interface IResourceService {
      * @param function
      * @return
      */
-    IResource getComputedResource(IKimFunctionCall function);
+    IResource getComputedResource(IServiceCall function);
 
     /**
      * 

@@ -3,23 +3,21 @@ package org.integratedmodelling.klab;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kdecl.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
-import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -30,12 +28,9 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.owl.ObservableBuilder;
-import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -300,38 +295,38 @@ public enum Observables implements IObservableService {
     return OWL.INSTANCE.getRestrictedClasses((IConcept) main, Concepts.p(NS.APPLIES_TO_PROPERTY));
   }
 
-  //  @Override
-//  public Builder declare(IConcept main, IOntology ontology) {
-//    return new ObservableBuilder((Concept) main, (Ontology) ontology);
-//  }
+  // @Override
+  // public Builder declare(IConcept main, IOntology ontology) {
+  // return new ObservableBuilder((Concept) main, (Ontology) ontology);
+  // }
 
-//  @Override
-//  public Builder declare(String main, IConcept parent, IOntology ontology) {
-//    return new ObservableBuilder(main, (Concept) parent, (Ontology) ontology);
-//  }
+  // @Override
+  // public Builder declare(String main, IConcept parent, IOntology ontology) {
+  // return new ObservableBuilder(main, (Concept) parent, (Ontology) ontology);
+  // }
 
-//  @Override
-//  public Builder declare(String main, Set<Type> type, IOntology ontology) {
-//    return new ObservableBuilder(main, type, (Ontology) ontology);
-//  }
+  // @Override
+  // public Builder declare(String main, Set<Type> type, IOntology ontology) {
+  // return new ObservableBuilder(main, type, (Ontology) ontology);
+  // }
 
-//  @Override
-//  public Builder declare(IConcept main) {
-//    return declare(main,
-//        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
-//  }
+  // @Override
+  // public Builder declare(IConcept main) {
+  // return declare(main,
+  // Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
+  // }
 
-//  @Override
-//  public Builder declare(String main, IConcept parent) {
-//    return declare(main, parent,
-//        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
-//  }
+  // @Override
+  // public Builder declare(String main, IConcept parent) {
+  // return declare(main, parent,
+  // Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
+  // }
 
-//  @Override
-//  public Builder declare(String main, Set<Type> type) {
-//    return declare(main, type,
-//        Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
-//  }
+  // @Override
+  // public Builder declare(String main, Set<Type> type) {
+  // return declare(main, type,
+  // Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null);
+  // }
 
   @Override
   public Class<? extends IObservation> getObservationClass(IObservable observable) {
@@ -361,6 +356,18 @@ public enum Observables implements IObservableService {
       return getObservationClass(((IModel) resolvable).getObservables().get(0));
     }
     return null;
-  }  
+  }
+
+  @Override
+  public List<IServiceCall> computeMediators(IObservable from, IObservable to) {
+    List<IServiceCall> ret = new ArrayList<>();
+    if (!((Observable)to).canResolve((Observable)from)) {
+      throw new IllegalArgumentException(
+          "cannot compute mediators from an observable to another that does not resolve it: " + from
+              + " does not mediate to " + to);
+    }
+    // TODO oh yes, to do
+    return ret;
+  }
 
 }

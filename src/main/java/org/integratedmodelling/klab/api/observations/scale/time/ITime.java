@@ -27,7 +27,6 @@
 package org.integratedmodelling.klab.api.observations.scale.time;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface ITime extends IExtent {
 

@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.data.resources;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -82,6 +82,6 @@ public abstract class AbstractResource implements IResource {
      * 
      * @return
      */
-    public abstract IKimFunctionCall getComputation();
+    public abstract IServiceCall getComputation();
     
 }

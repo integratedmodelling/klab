@@ -3,9 +3,7 @@ package org.integratedmodelling.klab.owl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nullable;
-
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;

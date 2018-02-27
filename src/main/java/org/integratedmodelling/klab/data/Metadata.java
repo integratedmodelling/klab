@@ -25,7 +25,6 @@ package org.integratedmodelling.klab.data;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;

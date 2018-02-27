@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.engine.resources;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.GitUtils;

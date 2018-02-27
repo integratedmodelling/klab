@@ -33,10 +33,10 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IPrototype.Type;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimFunctionCall;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Extensions;
@@ -146,7 +146,7 @@ public class CommandProcessor
 
     } else if (input.length() > 0) {
 
-      IKimFunctionCall command = null;
+      IServiceCall command = null;
       try {
         command = parseCommandLine(input, cpack);
         boolean ok = command != null;
@@ -174,7 +174,7 @@ public class CommandProcessor
 
   }
 
-  private Object execute(IKimFunctionCall command, String pack) throws Exception {
+  private Object execute(IServiceCall command, String pack) throws Exception {
     Prototype prototype = getPackage(pack).get(command.getName());
     if (prototype == null || prototype.getExecutorClass() == null
         || !ICommand.class.isAssignableFrom(prototype.getExecutorClass())) {
@@ -212,7 +212,7 @@ public class CommandProcessor
 
 
 
-  public IKimFunctionCall parseCommandLine(String line, String pack)
+  public IServiceCall parseCommandLine(String line, String pack)
       throws KlabValidationException {
 
     String[] a = line.split("\\s");

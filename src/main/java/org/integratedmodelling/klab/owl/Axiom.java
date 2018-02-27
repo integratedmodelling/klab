@@ -29,7 +29,6 @@ package org.integratedmodelling.klab.owl;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 

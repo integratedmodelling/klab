@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.api.model;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
 

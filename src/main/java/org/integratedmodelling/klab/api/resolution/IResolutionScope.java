@@ -22,16 +22,9 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import java.util.Collection;
-import java.util.List;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.owl.Observable;
 
 /**
  * The resolution scope contains all the contextual information gathered during resolution,

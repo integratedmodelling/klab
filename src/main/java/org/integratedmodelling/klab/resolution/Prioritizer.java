@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.comparators.ComparatorChain;
@@ -27,7 +26,6 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.rest.resources.Model;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.utils.Pair;
-
 import com.vividsolutions.jts.geom.Geometry;
 
 public class Prioritizer implements IPrioritizer<Model> {

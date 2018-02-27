@@ -10,7 +10,6 @@ import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.IRegistryConfigurator;
 import org.integratedmodelling.kdl.KdlRuntimeModule;
 import org.integratedmodelling.kdl.KdlStandaloneSetup;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 

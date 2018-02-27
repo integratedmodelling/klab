@@ -23,7 +23,6 @@
 package org.integratedmodelling.klab.api.observations.scale.time;
 
 import java.util.Collection;
-
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
@@ -46,12 +45,6 @@ import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
  *
  */
 public interface ITransition extends IScale, Locator {
-
-    /**
-     * Initialization transition, passed to resolution strategies before time exists.
-     * Simply a null, may change in the future.
-     */
-    public static ITransition INITIALIZATION = null;
 
     /**
      * Should the agent remain alive/valid beyond this transition?
@@ -159,4 +152,13 @@ public interface ITransition extends IScale, Locator {
      * @return next transition
      */
     ITransition next();
+    
+    /**
+     * If true, this is an empty transition that corresponds to initialization (from nothing to 
+     * beginning of everything). 
+     * 
+     * @return true if this is the initialization transition.
+     * 
+     */
+    boolean isInitialization();
 }

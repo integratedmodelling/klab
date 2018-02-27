@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.common.view;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 /**

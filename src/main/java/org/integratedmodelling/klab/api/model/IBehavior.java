@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.api.model;
 
 import java.util.Collection;
+import java.util.List;
+import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -29,5 +31,14 @@ public interface IBehavior extends Iterable<IAction> {
      * @throws KlabException if functions raise exceptions or do not produce extents
      */
     Collection<IExtent> getExtents(IMonitor monitor) throws KlabException;
+        
+    /**
+     * All the actions specified in the behavior for the specified trigger.
+     *
+     * @param trigger 
+     * 
+     * @return the actions in order of declaration.
+     */
+    List<IAction> getActions(IKimAction.Trigger trigger);
 
 }

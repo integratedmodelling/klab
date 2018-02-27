@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
-
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;

@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
 /**
@@ -41,7 +42,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * through dependencies (see {@link #getDependencies()}.
  * 
  */
-public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable {
+public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputable {
 
     /**
      * Return the semantics of all observables we are observing. The first in the list is the actual

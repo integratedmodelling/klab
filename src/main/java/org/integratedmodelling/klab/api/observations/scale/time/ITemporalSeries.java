@@ -27,7 +27,6 @@
 package org.integratedmodelling.klab.api.observations.scale.time;
 
 import java.util.Collection;
-
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface ITemporalSeries<T> extends ITime {

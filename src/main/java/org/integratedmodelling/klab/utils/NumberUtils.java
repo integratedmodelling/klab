@@ -28,7 +28,6 @@ package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.math3.util.Pair;
 
 public class NumberUtils extends org.apache.commons.lang.math.NumberUtils {

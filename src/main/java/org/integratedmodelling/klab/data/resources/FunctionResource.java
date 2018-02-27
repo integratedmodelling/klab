@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.data.resources;
 
 import java.util.Map;
 import java.util.Optional;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -14,10 +14,10 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
 public class FunctionResource extends AbstractResource {
 
-    IKimFunctionCall functionCall;
+    IServiceCall functionCall;
     IGeometry geometry;
     
-    public FunctionResource(String urn, IKimFunctionCall call) {
+    public FunctionResource(String urn, IServiceCall call) {
         super(urn);
         this.functionCall = call;
         IPrototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
@@ -52,7 +52,7 @@ public class FunctionResource extends AbstractResource {
     }
 
     @Override
-    public IKimFunctionCall getComputation() {
+    public IServiceCall getComputation() {
       return functionCall;
     }
 

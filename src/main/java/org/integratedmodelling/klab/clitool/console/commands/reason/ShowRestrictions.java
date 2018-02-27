@@ -1,9 +1,8 @@
 package org.integratedmodelling.klab.clitool.console.commands.reason;
 
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -25,7 +24,7 @@ import org.semanticweb.owlapi.model.OWLQuantifiedRestriction;
 public class ShowRestrictions implements ICommand {
 
     @Override
-    public Object execute(IKimFunctionCall call, ISession session) throws KlabValidationException {
+    public Object execute(IServiceCall call, ISession session) throws KlabValidationException {
         String declaration = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();
         IConcept concept = declaration.startsWith("k:")
                 ? Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2))

@@ -33,7 +33,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.URL;
-
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
 public class NetUtilities {

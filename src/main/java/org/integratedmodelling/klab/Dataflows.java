@@ -4,12 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
@@ -17,6 +21,7 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.observation.Transition;
 import org.integratedmodelling.klab.resolution.DataflowBuilder;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
@@ -88,6 +93,22 @@ public enum Dataflows implements IDataflowService {
       }
 
       return (Dataflow<T>) builder.build(scope.getMonitor());
+    }
+
+    @Override
+    public List<Trigger> getActionTriggersFor(ITransition transition) {
+      List<Trigger> ret = new ArrayList<>();
+      // TODO!
+      if (transition.equals(Transition.initialization())) {
+        ret.add(Trigger.DEFINITION);
+        ret.add(Trigger.RESOLUTION);
+      } else {
+        ret.add(Trigger.TRANSITION);
+        if (transition.isLast()) {
+          ret.add(Trigger.TERMINATION);
+        }
+      }
+      return ret;
     }
     
 }

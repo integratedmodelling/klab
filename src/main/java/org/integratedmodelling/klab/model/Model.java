@@ -6,16 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IKimContextualization;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.resources.AbstractResource;
@@ -24,6 +28,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.CompatibleObservable;
 
 public class Model extends KimObject implements IModel {
 
@@ -122,7 +128,7 @@ public class Model extends KimObject implements IModel {
       return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
     } else if (contextualization.getRemoteUrn() != null) {
       return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
-    } 
+    }
     // TODO the rest - classifications (normal or according to), lookup table etc
     // TODO figure out and validate the postprocessor thing
     // TODO these may become multiple
@@ -157,13 +163,13 @@ public class Model extends KimObject implements IModel {
 
   @Override
   public boolean isResolved() {
-      if (resource != null) {
-          return true;
-      }
-      if (contextualizerResource != null) {
-          return !contextualizerResource.get().getGeometry().isEmpty();
-      }
-      return false;
+    if (resource != null) {
+      return true;
+    }
+    if (contextualizerResource != null) {
+      return !contextualizerResource.get().getGeometry().isEmpty();
+    }
+    return false;
   }
 
   @Override
@@ -254,25 +260,44 @@ public class Model extends KimObject implements IModel {
   public Scale getCoverage(IMonitor monitor) throws KlabException {
     return Scale.create(behavior.getExtents(monitor));
   }
-  
+
   /**
-   * Return all the computational steps required to compute the model, encoded as
-   * function calls.
+   * Return all the computational steps required to compute the model, encoded as function calls.
    * 
-   * @return the computations for the model
+   * @param transition the transition to be computed
+   * @return the computations for the model at the transition
    */
-  public List<IKimFunctionCall> getComputation() {
-    List<IKimFunctionCall> ret = new ArrayList<>();
+  @Override
+  public List<IServiceCall> getComputation(ITransition transition) {
+    List<IServiceCall> ret = new ArrayList<>();
     if (resource.isPresent()) {
-      ret.add(((AbstractResource)resource.get()).getComputation());
+      ret.add(((AbstractResource) resource.get()).getComputation());
     }
     if (contextualizerResource.isPresent()) {
-      ret.add(((AbstractResource)contextualizerResource.get()).getComputation());
+      ret.add(((AbstractResource) contextualizerResource.get()).getComputation());
     }
-    /*
-     * TODO any other contextualization spec
-     */
-   return ret;
+    for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
+      for (IAction action : behavior.getActions(trigger)) {
+        ret.addAll(action.getComputation(transition));
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * Get the output that can satisfy this observable, possibly with mediation.
+   * 
+   * @param observable
+   * @return
+   */
+  public Observable getCompatibleOutput(Observable observable) {
+    for (IObservable output : observables) {
+      if (new CompatibleObservable((Observable) output)
+          .equals(new CompatibleObservable(observable))) {
+        return (Observable) output;
+      }
+    }
+    return null;
   }
 
 }

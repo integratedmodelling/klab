@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.time.extents;
 
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState.Mediator;
@@ -172,7 +172,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public IKimFunctionCall getKimSpecification() {
+    public IServiceCall getKimSpecification() {
       // TODO Auto-generated method stub
       return null;
     }

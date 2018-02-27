@@ -40,6 +40,11 @@ void restrictions
 	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowRestrictions
 }
 
+void compare
+	"Cross-compare a set of concepts for specificity and compatibility."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.Compare
+}
 
 //annotation run for observers
 //	"Mark a context for batch execution, specifying the observations to be made in it."

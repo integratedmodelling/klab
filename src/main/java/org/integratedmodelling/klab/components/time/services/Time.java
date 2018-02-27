@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.time.services;
 
 import java.util.Map;
-
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;

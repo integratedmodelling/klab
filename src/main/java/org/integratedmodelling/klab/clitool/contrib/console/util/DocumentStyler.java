@@ -22,9 +22,13 @@
 
 package org.integratedmodelling.klab.clitool.contrib.console.util;
 
-import java.awt.*;
-import javax.swing.text.*;
+import java.awt.Font;
 import java.util.ArrayList;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 /** 
  * This class is designed to control and make easier the addition of text

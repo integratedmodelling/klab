@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
-
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.services.IReasonerService;
 
 /**

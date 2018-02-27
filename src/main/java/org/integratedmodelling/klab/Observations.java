@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab;
 
 import java.lang.reflect.Constructor;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;

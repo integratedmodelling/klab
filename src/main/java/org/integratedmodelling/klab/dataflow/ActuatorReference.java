@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.dataflow;
 
 import org.apache.commons.lang.StringUtils;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuatorReference;

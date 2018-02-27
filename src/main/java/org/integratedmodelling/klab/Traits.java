@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -19,8 +18,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
-
-import com.google.common.collect.Sets;
 
 public enum Traits implements ITraitService {
     INSTANCE;

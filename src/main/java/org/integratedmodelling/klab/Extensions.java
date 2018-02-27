@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
@@ -87,7 +87,7 @@ public enum Extensions implements IExtensionService {
   }
 
   @Override
-  public Object callFunction(IKimFunctionCall functionCall, IMonitor monitor) throws KlabException {
+  public Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException {
 
     Object ret = null;
 

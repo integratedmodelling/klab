@@ -30,8 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
-
 /**
  * The object that creates a ranking of whatever object is being used to represent a model according to 
  * the implementation. Extracts the criteria for ranking from the object and aggregates them into an

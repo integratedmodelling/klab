@@ -22,9 +22,13 @@
 
 package org.integratedmodelling.klab.clitool.contrib.console.util;
 
-import javax.swing.JTextPane;
-import javax.swing.text.*;
 import java.awt.Toolkit;
+import javax.swing.JTextPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.StyledDocument;
 
 /**
  * This class is used when the DragonConsole is using the Inline Input Scheme

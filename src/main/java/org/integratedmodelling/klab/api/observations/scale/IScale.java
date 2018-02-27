@@ -21,8 +21,6 @@ public interface IScale extends IObservationTopology, Iterable<ITransition> {
      */
     public interface Locator {
 
-        public static Locator INITIALIZATION = null;
-
         /**
          * Should be a constant but no way to ask for that in an interface. Number of dimension offsets to
          * locate one extent.

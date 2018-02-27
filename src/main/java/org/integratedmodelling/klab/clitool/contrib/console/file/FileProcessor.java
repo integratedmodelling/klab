@@ -22,8 +22,13 @@
 
 package org.integratedmodelling.klab.clitool.contrib.console.file;
 
-import java.io.*;
 import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /** 
  * Receives a file path and then reads the contents of the file into the proper

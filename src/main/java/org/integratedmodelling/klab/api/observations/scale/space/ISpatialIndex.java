@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;

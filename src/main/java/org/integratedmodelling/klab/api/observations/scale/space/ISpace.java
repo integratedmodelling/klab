@@ -22,7 +22,6 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 import java.util.Optional;
-
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 public interface ISpace extends IExtent {

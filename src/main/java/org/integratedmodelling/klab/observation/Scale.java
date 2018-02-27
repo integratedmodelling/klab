@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
@@ -35,6 +36,10 @@ public class Scale implements IScale {
   protected Time                   time           = null;
   protected Space                  space          = null;
   protected MultidimensionalCursor cursor;
+  
+  // this is copied to transitions so that we can quickly assess if two transitions
+  // come from the same scale.
+  protected InstanceIdentifier     identifier     = new InstanceIdentifier();
 
   /*
    * Next three are to support subscales built as views of another
@@ -47,7 +52,7 @@ public class Scale implements IScale {
   // ... along this dimension
   private int                      sliceDimension = -1;
 
-  private Scale() {}
+  protected Scale() {}
 
   private Scale(IExtent[] topologies, MultidimensionalCursor cursor, int sliceExtentIndex,
       int sliceExtentOffset) throws KlabException {
@@ -89,14 +94,14 @@ public class Scale implements IScale {
   }
 
 
-  public List<IKimFunctionCall> getKimSpecification() {
-    List<IKimFunctionCall> ret = new ArrayList<>();
+  public List<IServiceCall> getKimSpecification() {
+    List<IServiceCall> ret = new ArrayList<>();
     for (IExtent extent : extents) {
-      ret.add(((Extent)extent).getKimSpecification());
+      ret.add(((Extent) extent).getKimSpecification());
     }
     return ret;
   }
-  
+
   @Override
   public final Index getIndex(int sliceIndex, int sliceNumber, Locator... locators) {
 
@@ -391,7 +396,8 @@ public class Scale implements IScale {
 
     Scale ret = new Scale();
     for (IExtent e : extents) {
-      ret.mergeExtent((IExtent)e.intersection(((Scale) scale).getExtent(e.getDomainConcept())), false);
+      ret.mergeExtent((IExtent) e.intersection(((Scale) scale).getExtent(e.getDomainConcept())),
+          false);
     }
 
     return ret;
@@ -404,14 +410,14 @@ public class Scale implements IScale {
       return null;
     }
     Scale scale = (Scale) scale_;
-    
+
     if (!hasSameExtents(scale)) {
       return null;
     }
 
     Scale ret = new Scale();
     for (IExtent e : extents) {
-      ret.mergeExtent((IExtent)e.union(((Scale) scale).getExtent(e.getDomainConcept())), false);
+      ret.mergeExtent((IExtent) e.union(((Scale) scale).getExtent(e.getDomainConcept())), false);
     }
 
     return ret;
@@ -703,9 +709,9 @@ public class Scale implements IScale {
       IExtent oext = other.getExtent(e.getDomainConcept());
       IExtent merged = null;
       if (how.equals(LogicalConnector.INTERSECTION)) {
-        merged = (IExtent)e.intersection(oext);
+        merged = (IExtent) e.intersection(oext);
       } else if (how.equals(LogicalConnector.UNION)) {
-        merged = (IExtent)e.union(oext);
+        merged = (IExtent) e.union(oext);
       } else {
         throw new KlabValidationException("extents are being merged with illegal operator" + how);
       }

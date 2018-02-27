@@ -29,7 +29,6 @@ package org.integratedmodelling.klab.owl;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;

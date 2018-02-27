@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.util.List;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.INumericRange;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 

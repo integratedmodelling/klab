@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -50,6 +50,6 @@ public interface IExtensionService {
    * @throws KlabResourceNotFoundException if the function is unknown
    * @throws KlabException if any exception was thrown during evaluation
    */
-  Object callFunction(IKimFunctionCall functionCall, IMonitor monitor) throws KlabException;
+  Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
 
 }

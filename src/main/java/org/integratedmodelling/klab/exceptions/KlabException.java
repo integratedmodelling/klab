@@ -28,7 +28,6 @@ package org.integratedmodelling.klab.exceptions;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 @SuppressWarnings("javadoc")

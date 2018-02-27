@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;

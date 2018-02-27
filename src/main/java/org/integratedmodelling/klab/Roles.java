@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab;
 
 import java.util.Collection;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.services.IRoleService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;

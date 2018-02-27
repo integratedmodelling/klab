@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.integratedmodelling.kim.api.IKimAction;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimBehavior;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IActiveKimObject;
@@ -21,13 +23,12 @@ public class Behavior implements IBehavior {
     List<IExtent> extents;
     IKimBehavior  statement;
 
-    class Action implements IAction {
-
-    }
-
     public Behavior(IKimBehavior behavior, IActiveKimObject model) {
         // TODO Auto-generated constructor stub
         this.statement = behavior;
+        for (IKimAction action : behavior) {
+          actions.add(new Action(action));
+        }
     }
 
     @Override
@@ -48,7 +49,7 @@ public class Behavior implements IBehavior {
     public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
         if (this.extents == null) {
             this.extents = new ArrayList<>();
-            for (IKimFunctionCall extentFunction : statement.getExtentFunctions()) {
+            for (IServiceCall extentFunction : statement.getExtentFunctions()) {
               Object extent = Extensions.INSTANCE.callFunction(extentFunction, monitor);
               if (!(extent instanceof IExtent)) {
                 throw new KlabValidationException("function " + extentFunction + " does not produce a valid extent");
@@ -57,6 +58,12 @@ public class Behavior implements IBehavior {
             }
         }
         return this.extents;
+    }
+
+    @Override
+    public List<IAction> getActions(Trigger trigger) {
+      // TODO Auto-generated method stub
+      return null;
     }
 
 }

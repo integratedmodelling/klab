@@ -38,11 +38,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
-
 import com.verhas.licensor.License;
 
 /**

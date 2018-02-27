@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Configuration;
@@ -39,7 +38,6 @@ import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.Escape;
-
 import com.vividsolutions.jts.geom.Geometry;
 
 public class ModelKbox extends ObservableKbox {

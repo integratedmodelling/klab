@@ -4,14 +4,14 @@
  */
 package org.integratedmodelling.klab.utils.xtext;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.eclipse.xtext.testing.GlobalRegistries;
 import org.eclipse.xtext.testing.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.IRegistryConfigurator;
 import org.integratedmodelling.kim.KnowledgeDeclarationRuntimeModule;
 import org.integratedmodelling.kim.KnowledgeDeclarationStandaloneSetup;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class KnowledgeDeclarationInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 

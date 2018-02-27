@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.data.resources;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.model.KimFunctionCall;
@@ -76,7 +76,7 @@ public class LiteralResource extends AbstractResource {
   }
 
   @Override
-  public IKimFunctionCall getComputation() {
+  public IServiceCall getComputation() {
     return new LiteralFunction(value);
   }
 

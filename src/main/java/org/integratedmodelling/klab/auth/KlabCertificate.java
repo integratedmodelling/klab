@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;

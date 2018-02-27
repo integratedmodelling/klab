@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.semanticweb.owlapi.rdf.util.RDFConstants;
 
 public class ObservableBuilder implements Builder {
 

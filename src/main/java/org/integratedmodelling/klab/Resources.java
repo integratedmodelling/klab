@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -118,7 +118,7 @@ public enum Resources implements IResourceService {
   }
 
   @Override
-  public IResource getComputedResource(IKimFunctionCall function) {
+  public IResource getComputedResource(IServiceCall function) {
     return new FunctionResource(
         Urns.KLAB_URN_PREFIX + Urns.LOCAL_FUNCTION_PREFIX + function.getName(), function);
   }

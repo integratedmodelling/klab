@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.owl.Knowledge;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class Classifier implements IClassifier {

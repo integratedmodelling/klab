@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimFunctionCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -356,7 +356,7 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public IKimFunctionCall getKimSpecification() {
+  public IServiceCall getKimSpecification() {
     List<Object> args = new ArrayList<>(4);
     args.add("shape");
     args.add(shape.toString());

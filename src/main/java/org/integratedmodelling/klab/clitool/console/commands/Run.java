@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.clitool.console.commands;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.engine.Engine;
@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.engine.Engine;
 public class Run implements ICommand {
 
   @Override
-  public Object execute(IKimFunctionCall call, ISession session) throws Exception {
+  public Object execute(IServiceCall call, ISession session) throws Exception {
 
     for (Object resource : (List<?>) call.getParameters().get("arguments")) {
       URL url = null;

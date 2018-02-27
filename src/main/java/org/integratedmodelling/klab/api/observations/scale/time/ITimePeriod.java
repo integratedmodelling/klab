@@ -26,9 +26,6 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale.time;
 
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.exceptions.KlabException;
-
 /**
  * Authoritative type for expressing an anchored (specific start/end) duration of time.
  *

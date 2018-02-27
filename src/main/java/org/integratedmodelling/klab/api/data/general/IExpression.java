@@ -27,7 +27,6 @@
 package org.integratedmodelling.klab.api.data.general;
 
 import java.util.Map;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;

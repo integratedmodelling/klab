@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.kim.api.IKimFunctionCall;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class RankedModel extends Model implements IRankedModel {
@@ -192,8 +194,8 @@ public class RankedModel extends Model implements IRankedModel {
     }
 
     @Override
-    public List<IKimFunctionCall> getComputation() {
-      return getDelegate().getComputation();
+    public List<IServiceCall> getComputation(ITransition transition) {
+      return getDelegate().getComputation(transition);
     }
     
     public String describeRanks() {
@@ -223,6 +225,11 @@ public class RankedModel extends Model implements IRankedModel {
     @Override
     public Map<String, Object> getRanks() {
         return ranks;
+    }
+    
+    @Override
+    public Observable getCompatibleOutput(Observable observable) {
+      return getDelegate().getCompatibleOutput(observable);
     }
 
 }
