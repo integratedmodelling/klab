@@ -1,17 +1,17 @@
 worldview im;
 
-//@test(
-//	name = "tests.core.qgen-dep-2",
-//	description  = "Shared dependency chain",
-//	observations = ("geography:Elevation"),
-//	assertions = (
-//		assert.nodata.percentage(state="geography:Elevation", max=0)
-//		assert.nodata.percentage(state="geography:Slope", max=0)
-//		assert.match(state="geography:Aspect", exact=10)
-//		assert.match(state="geography:Elevation", min=10)
-//	),
+@test(
+	name = "tests.core.qgen-dep-2",
+	description  = "Shared dependency chain",
+	observations = ("geography:Elevation"),
+	assertions = (
+		assert.nodata.percentage(state="geography:Elevation", max=0)
+		assert.nodata.percentage(state="geography:Slope", max=0)
+		assert.match(state="geography:Aspect", exact=10)
+		assert.match(state="geography:Elevation", min=10)
+	)//,
 //	resultdataflow = 'results/test3.kdl'
-//)
+)
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 

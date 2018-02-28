@@ -1,13 +1,12 @@
 @klab 0.10.0
-@dataflow local:session:zxdddaddf99djj:zxdddad // the task URN (session)
-@author 'k.LAB resolver 2018-02-19 11:46:36.023'
-@worldview im
-@context local:observation:zxdddaddf99djj:xsdd99d // the observation URN (session)
+@dataflow local:task:s1iunoja694xma:t1hrdp9nd2pgl3
+@author 'k.LAB resolver Wed Feb 28 12:26:45 CET 2018'
+@context local:observation:s1iunoja694xma:oto4ix5l2h0s7
 
 number elevation {
-	observe new geography:Elevation in degree_angle
-	number slope {
-		compute gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360)
-	}
-	compute state.distribute('[slope * 12.44]')
+   observe new geography:Elevation in m
+   number slope {
+      compute gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360)
+   }
+   compute klab.runtime.exec(code = "[slope * 12.44]")
 }

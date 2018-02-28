@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.resources;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
@@ -10,6 +11,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class LiteralResource extends AbstractResource {
@@ -23,14 +25,12 @@ public class LiteralResource extends AbstractResource {
    */
   public static class LiteralFunction extends KimServiceCall {
 
-    public final static String LITERAL_FUNCTION_ID = "klab.internal.literal";
-
     Object                     value;
 
     public LiteralFunction(Object value) {
       super(null);
       this.value = null;
-      setName(LITERAL_FUNCTION_ID);
+      setName(IRuntimeProvider.LITERAL_FUNCTION_ID);
     }
 
     private static final long serialVersionUID = -5190145577904822153L;

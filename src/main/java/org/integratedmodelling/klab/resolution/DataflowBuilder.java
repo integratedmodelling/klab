@@ -90,6 +90,10 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
     List<IServiceCall> mediators = new ArrayList<>();
     int                    refcount  = 0;
 
+    public Node(Observable observable) {
+        this.observable = observable;
+    }
+
     /*
      * get the actuator in the node, ignoring the children
      */
@@ -132,7 +136,7 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
         : (observer == null ? null : observer.getObservable());
 
     Node previous = catalog.get(new CompatibleObservable(observable));
-    Node ret = new Node();
+    Node ret = new Node(observable);
 
     if (previous == null) {
 
@@ -170,7 +174,6 @@ public class DataflowBuilder<T extends IArtifact> implements Builder {
         ret.original.setNamespace(observer.getNamespace());
       }
 
-      ret.observable = observable;
       ret.original.setObservable(observable);
 
       /*

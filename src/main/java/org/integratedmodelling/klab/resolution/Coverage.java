@@ -178,7 +178,7 @@ public class Coverage implements ICoverage {
                      * recompute current using the other's
                      */
                     ITopologicallyComparable<?> other = its.current == null ? its.original : its.current;
-                    ITopologicallyComparable<?> current = my.current.union(other);
+                    ITopologicallyComparable<?> current = my.current == null ? other : my.current.union(other);
                     double ncoverage = current.getCoveredExtent() / my.original.getCoveredExtent();
 
                     /*
@@ -212,7 +212,7 @@ public class Coverage implements ICoverage {
             for (CExt its : ((Coverage) coverage).current) {
                 if (its.domain.equals(my.domain)) {
                     ITopologicallyComparable<?> other = its.current == null ? its.original : its.current;
-                    ITopologicallyComparable<?> current = my.current.intersection(other);
+                    ITopologicallyComparable<?> current =  my.current == null ? other : my.current.intersection(other);
                     double ncoverage = current.getCoveredExtent() / my.original.getCoveredExtent();
                     ret.coverage *= ncoverage;
                     ret.current.add(new CExt(my.domain, my.original, current, ncoverage));
