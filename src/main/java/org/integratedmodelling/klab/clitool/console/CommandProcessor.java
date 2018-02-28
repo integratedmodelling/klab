@@ -37,7 +37,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.model.KimFunctionCall;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -216,7 +216,7 @@ public class CommandProcessor
       throws KlabValidationException {
 
     String[] a = line.split("\\s");
-    KimFunctionCall ret = null;
+    KimServiceCall ret = null;
 
     if (a.length < 1) {
       return null;
@@ -226,7 +226,7 @@ public class CommandProcessor
     if (prototype == null)
       return null;
 
-    ret = new KimFunctionCall(prototype.getName());
+    ret = new KimServiceCall(prototype.getName());
 
     String[] args = new String[a.length - 1];
     System.arraycopy(a, 1, args, 0, a.length - 1);

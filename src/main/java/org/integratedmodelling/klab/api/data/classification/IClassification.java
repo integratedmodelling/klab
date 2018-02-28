@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public interface IClassification extends Iterable<IClassifier> {
 
@@ -32,9 +33,10 @@ public interface IClassification extends Iterable<IClassifier> {
      * classifiers match.
      * 
      * @param object
+     * @param monitor 
      * @return
      */
-    IConcept classify(Object object);
+    IConcept classify(Object object, IMonitor monitor);
 
     /**
    * Get the undiscretized value for the passed concept. If the concept is not in the classification

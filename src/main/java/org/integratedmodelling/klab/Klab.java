@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
+import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
@@ -37,6 +41,9 @@ public enum Klab implements IRuntimeService {
     INSTANCE;
 
     IComponent storageProvider = null;
+    IComponent runtimeProvider = null;
+
+    File workDirectory = new File(".").getAbsoluteFile();
 
     /**
      * Handler to process classes with k.LAB annotations. Register using
@@ -325,9 +332,73 @@ public enum Klab implements IRuntimeService {
 
         return (IStorageProvider) ((Component) storageProvider).getImplementation();
     }
+    
+    public IRuntimeProvider getRuntimeProvider() {
+
+        String providerComponent = Configuration.INSTANCE.getProperties()
+                .getProperty(IConfigurationService.RUNTIME_PROVIDER_COMPONENT);
+        int nproviders = 0;
+
+        if (runtimeProvider == null) {
+            for (IComponent component : Extensions.INSTANCE.getComponents()) {
+                Optional<Class<?>> cclass = ((Component) component)
+                        .getImplementingClass();
+                if (cclass.isPresent() && IRuntimeProvider.class.isAssignableFrom(cclass.get())) {
+                    if (providerComponent != null) {
+                        if (component.getName().equals(providerComponent)) {
+                            runtimeProvider = component;
+                            break;
+                        }
+                    } else if (providerComponent == null) {
+                        runtimeProvider = component;
+                    }
+                    nproviders++;
+                }
+            }
+            if (nproviders > 1 && providerComponent == null) {
+                throw new KlabRuntimeException("multiple dataflow runtime components found: please configure the class of the desired provider");
+            }
+        }
+
+        if (runtimeProvider == null) {
+            throw new KlabRuntimeException("no dataflow runtime component found: please install a runtime plug-in");
+        }
+
+        return (IRuntimeProvider) ((Component) runtimeProvider).getImplementation();
+    }
 
     public IMonitor getRootMonitor() {
         return rootMonitor;
+    }
+
+    /**
+     * Resolve a file name to a file using the work directory if the path is not
+     * found as is.
+     * 
+     * @param filename
+     * @return an existing file, or null.
+     */
+    public File resolveFile(String filename) {
+        File ret = new File(filename);
+        if (ret.exists()) {
+            return ret;
+        }
+        ret = new File(workDirectory + File.separator + filename);
+        return ret.exists() ? ret : null;
+    }
+    
+    /**
+     * Work directory (defaults at '.') is only for interactive applications (script running, imports,
+     * certificate generation and the like).
+     * 
+     * @return the current work directory
+     */
+    public File getWorkDirectory() {
+        return workDirectory;
+    }
+
+    public void setWorkDirectory(File file) {
+        this.workDirectory = file;
     }
 
 }

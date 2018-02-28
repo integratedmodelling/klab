@@ -46,14 +46,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @author  Ferd
  */
 public interface INamespace extends IKimObject {
-    
+
     /**
      * The list of k.IM objects in order of declaration in the namespace file.
      * 
      * @return the objects
      */
     List<IKimObject> getObjects();
-    
+
     /**
      * Return a flattened list of all k.IM objects and their children.
      * 
@@ -67,7 +67,7 @@ public interface INamespace extends IKimObject {
      * @return
      */
     IKimObject getObject(String id);
-    
+
     /**
      * Time of creation of the underlying resource if any, time when the object definition 
      * finished otherwise.
@@ -101,7 +101,7 @@ public interface INamespace extends IKimObject {
      * @return all the namespaces imported.
      */
     Collection<INamespace> getImportedNamespaces();
-    
+
     /**
      * @return namespaces for training the models in us - currently unused.
      */
@@ -213,7 +213,7 @@ public interface INamespace extends IKimObject {
      * @return true if the whole namespace is void
      */
     boolean isInactive();
-    
+
     /**
      * True if the namespace does not define any knowledge that cannot be reconstructed
      * exclusively from worldview concepts. This is equivalent to using only 'equals' 
@@ -244,7 +244,7 @@ public interface INamespace extends IKimObject {
      * @return
      */
     boolean isInternal();
-    
+
     /**
      * Metadata can be associated to models in k.IM.
      * 
@@ -252,5 +252,12 @@ public interface INamespace extends IKimObject {
      */
     IMetadata getMetadata();
 
+    /**
+     * True if this namespace is the default namespace provided in a project for local concept definitions and
+     * equivalences.
+     * 
+     * @return true if project-wide knowledge space
+     */
+    boolean isProjectKnowledge();
 
 }

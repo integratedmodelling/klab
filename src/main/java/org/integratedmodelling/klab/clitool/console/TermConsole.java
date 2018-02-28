@@ -180,8 +180,8 @@ public class TermConsole implements IConsole {
               new CommandHistory());
           terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
           terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
+          terminal.console.append("Work directory: " + Klab.INSTANCE.getWorkDirectory() + "\n");
           terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
-          terminal.console.append("Operating directory: " + new File(".").getAbsolutePath() + "\n");
           terminal.setVisible(true);
           terminal.console.setPrompt(">> ");
 

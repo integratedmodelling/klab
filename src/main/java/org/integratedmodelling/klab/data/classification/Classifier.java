@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
@@ -80,7 +82,7 @@ public class Classifier implements IClassifier {
   }
 
   @Override
-  public boolean classify(Object o) {
+  public boolean classify(Object o, IMonitor monitor) {
 
     if (anythingMatch) {
       return true;
@@ -109,7 +111,7 @@ public class Classifier implements IClassifier {
     } else if (classifierMatches != null) {
 
       for (Classifier cl : classifierMatches) {
-        if (cl.classify(o))
+        if (cl.classify(o, monitor))
           return true;
       }
 
@@ -136,8 +138,8 @@ public class Classifier implements IClassifier {
         HashMap<String, Object> parms = new HashMap<String, Object>();
         parms.put("self", o);
         // FIXME pass a proper monitor
-        return negated ? !(Boolean) expressionMatch.eval(parms, null)
-            : (Boolean) expressionMatch.eval(parms, null);
+        return negated ? !(Boolean) expressionMatch.eval(parms, monitor, /* TODO pass a context */ null)
+            : (Boolean) expressionMatch.eval(parms, monitor, /* TODO pass a context */ null);
 
       } catch (Exception e) {
         throw new KlabRuntimeException(e);

@@ -267,4 +267,10 @@ public class Namespace extends KimObject implements INamespace {
     return name;
   }
 
+@Override
+public boolean isProjectKnowledge() {
+    // TODO Auto-generated method stub
+    return false;
+}
+
 }

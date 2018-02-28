@@ -21,6 +21,12 @@ void run
 	class org.integratedmodelling.klab.clitool.console.commands.Run
 }
 
+void cd
+	"Change or display the current work directory"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.Cd
+}
+
 /**
  * Batch run: use CL parameters to enable multiple batch contexts
  */

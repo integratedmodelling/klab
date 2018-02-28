@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.data.classification;
 
 import java.util.Iterator;
+
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class Classification implements IClassification {
 
@@ -36,7 +38,7 @@ public class Classification implements IClassification {
   }
 
   @Override
-  public IConcept classify(Object object) {
+  public IConcept classify(Object object, IMonitor monitor) {
     // TODO Auto-generated method stub
     return null;
   }

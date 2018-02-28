@@ -27,27 +27,65 @@
 package org.integratedmodelling.klab.api.data.general;
 
 import java.util.Map;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
+ * Simple execution interface for expressions. A new expression is generated per each call
+ * to the corresponding language statement, so each object can store local data about its call context.
+ * 
  * @author ferdinando.villa
  *
  */
 public interface IExpression {
 
     /**
-     * Simple execution interface for expressions. A new expression is generated per each call
-     * to the corresponding language statement, so it can store local data about its call context.
+     * A context is always passed to exec(), although some or all of its members may be null.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Context {
+
+       /**
+        * 
+        * @return
+        */
+        INamespace getNamespace();
+
+        /**
+         * 
+         * @return
+         */
+        IModel getModel();
+        
+        /**
+         * @return
+         */
+        IObservable getObservable();
+
+        /**
+         * 
+         * @return
+         */
+        IGeometry getGeometry();
+    }
+
+    /**
+     * Execute the expression
      * @param parameters from context or defined in a language call
      * @param monitor 
      * @param context usually null, may be added to determine the result of the evaluation according to
-     *        the calling context, interpreted conceptually (e.g. the expected role of the return value)
+     *        the calling context.
      * @return the result of evaluating the expression
      * @throws KlabException TODO
      */
-    Object eval(Map<String, Object> parameters, IMonitor monitor, IConcept... context)
+    Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
             throws KlabException;
 
 }

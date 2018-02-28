@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
-import org.integratedmodelling.kim.model.KimFunctionCall;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -21,7 +21,7 @@ public class LiteralResource extends AbstractResource {
    * @author ferdinando.villa
    *
    */
-  public static class LiteralFunction extends KimFunctionCall {
+  public static class LiteralFunction extends KimServiceCall {
 
     public final static String LITERAL_FUNCTION_ID = "klab.internal.literal";
 
@@ -37,7 +37,7 @@ public class LiteralResource extends AbstractResource {
 
     @Override
     public String getSourceCode() {
-      return value == null ? "unknown" : value.toString();
+      return value == null ? "unknown" : value.toString().trim();
     }
 
   }

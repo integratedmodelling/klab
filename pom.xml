@@ -217,6 +217,13 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.11</version>
 		</dependency>
+		
+		<!-- Groovy -->
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.5.0-beta-2</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.january/org.eclipse.january 
 			underlying implementation for non-distributed state storage -->

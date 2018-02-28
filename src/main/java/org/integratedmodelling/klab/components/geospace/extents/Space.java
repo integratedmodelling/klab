@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.model.KimFunctionCall;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -364,7 +364,7 @@ public class Space extends Extent implements ISpace {
       args.add("grid");
       args.add(gridSpecs);
     }
-    return new KimFunctionCall("space", args.toArray());
+    return new KimServiceCall("space", args.toArray());
   }
 
 }

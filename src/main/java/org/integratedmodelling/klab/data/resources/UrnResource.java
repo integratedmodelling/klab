@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.model.KimFunctionCall;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.raw.IRawObject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -46,7 +46,7 @@ public class UrnResource extends AbstractResource {
 
   @Override
   public IServiceCall getComputation() {
-    return new KimFunctionCall(URN_FUNCTION_ID, "urn", urn);
+    return new KimServiceCall(URN_FUNCTION_ID, "urn", urn);
   }
 
 }
