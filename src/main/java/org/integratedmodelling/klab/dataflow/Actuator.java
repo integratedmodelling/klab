@@ -18,16 +18,17 @@ import org.integratedmodelling.klab.owl.Observable;
 
 public class Actuator<T extends IArtifact> implements IActuator {
 
-    protected String               name;
-    private String                 alias;
-    private INamespace             namespace;
-    private Observable             observable;
-    private Scale                  scale;
-    private IKdlActuator.Type      type;
-    List<IActuator>                actuators           = new ArrayList<>();
-    IMonitor                       monitor;
-    Date                           creationTime        = new Date();
-    private boolean                createObservation;
+    protected String           name;
+    private String             alias;
+    private INamespace         namespace;
+    private Observable         observable;
+    private Scale              scale;
+    private IKdlActuator.Type  type;
+    List<IActuator>            actuators           = new ArrayList<>();
+    IMonitor                   monitor;
+    Date                       creationTime        = new Date();
+    private boolean            createObservation;
+    private boolean            reference;
 
     /*
      * these are the specs from which the contextualizers are built: first the computation, then the
@@ -37,7 +38,7 @@ public class Actuator<T extends IArtifact> implements IActuator {
     private List<IServiceCall> computationStrategy = new ArrayList<>();
     private List<IServiceCall> mediationStrategy   = new ArrayList<>();
 
-    private Class<? extends T>     cls;
+    private Class<? extends T> cls;
 
     @Override
     public String getName() {
@@ -99,6 +100,18 @@ public class Actuator<T extends IArtifact> implements IActuator {
      */
     protected String encode(int offset) {
 
+        if (reference) {
+
+            String ofs = StringUtils.repeat(" ", offset);
+            String ret = ofs + "import " + type.name().toLowerCase() + " " + getName();
+
+            if (!getComputationStrategy().isEmpty() || !getMediationStrategy().isEmpty()) {
+                ret += encodeBody(offset, ofs);
+            }
+
+            return ret;
+        }
+
         String ofs = StringUtils.repeat(" ", offset);
         String ret = ofs + getType().name().toLowerCase() + " "
                 + (getObservable() == null ? getName() : getObservable().getLocalName());
@@ -155,10 +168,6 @@ public class Actuator<T extends IArtifact> implements IActuator {
 
     public static <T extends IArtifact> Actuator<T> create(IMonitor monitor, Class<T> observationClass) {
         return new Actuator<T>(monitor, observationClass);
-    }
-
-    public Actuator<T> getReference() {
-        return ActuatorReference.create(this, cls);
     }
 
     public List<IServiceCall> getComputationStrategy() {
@@ -223,6 +232,14 @@ public class Actuator<T extends IArtifact> implements IActuator {
 
     public void setCreateObservation(boolean createObservation) {
         this.createObservation = createObservation;
+    }
+
+    public void setReference(boolean reference) {
+        this.reference = reference;
+    }
+
+    public boolean isReference() {
+        return reference;
     }
 
 }

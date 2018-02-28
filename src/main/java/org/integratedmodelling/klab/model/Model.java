@@ -299,5 +299,15 @@ public class Model extends KimObject implements IModel {
     }
     return null;
   }
+  
+  @Override
+  public int hashCode() {
+      return getName().hashCode();
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+      return obj instanceof Model && getName().equals(((Model)obj).getName());
+  }
 
 }

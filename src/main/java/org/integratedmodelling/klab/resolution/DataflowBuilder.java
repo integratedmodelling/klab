@@ -2,10 +2,12 @@ package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -29,244 +31,272 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class DataflowBuilder<T extends IArtifact> implements Builder {
 
-  String                                     name;
-  Class<T>                                   cls;
-  DirectObservation                          context;
-  double                                     coverage;
+    String                                     name;
+    Class<T>                                   cls;
+    DirectObservation                          context;
+    double                                     coverage;
 
-  DirectedGraph<IResolvable, DependencyEdge> dependencyGraph =
-      new DefaultDirectedGraph<>(DependencyEdge.class);
+    DirectedGraph<IResolvable, DependencyEdge> dependencyGraph = new DefaultDirectedGraph<>(DependencyEdge.class);
+    Map<Model, ModelD>                         modelCatalog    = new HashMap<>();
 
-  static class DependencyEdge {
+    static class DependencyEdge {
 
-    Coverage coverage;
+        Coverage coverage;
 
-    DependencyEdge(Coverage coverage) {
-      this.coverage = coverage;
-    }
-  }
-
-  public DataflowBuilder(String name, Class<T> type) {
-    this.name = name;
-  }
-
-  @Override
-  public Dataflow<?> build(IMonitor monitor) {
-
-    Dataflow<?> ret = new Dataflow<T>(monitor, cls);
-    ret.setName(this.name);
-    ret.setContext(this.context);
-    ret.setCoverage(this.coverage);
-
-    for (IResolvable root : getRootResolvables(dependencyGraph)) {
-
-      Node node = compileActuator(root, dependencyGraph, new HashMap<>(), monitor);
-      node.getActuator().setCreateObservation(root instanceof IObserver
-          || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
-
-      ret.getActuators().add(node.getActuatorTree());
-    }
-
-    return ret;
-  }
-
-  /**
-   * Compilation builds a tree of nodes, each containing either an actuator or a reference. During
-   * compilation, those may be rearranged so that an actuator needed in an outside scope is floated
-   * to the containing scope and substituted with a reference to it.
-   * 
-   * The final actuator hierarchy is built by calling {@link #getActuatorTree()} on the root node.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  class Node {
-
-    Observable             observable;
-    Observable             originalObservable;
-    Actuator<?>            original;
-    Actuator<?>            reference;
-    List<Node>             children  = new ArrayList<>();
-    List<IServiceCall> mediators = new ArrayList<>();
-    int                    refcount  = 0;
-
-    public Node(Observable observable) {
-        this.observable = observable;
-    }
-
-    /*
-     * get the actuator in the node, ignoring the children
-     */
-    Actuator<?> getActuator() {
-      return original == null ? reference : original;
-    }
-
-    /*
-     * get the finished actuator with all the children and the mediation strategy
-     */
-    Actuator<?> getActuatorTree() {
-      Actuator<?> ret = getActuator();
-      for (Node child : children) {
-        ret.getActuators().add(child.getActuatorTree());
-        ret.getMediationStrategy().addAll(
-            Observables.INSTANCE.computeMediators(child.originalObservable, child.observable));
-      }
-      return ret;
-    }
-
-    public String toString() {
-      return getActuator() == null ? "(empty node)" : getActuator().toString();
-    }
-
-  }
-
-  /*
-   * The catalog matches each resolvable to the node that currently holds the actuator and not a
-   * reference.
-   * 
-   * We pass the root observable to decide whether we should build an observation for it in case
-   * this is a resolution model.
-   */
-  private Node compileActuator(IResolvable resolvable,
-      DirectedGraph<IResolvable, DependencyEdge> graph, Map<CompatibleObservable, Node> catalog,
-      IMonitor monitor) {
-
-    Observer observer = resolvable instanceof Observer ? (Observer) resolvable : null;
-    Observable observable = resolvable instanceof Observable ? (Observable) resolvable
-        : (observer == null ? null : observer.getObservable());
-
-    Node previous = catalog.get(new CompatibleObservable(observable));
-    Node ret = new Node(observable);
-
-    if (previous == null) {
-
-      /*
-       * create the original actuator
-       */
-      ret.original = Actuator.create(monitor, Observables.INSTANCE.getObservationClass(observable));
-      ret.original.setName(observable.getLocalName());
-
-      switch (observable.getObservationType()) {
-        case CLASSIFICATION:
-          ret.original.setType(Type.CONCEPT);
-          break;
-        case DETECTION:
-        case INSTANTIATION:
-          ret.original.setType(Type.OBJECT);
-          break;
-        case QUANTIFICATION:
-          ret.original.setType(Type.NUMBER);
-          break;
-        case SIMULATION:
-          ret.original.setType(Type.PROCESS);
-          break;
-        case VERIFICATION:
-          ret.original.setType(Type.BOOLEAN);
-          break;
-      }
-
-      if (observer != null) {
-        try {
-          ret.original.setScale(Scale.create(observer.getBehavior().getExtents(monitor)));
-        } catch (KlabException e) {
-          throw new KlabRuntimeException(e);
+        DependencyEdge(Coverage coverage) {
+            this.coverage = coverage;
         }
-        ret.original.setNamespace(observer.getNamespace());
-      }
+    }
 
-      ret.original.setObservable(observable);
+    public DataflowBuilder(String name, Class<T> type) {
+        this.name = name;
+    }
 
-      /*
-       * go through models
-       */
-      boolean hasPartials = graph.incomingEdgesOf(resolvable).size() > 1;
-      for (DependencyEdge d : graph.incomingEdgesOf(resolvable)) {
+    @Override
+    public Dataflow<?> build(IMonitor monitor) {
 
-        Model model = (Model) graph.getEdgeSource(d);
+        Dataflow<?> ret = new Dataflow<T>(monitor, cls);
+        ret.setName(this.name);
+        ret.setContext(this.context);
+        ret.setCoverage(this.coverage);
 
-        for (DependencyEdge o : graph.incomingEdgesOf(model)) {
+        for (IResolvable root : getRootResolvables(dependencyGraph)) {
 
-          Node child = compileActuator(graph.getEdgeSource(o), graph, catalog, monitor);
+            modelCatalog.clear();
 
-          if (hasPartials) {
-            // add scale and name suffix
-            Coverage coverage = d.coverage;
-          }
-
-          // if needed, set alias to name of dependency
-
-          ret.children.add(child);
+            Node node = compileActuator(root, dependencyGraph, monitor);
+            Actuator<?> actuator = node.getActuatorTree(monitor, new HashSet<>());
+            actuator.setCreateObservation(root instanceof IObserver
+                    || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
+            ret.getActuators().add(actuator);
         }
 
-        // NO use triggers separately 
-        ret.original.getComputationStrategy()
-            .addAll(model.getComputation(Transition.initialization()));
-        ret.originalObservable = model.getCompatibleOutput(observable);
-      }
+        return ret;
+    }
 
-      if (hasPartials) {
-        // TODO add merge step to mediators
-      } else {
-        // take all computation and mediation from strategy.get(0)
-      }
+    static class ModelD {
 
-    } else {
-      /*
-       * float the previous actuator to our level, swapping it with a reference to replace the
-       * original one created downstream. The actuator in this node becomes our own and gets aliased
-       * to the name of this observable
-       */
-      previous.reference = previous.original.getReference();
-      ret.original = previous.original;
-      ret.original.setAlias(observable.getLocalName());
-      ret.refcount = previous.refcount + 1;
-      previous.refcount = 1;
-      previous.original = null;
-      ret.originalObservable = previous.originalObservable;
+        Model    model;
+        // how many nodes reference this model's observables
+        int      useCount;
+        // this is null unless the model covers only a part of the context
+        Coverage coverage;
+
+        public ModelD(Model model) {
+            this.model = model;
+        }
+
+        @Override
+        public int hashCode() {
+            return model.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof ModelD && model.equals(((ModelD) obj).model);
+        }
+
+    }
+
+    /**
+     * Each node represents one use of a model to compute one observable. Each node will compute
+     * an actuator (a true one the first use, a reference afterwards). Nodes are arranged by
+     * the compiler in a 
+     * 
+     * If there is more than one model, they will have to be computed individually in their own scale and
+     * merged before any other computations are called.
+     * 
+     * The final actuator hierarchy is built by calling {@link #getActuatorTree(IMonitor)} on the root node.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    class Node {
+
+        Observable  observable;
+        Observer    observer;
+        Set<ModelD> models   = new HashSet<>();
+        List<Node>  children = new ArrayList<>();
+
+        public Node(IResolvable observable) {
+            if (observable instanceof Observable) {
+                this.observable = (Observable) observable;
+            } else if (observable instanceof Observer) {
+                this.observer = (Observer) observable;
+                this.observable = this.observer.getObservable();
+            }
+        }
+
+        /*
+         * get the actuator in the node, ignoring the children
+         */
+        Actuator<?> createActuator(IMonitor monitor, Set<Model> generated) {
+
+            /*
+             * create the original actuator
+             */
+            Actuator<?> ret = Actuator.create(monitor, Observables.INSTANCE.getObservationClass(observable));
+
+            ret.setObservable(observable);
+            ret.setName(observable.getLocalName());
+
+            switch (observable.getObservationType()) {
+            case CLASSIFICATION:
+                ret.setType(Type.CONCEPT);
+                break;
+            case DETECTION:
+            case INSTANTIATION:
+                ret.setType(Type.OBJECT);
+                break;
+            case QUANTIFICATION:
+                ret.setType(Type.NUMBER);
+                break;
+            case SIMULATION:
+                ret.setType(Type.PROCESS);
+                break;
+            case VERIFICATION:
+                ret.setType(Type.BOOLEAN);
+                break;
+            }
+
+            if (observer != null) {
+                try {
+                    ret.setScale(Scale.create(observer.getBehavior().getExtents(monitor)));
+                } catch (KlabException e) {
+                    throw new KlabRuntimeException(e);
+                }
+                ret.setNamespace(observer.getNamespace());
+            }
+
+            if (models.size() == 1) {
+
+                Model theModel = models.iterator().next().model;
+
+                if (!generated.contains(theModel)) {
+                    generated.add(theModel);
+                    ret.getComputationStrategy().addAll(models.iterator().next().model
+                            .getComputation(Transition.initialization()));
+                } else {
+                    ret.setReference(true);
+                }
+
+                /*
+                 * build in the models' computation or set to a reference
+                 */
+                if (models.iterator().next().useCount == 1) {
+
+                    /*
+                     * ignore the model's observer id, use the entire computation for this observable
+                     */
+
+                } else {
+
+                    /*
+                     * compile in a reference with the original model's observable ID 'as' our observable's name
+                     */
+                }
+
+            } else if (models.size() > 1) {
+                
+                /*
+                 * duplicate the observable into ad-hoc separate sub-actuators with
+                 * independent scale and compile in a merge 
+                 */
+            }
+
+            return ret;
+        }
+
+        /*
+         * get the finished actuator with all the children and the mediation strategy
+         */
+        Actuator<?> getActuatorTree(IMonitor monitor, Set<Model> generated) {
+            Actuator<?> ret = createActuator(monitor, generated);
+            for (Node child : children) {
+                ret.getActuators().add(child.getActuatorTree(monitor, generated));
+                // ret.getMediationStrategy().addAll(Observables.INSTANCE
+                // .computeMediators(child.originalObservable, child.observable));
+            }
+            return ret;
+        }
     }
 
     /*
-     * the new node is either added to the catalog or takes place of the previous
+     * The simple compilation strategy keeps a catalog of models and a builds a tree of models usage for each
+     * observable. Then node are scanned from the root and an actuator is built the first time a model is encountered,
+     * a reference is built from the second on. If the model is only used once and for a single observable, the original actuator for a model is
+     * given the name of its use and the mediators are compiled in it; otherwise, a link is created and mediators are put in the
+     * import instruction.
      */
-    catalog.put(new CompatibleObservable(observable), ret);
+    private Node compileActuator(IResolvable resolvable, DirectedGraph<IResolvable, DependencyEdge> graph, IMonitor monitor) {
 
-    return ret;
-  }
+        Node ret = new Node(resolvable);
 
-  @Override
-  public Builder within(IDirectObservation context) {
-    this.context = (DirectObservation) context;
-    return this;
-  }
+        /*
+         * go through models
+         */
+        boolean hasPartials = graph.incomingEdgesOf(resolvable).size() > 1;
+        for (DependencyEdge d : graph.incomingEdgesOf(resolvable)) {
 
-  @Override
-  public Builder withCoverage(double coverage) {
-    this.coverage = coverage;
-    return this;
-  }
+            Model model = (Model) graph.getEdgeSource(d);
+            ModelD md = compileModel(model);
+            for (DependencyEdge o : graph.incomingEdgesOf(model)) {
+                Node child = compileActuator(graph.getEdgeSource(o), graph, monitor);
+                if (hasPartials) {
+                    md.coverage = d.coverage;
+                }
+                ret.children.add(child);
+            }
+            ret.models.add(md);
+        }
 
-  @Override
-  public Builder withDependency(IResolvable source, IResolvable target, ICoverage coverage) {
-    dependencyGraph.addVertex(source);
-    dependencyGraph.addVertex(target);
-    dependencyGraph.addEdge(source, target, new DependencyEdge((Coverage) coverage));
-    return this;
-  }
-
-  private List<IResolvable> getRootResolvables(DirectedGraph<IResolvable, DependencyEdge> graph) {
-    List<IResolvable> ret = new ArrayList<>();
-    for (IResolvable res : graph.vertexSet()) {
-      if (graph.outgoingEdgesOf(res).size() == 0) {
-        ret.add(res);
-      }
+        return ret;
     }
-    return ret;
-  }
 
-  @Override
-  public Builder withResolvable(IResolvable resolvable) {
-    dependencyGraph.addVertex(resolvable);
-    return this;
-  }
+    ModelD compileModel(Model model) {
+        ModelD ret = modelCatalog.get(model);
+        if (ret == null) {
+            ret = new ModelD(model);
+            modelCatalog.put(model, ret);
+        }
+        ret.useCount++;
+        return ret;
+    }
+
+    @Override
+    public Builder within(IDirectObservation context) {
+        this.context = (DirectObservation) context;
+        return this;
+    }
+
+    @Override
+    public Builder withCoverage(double coverage) {
+        this.coverage = coverage;
+        return this;
+    }
+
+    @Override
+    public Builder withDependency(IResolvable source, IResolvable target, ICoverage coverage) {
+        dependencyGraph.addVertex(source);
+        dependencyGraph.addVertex(target);
+        dependencyGraph.addEdge(source, target, new DependencyEdge((Coverage) coverage));
+        return this;
+    }
+
+    private List<IResolvable> getRootResolvables(DirectedGraph<IResolvable, DependencyEdge> graph) {
+        List<IResolvable> ret = new ArrayList<>();
+        for (IResolvable res : graph.vertexSet()) {
+            if (graph.outgoingEdgesOf(res).size() == 0) {
+                ret.add(res);
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public Builder withResolvable(IResolvable resolvable) {
+        dependencyGraph.addVertex(resolvable);
+        return this;
+    }
 
 }
