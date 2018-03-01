@@ -128,13 +128,7 @@ public abstract class Observation implements IObservation {
 
   @Override
   public IProvenance getProvenance() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void explore() {
-    // TODO Auto-generated method stub
+    return ((Subject)getRoot()).getRuntimeContext().getProvenance();
   }
 
   public String getId() {
@@ -172,7 +166,6 @@ public abstract class Observation implements IObservation {
   public void setNamespace(INamespace namespace) {
    this.namespace = (Namespace) namespace;
   }
-  
 
   @Override
   public boolean hasNext() {

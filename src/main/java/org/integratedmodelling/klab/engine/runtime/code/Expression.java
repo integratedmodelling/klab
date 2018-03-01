@@ -36,7 +36,7 @@ public abstract class Expression implements IExpression {
         public Geometry getGeometry() {
             return geometry;
         }
-        
     }
+
     
 }

@@ -14,18 +14,22 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
     super(monitor, cls);
   }
 
-  String            description;
+  String                    description;
   private DirectObservation context;
   private double            coverage;
 
   @Override
   public T run(IMonitor monitor) throws KlabException {
-    // TODO enough?
-    return compute(getContext(), monitor);
-  }
 
-  @SuppressWarnings("unchecked")
-  public T compute(DirectObservation context, IMonitor monitor) throws KlabException {
+    /*
+     * 1. establish context. Get the runtime and storage provider. If we have a runtime context,
+     * take those from it, otherwise make one.
+     */
+
+    /*
+     * 2. Children at the dataflow level can run in parallel so have the runtime create futures for
+     * each child.
+     */
 
     // TODO use futures and compute all children in parallel; chain resulting artifacts. Not really
     // important at the moment.
@@ -89,21 +93,21 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
     this.description = description;
   }
 
-public double getCoverage() {
+  public double getCoverage() {
     return coverage;
-}
+  }
 
-public void setCoverage(double coverage) {
+  public void setCoverage(double coverage) {
     this.coverage = coverage;
-}
+  }
 
-public DirectObservation getContext() {
+  public DirectObservation getContext() {
     return context;
-}
+  }
 
-public void setContext(DirectObservation context) {
+  public void setContext(DirectObservation context) {
     this.context = context;
-}
+  }
 
 
 }

@@ -1,7 +1,8 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
 import java.util.Map;
-
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -61,7 +62,11 @@ public class Space implements IExpression {
     IUnit uu = Units.INSTANCE.getUnit(pd.getSecond());
     IUnit mm = Units.INSTANCE.getUnit("m");
     return mm.convert(pd.getFirst().doubleValue(), uu).doubleValue();
+  }
 
+  @Override
+  public IGeometry getGeometry() {
+    return Geometry.create("S2");
   }
 
 

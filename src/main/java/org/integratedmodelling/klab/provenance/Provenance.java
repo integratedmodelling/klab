@@ -1,14 +1,50 @@
 package org.integratedmodelling.klab.provenance;
 
-import org.integratedmodelling.klab.api.observations.IObservation;
+import java.util.Collection;
+import java.util.List;
+import org.integratedmodelling.kim.api.IKimMetadata;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.observation.Subject;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-public class Provenance extends DefaultDirectedGraph<IObservation, Activity> {
+public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implements IProvenance {
 
   private static final long serialVersionUID = -699663910228938188L;
 
-  public Provenance() {
+  Subject root;
+  
+  public Provenance(Subject root) {
     super(Activity.class);
+    this.root = root;
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return vertexSet().isEmpty();
+  }
+
+  @Override
+  public IKimMetadata collectMetadata(Object node) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<IActivity> getPrimaryActions() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IArtifact getRootArtifact() {
+    return root;
+  }
+
+  @Override
+  public Collection<IArtifact> getArtifacts() {
+    return vertexSet();
   }
 
 }

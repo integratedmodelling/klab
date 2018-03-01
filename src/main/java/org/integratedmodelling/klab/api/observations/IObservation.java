@@ -100,11 +100,6 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
   IProvenance getProvenance();
 
   /**
-   * Open a k.EXPLORER window on the root observation, focused on this.
-   */
-  void explore();
-
-  /**
    * Check if this observation (as an artifact) is part of a group and has another after it.
    * 
    * Redeclared in lieu of implementing {@link Iterator}, which Java limitations do not allow us to
