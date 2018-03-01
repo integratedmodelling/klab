@@ -3,21 +3,22 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.Iterator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
- * An Artifact can be any of the first-class citizens in k.LAB: Observation or Model (when the model
- * has been produced by another, such as a learning model). Observations are the final results of a
- * successful contextualization. We also allow Artifacts to represent groups of observations (e.g.
- * all the Subjects instantiated by resolving a subject observable), to avoid creating monster
- * graphs.
+ * An Artifact can be any of the first-class products of a k.LAB task: a {@link IObservation} (in
+ * most situations) or a {@link IModel} when the model has been produced by another, such as a
+ * learning model. Observations are the usual final results of a successful contextualization. By
+ * implementing {@link Iterator}, we also allow Artifacts to represent groups of artifacts (e.g. all
+ * the Subjects instantiated by resolving a subject {@link IObservable}). This enables much simpler
+ * handling of provenance.
  * 
- * Artifacts are also iterators of artifacts so that groups of artifacts can be seen and returned as
- * one artifact. Check {@link #hasNext()} to see if the returned artifact is the first of a group.
- * 
- * Each artifact can return the provenance graph it's part of, allowing all k.LAB operations to
- * simply return an Artifact.
+ * Each artifact can return the provenance graph it's part of, allowing all k.LAB tasks to simply
+ * return an IArtifact and provide full information on what happened.
  * 
  * @author Ferd
  * @param <T>
@@ -29,7 +30,7 @@ public interface IArtifact extends Node, Iterator<IArtifact> {
    * @return
    */
   String getUrn();
-  
+
   /**
    * @return
    */

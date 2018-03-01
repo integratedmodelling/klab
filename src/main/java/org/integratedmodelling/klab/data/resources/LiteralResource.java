@@ -29,7 +29,7 @@ public class LiteralResource extends AbstractResource {
 
     public LiteralFunction(Object value) {
       super(null);
-      this.value = null;
+      this.value = value;
       setName(IRuntimeProvider.LITERAL_FUNCTION_ID);
     }
 

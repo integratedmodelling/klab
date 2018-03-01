@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimContextualization;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
@@ -157,8 +157,12 @@ public class Model extends KimObject implements IModel {
 
   @Override
   public String getLocalNameFor(IObservable observable) {
-    // TODO Auto-generated method stub
-    return null;
+    IObservable obs = getCompatibleOutput((Observable)observable);
+    if (obs != null) {
+      return obs.getLocalName();
+    }
+    obs = getCompatibleInput((Observable)observable);
+    return obs == null ? null : obs.getLocalName();
   }
 
   @Override
@@ -295,6 +299,22 @@ public class Model extends KimObject implements IModel {
       if (new CompatibleObservable((Observable) output)
           .equals(new CompatibleObservable(observable))) {
         return (Observable) output;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Get the input that can satisfy this observable, possibly with mediation.
+   * 
+   * @param observable
+   * @return
+   */
+  public Observable getCompatibleInput(Observable observable) {
+    for (IObservable input : dependencies) {
+      if (new CompatibleObservable((Observable) input)
+          .equals(new CompatibleObservable(observable))) {
+        return (Observable) input;
       }
     }
     return null;

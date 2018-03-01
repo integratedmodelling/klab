@@ -80,7 +80,7 @@ public enum Dataflows implements IDataflowService {
     public <T extends IArtifact> Dataflow<T> compile(String name, IResolutionScope scope, Class<T> cls)
         throws KlabException {
 
-      Dataflow.Builder builder = new DataflowBuilder<T>(name, cls).withCoverage(scope.getCoverage())
+      DataflowBuilder<T> builder = new DataflowBuilder<T>(name, cls).withCoverage(scope.getCoverage())
           .within(scope.getContext());
 
       if (((ResolutionScope)scope).getObserver() != null) {
