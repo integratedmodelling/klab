@@ -217,7 +217,7 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.11</version>
 		</dependency>
-		
+
 		<!-- Groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
@@ -236,7 +236,7 @@
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core </artifactId>
-			<version>1.0.1</version>
+			<version>1.1.0</version>
 		</dependency>
 
 		<!-- OWL and DL reasoning -->
@@ -307,6 +307,13 @@
 			</exclusion> </exclusions> </dependency> -->
 		<!-- GEOTOOLS mess ends -->
 
+		<!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
+		<!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-ext</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 
 	</dependencies>
 </project>

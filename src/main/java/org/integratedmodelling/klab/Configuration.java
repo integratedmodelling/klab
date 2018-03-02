@@ -179,4 +179,21 @@ public enum Configuration implements IConfigurationService {
         return dataPath;
     }
 
+    @Override
+    public int getDataflowThreadCount() {
+      // TODO Auto-generated method stub
+      return 10;
+    }
+
+    @Override
+    public int getTaskThreadCount() {
+      // TODO Auto-generated method stub
+      return 10;
+    }
+    
+    @Override
+    public int getScriptThreadCount() {
+      // TODO Auto-generated method stub
+      return 3;
+    }
 }

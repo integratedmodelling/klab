@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -24,26 +26,36 @@ import org.integratedmodelling.klab.observation.DirectObservation;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.observation.Transition;
 import org.integratedmodelling.klab.owl.Observable;
-import org.jgrapht.DirectedGraph;
+import org.integratedmodelling.klab.utils.graph.Graphs;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
 public class DataflowBuilder<T extends IArtifact> {
 
-  String                                     name;
-  Class<T>                                   cls;
-  DirectObservation                          context;
-  double                                     coverage;
+  String                             name;
+  Class<T>                           cls;
+  DirectObservation                  context;
+  double                             coverage;
 
-  DirectedGraph<IResolvable, DependencyEdge> dependencyGraph =
-      new DefaultDirectedGraph<>(DependencyEdge.class);
-  Map<Model, ModelD>                         modelCatalog    = new HashMap<>();
+  Graph<IResolvable, ResolutionEdge> resolutionGraph =
+      new DefaultDirectedGraph<>(ResolutionEdge.class);
+  Map<Model, ModelD>                 modelCatalog    = new HashMap<>();
 
-  static class DependencyEdge {
+  static class ResolutionEdge {
 
     Coverage coverage;
+    int rank;
 
-    DependencyEdge(Coverage coverage) {
+    ResolutionEdge(Coverage coverage) {
       this.coverage = coverage;
+    }
+    
+    ResolutionEdge() {}
+    
+    public String toString() {
+      return "resolves (" + rank + ")";
     }
   }
 
@@ -53,16 +65,22 @@ public class DataflowBuilder<T extends IArtifact> {
 
   public Dataflow<?> build(IMonitor monitor) {
 
+    rankEdges();
+
+    if (Configuration.INSTANCE.isDebuggingEnabled()) {
+      Graphs.show(resolutionGraph);
+    }
+    
     Dataflow<?> ret = new Dataflow<T>(monitor, cls);
     ret.setName(this.name);
     ret.setContext(this.context);
     ret.setCoverage(this.coverage);
 
-    for (IResolvable root : getRootResolvables(dependencyGraph)) {
+    for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
       modelCatalog.clear();
 
-      Node node = compileActuator(root, dependencyGraph, monitor);
+      Node node = compileActuator(root, resolutionGraph, monitor);
       Actuator<?> actuator = node.getActuatorTree(monitor, new HashSet<>());
       actuator.setCreateObservation(root instanceof IObserver
           || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
@@ -70,6 +88,20 @@ public class DataflowBuilder<T extends IArtifact> {
     }
 
     return ret;
+  }
+
+  private void rankEdges() {
+    
+    TopologicalOrderIterator<IResolvable, ResolutionEdge> sorter = new TopologicalOrderIterator<>(resolutionGraph);
+    while (sorter.hasNext()) {
+      IResolvable node = sorter.next();
+      if (node instanceof Model) {
+        for (ResolutionEdge edge : resolutionGraph.incomingEdgesOf(node)) {
+          edge.rank ++;
+        }
+      }
+    }
+    
   }
 
   static class ModelD {
@@ -138,7 +170,6 @@ public class DataflowBuilder<T extends IArtifact> {
           Actuator.create(monitor, Observables.INSTANCE.getObservationClass(observable));
 
       ret.setObservable(observable);
-      ret.setName(observable.getLocalName());
 
       switch (observable.getObservationType()) {
         case CLASSIFICATION:
@@ -171,6 +202,7 @@ public class DataflowBuilder<T extends IArtifact> {
       if (models.size() == 1) {
 
         Model theModel = models.iterator().next().model;
+        ret.setName(theModel.getLocalNameFor(observable));
 
         if (!generated.contains(theModel)) {
           generated.add(theModel);
@@ -178,7 +210,6 @@ public class DataflowBuilder<T extends IArtifact> {
               .addAll(models.iterator().next().model.getComputation(Transition.initialization()));
         } else {
           ret.setReference(true);
-          ret.setName(theModel.getLocalNameFor(observable));
           ret.setAlias(observable.getLocalName());
         }
 
@@ -232,8 +263,8 @@ public class DataflowBuilder<T extends IArtifact> {
    * use and the mediators are compiled in it; otherwise, a link is created and mediators are put in
    * the import instruction.
    */
-  private Node compileActuator(IResolvable resolvable,
-      DirectedGraph<IResolvable, DependencyEdge> graph, IMonitor monitor) {
+  private Node compileActuator(IResolvable resolvable, Graph<IResolvable, ResolutionEdge> graph,
+      IMonitor monitor) {
 
     Node ret = new Node(resolvable);
 
@@ -241,11 +272,11 @@ public class DataflowBuilder<T extends IArtifact> {
      * go through models
      */
     boolean hasPartials = graph.incomingEdgesOf(resolvable).size() > 1;
-    for (DependencyEdge d : graph.incomingEdgesOf(resolvable)) {
+    for (ResolutionEdge d : graph.incomingEdgesOf(resolvable)) {
 
       Model model = (Model) graph.getEdgeSource(d);
       ModelD md = compileModel(model);
-      for (DependencyEdge o : graph.incomingEdgesOf(model)) {
+      for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
         Node child = compileActuator(graph.getEdgeSource(o), graph, monitor);
         if (hasPartials) {
           md.coverage = d.coverage;
@@ -278,15 +309,15 @@ public class DataflowBuilder<T extends IArtifact> {
     return this;
   }
 
-  public DataflowBuilder<T> withDependency(IResolvable source, IResolvable target,
+  public DataflowBuilder<T> withResolution(IResolvable source, IResolvable target,
       ICoverage coverage) {
-    dependencyGraph.addVertex(source);
-    dependencyGraph.addVertex(target);
-    dependencyGraph.addEdge(source, target, new DependencyEdge((Coverage) coverage));
+    resolutionGraph.addVertex(source);
+    resolutionGraph.addVertex(target);
+    resolutionGraph.addEdge(source, target, new ResolutionEdge((Coverage) coverage));
     return this;
   }
 
-  private List<IResolvable> getRootResolvables(DirectedGraph<IResolvable, DependencyEdge> graph) {
+  private List<IResolvable> getRootResolvables(Graph<IResolvable, ResolutionEdge> graph) {
     List<IResolvable> ret = new ArrayList<>();
     for (IResolvable res : graph.vertexSet()) {
       if (graph.outgoingEdgesOf(res).size() == 0) {
@@ -297,7 +328,7 @@ public class DataflowBuilder<T extends IArtifact> {
   }
 
   public DataflowBuilder<T> withResolvable(IResolvable resolvable) {
-    dependencyGraph.addVertex(resolvable);
+    resolutionGraph.addVertex(resolvable);
     return this;
   }
 

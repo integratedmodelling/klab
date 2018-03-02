@@ -18,10 +18,11 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 
-public abstract class Observation implements IObservation {
+public abstract class Observation extends Artifact implements IObservation {
 
   private static final long      serialVersionUID = -7645502752899232235L;
 
@@ -166,19 +167,7 @@ public abstract class Observation implements IObservation {
   public void setNamespace(INamespace namespace) {
    this.namespace = (Namespace) namespace;
   }
-
-  @Override
-  public boolean hasNext() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public IObservation next() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  
   // Provenance (from IArtifact's contract)
   
   @Override

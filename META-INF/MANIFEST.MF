@@ -233,7 +233,11 @@ Bundle-ClassPath: target/dependency/antlr-runtime-3.2.jar,
  target/dependency/spring-webmvc-4.3.4.RELEASE.jar,
  target/dependency/tomcat-embed-core-8.5.6.jar,
  target/dependency/tomcat-embed-el-8.5.6.jar,
- target/dependency/tomcat-embed-websocket-8.5.6.jar
+ target/dependency/tomcat-embed-websocket-8.5.6.jar,
+ target/dependency/jgraph-5.13.0.0.jar,
+ target/dependency/jgrapht-ext-1.1.0.jar,
+ target/dependency/jgrapht-io-1.1.0.jar,
+ target/dependency/jgraphx-2.0.0.1.jar
 Require-Bundle: org.integratedmodelling.kim;bundle-version="0.10.0",
  org.integratedmodelling.kdl;bundle-version="0.10.0",
  org.eclipse.xtext.testing,

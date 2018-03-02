@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.geospace.services;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -25,12 +24,6 @@ public class TerrainService implements IStateResolver {
     public void setRuntimeContext(IActuator actuator, IArtifact provenance, IMonitor monitor) {
         // TODO Auto-generated method stub
         
-    }
-
-    @Override
-    public IState createObservation(IScale scale) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

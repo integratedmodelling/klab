@@ -22,8 +22,7 @@ public class Process extends DirectObservation implements IProcess {
 
     @Override
     public Process next() {
-      // TODO Auto-generated method stub
-      return null;
+      return (Process)getNext();
     }
     
 }

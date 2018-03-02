@@ -52,6 +52,10 @@ annotation test for observers
 	text input name 
 		"A name for this test. If given, the test logs will include it." 
 
+	optional input repeat
+		"Repeat the test the indicated number of times. Default is 1. Used to catch non-deterministic conditions."
+		default 1
+
 	optional input save 
 		"If given with a value of true, the result context will be saved in a directory
          with the test name, or a random name if a name is not given." 

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgraph-5.13.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgrapht-ext-1.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgrapht-io-1.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jgraphx-2.0.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/gt-api-19-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/gt-data-19-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/gt-epsg-extension-19-SNAPSHOT.jar"/>
@@ -142,7 +146,6 @@
 	<classpathentry exported="true" kind="lib" path="target/dependency/jboss-logging-3.2.1.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jcl-over-slf4j-1.7.21.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jdom2-2.0.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="target/dependency/jgrapht-core-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jgridshift-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jgroups-3.6.8.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/joda-time-2.3.jar"/>
@@ -189,5 +192,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="target/dependency/groovy-all-2.5.0-beta-2.jar"/>
+	<classpathentry kind="lib" path="target/dependency/jgrapht-core-1.1.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

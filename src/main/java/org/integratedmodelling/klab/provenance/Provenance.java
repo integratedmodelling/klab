@@ -15,6 +15,11 @@ public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implem
 
   Subject root;
   
+  /**
+   * TODO this should also take the agent and activity that created the initial subject.
+   * 
+   * @param root
+   */
   public Provenance(Subject root) {
     super(Activity.class);
     this.root = root;

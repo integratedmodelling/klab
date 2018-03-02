@@ -465,7 +465,7 @@ public class Engine extends Server implements IEngine {
   public ExecutorService getScriptExecutor() {
     if (scriptExecutor == null) {
       // TODO condition both the type and the parameters of the executor to options
-      scriptExecutor = Executors.newFixedThreadPool(10);
+      scriptExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getScriptThreadCount());
     }
     return scriptExecutor;
   }
@@ -478,7 +478,7 @@ public class Engine extends Server implements IEngine {
   public ExecutorService getTaskExecutor() {
     if (taskExecutor == null) {
       // TODO condition both the type and the parameters of the executor to options
-      taskExecutor = Executors.newFixedThreadPool(30);
+      taskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getTaskThreadCount());
     }
     return taskExecutor;
   }

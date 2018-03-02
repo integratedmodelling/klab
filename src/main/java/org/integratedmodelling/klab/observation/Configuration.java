@@ -13,4 +13,9 @@ public class Configuration extends CountableObservation implements IConfiguratio
 
     private static final long serialVersionUID = -7911688766542253051L;
 
+    @Override
+    public Configuration next() {
+      return (Configuration)getNext();
+    }
+
 }

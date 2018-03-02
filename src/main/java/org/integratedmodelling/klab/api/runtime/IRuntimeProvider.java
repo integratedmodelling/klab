@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.concurrent.Future;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -10,22 +9,25 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IRuntimeProvider {
 
   /**
-   * The main executor for a k.LAB dataflow.
+   * The main executor for a k.LAB dataflow. Each call returns a new Future that has been started.
    * 
    * @param actuator
    * @param context
-   * @return
-   * @throws KlabException 
+   * @param monitor
+   * @return a future that is computing the final artifact for the actuator.
+   * @throws KlabException
    */
-  Future<IArtifact> compute(IActuator actuator, IRuntimeContext context, IMonitor monitor) throws KlabException;
-  
+  Future<IArtifact> compute(IActuator actuator, IRuntimeContext context, IMonitor monitor)
+      throws KlabException;
+
   /**
-   * Create a suitable runtime context for the passed root subject.
+   * Create an empty runtime context for the dataflow that will build the context subject.
    * 
    * @param rootSubject
-   * @return
+   * @return a new runtime context.
    */
-  IRuntimeContext createRuntimeContext(ISubject rootSubject);
+  IRuntimeContext createRuntimeContext();
+
 
   /**
    * Mandatory ID of the execution function for k.IM expression code.

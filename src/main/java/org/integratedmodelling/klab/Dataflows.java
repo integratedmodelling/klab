@@ -88,7 +88,7 @@ public enum Dataflows implements IDataflowService {
       }
 
       for (Link link : ((ResolutionScope)scope).getLinks()) {
-        builder = builder.withDependency(link.getTarget().getResolvable(),
+        builder = builder.withResolution(link.getTarget().getResolvable(),
             link.getSource().getResolvable(), link.getTarget());
       }
 

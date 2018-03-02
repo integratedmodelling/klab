@@ -89,7 +89,20 @@ public class Actuator<T extends IArtifact> implements IActuator {
           this.getNamespace(), monitor, context);
     }
 
+    for (IServiceCall service : computationStrategy) {
+      // invoke service, set ret to top of stack
+    }
+    for (IServiceCall service : mediationStrategy) {
+      // invoke service
+    }
+
     return ret;
+  }
+
+  public String toString() {
+    return "<" + getName()
+        + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
+        + (computationStrategy.size() + mediationStrategy.size()) + "]>";
   }
 
   /**
@@ -103,7 +116,8 @@ public class Actuator<T extends IArtifact> implements IActuator {
     // TODO near-identical, combine
     if (reference) {
       String ofs = StringUtils.repeat(" ", offset);
-      String ret = ofs + "import " + type.name().toLowerCase() + " " + getName() + encodeBody(offset, ofs);
+      String ret =
+          ofs + "import " + type.name().toLowerCase() + " " + getName() + encodeBody(offset, ofs);
       return ret;
     }
 

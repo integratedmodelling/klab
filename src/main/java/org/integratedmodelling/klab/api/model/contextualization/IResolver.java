@@ -7,8 +7,8 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 
 /**
- * A Resolver is a {@link IContextualizer} that <i>explains</i> an observation by ensuring that it
- * conforms to its definition.
+ * A Resolver is a {@link IContextualizer} that <i>explains</i> an existing observation by ensuring
+ * that it conforms to its definition.
  * 
  * @author ferdinando.villa
  * @param <T> the observation type resolved

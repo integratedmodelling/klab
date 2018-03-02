@@ -68,16 +68,15 @@ public class State extends Observation implements IState {
     // TODO Auto-generated method stub
     return null;
   }
-
-  @Override
-  public State next() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  
   public void setValue(Object value, long offset) {
     // TODO create storage lazily if not there; if observable is numeric and value is a
     // distribution, set up for
     // that or promote to probabilistic.
+  }
+
+  @Override
+  public State next() {
+    return (State)getNext();
   }
 }

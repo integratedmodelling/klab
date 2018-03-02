@@ -14,9 +14,9 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.RuntimeContext;
 
 public class Subject extends CountableObservation implements ISubject {
 
@@ -116,10 +116,13 @@ public class Subject extends CountableObservation implements ISubject {
   public RuntimeContext getRuntimeContext() {
     return runtimeContext;
   }
-  
+
+  public void setRuntimeContext(RuntimeContext runtimeContext) {
+    this.runtimeContext = runtimeContext;
+  }
+
   @Override
   public Subject next() {
-    // TODO Auto-generated method stub
-    return null;
+    return (Subject)getNext();
   }
 }

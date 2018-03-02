@@ -21,4 +21,10 @@ public interface IRuntimeContext {
   
   ISubject getRoot();
   
+  /*
+   * Must be exposed for a runtime provider to be able to set the root subject.
+   * @param subject
+   */
+  void setRootSubject(ISubject subject);
+  
 }

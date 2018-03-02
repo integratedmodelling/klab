@@ -35,7 +35,7 @@ public class Relationship extends CountableObservation implements IRelationship 
 
   @Override
   public Relationship next() {
-    // TODO Auto-generated method stub
-    return null;
+    return (Relationship)getNext();
   }
+
 }

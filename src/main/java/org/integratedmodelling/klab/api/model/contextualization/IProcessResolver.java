@@ -19,6 +19,4 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public interface IProcessResolver extends IResolver<IProcess> {
 
-  IProcess createObservation(IScale scale);
-
 }

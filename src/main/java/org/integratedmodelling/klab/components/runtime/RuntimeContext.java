@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.resolution;
+package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
 import org.integratedmodelling.klab.Klab;
@@ -36,14 +36,28 @@ public class RuntimeContext implements IRuntimeContext {
   IRuntimeProvider                     runtimeProvider;
   DirectedGraph<ISubject, IRelationship> structure;
 
-  public RuntimeContext(Subject subject) {
-    this.subject = subject;
+  /**
+   * Create a runtime context for a computation that hasn't yet defined
+   * a context subject. 
+   */
+  public RuntimeContext() {
     this.storageProvider = Klab.INSTANCE.getStorageProvider();
     this.runtimeProvider = Klab.INSTANCE.getRuntimeProvider();
-    this.eventBus = new EventBus(subject);
     this.structure = new DefaultDirectedGraph<>(Relationship.class);
-    this.configurationDetector = new ConfigurationDetector(subject, structure);
-    this.provenance = new Provenance(subject);
+  }
+  
+  /**
+   * Set the root subject for the context, initializing the provenance and
+   * the 
+   * @param subject
+   */
+  public void setRootSubject(ISubject subject) {
+    ((Subject)subject).setRuntimeContext(this);
+    this.subject = (Subject) subject;
+    this.eventBus = new EventBus((Subject) subject);
+    this.configurationDetector = new ConfigurationDetector((Subject) subject, structure);
+    this.provenance = new Provenance((Subject) subject);
+    this.structure.addVertex(subject);
   }
 
   @Override

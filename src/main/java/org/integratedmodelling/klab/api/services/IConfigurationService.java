@@ -211,4 +211,10 @@ public interface IConfigurationService {
      */
     boolean isDebuggingEnabled();
 
+    int getDataflowThreadCount();
+
+    int getTaskThreadCount();
+
+    int getScriptThreadCount();
+
 }

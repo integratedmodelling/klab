@@ -1,12 +1,18 @@
 package org.integratedmodelling.klab.dataflow;
 
+import java.util.concurrent.ExecutionException;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IRuntimeContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.DirectObservation;
+import org.integratedmodelling.klab.observation.Subject;
+import org.integratedmodelling.klab.provenance.Artifact;
 
 public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataflow<T> {
 
@@ -18,36 +24,39 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   private DirectObservation context;
   private double            coverage;
 
+  @SuppressWarnings("unchecked")
   @Override
   public T run(IMonitor monitor) throws KlabException {
 
     /*
-     * 1. establish context. Get the runtime and storage provider. If we have a runtime context,
-     * take those from it, otherwise make one.
+     * 1. establish the computation context: if we have a runtime context, take it from it,
+     * otherwise make one.
      */
+    IRuntimeContext ctx =
+        context == null ? Klab.INSTANCE.getRuntimeProvider().createRuntimeContext()
+            : ((Subject) context).getRoot().getRuntimeContext();
 
     /*
-     * 2. Children at the dataflow level can run in parallel so have the runtime create futures for
-     * each child.
+     * 2. Children at the dataflow level run in parallel, so have the runtime start futures for each
+     * child and chain the results when they come.
      */
-
-    // TODO use futures and compute all children in parallel; chain resulting artifacts. Not really
-    // important at the moment.
-    T ret = null;
-
+    IArtifact ret = null;
     for (IActuator actuator : actuators) {
-      // TODO this is the top-level execution so it should order by dependency and run the children
-      // appropriately.
-      Object o = ((Actuator<?>) actuator).compute(context, monitor);
-      if (o != null) {
+      try {
+        IArtifact artifact =
+            Klab.INSTANCE.getRuntimeProvider().compute(actuator, ctx, monitor).get();
         if (ret == null) {
-          ret = (T) o;
+          ret = artifact;
         } else {
-          // chain it
+          ((Artifact) ret).chain(ret);
         }
+      } catch (InterruptedException e) {
+        return null;
+      } catch (ExecutionException e) {
+        throw new KlabContextualizationException(e);
       }
     }
-    return ret;
+    return (T) ret;
   }
 
   @Override

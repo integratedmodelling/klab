@@ -190,7 +190,7 @@ public class RankedModel extends Model implements IRankedModel {
     }
 
     public String toString() {
-        return getDelegate().toString() + "\n\n" + describeRanks();
+        return getDelegate().toString()/* + "\n\n" + describeRanks()*/;
     }
 
     @Override
