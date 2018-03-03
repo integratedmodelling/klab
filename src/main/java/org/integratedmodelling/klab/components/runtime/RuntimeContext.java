@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.Collection;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -14,7 +13,7 @@ import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.observation.Relationship;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.provenance.Provenance;
-import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
@@ -28,31 +27,19 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  */
 public class RuntimeContext implements IRuntimeContext {
 
-  Subject                              subject;
-  Provenance                           provenance;
-  EventBus                             eventBus;
-  ConfigurationDetector                configurationDetector;
-  IStorageProvider                     storageProvider;
-  IRuntimeProvider                     runtimeProvider;
-  DirectedGraph<ISubject, IRelationship> structure;
+  Subject subject;
+  Provenance provenance;
+  EventBus eventBus;
+  ConfigurationDetector configurationDetector;
+  Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
 
   /**
-   * Create a runtime context for a computation that hasn't yet defined
-   * a context subject. 
-   */
-  public RuntimeContext() {
-    this.storageProvider = Klab.INSTANCE.getStorageProvider();
-    this.runtimeProvider = Klab.INSTANCE.getRuntimeProvider();
-    this.structure = new DefaultDirectedGraph<>(Relationship.class);
-  }
-  
-  /**
-   * Set the root subject for the context, initializing the provenance and
-   * the 
+   * Set the root subject for the context, initializing the provenance and the
+   * 
    * @param subject
    */
   public void setRootSubject(ISubject subject) {
-    ((Subject)subject).setRuntimeContext(this);
+    ((Subject) subject).setRuntimeContext(this);
     this.subject = (Subject) subject;
     this.eventBus = new EventBus((Subject) subject);
     this.configurationDetector = new ConfigurationDetector((Subject) subject, structure);
@@ -94,7 +81,7 @@ public class RuntimeContext implements IRuntimeContext {
   public ISubject getRoot() {
     return subject;
   }
-  
+
   public void exportStructure(String outFile) {
     // TODO export a GEFX file
   }

@@ -27,6 +27,12 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 
 /**
  * This component provides the default dataflow execution runtime and the associated services.
+ * Simply dispatches a topologically sorted computation to a threadpool executor. The JGraphT-based
+ * topological order built does not account for possible parallel actuators, which it should.
+ * 
+ * Besides this, the dataflow only supports a single, fixed computational model.
+ * 
+ * TODO use a parallelizing sort and use a CompletableFuture for parallel tasks.
  * 
  * @author Ferd
  *
@@ -34,8 +40,9 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 @Component(id = "runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
-  ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
-  
+  ExecutorService executor =
+      Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
+
   @Override
   public Future<IArtifact> compute(IActuator actuator, IRuntimeContext context, IMonitor monitor)
       throws KlabException {
@@ -45,20 +52,21 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       @Override
       public IArtifact call() throws Exception {
         Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
-        TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph);
+        TopologicalOrderIterator<IActuator, DefaultEdge> sorter =
+            new TopologicalOrderIterator<>(graph);
         IArtifact ret = null;
         while (sorter.hasNext()) {
           @SuppressWarnings("unchecked")
           Actuator<IArtifact> active = (Actuator<IArtifact>) sorter.next();
-          ret = active.compute((DirectObservation) context.getRoot(), monitor);
+          ret = active.compute((DirectObservation) context.getRoot(), context, monitor);
           if (context.getRoot() == null && ret instanceof ISubject) {
-            context.setRootSubject((ISubject)ret);
+            context.setRootSubject((ISubject) ret);
           }
         }
         return ret;
       }
     });
-    
+
   }
 
   private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
@@ -76,24 +84,32 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
     graph.addVertex(actuator);
     catalog.put(actuator.getName(), actuator);
-    
+
     for (IActuator a : actuator.getActuators()) {
-      if (((Actuator<?>)a).isReference()) {
+      if (((Actuator<?>) a).isReference()) {
         IActuator ref = catalog.get(a.getName());
         if (ref == null) {
           throw new KlabIllegalStatusException("referenced actuator not found");
         }
         graph.addEdge(ref, actuator);
       } else {
+        /*
+         * containment is a dependency only if there is a computation or mediation; otherwise
+         * children are computable in parallel - which this implementation does not support.
+         */
+        if (!actuator.getComputation().isEmpty()) {
+          graph.addVertex(a);
+          graph.addEdge(a, actuator);
+        }
         insertActuator(a, graph, catalog);
       }
     }
-    
+
   }
 
   @Override
   public IRuntimeContext createRuntimeContext() {
     return new RuntimeContext();
   }
-  
+
 }

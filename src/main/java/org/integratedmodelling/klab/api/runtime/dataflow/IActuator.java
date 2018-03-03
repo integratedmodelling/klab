@@ -1,11 +1,17 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import java.util.List;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 /**
- * Each node in a dataflow is an actuator. Some actuators may be references, in which case the
- * original actuator will always come before them.
+ * Each node in a dataflow is an actuator. Compared to other workflow systems (e.g. Ptolemy), an
+ * actuator is a composite actor; the individual actors are represented by k.LAB
+ * {@link IServiceCall}s.
+ * 
+ * Some actuators may be references, corresponding to "input ports" in other workflow systems. In a
+ * k.LAB computation, references are always resolved and the implementing which case the original
+ * actuator will always be serialized before any references to it.
  * 
  * @author ferdinando.villa
  *
@@ -48,4 +54,12 @@ public interface IActuator {
    *         specifically given will return a non-empty scale.
    */
   IScale getScale();
+
+  /**
+   * Return the list of all computations in this actuator, or an empty list. Should always be empty
+   * if the actuator is a reference to another.
+   * 
+   * @return all computations. Never null, possibly empty.
+   */
+  List<IServiceCall> getComputation();
 }

@@ -4,11 +4,11 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.observation.Subject;
-import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 
 public class ConfigurationDetector implements IConfigurationDetector {
 
-  public ConfigurationDetector(Subject subject, DirectedGraph<ISubject, IRelationship> structure) {
+  public ConfigurationDetector(Subject subject, Graph<ISubject, IRelationship> structure) {
     // TODO Auto-generated constructor stub
   }
 
