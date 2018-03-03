@@ -9,7 +9,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IRuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -81,7 +81,7 @@ public class Actuator<T extends IArtifact> implements IActuator {
    * @throws KlabException
    */
   @SuppressWarnings("unchecked")
-  public T compute(DirectObservation context, IRuntimeContext runtimeContext, IMonitor monitor) throws KlabException {
+  public T compute(DirectObservation context, IComputationContext runtimeContext, IMonitor monitor) throws KlabException {
 
     /*
      * 1. if we don't have a symbol table, make one and remap the outer symbols to 

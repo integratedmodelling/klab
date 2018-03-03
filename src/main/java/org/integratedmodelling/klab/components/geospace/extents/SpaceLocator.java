@@ -125,7 +125,7 @@ public class SpaceLocator extends AbstractLocator {
     }
 
     @Override
-    public IConcept getDomainConcept() {
+    public IConcept getExtent() {
         return Concepts.c(NS.SPACE_DOMAIN);
     }
 

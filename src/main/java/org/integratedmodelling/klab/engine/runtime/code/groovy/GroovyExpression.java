@@ -129,7 +129,7 @@ public class GroovyExpression extends Expression {
    * @param code
    * @param model
    */
-  public GroovyExpression(String code, IModel model) {
+  GroovyExpression(String code, IModel model) {
 
     ImportCustomizer customizer = new ImportCustomizer();
     for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
@@ -145,7 +145,7 @@ public class GroovyExpression extends Expression {
     initialize(inputs, null);
   }
 
-  public GroovyExpression(String code, INamespace namespace, Set<IConcept> domain) {
+  GroovyExpression(String code, INamespace namespace, Set<IConcept> domain) {
 
     ImportCustomizer customizer = new ImportCustomizer();
     for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
@@ -158,7 +158,7 @@ public class GroovyExpression extends Expression {
     this.domain.addAll(domain);
   }
 
-  public GroovyExpression(String code) {
+  GroovyExpression(String code) {
 
     ImportCustomizer customizer = new ImportCustomizer();
     for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {

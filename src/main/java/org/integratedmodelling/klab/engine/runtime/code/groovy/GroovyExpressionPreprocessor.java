@@ -111,7 +111,6 @@ public class GroovyExpressionPreprocessor {
       lastSigTokenType = GroovyLexer.NUM_INT;
       return t;
     }
-
   }
 
   /*

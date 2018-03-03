@@ -1,10 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import javax.annotation.Nullable;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.data.raw.IRawObservation;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
  * A Resolver is a {@link IContextualizer} that <i>explains</i> an existing observation by ensuring
@@ -14,20 +11,16 @@ import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
  * @param <T> the observation type resolved
  *
  */
-public abstract interface IResolver<T extends IObservation> extends IContextualizer {
+public abstract interface IResolver<T extends IRawObservation> extends IContextualizer {
 
   /**
    * Called at each relevant extent location for the scale and the geometry of the observation being
-   * resolved. A {@link IState} resolver will call
-   * {@link #resolve(IObservation, IDirectObservation, Locator)} at each extent (so potentially
-   * multiple times per transition}, while any direct observation will only call it once at
-   * initialization and once per transition.
+   * resolved.
    * 
    * @param observation the observation being resolved.
-   * @param context the observation that provides the context for the one being resolved. It will be
-   *        null when that observation is the root context.
-   * @param locator defines the position on the observation's scale.
+   * @param context the runtime context of the computation.
+   * @return the final observation - either the same passed or a new one if mediation was necessary.
    */
-  void resolve(T observation, @Nullable IDirectObservation context, Locator locator);
+  T resolve(T observation, IComputationContext context);
 
 }

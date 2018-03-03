@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -19,22 +18,24 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
-import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpression;
+import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyProcessor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -175,9 +176,17 @@ public enum Extensions implements IExtensionService {
         return ret;
     }
     
-    public IExpression compileExpression(String expressionCode, String language) {
-        // TODO find a language adapter and use it
-        return new GroovyExpression(expressionCode);
+    public IExpression compileExpression(String expressionCode, String language) throws KlabValidationException {
+        return getLanguageProcessor(language).compile(expressionCode, null);
     }
 
+    public IExpression compileExpression(String expressionCode, IComputationContext context, String language) throws KlabValidationException {
+      return getLanguageProcessor(language).compile(expressionCode, context);
+    }
+    
+    public ILanguageProcessor getLanguageProcessor(String language) {
+      // TODO
+      return (language == null || language.equals("groovy")) ? GroovyProcessor.INSTANCE : null;
+    }
+    
 }

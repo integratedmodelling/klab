@@ -41,6 +41,8 @@ public interface IExpression {
   /**
    * A context is always passed to exec(), although some or all of its members may be null.
    * 
+   * FIXME probably not necessary having IComputationContext for expression services.
+   * 
    * @author Ferd
    *
    */

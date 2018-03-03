@@ -920,7 +920,7 @@ public class Scale implements IScale {
     }
 
     @Override
-    public IConcept getDomainConcept() {
+    public IConcept getExtent() {
       return extent.getDomainConcept();
     }
 
@@ -934,6 +934,11 @@ public class Scale implements IScale {
     @Override
     public boolean isActive(int offset) {
       return extent.isCovered(offset);
+    }
+
+    @Override
+    public boolean isScalar() {
+      return size() == 1;
     }
   }
 

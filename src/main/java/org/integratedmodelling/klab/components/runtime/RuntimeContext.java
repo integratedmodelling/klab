@@ -1,15 +1,17 @@
 package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.data.IStorageProvider;
+import org.integratedmodelling.klab.api.data.raw.IRawObservation;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.IRuntimeContext;
-import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.observation.Relationship;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -27,6 +29,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  */
 public class RuntimeContext implements IRuntimeContext {
 
+  Namespace namespace;
   Subject subject;
   Provenance provenance;
   EventBus eventBus;
@@ -78,12 +81,40 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public ISubject getRoot() {
+  public ISubject getSubject() {
     return subject;
   }
 
+  /*
+   * TODO this should be API but not the public API - an internal extended API for the engine. Same for
+   * recontextualizing methods
+   */
   public void exportStructure(String outFile) {
     // TODO export a GEFX file
+  }
+
+  @Override
+  public INamespace getNamespace() {
+    // TODO Auto-generated method stub
+    return namespace;
+  }
+
+  @Override
+  public IRuntimeContext localize(IActuator executor) {
+    // TODO Auto-generated method stub
+    return this;
+  }
+
+  @Override
+  public Collection<IObservable> getKnownObservables() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IRawObservation get(String localName) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

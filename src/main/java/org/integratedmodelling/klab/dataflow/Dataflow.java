@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IRuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -32,7 +32,7 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
      * 1. establish the computation context: if we have a runtime context, take it from it,
      * otherwise make one.
      */
-    IRuntimeContext ctx =
+    IComputationContext ctx =
         context == null ? Klab.INSTANCE.getRuntimeProvider().createRuntimeContext()
             : ((Subject) context).getRoot().getRuntimeContext();
 

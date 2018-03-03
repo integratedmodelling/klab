@@ -1,11 +1,15 @@
 package org.integratedmodelling.klab.api.data.raw;
 
-import java.util.Map;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
+/**
+ * 
+ * @author Ferd
+ *
+ */
+public interface IRawObject extends IRawObservation {
 
-public interface IRawObject {
-    
-    Map<String, IRawObservation> getObservations();
+  IRawObject next();
 
-    IMetadata getMetadata();
+  String getName();
+
+  IRawObservation get(String name);
 }

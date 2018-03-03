@@ -17,7 +17,7 @@ public interface IRuntimeProvider {
    * @return a future that is computing the final artifact for the actuator.
    * @throws KlabException
    */
-  Future<IArtifact> compute(IActuator actuator, IRuntimeContext context, IMonitor monitor)
+  Future<IArtifact> compute(IActuator actuator, IComputationContext context, IMonitor monitor)
       throws KlabException;
 
   /**
@@ -26,7 +26,7 @@ public interface IRuntimeProvider {
    * @param rootSubject
    * @return a new runtime context.
    */
-  IRuntimeContext createRuntimeContext();
+  IComputationContext createRuntimeContext();
 
 
   /**

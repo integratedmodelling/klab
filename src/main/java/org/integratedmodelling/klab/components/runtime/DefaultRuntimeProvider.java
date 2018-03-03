@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.IRuntimeContext;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -44,25 +44,31 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
   @Override
-  public Future<IArtifact> compute(IActuator actuator, IRuntimeContext context, IMonitor monitor)
-      throws KlabException {
+  public Future<IArtifact> compute(IActuator actuator, IComputationContext context,
+      IMonitor monitor) throws KlabException {
 
     return executor.submit(new Callable<IArtifact>() {
 
       @Override
       public IArtifact call() throws Exception {
+        
         Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
         TopologicalOrderIterator<IActuator, DefaultEdge> sorter =
             new TopologicalOrderIterator<>(graph);
         IArtifact ret = null;
+        
         while (sorter.hasNext()) {
           @SuppressWarnings("unchecked")
           Actuator<IArtifact> active = (Actuator<IArtifact>) sorter.next();
-          ret = active.compute((DirectObservation) context.getRoot(), context, monitor);
-          if (context.getRoot() == null && ret instanceof ISubject) {
-            context.setRootSubject((ISubject) ret);
+          
+          ret = active.compute((DirectObservation) context.getSubject(),
+              ((RuntimeContext) context).localize(active), monitor);
+          
+          if (context.getSubject() == null && ret instanceof ISubject) {
+            ((RuntimeContext) context).setRootSubject((ISubject) ret);
           }
         }
+        
         return ret;
       }
     });
@@ -108,7 +114,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IRuntimeContext createRuntimeContext() {
+  public IComputationContext createRuntimeContext() {
     return new RuntimeContext();
   }
 

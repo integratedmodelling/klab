@@ -68,7 +68,7 @@ public class Transition extends Scale implements ITransition {
   }
 
   @Override
-  public IConcept getDomainConcept() {
+  public IConcept getExtent() {
     // TODO Auto-generated method stub
     return null;
   }

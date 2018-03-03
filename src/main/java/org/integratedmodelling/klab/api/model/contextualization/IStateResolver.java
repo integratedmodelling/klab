@@ -1,13 +1,19 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
- * The resolver for a {@link IState}.
+ * The resolver for a {@link IState} when the state must be resolved in a point-by-point
+ * fashion.
  * 
  * @author ferdinando.villa
  *
  */
-public interface IStateResolver extends IResolver<IState> {
-  
+public interface IStateResolver extends IContextualizer {
+
+  IStorage<?> resolve(IStorage<?> observation, IComputationContext context, Locator locator);
+
 }
