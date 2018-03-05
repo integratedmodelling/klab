@@ -42,7 +42,7 @@ public class Individual implements IIndividual {
     /**
      * This constructor is the only one that should be used from the API.
      * 
-     * @param observable
+     * @param semantics
      * @param context
      */
     Individual(OWLIndividual individual, IObservation context, IOntology ontology) {

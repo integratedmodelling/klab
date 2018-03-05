@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import java.util.List;
-import org.integratedmodelling.klab.api.data.raw.IRawObject;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  *
  * @param <T>
  */
-public interface IInstantiator<T extends IRawObject> extends IContextualizer {
+public interface IInstantiator<T extends IObjectData> extends IContextualizer {
 
   /**
    * Instantiate and return the target observations in the passed context. Those observations will

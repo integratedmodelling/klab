@@ -58,17 +58,18 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
   List<IObservable> getObservables();
 
   /**
-   * If the model is a semantic annotation for a resource, such as a value, service or URN, return
-   * the correspondent resolved resource. This operation implies resolution of the resource
-   * (retrieval of metadata) but not fetching (retrieval of data). It should be implemented to be as
-   * fast as possible, using sensible caching if necessary.
+   * If the model is a semantic annotation for a resource, such as a value, service or URN, return the
+   * resources as computables for later resolution. These include anything described directly (model
+   * resource as ...) and any others given in the 'using' statement. Since 0.10.0 resources may be
+   * multiple, be identified by aliases, and cross-reference each other in computation. 
    * 
    * The resource also contains any metadata for created objects, such as their name, no-data values
-   * etc.
+   * etc. Resources given in the 'using' clause may have requirements (stated syntactically as alias
+   * names); all need to be fully resolved within the model by dependencies or other resources.
    * 
-   * @return the resource that this model provides semantics for, if any.
+   * @return the resources that this model provides semantics for. Possibly empty, never null.
    */
-  Optional<IResource> getResource();
+  List<IComputable> getResources();
 
   /**
    * The asserted semantics for any observation needed in order to produce observations of the
@@ -159,15 +160,15 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
    */
   IMetadata getMetadata();
 
-  /**
-   * If there is a contextualizer clause ('using') and it is not used simply as an alias for a
-   * primary resource (in which case it will be returned by {@link #getResource()}, return it here.
-   * Having a resource here usually means a post-processing call, classification, lookup table or
-   * URN.
-   * 
-   * @return the post-processor resource, if any.
-   */
-  Optional<IResource> getContextualizerResource();
+//  /**
+//   * If there is a contextualizer clause ('using') and it is not used simply as an alias for a
+//   * primary resource (in which case it will be returned by {@link #getResource()}, return it here.
+//   * Having a resource here usually means a post-processing call, classification, lookup table or
+//   * URN.
+//   * 
+//   * @return the post-processor resource, if any.
+//   */
+//  Optional<IResource> getContextualizerResource();
 
   /**
    * If true, the model or the namespace containing it have been declared private, and only models

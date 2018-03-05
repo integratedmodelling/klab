@@ -1,21 +1,13 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.data.AbstractObservationData;
 
-public class BooleanStorage implements IStorage<Boolean> {
+public class BooleanStorage extends AbstractObservationData implements IStorage<Boolean> {
 
   public BooleanStorage() {
     // TODO Auto-generated constructor stub
-  }
-
-  @Override
-  public IGeometry getGeometry() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override
@@ -42,16 +34,5 @@ public class BooleanStorage implements IStorage<Boolean> {
     return 0;
   }
 
-  @Override
-  public IObservable getSemantics() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IMetadata getMetadata() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 
 }

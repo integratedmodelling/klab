@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.api.data.raw.IRawObservation;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
@@ -37,7 +37,7 @@ public interface IRuntimeContext extends IComputationContext {
    * @param localName
    * @return
    */
-  IRawObservation get(String localName);
+  IObservationData get(String localName);
 
   /**
    * 

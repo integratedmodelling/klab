@@ -6,6 +6,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
@@ -40,6 +42,22 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 @Component(id = "runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
+  /**
+   * Mandatory ID of the execution function for k.IM expression code.
+   */
+  static final public String EXECUTE_FUNCTION_ID                           = "klab.runtime.exec";
+  static final public String EXECUTE_FUNCTION_PARAMETER_CODE               = "code";
+  static final public String EXECUTE_FUNCTION_PARAMETER_LANGUAGE           = "language";
+  static final public String EXECUTE_FUNCTION_PARAMETER_CONDITION          = "ifcondition";
+  static final public String EXECUTE_FUNCTION_PARAMETER_NEGATIVE_CONDITION = "unlesscondition";
+
+  /**
+   * A service call whose only purpose is to carry a literal. Doesn't even get compiled into KDL
+   * (its source code is the literal itself), so no need for an implementation.
+   */
+  static final public String LITERAL_FUNCTION_ID                           = "klab.runtime.literal";
+
+  
   ExecutorService executor =
       Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
@@ -116,6 +134,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   @Override
   public IComputationContext createRuntimeContext() {
     return new RuntimeContext();
+  }
+
+  @Override
+  public IServiceCall getServiceCall(IComputableResource resource) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

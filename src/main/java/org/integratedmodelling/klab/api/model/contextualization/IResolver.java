@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.klab.api.data.raw.IRawObservation;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  * @param <T> the observation type resolved
  *
  */
-public abstract interface IResolver<T extends IRawObservation> extends IContextualizer {
+public abstract interface IResolver<T extends IObservationData> extends IContextualizer {
 
   /**
    * Called at each relevant extent location for the scale and the geometry of the observation being

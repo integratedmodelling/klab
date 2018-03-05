@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import java.util.List;
-import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 
 /**
@@ -14,6 +14,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
  */
 public interface IComputable {
 
-  List<IServiceCall> getComputation(ITransition transition);
+  List<IComputableResource> getComputation(ITransition transition);
 
 }

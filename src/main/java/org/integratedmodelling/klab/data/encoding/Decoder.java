@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.data.encoding;
 import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
-import org.integratedmodelling.klab.api.data.raw.IRawObject;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 public enum Decoder {
@@ -18,7 +18,7 @@ public enum Decoder {
      * @param data
      * @return
      */
-    IRawObject decode(IKlabData data, IGeometry geometry, @Nullable IConcept semantics) {
+    IObjectData decode(IKlabData data, IGeometry geometry, @Nullable IConcept semantics) {
         return null;
     }
 

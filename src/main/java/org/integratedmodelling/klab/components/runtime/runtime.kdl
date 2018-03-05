@@ -6,17 +6,8 @@
 @version 0.10.0
 @namespace klab.runtime
 
-/**
- * Compile and execute k.IM-specified expressions.
- * 
- * TODO provide and compile different versions (exec.proc, exec.state etc) to use according to
- * context instead of annotating as object.
- * 
- * If the name of this function is changed, the constants in 
- * org.integratedmodelling.klab.engine.runtime.service.Execute must also change.
- */
-object exec
-	"Execute the passed expression"
+contextualizer exec
+	"Return an appropriate contextualizer for an expression."
 {
 	
 	text code
@@ -35,5 +26,27 @@ object exec
 		default "groovy"
 		
 	class org.integratedmodelling.klab.components.runtime.services.Execute
+
+}
+
+contextualizer literal
+	"Return a contextualizer for a literal value"
+{
+	
+	object val
+		"The value to be contextualized"
+				
+	class org.integratedmodelling.klab.components.runtime.services.Literal
+
+}
+
+contextualizer urn
+	"Return a contextualizer for a literal value"
+{
+	
+	text urn
+		"The URN pointing to the resource to be resolved and retrieved"
+				
+	class org.integratedmodelling.klab.components.runtime.services.Urn
 
 }

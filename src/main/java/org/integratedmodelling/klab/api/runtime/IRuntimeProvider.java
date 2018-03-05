@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.concurrent.Future;
+import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -28,20 +30,13 @@ public interface IRuntimeProvider {
    */
   IComputationContext createRuntimeContext();
 
-
   /**
-   * Mandatory ID of the execution function for k.IM expression code.
+   * Get a suitable service call that will turn the passed specification for a resource into a
+   * suitable contextualizer that runs on this runtime.
+   * 
+   * @param resource
+   * @return
    */
-  static final public String EXECUTE_FUNCTION_ID                           = "klab.runtime.exec";
-  static final public String EXECUTE_FUNCTION_PARAMETER_CODE               = "code";
-  static final public String EXECUTE_FUNCTION_PARAMETER_LANGUAGE           = "language";
-  static final public String EXECUTE_FUNCTION_PARAMETER_CONDITION          = "ifcondition";
-  static final public String EXECUTE_FUNCTION_PARAMETER_NEGATIVE_CONDITION = "unlesscondition";
-
-  /**
-   * A service call whose only purpose is to carry a literal. Doesn't even get compiled into KDL
-   * (its source code is the literal itself), so no need for an implementation.
-   */
-  static final public String LITERAL_FUNCTION_ID                           = "klab.literal";
+  IServiceCall getServiceCall(IComputableResource resource);
 
 }

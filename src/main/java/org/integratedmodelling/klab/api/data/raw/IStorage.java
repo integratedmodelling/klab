@@ -4,7 +4,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 
 /**
- * IStorage is a {@link IRawState} that is typed and contains API to be used within a semantic
+ * IStorage is a {@link IStateData} that is typed and contains API to be used within a semantic
  * {@link IState}, so it admits {@link Locator}s as indices for getting and setting values.
  * 
  * TODO use a "dumb" locator linked to IGeometry (which during contextualization becomes a known
@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
  *
  * @param <T>
  */
-public interface IStorage<T> extends IRawState {
+public interface IStorage<T> extends IStateData {
 
   /**
    * Get the n-th object.

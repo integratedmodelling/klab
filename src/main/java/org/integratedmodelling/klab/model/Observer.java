@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -81,8 +82,8 @@ public class Observer extends KimObject implements IObserver {
   }
 
   @Override
-  public List<IServiceCall> getComputation(ITransition transition) {
-    List<IServiceCall> ret = new ArrayList<>();
+  public List<IComputableResource> getComputation(ITransition transition) {
+    List<IComputableResource> ret = new ArrayList<>();
     for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
       for (IAction action : behavior.getActions(trigger)) {
         ret.addAll(action.getComputation(transition));

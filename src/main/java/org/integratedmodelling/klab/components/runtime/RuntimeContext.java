@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.api.data.raw.IRawObservation;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
@@ -112,7 +112,7 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public IRawObservation get(String localName) {
+  public IObservationData get(String localName) {
     // TODO Auto-generated method stub
     return null;
   }
