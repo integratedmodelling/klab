@@ -75,13 +75,5 @@ public abstract class AbstractResource implements IResource {
     public List<INotification> getHistory() {
         return history;
     }
-
-    /**
-     * Return a function call that will produce the correspondent value or 
-     * contextualizer when called through a {@link Dataflow}.
-     * 
-     * @return
-     */
-    public abstract IServiceCall getComputation();
     
 }

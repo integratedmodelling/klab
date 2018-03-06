@@ -17,6 +17,9 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
@@ -42,22 +45,6 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 @Component(id = "runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
-  /**
-   * Mandatory ID of the execution function for k.IM expression code.
-   */
-  static final public String EXECUTE_FUNCTION_ID                           = "klab.runtime.exec";
-  static final public String EXECUTE_FUNCTION_PARAMETER_CODE               = "code";
-  static final public String EXECUTE_FUNCTION_PARAMETER_LANGUAGE           = "language";
-  static final public String EXECUTE_FUNCTION_PARAMETER_CONDITION          = "ifcondition";
-  static final public String EXECUTE_FUNCTION_PARAMETER_NEGATIVE_CONDITION = "unlesscondition";
-
-  /**
-   * A service call whose only purpose is to carry a literal. Doesn't even get compiled into KDL
-   * (its source code is the literal itself), so no need for an implementation.
-   */
-  static final public String LITERAL_FUNCTION_ID                           = "klab.runtime.literal";
-
-  
   ExecutorService executor =
       Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
@@ -69,24 +56,24 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
       @Override
       public IArtifact call() throws Exception {
-        
+
         Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
         TopologicalOrderIterator<IActuator, DefaultEdge> sorter =
             new TopologicalOrderIterator<>(graph);
         IArtifact ret = null;
-        
+
         while (sorter.hasNext()) {
           @SuppressWarnings("unchecked")
           Actuator<IArtifact> active = (Actuator<IArtifact>) sorter.next();
-          
+
           ret = active.compute((DirectObservation) context.getSubject(),
               ((RuntimeContext) context).localize(active), monitor);
-          
+
           if (context.getSubject() == null && ret instanceof ISubject) {
             ((RuntimeContext) context).setRootSubject((ISubject) ret);
           }
         }
-        
+
         return ret;
       }
     });
@@ -128,7 +115,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         insertActuator(a, graph, catalog);
       }
     }
-
   }
 
   @Override
@@ -138,8 +124,31 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
   @Override
   public IServiceCall getServiceCall(IComputableResource resource) {
-    // TODO Auto-generated method stub
-    return null;
+    if (resource.getServiceCall() != null) {
+      return resource.getServiceCall();
+    } else if (resource.getUrn() != null) {
+      return UrnResolver.getServiceCall(resource.getUrn());
+    } else if (resource.getExpression() != null) {
+      return ExpressionResolver.getServiceCall(resource);
+    } else if (resource.getLiteral() != null) {
+      return LiteralStateResolver.getServiceCall(resource.getLiteral());
+    }
+
+    // temp
+    throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
   }
+
+  // from Model, for safekeeping
+  // private IResource createContextualizerResource(IKimContextualization contextualization) {
+  // if (contextualization.getFunction() != null) {
+  // return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
+  // } else if (contextualization.getRemoteUrn() != null) {
+  // return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
+  // }
+  //// TODO the rest - classifications (normal or according to), lookup table etc
+  //// TODO figure out and validate the postprocessor thing
+  //// TODO these may become multiple
+  // return null;
+  // }
 
 }

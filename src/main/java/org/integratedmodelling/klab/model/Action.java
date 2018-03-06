@@ -1,15 +1,16 @@
 package org.integratedmodelling.klab.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimAction.Type;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 
+/*
+ * FIXME at this point there is no need for a model-side Action - could simply use the k.IM peer
+ */
 class Action implements IAction {
 
     IKimAction delegate;

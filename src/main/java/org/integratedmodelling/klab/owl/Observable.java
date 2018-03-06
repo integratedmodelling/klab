@@ -355,7 +355,7 @@ public class Observable extends Concept implements IObservable {
   }
 
   public String toString() {
-    return "[" + getLocalName() + ": " + this.declaration + "]";
+    return "[" + getLocalName() + " = " + this.declaration + "]";
   }
 
   @Override

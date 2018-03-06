@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -13,9 +12,6 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.services.IResourceService;
-import org.integratedmodelling.klab.components.runtime.resources.FunctionResource;
-import org.integratedmodelling.klab.components.runtime.resources.LiteralResource;
-import org.integratedmodelling.klab.components.runtime.resources.UrnResource;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -61,18 +57,18 @@ public enum Resources implements IResourceService {
       id = id.substring(Urns.KLAB_URN_PREFIX.length());
     }
 
-    if (id.startsWith(Urns.LOCAL_BOOLEAN_PREFIX)) {
+/*    if (id.startsWith(Urns.LOCAL_BOOLEAN_PREFIX)) {
 
       Boolean b = Boolean.parseBoolean(
           StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_BOOLEAN_PREFIX.length())));
       ret = getLiteralResource(b);
 
-    } else if (id.startsWith(Urns.LOCAL_FILE_PREFIX)) {
+    } else*/ if (id.startsWith(Urns.LOCAL_FILE_PREFIX)) {
 
-      String text = StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_TEXT_PREFIX.length()));
+      String text = StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_FILE_PREFIX.length()));
       ret = getLocalFileResource(new File(text));
 
-    } else if (id.startsWith(Urns.LOCAL_NUMBER_PREFIX)) {
+    } /*else if (id.startsWith(Urns.LOCAL_NUMBER_PREFIX)) {
 
       Number number = Double.parseDouble(
           StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_NUMBER_PREFIX.length())));
@@ -85,16 +81,12 @@ public enum Resources implements IResourceService {
 
     } else if (id.startsWith(Urns.LOCAL_FUNCTION_PREFIX)) {
 
-    } else {
-
-      ret = getUrnResource(id);
+    } */ else {
+      // TODO
+//      ret = getUrnResource(id);
     }
 
     return ret;
-  }
-
-  public IResource getUrnResource(String id) {
-    return new UrnResource(id);
   }
 
   @Override
@@ -115,17 +107,6 @@ public enum Resources implements IResourceService {
      */
 
     return ret;
-  }
-
-  @Override
-  public IResource getComputedResource(IServiceCall function) {
-    return new FunctionResource(
-        Urns.KLAB_URN_PREFIX + Urns.LOCAL_FUNCTION_PREFIX + function.getName(), function);
-  }
-
-  @Override
-  public IResource getLiteralResource(Object inlineResource) {
-    return new LiteralResource(inlineResource);
   }
 
   /**

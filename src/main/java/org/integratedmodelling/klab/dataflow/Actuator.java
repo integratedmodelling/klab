@@ -187,13 +187,13 @@ public class Actuator<T extends IArtifact> implements IActuator {
                 ret += ((Actuator<?>) actuator).encode(offset + 3) + "\n";
             }
 
-            List<IServiceCall> computation = new ArrayList<>();
-            computation.addAll(getComputationStrategy());
-            computation.addAll(getMediationStrategy());
+            List<IServiceCall> serviceCalls = new ArrayList<>();
+            serviceCalls.addAll(getComputationStrategy());
+            serviceCalls.addAll(getMediationStrategy());
 
-            for (int i = 0; i < computation.size(); i++) {
-                ret += (i == 0 ? (ofs + "   compute ") : ofs + "     ") + computation.get(i).getSourceCode()
-                        + (i < computation.size() - 1 ? "," : "") + "\n";
+            for (int i = 0; i < serviceCalls.size(); i++) {
+                ret += (i == 0 ? (ofs + "   compute ") : ofs + "     ") + serviceCalls.get(i).getSourceCode()
+                        + (i < serviceCalls.size() - 1 ? "," : "") + "\n";
             }
             ret += ofs + "}";
         }

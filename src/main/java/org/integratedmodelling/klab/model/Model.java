@@ -9,9 +9,8 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -71,35 +70,14 @@ public class Model extends KimObject implements IModel {
     }
 
     if (model.getResourceUrn().isPresent()) {
-//      try {
-//        this.resource = Optional.of(Resources.INSTANCE.getResource(model.getResourceUrn().get()));
-//      } catch (KlabUnknownUrnException | KlabUnauthorizedUrnException e) {
-//        monitor.error(e, model);
-//      }
+      this.resources.add(new ComputableResource(model.getResourceUrn().get()));
     } else if (model.getResourceFunction().isPresent()) {
-//      this.resource =
-//          Optional.of(Resources.INSTANCE.getComputedResource(model.getResourceFunction().get()));
+      this.resources.add(new ComputableResource(model.getResourceFunction().get()));
     } else if (model.getInlineValue().isPresent()) {
-//      this.resource =
-//          Optional.of(Resources.INSTANCE.getLiteralResource(model.getInlineValue().get()));
+      this.resources.add(new ComputableResource(model.getInlineValue()));
     }
 
     this.resources.addAll(model.getContextualization());
-//    IResource ctxResource = createContextualizerResource(model.getContextualization());
-//    if (ctxResource != null) {
-//
-//      /*
-//       * if we have a 'using' but no resource before the observable, this becomes the resource
-//       * itself unless it's a post-processor, in which case it will be installed as a contextualizer
-//       * resource.
-//       */
-//      if (this.resource == null && !model.getContextualization().isPostProcessor()) {
-//        this.resource = Optional.of(ctxResource);
-//      } else {
-//        this.contextualizerResource = Optional.of(ctxResource);
-//      }
-//
-//    }
 
     // actions
     this.behavior = new Behavior(model.getBehavior(), this);
@@ -120,32 +98,10 @@ public class Model extends KimObject implements IModel {
     return "[" + getName() + "]";
   }
 
-//  private IResource createContextualizerResource(IKimContextualization contextualization) {
-//    if (contextualization.getFunction() != null) {
-//      return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
-//    } else if (contextualization.getRemoteUrn() != null) {
-//      return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
-//    }
-//    // TODO the rest - classifications (normal or according to), lookup table etc
-//    // TODO figure out and validate the postprocessor thing
-//    // TODO these may become multiple
-//    return null;
-//  }
-
-  // @Override
-  // public Optional<IResource> getContextualizerResource() {
-  // return contextualizerResource;
-  // }
-
   @Override
   public List<IObservable> getObservables() {
     return observables;
   }
-
-  // @Override
-  // public Optional<IResource> getResource() {
-  // return resource;
-  // }
 
   @Override
   public Map<String, IObservable> getAttributeObservables() {
@@ -164,9 +120,13 @@ public class Model extends KimObject implements IModel {
 
   @Override
   public boolean isResolved() {
-    // TODO all resources have no parameters or all parameters are resolved throughy resources with no parameters. 
+    // TODO all resources have no parameters or all parameters are resolved through resources with no parameters.
+    // TODO also check 'change to' status on main observable. And maybe geometry (vs. context? Should we check in context?)
     for (IComputableResource resource : resources) {
-      //
+      // TODO TODO this is a temp fix to make the tests run.
+      if (!resource.getRequiredResourceNames().isEmpty()) {
+        return false;
+      }
     }
     //    if (resource != null) {
 //      return true;
@@ -174,7 +134,8 @@ public class Model extends KimObject implements IModel {
 //    if (contextualizerResource != null) {
 //      return !contextualizerResource.get().getGeometry().isEmpty();
 //    }
-    return false;
+    // TODO temp rationale: empty resource set = pass-through model
+    return !resources.isEmpty();
   }
 
   @Override

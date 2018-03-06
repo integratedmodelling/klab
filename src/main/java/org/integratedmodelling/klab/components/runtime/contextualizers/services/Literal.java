@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.components.runtime.services;
+package org.integratedmodelling.klab.components.runtime.contextualizers.services;
 
 import java.util.Map;
 

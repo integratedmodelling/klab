@@ -25,7 +25,7 @@ contextualizer exec
 		"The language of the expression" 
 		default "groovy"
 		
-	class org.integratedmodelling.klab.components.runtime.services.Execute
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver
 
 }
 
@@ -36,7 +36,7 @@ contextualizer literal
 	object val
 		"The value to be contextualized"
 				
-	class org.integratedmodelling.klab.components.runtime.services.Literal
+	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
 
 }
 
@@ -47,6 +47,6 @@ contextualizer urn
 	text urn
 		"The URN pointing to the resource to be resolved and retrieved"
 				
-	class org.integratedmodelling.klab.components.runtime.services.Urn
+	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
 
 }

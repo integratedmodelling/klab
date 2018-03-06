@@ -14,6 +14,14 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IStateResolver extends IContextualizer {
 
-  IStorage<?> resolve(IStorage<?> observation, IComputationContext context, Locator locator);
+  /**
+   * Return the individual value at the passed locator.
+   * 
+   * @param observation
+   * @param context
+   * @param locator
+   * @return
+   */
+  Object resolve(IStorage<?> observation, IComputationContext context, Locator locator);
 
 }
