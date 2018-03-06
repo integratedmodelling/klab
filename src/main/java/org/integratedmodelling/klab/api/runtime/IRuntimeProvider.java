@@ -13,8 +13,8 @@ public interface IRuntimeProvider {
   /**
    * The main executor for a k.LAB dataflow. Each call returns a new Future that has been started.
    * 
-   * @param actuator
-   * @param context
+   * @param actuator a top-level actuator that has no dependencies on external ones.
+   * @param context an appropriate context for the computation (see {@link #createRuntimeContext()})
    * @param monitor
    * @return a future that is computing the final artifact for the actuator.
    * @throws KlabException
@@ -31,7 +31,7 @@ public interface IRuntimeProvider {
   IComputationContext createRuntimeContext();
 
   /**
-   * Get a suitable service call that will turn the passed specification for a resource into a
+   * Get a service call that, once executed, will turn the passed specification for a resource into a
    * suitable contextualizer that runs on this runtime.
    * 
    * @param resource
