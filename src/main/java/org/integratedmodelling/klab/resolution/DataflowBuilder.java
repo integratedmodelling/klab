@@ -193,7 +193,7 @@ public class DataflowBuilder<T extends IArtifact> {
           generated.add(theModel);
           for (IComputableResource resource : models.iterator().next().model
               .getComputation(Transition.initialization())) {
-            ret.getComputationStrategy().add(Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource));
+            ret.addComputation(resource);
           }
         } else {
           ret.setReference(true);
