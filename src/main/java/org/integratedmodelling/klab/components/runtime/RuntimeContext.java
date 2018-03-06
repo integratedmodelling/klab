@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -35,7 +37,20 @@ public class RuntimeContext implements IRuntimeContext {
   EventBus eventBus;
   ConfigurationDetector configurationDetector;
   Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
-
+  Map<String, IObservationData> catalog = new HashMap<>();
+  
+  public RuntimeContext() {}
+  
+  private RuntimeContext(RuntimeContext context) {
+    this.namespace = context.namespace;
+    this.subject = context.subject;
+    this.provenance = context.provenance;
+    this.eventBus = context.eventBus;
+    this.configurationDetector = context.configurationDetector;
+    this.structure = context.structure;
+    this.catalog.putAll(context.catalog);
+  }
+  
   /**
    * Set the root subject for the context, initializing the provenance and the
    * 
@@ -100,12 +115,6 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public IRuntimeContext localize(IActuator executor) {
-    // TODO Auto-generated method stub
-    return this;
-  }
-
-  @Override
   public Collection<IObservable> getKnownObservables() {
     // TODO Auto-generated method stub
     return null;
@@ -113,8 +122,21 @@ public class RuntimeContext implements IRuntimeContext {
 
   @Override
   public IObservationData get(String localName) {
-    // TODO Auto-generated method stub
-    return null;
+    return catalog.get(localName);
+  }
+
+  @Override
+  public IRuntimeContext copy() {
+    return new RuntimeContext(this);
+  }
+
+  @Override
+  public void rename(String name, String alias) {
+    IObservationData obj = catalog.get(name);
+    if (obj != null) {
+      catalog.remove(name);
+      catalog.put(alias, obj);
+    }
   }
 
 }

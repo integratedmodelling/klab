@@ -62,4 +62,12 @@ public interface IActuator {
    * @return all computations. Never null, possibly empty.
    */
   List<IServiceCall> getComputation();
+
+  /**
+   * If this actuator is aliased to a different name within the containing actuator, return the
+   * alias.
+   * 
+   * @return the alias or null
+   */
+  String getAlias();
 }

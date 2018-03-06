@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Expressio
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.observation.DirectObservation;
@@ -66,8 +67,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
           @SuppressWarnings("unchecked")
           Actuator<IArtifact> active = (Actuator<IArtifact>) sorter.next();
 
-          ret = active.compute((DirectObservation) context.getSubject(),
-              ((RuntimeContext) context).localize(active), monitor);
+          ret = active.compute((DirectObservation) context.getSubject(), (IRuntimeContext) context, monitor);
 
           if (context.getSubject() == null && ret instanceof ISubject) {
             ((RuntimeContext) context).setRootSubject((ISubject) ret);

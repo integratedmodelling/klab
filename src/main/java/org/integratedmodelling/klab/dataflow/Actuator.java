@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.dataflow;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -18,6 +17,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.DirectObservation;
@@ -27,276 +28,290 @@ import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator<T extends IArtifact> implements IActuator {
 
-    protected String              name;
-    private String                alias;
-    private INamespace            namespace;
-    private Observable            observable;
-    private Scale                 scale;
-    private IKdlActuator.Type     type;
-    List<IActuator>               actuators           = new ArrayList<>();
-    IMonitor                      monitor;
-    Date                          creationTime        = new Date();
-    private boolean               createObservation;
-    private boolean               reference;
+  protected String name;
+  private String alias;
+  private INamespace namespace;
+  private Observable observable;
+  private Scale scale;
+  private IKdlActuator.Type type;
+  List<IActuator> actuators = new ArrayList<>();
+  IMonitor monitor;
+  Date creationTime = new Date();
+  private boolean createObservation;
+  private boolean reference;
 
-    /**
-     * The contextualizer chain that implements the computation specified by 
-     * IServiceCalls. These may be first-class resolvers/instantiators
-     * or mediators, in order of execution. Created and populated at
-     * compute().
-     */
-    private List<IContextualizer> computation         = null;
+  /**
+   * The contextualizer chain that implements the computation specified by IServiceCalls. These may
+   * be first-class resolvers/instantiators or mediators, in order of execution. Created and
+   * populated at compute().
+   */
+  private List<IContextualizer> computation = null;
 
-    /**
-     * the specs from which the contextualizers are built: first the computation, then the
-     * mediation. We keep them separated because the compiler needs to rearrange mediators and
-     * references as needed. Then both get executed to produce the final list of contextualizers.
-     */
-    private List<IServiceCall>    computationStrategy = new ArrayList<>();
-    private List<IServiceCall>    mediationStrategy   = new ArrayList<>();
+  /**
+   * the specs from which the contextualizers are built: first the computation, then the mediation.
+   * We keep them separated because the compiler needs to rearrange mediators and references as
+   * needed. Then both get executed to produce the final list of contextualizers.
+   */
+  private List<IServiceCall> computationStrategy = new ArrayList<>();
+  private List<IServiceCall> mediationStrategy = new ArrayList<>();
 
-    private Class<? extends T>    cls;
+  private Class<? extends T> cls;
 
-    @Override
-    public String getName() {
-        return name;
-    }
+  @Override
+  public String getName() {
+    return name;
+  }
 
-    public Actuator(IMonitor monitor, Class<? extends T> cls) {
-        this.cls = cls;
-        this.monitor = monitor;
-    }
+  public Actuator(IMonitor monitor, Class<? extends T> cls) {
+    this.cls = cls;
+    this.monitor = monitor;
+  }
 
-    @Override
-    public Scale getScale() {
-        return scale;
-    }
+  @Override
+  public Scale getScale() {
+    return scale;
+  }
 
-    @Override
-    public List<IActuator> getActuators() {
-        return actuators;
-    }
+  @Override
+  public List<IActuator> getActuators() {
+    return actuators;
+  }
 
-    @Override
-    public List<IActuator> getInputs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public List<IActuator> getInputs() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public List<IActuator> getOutputs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public List<IActuator> getOutputs() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    /**
-     * Compute the actuator.
-     * 
-     * @param context this one must be passed a context already adapted to the actuator's names and
-     *        scale.
-     * @param monitor
-     * @return
-     * @throws KlabException
-     */
-    @SuppressWarnings("unchecked")
-    public T compute(DirectObservation context, IComputationContext runtimeContext, IMonitor monitor)
-            throws KlabException {
+  /**
+   * Compute the actuator.
+   * 
+   * @param context The context observation (null in the root actuator for a new context)
+   * @param runtimeContext this one must be passed a context already adapted to the actuator's names
+   *        and scale.
+   * @param monitor
+   * @return
+   * @throws KlabException
+   */
+  @SuppressWarnings("unchecked")
+  public T compute(DirectObservation context, IRuntimeContext runtimeContext, IMonitor monitor)
+      throws KlabException {
 
-        if (computation == null) {
-            // compile the contextualization strategy
-            computation = new ArrayList<>();
-            for (IServiceCall service : Collections.join(computationStrategy, mediationStrategy)) {
-                Object contextualizer = Extensions.INSTANCE.callFunction(service, monitor);
-                if (!(contextualizer instanceof IContextualizer)) {
-                    throw new KlabValidationException("function " + service.getName() + " does not produce a contextualizer");
-                }
-                computation.add((IContextualizer)contextualizer);
-            }
+    IRuntimeContext ctx = localizeContext(runtimeContext);
+
+    if (computation == null) {
+      // compile the contextualization strategy
+      computation = new ArrayList<>();
+      for (IServiceCall service : Collections.join(computationStrategy, mediationStrategy)) {
+        Object contextualizer = Extensions.INSTANCE.callFunction(service, monitor);
+        if (!(contextualizer instanceof IContextualizer)) {
+          throw new KlabValidationException(
+              "function " + service.getName() + " does not produce a contextualizer");
         }
-        
-        // create observation if requested
-        T ret = null;
-        if (this.isCreateObservation()) {
-            ret = (T) Observations.INSTANCE.createObservation(getObservable(), this.getScale(), this
-                    .getNamespace(), monitor, context);
+        computation.add((IContextualizer) contextualizer);
+      }
+    }
+
+    // create observation if requested
+    T ret = null;
+    if (this.isCreateObservation()) {
+      ret = (T) Observations.INSTANCE.createObservation(getObservable(), this.getScale(),
+          this.getNamespace(), monitor, context);
+    }
+
+    // run it
+    for (IContextualizer contextualizer : computation) {
+
+      if (contextualizer instanceof IStateResolver) {
+        // TODO run state by state
+      } else if (contextualizer instanceof IResolver) {
+        // TODO run resolver/mediator
+      } else if (contextualizer instanceof IInstantiator) {
+        // TODO run instantiator
+      }
+    }
+
+    return ret;
+  }
+
+  private IRuntimeContext localizeContext(IRuntimeContext runtimeContext) {
+    IRuntimeContext ret = runtimeContext.copy();
+    for (IActuator input : getInputs()) {
+      if (ret.get(input.getName()) != null) {
+        ret.rename(input.getName(), input.getAlias());
+      }
+    }
+    return ret;
+  }
+
+  public String toString() {
+    return "<" + getName()
+        + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
+        + (computationStrategy.size() + mediationStrategy.size()) + "]>";
+  }
+
+  /**
+   * Reconstruct or return the source code for this actuator.
+   * 
+   * @param offset
+   * @return
+   */
+  protected String encode(int offset) {
+
+    // TODO near-identical, combine
+    if (reference) {
+      String ofs = StringUtils.repeat(" ", offset);
+      String ret =
+          ofs + "import " + type.name().toLowerCase() + " " + getName() + encodeBody(offset, ofs);
+      return ret;
+    }
+
+    String ofs = StringUtils.repeat(" ", offset);
+    String ret = ofs + getType().name().toLowerCase() + " "
+        + (getObservable() == null ? getName() : getObservable().getLocalName());
+
+    ret += encodeBody(offset, ofs);
+
+    return ret;
+
+  }
+
+  protected String encodeBody(int offset, String ofs) {
+
+    boolean hasBody = actuators.size() > 0 || getComputationStrategy().size() > 0
+        || getMediationStrategy().size() > 0 || createObservation;
+
+    String ret = "";
+
+    if (hasBody) {
+
+      ret = " {\n";
+
+      if (isCreateObservation()) {
+        ret += ofs + "   " + "observe new " + getObservable().getDeclaration() + "\n";
+      }
+
+      for (IActuator actuator : actuators) {
+        ret += ((Actuator<?>) actuator).encode(offset + 3) + "\n";
+      }
+
+      List<IServiceCall> serviceCalls = new ArrayList<>();
+      serviceCalls.addAll(getComputationStrategy());
+      serviceCalls.addAll(getMediationStrategy());
+
+      for (int i = 0; i < serviceCalls.size(); i++) {
+        ret += (i == 0 ? (ofs + "   compute ") : ofs + "     ")
+            + serviceCalls.get(i).getSourceCode() + (i < serviceCalls.size() - 1 ? "," : "") + "\n";
+      }
+      ret += ofs + "}";
+    }
+
+    if (getAlias() != null && !getAlias().equals(getName())) {
+      ret += " as " + getAlias();
+    }
+
+    if (getScale() != null && !getScale().isEmpty()) {
+      List<IServiceCall> scaleSpecs = getScale().getKimSpecification();
+      if (!scaleSpecs.isEmpty()) {
+        ret += " over";
+        for (int i = 0; i < scaleSpecs.size(); i++) {
+          ret += " " + scaleSpecs.get(i).getSourceCode()
+              + ((i < scaleSpecs.size() - 1) ? (",\n" + ofs + "      ") : "");
         }
-        
-        // run it
-        for (IContextualizer contextualizer : computation) {
-
-            if (contextualizer instanceof IStateResolver) {
-                // TODO run state by state
-            } else if (contextualizer instanceof IResolver) {
-               // TODO run resolver/mediator
-            } else if (contextualizer instanceof IInstantiator) {
-                // TODO run instantiator
-            }
-        }
-
-        return ret;
+      }
     }
 
-    public String toString() {
-        return "<" + getName()
-                + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
-                + (computationStrategy.size() + mediationStrategy.size()) + "]>";
-    }
+    return ret;
+  }
 
-    /**
-     * Reconstruct or return the source code for this actuator.
-     * 
-     * @param offset
-     * @return
-     */
-    protected String encode(int offset) {
+  public static <T extends IArtifact> Actuator<T> create(IMonitor monitor,
+      Class<T> observationClass) {
+    return new Actuator<T>(monitor, observationClass);
+  }
 
-        // TODO near-identical, combine
-        if (reference) {
-            String ofs = StringUtils.repeat(" ", offset);
-            String ret = ofs + "import " + type.name().toLowerCase() + " " + getName()
-                    + encodeBody(offset, ofs);
-            return ret;
-        }
+  public List<IServiceCall> getComputationStrategy() {
+    return computationStrategy;
+  }
 
-        String ofs = StringUtils.repeat(" ", offset);
-        String ret = ofs + getType().name().toLowerCase() + " "
-                + (getObservable() == null ? getName() : getObservable().getLocalName());
+  public void setComputationStrategy(List<IServiceCall> computationStrategy) {
+    this.computationStrategy = computationStrategy;
+  }
 
-        ret += encodeBody(offset, ofs);
+  public String getAlias() {
+    return alias;
+  }
 
-        return ret;
+  public void setAlias(String alias) {
+    this.alias = alias;
+  }
 
-    }
+  public Observable getObservable() {
+    return observable;
+  }
 
-    protected String encodeBody(int offset, String ofs) {
+  public void setObservable(Observable observable) {
+    this.observable = observable;
+  }
 
-        boolean hasBody = actuators.size() > 0 || getComputationStrategy().size() > 0
-                || getMediationStrategy().size() > 0 || createObservation;
+  public INamespace getNamespace() {
+    return namespace;
+  }
 
-        String ret = "";
+  public void setNamespace(INamespace namespace) {
+    this.namespace = namespace;
+  }
 
-        if (hasBody) {
+  public void setScale(Scale scale) {
+    this.scale = scale;
+  }
 
-            ret = " {\n";
+  public IKdlActuator.Type getType() {
+    return type;
+  }
 
-            if (isCreateObservation()) {
-                ret += ofs + "   " + "observe new " + getObservable().getDeclaration() + "\n";
-            }
+  public void setType(IKdlActuator.Type type) {
+    this.type = type;
+  }
 
-            for (IActuator actuator : actuators) {
-                ret += ((Actuator<?>) actuator).encode(offset + 3) + "\n";
-            }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-            List<IServiceCall> serviceCalls = new ArrayList<>();
-            serviceCalls.addAll(getComputationStrategy());
-            serviceCalls.addAll(getMediationStrategy());
+  public List<IServiceCall> getMediationStrategy() {
+    return mediationStrategy;
+  }
 
-            for (int i = 0; i < serviceCalls.size(); i++) {
-                ret += (i == 0 ? (ofs + "   compute ") : ofs + "     ") + serviceCalls.get(i).getSourceCode()
-                        + (i < serviceCalls.size() - 1 ? "," : "") + "\n";
-            }
-            ret += ofs + "}";
-        }
+  public void setMediationStrategy(List<IServiceCall> mediationStrategy) {
+    this.mediationStrategy = mediationStrategy;
+  }
 
-        if (getAlias() != null && !getAlias().equals(getName())) {
-            ret += " as " + getAlias();
-        }
+  public boolean isCreateObservation() {
+    return createObservation;
+  }
 
-        if (getScale() != null && !getScale().isEmpty()) {
-            List<IServiceCall> scaleSpecs = getScale().getKimSpecification();
-            if (!scaleSpecs.isEmpty()) {
-                ret += " over";
-                for (int i = 0; i < scaleSpecs.size(); i++) {
-                    ret += " " + scaleSpecs.get(i).getSourceCode()
-                            + ((i < scaleSpecs.size() - 1) ? (",\n" + ofs + "      ") : "");
-                }
-            }
-        }
+  public void setCreateObservation(boolean createObservation) {
+    this.createObservation = createObservation;
+  }
 
-        return ret;
-    }
+  public void setReference(boolean reference) {
+    this.reference = reference;
+  }
 
-    public static <T extends IArtifact> Actuator<T> create(IMonitor monitor, Class<T> observationClass) {
-        return new Actuator<T>(monitor, observationClass);
-    }
+  public boolean isReference() {
+    return reference;
+  }
 
-    public List<IServiceCall> getComputationStrategy() {
-        return computationStrategy;
-    }
-
-    public void setComputationStrategy(List<IServiceCall> computationStrategy) {
-        this.computationStrategy = computationStrategy;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public Observable getObservable() {
-        return observable;
-    }
-
-    public void setObservable(Observable observable) {
-        this.observable = observable;
-    }
-
-    public INamespace getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(INamespace namespace) {
-        this.namespace = namespace;
-    }
-
-    public void setScale(Scale scale) {
-        this.scale = scale;
-    }
-
-    public IKdlActuator.Type getType() {
-        return type;
-    }
-
-    public void setType(IKdlActuator.Type type) {
-        this.type = type;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<IServiceCall> getMediationStrategy() {
-        return mediationStrategy;
-    }
-
-    public void setMediationStrategy(List<IServiceCall> mediationStrategy) {
-        this.mediationStrategy = mediationStrategy;
-    }
-
-    public boolean isCreateObservation() {
-        return createObservation;
-    }
-
-    public void setCreateObservation(boolean createObservation) {
-        this.createObservation = createObservation;
-    }
-
-    public void setReference(boolean reference) {
-        this.reference = reference;
-    }
-
-    public boolean isReference() {
-        return reference;
-    }
-
-    @Override
-    public List<IServiceCall> getComputation() {
-        List<IServiceCall> ret = new ArrayList<>(computationStrategy);
-        ret.addAll(mediationStrategy);
-        return ret;
-    }
+  @Override
+  public List<IServiceCall> getComputation() {
+    List<IServiceCall> ret = new ArrayList<>(computationStrategy);
+    ret.addAll(mediationStrategy);
+    return ret;
+  }
 
 }

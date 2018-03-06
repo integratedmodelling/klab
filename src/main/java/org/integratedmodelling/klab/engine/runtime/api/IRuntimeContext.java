@@ -6,7 +6,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 
 /**
  * This API extends {@link IComputationContext} to add setters and other functionalities that is
@@ -17,16 +16,6 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
  *
  */
 public interface IRuntimeContext extends IComputationContext {
-
-  /**
-   * Return a new context with the local environment, including all names for previous observations
-   * and inputs, translated to what's understood within the passed actuator.
-   * 
-   * @param executor 
-   * 
-   * @return a context localized to the passed actuator
-   */
-  IRuntimeContext localize(IActuator executor);
 
   // TODO tentative
   Collection<IObservable> getKnownObservables();
@@ -44,4 +33,19 @@ public interface IRuntimeContext extends IComputationContext {
    * @return
    */
   IConfigurationDetector getConfigurationDetector();
+
+  /**
+   * Produce an exact copy of this context.
+   * 
+   * @return
+   */
+  IRuntimeContext copy();
+
+  /**
+   * Rename the passed observation data as the passed alias.
+   * 
+   * @param name
+   * @param alias
+   */
+  void rename(String name, String alias);
 }
