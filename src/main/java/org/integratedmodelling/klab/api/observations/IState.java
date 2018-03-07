@@ -2,13 +2,14 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.util.Collection;
 import java.util.List;
+
+import org.h2.command.ddl.Analyze;
 import org.integratedmodelling.klab.api.data.Aggregation;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 
 /**
@@ -22,8 +23,10 @@ public interface IState extends IObservation {
      * Listener that we can install with {@link #addChangeListener} to be notified of
      * changes.
      * 
+     * FIXME turn into subscribing to event, passing a locator to establish relevance (when to fire)
+     * 
      * @author ferd
-     *
+     * @deprecated use an event model
      */
     interface ChangeListener {
 
@@ -33,7 +36,7 @@ public interface IState extends IObservation {
          * @param offset
          * @param value
          */
-        void changed(int offset, Object value);
+        void changed(ILocator offset, Object value);
 
         /**
          * Called once before a new transition is executed or at the end of
@@ -57,7 +60,7 @@ public interface IState extends IObservation {
      * them automatically.
      * 
      * @author ferdinando.villa
-     *
+     * @deprecated bring below the API
      */
     interface Mediator {
 
@@ -131,7 +134,7 @@ public interface IState extends IObservation {
      * @return the value at the passed locator, which may come from a different
      *  scale.
      */
-    Object getValue(Locator locator);
+    Object getValue(ILocator locator);
 
 
     /**
@@ -152,6 +155,7 @@ public interface IState extends IObservation {
      * Add a listener to notify when any value is changed.
      * 
      * @param listener
+     * @deprecated use an event model
      */
     void addChangeListener(ChangeListener listener);
 

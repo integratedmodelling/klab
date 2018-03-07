@@ -50,6 +50,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      * 
      * @param stateIndex
      * @return a new extent with getValueCount() == 1.
+     * @deprecated use locators only
      */
     IExtent getExtent(long stateIndex);
 
@@ -68,6 +69,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      * 
      * @param stateIndex
      * @return whether there is an observable world at the given location.
+     * @deprecated use locators only; do not return non-covered extents
      */
     boolean isCovered(long stateIndex);
 
@@ -124,6 +126,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      * will return <code>new int[] { getMultiplicity() }</code>.
      *
      * @return dimension sizes
+     * @deprecated use locators only
      */
     long[] getDimensionSizes();
 
@@ -136,6 +139,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      *            if true, endeavor to return offset in the order that most closely
      *            resembles row-first ordering wrt euclidean x,y,z (default).
      * @return dimension offsets
+     * @deprecated use locators only
      */
     long[] getDimensionOffsets(long linearOffset, boolean rowFirst);
 
@@ -149,6 +153,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      * 
      * @param locator
      * @return the offset corresponding to the locator
+     * @deprecated use locators only
      */
     long locate(Locator locator);
 
@@ -165,7 +170,9 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      *            aggregation strategy.
      * @param trait
      *            a data reduction trait to interpret the mediated values (may be null).
-     * @return the configured mediator or null
+     * @return the configured mediator or null     
+     * 
+     * @deprecated bring behind API
      */
     IState.Mediator getMediator(IExtent extent, IObservable observable, IConcept trait);
 }

@@ -33,6 +33,11 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+/**
+ * FIXME this is just a space extent - check how to simplify
+ * @author Ferd
+ *
+ */
 public interface IGrid extends Iterable<Cell> {
 
     public interface Cell {

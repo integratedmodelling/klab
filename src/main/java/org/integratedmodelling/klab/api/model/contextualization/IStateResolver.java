@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -22,6 +22,6 @@ public interface IStateResolver extends IContextualizer {
    * @param locator
    * @return
    */
-  Object resolve(IStorage<?> observation, IComputationContext context, Locator locator);
+  Object resolve(IStorage<?> observation, IComputationContext context, ILocator locator);
 
 }

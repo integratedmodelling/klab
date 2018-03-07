@@ -93,6 +93,7 @@ public interface IScale extends ILocator, IObservationTopology, Iterable<IScale>
      * 
      * @param locators
      * @return the offset corresponding to the locators
+     * @deprecated use locators only
      */
     long locate(Locator... locators);
 
@@ -108,6 +109,7 @@ public interface IScale extends ILocator, IObservationTopology, Iterable<IScale>
      * @param extent
      * @param offset
      * @return the subscale
+     * @deprecated use locators only
      */
     IScale getSubscale(IConcept extent, long offset);
 
@@ -118,6 +120,7 @@ public interface IScale extends ILocator, IObservationTopology, Iterable<IScale>
      * 
      * @param subscaleOffset
      * @return original offset
+     * @deprecated use locators only
      */
     long getOriginalOffset(long subscaleOffset);
 
@@ -139,6 +142,7 @@ public interface IScale extends ILocator, IObservationTopology, Iterable<IScale>
      * @param extent
      * @param overallOffset
      * @return the extent offset
+     * @deprecated use locators only
      */
     long getExtentOffset(IExtent extent, long overallOffset);
 

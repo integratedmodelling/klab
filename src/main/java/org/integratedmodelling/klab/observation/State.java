@@ -4,7 +4,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 
@@ -37,7 +37,7 @@ public class State extends Observation implements IState {
   }
 
   @Override
-  public Object getValue(Locator locator) {
+  public Object getValue(ILocator locator) {
     // TODO Auto-generated method stub
     return null;
   }
