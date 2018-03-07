@@ -17,13 +17,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
  *
  */
 public interface IState extends IObservation {
-   
-    /**
-     * 
-     * @return
-     */
-    IStorage<?> getStorage();
-
 
     /**
      * Listener that we can install with {@link #addChangeListener} to be notified of

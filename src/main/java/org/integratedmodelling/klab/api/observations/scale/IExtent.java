@@ -69,7 +69,7 @@ public interface IExtent extends ITopology<IExtent>, Iterable<IExtent> {
      * @param stateIndex
      * @return whether there is an observable world at the given location.
      */
-    boolean isCovered(int stateIndex);
+    boolean isCovered(long stateIndex);
 
     /**
      * Return an extent of the same domainConcept that represents the merge of the two. If
@@ -125,7 +125,7 @@ public interface IExtent extends ITopology<IExtent>, Iterable<IExtent> {
      *
      * @return dimension sizes
      */
-    int[] getDimensionSizes();
+    long[] getDimensionSizes();
 
     /**
      * Translate a linear offset into the offsets for each dimension. If the dimension is
@@ -137,7 +137,7 @@ public interface IExtent extends ITopology<IExtent>, Iterable<IExtent> {
      *            resembles row-first ordering wrt euclidean x,y,z (default).
      * @return dimension offsets
      */
-    int[] getDimensionOffsets(int linearOffset, boolean rowFirst);
+    long[] getDimensionOffsets(long linearOffset, boolean rowFirst);
 
     /**
      * Use the passed object to locate an unambiguous extent within the topology. If an
@@ -150,7 +150,7 @@ public interface IExtent extends ITopology<IExtent>, Iterable<IExtent> {
      * @param locator
      * @return the offset corresponding to the locator
      */
-    int locate(Locator locator);
+    long locate(Locator locator);
 
     /**
      * Get a state mediator to the passed extent. If extent is incompatible return null;

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
@@ -54,21 +55,21 @@ public class Grid extends Area implements IGrid {
   static Orientation[] mooreNeighborhood = new Orientation[] {Orientation.W, Orientation.NW,
       Orientation.N, Orientation.NE, Orientation.E, Orientation.SE, Orientation.S, Orientation.SW};
 
-  static int connectionCount(int n, int m) {
-    return ((n - 2) * (m - 2) * 8) + // connections in internal cells
+  static int connectionCount(long n, long m) {
+    return (int)(((n - 2) * (m - 2) * 8) + // connections in internal cells
         (2 * (n - 2) + 2 * (m - 2)) * 5 + // connections in edge cells
-        (4 * 3); // connections in corner cells
+        (4 * 3)); // connections in corner cells
   }
 
   public static Grid create(Shape shape, double resolutionInMeters) throws KlabException {
     return new Grid(shape, resolutionInMeters);
   }
 
-  public static Grid create(Shape shape, int x, int y) throws KlabException {
+  public static Grid create(Shape shape, long x, long y) throws KlabException {
     return new Grid(shape, x, y);
   }
 
-  public static Grid create(double gxmin, double gymin, double gxmax, double gymax, int nx, int ny,
+  public static Grid create(double gxmin, double gymin, double gxmax, double gymax, long nx, long ny,
       Projection projection) {
     return new Grid(gxmin, gymin, gxmax, gymax, nx, ny, projection);
   }
@@ -96,7 +97,7 @@ public class Grid extends Area implements IGrid {
    * @param y
    * @throws KlabException
    */
-  private Grid(Shape shape, int x, int y) throws KlabException {
+  private Grid(Shape shape, long x, long y) throws KlabException {
     super(shape);
     this.setResolution(x, y);
     // activationLayer = ThinklabRasterizer.createMask(shape, this);
@@ -106,7 +107,7 @@ public class Grid extends Area implements IGrid {
       double y1, // latLowerBound
       double x2, // lonUpperBound
       double y2, // latUpperBound
-      int xDivs, int yDivs, Projection projection) {
+      long xDivs, long yDivs, Projection projection) {
 
     this.xOrigin = x1;
     this.yOrigin = y1;
@@ -117,29 +118,29 @@ public class Grid extends Area implements IGrid {
 
   public class CellImpl implements Cell {
 
-    int   x;
-    int   y;
+    long   x;
+    long   y;
 
     Shape shape;
 
-    CellImpl(int x, int y) {
+    CellImpl(long x, long y) {
       this.x = x;
       this.y = y;
     }
 
     @Override
-    public int getX() {
+    public long getX() {
       return x;
     }
 
     @Override
-    public int getY() {
+    public long getY() {
       return y;
     }
 
     @Override
     public Cell N() {
-      int trow = getYCells() - 1;
+      long trow = getYCells() - 1;
       if (y < trow) {
         return new CellImpl(x, y + 1);
       }
@@ -164,7 +165,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public Cell W() {
-      int tcol = getXCells() - 1;
+      long tcol = getXCells() - 1;
       if (x < tcol) {
         return new CellImpl(x + 1, y);
       }
@@ -173,7 +174,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public Cell NW() {
-      int trow = getYCells() - 1, tcol = getXCells() - 1;
+      long trow = getYCells() - 1, tcol = getXCells() - 1;
       if (y < trow && x < tcol) {
         return new CellImpl(x + 1, y + 1);
       }
@@ -182,7 +183,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public Cell NE() {
-      int trow = getYCells() - 1;
+      long trow = getYCells() - 1;
       if (y < trow && x > 0) {
         return new CellImpl(x - 1, y + 1);
       }
@@ -199,7 +200,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public Cell SW() {
-      int tcol = getXCells() - 1;
+      long tcol = getXCells() - 1;
       if (y > 0 && x < tcol) {
         return new CellImpl(x + 1, y - 1);
       }
@@ -246,11 +247,11 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public int hashCode() {
-      final int prime = 31;
-      int result = 1;
+      final long prime = 31;
+      long result = 1;
       result = prime * result + x;
       result = prime * result + y;
-      return result;
+      return (int)result;
     }
 
     @Override
@@ -266,9 +267,9 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public Cell move(int xOfs, int yOfs) {
-      int newX = x + xOfs;
-      int newY = y + yOfs;
+    public Cell move(long xOfs, long yOfs) {
+      long newX = x + xOfs;
+      long newY = y + yOfs;
       if (newX >= 0 && newX < xCells) {
         if (newY >= 0 && newY < yCells) {
           // if (isActive(newX, newY)) {
@@ -300,7 +301,7 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public Integer getOffsetInGrid() {
+    public Long getOffsetInGrid() {
       return getOffset(x, y);
     }
 
@@ -315,8 +316,8 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public boolean isAdjacent(Cell cell) {
-      int xo = Math.abs(cell.getX() - x);
-      int yo = Math.abs(cell.getY() - y);
+      long xo = Math.abs(cell.getX() - x);
+      long yo = Math.abs(cell.getY() - y);
       return (xo + yo) > 0 && (xo <= 1) && (yo <= 1);
     }
 
@@ -350,8 +351,8 @@ public class Grid extends Area implements IGrid {
   }
 
   Shape  shape;
-  int    xCells            = 0;
-  int    yCells            = 0;
+  long    xCells            = 0;
+  long    yCells            = 0;
   double cellWidth         = 0.0;
   double cellHeight        = 0.0;
   double xOrigin           = 0.0;
@@ -361,7 +362,7 @@ public class Grid extends Area implements IGrid {
   /*
    * only set in a subgrid of the grid having the parent ID.
    */
-  int[]  offsetInSupergrid = null;
+  long[]  offsetInSupergrid = null;
   String superGridId       = null;
 
   public Grid() {
@@ -392,26 +393,26 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public int getYCells() {
+  public long getYCells() {
     return yCells;
   }
 
   @Override
-  public int getXCells() {
+  public long getXCells() {
     return xCells;
   }
 
   @Override
-  public int getCellCount() {
+  public long getCellCount() {
     return xCells * yCells;
   }
 
-  public Cell getCell(int index) {
-    int[] xy = getXYOffsets(index);
+  public Cell getCell(long index) {
+    long[] xy = getXYOffsets(index);
     return new CellImpl(xy[0], xy[1]);
   }
 
-  public Cell getCell(int x, int y) {
+  public Cell getCell(long x, long y) {
     return new CellImpl(x, y);
   }
 
@@ -422,38 +423,38 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public boolean isActive(int x, int y) {
+  public boolean isActive(long x, long y) {
     return isCovered(getOffset(x, y));
   }
 
   @Override
-  public int[] getGridCoordinatesAt(double x, double y) {
-    int ofs = getOffsetFromWorldCoordinates(x, y);
+  public long[] getGridCoordinatesAt(double x, double y) {
+    long ofs = getOffsetFromWorldCoordinates(x, y);
     return getXYOffsets(ofs);
   }
 
   @Override
-  public int getOffsetFromWorldCoordinates(double x, double y) {
+  public long getOffsetFromWorldCoordinates(double x, double y) {
     if (x < getEnvelope().getMinX() || x > getEnvelope().getMaxX() || y < getEnvelope().getMinY()
         || y > getEnvelope().getMaxY())
       return -1;
-    int xx =
-        (int) (((x - getEnvelope().getMinX()) / (getEnvelope().getMaxX() - getEnvelope().getMinX()))
+    long xx =
+        (long) (((x - getEnvelope().getMinX()) / (getEnvelope().getMaxX() - getEnvelope().getMinX()))
             * xCells);
-    int yy =
-        (int) (((y - getEnvelope().getMinY()) / (getEnvelope().getMaxY() - getEnvelope().getMinY()))
+    long yy =
+        (long) (((y - getEnvelope().getMinY()) / (getEnvelope().getMaxY() - getEnvelope().getMinY()))
             * yCells);
     return getIndex(xx, yy);
   }
 
   @Override
-  public double[] getWorldCoordinatesAt(int x, int y) {
+  public double[] getWorldCoordinatesAt(long x, long y) {
     double x1 = getEnvelope().getMinX() + (cellWidth * x);
     double y1 = getEnvelope().getMinY() + (cellHeight * (getYCells() - y - 1));
     return new double[] {x1 + (cellWidth / 2), y1 + (cellHeight / 2)};
   }
 
-  public int getIndex(int x, int y) {
+  public long getIndex(long x, long y) {
     if (xCells != 0) {
       return (y * xCells) + x;
     }
@@ -461,13 +462,13 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public double[] getCoordinates(int index) {
-    int[] xy = getXYOffsets(index);
+  public double[] getCoordinates(long index) {
+    long[] xy = getXYOffsets(index);
     return getWorldCoordinatesAt(xy[0], xy[1]);
   }
 
   @Override
-  public Locator getLocator(int x, int y) {
+  public Locator getLocator(long x, long y) {
     return new SpaceLocator(x, yCells - y - 1);
   }
 
@@ -515,8 +516,8 @@ public class Grid extends Area implements IGrid {
     double gymax = senv.getMaxY();
     double dy = gymax - gymin;
 
-    int nx = (int) (dx / getCellWidth());
-    int ny = (int) (dy / getCellHeight());
+    long nx = (long) (dx / getCellWidth());
+    long ny = (long) (dy / getCellHeight());
 
     if ((nx * getCellWidth()) < dx) {
       nx++;
@@ -529,11 +530,11 @@ public class Grid extends Area implements IGrid {
       gymax += (getCellHeight() / 2);
     }
 
-    int xofs = (int) ((gxmin - getEast()) / getCellWidth());
-    int yofs = (int) ((gymin - getSouth()) / getCellHeight());
+    long xofs = (long) ((gxmin - getEast()) / getCellWidth());
+    long yofs = (long) ((gymin - getSouth()) / getCellHeight());
 
     Grid ret = new Grid(shape, nx, ny);
-    ret.offsetInSupergrid = new int[] {xofs, yofs};
+    ret.offsetInSupergrid = new long[] {xofs, yofs};
     ret.superGridId = getSignature();
 
     ret.createActivationLayer(shape);
@@ -541,7 +542,7 @@ public class Grid extends Area implements IGrid {
     return ret;
   }
 
-  private void setResolution(int xCells, int yCells) {
+  private void setResolution(long xCells, long yCells) {
     this.xCells = xCells;
     this.yCells = yCells;
     this.cellWidth = getEnvelope().getWidth() / xCells;
@@ -553,8 +554,8 @@ public class Grid extends Area implements IGrid {
 
   }
 
-  public Collection<Integer> getNeumannNeighbors(int xcell, int ycell) {
-    ArrayList<Integer> ret = new ArrayList<>();
+  public Collection<Long> getNeumannNeighbors(long xcell, long ycell) {
+    ArrayList<Long> ret = new ArrayList<>();
 
     if (inRange(xcell - 1, ycell))
       ret.add(getOffset(xcell - 1, ycell));
@@ -568,9 +569,9 @@ public class Grid extends Area implements IGrid {
     return ret;
   }
 
-  public Collection<Integer> getMooreNeighbors(int xcell, int ycell) {
+  public Collection<Long> getMooreNeighbors(long xcell, long ycell) {
 
-    ArrayList<Integer> ret = (ArrayList<Integer>) getNeumannNeighbors(xcell, ycell);
+    ArrayList<Long> ret = (ArrayList<Long>) getNeumannNeighbors(xcell, ycell);
 
     if (inRange(xcell - 1, ycell - 1))
       ret.add(getOffset(xcell - 1, ycell - 1));
@@ -584,11 +585,11 @@ public class Grid extends Area implements IGrid {
     return ret;
   }
 
-  public boolean inRange(int x, int y) {
+  public boolean inRange(long x, long y) {
     return x >= 0 && x < getXCells() && y >= 0 && y < getYCells();
   }
 
-  public boolean isCovered(int granule) {
+  public boolean isCovered(long granule) {
     if (mask == null) {
       return true;
     }
@@ -596,20 +597,20 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public int[] getXYOffsets(int index) {
-    int xx = index % getXCells();
-    int yy = getYCells() - (index / getXCells()) - 1;
-    return new int[] {xx, yy};
+  public long[] getXYOffsets(long index) {
+    long xx = index % getXCells();
+    long yy = getYCells() - (index / getXCells()) - 1;
+    return new long[] {xx, yy};
   }
 
-  public static int[] getXYCoordinates(int index, int width, int height) {
-    int xx = index % width;
-    int yy = /* height - ( */index / width/* ) - 1 */;
-    return new int[] {xx, yy};
+  public static long[] getXYCoordinates(long index, long width, long height) {
+    long xx = index % width;
+    long yy = /* height - ( */index / width/* ) - 1 */;
+    return new long[] {xx, yy};
   }
 
   @Override
-  public int getOffset(int x, int y) {
+  public long getOffset(long x, long y) {
     return ((yCells - y - 1) * xCells) + x;
   }
 
@@ -632,13 +633,13 @@ public class Grid extends Area implements IGrid {
     return superGridId;
   }
 
-  public int[] getOffsetInParentGrid() {
+  public long[] getOffsetInParentGrid() {
     return offsetInSupergrid;
   }
 
   @Override
   public double snapX(double xCoordinate, int direction) {
-    int steps = (int) Math.floor((xCoordinate - getEast()) / getCellWidth());
+    long steps = (long) Math.floor((xCoordinate - getEast()) / getCellWidth());
     if (direction == RIGHT && steps < getXCells() - 1) {
       steps++;
     }
@@ -647,7 +648,7 @@ public class Grid extends Area implements IGrid {
 
   @Override
   public double snapY(double yCoordinate, int direction) {
-    int steps = (int) Math.floor((yCoordinate - getSouth()) / getCellHeight());
+    long steps = (long) Math.floor((yCoordinate - getSouth()) / getCellHeight());
     if (direction == TOP && steps < getYCells() - 1) {
       steps++;
     }
@@ -717,7 +718,7 @@ public class Grid extends Area implements IGrid {
    * @throws KlabException
    */
   private void setAdjustedEnvelope(Shape shape, double squareSize) throws KlabException {
-    int x = 0, y = 0;
+    long x = 0, y = 0;
     double dx = 0, dy = 0;
     Envelope env = shape.getEnvelope();
 
@@ -728,8 +729,8 @@ public class Grid extends Area implements IGrid {
       double height = env.getHeight();
       double width = env.getWidth();
 
-      x = (int) Math.ceil(width / squareSize);
-      y = (int) Math.ceil(height / squareSize);
+      x = (long) Math.ceil(width / squareSize);
+      y = (long) Math.ceil(height / squareSize);
 
       dx = (x * squareSize) - width;
       dy = (y * squareSize) - height;
@@ -760,8 +761,8 @@ public class Grid extends Area implements IGrid {
 
       double width =
           Projection.haversine(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
-      x = (int) Math.ceil(width / squareSize);
-      y = (int) Math.ceil(height / squareSize);
+      x = (long) Math.ceil(width / squareSize);
+      y = (long) Math.ceil(height / squareSize);
 
       // Here I tried to adjust further dx and dy based on the size of the
       // grid cell

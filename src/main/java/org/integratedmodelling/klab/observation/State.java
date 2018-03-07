@@ -26,12 +26,8 @@ public class State extends Observation implements IState {
   }
 
   @Override
-  public IStorage<?> getStorage() {
-    if (storage == null) {
-      // TODO create it based on 
-    }
-    // TODO Auto-generated method stub
-    return null;
+  public IStorage<?> getData() {
+      return storage;
   }
 
   @Override

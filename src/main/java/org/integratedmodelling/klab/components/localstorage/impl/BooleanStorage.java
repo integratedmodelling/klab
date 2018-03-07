@@ -1,13 +1,15 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
 import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.data.AbstractObservationData;
+import org.integratedmodelling.klab.observation.Scale;
 
 public class BooleanStorage extends AbstractObservationData implements IStorage<Boolean> {
 
-  public BooleanStorage() {
-    // TODO Auto-generated constructor stub
+  public BooleanStorage(IObservable observable, Scale scale) {
+      super(observable);
   }
 
   @Override

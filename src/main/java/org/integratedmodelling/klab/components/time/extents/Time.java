@@ -34,12 +34,6 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public boolean isCovered(int stateIndex) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public IExtent merge(IExtent extent, boolean force) throws KlabException {
         // TODO Auto-generated method stub
         return null;
@@ -55,24 +49,6 @@ public class Time extends Extent implements ITime {
     public boolean isEmpty() {
         // TODO Auto-generated method stub
         return false;
-    }
-
-    @Override
-    public int[] getDimensionSizes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int[] getDimensionOffsets(int linearOffset, boolean rowFirst) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int locate(Locator locator) {
-        // TODO Auto-generated method stub
-        return 0;
     }
 
     @Override
@@ -175,6 +151,30 @@ public class Time extends Extent implements ITime {
     public IServiceCall getKimSpecification() {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public boolean isCovered(long stateIndex) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public long[] getDimensionSizes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public long[] getDimensionOffsets(long linearOffset, boolean rowFirst) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public long locate(Locator locator) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

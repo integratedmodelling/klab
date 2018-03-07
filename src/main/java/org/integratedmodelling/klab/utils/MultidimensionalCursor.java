@@ -24,288 +24,293 @@ package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.xtext.util.Triple;
 import org.eclipse.xtext.util.Tuples;
 
 public class MultidimensionalCursor {
 
-	public enum StorageOrdering {
-	    // the first dimension varies slowest FIXME the name means the opposite
-	    ROW_FIRST,
-		COLUMN_FIRST;
-	}
+    public enum StorageOrdering {
+        // the first dimension varies slowest FIXME the name means the opposite
+        ROW_FIRST,
+        COLUMN_FIRST;
+    }
 
-	/**
-	 * At this stage we would only need a vector, but this can come in handy to
-	 * support descending dimensions later.
-	 * 
-	 * @author Ferdinando Villa
-	 *
-	 */
-	private class StorageOrder {
+    /**
+     * At this stage we would only need a vector, but this can come in handy to
+     * support descending dimensions later.
+     * 
+     * @author Ferdinando Villa
+     *
+     */
+    private class StorageOrder {
 
-		public ArrayList<Integer> ordering = new ArrayList<Integer>();
+        public ArrayList<Integer> ordering = new ArrayList<Integer>();
 
-		void set(int dimensions, StorageOrdering order) {
+        void set(int dimensions, StorageOrdering order) {
 
-			ordering.clear();
+            ordering.clear();
 
-			for (int i = 0; i < dimensions; i++) {
-				if (order == StorageOrdering.ROW_FIRST) {
-					ordering.add(dimensions - 1 - i);
-				} else if (order == StorageOrdering.COLUMN_FIRST) {
-					ordering.add(i);
-				}
-			}
-		}
-	}
+            for (int i = 0; i < dimensions; i++) {
+                if (order == StorageOrdering.ROW_FIRST) {
+                    ordering.add(dimensions - 1 - i);
+                } else if (order == StorageOrdering.COLUMN_FIRST) {
+                    ordering.add(i);
+                }
+            }
+        }
+    }
 
-	/*
-	 * iterable to scan one dimension given values for all others
-	 */
-	class SliceCursor implements Iterable<Integer> {
+    /*
+     * iterable to scan one dimension given values for all others
+     */
+    class SliceCursor implements Iterable<Long> {
 
-		int[] extents;
-		int varIndex;
-		int varSize;
+        long[] extents;
+        int    varIndex;
+        long   varSize;
 
-		class It implements Iterator<Integer> {
+        class It implements Iterator<Long> {
 
-			int current = 0;
+            long current = 0;
 
-			@Override
-			public boolean hasNext() {
-				return current < varSize;
-			}
+            @Override
+            public boolean hasNext() {
+                return current < varSize;
+            }
 
-			@Override
-			public Integer next() {
-				extents[varIndex] = current++;
-				return getElementOffset(extents);
-			}
+            @Override
+            public Long next() {
+                extents[varIndex] = current++;
+                return getElementOffset(extents);
+            }
 
-			@Override
-			public void remove() {
-				// TODO Auto-generated method stub
+            @Override
+            public void remove() {
+                // TODO Auto-generated method stub
 
-			}
+            }
 
-		}
+        }
 
-		public SliceCursor(int dimIndex, int[] otherDimOffsets) {
-			extents = otherDimOffsets;
-			varIndex = dimIndex;
-			varSize = MultidimensionalCursor.this.extents.get(varIndex);
-		}
+        public SliceCursor(int dimIndex, long[] otherDimOffsets) {
+            extents = otherDimOffsets;
+            varIndex = dimIndex;
+            varSize = MultidimensionalCursor.this.extents.get(varIndex);
+        }
 
-		public SliceCursor(int dimIndex, int[] otherDimOffsets, int sliceIndex, int sliceNumber) {
-			extents = otherDimOffsets;
-			varIndex = dimIndex;
-			varSize = MultidimensionalCursor.this.extents.get(varIndex);
-			/*
-			 * TODO offsets
-			 */
-		}
+        public SliceCursor(int dimIndex, long[] otherDimOffsets, long sliceIndex, int sliceNumber) {
+            extents = otherDimOffsets;
+            varIndex = dimIndex;
+            varSize = MultidimensionalCursor.this.extents.get(varIndex);
+            /*
+             * TODO offsets
+             */
+        }
 
-		@Override
-		public Iterator<Integer> iterator() {
-			return new It();
-		}
+        @Override
+        public Iterator<Long> iterator() {
+            return new It();
+        }
 
-	}
+    }
 
-	int multiplicity;
-	int dimensions;
-	ArrayList<Integer> extents = new ArrayList<Integer>();
-	ArrayList<Integer> strides = new ArrayList<Integer>();
-	StorageOrdering storageOrderType;
-	StorageOrder storageOrder = new StorageOrder();
-	int[] ordering = null;
+    long            multiplicity;
+    int             dimensions;
+    ArrayList<Long> extents      = new ArrayList<Long>();
+    ArrayList<Long> strides      = new ArrayList<Long>();
+    StorageOrdering storageOrderType;
+    StorageOrder    storageOrder = new StorageOrder();
+    int[]           ordering     = null;
 
-	public MultidimensionalCursor(StorageOrdering order) {
-		multiplicity = 0;
-		dimensions = 0;
-		storageOrderType = order;
-	}
+    public MultidimensionalCursor(StorageOrdering order) {
+        multiplicity = 0;
+        dimensions = 0;
+        storageOrderType = order;
+    }
 
-	public MultidimensionalCursor() {
-		this(StorageOrdering.ROW_FIRST);
-	}
+    public MultidimensionalCursor() {
+        this(StorageOrdering.ROW_FIRST);
+    }
 
-	public MultidimensionalCursor(MultidimensionalCursor cursor) {
-		multiplicity = cursor.multiplicity;
-		dimensions = cursor.dimensions;
-		storageOrderType = cursor.storageOrderType;
-		extents = cursor.extents;
-		storageOrder = cursor.storageOrder;
-		ordering = cursor.ordering;
-		strides = cursor.strides;
-	}
+    public MultidimensionalCursor(MultidimensionalCursor cursor) {
+        multiplicity = cursor.multiplicity;
+        dimensions = cursor.dimensions;
+        storageOrderType = cursor.storageOrderType;
+        extents = cursor.extents;
+        storageOrder = cursor.storageOrder;
+        ordering = cursor.ordering;
+        strides = cursor.strides;
+    }
 
-	public void reset() {
-		multiplicity = 0;
-		extents.clear();
-		strides.clear();
-	}
+    public void reset() {
+        multiplicity = 0;
+        extents.clear();
+        strides.clear();
+    }
 
-	public Iterable<Integer> getDimensionScanner(int dimIndex, int[] otherDimOffsets) {
-		return new SliceCursor(dimIndex, otherDimOffsets);
-	}
+    public Iterable<Long> getDimensionScanner(int dimIndex, long[] otherDimOffsets) {
+        return new SliceCursor(dimIndex, otherDimOffsets);
+    }
 
-	public Iterable<Integer> getDimensionScanner(int dimIndex, int[] otherDimOffsets, int sliceIndex, int sliceNumber) {
-		return new SliceCursor(dimIndex, otherDimOffsets, sliceIndex, sliceNumber);
-	}
+    public Iterable<Long> getDimensionScanner(int dimIndex, long[] otherDimOffsets, long sliceIndex, int sliceNumber) {
+        return new SliceCursor(dimIndex, otherDimOffsets, sliceIndex, sliceNumber);
+    }
 
-	private int initializeStrides() {
+    private long initializeStrides() {
 
-		int stride = 1;
-		multiplicity = 1;
-		strides.clear();
-		for (int n = 0; n != dimensions; ++n)
-			strides.add(0);
-		ordering = new int[dimensions];
-		storageOrder.set(dimensions, storageOrderType);
-		for (int n = 0; n != dimensions; ++n) {
-			ordering[n] = storageOrder.ordering.get(n);
-			strides.set(storageOrder.ordering.get(n), stride);
-			stride *= extents.get(storageOrder.ordering.get(n));
-			multiplicity *= extents.get(storageOrder.ordering.get(n));
-		}
+        long stride = 1;
+        multiplicity = 1;
+        strides.clear();
+        for (int n = 0; n != dimensions; ++n)
+            strides.add(0L);
+        ordering = new int[dimensions];
+        storageOrder.set(dimensions, storageOrderType);
+        for (int n = 0; n != dimensions; ++n) {
+            ordering[n] = storageOrder.ordering.get(n);
+            strides.set(storageOrder.ordering.get(n), stride);
+            stride *= extents.get(storageOrder.ordering.get(n));
+            multiplicity *= extents.get(storageOrder.ordering.get(n));
+        }
 
-		return multiplicity;
-	}
+        return multiplicity;
+    }
 
-	public int[] getElementIndexes(int subscaleOffset) {
+    public long[] getElementIndexes(long subscaleOffset) {
 
-		int[] ret = new int[dimensions];
-		int rest = subscaleOffset;
+        long[] ret = new long[dimensions];
+        long rest = subscaleOffset;
 
-		if (dimensions == 0)
-			return ret;
+        if (dimensions == 0)
+            return ret;
 
-		if (storageOrderType == StorageOrdering.COLUMN_FIRST) {
-			for (int i = dimensions - 1; i > 0; i--) {
-				ret[i] = subscaleOffset / strides.get(i);
-				rest -= ret[i] * strides.get(i);
-			}
-			ret[0] = rest;
-		} else {
-			for (int i = 0; i < dimensions - 1; i++) {
-				ret[i] = subscaleOffset / strides.get(i);
-				rest -= ret[i] * strides.get(i);
-			}
-			ret[dimensions - 1] = rest;
-		}
+        if (storageOrderType == StorageOrdering.COLUMN_FIRST) {
+            for (int i = dimensions - 1; i > 0; i--) {
+                ret[i] = subscaleOffset / strides.get(i);
+                rest -= ret[i] * strides.get(i);
+            }
+            ret[0] = rest;
+        } else {
+            for (int i = 0; i < dimensions - 1; i++) {
+                ret[i] = subscaleOffset / strides.get(i);
+                rest -= ret[i] * strides.get(i);
+            }
+            ret[dimensions - 1] = rest;
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	/**
-	 * 
-	 * @param indices
-	 * @return linear offset
-	 */
-	public int getElementOffset(int... indices) {
-		int offset = 0;
-		for (int n = 0; n < dimensions; ++n)
-			offset += indices[n] * strides.get(n);
-		return offset;
-	}
+    /**
+     * 
+     * @param indices
+     * @return linear offset
+     */
+    public long getElementOffset(long... indices) {
+        long offset = 0;
+        for (int n = 0; n < dimensions; ++n)
+            offset += indices[n] * strides.get(n);
+        return offset;
+    }
 
-	/**
-	 * returns the three offsets needed to implement a strided scanner - start
-	 * offset, past end offset, and stride - over a specified dimension. Must be
-	 * passed the dimension int and a vector with all the remaining offsets -
-	 * the one from dimension dim is ignored.
-	 * 
-	 * @param dimension
-	 * @param intes
-	 * @return the offsets
-	 */
-	public Triple<Integer, Integer, Integer> getStridedOffsets(int dimension, int[] intes) {
+    /**
+     * returns the three offsets needed to implement a strided scanner - start
+     * offset, past end offset, and stride - over a specified dimension. Must be
+     * passed the dimension int and a vector with all the remaining offsets -
+     * the one from dimension dim is ignored.
+     * 
+     * @param dimension
+     * @param intes
+     * @return the offsets
+     */
+    public Triple<Long, Long, Long> getStridedOffsets(int dimension, long[] intes) {
 
-		intes[dimension] = 0;
-		int ofs = getElementOffset(intes);
-		intes[dimension] = 1;
-		int stp = getElementOffset(intes) - ofs;
-		intes[dimension] = extents.get(dimension);
-		int end = getElementOffset(intes);
-		return Tuples.create(ofs, end, stp);
-	}
+        intes[dimension] = 0;
+        long ofs = getElementOffset(intes);
+        intes[dimension] = 1;
+        long stp = getElementOffset(intes) - ofs;
+        intes[dimension] = extents.get(dimension);
+        long end = getElementOffset(intes);
+        return Tuples.create(ofs, end, stp);
+    }
 
-	/**
-	 * 
-	 * @param extents
-	 * @return multiplicity
-	 */
-	public int defineDimensions(int... extents) {
+    /**
+     * 
+     * @param extents
+     * @return multiplicity
+     */
+    public long defineDimensions(long... extents) {
 
-		reset();
+        reset();
 
-		dimensions = extents == null ? 0 : extents.length;
+        dimensions = extents == null ? 0 : extents.length;
 
-		if (extents != null)
-			for (int ii : extents)
-				this.extents.add(ii);
+        if (extents != null)
+            for (long ii : extents)
+                this.extents.add(ii);
 
-		return initializeStrides();
-	}
+        return initializeStrides();
+    }
 
-	/**
-	 * the extent of the specified dimension. We only support 0-based extents
-	 * for now.
-	 * 
-	 * @param nDim
-	 * @return dimension size
-	 */
-	public int getDimensionSize(int nDim) {
-		return extents.get(nDim);
-	}
+    /**
+     * the extent of the specified dimension. We only support 0-based extents
+     * for now.
+     * 
+     * @param nDim
+     * @return dimension size
+     */
+    public long getDimensionSize(int nDim) {
+        return extents.get(nDim);
+    }
 
-	/**
-	 * 
-	 * @return number of dimensions
-	 */
-	public int getDimensionsCount() {
-		return dimensions;
-	}
+    /**
+     * 
+     * @return number of dimensions
+     */
+    public int getDimensionsCount() {
+        return dimensions;
+    }
 
-	public int[] getExtents() {
-		int[] ret = new int[extents.size()];
-		int i = 0;
-		for (int ex : extents) {
-			ret[i++] = ex;
-		}
-		return ret;
-	}
+    public long[] getExtents() {
+        long[] ret = new long[extents.size()];
+        int i = 0;
+        for (long ex : extents) {
+            ret[i++] = ex;
+        }
+        return ret;
+    }
 
-	/**
-	 * 
-	 * @return multiplicity
-	 */
-	public int getMultiplicity() {
-		return multiplicity;
-	}
+    /**
+     * 
+     * @return multiplicity
+     */
+    public long getMultiplicity() {
+        return multiplicity;
+    }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		int[][] data = { { 0, 1, 2, 3, 4, 5, 6 }, { 7, 8, 9, 10, 11, 12, 13 }, { 14, 15, 16, 17, 18, 19, 20 } };
+        int[][] data = {
+                { 0, 1, 2, 3, 4, 5, 6 },
+                { 7, 8, 9, 10, 11, 12, 13 },
+                { 14, 15, 16, 17, 18, 19, 20 } };
 
-		MultidimensionalCursor md = new MultidimensionalCursor(MultidimensionalCursor.StorageOrdering.ROW_FIRST);
+        MultidimensionalCursor md = new MultidimensionalCursor(MultidimensionalCursor.StorageOrdering.ROW_FIRST);
 
-		// x size (cols), y size (rows)
-		System.out.println("dimensions are x = " + data[0].length + " (columns) * y=" + data.length + " (rows)");
+        // x size (cols), y size (rows)
+        System.out.println("dimensions are x = " + data[0].length + " (columns) * y=" + data.length
+                + " (rows)");
 
-		int size = md.defineDimensions(data[0].length, data.length);
+        long size = md.defineDimensions(data[0].length, data.length);
 
-		System.out.println("strides = " + md.strides);
-		System.out.println("orderin = " + md.storageOrder.ordering);
+        System.out.println("strides = " + md.strides);
+        System.out.println("orderin = " + md.storageOrder.ordering);
 
-		for (int i = 0; i < size; i++) {
-			int[] xy = md.getElementIndexes(i);
-			System.out.println("order " + i + "-> (" + xy[0] + "," + xy[1] + ")");
-			System.out.println("\t -> " + data[xy[1]][xy[0]]);
-		}
-	}
+        for (int i = 0; i < size; i++) {
+            long[] xy = md.getElementIndexes(i);
+            System.out.println("order " + i + "-> (" + xy[0] + "," + xy[1] + ")");
+            System.out.println("\t -> " + data[(int) xy[1]][(int) xy[0]]);
+        }
+    }
 
 }

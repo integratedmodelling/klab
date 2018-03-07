@@ -108,9 +108,9 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public boolean isCovered(int stateIndex) {
+  public boolean isCovered(long stateIndex) {
     // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   @Override
@@ -151,32 +151,32 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public int[] getDimensionSizes() {
+  public long[] getDimensionSizes() {
     if (features != null) {
-      return new int[] {features.size()};
+      return new long[] {features.size()};
     } else if (grid != null) {
-      return new int[] {grid.getXCells(), grid.getYCells()};
+      return new long[] {grid.getXCells(), grid.getYCells()};
     }
-    return new int[] {1};
+    return new long[] {1};
   }
 
   @Override
-  public int[] getDimensionOffsets(int linearOffset, boolean rowFirst) {
+  public long[] getDimensionOffsets(long linearOffset, boolean rowFirst) {
 
     if (features != null) {
-      return new int[] {linearOffset};
+      return new long[] {linearOffset};
     } else if (grid != null) {
       if (rowFirst) {
-        int[] xy = grid.getXYOffsets(linearOffset);
-        return new int[] {xy[1], xy[0]};
+        long[] xy = grid.getXYOffsets(linearOffset);
+        return new long[] {xy[1], xy[0]};
       }
       return grid.getXYOffsets(linearOffset);
     }
-    return new int[] {0};
+    return new long[] {0};
   }
 
   @Override
-  public int locate(Locator locator) {
+  public long locate(Locator locator) {
 
     if (locator instanceof SpaceLocator) {
       if (locator.isAll())

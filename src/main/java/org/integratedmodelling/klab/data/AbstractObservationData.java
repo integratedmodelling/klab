@@ -18,6 +18,10 @@ public abstract class AbstractObservationData implements IObservationData {
     IGeometry   geometry;
     IMetadata   metadata = new Metadata();
 
+    protected AbstractObservationData(IObservable semantics) {
+        this.semantics = semantics;
+    }
+    
     @Override
     public boolean hasNext() {
         // TODO Auto-generated method stub

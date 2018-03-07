@@ -47,10 +47,10 @@ public class MediationOperations {
 
     Grid grid;
     Grid ogrid;
-    int  xofs = 0;
-    int  yofs = 0;
+    long  xofs = 0;
+    long  yofs = 0;
 
-    private Subgrid(Grid grid, Grid originalGrid, int xofs, int yofs) {
+    private Subgrid(Grid grid, Grid originalGrid, long xofs, long yofs) {
       this.grid = grid;
       this.ogrid = originalGrid;
       this.xofs = xofs;
@@ -63,47 +63,47 @@ public class MediationOperations {
     }
 
     @Override
-    public int getYCells() {
+    public long getYCells() {
       return grid.getYCells();
     }
 
     @Override
-    public int getXCells() {
+    public long getXCells() {
       return grid.getXCells();
     }
 
     @Override
-    public int getCellCount() {
+    public long getCellCount() {
       return grid.getCellCount();
     }
 
     @Override
-    public int getOffset(int x, int y) {
+    public long getOffset(long x, long y) {
       return grid.getOffset(x, y);
     }
 
     @Override
-    public boolean isActive(int x, int y) {
+    public boolean isActive(long x, long y) {
       return grid.isActive(x, y);
     }
 
     @Override
-    public int getOffsetFromWorldCoordinates(double lon, double lat) {
+    public long getOffsetFromWorldCoordinates(double lon, double lat) {
       return grid.getOffsetFromWorldCoordinates(lon, lat);
     }
 
     @Override
-    public int[] getXYOffsets(int index) {
+    public long[] getXYOffsets(long index) {
       return grid.getXYOffsets(index);
     }
 
     @Override
-    public double[] getCoordinates(int index) {
+    public double[] getCoordinates(long index) {
       return grid.getCoordinates(index);
     }
 
     @Override
-    public Locator getLocator(int x, int y) {
+    public Locator getLocator(long x, long y) {
       return grid.getLocator(x, y);
     }
 
@@ -171,12 +171,12 @@ public class MediationOperations {
     }
 
     @Override
-    public double[] getWorldCoordinatesAt(int x, int y) {
+    public double[] getWorldCoordinatesAt(long x, long y) {
       return grid.getWorldCoordinatesAt(x, y);
     }
 
     @Override
-    public int[] getGridCoordinatesAt(double x, double y) {
+    public long[] getGridCoordinatesAt(double x, double y) {
       return grid.getGridCoordinatesAt(x, y);
     }
 
@@ -206,11 +206,11 @@ public class MediationOperations {
     double dx = gxmax - gxmin;
     double dy = gymax - gymin;
 
-    int nx = (int) (dx / grid.getCellWidth()) + 1;
-    int ny = (int) (dy / grid.getCellHeight()) + 1;
+    long nx = (long) (dx / grid.getCellWidth()) + 1;
+    long ny = (long) (dy / grid.getCellHeight()) + 1;
 
-    int xofs = (int) ((gxmin - grid.getEast()) / grid.getCellWidth());
-    int yofs = (int) ((gymin - grid.getSouth()) / grid.getCellHeight());
+    long xofs = (long) ((gxmin - grid.getEast()) / grid.getCellWidth());
+    long yofs = (long) ((gymin - grid.getSouth()) / grid.getCellHeight());
 
     return new Subgrid(Grid.create(gxmin, gymin, gxmax, gymax, nx, ny, shape.getProjection()), grid,
         xofs, yofs);

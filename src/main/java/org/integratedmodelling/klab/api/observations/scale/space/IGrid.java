@@ -57,9 +57,9 @@ public interface IGrid extends Iterable<Cell> {
 
         Cell getNeighbor(Orientation orientation);
         
-        int getX();
+        long getX();
 
-        int getY();
+        long getY();
 
         /**
          * Create a new cell in a position offset by the passed number of cells in each dimension; return null if
@@ -69,7 +69,7 @@ public interface IGrid extends Iterable<Cell> {
          * @param yOfs
          * @return moved cell
          */
-        Cell move(int xOfs, int yOfs);
+        Cell move(long xOfs, long yOfs);
 
         double getEast();
 
@@ -79,7 +79,7 @@ public interface IGrid extends Iterable<Cell> {
 
         double getNorth();
 
-        Integer getOffsetInGrid();
+        Long getOffsetInGrid();
         
         boolean isAdjacent(Cell cell);
         
@@ -103,23 +103,23 @@ public interface IGrid extends Iterable<Cell> {
 
         public abstract void or(Mask other) throws KlabValidationException;
 
-        public abstract IPair<Integer, Integer> getCell(int index);
+        public abstract IPair<Long, Long> getCell(long index);
 
-        public abstract boolean isActive(int linearIndex);
+        public abstract boolean isActive(long linearIndex);
 
-        public abstract boolean isActive(int x, int y);
+        public abstract boolean isActive(long x, long y);
 
-        public abstract void activate(int x, int y);
+        public abstract void activate(long x, long y);
 
-        public abstract void deactivate(int x, int y);
+        public abstract void deactivate(long x, long y);
 
-        public abstract int totalActiveCells();
+        public abstract long totalActiveCells();
 
-        public abstract int nextActiveOffset(int fromOffset);
+        public abstract long nextActiveOffset(long fromOffset);
 
-        public abstract int[] nextActiveCell(int fromX, int fromY);
+        public abstract long[] nextActiveCell(long fromX, long fromY);
 
-        public abstract IPair<Integer, Integer> nextActiveCell(int fromOffset);
+        public abstract IPair<Long, Long> nextActiveCell(long fromOffset);
 
         public abstract IGrid getGrid();
 
@@ -165,20 +165,20 @@ public interface IGrid extends Iterable<Cell> {
      * Number of cells on horizontal (W-E) axis.
      * @return Y cells
      */
-    int getYCells();
+    long getYCells();
 
     /**
      * Number of cells on vertical (S-N) axis.
      * @return X cells
      */
-    int getXCells();
+    long getXCells();
 
     /**
      * Total number of cells.
      * 
      * @return total cells
      */
-    int getCellCount();
+    long getCellCount();
     
     /**
      * Return the cell area. Use coordinates if projection not available, else
@@ -197,7 +197,7 @@ public interface IGrid extends Iterable<Cell> {
      * @param y
      * @return linear offset
      */
-    int getOffset(int x, int y);
+    long getOffset(long x, long y);
 
     /**
      * Return whether the grid cell at the passed coordinates is part of the active
@@ -207,7 +207,7 @@ public interface IGrid extends Iterable<Cell> {
      * @param y
      * @return true if active
      */
-    boolean isActive(int x, int y);
+    boolean isActive(long x, long y);
     
     double getEast();
 
@@ -226,7 +226,7 @@ public interface IGrid extends Iterable<Cell> {
      * @param lat
      * @return linear offset
      */
-    int getOffsetFromWorldCoordinates(double lon, double lat);
+    long getOffsetFromWorldCoordinates(double lon, double lat);
 
     /**
      * Convert from linear index.
@@ -234,7 +234,7 @@ public interface IGrid extends Iterable<Cell> {
      * @param index
      * @return xy offsets from linear
      */
-    int[] getXYOffsets(int index);
+    long[] getXYOffsets(long index);
 
     /**
      * Get the most accurate geospatial coordinates (w-e, s-n) for the linear offset passed,
@@ -244,7 +244,7 @@ public interface IGrid extends Iterable<Cell> {
      * @param index
      * @return world coordinates for linear offset
      */
-    double[] getCoordinates(int index);
+    double[] getCoordinates(long index);
 
     /**
      * Get a locator for the passed grid coordinates. Use this instead of creating a
@@ -255,15 +255,15 @@ public interface IGrid extends Iterable<Cell> {
      * @param y
      * @return locator for x,y cell
      */
-    IScale.Locator getLocator(int x, int y);
+    IScale.Locator getLocator(long x, long y);
 
     double getCellWidth();
 
     double getCellHeight();
 
-    double[] getWorldCoordinatesAt(int x, int y);
+    double[] getWorldCoordinatesAt(long x, long y);
 
-    int[] getGridCoordinatesAt(double x, double y);
+    long[] getGridCoordinatesAt(double x, double y);
     
     IProjection getProjection();
 

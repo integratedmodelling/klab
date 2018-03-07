@@ -30,39 +30,39 @@ import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator<T extends IArtifact> implements IActuator {
 
-    protected String                  name;
-    private String                    alias;
-    private INamespace                namespace;
-    private Observable                observable;
-    private Scale                     scale;
-    private IKdlActuator.Type         type;
-    List<IActuator>                   actuators         = new ArrayList<>();
-    IMonitor                          monitor;
-    Date                              creationTime      = new Date();
-    private boolean                   createObservation;
-    private boolean                   reference;
-    private boolean                   exported;
+    protected String                                         name;
+    private String                                           alias;
+    private INamespace                                       namespace;
+    private Observable                                       observable;
+    private Scale                                            scale;
+    private IKdlActuator.Type                                type;
+    List<IActuator>                                          actuators         = new ArrayList<>();
+    IMonitor                                                 monitor;
+    Date                                                     creationTime      = new Date();
+    private boolean                                          createObservation;
+    private boolean                                          reference;
+    private boolean                                          exported;
 
     // this is only for the API
-    private List<IComputableResource> computedResources = new ArrayList<>();
+    private List<IComputableResource>                        computedResources = new ArrayList<>();
 
     /**
      * The contextualizer chain that implements the computation specified by IServiceCalls. These may
      * be first-class resolvers/instantiators or mediators, in order of execution. Created and
      * populated at compute().
      */
-    private List<IContextualizer>     computation       = null;
+    private List<Pair<IContextualizer, IComputableResource>> computation       = null;
 
     public void addComputation(IComputableResource resource) {
         computedResources.add(resource);
         IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource);
-        computationStrategy.add(new Pair<>(serviceCall, resource.getTarget()));
+        computationStrategy.add(new Pair<>(serviceCall, resource));
     }
 
     public void addMediation(IComputableResource resource) {
         computedResources.add(resource);
         IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource);
-        mediationStrategy.add(new Pair<>(serviceCall, resource.getTarget()));
+        mediationStrategy.add(new Pair<>(serviceCall, resource));
     }
 
     /**
@@ -72,10 +72,10 @@ public class Actuator<T extends IArtifact> implements IActuator {
      * 
      * Each list contains a service call and its local target name, null for the main observable.
      */
-    private List<Pair<IServiceCall, String>> computationStrategy = new ArrayList<>();
-    private List<Pair<IServiceCall, String>> mediationStrategy   = new ArrayList<>();
+    private List<Pair<IServiceCall, IComputableResource>> computationStrategy = new ArrayList<>();
+    private List<Pair<IServiceCall, IComputableResource>> mediationStrategy   = new ArrayList<>();
 
-    private Class<? extends T>               cls;
+    private Class<? extends T>                            cls;
 
     @Override
     public String getName() {
@@ -138,14 +138,14 @@ public class Actuator<T extends IArtifact> implements IActuator {
         if (computation == null) {
             // compile the contextualization strategy
             computation = new ArrayList<>();
-            for (Pair<IServiceCall, String> service : Collections
+            for (Pair<IServiceCall, IComputableResource> service : Collections
                     .join(computationStrategy, mediationStrategy)) {
                 Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), monitor);
                 if (!(contextualizer instanceof IContextualizer)) {
                     throw new KlabValidationException("function " + service.getFirst().getName()
                             + " does not produce a contextualizer");
                 }
-                computation.add((IContextualizer) contextualizer);
+                computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
             }
         }
 
@@ -157,13 +157,13 @@ public class Actuator<T extends IArtifact> implements IActuator {
         }
 
         // run it
-        for (IContextualizer contextualizer : computation) {
+        for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
 
-            if (contextualizer instanceof IStateResolver) {
+            if (contextualizer.getFirst() instanceof IStateResolver) {
                 // TODO run state by state
-            } else if (contextualizer instanceof IResolver) {
+            } else if (contextualizer.getFirst() instanceof IResolver) {
                 // TODO run resolver/mediator
-            } else if (contextualizer instanceof IInstantiator) {
+            } else if (contextualizer.getFirst() instanceof IInstantiator) {
                 // TODO run instantiator
             }
         }
@@ -232,15 +232,15 @@ public class Actuator<T extends IArtifact> implements IActuator {
                 ret += ((Actuator<?>) actuator).encode(offset + 3) + "\n";
             }
 
-            List<Pair<IServiceCall, String>> serviceCalls = new ArrayList<>();
+            List<Pair<IServiceCall, IComputableResource>> serviceCalls = new ArrayList<>();
             serviceCalls.addAll(computationStrategy);
             serviceCalls.addAll(mediationStrategy);
 
             for (int i = 0; i < serviceCalls.size(); i++) {
                 ret += (i == 0 ? (ofs + "   compute ") : ofs + "     ")
                         + serviceCalls.get(i).getFirst().getSourceCode()
-                        + (serviceCalls.get(i).getSecond() == null ? ""
-                                : (" as " + serviceCalls.get(i).getSecond()))
+                        + (serviceCalls.get(i).getSecond().getTarget() == null ? ""
+                                : (" as " + serviceCalls.get(i).getSecond().getTarget()))
                         + (i < serviceCalls.size() - 1 ? "," : "")
                         + "\n";
             }

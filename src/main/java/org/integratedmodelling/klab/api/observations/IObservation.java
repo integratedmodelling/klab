@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.api.observations;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
+
 import org.integratedmodelling.klab.api.auth.IObservationIdentity;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -90,6 +92,14 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
    * @return the observation of space
    */
   ISpace getSpace();
+  
+  /**
+   * All observations wrap a raw data object, which dataflows and contextualizers operate upon. The
+   * data object also mirrors any chained artifacts' content through its own iterator API.
+   * 
+   * @return the observation data. Never null.
+   */
+  IObservationData getData();
 
   /**
    * Any observation that exists has provenance. Call this on the root observation for the entire
