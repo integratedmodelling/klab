@@ -24,12 +24,14 @@ package org.integratedmodelling.klab.components.geospace.extents.mediators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -39,6 +41,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 public class MediationOperations {
@@ -156,12 +159,12 @@ public class MediationOperations {
     }
 
     @Override
-    public double snapX(double xCoordinate, int direction) {
+    public double snapX(double xCoordinate, Direction direction) {
       return grid.snapX(xCoordinate, direction);
     }
 
     @Override
-    public double snapY(double yCoordinate, int direction) {
+    public double snapY(double yCoordinate, Direction direction) {
       return grid.snapY(yCoordinate, direction);
     }
 
@@ -198,10 +201,10 @@ public class MediationOperations {
     /*
      * adjusts envelope boundaries to cover original cells exactly
      */
-    double gxmin = grid.snapX(senv.getMinX(), IGrid.LEFT);
-    double gxmax = grid.snapX(senv.getMaxX(), IGrid.RIGHT);
-    double gymin = grid.snapY(senv.getMinY(), IGrid.BOTTOM);
-    double gymax = grid.snapY(senv.getMaxY(), IGrid.TOP);
+    double gxmin = grid.snapX(senv.getMinX(), Direction.LEFT);
+    double gxmax = grid.snapX(senv.getMaxX(), Direction.RIGHT);
+    double gymin = grid.snapY(senv.getMinY(), Direction.BOTTOM);
+    double gymax = grid.snapY(senv.getMaxY(), Direction.TOP);
 
     double dx = gxmax - gxmin;
     double dy = gymax - gymin;

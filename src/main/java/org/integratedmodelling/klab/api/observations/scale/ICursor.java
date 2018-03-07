@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.api.observations.scale;
 
 /**
- * Returned by getIndex, it returns offset indices along only one of the scale extents. It's also
- * capable of checking if the correspondent location is masked (i.e. not really part of the
+ * Scale cursor, an iterator that produces indices along only one of the scale extents. It's also
+ * capable of checking if the correspondent location is masked (i.e. not part of the
  * topology) or active.
+ * 
+ * Returned by {@link IScale#getIndex(Locator...)}.
  * 
  * @author Ferd
  *

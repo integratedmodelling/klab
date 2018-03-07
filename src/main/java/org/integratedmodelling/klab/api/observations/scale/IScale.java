@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
+import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -13,12 +13,13 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author ferdinando.villa
  *
  */
-public interface IScale extends IObservationTopology, Iterable<ITransition> {
+public interface IScale extends ILocator, IObservationTopology, Iterable<IScale> {
 
     /**
      * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise
      * 'granule' or to a slice for an extent along it. Used in {@link #getIndex(Locator...)} and
      * {@link #locate(Locator...)}, as well as in dataflow execution through {@link IContextualizer}.
+     * @deprecated use the scale itself or an extent
      */
     public interface Locator {
 
@@ -72,29 +73,16 @@ public interface IScale extends IObservationTopology, Iterable<ITransition> {
      * @return a new merged scale
      * @throws KlabException
      */
-    IScale merge(IScale scale, LogicalConnector how, boolean adopt) throws KlabException;
+     IScale merge(IScale scale, LogicalConnector how, boolean adopt) throws KlabException;
 
-    /**
-     * Get an index to loop over one dimension (set as -1) given fixed position for all others.
-     * 
-     * @param locators
-     * 
-     * @return an iterator locked at the passed locators
-     */
-    ICursor getIndex(Locator... locators);
-
-    /**
-     * Get an index to loop over one dimension (set as -1) given fixed position for all others, only
-     * considering the sliceIndex-th part of the field from a total number of slices = sliceNumber.
-     * Used for parallelization of loops.
-     * 
-     * @param sliceIndex
-     * @param sliceNumber
-     * @param locators
-     * 
-     * @return an iterator as requested
-     */
-    ICursor getIndex(int sliceIndex, int sliceNumber, Locator... locators);
+//    /**
+//     * Get an index to loop over one dimension (set as -1) given fixed position for all others.
+//     * 
+//     * @param locators
+//     * 
+//     * @return an iterator locked at the passed locators
+//     */
+//    ICursor getCursor(Locator... locators);
 
     /**
      * Take an array of objects that can locate a position in each extent, using the order of the

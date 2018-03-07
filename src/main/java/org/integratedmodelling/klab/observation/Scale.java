@@ -102,8 +102,18 @@ public class Scale implements IScale {
         return ret;
     }
 
-    @Override
-    public final ICursor getIndex(int sliceIndex, int sliceNumber, Locator... locators) {
+    /**
+    * Get an index to loop over one dimension (set as -1) given fixed position for all others, only
+    * considering the sliceIndex-th part of the field from a total number of slices = sliceNumber.
+    * Used for parallelization of loops.
+    * 
+    * @param sliceIndex
+    * @param sliceNumber
+    * @param locators
+    * 
+    * @return an iterator as requested
+    */
+    public final ICursor getCursor(int sliceIndex, int sliceNumber, Locator... locators) {
 
         int variableDimension = -1;
         long[] exts = new long[getExtentCount()];
@@ -139,8 +149,8 @@ public class Scale implements IScale {
                 .getDimensionScanner(variableDimension, exts, sliceIndex, sliceNumber), cursor, variableDimension);
     }
 
-    @Override
-    public final ICursor getIndex(Locator... locators) {
+//    @Override
+    public final ICursor getCursor(Locator... locators) {
 
         int variableDimension = -1;
         long[] exts = new long[getExtentCount()];
@@ -821,7 +831,7 @@ public class Scale implements IScale {
     }
 
     @Override
-    public Iterator<ITransition> iterator() {
+    public Iterator<IScale> iterator() {
         // TODO Auto-generated method stub
         return null;
     }

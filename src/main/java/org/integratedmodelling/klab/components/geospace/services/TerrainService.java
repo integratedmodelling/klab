@@ -13,6 +13,12 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class TerrainService implements IResolver<IStorage<?>>, IExpression {
 
+    public TerrainService() {}
+    
+    public TerrainService(Map<String, Object> parameters, IMonitor monitor, Context context) {
+        // TODO Auto-generated constructor stub
+    }
+
     @Override
     public IStorage<?> resolve(IStorage<?> observation, IComputationContext context) {
         // TODO Auto-generated method stub
@@ -22,8 +28,7 @@ public class TerrainService implements IResolver<IStorage<?>>, IExpression {
     @Override
     public Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
             throws KlabException {
-        // TODO Auto-generated method stub
-        return null;
+        return new TerrainService(parameters, monitor, context);
     }
 
     @Override

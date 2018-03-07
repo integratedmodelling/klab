@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public interface IExtent extends ITopology<IExtent>, Iterable<IExtent> {
+public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent> {
 
 
     /**

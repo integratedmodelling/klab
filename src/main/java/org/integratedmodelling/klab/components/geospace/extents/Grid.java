@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -638,18 +639,18 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public double snapX(double xCoordinate, int direction) {
+  public double snapX(double xCoordinate, Direction direction) {
     long steps = (long) Math.floor((xCoordinate - getEast()) / getCellWidth());
-    if (direction == RIGHT && steps < getXCells() - 1) {
+    if (direction == Direction.RIGHT && steps < getXCells() - 1) {
       steps++;
     }
     return getEast() + (getCellWidth() * steps);
   }
 
   @Override
-  public double snapY(double yCoordinate, int direction) {
+  public double snapY(double yCoordinate, Direction direction) {
     long steps = (long) Math.floor((yCoordinate - getSouth()) / getCellHeight());
-    if (direction == TOP && steps < getYCells() - 1) {
+    if (direction == Direction.TOP && steps < getYCells() - 1) {
       steps++;
     }
     return getSouth() + (getCellHeight() * steps);

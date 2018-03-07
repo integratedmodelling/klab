@@ -137,21 +137,13 @@ public interface IGrid extends Iterable<Cell> {
 
     }
 
-    /*
-     * constant for snapping
-     */
-	public static final int LEFT = 1;
-	public static final int RIGHT = 2;
-	public static final int TOP = 3;
-	public static final int BOTTOM = 4;
-
 	/**
 	 * 
 	 * @param xCoordinate
 	 * @param direction
 	 * @return
 	 */
-	double snapX(double xCoordinate, int direction);
+	double snapX(double xCoordinate, Direction direction);
 	
 	/**
 	 * 
@@ -159,7 +151,7 @@ public interface IGrid extends Iterable<Cell> {
 	 * @param direction
 	 * @return
 	 */
-	double snapY(double yCoordinate, int direction);
+	double snapY(double yCoordinate, Direction direction);
 	
     /**
      * Number of cells on horizontal (W-E) axis.

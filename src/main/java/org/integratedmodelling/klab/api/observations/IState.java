@@ -87,7 +87,7 @@ public interface IState extends IObservation {
          * @param index
          * @return a mediated object
          */
-        Object mediateTo(Object value, int index);
+        Object mediateTo(Object value, long index);
 
         /**
          * Get all the locators that will map the original state's scale to the passed
@@ -97,7 +97,7 @@ public interface IState extends IObservation {
          * @param index
          * @return the locators needed to mediate
          */
-        List<IScale.Locator> getLocators(int index);
+        List<IScale.Locator> getLocators(long index);
 
         /**
          * Reduce the passed collection of pairs (value, weight) to one value according to

@@ -132,6 +132,7 @@ public class DataflowBuilder<T extends IArtifact> {
         Set<ModelD> models   = new HashSet<>();
         List<Node>  children = new ArrayList<>();
         Scale       scale;
+        boolean     definesScale;
 
         public Node(IResolvable observable) {
             if (observable instanceof Observable) {
@@ -154,6 +155,7 @@ public class DataflowBuilder<T extends IArtifact> {
 
             ret.setObservable(observable);
             ret.setScale(scale);
+            ret.setDefinesScale(definesScale);
 
             switch (observable.getObservationType()) {
             case CLASSIFICATION:
@@ -281,6 +283,7 @@ public class DataflowBuilder<T extends IArtifact> {
             } catch (KlabException e) {
                 throw new KlabRuntimeException(e);
             }
+            ret.definesScale = true;
         }
 
         ret.scale = scale;
@@ -294,10 +297,13 @@ public class DataflowBuilder<T extends IArtifact> {
             Model model = (Model) graph.getEdgeSource(d);
             ModelD md = compileModel(model);
             for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
+
                 Node child = compileActuator(graph.getEdgeSource(o), graph, o.coverage == null ? scale
                         : o.coverage.getScale(), monitor);
+                
                 if (hasPartials) {
                     md.coverage = d.coverage;
+                    child.definesScale = true;
                 }
                 ret.children.add(child);
             }

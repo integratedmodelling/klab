@@ -76,6 +76,7 @@ public class Actuator<T extends IArtifact> implements IActuator {
     private List<Pair<IServiceCall, IComputableResource>> mediationStrategy   = new ArrayList<>();
 
     private Class<? extends T>                            cls;
+    private boolean definesScale;
 
     @Override
     public String getName() {
@@ -251,7 +252,7 @@ public class Actuator<T extends IArtifact> implements IActuator {
             ret += " as " + getAlias();
         }
 
-        if (getScale() != null && !getScale().isEmpty()) {
+        if (definesScale && getScale() != null && !getScale().isEmpty()) {
             List<IServiceCall> scaleSpecs = getScale().getKimSpecification();
             if (!scaleSpecs.isEmpty()) {
                 ret += " over";
@@ -333,5 +334,9 @@ public class Actuator<T extends IArtifact> implements IActuator {
     @Override
     public List<IComputableResource> getComputation() {
         return computedResources;
+    }
+
+    public void setDefinesScale(boolean definesScale) {
+        this.definesScale = definesScale;
     }
 }
