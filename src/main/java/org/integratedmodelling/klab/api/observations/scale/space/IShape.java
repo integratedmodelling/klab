@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  * @author ferdinando.villa
  *
  */
-public interface IShape extends IReferenced {
+public interface IShape extends IReferenced, ISpace {
 
     public enum Type {
         EMPTY,
@@ -26,7 +26,7 @@ public interface IShape extends IReferenced {
      * 
      * @return the type
      */
-    Type getType();
+    Type getGeometryType();
 
     /**
      * Return a suitable measure of area. Unit must be areal.

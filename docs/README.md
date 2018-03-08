@@ -13,7 +13,7 @@ Before running make to generate documentation:
     >  pip install sphinxcontrib.httpexample
 
 # Install the Sphinx Java domain for Java documentation (see http://bronto-javasphinx.readthedocs.io/en/latest/#) using
-    >  pip install install javasphinx
+    >  pip install javasphinx
 
 Then you can run sphinx as usual, e.g.:
 

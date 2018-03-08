@@ -302,8 +302,13 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public Iterator<IExtent> iterator() {
-    // TODO Auto-generated method stub
-    return null;
+    if (grid != null) {
+      return grid.iterator();
+    } 
+    if (features != null) {
+      return features.iterator();
+    }
+    return shape.iterator();
   }
 
   @Override
@@ -330,7 +335,7 @@ public class Space extends Extent implements ISpace {
 //  @Override
   public Optional<ITessellation> getTessellation() {
     // TODO Auto-generated method stub
-    return null;
+    return features == null ? Optional.empty() : Optional.of(features);
   }
 
   @Override

@@ -1,13 +1,23 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import java.util.Collections;
+import java.util.Iterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -104,7 +114,7 @@ public class Shape implements IShape {
   }
 
   @Override
-  public Type getType() {
+  public Type getGeometryType() {
     if (type == null) {
       if (geometry instanceof Polygon) {
         type = Type.POLYGON;
@@ -273,6 +283,110 @@ public class Shape implements IShape {
       throw new KlabRuntimeException(e);
     }
     return this.standardizedGeometry;
+  }
+
+  @Override
+  public IShape getShape() {
+    return this;
+  }
+
+  @Override
+  public ISpace at(ILocator locator) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public int getScaleRank() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public IConcept getDomainConcept() {
+    return Concepts.c(NS.SPACE_DOMAIN);
+  }
+
+  @Override
+  public IExtent collapse() {
+    return this;
+  }
+
+  @Override
+  public IExtent merge(IExtent extent, boolean force) throws KlabException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public double getCoverage() {
+    // TODO Auto-generated method stub
+    return 1;
+  }
+
+  @Override
+  public long getMultiplicity() {
+    // TODO Auto-generated method stub
+    return 1;
+  }
+
+  @Override
+  public boolean contains(IExtent o) throws KlabException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean overlaps(IExtent o) throws KlabException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean intersects(IExtent o) throws KlabException {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public ITopologicallyComparable<? extends IExtent> union(ITopologicallyComparable<?> other)
+      throws KlabException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ITopologicallyComparable<? extends IExtent> intersection(ITopologicallyComparable<?> other)
+      throws KlabException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public double getCoveredExtent() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public Iterator<IExtent> iterator() {
+    return Collections.singleton((IExtent)this).iterator();
+  }
+
+  @Override
+  public org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type getType() {
+    // TODO Auto-generated method stub
+    return org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type.SPACE;
+  }
+
+  @Override
+  public boolean isRegular() {
+    return false;
+  }
+
+  @Override
+  public int getDimensionality() {
+    return 0;
   }
 
 }

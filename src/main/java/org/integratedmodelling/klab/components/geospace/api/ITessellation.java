@@ -26,7 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.components.geospace.api;
 
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**
  * An irregular tessellation topology implemented as an array of shapes, not necessarily 
@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
  * @author ferdinando.villa
  *
  */
-public interface ITessellation extends Iterable<IShape> {
+public interface ITessellation extends Iterable<IExtent> {
 
   int size();
   

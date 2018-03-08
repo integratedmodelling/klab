@@ -29,12 +29,12 @@ package org.integratedmodelling.klab.components.geospace.api;
 import java.util.Collection;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.utils.IPair;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
-import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -42,9 +42,9 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  * @author Ferd
  *
  */
-public interface IGrid extends Iterable<Cell> {
+public interface IGrid extends Iterable<IExtent> {
 
-    public interface Cell {
+    public interface Cell extends ISpace {
 
         Cell N();
 

@@ -2,14 +2,23 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.Scale.Locator;
@@ -346,7 +355,107 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public IShape getShape() {
-      return Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
+      if (this.shape == null) {
+        this.shape = Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
+      }
+      return this.shape;
+    }
+
+    @Override
+    public IEnvelope getEnvelope() {
+      return getShape().getEnvelope();
+    }
+
+    @Override
+    public IProjection getProjection() {
+      return projection;
+    }
+
+    @Override
+    public ISpace at(ILocator locator) {
+      return getShape().at(locator);
+    }
+
+    @Override
+    public int getScaleRank() {
+      return getShape().getScaleRank();
+    }
+
+    @Override
+    public IConcept getDomainConcept() {
+      return Concepts.c(NS.SPACE_DOMAIN);
+    }
+
+    @Override
+    public IExtent collapse() {
+      return getShape().collapse();
+    }
+
+    @Override
+    public IExtent merge(IExtent extent, boolean force) throws KlabException {
+      return getShape().merge(extent, force);
+    }
+
+    @Override
+    public double getCoverage() {
+      return 1;
+    }
+
+    @Override
+    public long getMultiplicity() {
+      return 1;
+    }
+
+    @Override
+    public boolean contains(IExtent o) throws KlabException {
+      return getShape().contains(o);
+    }
+
+    @Override
+    public boolean overlaps(IExtent o) throws KlabException {
+      return getShape().overlaps(o);
+    }
+
+    @Override
+    public boolean intersects(IExtent o) throws KlabException {
+      return getShape().intersects(o);
+    }
+
+    @Override
+    public ITopologicallyComparable<? extends IExtent> union(ITopologicallyComparable<?> other)
+        throws KlabException {
+      return getShape().union(other);
+    }
+
+    @Override
+    public ITopologicallyComparable<? extends IExtent> intersection(
+        ITopologicallyComparable<?> other) throws KlabException {
+      return getShape().intersection(other);
+    }
+
+    @Override
+    public double getCoveredExtent() {
+      return 1;
+    }
+
+    @Override
+    public Iterator<IExtent> iterator() {
+      return Collections.singleton((IExtent)this).iterator();
+    }
+
+    @Override
+    public Type getType() {
+      return Type.SPACE;
+    }
+
+    @Override
+    public boolean isRegular() {
+      return true;
+    }
+
+    @Override
+    public int getDimensionality() {
+      return 0;
     }
   }
 
@@ -370,11 +479,11 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public Iterator<Cell> iterator() {
+  public Iterator<IExtent> iterator() {
 
-    return new Iterator<Cell>() {
+    return new Iterator<IExtent>() {
 
-      int n = 0;
+      long n = 0;
 
       @Override
       public boolean hasNext() {
@@ -383,6 +492,7 @@ public class Grid extends Area implements IGrid {
 
       @Override
       public Cell next() {
+        // TODO move to next ACTIVE cell
         return getCell(n++);
       }
 
@@ -408,6 +518,7 @@ public class Grid extends Area implements IGrid {
   }
 
   public Cell getCell(long index) {
+    // FIXME if we have a mask, should go to the next ACTIVE cell.
     long[] xy = getXYOffsets(index);
     return new CellImpl(xy[0], xy[1]);
   }
