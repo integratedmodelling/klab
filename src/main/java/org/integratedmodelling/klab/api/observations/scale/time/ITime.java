@@ -63,12 +63,12 @@ public interface ITime extends IExtent {
      */
     ITimeDuration getStep();
 
-    /**
-     * Get the transition between time i and the next.
-     * 
-     * @param i
-     * @return
-     */
-    ITransition getTransition(int i);
+//    /**
+//     * Get the transition between time i and the next.
+//     * 
+//     * @param i
+//     * @return
+//     */
+//    ITransition getTransition(int i);
     
 }

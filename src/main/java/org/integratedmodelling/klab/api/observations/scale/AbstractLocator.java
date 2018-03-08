@@ -26,7 +26,9 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale;
 
-public abstract class AbstractLocator implements IScale.Locator {
+import org.integratedmodelling.klab.observation.Scale;
+
+public abstract class AbstractLocator implements Scale.Locator {
 
     double weight = 1.0;
 

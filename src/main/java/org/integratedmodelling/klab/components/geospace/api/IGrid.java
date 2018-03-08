@@ -24,13 +24,17 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.api.observations.scale.space;
+package org.integratedmodelling.klab.components.geospace.api;
 
 import java.util.Collection;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.Direction;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -243,16 +247,16 @@ public interface IGrid extends Iterable<Cell> {
      */
     double[] getCoordinates(long index);
 
-    /**
-     * Get a locator for the passed grid coordinates. Use this instead of creating a
-     * locator from scratch, to ensure that the grid coordinates conform to the
-     * arrangement of this grid.
-     * 
-     * @param x
-     * @param y
-     * @return locator for x,y cell
-     */
-    IScale.Locator getLocator(long x, long y);
+//    /**
+//     * Get a locator for the passed grid coordinates. Use this instead of creating a
+//     * locator from scratch, to ensure that the grid coordinates conform to the
+//     * arrangement of this grid.
+//     * 
+//     * @param x
+//     * @param y
+//     * @return locator for x,y cell
+//     */
+//    IScale.Locator getLocator(long x, long y);
 
     double getCellWidth();
 

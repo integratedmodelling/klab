@@ -1,16 +1,7 @@
 package org.integratedmodelling.klab.api.observations;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.h2.command.ddl.Analyze;
-import org.integratedmodelling.klab.api.data.Aggregation;
-import org.integratedmodelling.klab.api.data.utils.IPair;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 
 /**
  * 
@@ -19,103 +10,35 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
  */
 public interface IState extends IObservation {
 
-    /**
-     * Listener that we can install with {@link #addChangeListener} to be notified of
-     * changes.
-     * 
-     * FIXME turn into subscribing to event, passing a locator to establish relevance (when to fire)
-     * 
-     * @author ferd
-     * @deprecated use an event model
-     */
-    interface ChangeListener {
+//    /**
+//     * Listener that we can install with {@link #addChangeListener} to be notified of
+//     * changes.
+//     * 
+//     * FIXME turn into subscribing to event, passing a locator to establish relevance (when to fire)
+//     * 
+//     * @author ferd
+//     * @deprecated use an event model
+//     */
+//    interface ChangeListener {
+//
+//        /**
+//         * Called every time a new value is set.
+//         * 
+//         * @param offset
+//         * @param value
+//         */
+//        void changed(ILocator offset, Object value);
+//
+//        /**
+//         * Called once before a new transition is executed or at the end of
+//         * initialization.
+//         * 
+//         * @param transaction
+//         */
+//        void transitionDone(ITransition transaction);
+//    }
+//
 
-        /**
-         * Called every time a new value is set.
-         * 
-         * @param offset
-         * @param value
-         */
-        void changed(ILocator offset, Object value);
-
-        /**
-         * Called once before a new transition is executed or at the end of
-         * initialization.
-         * 
-         * @param transaction
-         */
-        void transitionDone(ITransition transaction);
-    }
-
-    /**
-     * Mediators are created by extents and are used to implement views of a state that
-     * mediate values to another scale.
-     * 
-     * A mediator should be aware that the extents it mediates may have changed (it can
-     * use States.hasChanged() to inspect that) and be able to readjust if necessary. This
-     * will properly handle moving agents.
-     * 
-     * FIXME all mediators should be change listeners for the mediated state, and
-     * rearrange the mediation strategy at each change as needed - we should subscribe
-     * them automatically.
-     * 
-     * @author ferdinando.villa
-     * @deprecated bring below the API
-     */
-    interface Mediator {
-
-        /**
-         * The kind of aggregation that the mediation implies.
-         * 
-         * @return aggregation type
-         */
-        Aggregation getAggregation();
-
-        /**
-         * Apply the locators to the original state, adding whatever other locators the
-         * mediation strategy implies. Return the aggregated value implied by the
-         * strategy.
-         * 
-         * @param originalState
-         * @param otherLocators
-         *
-         * @return a mediated object
-         */
-        Object mediateFrom(IState originalState, IScale.Locator... otherLocators);
-
-        /**
-         * Apply the passed value to our scale and return the result.
-         * 
-         * @param value
-         * @param index
-         * @return a mediated object
-         */
-        Object mediateTo(Object value, long index);
-
-        /**
-         * Get all the locators that will map the original state's scale to the passed
-         * index in the mediated scale. Weights should be assigned according to coverage
-         * and aggregation strategy.
-         * 
-         * @param index
-         * @return the locators needed to mediate
-         */
-        List<IScale.Locator> getLocators(long index);
-
-        /**
-         * Reduce the passed collection of pairs (value, weight) to one value according to
-         * aggregation strategy.
-         * 
-         * @param toReduce
-         * @param metadata
-         *            a map to fill with any relevant statistics related to the
-         *            aggregation (errors, uncertainty, boundaries, distributions, truth
-         *            values etc) using the keys above.
-         * 
-         * @return the reduced value
-         */
-        Object reduce(Collection<IPair<Object, Double>> toReduce, IMetadata metadata);
-    }
 
     /**
      * Return the total number of values determined by the scale of the owning
@@ -136,7 +59,6 @@ public interface IState extends IObservation {
      */
     Object getValue(ILocator locator);
 
-
     /**
      * True if the state has the same value overall despite the scale.
      * 
@@ -151,13 +73,13 @@ public interface IState extends IObservation {
      */
     boolean isDynamic();
 
-    /**
-     * Add a listener to notify when any value is changed.
-     * 
-     * @param listener
-     * @deprecated use an event model
-     */
-    void addChangeListener(ChangeListener listener);
+//    /**
+//     * Add a listener to notify when any value is changed.
+//     * 
+//     * @param listener
+//     * @deprecated use an event model
+//     */
+//    void addChangeListener(ChangeListener listener);
 
     /**
      * Return either the original state or a wrapper that will allow get/set of values 

@@ -9,9 +9,9 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.services.IUnitService;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -249,8 +249,8 @@ public enum Units implements IUnitService {
 
     @Override
     public boolean isSpatialDensity(IUnit unit, IExtent space) {
-        if (space instanceof ISpace) {
-            switch (space.getDimensionSizes().length) {
+        if (space instanceof Space) {
+            switch (((Space)space).getDimensionSizes().length) {
             case 0:
                 return false;
             case 1:

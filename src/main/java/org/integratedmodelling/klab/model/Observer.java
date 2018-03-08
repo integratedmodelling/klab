@@ -5,13 +5,12 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.owl.Observable;
 
@@ -82,7 +81,7 @@ public class Observer extends KimObject implements IObserver {
   }
 
   @Override
-  public List<IComputableResource> getComputation(ITransition transition) {
+  public List<IComputableResource> getComputation(ILocator transition) {
     List<IComputableResource> ret = new ArrayList<>();
     for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
       for (IAction action : behavior.getActions(trigger)) {

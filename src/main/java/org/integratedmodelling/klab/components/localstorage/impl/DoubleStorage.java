@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.data.AbstractObservationData;
 import org.integratedmodelling.klab.observation.Scale;
 
@@ -13,27 +13,21 @@ public class DoubleStorage extends AbstractObservationData implements IStorage<D
   }
 
   @Override
-  public Double get(long index) {
+  public long size() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public Double get(ILocator index) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public void set(long index, Object value) {
+  public void set(ILocator index, Object value) {
     // TODO Auto-generated method stub
     
-  }
-
-  @Override
-  public void set(Object data, Locator... locators) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public long size() {
-    // TODO Auto-generated method stub
-    return 0;
   }
   
 }

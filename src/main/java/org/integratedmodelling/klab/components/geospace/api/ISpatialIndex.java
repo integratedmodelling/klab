@@ -1,10 +1,11 @@
-package org.integratedmodelling.klab.api.observations.scale.space;
+package org.integratedmodelling.klab.components.geospace.api;
 
 import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.observation.Scale;
 
 /**
  * Spatial index with k.LAB semantics (as well as more basic functions for now). Much to
@@ -19,11 +20,11 @@ public interface ISpatialIndex {
 
     void add(IDirectObservation observation);
 
-    double distanceBetween(IScale.Locator position, String objectId);
+    double distanceBetween(Scale.Locator position, String objectId);
 
     double distanceBetween(int offset, String objectId);
 
-    Collection<IPair<String, ISpace>> getNearest(IScale.Locator position, int maxResults);
+    Collection<IPair<String, ISpace>> getNearest(Scale.Locator position, int maxResults);
 
     ISpace getExtent();
 
@@ -41,7 +42,7 @@ public interface ISpatialIndex {
      * @param sfs
      * @return
      */
-    IPair<IDirectObservation, Double> getNearestObject(IScale.Locator sfs);
+    IPair<IDirectObservation, Double> getNearestObject(Scale.Locator sfs);
 
     /**
      * Return all objects in the index, sorted according to increasing distance from
@@ -59,13 +60,13 @@ public interface ISpatialIndex {
      * @param sfs
      * @return
      */
-    List<IPair<IDirectObservation, Double>> getNear(IScale.Locator sfs);
+    List<IPair<IDirectObservation, Double>> getNear(Scale.Locator sfs);
 
     boolean contains(String objectId);
 
     double distanceToNearestObjectFrom(int sfs);
 
-    double distanceToNearestObjectFrom(IScale.Locator sfs);
+    double distanceToNearestObjectFrom(Scale.Locator sfs);
 
     int size();
 }

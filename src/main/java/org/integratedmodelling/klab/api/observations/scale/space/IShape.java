@@ -26,7 +26,7 @@ public interface IShape extends IReferenced {
      * 
      * @return the type
      */
-    IShape.Type getType();
+    Type getType();
 
     /**
      * Return a suitable measure of area. Unit must be areal.
@@ -47,28 +47,28 @@ public interface IShape extends IReferenced {
      * Return the shape transformed to the passed projection.
      * 
      * @param projection
-     * @return
+     * @return the transformed shape
      * @throws KlabValidationException 
      */
     IShape transform(IProjection projection) throws KlabValidationException;
 
     /**
-     * 
-     * @return
+     * The shape's bounding box
+     * @return the referenced envelope
      */
     IEnvelope getEnvelope();
 
     /**
-     * 
+     * Create a new shape by intersecting this with the passed other.
      * @param other
-     * @return
+     * @return the intersection
      */
     IShape intersection(IShape other);
 
     /**
-     * 
+     * Create a new shape by uniting this with the passed other.
      * @param other
-     * @return
+     * @return the union
      */
     IShape union(IShape other);
 

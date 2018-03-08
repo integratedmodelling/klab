@@ -21,7 +21,6 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale.space;
 
-import java.util.Optional;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 public interface ISpace extends IExtent {
@@ -44,19 +43,19 @@ public interface ISpace extends IExtent {
      */
     IProjection getProjection();
 
-    /**
-     * Return the grid topology if we are using one, or null.
-     * 
-     * @return the grid, or null
-     */
-    Optional<IGrid> getGrid();
+//    /**
+//     * Return the grid topology if we are using one, or null.
+//     * 
+//     * @return the grid, or null
+//     */
+//    Optional<IGrid> getGrid();
 
-    /**
-     * Return the tessellation topology if we are using one, or null.
-     * 
-     * @return tessellation
-     */
-    Optional<ITessellation> getTessellation();
+//    /**
+//     * Return the tessellation topology if we are using one, or null.
+//     * 
+//     * @return tessellation
+//     */
+//    Optional<ITessellation> getTessellation();
 
     /**
      * Get the shape of this extent - usually it's the same as getExtent but with the additional
@@ -66,15 +65,15 @@ public interface ISpace extends IExtent {
      */
     IShape getShape();
 
-    /**
-     * Return a spatial index capable of keeping track of other extents relative to this one. Each extent can
-     * have an index stored in it, and may create new (empty) ones as requested.
-     * 
-     * @param makeNew
-     *            if true, create and return a new index for this extent. If false, return the stored index
-     *            for the extent, creating it only if necessary.
-     * 
-     * @return a spatial index set to our extent
-     */
-    ISpatialIndex getIndex(boolean makeNew);
+//    /**
+//     * Return a spatial index capable of keeping track of other extents relative to this one. Each extent can
+//     * have an index stored in it, and may create new (empty) ones as requested.
+//     * 
+//     * @param makeNew
+//     *            if true, create and return a new index for this extent. If false, return the stored index
+//     *            for the extent, creating it only if necessary.
+//     * 
+//     * @return a spatial index set to our extent
+//     */
+//    ISpatialIndex getIndex(boolean makeNew);
 }

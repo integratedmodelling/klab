@@ -26,6 +26,8 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale;
 
+import java.util.List;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -39,7 +41,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  * 
  * @author Ferd
  */
-public abstract interface IObservationTopology extends ITopology<IScale> {
+public abstract interface IObservationTopology extends IGeometry, ITopology<IScale> {
 
     /**
      * We deal with space and time in all natural systems, so we expose these to ease API use.
@@ -54,6 +56,22 @@ public abstract interface IObservationTopology extends ITopology<IScale> {
      * @return the time, or null
      */
     ITime getTime();
+    
+    /**
+     * True if we have time and the time topology determines more than a single state. It's also in
+     * IObservation, but it's convenient to duplicate it here too.
+     * 
+     * @return true if distributed in time
+     */
+    boolean isTemporallyDistributed();
+
+    /**
+     * True if we have space and the space topology determines more than a single state. It's also in
+     * IObservation, but it's convenient to duplicate it here too.
+     * 
+     * @return true if distributed in space
+     */
+    boolean isSpatiallyDistributed();
 
     /**
      * Total number of extents available in this Scale. Note that there may be more extents than just space
@@ -64,15 +82,12 @@ public abstract interface IObservationTopology extends ITopology<IScale> {
     int getExtentCount();
 
     /**
-     * Get the n-th extent. Index reflects the scale's inherent sorting and must be stable across
-     * instances, i.e. if two scales have the same extents, they must be in the same order, and this
-     * also applies to scales that are subsets.
+     * Return the list of extents ordered by contextualization priority.
      * 
-     * @param index
-     * @return the extent in position {@code index}
+     * @return the extents
      */
-    IExtent getExtent(int index);
-
+    List<IExtent> getExtents();
+    
     /**
      * Get the extent that observes the passed domain concept, or null if it does not exist.
      * 

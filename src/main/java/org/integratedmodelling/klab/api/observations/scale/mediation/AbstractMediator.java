@@ -31,11 +31,11 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.data.Aggregators.Max;
 import org.integratedmodelling.klab.data.Aggregators.Mean;
 import org.integratedmodelling.klab.data.Aggregators.Min;
 import org.integratedmodelling.klab.data.Aggregators.Sum;
+import org.integratedmodelling.klab.observation.Scale;
 
 /**
  * Holds aggregation methods for all mediators to use.
@@ -43,7 +43,7 @@ import org.integratedmodelling.klab.data.Aggregators.Sum;
  * @author ferdinando.villa
  *
  */
-public abstract class AbstractMediator implements IState.Mediator {
+public abstract class AbstractMediator implements Scale.Mediator {
 
 
   /**

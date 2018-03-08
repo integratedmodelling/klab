@@ -3,17 +3,16 @@ package org.integratedmodelling.klab.components.time.extents;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IState.Mediator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.Extent;
+import org.integratedmodelling.klab.observation.Scale.Locator;
+import org.integratedmodelling.klab.observation.Scale.Mediator;
 
 public class Time extends Extent implements ITime {
 
@@ -50,13 +49,7 @@ public class Time extends Extent implements ITime {
         // TODO Auto-generated method stub
         return false;
     }
-
-    @Override
-    public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
     @Override
     public long getMultiplicity() {
         // TODO Auto-generated method stub
@@ -130,12 +123,6 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public ITransition getTransition(int i) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Extent copy() {
         // TODO Auto-generated method stub
         return null;
@@ -172,9 +159,39 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
+    public double getCoverage() {
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
+    @Override
+    public Type getType() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public boolean isRegular() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    @Override
+    public int getDimensionality() {
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
+    @Override
     public long locate(Locator locator) {
-        // TODO Auto-generated method stub
-        return 0;
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
+    @Override
+    public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
+      // TODO Auto-generated method stub
+      return null;
     }
 
 }

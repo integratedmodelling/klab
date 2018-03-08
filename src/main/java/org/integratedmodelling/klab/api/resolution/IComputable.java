@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.resolution;
 
 import java.util.List;
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 /**
  * The computable interface applies to objects that can contribute computations to a dataflow. If
@@ -14,6 +14,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
  */
 public interface IComputable {
 
-  List<IComputableResource> getComputation(ITransition transition);
+  List<IComputableResource> getComputation(ILocator extent);
 
 }

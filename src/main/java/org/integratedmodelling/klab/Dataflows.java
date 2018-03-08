@@ -13,7 +13,7 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.observation.Transition;
 import org.integratedmodelling.klab.resolution.DataflowBuilder;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
@@ -96,17 +95,18 @@ public enum Dataflows implements IDataflowService {
     }
 
     @Override
-    public List<Trigger> getActionTriggersFor(ITransition transition) {
+    public List<Trigger> getActionTriggersFor(ILocator transition) {
       List<Trigger> ret = new ArrayList<>();
       // TODO!
-      if (transition.equals(Transition.initialization())) {
+      if (transition.equals(ILocator.INITIALIZATION)) {
         ret.add(Trigger.DEFINITION);
         ret.add(Trigger.RESOLUTION);
       } else {
         ret.add(Trigger.TRANSITION);
-        if (transition.isLast()) {
-          ret.add(Trigger.TERMINATION);
-        }
+        // FIXME add back
+//        if (transition.isLast()) {
+//          ret.add(Trigger.TERMINATION);
+//        }
       }
       return ret;
     }

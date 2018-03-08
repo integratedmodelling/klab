@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -216,7 +216,7 @@ public class RankedModel extends Model implements IRankedModel {
   }
 
   @Override
-  public List<IComputableResource> getComputation(ITransition transition) {
+  public List<IComputableResource> getComputation(ILocator transition) {
     return getDelegate().getComputation(transition);
   }
 

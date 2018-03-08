@@ -3,17 +3,16 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.observation.Scale.Locator;
 
 /**
  * 
@@ -468,7 +467,6 @@ public class Grid extends Area implements IGrid {
     return getWorldCoordinatesAt(xy[0], xy[1]);
   }
 
-  @Override
   public Locator getLocator(long x, long y) {
     return new SpaceLocator(x, yCells - y - 1);
   }

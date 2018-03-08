@@ -54,12 +54,6 @@ public class State extends Observation implements IState {
   }
 
   @Override
-  public void addChangeListener(ChangeListener listener) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public State as(IObservable observable) {
     // TODO Auto-generated method stub
     return null;

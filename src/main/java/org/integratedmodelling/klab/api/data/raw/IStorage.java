@@ -1,7 +1,8 @@
 package org.integratedmodelling.klab.api.data.raw;
 
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.observation.Scale.Locator;
 
 /**
  * IStorage is a {@link IStateData} that is typed and contains API to be used within a semantic
@@ -22,7 +23,7 @@ public interface IStorage<T> extends IStateData {
    * @param index
    * @return value at index
    */
-  T get(long index);
+  T get(ILocator index);
 
   /**
    * Set the value at given index. Improper values are a runtime exception.
@@ -34,15 +35,15 @@ public interface IStorage<T> extends IStateData {
    * 
    * @throws IllegalArgumentException if value is incompatible with type.
    */
-  void set(long index, Object value);
+  void set(ILocator index, Object value);
 
-  /**
-   * Bulk set of raw data in specified position.
-   * 
-   * @param data
-   * @param locators
-   */
-  void set(Object data, Locator... locators);
+//  /**
+//   * Bulk set of raw data in specified position.
+//   * 
+//   * @param data
+//   * @param locators
+//   */
+//  void set(Object data, Locator... locators);
 
   /**
    * Total number of values. Should be compatible with the multiplicity of the scale in the state

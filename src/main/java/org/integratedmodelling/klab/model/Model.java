@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITransition;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
@@ -234,7 +234,7 @@ public class Model extends KimObject implements IModel {
    * @return the computations for the model at the transition
    */
   @Override
-  public List<IComputableResource> getComputation(ITransition transition) {
+  public List<IComputableResource> getComputation(ILocator transition) {
     List<IComputableResource> ret = new ArrayList<>(resources);
     for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
       for (IAction action : behavior.getActions(trigger)) {

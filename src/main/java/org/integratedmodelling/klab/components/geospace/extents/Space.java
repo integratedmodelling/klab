@@ -9,21 +9,21 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IState.Mediator;
+import org.integratedmodelling.klab.observation.Scale.Mediator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpatialIndex;
-import org.integratedmodelling.klab.api.observations.scale.space.ITessellation;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
+import org.integratedmodelling.klab.components.geospace.api.ITessellation;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.Extent;
+import org.integratedmodelling.klab.observation.Scale.Locator;
 
 public class Space extends Extent implements ISpace {
 
@@ -320,13 +320,13 @@ public class Space extends Extent implements ISpace {
     return projection;
   }
 
-  @Override
+//  @Override
   public Optional<IGrid> getGrid() {
     // TODO Auto-generated method stub
     return grid == null ? Optional.empty() : Optional.of(grid);
   }
 
-  @Override
+//  @Override
   public Optional<ITessellation> getTessellation() {
     // TODO Auto-generated method stub
     return null;
@@ -337,7 +337,7 @@ public class Space extends Extent implements ISpace {
     return shape;
   }
 
-  @Override
+//  @Override
   public ISpatialIndex getIndex(boolean makeNew) {
     // TODO Auto-generated method stub
     return null;
@@ -365,6 +365,30 @@ public class Space extends Extent implements ISpace {
       args.add(gridSpecs);
     }
     return new KimServiceCall("space", args.toArray());
+  }
+
+  @Override
+  public double getCoverage() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public Type getType() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean isRegular() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public int getDimensionality() {
+    // TODO Auto-generated method stub
+    return 0;
   }
 
 }

@@ -24,24 +24,22 @@ package org.integratedmodelling.klab.components.geospace.extents.mediators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
-import org.integratedmodelling.klab.api.observations.scale.IScale.Locator;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.utils.Pair;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 public class MediationOperations {
@@ -105,7 +103,7 @@ public class MediationOperations {
       return grid.getCoordinates(index);
     }
 
-    @Override
+//    @Override
     public Locator getLocator(long x, long y) {
       return grid.getLocator(x, y);
     }

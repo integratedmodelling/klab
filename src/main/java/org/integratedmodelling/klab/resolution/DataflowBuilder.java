@@ -8,13 +8,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -27,7 +27,6 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.DirectObservation;
 import org.integratedmodelling.klab.observation.Scale;
-import org.integratedmodelling.klab.observation.Transition;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
@@ -189,7 +188,7 @@ public class DataflowBuilder<T extends IArtifact> {
                 if (!generated.contains(theModel)) {
                     generated.add(theModel);
                     for (IComputableResource resource : models.iterator().next().model
-                            .getComputation(Transition.initialization())) {
+                            .getComputation(ILocator.INITIALIZATION)) {
                         ret.addComputation(resource);
                     }
                 } else {
