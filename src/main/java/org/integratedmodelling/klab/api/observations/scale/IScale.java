@@ -27,5 +27,12 @@ public interface IScale extends ILocator, IObservationTopology, Iterable<IScale>
    * @throws KlabException
    */
   IScale merge(IScale scale, LogicalConnector how, boolean adopt) throws KlabException;
+  
+  /**
+   * The scale implementation of {@link ILocator#at(ILocator)} always return a scale and 
+   * can only use another space as locator.
+   */
+  @Override
+  IScale at(ILocator locator);
 
 }

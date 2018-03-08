@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
@@ -190,6 +191,12 @@ public class Time extends Extent implements ITime {
 
     @Override
     public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public ITime at(ILocator locator) {
       // TODO Auto-generated method stub
       return null;
     }

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
@@ -16,14 +17,15 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.ICursor;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.engine.api.ICursor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -32,7 +34,12 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
 
-public class Scale extends Geometry implements IScale {
+public class Scale implements IScale {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -7855922162677333636L;
 
   /**
    * Mediators are created by extents and are used to implement views of a state that
@@ -967,6 +974,34 @@ public class Scale extends Geometry implements IScale {
 
   @Override
   public Iterator<IScale> iterator() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IGeometry getChild() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<Dimension> getDimensions() {
+    return null;
+  }
+
+  @Override
+  public Granularity getGranularity() {
+    return Granularity.SINGLE;
+  }
+
+  @Override
+  public boolean isScalar() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public IScale at(ILocator locator) {
     // TODO Auto-generated method stub
     return null;
   }

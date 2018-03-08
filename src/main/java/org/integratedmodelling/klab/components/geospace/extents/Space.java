@@ -9,8 +9,8 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.observation.Scale.Mediator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.Extent;
 import org.integratedmodelling.klab.observation.Scale.Locator;
+import org.integratedmodelling.klab.observation.Scale.Mediator;
 
 public class Space extends Extent implements ISpace {
 
@@ -389,6 +390,12 @@ public class Space extends Extent implements ISpace {
   public int getDimensionality() {
     // TODO Auto-generated method stub
     return 0;
+  }
+
+  @Override
+  public ISpace at(ILocator locator) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

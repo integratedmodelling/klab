@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -188,7 +188,7 @@ public class DataflowBuilder<T extends IArtifact> {
                 if (!generated.contains(theModel)) {
                     generated.add(theModel);
                     for (IComputableResource resource : models.iterator().next().model
-                            .getComputation(ILocator.INITIALIZATION)) {
+                            .getComputation(ITime.INITIALIZATION)) {
                         ret.addComputation(resource);
                     }
                 } else {

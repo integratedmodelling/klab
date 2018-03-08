@@ -22,6 +22,7 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 public interface ISpace extends IExtent {
 
@@ -31,7 +32,7 @@ public interface ISpace extends IExtent {
     /**
      * Get the envelope, providing boundaries.
      * 
-     * @return
+     * @return the referenced envelope
      */
     IEnvelope getEnvelope();
 
@@ -42,21 +43,6 @@ public interface ISpace extends IExtent {
      * @return coordinate reference system
      */
     IProjection getProjection();
-
-//    /**
-//     * Return the grid topology if we are using one, or null.
-//     * 
-//     * @return the grid, or null
-//     */
-//    Optional<IGrid> getGrid();
-
-//    /**
-//     * Return the tessellation topology if we are using one, or null.
-//     * 
-//     * @return tessellation
-//     */
-//    Optional<ITessellation> getTessellation();
-
     /**
      * Get the shape of this extent - usually it's the same as getExtent but with the additional
      * type constraint.
@@ -64,16 +50,12 @@ public interface ISpace extends IExtent {
      * @return full shape
      */
     IShape getShape();
+    
+    /**
+     * The space implementation of {@link ILocator#at(ILocator)} always return a time and 
+     * can only use another space as locator.
+     */
+    @Override
+    ISpace at(ILocator locator);
 
-//    /**
-//     * Return a spatial index capable of keeping track of other extents relative to this one. Each extent can
-//     * have an index stored in it, and may create new (empty) ones as requested.
-//     * 
-//     * @param makeNew
-//     *            if true, create and return a new index for this extent. If false, return the stored index
-//     *            for the extent, creating it only if necessary.
-//     * 
-//     * @return a spatial index set to our extent
-//     */
-//    ISpatialIndex getIndex(boolean makeNew);
 }

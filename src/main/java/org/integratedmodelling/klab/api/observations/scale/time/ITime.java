@@ -27,11 +27,23 @@
 package org.integratedmodelling.klab.api.observations.scale.time;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 public interface ITime extends IExtent {
 
     int MIN_SCALE_RANK = 0;
     int MAX_SCALE_RANK = 19;
+    
+    /**
+     * The empty, non-descript initialization locator refers to the extent before
+     * any extent exists.
+     */
+    ILocator INITIALIZATION = new ILocator() {
+
+      @Override
+      public ILocator at(ILocator locator) {
+        return this;
+      }};
 
     /**
      * Overriding to require that the collapsed type is ITimePeriod. This allows simpler coding against the API,
@@ -63,12 +75,11 @@ public interface ITime extends IExtent {
      */
     ITimeDuration getStep();
 
-//    /**
-//     * Get the transition between time i and the next.
-//     * 
-//     * @param i
-//     * @return
-//     */
-//    ITransition getTransition(int i);
+    /**
+     * The time implementation of {@link ILocator#at(ILocator)} always return a time and 
+     * can only use another time as locator.
+     */
+    @Override
+    ITime at(ILocator locator);
     
 }

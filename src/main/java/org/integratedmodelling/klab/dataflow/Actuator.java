@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.dataflow;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -11,11 +10,15 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -160,7 +163,13 @@ public class Actuator<T extends IArtifact> implements IActuator {
         // run it
         for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
 
+            IObservationData data = getTargetData(contextualizer.getSecond());
+          
             if (contextualizer.getFirst() instanceof IStateResolver) {
+              for (IScale state : scale.at(ITime.INITIALIZATION /* FIXME must be the passed transition */)) {
+                Object value = ((IStateResolver)contextualizer).resolve((IStorage<?>)data, ctx, state);
+                ((IStorage<?>)value).set(state, value);
+              }
                 // TODO run state by state
             } else if (contextualizer.getFirst() instanceof IResolver) {
                 // TODO run resolver/mediator
@@ -170,6 +179,11 @@ public class Actuator<T extends IArtifact> implements IActuator {
         }
 
         return ret;
+    }
+
+    private IObservationData getTargetData(IComputableResource iComputableResource) {
+      // TODO Auto-generated method stub
+      return null;
     }
 
     private IRuntimeContext localizeContext(IRuntimeContext runtimeContext) {
