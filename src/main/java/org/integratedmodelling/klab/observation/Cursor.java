@@ -37,7 +37,7 @@ public class Cursor implements ICursor {
         int i = 0;
         for (IExtent e : extents) {
             if (i == dind) {
-                dmax = e.getMultiplicity();
+                dmax = e.size();
                 if (e instanceof ITime) {
                     type = 1;
                 } else if (e instanceof ISpace) {

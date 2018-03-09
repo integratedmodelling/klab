@@ -27,6 +27,14 @@ public interface IRuntimeContext extends IComputationContext {
    * @return
    */
   IObservationData get(String localName);
+  
+  /**
+   * Set the passed data object in the symbol table.
+   * 
+   * @param name
+   * @param data
+   */
+  void set(String name, IObservationData data);
 
   /**
    * 

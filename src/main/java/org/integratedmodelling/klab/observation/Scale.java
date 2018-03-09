@@ -8,11 +8,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
-import org.integratedmodelling.kim.api.data.IGeometry.Granularity;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -36,85 +34,81 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
 
-public class Scale implements IScale  {
+public class Scale implements IScale {
 
-  private static AtomicInteger counter = new AtomicInteger(0);
-  transient int scaleId = counter.incrementAndGet();
-  
+  private static AtomicLong counter = new AtomicLong(0);
+  transient long scaleId = counter.incrementAndGet();
+
   /**
    * 
    */
   private static final long serialVersionUID = -7855922162677333636L;
 
   /**
-   * Mediators are created by extents and are used to implement views of a state that
-   * mediate values to another scale.
+   * Mediators are created by extents and are used to implement views of a state that mediate values
+   * to another scale.
    * 
-   * A mediator should be aware that the extents it mediates may have changed (it can
-   * use States.hasChanged() to inspect that) and be able to readjust if necessary. This
-   * will properly handle moving agents.
+   * A mediator should be aware that the extents it mediates may have changed (it can use
+   * States.hasChanged() to inspect that) and be able to readjust if necessary. This will properly
+   * handle moving agents.
    * 
-   * FIXME all mediators should be change listeners for the mediated state, and
-   * rearrange the mediation strategy at each change as needed - we should subscribe
-   * them automatically.
+   * FIXME all mediators should be change listeners for the mediated state, and rearrange the
+   * mediation strategy at each change as needed - we should subscribe them automatically.
    * 
    * @author ferdinando.villa
    */
   public interface Mediator {
 
-      /**
-       * The kind of aggregation that the mediation implies.
-       * 
-       * @return aggregation type
-       */
-      Aggregation getAggregation();
+    /**
+     * The kind of aggregation that the mediation implies.
+     * 
+     * @return aggregation type
+     */
+    Aggregation getAggregation();
 
-      /**
-       * Apply the locators to the original state, adding whatever other locators the
-       * mediation strategy implies. Return the aggregated value implied by the
-       * strategy.
-       * 
-       * @param originalState
-       * @param otherLocators
-       *
-       * @return a mediated object
-       */
-      Object mediateFrom(IState originalState, Locator... otherLocators);
+    /**
+     * Apply the locators to the original state, adding whatever other locators the mediation
+     * strategy implies. Return the aggregated value implied by the strategy.
+     * 
+     * @param originalState
+     * @param otherLocators
+     *
+     * @return a mediated object
+     */
+    Object mediateFrom(IState originalState, Locator... otherLocators);
 
-      /**
-       * Apply the passed value to our scale and return the result.
-       * 
-       * @param value
-       * @param index
-       * @return a mediated object
-       */
-      Object mediateTo(Object value, long index);
+    /**
+     * Apply the passed value to our scale and return the result.
+     * 
+     * @param value
+     * @param index
+     * @return a mediated object
+     */
+    Object mediateTo(Object value, long index);
 
-      /**
-       * Get all the locators that will map the original state's scale to the passed
-       * index in the mediated scale. Weights should be assigned according to coverage
-       * and aggregation strategy.
-       * 
-       * @param index
-       * @return the locators needed to mediate
-       */
-      List<Locator> getLocators(long index);
+    /**
+     * Get all the locators that will map the original state's scale to the passed index in the
+     * mediated scale. Weights should be assigned according to coverage and aggregation strategy.
+     * 
+     * @param index
+     * @return the locators needed to mediate
+     */
+    List<Locator> getLocators(long index);
 
-      /**
-       * Reduce the passed collection of pairs (value, weight) to one value according to
-       * aggregation strategy.
-       * 
-       * @param toReduce
-       * @param metadata
-       *            a map to fill with any relevant statistics related to the
-       *            aggregation (errors, uncertainty, boundaries, distributions, truth
-       *            values etc) using the keys above.
-       * 
-       * @return the reduced value
-       */
-      Object reduce(Collection<IPair<Object, Double>> toReduce, IMetadata metadata);
+    /**
+     * Reduce the passed collection of pairs (value, weight) to one value according to aggregation
+     * strategy.
+     * 
+     * @param toReduce
+     * @param metadata a map to fill with any relevant statistics related to the aggregation
+     *        (errors, uncertainty, boundaries, distributions, truth values etc) using the keys
+     *        above.
+     * 
+     * @return the reduced value
+     */
+    Object reduce(Collection<IPair<Object, Double>> toReduce, IMetadata metadata);
   }
-  
+
   /**
    * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise
    * 'granule' or to a slice for an extent along it. Used in {@link #getIndex(Locator...)} and
@@ -171,7 +165,7 @@ public class Scale implements IScale  {
   protected InstanceIdentifier identifier = new InstanceIdentifier();
 
   /*
-   * Next three are to support subscales built as views of another
+   * Next four are to support subscales built as views of another
    */
   // originalCursor != null means we derive from a previous scale and are representing
   // one slice of it...
@@ -180,6 +174,11 @@ public class Scale implements IScale  {
   private long sliceOffset = -1;
   // ... along this dimension
   private int sliceDimension = -1;
+  // the ID of the originating scale. If size() == 1, we can locate directly in it using the offset below.
+  private long originalScaleId = -1;
+  // the offset in the original scale (only applies if originalScaleId > 0);
+  long originalScaleOffset = -1;
+  
 
   protected Scale() {}
 
@@ -193,6 +192,26 @@ public class Scale implements IScale  {
     for (IExtent e : topologies) {
       mergeExtent(e, true);
     }
+  }
+
+  /**
+   * 1-sized scale localized to the position passed in the parent scale, and needing no sort. Used
+   * as the return value of a scale iterator going through all states.
+   * @param scale 
+   * @param offset 
+   */
+  public Scale(Scale scale, long offset) {
+
+    this.originalScaleOffset = offset;
+    this.originalScaleId = scale.scaleId;
+    
+    long[] pos = scale.cursor.getElementIndexes(offset);
+    for (int i = 0; i < scale.extents.size(); i++) {
+      this.extents.add(
+          scale.extents.get(i) instanceof Extent ? ((Extent) scale.extents.get(i)).getExtent(pos[i])
+              : scale.extents.get(i));
+    }
+    this.multiplicity = 1;
   }
 
   /**
@@ -249,7 +268,7 @@ public class Scale implements IScale  {
     int i = 0;
     for (IExtent e : extents) {
       for (Locator o : locators) {
-        long n = ((Extent)e).locate(o);
+        long n = ((Extent) e).locate(o);
         if (n != Extent.INAPPROPRIATE_LOCATOR) {
           exts[i] = n;
           break;
@@ -287,7 +306,7 @@ public class Scale implements IScale  {
     int i = 0;
     for (IExtent e : extents) {
       for (Locator o : locators) {
-        long n = ((Extent)e).locate(o);
+        long n = ((Extent) e).locate(o);
         if (n != Extent.INAPPROPRIATE_LOCATOR) {
           exts[i] = n;
           break;
@@ -319,6 +338,23 @@ public class Scale implements IScale  {
         variableDimension);
   }
 
+
+  private class ScaleIterator implements Iterator<IScale> {
+
+    long offset = 0;
+
+    @Override
+    public boolean hasNext() {
+      return offset < size() - 1;
+    }
+
+    @Override
+    public IScale next() {
+      return new Scale(Scale.this, offset);
+    }
+  }
+
+
   public long getExtentOffset(IExtent extent, long overallOffset) {
     int n = 0;
     boolean found = false;
@@ -338,12 +374,12 @@ public class Scale implements IScale  {
 
   @Override
   public boolean isTemporallyDistributed() {
-    return getTime() != null && getTime().getMultiplicity() > 1;
+    return getTime() != null && getTime().size() > 1;
   }
 
   @Override
   public boolean isSpatiallyDistributed() {
-    return getSpace() != null && getSpace().getMultiplicity() > 1;
+    return getSpace() != null && getSpace().size() > 1;
   }
 
   protected void sort() {
@@ -376,7 +412,7 @@ public class Scale implements IScale  {
     int idx = 0;
     for (IExtent e : order) {
 
-      if (e.getMultiplicity() == INFINITE) {
+      if (e.size() == INFINITE) {
         multiplicity = INFINITE;
       }
       if (e instanceof Time) {
@@ -388,14 +424,14 @@ public class Scale implements IScale  {
       }
 
       if (multiplicity != INFINITE)
-        multiplicity *= e.getMultiplicity();
+        multiplicity *= e.size();
 
       idx++;
     }
 
     // better safe than sorry. Only time can be infinite so this should be pretty safe
     // as long as the comparator above works.
-    if (multiplicity == INFINITE && extents.get(0).getMultiplicity() != INFINITE) {
+    if (multiplicity == INFINITE && extents.get(0).size() != INFINITE) {
       throw new KlabRuntimeException(
           "internal error: infinite dimension is not the first in scale");
     }
@@ -405,7 +441,7 @@ public class Scale implements IScale  {
     long[] dims = new long[multiplicity == INFINITE ? extents.size() - 1 : extents.size()];
     int n = 0;
     for (int i = multiplicity == INFINITE ? 1 : 0; i < extents.size(); i++) {
-      dims[n++] = extents.get(i).getMultiplicity();
+      dims[n++] = extents.get(i).size();
     }
     cursor.defineDimensions(dims);
     extents = order;
@@ -417,7 +453,7 @@ public class Scale implements IScale  {
     int i = 0;
     for (IExtent e : extents) {
       for (Locator l : locators) {
-        long idx = ((Extent)e).locate(l);
+        long idx = ((Extent) e).locate(l);
         if (idx >= 0) {
           loc[i++] = idx;
           break;
@@ -445,7 +481,7 @@ public class Scale implements IScale  {
   public boolean isCovered(long offset) {
     long[] oofs = getExtentIndex(offset);
     for (int i = 0; i < getExtentCount(); i++) {
-      if (!((Extent)extents.get(i)).isCovered(oofs[i])) {
+      if (!((Extent) extents.get(i)).isCovered(oofs[i])) {
         return false;
       }
     }
@@ -454,20 +490,20 @@ public class Scale implements IScale  {
 
   public boolean isConsistent() {
     for (int i = 0; i < getExtentCount(); i++) {
-      if (!((Extent)extents.get(i)).isConsistent()) {
+      if (!((Extent) extents.get(i)).isConsistent()) {
         return false;
       }
     }
     return true;
   }
 
-//  @Override
+  // @Override
   public IExtent getExtent(int index) {
     return extents.get(index);
   }
 
   @Override
-  public long getMultiplicity() {
+  public long size() {
     return multiplicity;
   }
 
@@ -563,7 +599,7 @@ public class Scale implements IScale  {
    */
   public void mergeExtent(IExtent extent, boolean force) {
 
-    
+
     IExtent merged = null;
     int i = 0;
     for (IExtent e : extents) {
@@ -580,10 +616,10 @@ public class Scale implements IScale  {
 
     if (merged != null) {
       extents.add(i, merged);
-      ((AbstractExtent)merged).setScaleId(scaleId);
+      ((AbstractExtent) merged).setScaleId(scaleId);
     } else {
       extents.add(extent);
-      ((AbstractExtent)extent).setScaleId(scaleId);
+      ((AbstractExtent) extent).setScaleId(scaleId);
     }
 
     sort();
@@ -602,7 +638,7 @@ public class Scale implements IScale  {
 
     long[] dims = new long[extents.size()];
     for (int i = 0; i < dims.length; i++) {
-      dims[i] = extents.get(i).getMultiplicity();
+      dims[i] = extents.get(i).size();
     }
 
     MultidimensionalCursor cursor = new MultidimensionalCursor();
@@ -612,7 +648,7 @@ public class Scale implements IScale  {
       IExtent[] exts = new IExtent[dims.length];
       long[] idx = cursor.getElementIndexes(i);
       for (int j = 0; j < exts.length; j++) {
-        exts[j] = ((Extent)extents.get(j)).getExtent(idx[j]);
+        exts[j] = ((Extent) extents.get(j)).getExtent(idx[j]);
       }
       ret.add(create(exts));
     }
@@ -861,7 +897,7 @@ public class Scale implements IScale  {
   public String toString() {
     String ss = "";
     for (IExtent e : extents) {
-      ss += "<" + e.getDomainConcept() + " # " + e.getMultiplicity() + ">";
+      ss += "<" + e.getDomainConcept() + " # " + e.size() + ">";
     }
     return "Scale #" + extents.size() + " " + ss;
   }
@@ -870,7 +906,7 @@ public class Scale implements IScale  {
   public boolean isEmpty() {
 
     for (IExtent e : extents) {
-      if (((Extent)e).isEmpty()) {
+      if (((Extent) e).isEmpty()) {
         return true;
       }
     }
@@ -981,8 +1017,7 @@ public class Scale implements IScale  {
 
   @Override
   public Iterator<IScale> iterator() {
-    // TODO Auto-generated method stub
-    return null;
+    return new ScaleIterator();
   }
 
   @Override
@@ -1006,7 +1041,7 @@ public class Scale implements IScale  {
     // TODO Auto-generated method stub
     return false;
   }
-  
+
   @Override
   public IScale at(ILocator locator) {
     if (locator.equals(ITime.INITIALIZATION)) {
@@ -1017,16 +1052,16 @@ public class Scale implements IScale  {
         // just remove time
       }
     } else if (locator instanceof IExtent) {
-      if (((AbstractExtent)locator).isOwnExtent(this)) {
+      if (((AbstractExtent) locator).isOwnExtent(this)) {
         // guarantees no mediation needed
       } else {
         // if we don't have this extent, illegal arg (or just return this?)
         // mediation may be needed
       }
     } else if (locator instanceof IScale) {
-      if (((Scale)locator).scaleId == scaleId) {
+      if (((Scale) locator).scaleId == scaleId) {
         return this;
-      } 
+      }
       // all-around mediation possible
     } else {
       throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");

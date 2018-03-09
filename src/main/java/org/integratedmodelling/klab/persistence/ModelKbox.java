@@ -569,12 +569,12 @@ public class ModelKbox extends ObservableKbox {
 
     if (scale != null) {
 
-      scaleMultiplicity = scale.getMultiplicity();
+      scaleMultiplicity = scale.size();
       if (scale.getSpace() != null) {
         spaceExtent = scale.getSpace().getShape();
         // may be null when we just say 'over space'.
         if (spaceExtent != null) {
-          spaceMultiplicity = scale.getSpace().getMultiplicity();
+          spaceMultiplicity = scale.getSpace().size();
         }
         isSpatial = true;
       }
@@ -587,7 +587,7 @@ public class ModelKbox extends ObservableKbox {
           if (timeExtent.getEnd() != null) {
             timeEnd = timeExtent.getEnd().getMillis();
           }
-          timeMultiplicity = scale.getTime().getMultiplicity();
+          timeMultiplicity = scale.getTime().size();
         }
         isTemporal = true;
       }

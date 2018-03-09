@@ -201,7 +201,7 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public long getMultiplicity() {
+  public long size() {
     if (grid != null) {
       return grid.getCellCount();
     }
@@ -357,8 +357,16 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public Space getExtent(long stateIndex) {
-    // TODO Auto-generated method stub
+  public ISpace getExtent(long stateIndex) {
+    if (this.size() == 1 && stateIndex == 0) {
+      return this;
+    }
+    if (grid != null) {
+      return grid.getCell(stateIndex);
+    }
+    if (features != null) {
+      return features.getFeature(stateIndex);
+    }
     return null;
   }
 

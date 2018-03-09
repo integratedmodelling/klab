@@ -403,7 +403,7 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public long getMultiplicity() {
+    public long size() {
       return 1;
     }
 

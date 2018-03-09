@@ -37,6 +37,6 @@ public interface ITopology<T> extends ITopologicallyComparable<T> {
      * 
      * @return number of subdivisions
      */
-    public long getMultiplicity();
+    public long size();
 
 }

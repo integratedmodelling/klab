@@ -2,11 +2,10 @@ package org.integratedmodelling.klab.api.data.raw;
 
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 
 /**
  * IStorage is a {@link IStateData} that is typed and contains API to be used within a semantic
- * {@link IState}, so it admits {@link Locator}s as indices for getting and setting values.
+ * {@link IState}, so it admits {@link ILocator}s as indices for getting and setting values.
  * 
  * TODO use a "dumb" locator linked to IGeometry (which during contextualization becomes a known
  * shape)
@@ -15,7 +14,7 @@ import org.integratedmodelling.klab.observation.Scale.Locator;
  *
  * @param <T>
  */
-public interface IStorage<T> extends IStateData {
+public interface IStorage<T> extends IObservationData {
 
   /**
    * Get the n-th object.
@@ -36,14 +35,6 @@ public interface IStorage<T> extends IStateData {
    * @throws IllegalArgumentException if value is incompatible with type.
    */
   void set(ILocator index, Object value);
-
-//  /**
-//   * Bulk set of raw data in specified position.
-//   * 
-//   * @param data
-//   * @param locators
-//   */
-//  void set(Object data, Locator... locators);
 
   /**
    * Total number of values. Should be compatible with the multiplicity of the scale in the state

@@ -22,7 +22,7 @@ public abstract class Extent extends AbstractExtent {
 
       @Override
       public boolean hasNext() {
-        return i < (getMultiplicity() - 1);
+        return i < (size() - 1);
       }
 
       @Override

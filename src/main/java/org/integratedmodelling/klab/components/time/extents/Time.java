@@ -52,7 +52,7 @@ public class Time extends Extent implements ITime {
     }
     
     @Override
-    public long getMultiplicity() {
+    public long size() {
         // TODO Auto-generated method stub
         return 0;
     }

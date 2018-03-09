@@ -326,7 +326,7 @@ public class Shape extends AbstractExtent implements IShape {
   }
 
   @Override
-  public long getMultiplicity() {
+  public long size() {
     // TODO Auto-generated method stub
     return 1;
   }

@@ -38,9 +38,9 @@ public class RuntimeContext implements IRuntimeContext {
   ConfigurationDetector configurationDetector;
   Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
   Map<String, IObservationData> catalog = new HashMap<>();
-  
+
   public RuntimeContext() {}
-  
+
   private RuntimeContext(RuntimeContext context) {
     this.namespace = context.namespace;
     this.subject = context.subject;
@@ -50,7 +50,7 @@ public class RuntimeContext implements IRuntimeContext {
     this.structure = context.structure;
     this.catalog.putAll(context.catalog);
   }
-  
+
   /**
    * Set the root subject for the context, initializing the provenance and the
    * 
@@ -101,8 +101,8 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   /*
-   * TODO this should be API but not the public API - an internal extended API for the engine. Same for
-   * recontextualizing methods
+   * TODO this should be API but not the public API - an internal extended API for the engine. Same
+   * for recontextualizing methods
    */
   public void exportStructure(String outFile) {
     // TODO export a GEFX file
@@ -137,6 +137,11 @@ public class RuntimeContext implements IRuntimeContext {
       catalog.remove(name);
       catalog.put(alias, obj);
     }
+  }
+
+  @Override
+  public void set(String name, IObservationData data) {
+    catalog.put(name, data);
   }
 
 }

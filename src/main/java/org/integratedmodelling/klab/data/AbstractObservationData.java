@@ -4,6 +4,8 @@ import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.observation.Scale;
 
 /**
  * Simple abstract observation data class for storage components. Just implements
@@ -47,6 +49,10 @@ public abstract class AbstractObservationData implements IObservationData {
     @Override
     public IMetadata getMetadata() {
         return metadata;
+    }
+    
+    public long locatorToOffset(ILocator locator, Scale scale) {
+      return 0;
     }
 
 }

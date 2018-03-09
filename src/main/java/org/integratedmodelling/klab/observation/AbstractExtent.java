@@ -17,9 +17,9 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
  */
 public abstract class AbstractExtent implements IExtent {
 
-  private transient int scaleId;
+  private transient long scaleId;
 
-  void setScaleId(int id) {
+  void setScaleId(long id) {
     this.scaleId = id;
   }
   
