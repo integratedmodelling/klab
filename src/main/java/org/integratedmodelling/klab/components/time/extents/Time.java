@@ -126,6 +126,7 @@ public class Time extends Extent implements ITime {
     @Override
     public Extent copy() {
         // TODO Auto-generated method stub
+        // TODO REMEMBER TO ALSO COPY THE SCALE ID
         return null;
     }
 

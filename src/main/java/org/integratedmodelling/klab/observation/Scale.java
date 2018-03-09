@@ -8,9 +8,11 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.kim.api.data.IGeometry.Granularity;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -34,8 +36,11 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
 
-public class Scale implements IScale {
+public class Scale implements IScale  {
 
+  private static AtomicInteger counter = new AtomicInteger(0);
+  transient int scaleId = counter.incrementAndGet();
+  
   /**
    * 
    */
@@ -558,6 +563,7 @@ public class Scale implements IScale {
    */
   public void mergeExtent(IExtent extent, boolean force) {
 
+    
     IExtent merged = null;
     int i = 0;
     for (IExtent e : extents) {
@@ -574,8 +580,10 @@ public class Scale implements IScale {
 
     if (merged != null) {
       extents.add(i, merged);
+      ((AbstractExtent)merged).setScaleId(scaleId);
     } else {
       extents.add(extent);
+      ((AbstractExtent)extent).setScaleId(scaleId);
     }
 
     sort();
@@ -968,7 +976,6 @@ public class Scale implements IScale {
       }
       extents.add(found ? e.collapse() : ((Extent) e).copy());
     }
-
     return create(extents);
   }
 
@@ -999,10 +1006,31 @@ public class Scale implements IScale {
     // TODO Auto-generated method stub
     return false;
   }
-
+  
   @Override
   public IScale at(ILocator locator) {
-    // TODO Auto-generated method stub
+    if (locator.equals(ITime.INITIALIZATION)) {
+      if (getTime() == null) {
+        // I want you just the way you are
+        return this;
+      } else {
+        // just remove time
+      }
+    } else if (locator instanceof IExtent) {
+      if (((AbstractExtent)locator).isOwnExtent(this)) {
+        // guarantees no mediation needed
+      } else {
+        // if we don't have this extent, illegal arg (or just return this?)
+        // mediation may be needed
+      }
+    } else if (locator instanceof IScale) {
+      if (((Scale)locator).scaleId == scaleId) {
+        return this;
+      } 
+      // all-around mediation possible
+    } else {
+      throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
+    }
     return null;
   }
 

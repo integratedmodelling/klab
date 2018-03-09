@@ -9,8 +9,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
 
-
-public abstract class Extent implements IExtent {
+public abstract class Extent extends AbstractExtent {
 
   public static int INAPPROPRIATE_LOCATOR = -2;
   public static int GENERIC_LOCATOR = -1;

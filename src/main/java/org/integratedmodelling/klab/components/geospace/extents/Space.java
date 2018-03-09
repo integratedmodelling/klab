@@ -352,6 +352,7 @@ public class Space extends Extent implements ISpace {
   @Override
   public Space copy() {
     // TODO Auto-generated method stub
+    // TODO REMEMBER TO ALSO COPY THE SCALEID
     return null;
   }
 

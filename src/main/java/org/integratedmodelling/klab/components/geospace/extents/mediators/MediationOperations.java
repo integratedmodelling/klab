@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -143,7 +144,7 @@ public class MediationOperations {
     }
 
     @Override
-    public Iterator<Cell> iterator() {
+    public Iterator<IExtent> iterator() {
       return grid.iterator();
     }
 
@@ -241,13 +242,13 @@ public class MediationOperations {
     // sd.add(shape, "sub shape");
 
     Collection<Pair<Cell, Double>> ret = new ArrayList<>();
-    for (Cell cell : subgrid) {
+    for (IExtent cell : subgrid) {
 
-      double d = shape.getCoverage(cell, useSimpleIntersection);
+      double d = shape.getCoverage((Cell)cell, useSimpleIntersection);
 
       if (d > 0) {
 
-        Cell orig = subgrid.getOriginalCell(cell);
+        Cell orig = subgrid.getOriginalCell((Cell)cell);
         ret.add(new Pair<>(orig, d));
 
         // sd.add(cell, "transposed covering");

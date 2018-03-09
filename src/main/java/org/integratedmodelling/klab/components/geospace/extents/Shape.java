@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.observation.AbstractExtent;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -34,13 +35,13 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKTReader;
 
-public class Shape implements IShape {
+public class Shape extends AbstractExtent implements IShape {
 
   Geometry                 geometry;
   // the geometry in WGS84, only cached if asked for and originally not in it.
   Geometry                 standardizedGeometry;
   Envelope                 envelope;
-  Type                     type           = null;
+  IShape.Type                     type           = null;
   Projection               projection;
 
   // these are used to speed up repeated point-in-polygon operations like
@@ -114,20 +115,20 @@ public class Shape implements IShape {
   }
 
   @Override
-  public Type getGeometryType() {
+  public IShape.Type getGeometryType() {
     if (type == null) {
       if (geometry instanceof Polygon) {
-        type = Type.POLYGON;
+        type = IShape.Type.POLYGON;
       } else if (geometry instanceof MultiPolygon) {
-        type = Type.MULTIPOLYGON;
+        type = IShape.Type.MULTIPOLYGON;
       } else if (geometry instanceof Point) {
-        type = Type.POINT;
+        type = IShape.Type.POINT;
       } else if (geometry instanceof MultiLineString) {
-        type = Type.MULTILINESTRING;
+        type = IShape.Type.MULTILINESTRING;
       } else if (geometry instanceof LineString) {
-        type = Type.LINESTRING;
+        type = IShape.Type.LINESTRING;
       } else if (geometry instanceof MultiPoint) {
-        type = Type.MULTIPOINT;
+        type = IShape.Type.MULTIPOINT;
       }
     }
     return type;

@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.observation.AbstractExtent;
 import org.integratedmodelling.klab.observation.Scale.Locator;
 
 /**
@@ -125,7 +126,7 @@ public class Grid extends Area implements IGrid {
     setResolution(xDivs, yDivs);
   }
 
-  public class CellImpl implements Cell {
+  public class CellImpl extends AbstractExtent implements Cell {
 
     long   x;
     long   y;
