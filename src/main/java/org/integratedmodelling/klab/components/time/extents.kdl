@@ -5,5 +5,19 @@ temporalextent time
 	"Generates temporal extents to use in observations or to constrain models. Parameters
 	 enable the creation of single periods as well as regular and irregular time grids."
 {
-	class org.integratedmodelling.klab.components.geospace.services.TerrainService
+
+	optional input start 
+		"A string specifying the start of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
+		default ""
+	
+	optional input end 
+		"A string specifying the end of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
+		default ""
+
+	optional input step 
+		"A string specifying the linear resolution of the desired time grid as a number with duration
+		 units. Example: '1 day'."
+		default ""
+
+	class org.integratedmodelling.klab.components.time.services.Time
 }

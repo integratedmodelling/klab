@@ -51,7 +51,16 @@ public abstract class AbstractObservationData implements IObservationData {
         return metadata;
     }
     
-    public long locatorToOffset(ILocator locator, Scale scale) {
+    /**
+     * Return the single offset in linear storage for the passed locator if the locator
+     * is conformant with our scale. If more complex mediation (involving >1 or <1 coverage) is
+     * necessary, return -1.
+     * 
+     * @param locator
+     * @param scale
+     * @return
+     */
+    public long getConformantOffset(ILocator locator, Scale scale) {
       return 0;
     }
 
