@@ -209,6 +209,13 @@
 
 		<!-- ENGINE DEPENDENCIES -->
 
+		<!-- larray: memory-mapped arrays that support the default storage provider -->
+		<dependency>
+			<groupId>org.xerial.larray</groupId>
+			<artifactId>larray_2.12</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+
 		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
 			but Spring shouldn't be needed in the embedded engine and the API is better 
 			here. -->

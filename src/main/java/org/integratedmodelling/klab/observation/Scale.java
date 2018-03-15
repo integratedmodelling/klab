@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
 
-public class Scale implements IScale {
+public class Scale extends AbstractLocator implements IScale {
 
   private static AtomicLong counter = new AtomicLong(0);
   transient long scaleId = counter.incrementAndGet();
@@ -1068,5 +1068,6 @@ public class Scale implements IScale {
     }
     return null;
   }
+
 
 }
