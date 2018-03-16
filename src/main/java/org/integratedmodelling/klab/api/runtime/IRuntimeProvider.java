@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.runtime;
 import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -19,7 +19,7 @@ public interface IRuntimeProvider {
    * @return a future that is computing the final artifact for the actuator.
    * @throws KlabException
    */
-  Future<IArtifact> compute(IActuator actuator, IComputationContext context, IMonitor monitor)
+  Future<IObservationData> compute(IActuator actuator, IComputationContext context, IMonitor monitor)
       throws KlabException;
 
   /**

@@ -92,11 +92,6 @@
 			<artifactId>org.integratedmodelling.kdl</artifactId>
 			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
-
-		<!-- boilerplate be damned; see if this is 100% painless to use in Eclipse. 
-			Lombok isn't. <dependency> <groupId>com.google.auto.value</groupId> <artifactId>auto-value</artifactId> 
-			<version>1.5</version> <scope>provided</scope> </dependency> -->
-
 		<dependency>
 			<groupId>com.verhas</groupId>
 			<artifactId>license3j</artifactId>
@@ -232,14 +227,7 @@
 			<version>2.5.0-beta-2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.eclipse.january/org.eclipse.january 
-			underlying implementation for non-distributed state storage -->
-		<dependency>
-			<groupId>org.eclipse.january</groupId>
-			<artifactId>org.eclipse.january</artifactId>
-			<version>2.1.0</version>
-		</dependency>
-
+		<!-- basic graph API -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core </artifactId>
@@ -258,7 +246,7 @@
 			<version>1.3.8.4</version>
 		</dependency>
 
-		<!-- spatial H2 database -->
+		<!-- spatial H2 database for kboxes -->
 		<dependency>
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2spatial</artifactId>
@@ -307,14 +295,10 @@
 			<artifactId>gt-epsg-extension</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-		<!-- WFS missing after 17.x <dependency> <groupId>org.geotools</groupId> 
-			<artifactId>gt-wfs</artifactId> <version>${geotools.version}</version> <exclusions> 
-			<exclusion> <groupId>org.eclipse.emf</groupId> <artifactId>common</artifactId> 
-			</exclusion> <exclusion> <groupId>org.eclipse.emf</groupId> <artifactId>ecore</artifactId> 
-			</exclusion> </exclusions> </dependency> -->
 		<!-- GEOTOOLS mess ends -->
 
 		<!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
+		
 		<!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>

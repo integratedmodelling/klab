@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.observation;
 import java.util.Collection;
 import java.util.Map;
 import org.integratedmodelling.kim.utils.CollectionUtils;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -22,8 +23,8 @@ public class Subject extends CountableObservation implements ISubject {
 
   private RuntimeContext runtimeContext;
 
-  private Subject(String name, Observable observable, Scale scale, IMonitor monitor) {
-    super(name, observable, scale, monitor);
+  private Subject(String name, Observable observable, Scale scale, IObjectData data, IMonitor monitor) {
+    super(name, observable, scale, data, monitor);
   }
 
   private static final long serialVersionUID = 2466999232658613114L;
@@ -33,11 +34,12 @@ public class Subject extends CountableObservation implements ISubject {
    * @param name
    * @param observable
    * @param scale
+   * @param data 
    * @param monitor 
    * @return
    */
-  public static Subject create(String name, Observable observable, Scale scale, IMonitor monitor) {
-    return new Subject(name, observable, scale, monitor);
+  public static Subject create(String name, Observable observable, Scale scale, IObjectData data, IMonitor monitor) {
+    return new Subject(name, observable, scale, data, monitor);
   }
   
   /**
@@ -45,12 +47,13 @@ public class Subject extends CountableObservation implements ISubject {
    * @param name
    * @param observable
    * @param scale
+   * @param data 
    * @param context
    * @param monitor 
    * @return
    */
-  public static Subject create(String name, Observable observable, Scale scale, Subject context, IMonitor monitor) {
-    Subject ret = new Subject(name, observable, scale, monitor);
+  public static Subject create(String name, Observable observable, Scale scale, IObjectData data, Subject context, IMonitor monitor) {
+    Subject ret = new Subject(name, observable, scale, data, monitor);
     ret.setContextObservation(context);
     return ret;
   }

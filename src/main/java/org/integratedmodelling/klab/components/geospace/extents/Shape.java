@@ -390,4 +390,10 @@ public class Shape extends AbstractExtent implements IShape {
     return 0;
   }
 
+  @Override
+  public long getOffset(ILocator index) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
 }

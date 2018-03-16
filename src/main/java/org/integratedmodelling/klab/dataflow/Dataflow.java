@@ -2,7 +2,10 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -14,10 +17,10 @@ import org.integratedmodelling.klab.observation.DirectObservation;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.provenance.Artifact;
 
-public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataflow<T> {
+public class Dataflow<T extends IArtifact> extends Actuator implements IDataflow<T> {
 
   public Dataflow(IMonitor monitor, Class<? extends T> cls) {
-    super(monitor, cls);
+    super(monitor);
   }
 
   String                    description;
@@ -27,6 +30,9 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
   @SuppressWarnings("unchecked")
   @Override
   public T run(IMonitor monitor) throws KlabException {
+
+    // ret = (T) Observations.INSTANCE.createObservation(getObservable(), this.getScale(),
+    // this.getNamespace(), monitor, context);
 
     /*
      * 1. establish the computation context: if we have a runtime context, take it from it,
@@ -43,8 +49,13 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
     IArtifact ret = null;
     for (IActuator actuator : actuators) {
       try {
-        IArtifact artifact =
+
+        IObservationData data =
             Klab.INSTANCE.getRuntimeProvider().compute(actuator, ctx, monitor).get();
+        
+        IObservation artifact = Observations.INSTANCE.createObservation(((Actuator) actuator).getObservable(),
+            actuator.getScale(), data, ((Actuator) actuator).getNamespace(), monitor, context);
+
         if (ret == null) {
           ret = artifact;
         } else {
@@ -75,7 +86,7 @@ public class Dataflow<T extends IArtifact> extends Actuator<T> implements IDataf
     }
 
     for (IActuator actuator : actuators) {
-      ret += ((Actuator<?>) actuator).encode(offset) + "\n";
+      ret += ((Actuator) actuator).encode(offset) + "\n";
     }
 
     return ret;

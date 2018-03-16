@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.observation;
 
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -12,17 +13,17 @@ public class State extends Observation implements IState {
 
   IStorage<?> storage;
 
-  private State(Observable observable, Scale scale, Subject context, IMonitor monitor) {
+  private State(Observable observable, Scale scale, IStorage<?> data, Subject context, IMonitor monitor) {
     super(observable, scale, monitor);
     setContextObservation(context);
-    this.storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale);
+    this.storage = storage;
   }
 
   private static final long serialVersionUID = -7075415960868285693L;
 
-  public static State create(Observable observable, Scale scale, Subject context,
+  public static State create(Observable observable, Scale scale, IStorage<?> data, Subject context,
       IMonitor monitor) {
-    return new State(observable, scale, context, monitor);
+    return new State(observable, scale, data, context, monitor);
   }
 
   @Override

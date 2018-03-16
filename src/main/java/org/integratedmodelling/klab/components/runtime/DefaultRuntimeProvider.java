@@ -7,12 +7,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.extensions.Component;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -46,108 +48,105 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 @Component(id = "runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
-    ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
+  ExecutorService executor =
+      Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
-    @Override
-    public Future<IArtifact> compute(IActuator actuator, IComputationContext context, IMonitor monitor)
-            throws KlabException {
+  @Override
+  public Future<IObservationData> compute(IActuator actuator, IComputationContext context,
+      IMonitor monitor) throws KlabException {
 
-        return executor.submit(new Callable<IArtifact>() {
+    return executor.submit(new Callable<IObservationData>() {
 
-            @Override
-            public IArtifact call() throws Exception {
+      @Override
+      public IObservationData call() throws Exception {
 
-                Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
-                TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph);
-                IArtifact ret = null;
+        Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
+        TopologicalOrderIterator<IActuator, DefaultEdge> sorter =
+            new TopologicalOrderIterator<>(graph);
+        IObservationData ret = null;
 
-                while (sorter.hasNext()) {
-                    @SuppressWarnings("unchecked")
-                    Actuator<IArtifact> active = (Actuator<IArtifact>) sorter.next();
-
-                    ret = active.compute((DirectObservation) context
-                            .getSubject(), (IRuntimeContext) context, monitor);
-
-                    if (context.getSubject() == null && ret instanceof ISubject) {
-                        ((RuntimeContext) context).setRootSubject((ISubject) ret);
-                    }
-                }
-
-                return ret;
-            }
-        });
-
-    }
-
-    private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
-        DefaultDirectedGraph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
-        insertActuator(actuator, ret, new HashMap<>());
-        if (Configuration.INSTANCE.isDebuggingEnabled()) {
-            Graphs.show(ret);
+        while (sorter.hasNext()) {
+          Actuator active = (Actuator) sorter.next();
+          ret = active.compute(context.getSubjectData(), (IRuntimeContext) context, monitor);
         }
+
         return ret;
+      }
+    });
+
+  }
+
+  private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
+    DefaultDirectedGraph<IActuator, DefaultEdge> ret =
+        new DefaultDirectedGraph<>(DefaultEdge.class);
+    insertActuator(actuator, ret, new HashMap<>());
+    if (Configuration.INSTANCE.isDebuggingEnabled()) {
+      Graphs.show(ret);
     }
+    return ret;
+  }
 
-    private void insertActuator(IActuator actuator, DefaultDirectedGraph<IActuator, DefaultEdge> graph, Map<String, IActuator> catalog) {
+  private void insertActuator(IActuator actuator,
+      DefaultDirectedGraph<IActuator, DefaultEdge> graph, Map<String, IActuator> catalog) {
 
-        graph.addVertex(actuator);
-        catalog.put(actuator.getName(), actuator);
+    graph.addVertex(actuator);
+    catalog.put(actuator.getName(), actuator);
 
-        for (IActuator a : actuator.getActuators()) {
-            if (((Actuator<?>) a).isReference()) {
-                IActuator ref = catalog.get(a.getName());
-                if (ref == null) {
-                    throw new KlabIllegalStatusException("referenced actuator not found");
-                }
-                graph.addEdge(ref, actuator);
-            } else {
-                /*
-                 * containment is a dependency only if there is a computation or mediation; otherwise
-                 * children are computable in parallel - which this implementation does not support.
-                 */
-                if (!actuator.isComputed()) {
-                    graph.addVertex(a);
-                    graph.addEdge(a, actuator);
-                }
-                insertActuator(a, graph, catalog);
-            }
+    for (IActuator a : actuator.getActuators()) {
+      if (((Actuator) a).isReference()) {
+        IActuator ref = catalog.get(a.getName());
+        if (ref == null) {
+          throw new KlabIllegalStatusException("referenced actuator not found");
         }
-    }
-
-    @Override
-    public IComputationContext createRuntimeContext() {
-        return new RuntimeContext();
-    }
-
-    @Override
-    public IServiceCall getServiceCall(IComputableResource resource) {
-        if (resource.getServiceCall() != null) {
-            return resource.getServiceCall();
-        } else if (resource.getUrn() != null) {
-            return UrnResolver.getServiceCall(resource.getUrn());
-        } else if (resource.getExpression() != null) {
-            return ExpressionResolver.getServiceCall(resource);
-        } else if (resource.getLiteral() != null) {
-            return LiteralStateResolver.getServiceCall(resource.getLiteral());
+        graph.addEdge(ref, actuator);
+      } else {
+        /*
+         * containment is a dependency only if there is a computation or mediation; otherwise
+         * children are computable in parallel - which this implementation does not support.
+         */
+        if (!actuator.isComputed()) {
+          graph.addVertex(a);
+          graph.addEdge(a, actuator);
         }
+        insertActuator(a, graph, catalog);
+      }
+    }
+  }
 
-        // TODO classifications, lookup tables
+  @Override
+  public IComputationContext createRuntimeContext() {
+    return new RuntimeContext();
+  }
 
-        // temp
-        throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
+  @Override
+  public IServiceCall getServiceCall(IComputableResource resource) {
+    if (resource.getServiceCall() != null) {
+      return resource.getServiceCall();
+    } else if (resource.getUrn() != null) {
+      return UrnResolver.getServiceCall(resource.getUrn());
+    } else if (resource.getExpression() != null) {
+      return ExpressionResolver.getServiceCall(resource);
+    } else if (resource.getLiteral() != null) {
+      return LiteralStateResolver.getServiceCall(resource.getLiteral());
     }
 
-    // from Model, for safekeeping
-    // private IResource createContextualizerResource(IKimContextualization contextualization) {
-    // if (contextualization.getFunction() != null) {
-    // return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
-    // } else if (contextualization.getRemoteUrn() != null) {
-    // return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
-    // }
-    //// TODO the rest - classifications (normal or according to), lookup table etc
-    //// TODO figure out and validate the postprocessor thing
-    //// TODO these may become multiple
-    // return null;
-    // }
+    // TODO classifications, lookup tables
+
+    // temp
+    throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
+  }
+
+  // from Model, for safekeeping
+  // private IResource createContextualizerResource(IKimContextualization contextualization) {
+  // if (contextualization.getFunction() != null) {
+  // return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
+  // } else if (contextualization.getRemoteUrn() != null) {
+  // return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
+  // }
+  //// TODO the rest - classifications (normal or according to), lookup table etc
+  //// TODO figure out and validate the postprocessor thing
+  //// TODO these may become multiple
+  // return null;
+  // }
 
 }

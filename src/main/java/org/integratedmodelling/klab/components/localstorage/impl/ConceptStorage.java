@@ -13,7 +13,6 @@ public class ConceptStorage extends AbstractObservationData implements IStorage<
       super(observable);
   }
 
-
   @Override
   public long size() {
     // TODO Auto-generated method stub

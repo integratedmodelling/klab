@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -57,12 +58,12 @@ public interface IComputationContext {
   Collection<ISubject> getAllSubjects();
 
   /**
-   * The subject that provides the context for this computation. It is null only when the root
+   * The data for the subject that provides the context for this computation. It is null only when the root
    * subject hasn't been resolved yet, which is not a situation that API users will normally
-   * encounter.
+   * encounter. The data are wrapped into a semantic ISubject after the computation has ended.
    * 
    * @return
    */
-  ISubject getSubject();
+  IObjectData getSubjectData();
 
 }

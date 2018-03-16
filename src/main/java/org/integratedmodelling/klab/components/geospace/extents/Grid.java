@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.AbstractExtent;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 
 /**
  * 
@@ -312,7 +311,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public Long getOffsetInGrid() {
-      return getOffset(x, y);
+      return Grid.this.getOffset(x, y);
     }
 
     @Override
@@ -458,6 +457,12 @@ public class Grid extends Area implements IGrid {
     public int getDimensionality() {
       return 0;
     }
+
+    @Override
+    public long getOffset(ILocator index) {
+      // TODO Auto-generated method stub
+      return 0;
+    }
   }
 
   Shape  shape;
@@ -579,9 +584,9 @@ public class Grid extends Area implements IGrid {
     return getWorldCoordinatesAt(xy[0], xy[1]);
   }
 
-  public Locator getLocator(long x, long y) {
-    return new SpaceLocator(x, yCells - y - 1);
-  }
+//  public Locator getLocator(long x, long y) {
+//    return new SpaceLocator(x, yCells - y - 1);
+//  }
 
   @Override
   public double getCellWidth() {

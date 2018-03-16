@@ -12,7 +12,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.Extent;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
 
 public class Time extends Extent implements ITime {
@@ -184,11 +183,11 @@ public class Time extends Extent implements ITime {
       return 0;
     }
 
-    @Override
-    public long locate(Locator locator) {
-      // TODO Auto-generated method stub
-      return 0;
-    }
+//    @Override
+//    public long locate(Locator locator) {
+//      // TODO Auto-generated method stub
+//      return 0;
+//    }
 
     @Override
     public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
@@ -200,6 +199,12 @@ public class Time extends Extent implements ITime {
     public ITime at(ILocator locator) {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public long getOffset(ILocator index) {
+      // TODO Auto-generated method stub
+      return 0;
     }
 
 }

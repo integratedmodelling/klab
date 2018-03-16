@@ -28,7 +28,6 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.observations.scale.AbstractLocator;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
@@ -40,7 +39,7 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
  * @author ferdinando.villa
  *
  */
-public class SpaceLocator extends AbstractLocator {
+public class SpaceLocator /* extends AbstractLocator */ {
 
     public int    x   = -1;
     public int    y   = -1;
@@ -110,7 +109,7 @@ public class SpaceLocator extends AbstractLocator {
         return new SpaceLocator(-1, -1);
     }
 
-    @Override
+//    @Override
     public boolean isAll() {
         return x == -1 && y == -1;
     }
@@ -119,12 +118,12 @@ public class SpaceLocator extends AbstractLocator {
         return x == -3;
     }
 
-    @Override
+//    @Override
     public int getDimensionCount() {
         return 2;
     }
 
-    @Override
+//    @Override
     public IConcept getExtent() {
         return Concepts.c(NS.SPACE_DOMAIN);
     }

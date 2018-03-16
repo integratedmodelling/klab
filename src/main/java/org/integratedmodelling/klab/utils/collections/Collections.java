@@ -8,9 +8,10 @@ public class Collections {
     /**
      * Pass any number of lists and return one with all the elements.
      * @param lists
-     * @return
+     * @return a single list with the content of all those passed
      */
-    public static <T> List<T> join(@SuppressWarnings("unchecked") List<T>... lists) {
+    @SafeVarargs
+    public static <T> List<T> join(List<T>... lists) {
         List<T> ret = new ArrayList<>();
         if (lists != null) {
             for (List<T> list : lists) {

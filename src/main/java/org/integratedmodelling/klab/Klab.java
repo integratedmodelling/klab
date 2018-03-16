@@ -8,24 +8,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
+import org.integratedmodelling.klab.data.storage.BooleanSingletonStorage;
+import org.integratedmodelling.klab.data.storage.ConceptSingletonStorage;
+import org.integratedmodelling.klab.data.storage.DoubleSingletonStorage;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
@@ -399,6 +404,23 @@ public enum Klab implements IRuntimeService {
 
     public void setWorkDirectory(File file) {
         this.workDirectory = file;
+    }
+
+    @Override
+    public IStorage<?> getSingletonStorage(IObservable observable, IScale scale) {
+      switch (observable.getObservationType()) {
+        case CLASSIFICATION:
+          return new ConceptSingletonStorage(observable, (Scale)scale);
+        case QUANTIFICATION:
+          return new DoubleSingletonStorage(observable, (Scale)scale);
+        case VERIFICATION:
+          return new BooleanSingletonStorage(observable, (Scale)scale);
+        case INSTANTIATION:
+        case SIMULATION:
+        case DETECTION:
+        default:
+          throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
+      }
     }
 
 }

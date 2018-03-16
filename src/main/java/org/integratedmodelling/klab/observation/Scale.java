@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.observation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,8 +14,6 @@ import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -25,11 +22,9 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.engine.api.ICursor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
@@ -66,16 +61,16 @@ public class Scale extends AbstractLocator implements IScale {
      */
     Aggregation getAggregation();
 
-    /**
-     * Apply the locators to the original state, adding whatever other locators the mediation
-     * strategy implies. Return the aggregated value implied by the strategy.
-     * 
-     * @param originalState
-     * @param otherLocators
-     *
-     * @return a mediated object
-     */
-    Object mediateFrom(IState originalState, Locator... otherLocators);
+//    /**
+//     * Apply the locators to the original state, adding whatever other locators the mediation
+//     * strategy implies. Return the aggregated value implied by the strategy.
+//     * 
+//     * @param originalState
+//     * @param otherLocators
+//     *
+//     * @return a mediated object
+//     */
+//    Object mediateFrom(IState originalState, Locator... otherLocators);
 
     /**
      * Apply the passed value to our scale and return the result.
@@ -86,14 +81,14 @@ public class Scale extends AbstractLocator implements IScale {
      */
     Object mediateTo(Object value, long index);
 
-    /**
-     * Get all the locators that will map the original state's scale to the passed index in the
-     * mediated scale. Weights should be assigned according to coverage and aggregation strategy.
-     * 
-     * @param index
-     * @return the locators needed to mediate
-     */
-    List<Locator> getLocators(long index);
+//    /**
+//     * Get all the locators that will map the original state's scale to the passed index in the
+//     * mediated scale. Weights should be assigned according to coverage and aggregation strategy.
+//     * 
+//     * @param index
+//     * @return the locators needed to mediate
+//     */
+//    List<Locator> getLocators(long index);
 
     /**
      * Reduce the passed collection of pairs (value, weight) to one value according to aggregation
@@ -108,49 +103,49 @@ public class Scale extends AbstractLocator implements IScale {
      */
     Object reduce(Collection<IPair<Object, Double>> toReduce, IMetadata metadata);
   }
-
-  /**
-   * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise
-   * 'granule' or to a slice for an extent along it. Used in {@link #getIndex(Locator...)} and
-   * {@link #locate(Locator...)}, as well as in dataflow execution through {@link IContextualizer}.
-   *
-   * @deprecated use the scale itself or an extent
-   */
-  public interface Locator {
-
-    /**
-     * Should be a constant but no way to ask for that in an interface. Number of dimension offsets
-     * to locate one extent.
-     *
-     * @return the number of dimension offsets required for locating a position.
-     */
-    public int getDimensionCount();
-
-    /**
-     * If true, this is locating a full dimension or subset, with multiple extents.
-     *
-     * @return true if the locator is an aggregator
-     */
-    public boolean isAll();
-
-    /**
-     * If the locator only covers the granule partially, return a value less than one, reflecting
-     * the amount of active coverage. This will only return anything other than 1 when computed by a
-     * IState.Mediator, which matches two scales and may find partial coverage when checking one
-     * index against another. It should normally return 1 and never return 0.
-     *
-     * @return the proportion of the topological subdivision we're locating
-     */
-    public double getWeight();
-
-    /**
-     * Return the concept for the extent this is locating.
-     *
-     * @return the extent concept
-     */
-    public IConcept getExtent();
-
-  }
+//
+//  /**
+//   * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise
+//   * 'granule' or to a slice for an extent along it. Used in {@link #getIndex(Locator...)} and
+//   * {@link #locate(Locator...)}, as well as in dataflow execution through {@link IContextualizer}.
+//   *
+//   * @deprecated use the scale itself or an extent
+//   */
+//  public interface Locator {
+//
+//    /**
+//     * Should be a constant but no way to ask for that in an interface. Number of dimension offsets
+//     * to locate one extent.
+//     *
+//     * @return the number of dimension offsets required for locating a position.
+//     */
+//    public int getDimensionCount();
+//
+//    /**
+//     * If true, this is locating a full dimension or subset, with multiple extents.
+//     *
+//     * @return true if the locator is an aggregator
+//     */
+//    public boolean isAll();
+//
+//    /**
+//     * If the locator only covers the granule partially, return a value less than one, reflecting
+//     * the amount of active coverage. This will only return anything other than 1 when computed by a
+//     * IState.Mediator, which matches two scales and may find partial coverage when checking one
+//     * index against another. It should normally return 1 and never return 0.
+//     *
+//     * @return the proportion of the topological subdivision we're locating
+//     */
+//    public double getWeight();
+//
+//    /**
+//     * Return the concept for the extent this is locating.
+//     *
+//     * @return the extent concept
+//     */
+//    public IConcept getExtent();
+//
+//  }
 
   protected List<IExtent> extents = new ArrayList<>();
   protected long multiplicity = 0;
@@ -249,94 +244,94 @@ public class Scale extends AbstractLocator implements IScale {
     return ret;
   }
 
-  /**
-   * Get an index to loop over one dimension (set as -1) given fixed position for all others, only
-   * considering the sliceIndex-th part of the field from a total number of slices = sliceNumber.
-   * Used for parallelization of loops.
-   * 
-   * @param sliceIndex
-   * @param sliceNumber
-   * @param locators
-   * 
-   * @return an iterator as requested
-   */
-  public final ICursor getCursor(int sliceIndex, int sliceNumber, Locator... locators) {
-
-    int variableDimension = -1;
-    long[] exts = new long[getExtentCount()];
-    Arrays.fill(exts, Extent.GENERIC_LOCATOR);
-    int i = 0;
-    for (IExtent e : extents) {
-      for (Locator o : locators) {
-        long n = ((Extent) e).locate(o);
-        if (n != Extent.INAPPROPRIATE_LOCATOR) {
-          exts[i] = n;
-          break;
-        }
-      }
-      i++;
-    }
-
-    /*
-     * 
-     */
-    int nm = 0;
-    for (i = 0; i < exts.length; i++) {
-      if (exts[i] == Extent.GENERIC_LOCATOR) {
-        nm++;
-        variableDimension = i;
-      }
-    }
-
-    if (nm > 1) {
-      throw new KlabRuntimeException("cannot iterate a scale along more than one dimensions");
-    }
-
-    return new Cursor(extents,
-        cursor.getDimensionScanner(variableDimension, exts, sliceIndex, sliceNumber), cursor,
-        variableDimension);
-  }
+//  /**
+//   * Get an index to loop over one dimension (set as -1) given fixed position for all others, only
+//   * considering the sliceIndex-th part of the field from a total number of slices = sliceNumber.
+//   * Used for parallelization of loops.
+//   * 
+//   * @param sliceIndex
+//   * @param sliceNumber
+//   * @param locators
+//   * 
+//   * @return an iterator as requested
+//   */
+//  public final ICursor getCursor(int sliceIndex, int sliceNumber, Locator... locators) {
+//
+//    int variableDimension = -1;
+//    long[] exts = new long[getExtentCount()];
+//    Arrays.fill(exts, Extent.GENERIC_LOCATOR);
+//    int i = 0;
+//    for (IExtent e : extents) {
+//      for (Locator o : locators) {
+//        long n = ((Extent) e).locate(o);
+//        if (n != Extent.INAPPROPRIATE_LOCATOR) {
+//          exts[i] = n;
+//          break;
+//        }
+//      }
+//      i++;
+//    }
+//
+//    /*
+//     * 
+//     */
+//    int nm = 0;
+//    for (i = 0; i < exts.length; i++) {
+//      if (exts[i] == Extent.GENERIC_LOCATOR) {
+//        nm++;
+//        variableDimension = i;
+//      }
+//    }
+//
+//    if (nm > 1) {
+//      throw new KlabRuntimeException("cannot iterate a scale along more than one dimensions");
+//    }
+//
+//    return new Cursor(extents,
+//        cursor.getDimensionScanner(variableDimension, exts, sliceIndex, sliceNumber), cursor,
+//        variableDimension);
+//  }
 
   // @Override
-  public final ICursor getCursor(Locator... locators) {
-
-    int variableDimension = -1;
-    long[] exts = new long[getExtentCount()];
-    Arrays.fill(exts, Extent.GENERIC_LOCATOR);
-    int i = 0;
-    for (IExtent e : extents) {
-      for (Locator o : locators) {
-        long n = ((Extent) e).locate(o);
-        if (n != Extent.INAPPROPRIATE_LOCATOR) {
-          exts[i] = n;
-          break;
-        }
-      }
-      i++;
-    }
-
-    /*
-     * 
-     */
-    int nm = 0;
-    for (i = 0; i < exts.length; i++) {
-      if (exts[i] == Extent.GENERIC_LOCATOR) {
-        nm++;
-        variableDimension = i;
-      }
-    }
-
-    if (nm == 0) {
-      return new Cursor(cursor.getElementOffset(exts));
-    }
-
-    if (nm > 1) {
-      throw new KlabRuntimeException("cannot iterate a scale along more than one dimensions");
-    }
-
-    return new Cursor(extents, cursor.getDimensionScanner(variableDimension, exts), cursor,
-        variableDimension);
-  }
+//  public final ICursor getCursor(Locator... locators) {
+//
+//    int variableDimension = -1;
+//    long[] exts = new long[getExtentCount()];
+//    Arrays.fill(exts, Extent.GENERIC_LOCATOR);
+//    int i = 0;
+//    for (IExtent e : extents) {
+//      for (Locator o : locators) {
+//        long n = ((Extent) e).locate(o);
+//        if (n != Extent.INAPPROPRIATE_LOCATOR) {
+//          exts[i] = n;
+//          break;
+//        }
+//      }
+//      i++;
+//    }
+//
+//    /*
+//     * 
+//     */
+//    int nm = 0;
+//    for (i = 0; i < exts.length; i++) {
+//      if (exts[i] == Extent.GENERIC_LOCATOR) {
+//        nm++;
+//        variableDimension = i;
+//      }
+//    }
+//
+//    if (nm == 0) {
+//      return new Cursor(cursor.getElementOffset(exts));
+//    }
+//
+//    if (nm > 1) {
+//      throw new KlabRuntimeException("cannot iterate a scale along more than one dimensions");
+//    }
+//
+//    return new Cursor(extents, cursor.getDimensionScanner(variableDimension, exts), cursor,
+//        variableDimension);
+//  }
 
 
   private class ScaleIterator implements Iterator<IScale> {
@@ -350,7 +345,9 @@ public class Scale extends AbstractLocator implements IScale {
 
     @Override
     public IScale next() {
-      return new Scale(Scale.this, offset);
+      IScale ret = new Scale(Scale.this, offset);
+      this.offset ++;
+      return ret;
     }
   }
 
@@ -447,21 +444,21 @@ public class Scale extends AbstractLocator implements IScale {
     extents = order;
   }
 
-  public long locate(Locator... locators) {
-
-    long[] loc = new long[getExtentCount()];
-    int i = 0;
-    for (IExtent e : extents) {
-      for (Locator l : locators) {
-        long idx = ((Extent) e).locate(l);
-        if (idx >= 0) {
-          loc[i++] = idx;
-          break;
-        }
-      }
-    }
-    return Scale.this.cursor.getElementOffset(loc);
-  }
+//  public long locate(Locator... locators) {
+//
+//    long[] loc = new long[getExtentCount()];
+//    int i = 0;
+//    for (IExtent e : extents) {
+//      for (Locator l : locators) {
+//        long idx = ((Extent) e).locate(l);
+//        if (idx >= 0) {
+//          loc[i++] = idx;
+//          break;
+//        }
+//      }
+//    }
+//    return Scale.this.cursor.getElementOffset(loc);
+//  }
 
   @Override
   public int getExtentCount() {
@@ -1038,8 +1035,7 @@ public class Scale extends AbstractLocator implements IScale {
 
   @Override
   public boolean isScalar() {
-    // TODO Auto-generated method stub
-    return false;
+    return size() == 1;
   }
 
   @Override
@@ -1067,6 +1063,25 @@ public class Scale extends AbstractLocator implements IScale {
       throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
     }
     return null;
+  }
+
+  @Override
+  public long getOffset(ILocator index) {
+    
+    if (index instanceof Scale && ((Scale)index).originalScaleId == this.scaleId) {
+      return ((Scale)index).originalScaleOffset;
+    }
+    
+    /*
+     * TODO other mediatable scale
+     */
+    
+    /*
+     * TODO single extent locator
+     */
+    
+    
+    return 0;
   }
 
 

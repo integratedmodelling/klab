@@ -78,7 +78,7 @@ public class DataflowBuilder<T extends IArtifact> {
             modelCatalog.clear();
 
             Node node = compileActuator(root, resolutionGraph, null, monitor);
-            Actuator<?> actuator = node.getActuatorTree(monitor, new HashSet<>());
+            Actuator actuator = node.getActuatorTree(monitor, new HashSet<>());
             actuator.setCreateObservation(root instanceof IObserver
                     || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
             ret.getActuators().add(actuator);
@@ -145,12 +145,12 @@ public class DataflowBuilder<T extends IArtifact> {
         /*
          * get the actuator in the node, ignoring the children
          */
-        Actuator<?> createActuator(IMonitor monitor, Set<Model> generated) {
+        Actuator createActuator(IMonitor monitor, Set<Model> generated) {
 
             /*
              * create the original actuator
              */
-            Actuator<?> ret = Actuator.create(monitor, Observables.INSTANCE.getObservationClass(observable));
+            Actuator ret = Actuator.create(monitor);
 
             ret.setObservable(observable);
             ret.setScale(scale);
@@ -227,8 +227,8 @@ public class DataflowBuilder<T extends IArtifact> {
         /*
          * get the finished actuator with all the children and the mediation strategy
          */
-        Actuator<?> getActuatorTree(IMonitor monitor, Set<Model> generated) {
-            Actuator<?> ret = createActuator(monitor, generated);
+        Actuator getActuatorTree(IMonitor monitor, Set<Model> generated) {
+            Actuator ret = createActuator(monitor, generated);
             for (Node child : sortChildren()) {
                 ret.getActuators().add(child.getActuatorTree(monitor, generated));
                 // ret.getMediationStrategy().addAll(Observables.INSTANCE

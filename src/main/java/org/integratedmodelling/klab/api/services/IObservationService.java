@@ -34,14 +34,14 @@ public interface IObservationService {
      */
     void index(IObserver observer, IMonitor monitor) throws KlabException;
 
-    /**
-     * Create a subject based on the specs in the passed observer.
-     * 
-     * @param observer
-     * @param monitor
-     * @return the newly created subject
-     * @throws KlabException 
-     */
-    ISubject createSubject(IObserver observer, IMonitor monitor) throws KlabException;
+//    /**
+//     * Create a subject based on the specs in the passed observer.
+//     * 
+//     * @param observer
+//     * @param monitor
+//     * @return the newly created subject
+//     * @throws KlabException 
+//     */
+//    ISubject createSubject(IObserver observer, IMonitor monitor) throws KlabException;
 
 }

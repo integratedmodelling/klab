@@ -39,7 +39,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.utils.Pair;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -105,9 +104,9 @@ public class MediationOperations {
     }
 
 //    @Override
-    public Locator getLocator(long x, long y) {
-      return grid.getLocator(x, y);
-    }
+//    public Locator getLocator(long x, long y) {
+//      return grid.getLocator(x, y);
+//    }
 
     @Override
     public double getEast() {

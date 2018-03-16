@@ -6,7 +6,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
 
 public abstract class Extent extends AbstractExtent {
@@ -110,17 +109,17 @@ public abstract class Extent extends AbstractExtent {
    */
   public abstract long[] getDimensionOffsets(long linearOffset, boolean rowFirst);
 
-  /**
-   * Use the passed object to locate an unambiguous extent within the topology. If an extent can be
-   * located based on the passed object, return the index of the extent. If the locator is not
-   * usable by this extent, return IExtent.INAPPROPRIATE_LOCATOR. If the locator selects the whole
-   * extent, return GENERIC_LOCATOR. Passing a locator that does not fit the extent should be
-   * admitted. Do not throw errors but return INAPPROPRIATE_LOCATOR in that case.
-   * 
-   * @param locator
-   * @return the offset corresponding to the locator
-   */
-  public abstract long locate(Locator locator);
+//  /**
+//   * Use the passed object to locate an unambiguous extent within the topology. If an extent can be
+//   * located based on the passed object, return the index of the extent. If the locator is not
+//   * usable by this extent, return IExtent.INAPPROPRIATE_LOCATOR. If the locator selects the whole
+//   * extent, return GENERIC_LOCATOR. Passing a locator that does not fit the extent should be
+//   * admitted. Do not throw errors but return INAPPROPRIATE_LOCATOR in that case.
+//   * 
+//   * @param locator
+//   * @return the offset corresponding to the locator
+//   */
+//  public abstract long locate(Locator locator);
 
   /**
    * Get a state mediator to the passed extent. If extent is incompatible return null; if no

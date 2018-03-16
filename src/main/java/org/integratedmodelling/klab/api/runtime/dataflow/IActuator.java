@@ -1,11 +1,9 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import java.util.List;
-
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Each node in a dataflow is an actuator. Compared to other workflow systems (e.g. Ptolemy), an

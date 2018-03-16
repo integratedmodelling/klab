@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.Extent;
-import org.integratedmodelling.klab.observation.Scale.Locator;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
 
 public class Space extends Extent implements ISpace {
@@ -176,23 +175,23 @@ public class Space extends Extent implements ISpace {
     return new long[] {0};
   }
 
-  @Override
-  public long locate(Locator locator) {
-
-    if (locator instanceof SpaceLocator) {
-      if (locator.isAll())
-        return GENERIC_LOCATOR;
-      if (grid != null) {
-        if (((SpaceLocator) locator).isLatLon()) {
-          return grid.getOffsetFromWorldCoordinates(((SpaceLocator) locator).lon,
-              ((SpaceLocator) locator).lat);
-        } else {
-          return grid.getOffset(((SpaceLocator) locator).x, ((SpaceLocator) locator).y);
-        }
-      }
-    }
-    return INAPPROPRIATE_LOCATOR;
-  }
+//  @Override
+//  public long locate(Locator locator) {
+//
+//    if (locator instanceof SpaceLocator) {
+//      if (locator.isAll())
+//        return GENERIC_LOCATOR;
+//      if (grid != null) {
+//        if (((SpaceLocator) locator).isLatLon()) {
+//          return grid.getOffsetFromWorldCoordinates(((SpaceLocator) locator).lon,
+//              ((SpaceLocator) locator).lat);
+//        } else {
+//          return grid.getOffset(((SpaceLocator) locator).x, ((SpaceLocator) locator).y);
+//        }
+//      }
+//    }
+//    return INAPPROPRIATE_LOCATOR;
+//  }
 
   @Override
   public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
@@ -410,6 +409,12 @@ public class Space extends Extent implements ISpace {
   public ISpace at(ILocator locator) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public long getOffset(ILocator index) {
+    // TODO Auto-generated method stub
+    return 0;
   }
 
 }

@@ -1,14 +1,9 @@
 package org.integratedmodelling.klab.engine.api;
 
-import org.integratedmodelling.klab.observation.Scale;
-import org.integratedmodelling.klab.observation.Scale.Locator;
-
 /**
  * Scale cursor, an iterator that produces indices along only one of the scale extents. It's also
  * capable of checking if the correspondent location is masked (i.e. not part of the
  * topology) or active.
- * 
- * Returned by {@link Scale#getCursor(Locator...)}.
  * 
  * @author Ferd
  *

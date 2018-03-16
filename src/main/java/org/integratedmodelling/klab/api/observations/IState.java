@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.observations;
 
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
@@ -90,5 +91,13 @@ public interface IState extends IObservation {
      * @return the (possibly wrapped) state
      */
     IState as(IObservable observable);
+    
+    /**
+     * Specialize the data for a state.
+     * 
+     * @return the observation data. Never null.
+     */
+    @Override
+    IStorage<?> getData();
     
 }

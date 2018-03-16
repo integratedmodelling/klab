@@ -3,13 +3,13 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -32,7 +32,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 public class RuntimeContext implements IRuntimeContext {
 
   Namespace namespace;
-  Subject subject;
+  IObjectData subject;
   Provenance provenance;
   EventBus eventBus;
   ConfigurationDetector configurationDetector;
@@ -58,7 +58,7 @@ public class RuntimeContext implements IRuntimeContext {
    */
   public void setRootSubject(ISubject subject) {
     ((Subject) subject).setRuntimeContext(this);
-    this.subject = (Subject) subject;
+    this.subject = subject.getData();
     this.eventBus = new EventBus((Subject) subject);
     this.configurationDetector = new ConfigurationDetector((Subject) subject, structure);
     this.provenance = new Provenance((Subject) subject);
@@ -96,7 +96,7 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public ISubject getSubject() {
+  public IObjectData getSubjectData() {
     return subject;
   }
 
