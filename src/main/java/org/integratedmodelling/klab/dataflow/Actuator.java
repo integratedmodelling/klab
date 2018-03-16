@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.ObjectData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
@@ -125,11 +124,11 @@ public class Actuator implements IActuator {
   /**
    * Compute the actuator.
    * 
-   * @param context The context observation (null in the root actuator for a new context)
+   * @param context The context observation data (null in the root actuator for a new context)
    * @param runtimeContext this one must be passed a context already adapted to the actuator's names
    *        and scale.
    * @param monitor
-   * @return
+   * @return the finalized observation data
    * @throws KlabException
    */
   public IObservationData compute(IObjectData context, IRuntimeContext runtimeContext,
@@ -171,20 +170,7 @@ public class Actuator implements IActuator {
 
     return ret;
   }
-
-  private IObservationData getTargetData(IComputableResource resource, IRuntimeContext context) {
-    String resId = resource.getTarget();
-    if (resId == null) {
-      resId = this.name;
-    }
-    IObservationData ret = context.get(resId);
-    if (ret == null) {
-      throw new KlabRuntimeException(
-          "internal error: resource data for " + resId + " not available");
-    }
-    return ret;
-  }
-
+  
   private IRuntimeContext setupContext(IRuntimeContext runtimeContext) {
 
     // create non-semantic storage if required
@@ -257,10 +243,6 @@ public class Actuator implements IActuator {
 
       ret = " {\n";
 
-      if (isCreateObservation()) {
-        ret += ofs + "   " + "observe new " + getObservable().getDeclaration() + "\n";
-      }
-
       for (IActuator actuator : actuators) {
         ret += ((Actuator) actuator).encode(offset + 3) + "\n";
       }
@@ -276,6 +258,11 @@ public class Actuator implements IActuator {
                 : (" as " + serviceCalls.get(i).getSecond().getTarget()))
             + (i < serviceCalls.size() - 1 ? "," : "") + "\n";
       }
+      
+      if (observable != null) {
+        ret += ofs + "   " + "semantics " + getObservable().getDeclaration() + "\n";
+      }
+      
       ret += ofs + "}";
     }
 

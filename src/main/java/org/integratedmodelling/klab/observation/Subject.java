@@ -17,11 +17,12 @@ import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Subject extends CountableObservation implements ISubject {
 
-  private RuntimeContext runtimeContext;
+  private IRuntimeContext runtimeContext;
 
   private Subject(String name, Observable observable, Scale scale, IObjectData data, IMonitor monitor) {
     super(name, observable, scale, data, monitor);
@@ -116,11 +117,11 @@ public class Subject extends CountableObservation implements ISubject {
    * 
    * @return
    */
-  public RuntimeContext getRuntimeContext() {
+  public IRuntimeContext getRuntimeContext() {
     return runtimeContext;
   }
 
-  public void setRuntimeContext(RuntimeContext runtimeContext) {
+  public void setRuntimeContext(IRuntimeContext runtimeContext) {
     this.runtimeContext = runtimeContext;
   }
 

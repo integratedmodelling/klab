@@ -51,19 +51,19 @@ public class RuntimeContext implements IRuntimeContext {
     this.catalog.putAll(context.catalog);
   }
 
-  /**
-   * Set the root subject for the context, initializing the provenance and the
-   * 
-   * @param subject
-   */
-  public void setRootSubject(ISubject subject) {
-    ((Subject) subject).setRuntimeContext(this);
-    this.subject = subject.getData();
-    this.eventBus = new EventBus((Subject) subject);
-    this.configurationDetector = new ConfigurationDetector((Subject) subject, structure);
-    this.provenance = new Provenance((Subject) subject);
-    this.structure.addVertex(subject);
-  }
+//  /**
+//   * Set the root subject for the context, initializing the provenance and the
+//   * 
+//   * @param subject
+//   */
+//  public void setRootSubject(ISubject subject) {
+//    ((Subject) subject).setRuntimeContext(this);
+//    this.subject = subject == null ? null : subject.getData();
+//    this.eventBus = new EventBus((Subject) subject);
+//    this.configurationDetector = new ConfigurationDetector((Subject) subject, structure);
+//    this.provenance = new Provenance((Subject) subject);
+//    this.structure.addVertex(subject);
+//  }
 
   @Override
   public IProvenance getProvenance() {

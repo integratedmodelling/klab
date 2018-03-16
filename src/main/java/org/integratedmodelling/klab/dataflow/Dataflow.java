@@ -6,11 +6,13 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.DirectObservation;
@@ -56,6 +58,10 @@ public class Dataflow<T extends IArtifact> extends Actuator implements IDataflow
         IObservation artifact = Observations.INSTANCE.createObservation(((Actuator) actuator).getObservable(),
             actuator.getScale(), data, ((Actuator) actuator).getNamespace(), monitor, context);
 
+        if (artifact instanceof ISubject && context == null) {
+          ((Subject)artifact).setRuntimeContext((IRuntimeContext)ctx);
+        }
+        
         if (ret == null) {
           ret = artifact;
         } else {
