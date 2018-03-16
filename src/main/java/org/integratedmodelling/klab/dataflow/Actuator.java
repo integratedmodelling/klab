@@ -156,15 +156,19 @@ public class Actuator implements IActuator {
     for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
 
       if (contextualizer.getFirst() instanceof IStateResolver) {
+        /*
+         * FIXME pass the distributed computation to the runtime provider for possible parallelization instead of hard-coding
+         * a for loop here.
+         */
         for (IScale state : scale.at(ITime.INITIALIZATION)) {
           Object value =
               ((IStateResolver) contextualizer.getFirst()).resolve((IStorage<?>) ret, ctx, state);
           ((IStorage<?>) ret).set(state, value);
         }
       } else if (contextualizer.getFirst() instanceof IResolver) {
-        // TODO run resolver/mediator
+        // TODO run resolver or mediator, reassign return value
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
-        // TODO run instantiator, then resolve each instance
+        // TODO run instantiator, then have the runtime provider resolve each instance
       }
     }
 
