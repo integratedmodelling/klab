@@ -95,7 +95,7 @@ public interface IModelService {
   INamespace load(File file, IMonitor monitor) throws KlabException;
 
   /**
-   * Load a single model file from an inputstream. Namespace must have no dependencies and name a
+   * Load a single model file from a stream. Namespace must have no dependencies and name a
    * worldview at the top.
    * 
    * @param input

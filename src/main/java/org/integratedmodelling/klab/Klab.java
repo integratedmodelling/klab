@@ -338,6 +338,7 @@ public enum Klab implements IRuntimeService {
         return (IStorageProvider) ((Component) storageProvider).getImplementation();
     }
     
+    @Override
     public IRuntimeProvider getRuntimeProvider() {
 
         String providerComponent = Configuration.INSTANCE.getProperties()

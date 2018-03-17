@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.ConceptStatement;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 
@@ -101,7 +102,7 @@ public class KimValidator implements Kim.Validator {
           object = null;
         }
       } else if (statement instanceof IKimModel) {
-        object = ModelBuilder.INSTANCE.build((IKimModel) statement, ns, monitor);
+        object = Model.create((IKimModel) statement, ns, monitor);
         if (object instanceof IModel) {
           try {
             Models.INSTANCE.index((IModel) object, monitor);

@@ -4,10 +4,11 @@ import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
 /**
- * FIXME review API - this is exposing all the wrong things.
+ * The k.LAB runtime. 
  * 
  * @author ferdinando.villa
  *
@@ -32,6 +33,8 @@ public interface IRuntimeService {
    */
   IStorageProvider getStorageProvider();
 
+  IRuntimeProvider getRuntimeProvider();
+  
   /**
    * Create and return storage for a singleton state of the passed observable, holding one value
    * that won't change in any dimension of the scale. Requested by the runtime when constant values
@@ -45,5 +48,6 @@ public interface IRuntimeService {
    * @return singleton storage for the passed observable
    */
   IStorage<?> getSingletonStorage(IObservable observable, IScale scale);
+
 
 }

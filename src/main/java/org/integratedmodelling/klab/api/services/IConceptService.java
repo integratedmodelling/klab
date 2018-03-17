@@ -3,28 +3,12 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public interface IConceptService {
 
   IProperty getProperty(String propertyId);
 
   IConcept getConcept(String conceptId);
-
-  /**
-   * Build a concept from its k.IM declaration. The resulting concept will return a normalized
-   * version of the k.IM code in its {@link IConcept#getDefinition()} method.
-   * 
-   * See {@link IObservableService#declare(String)} for the version that accepts observable
-   * semantics as well.
-   * 
-   * @param declaration
-   * @return the concept corresponding to a k.IM definition.
-   * @throws KlabValidationException if the declaration contains errors or unknown concepts.
-   */
-  // IConcept declare(String declaration) throws KlabValidationException;
-
-  // IConcept declare(IKimConcept observable, IMonitor monitor);
 
   Collection<IConcept> getLeastGeneral(Collection<IConcept> cc);
 

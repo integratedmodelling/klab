@@ -46,7 +46,18 @@ public class Model extends KimObject implements IModel {
     super(null);
   }
 
-  public Model(IKimModel model, INamespace namespace, IMonitor monitor) {
+  /**
+   * 
+   * @param model
+   * @param namespace
+   * @param monitor
+   * @return
+   */
+  public static Model create(IKimModel model, INamespace namespace, IMonitor monitor) {
+    return new Model(model, namespace, monitor);
+  }
+  
+  private Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
     super(model);
 

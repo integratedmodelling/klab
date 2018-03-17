@@ -33,11 +33,8 @@ public class Dataflow<T extends IArtifact> extends Actuator implements IDataflow
   @Override
   public T run(IMonitor monitor) throws KlabException {
 
-    // ret = (T) Observations.INSTANCE.createObservation(getObservable(), this.getScale(),
-    // this.getNamespace(), monitor, context);
-
     /*
-     * 1. establish the computation context: if we have a runtime context, take it from it,
+     *establish the computation context: if we have a runtime context, take it from it,
      * otherwise make one.
      */
     IComputationContext ctx =
@@ -45,7 +42,7 @@ public class Dataflow<T extends IArtifact> extends Actuator implements IDataflow
             : ((Subject) context).getRoot().getRuntimeContext();
 
     /*
-     * 2. Children at the dataflow level run in parallel, so have the runtime start futures for each
+     * Children at the dataflow level run in parallel, so have the runtime start futures for each
      * child and chain the results when they come.
      */
     IArtifact ret = null;

@@ -11,7 +11,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -25,7 +24,7 @@ public interface IObservableService {
    * If passed to {@link #isCompatible(IConcept, IConcept, int)}, different realms will not
    * determine incompatibility.
    */
-  static public final int ACCEPT_REALM_DIFFERENCES      = 0x01;
+  static public final int ACCEPT_REALM_DIFFERENCES = 0x01;
 
   /**
    * Flag for {@link #isCompatible(IConcept, IConcept, int)}.
@@ -33,7 +32,7 @@ public interface IObservableService {
    * If passed to {@link #isCompatible(IConcept, IConcept, int)}, only types that have the exact
    * same core type will be accepted.
    */
-  static public final int REQUIRE_SAME_CORE_TYPE        = 0x02;
+  static public final int REQUIRE_SAME_CORE_TYPE = 0x02;
 
   /**
    * Flag for {@link #isCompatible(IConcept, IConcept, int)}.
@@ -41,7 +40,7 @@ public interface IObservableService {
    * If passed to {@link #isCompatible(IConcept, IConcept, int)}, types with roles that are more
    * general of the roles in the first concept will be accepted.
    */
-  static public final int USE_ROLE_PARENT_CLOSURE       = 0x04;
+  static public final int USE_ROLE_PARENT_CLOSURE = 0x04;
 
   /**
    * Flag for {@link #isCompatible(IConcept, IConcept, int)}.
@@ -49,14 +48,13 @@ public interface IObservableService {
    * If passed to {@link #isCompatible(IConcept, IConcept, int)}, types with traits that are more
    * general of the traits in the first concept will be accepted.
    */
-  static public final int USE_TRAIT_PARENT_CLOSURE      = 0x08;
+  static public final int USE_TRAIT_PARENT_CLOSURE = 0x08;
 
   /**
    * Flag for {@link #isCompatible(IConcept, IConcept, int)}.
    * 
-   * If passed to
-   * {@link #declareObservable(IConcept, Collection, IConcept, IConcept, Collection, IConcept, IConcept, IOntology, int)}
-   * causes acceptance of subjective traits for observables.
+   * If passed to {@link #isCompatible(IConcept, IConcept, int)} causes acceptance of subjective
+   * traits for observables.
    */
   static public final int ACCEPT_SUBJECTIVE_OBSERVABLES = 0x10;
 
@@ -336,83 +334,93 @@ public interface IObservableService {
 
   }
 
-  /**
-   * Get a builder for a declaration of named observable, which will allow adding traits and clauses
-   * and obtain the final concept by calling {@link Builder#build()} on it.
-   * 
-   * The concept is created in the reasoner's ontology if a reasoner is active, or in the ontology
-   * where the main concept is located if not.
-   * 
-   * @param main
-   * @return a builder for the main concept
-   */
-  // Builder declare(IConcept main);
-
-  /**
-   * Get a builder for a declaration of named observable, which will allow adding traits and clauses
-   * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
-   * passed a name which can be with or without namespace, and a parent. The concept is only created
-   * if it's not there.
-   * 
-   * The concept is created in the reasoner's ontology if a reasoner is active, or in the ontology
-   * where the main concept is located if not.
-   * 
-   * @param main concept ID, which must be fully specified or build() will throw an exception.
-   * @param parent
-   * @return a builder for the main concept
-   */
-  // Builder declare(String main, @NotNull IConcept parent);
-
-  /**
-   * Get a builder for a declaration of named observable, which will allow adding traits and clauses
-   * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
-   * passed a name which can be with or without namespace, and a type to establish the core parent.
-   * The concept is only created if it's not there.
-   * 
-   * The concept is created in the reasoner's ontology if a reasoner is active, or in the ontology
-   * where the main concept is located if not.
-   * 
-   * @param main concept ID, which must be fully specified or build() will throw an exception
-   * @param type
-   * @return a builder for the main concept
-   */
-  // Builder declare(String main, @NotNull Set<Type> type);
-
-  /**
-   * Get a builder for a declaration of named observable, which will allow adding traits and clauses
-   * and obtain the final concept by calling {@link Builder#build()} on it.
-   * 
-   * @param main
-   * @param ontology
-   * @return a builder for the main concept
-   */
-  // Builder declare(IConcept main, IOntology ontology);
-
-  /**
-   * Get a builder for a declaration of named observable, which will allow adding traits and clauses
-   * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
-   * passed a name which can be with or without namespace, and a parent. The concept is only created
-   * if it's not there.
-   * 
-   * @param main
-   * @param parent
-   * @param ontology
-   * @return a builder for the main concept
-   */
-  // Builder declare(String main, @NotNull IConcept parent, IOntology ontology);
-
-  /**
-   * Get a builder for a declaration of named observable, which will allow adding traits and clauses
-   * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
-   * passed a name which can be with or without namespace, and a type to establish the core parent.
-   * The concept is only created if it's not there.
-   * 
-   * @param main
-   * @param type
-   * @param ontology
-   * @return a builder for the main concept
-   */
-  // Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
+  // /**
+  // * Get a builder for a declaration of named observable, which will allow adding traits and
+  // clauses
+  // * and obtain the final concept by calling {@link Builder#build()} on it.
+  // *
+  // * The concept is created in the reasoner's ontology if a reasoner is active, or in the ontology
+  // * where the main concept is located if not.
+  // *
+  // * @param main
+  // * @return a builder for the main concept
+  // */
+  // // Builder declare(IConcept main);
+  //
+  // /**
+  // * Get a builder for a declaration of named observable, which will allow adding traits and
+  // clauses
+  // * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
+  // * passed a name which can be with or without namespace, and a parent. The concept is only
+  // created
+  // * if it's not there.
+  // *
+  // * The concept is created in the reasoner's ontology if a reasoner is active, or in the ontology
+  // * where the main concept is located if not.
+  // *
+  // * @param main concept ID, which must be fully specified or build() will throw an exception.
+  // * @param parent
+  // * @return a builder for the main concept
+  // */
+  // // Builder declare(String main, @NotNull IConcept parent);
+  //
+  // /**
+  // * Get a builder for a declaration of named observable, which will allow adding traits and
+  // clauses
+  // * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
+  // * passed a name which can be with or without namespace, and a type to establish the core
+  // parent.
+  // * The concept is only created if it's not there.
+  // *
+  // * The concept is created in the reasoner's ontology if a reasoner is active, or in the ontology
+  // * where the main concept is located if not.
+  // *
+  // * @param main concept ID, which must be fully specified or build() will throw an exception
+  // * @param type
+  // * @return a builder for the main concept
+  // */
+  // // Builder declare(String main, @NotNull Set<Type> type);
+  //
+  // /**
+  // * Get a builder for a declaration of named observable, which will allow adding traits and
+  // clauses
+  // * and obtain the final concept by calling {@link Builder#build()} on it.
+  // *
+  // * @param main
+  // * @param ontology
+  // * @return a builder for the main concept
+  // */
+  // // Builder declare(IConcept main, IOntology ontology);
+  //
+  // /**
+  // * Get a builder for a declaration of named observable, which will allow adding traits and
+  // clauses
+  // * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
+  // * passed a name which can be with or without namespace, and a parent. The concept is only
+  // created
+  // * if it's not there.
+  // *
+  // * @param main
+  // * @param parent
+  // * @param ontology
+  // * @return a builder for the main concept
+  // */
+  // // Builder declare(String main, @NotNull IConcept parent, IOntology ontology);
+  //
+  // /**
+  // * Get a builder for a declaration of named observable, which will allow adding traits and
+  // clauses
+  // * and obtain the final concept by calling {@link Builder#build()} on it. This version can be
+  // * passed a name which can be with or without namespace, and a type to establish the core
+  // parent.
+  // * The concept is only created if it's not there.
+  // *
+  // * @param main
+  // * @param type
+  // * @param ontology
+  // * @return a builder for the main concept
+  // */
+  // // Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
 
   /**
    * True if o1 and o2 are observables from recognized domains, have compatible context and
@@ -454,13 +462,14 @@ public interface IObservableService {
   Class<? extends IObservation> getObservationClass(IResolvable resolvable);
 
   /**
-   * Return any mediators needed to turn an observable into a compatible one.
+   * Return service calls producing the sequence of mediators needed to turn an observable into a
+   * compatible one.
    * 
-   * Only guaranteed equality coming in is that to.canResolve(from). If this is not true, the
+   * The guaranteed constraint coming in is that to.canResolve(from). If this is not true, the
    * function throws an IllegalArgumentException.
    * 
-   * If from.observable.equals(to.observable), it's a unit or currency mediation. Otherwise it will
-   * involve classification (by/downTo) or other transformation.
+   * If from.observable.equals(to.observable), the mediation can only be a unit or currency
+   * conversion. Otherwise it may involve classification (by/downTo) or other transformation.
    * 
    * @param from
    * @param to

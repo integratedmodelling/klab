@@ -136,17 +136,5 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
   }
 
-  // from Model, for safekeeping
-  // private IResource createContextualizerResource(IKimContextualization contextualization) {
-  // if (contextualization.getFunction() != null) {
-  // return Resources.INSTANCE.getComputedResource(contextualization.getFunction());
-  // } else if (contextualization.getRemoteUrn() != null) {
-  // return Resources.INSTANCE.getUrnResource(contextualization.getRemoteUrn());
-  // }
-  //// TODO the rest - classifications (normal or according to), lookup table etc
-  //// TODO figure out and validate the postprocessor thing
-  //// TODO these may become multiple
-  // return null;
-  // }
 
 }

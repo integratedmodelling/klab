@@ -25,20 +25,6 @@ public interface IResourceService {
    * @return
    */
   IResource getLocalFileResource(File file);
-  //
-  // /**
-  // *
-  // * @param function
-  // * @return
-  // */
-  // IResource getComputedResource(IServiceCall function);
-  //
-  // /**
-  // *
-  // * @param inlineResource
-  // * @return
-  // */
-  // IResource getLiteralResource(Object inlineResource);
 
   /**
    * Retrieve a model object identified through a URN - either an observer or a model, local or
@@ -53,7 +39,8 @@ public interface IResourceService {
    * Retrieve a resolvable object identified by a URN, promoting any resource that is not directly
    * resolvable to the correspondent resolvable when possible.
    * 
-   * @param urn
+   * @param urn either a formal URN or one of the abbreviated forms recognized in k.IM (such as a
+   *        concept identifier)
    * @return a resolvable resource, or null if nothing can be found.
    */
   IResolvable getResolvableResource(String urn);
