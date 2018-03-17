@@ -14,13 +14,13 @@ import org.integratedmodelling.klab.observation.Scale;
  * @author Ferd
  *
  */
-public abstract class AbstractObservationData implements IObservationData {
+public abstract class ObservationData implements IObservationData {
 
     IObservable semantics;
     IGeometry   geometry;
     IMetadata   metadata = new Metadata();
 
-    protected AbstractObservationData(IObservable semantics) {
+    protected ObservationData(IObservable semantics) {
         this.semantics = semantics;
     }
     
@@ -34,6 +34,10 @@ public abstract class AbstractObservationData implements IObservationData {
     public IObservationData next() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    public void chain(IObservationData data) {
+      // TODO
     }
 
     @Override

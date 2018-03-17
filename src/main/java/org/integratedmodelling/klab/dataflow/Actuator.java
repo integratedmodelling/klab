@@ -18,10 +18,10 @@ import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.data.ObjectData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -150,6 +150,7 @@ public class Actuator implements IActuator {
 
     // localize names to this actuator's expectations; create non-semantic storage if needed
     IRuntimeContext ctx = setupContext(runtimeContext);
+    // this will be null if the actuator is for an instantiator
     IObservationData ret = runtimeContext.getData(this.name);
 
     // run it
@@ -168,7 +169,11 @@ public class Actuator implements IActuator {
         ret = ((IResolver<?>)contextualizer.getFirst()).resolve(ret, ctx);
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
         for (IObjectData object : ((IInstantiator)contextualizer.getFirst()).instantiate(this.observable, ctx)) {
-          // TODO resolve to semantic object; store result in context until ready for owning subject
+          if (ret == null) {
+            ret = object;
+          } else {
+            ((ObservationData)ret).chain(object);
+          }
         }
       }
     }

@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 
-public class ObjectData extends AbstractObservationData implements IObjectData {
+public class ObjectData extends ObservationData implements IObjectData {
 
     String name;
     Map<String, IObservationData> catalog = new HashMap<>();
