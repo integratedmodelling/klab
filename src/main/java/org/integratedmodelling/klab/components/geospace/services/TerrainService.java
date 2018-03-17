@@ -1,29 +1,26 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
 import java.util.Map;
-
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.processing.Terrain;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class TerrainService implements IResolver<IStorage<?>>, IExpression {
 
     public TerrainService() {}
     
-    public TerrainService(Map<String, Object> parameters, IMonitor monitor, Context context) {
-        // TODO Auto-generated constructor stub
-    }
-    
     @Override
     public Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
             throws KlabException {
-        return new TerrainService(parameters, monitor, context);
+        return new TerrainService();
     }
 
     @Override
@@ -32,9 +29,18 @@ public class TerrainService implements IResolver<IStorage<?>>, IExpression {
     }
 
     @Override
-    public IStorage<?> resolve(IObservationData ret, IComputationContext context) {
-      // TODO Auto-generated method stub
-      return null;
+    public IStorage<?> resolve(IStorage<?> ret, IComputationContext context, ILocator locator) {
+      
+      long[] xy = locator.getShape(Dimension.Type.SPACE);
+      Terrain terrain = new Terrain(context.get("detail", Integer.class), context.get("roughness", Double.class));
+      double dx = 1.0/xy[0];
+      double dy = 1.0/xy[1];
+      for (long x = 0; x < xy[0]; x++) {
+        for (long y = 0; y < xy[1]; y++) {
+          ret.set(locator.at(Dimension.Type.SPACE, x, y), terrain.getAltitude(dx*x, dy*y));
+        }
+      }
+      return ret;
     }
 
 }

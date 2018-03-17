@@ -29,6 +29,14 @@ public interface IRuntimeContext extends IComputationContext {
   void setData(String name, IObservationData data);
   
   /**
+   * Set POD data or parameters.
+   * 
+   * @param name
+   * @param value
+   */
+  void set(String name, Object value);
+  
+  /**
    * 
    * @return
    */

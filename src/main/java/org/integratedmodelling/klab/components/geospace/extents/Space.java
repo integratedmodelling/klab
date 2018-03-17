@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -415,6 +416,24 @@ public class Space extends Extent implements ISpace {
   public long getOffset(ILocator index) {
     // TODO Auto-generated method stub
     return 0;
+  }
+
+  @Override
+  public ILocator at(Dimension.Type dimension, long... offsets) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public long[] getShape(Type dimension) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Iterable<ILocator> over(Type dimension) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

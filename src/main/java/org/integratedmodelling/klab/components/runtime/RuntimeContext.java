@@ -53,6 +53,7 @@ public class RuntimeContext implements IRuntimeContext {
     this.configurationDetector = context.configurationDetector;
     this.structure = context.structure;
     this.catalog.putAll(context.catalog);
+    this.data.putAll(context.data);
   }
 
   @Override
@@ -148,11 +149,19 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public Object get(String name) {
-    return data.get(name);
+  public <T> T get(String name, T object) {
+    // TODO transform to T if compatible and needed
+    return data.containsKey(name) ? (T)data.get(name) : object;
+  }
+
+  @Override
+  public <T> T get(String name, Class<? extends T> cls) {
+    // TODO transform to T if compatible and needed
+    return (T)data.get(name);
   }
 
   public void set(String name, Object value) {
     data.put(name, value);
   }
+
 }

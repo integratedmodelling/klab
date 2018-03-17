@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -1080,8 +1082,31 @@ public class Scale extends AbstractLocator implements IScale {
      * TODO single extent locator
      */
     
-    
     return 0;
+  }
+
+  @Override
+  public IScale at(Dimension.Type dimension, long... offsets) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public long[] getShape(Type dimension) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IExtent getDimension(Type type) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Iterable<ILocator> over(Type dimension) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 

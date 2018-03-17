@@ -100,5 +100,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
    */
   @Override
   IScale at(ILocator locator);
+  
+  
 
 }

@@ -26,6 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale.time;
 
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
@@ -43,6 +44,24 @@ public interface ITime extends IExtent {
       @Override
       public ILocator at(ILocator locator) {
         return this;
+      }
+
+      @Override
+      public ILocator at(Dimension.Type dimension, long... offsets) {
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      @Override
+      public long[] getShape(Type dimension) {
+        // TODO Auto-generated method stub
+        return new long[]{};
+      }
+
+      @Override
+      public Iterable<ILocator> over(Type dimension) {
+        // TODO Auto-generated method stub
+        return null;
       }};
 
     /**

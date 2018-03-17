@@ -21,8 +21,8 @@ import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.data.ObjectData;
+import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -131,6 +131,7 @@ public class Actuator implements IActuator {
    * @return the finalized observation data
    * @throws KlabException
    */
+  @SuppressWarnings("unchecked")
   public IObservationData compute(IObjectData context, IRuntimeContext runtimeContext,
       IMonitor monitor) throws KlabException {
 
@@ -162,23 +163,41 @@ public class Actuator implements IActuator {
          * instead of hard-coding a loop here.
          */
         ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
-            (IStateResolver) contextualizer.getFirst(), (IStorage<?>) ret, ctx,
-            scale.at(ITime.INITIALIZATION));
+            (IStateResolver) contextualizer.getFirst(), (IStorage<?>) ret,
+            addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
 
       } else if (contextualizer.getFirst() instanceof IResolver) {
-        ret = ((IResolver<?>)contextualizer.getFirst()).resolve(ret, ctx);
+        ret = ((IResolver<IObservationData>) contextualizer.getFirst()).resolve(ret,
+            addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
-        for (IObjectData object : ((IInstantiator)contextualizer.getFirst()).instantiate(this.observable, ctx)) {
+        for (IObjectData object : ((IInstantiator) contextualizer.getFirst()).instantiate(
+            this.observable, addParameters(ctx, contextualizer.getSecond()),
+            scale.at(ITime.INITIALIZATION))) {
           if (ret == null) {
             ret = object;
           } else {
-            ((ObservationData)ret).chain(object);
+            ((ObservationData) ret).chain(object);
           }
         }
       }
     }
 
     return ret;
+  }
+
+  /**
+   * Set the call parameters, if any, into the context data so that they can be found by the
+   * contextualizer.
+   * 
+   * @param ctx
+   * @param second
+   * @return
+   */
+  private IRuntimeContext addParameters(IRuntimeContext ctx, IComputableResource resource) {
+    for (String name : resource.getParameters().keySet()) {
+      ctx.set(name, resource.getParameters().get(name));
+    }
+    return ctx;
   }
 
   private IRuntimeContext setupContext(IRuntimeContext runtimeContext) {

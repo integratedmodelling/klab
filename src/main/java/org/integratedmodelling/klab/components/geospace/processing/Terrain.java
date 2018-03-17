@@ -13,7 +13,7 @@ import java.util.Random;
 public class Terrain {
 
     private double[][] terrain;
-    private double     roughness, min, max;
+    private double     min, max;
     private int        divisions;
     private Random     rng;
 
@@ -23,7 +23,6 @@ public class Terrain {
      */
     public Terrain(int lod, double roughness) {
 
-        this.roughness = roughness;
         this.divisions = 1 << lod;
         terrain = new double[divisions + 1][divisions + 1];
         rng = new Random();
@@ -33,7 +32,7 @@ public class Terrain {
         terrain[divisions][0] = rnd();
         double rough = roughness;
         for (int i = 0; i < lod; ++i) {
-            int q = 1 << i, r = 1 << (lod - i), s = r >> 1;
+            int r = 1 << (lod - i), s = r >> 1;
             for (int j = 0; j < divisions; j += r)
                 for (int k = 0; k < divisions; k += r)
                     diamond(j, k, r, rough);

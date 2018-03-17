@@ -19,8 +19,8 @@ public interface IStateResolver extends IContextualizer {
    * 
    * @param observation
    * @param context
-   * @param locator
-   * @return
+   * @param locator A locator corresponding to a single extent state.
+   * @return the computed value at the locator
    */
   Object resolve(IStorage<?> observation, IComputationContext context, ILocator locator);
 

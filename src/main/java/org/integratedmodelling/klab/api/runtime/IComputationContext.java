@@ -73,9 +73,21 @@ public interface IComputationContext {
    * {@link IObservationData observation data objects} instead.
    * 
    * @param name
+   * @param defaultValue
    * @return a plain Java object
    */
-  Object get(String name);
+  <T> T get(String name, T defaultValue);
+
+  /**
+   * Get the localized POD object corresponding to the passed name for the current state or function
+   * parameters defined in a contextualizer call. Use {@link #getData(String)} to retrieve
+   * {@link IObservationData observation data objects} instead.
+   * 
+   * @param name
+   * @param cls the expected class of the result
+   * @return a plain Java object
+   */
+  <T> T get(String name, Class<? extends T> cls);
 
   /**
    * The data for the subject that provides the context for this computation. It is null only when

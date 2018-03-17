@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -394,6 +395,24 @@ public class Shape extends AbstractExtent implements IShape {
   public long getOffset(ILocator index) {
     // TODO Auto-generated method stub
     return 0;
+  }
+
+  @Override
+  public ILocator at(Dimension.Type dimension, long... offsets) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public long[] getShape(Dimension.Type dimension) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Iterable<ILocator> over(Dimension.Type dimension) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }
