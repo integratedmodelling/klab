@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -25,18 +26,19 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.Extent;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
+import org.integratedmodelling.klab.utils.collections.IterableAdapter;
 
 public class Space extends Extent implements ISpace {
 
-  private Shape         shape;
-  private Grid          grid;
-  private Envelope      envelope;
-  private Projection    projection;
+  private Shape shape;
+  private Grid grid;
+  private Envelope envelope;
+  private Projection projection;
   private ITessellation features;
-  private boolean       consistent  = false;
-  private String        gridSpecs   = null;
+  private boolean consistent = false;
+  private String gridSpecs = null;
 
-  private static Space  EMPTY_SPACE = new Space(Shape.empty());
+  private static Space EMPTY_SPACE = new Space(Shape.empty());
 
   public static Space create(Shape shape) {
     return new Space(shape);
@@ -45,7 +47,7 @@ public class Space extends Extent implements ISpace {
   public static final Space empty() {
     return EMPTY_SPACE;
   }
-  
+
   public static Space create(Shape shape, double resolutionInMeters) throws KlabException {
     Grid grid = Grid.create(shape, resolutionInMeters);
     Space ret = new Space(shape, grid);
@@ -176,23 +178,23 @@ public class Space extends Extent implements ISpace {
     return new long[] {0};
   }
 
-//  @Override
-//  public long locate(Locator locator) {
-//
-//    if (locator instanceof SpaceLocator) {
-//      if (locator.isAll())
-//        return GENERIC_LOCATOR;
-//      if (grid != null) {
-//        if (((SpaceLocator) locator).isLatLon()) {
-//          return grid.getOffsetFromWorldCoordinates(((SpaceLocator) locator).lon,
-//              ((SpaceLocator) locator).lat);
-//        } else {
-//          return grid.getOffset(((SpaceLocator) locator).x, ((SpaceLocator) locator).y);
-//        }
-//      }
-//    }
-//    return INAPPROPRIATE_LOCATOR;
-//  }
+  // @Override
+  // public long locate(Locator locator) {
+  //
+  // if (locator instanceof SpaceLocator) {
+  // if (locator.isAll())
+  // return GENERIC_LOCATOR;
+  // if (grid != null) {
+  // if (((SpaceLocator) locator).isLatLon()) {
+  // return grid.getOffsetFromWorldCoordinates(((SpaceLocator) locator).lon,
+  // ((SpaceLocator) locator).lat);
+  // } else {
+  // return grid.getOffset(((SpaceLocator) locator).x, ((SpaceLocator) locator).y);
+  // }
+  // }
+  // }
+  // return INAPPROPRIATE_LOCATOR;
+  // }
 
   @Override
   public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
@@ -304,7 +306,7 @@ public class Space extends Extent implements ISpace {
   public Iterator<IExtent> iterator() {
     if (grid != null) {
       return grid.iterator();
-    } 
+    }
     if (features != null) {
       return features.iterator();
     }
@@ -326,13 +328,13 @@ public class Space extends Extent implements ISpace {
     return projection;
   }
 
-//  @Override
+  // @Override
   public Optional<IGrid> getGrid() {
     // TODO Auto-generated method stub
     return grid == null ? Optional.empty() : Optional.of(grid);
   }
 
-//  @Override
+  // @Override
   public Optional<ITessellation> getTessellation() {
     // TODO Auto-generated method stub
     return features == null ? Optional.empty() : Optional.of(features);
@@ -343,7 +345,7 @@ public class Space extends Extent implements ISpace {
     return shape;
   }
 
-//  @Override
+  // @Override
   public ISpatialIndex getIndex(boolean makeNew) {
     // TODO Auto-generated method stub
     return null;
@@ -390,20 +392,17 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public Type getType() {
-    // TODO Auto-generated method stub
-    return null;
+    return Dimension.Type.SPACE;
   }
 
   @Override
   public boolean isRegular() {
-    // TODO Auto-generated method stub
-    return false;
+    return features == null;
   }
 
   @Override
   public int getDimensionality() {
-    // TODO Auto-generated method stub
-    return 0;
+    return 2;
   }
 
   @Override
@@ -426,14 +425,18 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public long[] getShape(Type dimension) {
-    // TODO Auto-generated method stub
-    return null;
+    return grid == null ? (features == null ? new long[] {1} : new long[] {features.size()})
+        : new long[] {grid.getXCells(), grid.getYCells()};
   }
 
   @Override
   public Iterable<ILocator> over(Type dimension) {
-    // TODO Auto-generated method stub
-    return null;
+    if (dimension != Dimension.Type.SPACE) {
+      throw new IllegalArgumentException("cannot iterate a spatial extent over " + dimension);
+    }
+    return grid != null ? new IterableAdapter<ILocator>(grid)
+        : (features != null ? new IterableAdapter<ILocator>(features)
+            : Collections.singleton(shape));
   }
 
 }

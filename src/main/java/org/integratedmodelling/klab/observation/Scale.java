@@ -1027,7 +1027,9 @@ public class Scale extends AbstractLocator implements IScale {
 
   @Override
   public List<Dimension> getDimensions() {
-    return null;
+    List<Dimension> ret = new ArrayList<>();
+    ret.addAll(extents);
+    return ret;
   }
 
   @Override
@@ -1094,12 +1096,20 @@ public class Scale extends AbstractLocator implements IScale {
   @Override
   public long[] getShape(Type dimension) {
     // TODO Auto-generated method stub
-    return null;
+    IExtent ext = getDimension(dimension);
+    if (ext == null) {
+      throw new IllegalArgumentException("scale does not implement requested " + dimension + " dimension");
+    }
+    return ext.getShape(dimension);
   }
 
   @Override
   public IExtent getDimension(Type type) {
-    // TODO Auto-generated method stub
+    for (IExtent extent : extents) {
+      if (extent.getType() == type) {
+        return extent;
+      }
+    }
     return null;
   }
 
