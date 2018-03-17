@@ -33,28 +33,28 @@ import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator implements IActuator {
 
-  protected String                                         name;
-  private String                                           alias;
-  private INamespace                                       namespace;
-  private Observable                                       observable;
-  private Scale                                            scale;
-  private IKdlActuator.Type                                type;
-  List<IActuator>                                          actuators         = new ArrayList<>();
-  IMonitor                                                 monitor;
-  Date                                                     creationTime      = new Date();
-  private boolean                                          createObservation;
-  private boolean                                          reference;
-  private boolean                                          exported;
+  protected String name;
+  private String alias;
+  private INamespace namespace;
+  private Observable observable;
+  private Scale scale;
+  private IKdlActuator.Type type;
+  List<IActuator> actuators = new ArrayList<>();
+  IMonitor monitor;
+  Date creationTime = new Date();
+  private boolean createObservation;
+  private boolean reference;
+  private boolean exported;
 
   // this is only for the API
-  private List<IComputableResource>                        computedResources = new ArrayList<>();
+  private List<IComputableResource> computedResources = new ArrayList<>();
 
   /**
    * The contextualizer chain that implements the computation specified by IServiceCalls. These may
    * be first-class resolvers/instantiators or mediators, in order of execution. Created and
    * populated at compute().
    */
-  private List<Pair<IContextualizer, IComputableResource>> computation       = null;
+  private List<Pair<IContextualizer, IComputableResource>> computation = null;
 
   public void addComputation(IComputableResource resource) {
     computedResources.add(resource);
@@ -76,9 +76,9 @@ public class Actuator implements IActuator {
    * Each list contains a service call and its local target name, null for the main observable.
    */
   private List<Pair<IServiceCall, IComputableResource>> computationStrategy = new ArrayList<>();
-  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy   = new ArrayList<>();
+  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy = new ArrayList<>();
 
-  private boolean                                       definesScale;
+  private boolean definesScale;
 
   @Override
   public String getName() {
@@ -149,36 +149,37 @@ public class Actuator implements IActuator {
     }
 
     // localize names to this actuator's expectations; create non-semantic storage if needed
-    IRuntimeContext  ctx = setupContext(runtimeContext);
-    IObservationData ret = runtimeContext.get(this.name);
+    IRuntimeContext ctx = setupContext(runtimeContext);
+    IObservationData ret = runtimeContext.getData(this.name);
 
     // run it
     for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
 
       if (contextualizer.getFirst() instanceof IStateResolver) {
         /*
-         * FIXME pass the distributed computation to the runtime provider for possible parallelization instead of hard-coding
-         * a for loop here.
+         * pass the distributed computation to the runtime provider for possible parallelization
+         * instead of hard-coding a loop here.
          */
-        for (IScale state : scale.at(ITime.INITIALIZATION)) {
-          Object value =
-              ((IStateResolver) contextualizer.getFirst()).resolve((IStorage<?>) ret, ctx, state);
-          ((IStorage<?>) ret).set(state, value);
-        }
+        ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
+            (IStateResolver) contextualizer.getFirst(), (IStorage<?>) ret, ctx,
+            scale.at(ITime.INITIALIZATION));
+
       } else if (contextualizer.getFirst() instanceof IResolver) {
-        // TODO run resolver or mediator, reassign return value
+        ret = ((IResolver<?>)contextualizer.getFirst()).resolve(ret, ctx);
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
-        // TODO run instantiator, then have the runtime provider resolve each instance
+        for (IObjectData object : ((IInstantiator)contextualizer.getFirst()).instantiate(this.observable, ctx)) {
+          // TODO resolve to semantic object; store result in context until ready for owning subject
+        }
       }
     }
 
     return ret;
   }
-  
+
   private IRuntimeContext setupContext(IRuntimeContext runtimeContext) {
 
     // create non-semantic storage if required
-    if (runtimeContext.get(this.name) == null) {
+    if (runtimeContext.getData(this.name) == null) {
       if (observable.getType().is(Type.QUALITY)) {
 
         // create storage
@@ -187,17 +188,17 @@ public class Actuator implements IActuator {
           // TODO analyze the computation and see if we can create a constant instead
 
         }
-        runtimeContext.set(this.name,
+        runtimeContext.setData(this.name,
             isConstant ? Klab.INSTANCE.getSingletonStorage(this.observable, this.scale)
                 : Klab.INSTANCE.getStorageProvider().createStorage(this.observable, this.scale));
       } else {
         // create object data
-        runtimeContext.set(this.name, new ObjectData(this.name, this.observable));
+        runtimeContext.setData(this.name, new ObjectData(this.name, this.observable));
       }
     }
     IRuntimeContext ret = runtimeContext.copy();
     for (IActuator input : getInputs()) {
-      if (ret.get(input.getName()) != null) {
+      if (ret.getData(input.getName()) != null) {
         ret.rename(input.getName(), input.getAlias());
       }
     }
@@ -262,11 +263,11 @@ public class Actuator implements IActuator {
                 : (" as " + serviceCalls.get(i).getSecond().getTarget()))
             + (i < serviceCalls.size() - 1 ? "," : "") + "\n";
       }
-      
+
       if (observable != null) {
         ret += ofs + "   " + "semantics " + getObservable().getDeclaration() + "\n";
       }
-      
+
       ret += ofs + "}";
     }
 

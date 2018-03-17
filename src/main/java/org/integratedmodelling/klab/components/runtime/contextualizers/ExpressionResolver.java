@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -48,12 +49,12 @@ public class ExpressionResolver implements IResolver<IStorage<?>>, IExpression {
     return null;
   }
 
-
   @Override
-  public IStorage<?> resolve(IStorage<?> observation, IComputationContext context) {
+  public IStorage<?> resolve(IObservationData ret, IComputationContext context) {
     // TODO Auto-generated method stub
     return null;
   }
+
 
   
 }

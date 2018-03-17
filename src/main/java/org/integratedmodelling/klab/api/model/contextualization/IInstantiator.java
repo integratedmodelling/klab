@@ -11,9 +11,8 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  * 
  * @author ferdinando.villa
  *
- * @param <T>
  */
-public interface IInstantiator<T extends IObjectData> extends IContextualizer {
+public interface IInstantiator extends IContextualizer {
 
   /**
    * Instantiate and return the target observations in the passed context. Those observations will
@@ -24,6 +23,6 @@ public interface IInstantiator<T extends IObjectData> extends IContextualizer {
    *
    * @return a list of observations, possibly empty but never null.
    */
-  List<T> instantiate(IObservable semantics, IComputationContext context);
+  List<IObjectData> instantiate(IObservable semantics, IComputationContext context);
 
 }

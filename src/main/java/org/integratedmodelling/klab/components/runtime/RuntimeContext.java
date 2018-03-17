@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.components.runtime;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
@@ -15,8 +18,8 @@ import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.observation.Relationship;
-import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
@@ -38,10 +41,11 @@ public class RuntimeContext implements IRuntimeContext {
   ConfigurationDetector configurationDetector;
   Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
   Map<String, IObservationData> catalog = new HashMap<>();
-
+  Map<String, Object> data = new HashMap<>();
+    
   public RuntimeContext() {}
 
-  private RuntimeContext(RuntimeContext context) {
+  RuntimeContext(RuntimeContext context) {
     this.namespace = context.namespace;
     this.subject = context.subject;
     this.provenance = context.provenance;
@@ -50,20 +54,6 @@ public class RuntimeContext implements IRuntimeContext {
     this.structure = context.structure;
     this.catalog.putAll(context.catalog);
   }
-
-//  /**
-//   * Set the root subject for the context, initializing the provenance and the
-//   * 
-//   * @param subject
-//   */
-//  public void setRootSubject(ISubject subject) {
-//    ((Subject) subject).setRuntimeContext(this);
-//    this.subject = subject == null ? null : subject.getData();
-//    this.eventBus = new EventBus((Subject) subject);
-//    this.configurationDetector = new ConfigurationDetector((Subject) subject, structure);
-//    this.provenance = new Provenance((Subject) subject);
-//    this.structure.addVertex(subject);
-//  }
 
   @Override
   public IProvenance getProvenance() {
@@ -121,7 +111,7 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public IObservationData get(String localName) {
+  public IObservationData getData(String localName) {
     return catalog.get(localName);
   }
 
@@ -140,8 +130,29 @@ public class RuntimeContext implements IRuntimeContext {
   }
 
   @Override
-  public void set(String name, IObservationData data) {
+  public void setData(String name, IObservationData data) {
     catalog.put(name, data);
   }
 
+  /*
+   * return all states that must be localized when a IStateContextualizer is run.
+   */
+  public Collection<Pair<String, IStorage<?>>> getStateDependentData() {
+    List<Pair<String, IStorage<?>>> ret = new ArrayList<>();
+    for (String var : catalog.keySet()) {
+      if (catalog.get(var) instanceof IStorage<?>) {
+        ret.add(new Pair<>(var, (IStorage<?>)catalog.get(var)));
+      }
+    }
+    return ret;
+  }
+
+  @Override
+  public Object get(String name) {
+    return data.get(name);
+  }
+
+  public void set(String name, Object value) {
+    data.put(name, value);
+  }
 }

@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.CompatibleObservable;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Model extends KimObject implements IModel {
 
@@ -56,7 +57,7 @@ public class Model extends KimObject implements IModel {
   public static Model create(IKimModel model, INamespace namespace, IMonitor monitor) {
     return new Model(model, namespace, monitor);
   }
-  
+
   private Model(IKimModel model, INamespace namespace, IMonitor monitor) {
 
     super(model);
@@ -131,20 +132,22 @@ public class Model extends KimObject implements IModel {
 
   @Override
   public boolean isResolved() {
-    // TODO all resources have no parameters or all parameters are resolved through resources with no parameters.
-    // TODO also check 'change to' status on main observable. And maybe geometry (vs. context? Should we check in context?)
+    // TODO all resources have no parameters or all parameters are resolved through resources with
+    // no parameters.
+    // TODO also check 'change to' status on main observable. And maybe geometry (vs. context?
+    // Should we check in context?)
     for (IComputableResource resource : resources) {
       // TODO TODO this is a temp fix to make the tests run.
       if (!resource.getRequiredResourceNames().isEmpty()) {
         return false;
       }
     }
-    //    if (resource != null) {
-//      return true;
-//    }
-//    if (contextualizerResource != null) {
-//      return !contextualizerResource.get().getGeometry().isEmpty();
-//    }
+    // if (resource != null) {
+    // return true;
+    // }
+    // if (contextualizerResource != null) {
+    // return !contextualizerResource.get().getGeometry().isEmpty();
+    // }
     // TODO temp rationale: empty resource set = pass-through model
     return !resources.isEmpty();
   }
@@ -196,9 +199,9 @@ public class Model extends KimObject implements IModel {
     this.dependencies = dependencies;
   }
 
-//  public void setResource(Optional<IResource> resource) {
-//    this.resource = resource;
-//  }
+  // public void setResource(Optional<IResource> resource) {
+  // this.resource = resource;
+  // }
 
   public void setDocumentation(Optional<IDocumentation> documentation) {
     this.documentation = documentation;
@@ -249,7 +252,7 @@ public class Model extends KimObject implements IModel {
     List<IComputableResource> ret = new ArrayList<>(resources);
     for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
       for (IAction action : behavior.getActions(trigger)) {
-        ret.addAll(action.getComputation(transition));
+          ret.addAll(action.getComputation(transition));
       }
     }
     return ret;

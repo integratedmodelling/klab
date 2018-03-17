@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -7,14 +8,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -26,7 +27,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
-import org.integratedmodelling.klab.observation.DirectObservation;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -130,10 +131,30 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       return LiteralStateResolver.getServiceCall(resource.getLiteral());
     }
 
-    // TODO classifications, lookup tables
-
     // temp
     throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
+  }
+
+  @Override
+  public IStorage<?> distributeComputation(IStateResolver resolver, IStorage<?> data,
+      IRuntimeContext context, IScale scale) {
+
+    // TODO use a distributed loop unless the resolver implements some tag interface to notify non-reentrant behavior
+    // TODO if this is done, the next one must be local to each thread
+    RuntimeContext ctx = new RuntimeContext((RuntimeContext)context);
+    Collection<Pair<String, IStorage<?>>> variables = ctx.getStateDependentData();
+    for (IScale state : scale) {
+      data.set(state, resolver.resolve(data, variables.isEmpty() ? ctx : localizeContext(ctx, state, variables), state));
+    }
+    return data;
+
+  }
+
+  private IComputationContext localizeContext(RuntimeContext context, IScale state, Collection<Pair<String, IStorage<?>>> variables) {
+    for (Pair<String, IStorage<?>> var : variables) {
+      context.set(var.getFirst(), var.getSecond().get(state));
+    }
+    return context;
   }
 
 

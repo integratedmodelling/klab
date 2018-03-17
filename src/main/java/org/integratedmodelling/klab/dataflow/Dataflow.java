@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -80,6 +81,7 @@ public class Dataflow<T extends IArtifact> extends Actuator implements IDataflow
 
     if (offset == 0) {
       ret += "@klab " + Version.CURRENT + "\n";
+      ret += "@worldview " + Workspaces.INSTANCE.getWorldview().getName() + "\n";
       ret += "@dataflow " + getName() + "\n";
       ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
       if (getContext() != null) {
