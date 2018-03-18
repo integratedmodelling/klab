@@ -58,21 +58,12 @@ public abstract class ObservationData implements IObservationData {
     return metadata;
   }
 
-  /**
-   * Return the single offset in linear storage for the passed locator if the locator is conformant
-   * with our scale. If more complex mediation (involving >1 or <1 coverage) is necessary, return
-   * -1.
-   * 
-   * @param locator
-   * @param scale
-   * @return
-   */
-  public long getConformantOffset(ILocator locator, Scale scale) {
-    return 0;
-  }
-
   public IRuntimeContext getRuntimeContext() {
     return this.runtimeContext;
+  }
+
+  public void setRuntimeContext(IRuntimeContext runtimeContext) {
+    this.runtimeContext = runtimeContext;
   }
 
 }

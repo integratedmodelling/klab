@@ -10,4 +10,5 @@ public interface IObjectData extends IObservationData {
   String getName();
 
   IObservationData get(String name);
+
 }

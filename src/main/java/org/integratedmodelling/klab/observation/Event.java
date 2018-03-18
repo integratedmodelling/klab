@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.observation;
 
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.observations.IEvent;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 

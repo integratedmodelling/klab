@@ -217,7 +217,8 @@ public class Actuator implements IActuator {
                 : Klab.INSTANCE.getStorageProvider().createStorage(this.observable, this.scale));
       } else {
         // create object data
-        runtimeContext.setData(this.name, new ObjectData(this.name, this.observable, runtimeContext));
+        runtimeContext.setData(this.name,
+            newObjectData(this.name, this.observable, runtimeContext));
       }
     }
     IRuntimeContext ret = runtimeContext.copy();
@@ -226,6 +227,13 @@ public class Actuator implements IActuator {
         ret.rename(input.getName(), input.getAlias());
       }
     }
+    return ret;
+  }
+
+  private IObservationData newObjectData(String name, Observable observable,
+      IRuntimeContext runtimeContext) {
+    IObjectData ret = ObjectData.create(name, observable);
+    ((ObjectData)ret).setRuntimeContext(runtimeContext);
     return ret;
   }
 
@@ -289,9 +297,9 @@ public class Actuator implements IActuator {
       }
 
       // UNCOMMENT TO OUTPUT SEMANTICS
-//      if (observable != null) {
-//        ret += ofs + "   " + "semantics " + getObservable().getDeclaration() + "\n";
-//      }
+      // if (observable != null) {
+      // ret += ofs + " " + "semantics " + getObservable().getDeclaration() + "\n";
+      // }
 
       ret += ofs + "}";
     }
