@@ -14,9 +14,9 @@ public interface IExtent
    * like a "zoom level".
    * 
    * The worldview defines this using numeric restrictions on the data property used to annotate
-   * scale constraints.
+   * scale constraints and establishes the range and granularity for the ranking.
    * 
-   * @return
+   * @return an integer summarizing the extent's size within the range covered by the worldview
    */
   int getScaleRank();
 
@@ -28,15 +28,13 @@ public interface IExtent
    * implementation is expected to try to merge extents that share the same domain concept even if
    * their observables are not the same.
    * 
-   * TODO remove and use getType()/getObservable()
-   * 
    * @return the domain concept for the extent
    */
   IConcept getDomainConcept();
 
   /**
    * Collapse the multiplicity and return the extent that represents the full extent of our topology
-   * in one single state. This extent may not necessarily be of the same class.
+   * in one single state. This extent may not be of the same class.
    * 
    * @return a new extent with getValueCount() == 1.
    */

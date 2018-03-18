@@ -27,4 +27,19 @@ public abstract class AbstractExtent extends AbstractLocator implements IExtent 
     return scale.scaleId == scaleId;
   }
 
+  /**
+   * Translate a linear offset into the offsets for each dimension. If the dimension is 1, return
+   * the offset itself.
+   * 
+   * @param linearOffset
+   * @return dimension offsets
+   */
+  public abstract long[] getDimensionOffsets(long linearOffset);
+
+  /**
+   * Check and return the offset corresponding to the passed dimensions.
+   * @param dimOffsets
+   * @return
+   */
+  public abstract long getOffset(long[] dimOffsets);
 }

@@ -41,32 +41,28 @@ public class Grid extends Area implements IGrid {
   /**
    * Directions accessible from each corner
    */
-  static Orientation[] swCorner          =
-      new Orientation[] {Orientation.N, Orientation.NE, Orientation.E};
-  static Orientation[] seCorner          =
-      new Orientation[] {Orientation.W, Orientation.NW, Orientation.N};
-  static Orientation[] nwCorner          =
-      new Orientation[] {Orientation.S, Orientation.SE, Orientation.W};
-  static Orientation[] neCorner          =
-      new Orientation[] {Orientation.W, Orientation.SW, Orientation.S};
+  static Orientation[] swCorner = new Orientation[] {Orientation.N, Orientation.NE, Orientation.E};
+  static Orientation[] seCorner = new Orientation[] {Orientation.W, Orientation.NW, Orientation.N};
+  static Orientation[] nwCorner = new Orientation[] {Orientation.S, Orientation.SE, Orientation.W};
+  static Orientation[] neCorner = new Orientation[] {Orientation.W, Orientation.SW, Orientation.S};
 
   /**
    * Directions accessible from each edge
    */
-  static Orientation[] sEdge             = new Orientation[] {Orientation.W, Orientation.NW,
-      Orientation.N, Orientation.NE, Orientation.E};
-  static Orientation[] eEdge             = new Orientation[] {Orientation.S, Orientation.SW,
-      Orientation.W, Orientation.NW, Orientation.N};
-  static Orientation[] nEdge             = new Orientation[] {Orientation.W, Orientation.SW,
-      Orientation.S, Orientation.SE, Orientation.E};
-  static Orientation[] wEdge             = new Orientation[] {Orientation.S, Orientation.SE,
-      Orientation.E, Orientation.NE, Orientation.N};
+  static Orientation[] sEdge = new Orientation[] {Orientation.W, Orientation.NW, Orientation.N,
+      Orientation.NE, Orientation.E};
+  static Orientation[] eEdge = new Orientation[] {Orientation.S, Orientation.SW, Orientation.W,
+      Orientation.NW, Orientation.N};
+  static Orientation[] nEdge = new Orientation[] {Orientation.W, Orientation.SW, Orientation.S,
+      Orientation.SE, Orientation.E};
+  static Orientation[] wEdge = new Orientation[] {Orientation.S, Orientation.SE, Orientation.E,
+      Orientation.NE, Orientation.N};
 
   static Orientation[] mooreNeighborhood = new Orientation[] {Orientation.W, Orientation.NW,
       Orientation.N, Orientation.NE, Orientation.E, Orientation.SE, Orientation.S, Orientation.SW};
 
   static int connectionCount(long n, long m) {
-    return (int)(((n - 2) * (m - 2) * 8) + // connections in internal cells
+    return (int) (((n - 2) * (m - 2) * 8) + // connections in internal cells
         (2 * (n - 2) + 2 * (m - 2)) * 5 + // connections in edge cells
         (4 * 3)); // connections in corner cells
   }
@@ -79,8 +75,8 @@ public class Grid extends Area implements IGrid {
     return new Grid(shape, x, y);
   }
 
-  public static Grid create(double gxmin, double gymin, double gxmax, double gymax, long nx, long ny,
-      Projection projection) {
+  public static Grid create(double gxmin, double gymin, double gxmax, double gymax, long nx,
+      long ny, Projection projection) {
     return new Grid(gxmin, gymin, gxmax, gymax, nx, ny, projection);
   }
 
@@ -128,8 +124,8 @@ public class Grid extends Area implements IGrid {
 
   public class CellImpl extends AbstractExtent implements Cell {
 
-    long   x;
-    long   y;
+    long x;
+    long y;
 
     Shape shape;
 
@@ -261,7 +257,7 @@ public class Grid extends Area implements IGrid {
       long result = 1;
       result = prime * result + x;
       result = prime * result + y;
-      return (int)result;
+      return (int) result;
     }
 
     @Override
@@ -288,6 +284,22 @@ public class Grid extends Area implements IGrid {
         }
       }
       return null;
+    }
+
+    @Override
+    public long[] getDimensionOffsets(long linearOffset) {
+      if (linearOffset != 0) {
+        throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+      }
+      return new long[] {0};
+    }
+
+    @Override
+    public long getOffset(long[] dimOffsets) {
+      if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
+        throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+      }
+      return 0;
     }
 
     @Override
@@ -441,7 +453,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public Iterator<IExtent> iterator() {
-      return Collections.singleton((IExtent)this).iterator();
+      return Collections.singleton((IExtent) this).iterator();
     }
 
     @Override
@@ -484,20 +496,20 @@ public class Grid extends Area implements IGrid {
     }
   }
 
-  Shape  shape;
-  long    xCells            = 0;
-  long    yCells            = 0;
-  double cellWidth         = 0.0;
-  double cellHeight        = 0.0;
-  double xOrigin           = 0.0;
-  double yOrigin           = 0.0;
-  Mask   mask              = null;
+  Shape shape;
+  long xCells = 0;
+  long yCells = 0;
+  double cellWidth = 0.0;
+  double cellHeight = 0.0;
+  double xOrigin = 0.0;
+  double yOrigin = 0.0;
+  Mask mask = null;
 
   /*
    * only set in a subgrid of the grid having the parent ID.
    */
-  long[]  offsetInSupergrid = null;
-  String superGridId       = null;
+  long[] offsetInSupergrid = null;
+  String superGridId = null;
 
   public Grid() {
     // TODO Auto-generated constructor stub
@@ -574,12 +586,10 @@ public class Grid extends Area implements IGrid {
     if (x < getEnvelope().getMinX() || x > getEnvelope().getMaxX() || y < getEnvelope().getMinY()
         || y > getEnvelope().getMaxY())
       return -1;
-    long xx =
-        (long) (((x - getEnvelope().getMinX()) / (getEnvelope().getMaxX() - getEnvelope().getMinX()))
-            * xCells);
-    long yy =
-        (long) (((y - getEnvelope().getMinY()) / (getEnvelope().getMaxY() - getEnvelope().getMinY()))
-            * yCells);
+    long xx = (long) (((x - getEnvelope().getMinX())
+        / (getEnvelope().getMaxX() - getEnvelope().getMinX())) * xCells);
+    long yy = (long) (((y - getEnvelope().getMinY())
+        / (getEnvelope().getMaxY() - getEnvelope().getMinY())) * yCells);
     return getIndex(xx, yy);
   }
 
@@ -603,9 +613,9 @@ public class Grid extends Area implements IGrid {
     return getWorldCoordinatesAt(xy[0], xy[1]);
   }
 
-//  public Locator getLocator(long x, long y) {
-//    return new SpaceLocator(x, yCells - y - 1);
-//  }
+  // public Locator getLocator(long x, long y) {
+  // return new SpaceLocator(x, yCells - y - 1);
+  // }
 
   @Override
   public double getCellWidth() {

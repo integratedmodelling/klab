@@ -98,28 +98,6 @@ public abstract class Extent extends AbstractExtent {
    */
   public abstract long[] getDimensionSizes();
 
-  /**
-   * Translate a linear offset into the offsets for each dimension. If the dimension is 1, return
-   * the offset itself.
-   * 
-   * @param linearOffset
-   * @param rowFirst if true, endeavor to return offset in the order that most closely resembles
-   *        row-first ordering wrt euclidean x,y,z (default).
-   * @return dimension offsets
-   */
-  public abstract long[] getDimensionOffsets(long linearOffset, boolean rowFirst);
-
-//  /**
-//   * Use the passed object to locate an unambiguous extent within the topology. If an extent can be
-//   * located based on the passed object, return the index of the extent. If the locator is not
-//   * usable by this extent, return IExtent.INAPPROPRIATE_LOCATOR. If the locator selects the whole
-//   * extent, return GENERIC_LOCATOR. Passing a locator that does not fit the extent should be
-//   * admitted. Do not throw errors but return INAPPROPRIATE_LOCATOR in that case.
-//   * 
-//   * @param locator
-//   * @return the offset corresponding to the locator
-//   */
-//  public abstract long locate(Locator locator);
 
   /**
    * Get a state mediator to the passed extent. If extent is incompatible return null; if no
@@ -133,6 +111,6 @@ public abstract class Extent extends AbstractExtent {
    * @return the configured mediator or null
    * 
    */
-  public abstract Mediator getMediator(IExtent extent, IObservable observable,
-      IConcept trait);
+  public abstract Mediator getMediator(IExtent extent, IObservable observable,  IConcept trait);
+
 }

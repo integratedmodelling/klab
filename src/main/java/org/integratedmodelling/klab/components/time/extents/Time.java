@@ -155,7 +155,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public long[] getDimensionOffsets(long linearOffset, boolean rowFirst) {
+    public long[] getDimensionOffsets(long linearOffset) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -224,6 +224,12 @@ public class Time extends Extent implements ITime {
     public Iterable<ILocator> over(Type dimension) {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public long getOffset(long[] dimOffsets) {
+      // TODO Auto-generated method stub
+      return 0;
     }
 
 }

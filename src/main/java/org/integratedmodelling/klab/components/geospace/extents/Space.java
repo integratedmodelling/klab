@@ -164,8 +164,31 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public long[] getDimensionOffsets(long linearOffset, boolean rowFirst) {
+  public long getOffset(long... dimOffsets) {
+    if (features != null) {
+      if (dimOffsets.length != 1) {
+        throw new IllegalArgumentException(
+            "can't address offset: tessellation space has one dimension");
+      }
+      return dimOffsets[0];
+    }
+    if (grid != null) {
+      if (dimOffsets.length != 2) {
+        throw new IllegalArgumentException("can't address offset: grid space has two dimensions");
+      }
+      return grid.getOffset(dimOffsets[0], dimOffsets[0]);
+    }
+    if (dimOffsets.length != 1 || dimOffsets[0] != 0) {
+      throw new IllegalArgumentException(
+          "can't address offset: shape space has one dimension and one extent");
+    }
+    return 0;
+  }
 
+  @Override
+  public long[] getDimensionOffsets(long linearOffset) {
+    // useless but was a a parameter in 0.9.x - see if it still serves any purpose before removing
+    boolean rowFirst = true;
     if (features != null) {
       return new long[] {linearOffset};
     } else if (grid != null) {

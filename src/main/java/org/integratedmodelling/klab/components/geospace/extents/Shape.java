@@ -415,4 +415,20 @@ public class Shape extends AbstractExtent implements IShape {
     return null;
   }
 
+  @Override
+  public long[] getDimensionOffsets(long linearOffset) {
+    if (linearOffset != 0) {
+      throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+    }
+    return new long[] {0};
+  }
+
+  @Override
+  public long getOffset(long[] dimOffsets) {
+    if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
+      throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+    }
+    return 0;
+  }
+
 }
