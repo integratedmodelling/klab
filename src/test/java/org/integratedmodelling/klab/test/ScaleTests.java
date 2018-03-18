@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Runs various scale subsetting and indexing using both space and time extents.
+ * Runs various scale subsetting and indexing tests using regular and irregular space and time extents.
  * 
  * @author ferdinando.villa
  *

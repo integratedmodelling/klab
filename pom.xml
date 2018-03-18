@@ -299,6 +299,18 @@
 
 		<!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
 		
+		<!-- for map display with JMapFrame/MapDisplay -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-render</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-swing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>

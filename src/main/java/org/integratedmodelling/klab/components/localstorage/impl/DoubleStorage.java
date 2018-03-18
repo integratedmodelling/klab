@@ -15,7 +15,7 @@ public class DoubleStorage extends ObservationData implements IStorage<Double> {
   private Scale scale;
   
   public DoubleStorage(IObservable observable, Scale scale) {
-      super(observable);
+      super(observable, null);
       this.scale = scale;
       this.data = LArrayJ.newLDoubleArray(scale.size());
   }

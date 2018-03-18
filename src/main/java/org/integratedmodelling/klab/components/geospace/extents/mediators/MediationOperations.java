@@ -143,7 +143,7 @@ public class MediationOperations {
     }
 
     @Override
-    public Iterator<IExtent> iterator() {
+    public Iterator<Cell> iterator() {
       return grid.iterator();
     }
 

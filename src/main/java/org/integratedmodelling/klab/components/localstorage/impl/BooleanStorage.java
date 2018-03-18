@@ -16,7 +16,7 @@ public class BooleanStorage extends ObservationData implements IStorage<Boolean>
   private LBitArray mask;
 
   public BooleanStorage(IObservable observable, Scale scale) {
-    super(observable);
+    super(observable, null);
     this.scale = scale;
     this.data = LArrayJ.newLBitArray(scale.size());
     this.mask = LArrayJ.newLBitArray(scale.size());

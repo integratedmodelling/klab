@@ -13,9 +13,9 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -77,10 +77,11 @@ public enum Dataflows implements IDataflowService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> Dataflow<T> compile(String name, IResolutionScope scope, Class<T> cls)
+    public Dataflow compile(String name, IResolutionScope scope)
         throws KlabException {
 
-      DataflowBuilder<T> builder = new DataflowBuilder<T>(name, cls).withCoverage(scope.getCoverage())
+      DataflowBuilder builder = new DataflowBuilder(name)
+          .withCoverage(scope.getCoverage())
           .within(scope.getContext());
 
       if (((ResolutionScope)scope).getObserver() != null) {
@@ -92,7 +93,7 @@ public enum Dataflows implements IDataflowService {
             link.getSource().getResolvable(), link.getTarget());
       }
 
-      return (Dataflow<T>) builder.build(scope.getMonitor());
+      return builder.build(scope.getMonitor());
     }
 
     @Override

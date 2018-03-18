@@ -367,7 +367,7 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public IShape getShape() {
+    public Shape getShape() {
       if (this.shape == null) {
         this.shape = Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
       }
@@ -516,9 +516,9 @@ public class Grid extends Area implements IGrid {
   }
 
   @Override
-  public Iterator<IExtent> iterator() {
+  public Iterator<Cell> iterator() {
 
-    return new Iterator<IExtent>() {
+    return new Iterator<Cell>() {
 
       long n = 0;
 

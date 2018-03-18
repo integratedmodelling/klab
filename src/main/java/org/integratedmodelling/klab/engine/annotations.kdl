@@ -38,6 +38,10 @@ annotation run for observers
 	optional input observations
 		"A list of the concepts or objects to observe in the context after it is resolved."
 		default ()
+
+	optional input visualize
+		"After resolving the observable, launch a suitable viewer for the context."
+		default false
 		
 	class org.integratedmodelling.klab.engine.annotations.RunHandler
 }
@@ -74,6 +78,10 @@ annotation test for observers
          context (identified by the 'context' variable) after all observations are made. Any
          fragment returning false or raising an exception causes the test to fail."
 		default ()
+
+	optional input visualize
+		"After resolving the observable, launch a suitable viewer for the context."
+		default false
 
 	class org.integratedmodelling.klab.engine.annotations.TestHandler
 

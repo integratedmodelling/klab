@@ -7,17 +7,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -70,12 +75,12 @@ public class ObserveInContextTask implements ITask<IObservation> {
         ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
             ResolutionScope.create(context, monitor, scenarios));
         if (scope.isRelevant()) {
-          Dataflow<? extends IObservation> dataflow =
-              Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope,
-                  Observables.INSTANCE.getObservationClass(resolvable));
+          Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope);
           System.out.println(dataflow.getKdlCode());
-          ret = dataflow.run(monitor);
-
+          
+          IObservationData data = dataflow.run(monitor);
+          ret = Observations.INSTANCE.createObservation(data.getSemantics(),
+              dataflow.getScale(), data, dataflow.getNamespace(), monitor, context);
         }
 
         return ret;
@@ -140,9 +145,4 @@ public class ObserveInContextTask implements ITask<IObservation> {
     return delegate.get(timeout, unit);
   }
 
-  @Override
-  public IDataflow getDataflow() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 }

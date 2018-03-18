@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -163,10 +164,19 @@ public enum Observations implements IObservationService {
 
   public IObservation createObservation(IObservable observable, IScale scale, IObservationData data, INamespace namespace,
       IMonitor monitor, IDirectObservation context) throws KlabException {
+    
+    // TODO create all chained observations recursively and resolve as needed
+    
     IObservation ret = null;
     if (observable.is(Type.SUBJECT)) {
       ret = createSubject((Observable) observable, observable.getLocalName(), (Scale) scale, (IObjectData)data,
           (Namespace)namespace, (Monitor) monitor, (DirectObservation) context);
+      
+      if (context == null) {
+        // propagate runtime context from resolved data
+        ((Subject)ret).setRuntimeContext(((ObservationData)data).getRuntimeContext());
+      }
+      
     } else if (observable.is(Type.EVENT)) {
       ret = createEvent((Observable) observable, observable.getLocalName(), (Scale) scale, (IObjectData)data,
           (Namespace)namespace, (Monitor) monitor, (Subject) context);

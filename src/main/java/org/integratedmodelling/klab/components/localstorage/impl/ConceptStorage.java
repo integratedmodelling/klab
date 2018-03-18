@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.observation.Scale;
 public class ConceptStorage extends ObservationData implements IStorage<IConcept> {
 
   public ConceptStorage(IObservable observable, Scale scale) {
-      super(observable);
+      super(observable, null);
   }
 
   @Override

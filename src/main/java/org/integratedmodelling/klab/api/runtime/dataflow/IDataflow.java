@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -45,7 +46,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @param <T> the most specific type of artifact this dataflow will build when run.
  *
  */
-public interface IDataflow<T extends IArtifact> extends IActuator {
+public interface IDataflow<T extends IObservationData> extends IActuator {
 
   /**
    * Run the dataflow using the configured or default {@link IRuntimeProvider} and return the

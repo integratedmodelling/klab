@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.observation.Extent;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
 import org.integratedmodelling.klab.utils.collections.IterableAdapter;
+import org.integratedmodelling.klab.utils.collections.IteratorAdapter;
 
 public class Space extends Extent implements ISpace {
 
@@ -328,7 +329,7 @@ public class Space extends Extent implements ISpace {
   @Override
   public Iterator<IExtent> iterator() {
     if (grid != null) {
-      return grid.iterator();
+      return new IteratorAdapter<IExtent>(grid.iterator());
     }
     if (features != null) {
       return features.iterator();

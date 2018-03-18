@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import java.util.Collections;
 import java.util.Iterator;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.Concepts;
@@ -152,6 +153,10 @@ public class Shape extends AbstractExtent implements IShape {
   @Override
   public boolean isEmpty() {
     return geometry == null || geometry.isEmpty();
+  }
+  
+  public Geometry getJTSGeometry() {
+    return geometry;
   }
 
   @Override
@@ -429,6 +434,10 @@ public class Shape extends AbstractExtent implements IShape {
       throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
     }
     return 0;
+  }
+
+  public ReferencedEnvelope getJTSEnvelope() {
+    return new ReferencedEnvelope(geometry.getEnvelopeInternal(), projection.crs);
   }
 
 }

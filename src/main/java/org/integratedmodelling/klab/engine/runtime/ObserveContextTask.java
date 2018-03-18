@@ -6,15 +6,22 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.observation.Subject;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -27,13 +34,11 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  */
 public class ObserveContextTask implements ITask<ISubject> {
 
-  Monitor              monitor;
-  ISubject             subject;
-  Dataflow<ISubject>   dataflow;
+  Monitor monitor;
   FutureTask<ISubject> delegate;
-  String               token           = "t" + NameGenerator.shortUUID();
-  Session              session;
-  String               taskDescription = "<uninitialized observation task " + token + ">";
+  String token = "t" + NameGenerator.shortUUID();
+  Session session;
+  String taskDescription = "<uninitialized observation task " + token + ">";
 
   public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
 
@@ -51,12 +56,19 @@ public class ObserveContextTask implements ITask<ISubject> {
 
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
           if (scope.isRelevant()) {
-            dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope, ISubject.class);
+            Dataflow dataflow =
+                Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope);
+
             System.out.println(dataflow.getKdlCode());
-            subject = dataflow.run(monitor);
+
+            IObservationData data = dataflow.run(monitor);
+            if (data != null) {
+              return (ISubject) Observations.INSTANCE.createObservation(data.getSemantics(),
+                  dataflow.getScale(), data, dataflow.getNamespace(), monitor, null);
+            }
           }
 
-          return subject;
+          return null;
         }
       });
 
@@ -120,11 +132,6 @@ public class ObserveContextTask implements ITask<ISubject> {
   public ISubject get(long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
     return delegate.get(timeout, unit);
-  }
-
-  @Override
-  public Dataflow<ISubject> getDataflow() {
-    return dataflow;
   }
 
 }

@@ -11,11 +11,9 @@ import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -32,16 +30,15 @@ import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-public class DataflowBuilder<T extends IArtifact> {
+public class DataflowBuilder {
 
-  String                             name;
-  Class<T>                           cls;
-  DirectObservation                  context;
-  double                             coverage;
+  String name;
+  DirectObservation context;
+  double coverage;
 
   Graph<IResolvable, ResolutionEdge> resolutionGraph =
       new DefaultDirectedGraph<>(ResolutionEdge.class);
-  Map<Model, ModelD>                 modelCatalog    = new HashMap<>();
+  Map<Model, ModelD> modelCatalog = new HashMap<>();
 
   static class ResolutionEdge {
 
@@ -58,17 +55,17 @@ public class DataflowBuilder<T extends IArtifact> {
     }
   }
 
-  public DataflowBuilder(String name, Class<T> type) {
+  public DataflowBuilder(String name) {
     this.name = name;
   }
 
-  public Dataflow<?> build(IMonitor monitor) {
+  public Dataflow build(IMonitor monitor) {
 
     if (Configuration.INSTANCE.isDebuggingEnabled()) {
       Graphs.show(resolutionGraph);
     }
 
-    Dataflow<?> ret = new Dataflow<T>(monitor, cls);
+    Dataflow ret = new Dataflow(monitor);
     ret.setName(this.name);
     ret.setContext(this.context);
     ret.setCoverage(this.coverage);
@@ -83,6 +80,11 @@ public class DataflowBuilder<T extends IArtifact> {
       actuator.setCreateObservation(root instanceof IObserver
           || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
       ret.getActuators().add(actuator);
+
+      // this will overwrite scale and namespace - another way of saying that these should either be
+      // identical or we shouldn't even allow more than one root resolvable.
+      ret.setScale(actuator.getScale());
+      ret.setNamespace(actuator.getNamespace());
     }
 
     return ret;
@@ -90,9 +92,9 @@ public class DataflowBuilder<T extends IArtifact> {
 
   static class ModelD {
 
-    Model    model;
+    Model model;
     // how many nodes reference this model's observables
-    int      useCount;
+    int useCount;
     // this is null unless the model covers only a part of the context
     Coverage coverage;
 
@@ -127,12 +129,12 @@ public class DataflowBuilder<T extends IArtifact> {
    */
   class Node {
 
-    Observable  observable;
-    Observer    observer;
-    Set<ModelD> models   = new HashSet<>();
-    List<Node>  children = new ArrayList<>();
-    Scale       scale;
-    boolean     definesScale;
+    Observable observable;
+    Observer observer;
+    Set<ModelD> models = new HashSet<>();
+    List<Node> children = new ArrayList<>();
+    Scale scale;
+    boolean definesScale;
 
     public Node(IResolvable observable) {
       if (observable instanceof Observable) {
@@ -247,7 +249,7 @@ public class DataflowBuilder<T extends IArtifact> {
       Collections.sort(ret, new Comparator<Node>() {
 
         @Override
-        public int compare(DataflowBuilder<T>.Node o1, DataflowBuilder<T>.Node o2) {
+        public int compare(DataflowBuilder.Node o1, DataflowBuilder.Node o2) {
           if (o2.models.isEmpty() && o1.models.isEmpty()) {
             return 0;
           }
@@ -324,17 +326,17 @@ public class DataflowBuilder<T extends IArtifact> {
     return ret;
   }
 
-  public DataflowBuilder<T> within(IDirectObservation context) {
+  public DataflowBuilder within(IDirectObservation context) {
     this.context = (DirectObservation) context;
     return this;
   }
 
-  public DataflowBuilder<T> withCoverage(double coverage) {
+  public DataflowBuilder withCoverage(double coverage) {
     this.coverage = coverage;
     return this;
   }
 
-  public DataflowBuilder<T> withResolution(IResolvable source, IResolvable target,
+  public DataflowBuilder withResolution(IResolvable source, IResolvable target,
       ICoverage coverage) {
     resolutionGraph.addVertex(source);
     resolutionGraph.addVertex(target);
@@ -352,7 +354,7 @@ public class DataflowBuilder<T extends IArtifact> {
     return ret;
   }
 
-  public DataflowBuilder<T> withResolvable(IResolvable resolvable) {
+  public DataflowBuilder withResolvable(IResolvable resolvable) {
     resolutionGraph.addVertex(resolvable);
     return this;
   }
