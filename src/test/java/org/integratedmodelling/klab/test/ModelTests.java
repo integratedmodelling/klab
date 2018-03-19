@@ -4,6 +4,9 @@
 package org.integratedmodelling.klab.test;
 
 import java.util.regex.Pattern;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.Engine;
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +37,12 @@ public class ModelTests {
 
     @Test
     public void runTests() throws Exception {
+      
+      try (ISession session = engine.createSession()) {
+        ISubject context = session.observe("test.tanzania").get();
+        IObservation elevation = context.observe("hydrology:SurfaceWaterFlow").get();
+      }
+      
         /*
          * run every file in the kim/ package, under tests/resources
          */

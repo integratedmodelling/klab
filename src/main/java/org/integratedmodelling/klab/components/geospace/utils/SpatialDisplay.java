@@ -61,6 +61,7 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
@@ -174,8 +175,8 @@ public class SpatialDisplay {
   Map<String, SLDesc> sLayers = new HashMap<>();
   Space space;
 
-  public SpatialDisplay(Space space) {
-    this.space = space;
+  public SpatialDisplay(ISpace space) {
+    this.space = (Space)space;
   }
 
   /**

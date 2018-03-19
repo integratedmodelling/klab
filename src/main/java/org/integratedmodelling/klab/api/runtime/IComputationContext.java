@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -13,10 +14,15 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
  * dataflows and down to actuators and contextualizers, appropriately customized to reflect names
  * and locators that each actuator expects.
  * 
+ * The {@link IParameters} methods access user-defined parameters, including any passed to the
+ * calling functions or URNs and, if appropriate, context-localized POD values for states (e.g. the
+ * specific value at the point of computation). The actual data objects are always available through
+ * {@link #getData(String)}.
+ * 
  * @author Ferd
  *
  */
-public interface IComputationContext {
+public interface IComputationContext extends IParameters {
 
   /**
    * The namespace of reference in this context. Usually that of the running model or observer.
@@ -66,28 +72,6 @@ public interface IComputationContext {
    * @return
    */
   IObservationData getData(String localName);
-
-  /**
-   * Get the localized POD object corresponding to the passed name for the current state or function
-   * parameters defined in a contextualizer call. Use {@link #getData(String)} to retrieve
-   * {@link IObservationData observation data objects} instead.
-   * 
-   * @param name
-   * @param defaultValue
-   * @return a plain Java object
-   */
-  <T> T get(String name, T defaultValue);
-
-  /**
-   * Get the localized POD object corresponding to the passed name for the current state or function
-   * parameters defined in a contextualizer call. Use {@link #getData(String)} to retrieve
-   * {@link IObservationData observation data objects} instead.
-   * 
-   * @param name
-   * @param cls the expected class of the result
-   * @return a plain Java object
-   */
-  <T> T get(String name, Class<? extends T> cls);
 
   /**
    * The data for the subject that provides the context for this computation. It is null only when

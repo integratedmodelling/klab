@@ -57,7 +57,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
   }
 
   @Override
-  public IExpression describe(String expression, IComputationContext context) throws KlabValidationException {
+  public Descriptor describe(String expression, IComputationContext context) throws KlabValidationException {
     // TODO Auto-generated method stub
     return null;
   }

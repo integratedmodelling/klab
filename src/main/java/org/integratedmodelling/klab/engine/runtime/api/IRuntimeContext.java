@@ -56,4 +56,11 @@ public interface IRuntimeContext extends IComputationContext {
    * @param alias
    */
   void rename(String name, String alias);
+
+  /**
+   * Export the network structure to a GEFX file.
+   * 
+   * @param outFile
+   */
+  void exportStructure(String outFile);
 }

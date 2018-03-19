@@ -71,6 +71,6 @@ public interface ILanguageProcessor {
    * @return a preprocessed descriptor, which must be enough to produce an IExpression on request.
    * @throws KlabValidationException if the expression contains syntax of logical errors
    */
-  IExpression describe(String expression, @Nullable IComputationContext context) throws KlabValidationException;
+  Descriptor describe(String expression, @Nullable IComputationContext context) throws KlabValidationException;
   
 }

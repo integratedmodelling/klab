@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.concurrent.Future;
-import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
@@ -25,7 +24,7 @@ public interface IRuntimeProvider {
    * @throws KlabException
    */
   Future<IObservationData> compute(IActuator actuator, IComputationContext context,
-      IMonitor monitor) throws KlabException;
+      IMonitor monitor) throws KlabException;   
 
   /**
    * Create an empty runtime context for the dataflow that will build the context subject.

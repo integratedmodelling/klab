@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
@@ -32,7 +33,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  * @author ferdinando.villa
  *
  */
-public class RuntimeContext implements IRuntimeContext {
+public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   Namespace namespace;
   IObjectData subject;
@@ -41,11 +42,11 @@ public class RuntimeContext implements IRuntimeContext {
   ConfigurationDetector configurationDetector;
   Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
   Map<String, IObservationData> catalog = new HashMap<>();
-  Map<String, Object> data = new HashMap<>();
     
   public RuntimeContext() {}
 
   RuntimeContext(RuntimeContext context) {
+    this.putAll(context);
     this.namespace = context.namespace;
     this.subject = context.subject;
     this.provenance = context.provenance;
@@ -53,7 +54,6 @@ public class RuntimeContext implements IRuntimeContext {
     this.configurationDetector = context.configurationDetector;
     this.structure = context.structure;
     this.catalog.putAll(context.catalog);
-    this.data.putAll(context.data);
   }
 
   @Override
@@ -91,17 +91,13 @@ public class RuntimeContext implements IRuntimeContext {
     return subject;
   }
 
-  /*
-   * TODO this should be API but not the public API - an internal extended API for the engine. Same
-   * for recontextualizing methods
-   */
+  @Override
   public void exportStructure(String outFile) {
     // TODO export a GEFX file
   }
 
   @Override
   public INamespace getNamespace() {
-    // TODO Auto-generated method stub
     return namespace;
   }
 
@@ -148,20 +144,8 @@ public class RuntimeContext implements IRuntimeContext {
     return ret;
   }
 
-  @Override
-  public <T> T get(String name, T object) {
-    // TODO transform to T if compatible and needed
-    return data.containsKey(name) ? (T)data.get(name) : object;
-  }
-
-  @Override
-  public <T> T get(String name, Class<? extends T> cls) {
-    // TODO transform to T if compatible and needed
-    return (T)data.get(name);
-  }
-
   public void set(String name, Object value) {
-    data.put(name, value);
+    this.put(name, value);
   }
 
 }

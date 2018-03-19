@@ -11,6 +11,7 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Type;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IAnnotationService;
@@ -45,7 +46,7 @@ public enum Annotations implements IAnnotationService {
          *         applications.
          * @throws Exception 
          */
-        Object process(IKimObject target, Map<String, Object> arguments, IMonitor monitor) throws Exception;
+        Object process(IKimObject target, Parameters arguments, IMonitor monitor) throws Exception;
     }
 
     Map<String, Handler>    handlers   = Collections.synchronizedMap(new HashMap<>());

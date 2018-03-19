@@ -25,13 +25,12 @@ public class Dataflow extends Actuator implements IDataflow<IObservationData> {
   private DirectObservation context;
   private double            coverage;
 
-  @SuppressWarnings("unchecked")
   @Override
   public IObservationData run(IMonitor monitor) throws KlabException {
 
     /*
-     *establish the computation context: if we have a runtime context, take it from it,
-     * otherwise make one.
+     * establish the computation context: if we have a runtime context, take it from it, otherwise
+     * make one.
      */
     IComputationContext ctx =
         context == null ? Klab.INSTANCE.getRuntimeProvider().createRuntimeContext()
@@ -47,11 +46,11 @@ public class Dataflow extends Actuator implements IDataflow<IObservationData> {
 
         IObservationData data =
             Klab.INSTANCE.getRuntimeProvider().compute(actuator, ctx, monitor).get();
-        
+
         if (ret == null) {
           ret = data;
         } else {
-          ((ObservationData)ret).chain(data);
+          ((ObservationData) ret).chain(data);
         }
       } catch (InterruptedException e) {
         return null;
@@ -70,7 +69,7 @@ public class Dataflow extends Actuator implements IDataflow<IObservationData> {
     if (offset == 0) {
       ret += "@klab " + Version.CURRENT + "\n";
       // UNCOMMENT IF SEMANTICS MUST BE OUTPUT BY ACTUATOR
-//      ret += "@worldview " + Workspaces.INSTANCE.getWorldview().getName() + "\n";
+      // ret += "@worldview " + Workspaces.INSTANCE.getWorldview().getName() + "\n";
       ret += "@dataflow " + getName() + "\n";
       ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
       if (getContext() != null) {

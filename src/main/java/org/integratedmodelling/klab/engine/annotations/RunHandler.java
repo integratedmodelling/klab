@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.annotations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 public class RunHandler implements Annotations.Handler {
 
   @Override
-  public Object process(IKimObject target, Map<String, Object> arguments, IMonitor monitor) throws Exception {
+  public Object process(IKimObject target, Parameters arguments, IMonitor monitor) throws Exception {
 
     if (!(arguments.get("observations") instanceof List)) {
         monitor.warn("run rannotation does not specify observations");
@@ -30,7 +30,7 @@ public class RunHandler implements Annotations.Handler {
     
     List<IObservation> result = new ArrayList<>();
     
-    List<?> observations = (List<?>)arguments.get("observations");
+    List<?> observations = arguments.get("observations", List.class);
     /* only run the context if we are in a script */
     if (monitor.getIdentity().is(Type.SCRIPT)) {
 

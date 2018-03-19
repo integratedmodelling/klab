@@ -3,22 +3,24 @@ package org.integratedmodelling.klab.engine.annotations;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import org.eclipse.xtext.util.Exceptions;
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 public class TestHandler implements Annotations.Handler {
 
   @Override
-  public Object process(IKimObject target, Map<String, Object> arguments, IMonitor monitor)
+  public Object process(IKimObject target, Parameters arguments, IMonitor monitor)
       throws Exception {
 
     String id = arguments.containsKey("name") ? arguments.get("name").toString() : "unnamed test";
@@ -70,6 +72,21 @@ public class TestHandler implements Annotations.Handler {
             } else {
               monitor.warn(id + ": observation of " + observer.getName() + " was unsuccessful");
             }
+            
+            for (IServiceCall assertion : arguments.get("assertions", new ArrayList<IServiceCall>())) {
+              // TODO check assertion
+            }
+            
+            if (subject != null && arguments.get("visualize", false)) {
+              if (subject.getScale().isSpatiallyDistributed()) {
+                SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
+                for (IState state : subject.getStates()) {
+                  display.add(state);
+                }
+                display.show();
+              }
+            }
+            
           } else {
             monitor.error(id + ": errors in retrieving observer or session");
           }
