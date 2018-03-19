@@ -29,7 +29,8 @@ package org.integratedmodelling.klab.api.data.general;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.january.IMonitor;
+
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
