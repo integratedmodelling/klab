@@ -53,12 +53,6 @@ public interface ITime extends IExtent {
       }
 
       @Override
-      public long[] getShape(Type dimension) {
-        // TODO Auto-generated method stub
-        return new long[]{};
-      }
-
-      @Override
       public Iterable<ILocator> over(Type dimension) {
         // TODO Auto-generated method stub
         return null;

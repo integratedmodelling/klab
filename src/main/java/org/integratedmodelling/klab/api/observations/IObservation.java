@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.api.observations;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
-
 import org.integratedmodelling.klab.api.auth.IObservationIdentity;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -19,9 +18,11 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
    * context observation: it allows recording different viewpoints on observations that are
    * contextual to the same observable - e.g. qualities of the same subject seen by different child
    * subjects in it. If null, this was made by the "root subject" that represents the session user.
-   * Later we may create a subject to represent the session user.
    * 
-   * @return the subject that provides the viewpoint for this observation, or null if this was a
+   * We may eventually create a subject to represent the session user for consistency, but as of the
+   * current version this is not done.
+   * 
+   * @return the subject that provides the viewpoint for this observation, or empty if this was a
    *         user-made observation.
    */
   Optional<ISubject> getObserver();
@@ -59,28 +60,29 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
   ISubject getRoot();
 
   /**
-   * True if the owning ISubject has an observation of space with more than one state value.
+   * True if our scale has an observation of space with more than one state
+   * value.
    * 
    * @return true if distributed in space
    */
   boolean isSpatiallyDistributed();
 
   /**
-   * True if the owning ISubject has an observation of time with more than one state value.
+   * True if our scale has an observation of time with more than one state value.
    * 
    * @return true if distributed in time.
    */
   boolean isTemporallyDistributed();
 
   /**
-   * True if the owning ISubject has any implementation of time.
+   * True if our scale has any implementation of time.
    * 
    * @return if time is known
    */
   boolean isTemporal();
 
   /**
-   * True if the owning ISubject has any implementation of space.
+   * True if our scale has any implementation of space.
    * 
    * @return if space is known
    */
@@ -92,7 +94,7 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
    * @return the observation of space
    */
   ISpace getSpace();
-  
+
   /**
    * All observations wrap a raw data object, which dataflows and contextualizers operate upon. The
    * data object also mirrors any chained artifacts' content through its own iterator API.
@@ -110,29 +112,15 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
   IProvenance getProvenance();
 
   /**
-   * Check if this observation (as an artifact) is part of a group and has another after it.
+   * Retrieve the observation following this in a group of artifacts. The return value has no
+   * relationship with the observation structure; it only describes the provenance, i.e. the
+   * grouping of observations that were created within the same activity (observation task).
    * 
-   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations do not allow us to
-   * specialize in child classes. All of the concrete children implement {@link IArtifact}, which
-   * extends Iterator. By declaring this here, we can use the function from Iterator without a cast.
+   * Overrides the {@link Iterator#next()} from {@link IArtifact} to return a {@code IObservation}.
    * 
-   * @return true if this observation is part of a group and there is another after it.
-   * 
-   */
-  boolean hasNext();
-
-  /**
-   * Retrieve the observation following this in a group of artifacts.
-   * 
-   * Redeclared in lieu of implementing {@link Iterator}, which Java limitations do not allow us to
-   * specialize in child classes. All of the concrete children implement {@link IArtifact}, which
-   * extends Iterator for their specific type. By declaring this here, we can use the function from
-   * Iterator without a cast.
-   * 
-   * Only call this after {@link #hasNext()} has returned true.
-   * 
-   * @return the next observation.
+   * @return the next observation in a group, if {@link #hasNext()} returns true.
    * 
    */
+  @Override
   IObservation next();
 }

@@ -16,9 +16,6 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
  *
  */
 public interface IRuntimeContext extends IComputationContext {
-
-  // TODO tentative
-  Collection<IObservable> getKnownObservables();
   
   /**
    * Set the passed data object in the symbol table.

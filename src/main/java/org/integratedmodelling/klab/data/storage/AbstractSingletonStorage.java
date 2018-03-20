@@ -27,7 +27,7 @@ public abstract class AbstractSingletonStorage<T> implements IStorage<T> {
     this.scale = scale;
   }
   
-  @Override
+//  @Override
   public IObservable getSemantics() {
     return semantics;
   }

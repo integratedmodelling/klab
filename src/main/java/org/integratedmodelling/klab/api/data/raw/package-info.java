@@ -2,7 +2,8 @@
  * 
  */
 /**
- * This package specifies the simple API for the raw data objects produced and manipulated by {@link IContextualizer contextualizers}. These
- * objects are "dressed" with semantics by the k.LAB engine and turned into observational artifacts. 
+ * This package specifies the API for the raw data objects produced and manipulated by
+ * {@link IContextualizer contextualizers}. These objects are "dressed" with semantics and
+ * provenance API by the k.LAB engine to produce observational artifacts.
  */
 package org.integratedmodelling.klab.api.data.raw;

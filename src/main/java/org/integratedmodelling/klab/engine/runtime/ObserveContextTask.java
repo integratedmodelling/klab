@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -58,7 +59,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
             IObservationData data = dataflow.run(monitor);
             if (data != null) {
-              return (ISubject) Observations.INSTANCE.createObservation(data.getSemantics(),
+              return (ISubject) Observations.INSTANCE.createObservation(((ObservationData)data).getSemantics(),
                   dataflow.getScale(), data, dataflow.getNamespace(), monitor, null);
             }
           }

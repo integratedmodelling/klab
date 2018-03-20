@@ -7,7 +7,7 @@ import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.processing.Terrain;
@@ -29,9 +29,9 @@ public class TerrainService implements IResolver<IStorage<?>>, IExpression {
     }
 
     @Override
-    public IStorage<?> resolve(IStorage<?> ret, IComputationContext context, ILocator locator) {
+    public IStorage<?> resolve(IStorage<?> ret, IComputationContext context, IScale locator) {
       
-      long[] xy = locator.getShape(Dimension.Type.SPACE);
+      long[] xy = locator.shape(Dimension.Type.SPACE);
       Terrain terrain = new Terrain(context.get("detail", Integer.class), context.get("roughness", Double.class));
       double dx = 1.0/xy[0];
       double dy = 1.0/xy[1];

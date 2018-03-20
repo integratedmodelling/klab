@@ -4,9 +4,7 @@ import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.observation.Scale;
 
 /**
  * Simple abstract observation data class for storage components. Just implements the basic iterator
@@ -43,7 +41,7 @@ public abstract class ObservationData implements IObservationData {
     // TODO
   }
 
-  @Override
+//  @Override
   public IObservable getSemantics() {
     return semantics;
   }

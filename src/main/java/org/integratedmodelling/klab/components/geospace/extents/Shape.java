@@ -310,11 +310,6 @@ public class Shape extends AbstractExtent implements IShape {
   }
 
   @Override
-  public IConcept getDomainConcept() {
-    return Concepts.c(NS.SPACE_DOMAIN);
-  }
-
-  @Override
   public IExtent collapse() {
     return this;
   }
@@ -409,12 +404,6 @@ public class Shape extends AbstractExtent implements IShape {
   }
 
   @Override
-  public long[] getShape(Dimension.Type dimension) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public Iterable<ILocator> over(Dimension.Type dimension) {
     // TODO Auto-generated method stub
     return null;
@@ -438,6 +427,11 @@ public class Shape extends AbstractExtent implements IShape {
 
   public ReferencedEnvelope getJTSEnvelope() {
     return new ReferencedEnvelope(geometry.getEnvelopeInternal(), projection.crs);
+  }
+
+  @Override
+  public long[] shape() {
+    return new long[] {1};
   }
 
 }

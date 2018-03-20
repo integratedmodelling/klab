@@ -75,7 +75,6 @@ public enum Dataflows implements IDataflowService {
         return ret;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Dataflow compile(String name, IResolutionScope scope)
         throws KlabException {

@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.Map;
-
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
@@ -9,7 +8,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -73,7 +72,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
   }
 
   @Override
-  public Object resolve(IStorage<?> observation, IComputationContext context, ILocator locator) {
+  public Object resolve(IStorage<?> observation, IComputationContext context, IScale locator) {
     return value;
   }
 }

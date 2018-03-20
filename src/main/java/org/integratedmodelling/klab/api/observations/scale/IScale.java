@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.observations.scale;
 
 import java.util.List;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -28,7 +28,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
    * @return the time, or null
    */
   ITime getTime();
-  
+
   /**
    * True if we have time and the time topology determines more than a single state. It's also in
    * IObservation, but it's convenient to duplicate it here too.
@@ -46,31 +46,25 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   boolean isSpatiallyDistributed();
 
   /**
-   * Total number of extents available in this Scale. Note that there may be more extents than just space
-   * and/or time. Read the non-existing documentation.
+   * Total number of extents available in this Scale. Note that in principle there may be more
+   * extents than just space and/or time, although this is not supported at the moment. Read the
+   * non-existing documentation.
    *
    * @return the number of extents for this topology
    */
   int getExtentCount();
 
   /**
-   * Return the list of extents ordered by contextualization priority.
+   * Return the list of extents, ordered by contextualization priority (time, if present, will
+   * always be first).
    * 
    * @return the extents
    */
   List<IExtent> getExtents();
-  
-  /**
-   * Get the extent that observes the passed domain concept, or null if it does not exist.
-   * 
-   * @param domainConcept
-   * @return the extent that observes the passed concept
-   */
-  IExtent getExtent(IConcept domainConcept);
 
   /**
-   * Return true only if he scale has > 0 extents and any of them is empty, so that the coverage of any
-   * other scale can only be 0.
+   * Return true only if he scale has > 0 extents and any of them is empty, so that the coverage of
+   * any other scale can only be 0.
    *
    * @return true if scale cannot be the context for any observation.
    */
@@ -93,14 +87,22 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
    * @throws KlabException
    */
   IScale merge(IScale scale, LogicalConnector how, boolean adopt) throws KlabException;
-  
+
   /**
-   * The scale implementation of {@link ILocator#at(ILocator)} always return a scale and 
-   * can use an extent, other scale, or ITime.INITIALIZATION as locator.
+   * The scale implementation of {@link ILocator#at(ILocator)} always return a scale and can use an
+   * extent, other scale, or ITime.INITIALIZATION as locator.
    */
   @Override
   IScale at(ILocator locator);
-  
-  
+
+  /**
+   * Mimics {@link org.integratedmodelling.kim.api.data.IGeometry.Dimension#shape()} passing the
+   * type of the desired dimension.
+   * 
+   * @param dimension the dimension we need the shape of
+   * @return the shape of the passed dimension
+   * @throws IllegalArgumentException if the dimension is not known in this scale
+   */
+  public long[] shape(Type dimension);
 
 }

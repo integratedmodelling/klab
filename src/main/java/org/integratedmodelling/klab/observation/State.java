@@ -1,11 +1,8 @@
 package org.integratedmodelling.klab.observation;
 
-import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.owl.Observable;
 
@@ -16,7 +13,7 @@ public class State extends Observation implements IState {
   private State(Observable observable, Scale scale, IStorage<?> data, Subject context, IMonitor monitor) {
     super(observable, scale, monitor);
     setContextObservation(context);
-    this.storage = storage;
+    this.storage = data;
   }
 
   private static final long serialVersionUID = -7075415960868285693L;
@@ -29,18 +26,6 @@ public class State extends Observation implements IState {
   @Override
   public IStorage<?> getData() {
       return storage;
-  }
-
-  @Override
-  public long getValueCount() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public Object getValue(ILocator locator) {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override

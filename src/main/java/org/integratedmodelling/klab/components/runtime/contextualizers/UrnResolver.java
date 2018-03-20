@@ -7,7 +7,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -28,7 +28,7 @@ public class UrnResolver implements IExpression, IResolver<IObservationData> {
   }
 
   @Override
-  public IObservationData resolve(IObservationData observation, IComputationContext context, ILocator locator) {
+  public IObservationData resolve(IObservationData observation, IComputationContext context, IScale locator) {
     // TODO Auto-generated method stub
     return null;
   }

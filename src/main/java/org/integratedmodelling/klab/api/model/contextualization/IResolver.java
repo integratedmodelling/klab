@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -23,6 +23,6 @@ public abstract interface IResolver<T extends IObservationData> extends IContext
    * @param locator the current location in the topology. This will have unitary time.
    * @return the final observation - either the same passed or a new one if mediation was necessary.
    */
-  T resolve(T ret, IComputationContext context, ILocator locator);
+  T resolve(T ret, IComputationContext context, IScale locator);
 
 }

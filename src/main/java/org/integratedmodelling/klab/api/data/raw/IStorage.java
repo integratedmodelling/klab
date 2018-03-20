@@ -1,14 +1,10 @@
 package org.integratedmodelling.klab.api.data.raw;
 
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 /**
- * IStorage is a {@link IStateData} that is typed and contains API to be used within a semantic
- * {@link IState}, so it admits {@link ILocator}s as indices for getting and setting values.
- * 
- * TODO use a "dumb" locator linked to IGeometry (which during contextualization becomes a known
- * shape)
+ * {@code IStorage} is a {@link IObservationData} that is typed and admits {@link ILocator}s as
+ * indices for getting and setting POD values.
  * 
  * @author Ferd
  *
@@ -37,8 +33,8 @@ public interface IStorage<T> extends IObservationData {
   void set(ILocator index, Object value);
 
   /**
-   * Total number of values. Should be compatible with the multiplicity of the scale in the state
-   * that owns t.
+   * Total number of values. Must be compatible with the size of the dimensions of the underlying
+   * geometry.
    * 
    * @return total count of states
    */

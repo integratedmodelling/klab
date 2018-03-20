@@ -28,12 +28,6 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public IConcept getDomainConcept() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public IExtent merge(IExtent extent, boolean force) throws KlabException {
         // TODO Auto-generated method stub
         return null;
@@ -215,12 +209,6 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public long[] getShape(Type dimension) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
     public Iterable<ILocator> over(Type dimension) {
       // TODO Auto-generated method stub
       return null;
@@ -230,6 +218,12 @@ public class Time extends Extent implements ITime {
     public long getOffset(long[] dimOffsets) {
       // TODO Auto-generated method stub
       return 0;
+    }
+
+    @Override
+    public long[] shape() {
+      // TODO Auto-generated method stub
+      return null;
     }
 
 }

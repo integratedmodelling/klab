@@ -7,7 +7,11 @@ public abstract class Artifact implements IArtifact {
   protected IArtifact next;
 
   public void chain(IArtifact artifact) {
-    this.next = artifact;
+    Artifact end = this;
+    while (end.next != null) {
+      end = (Artifact)end.next;
+    }
+    end.next = artifact;
   }
   
   public boolean hasNext() {

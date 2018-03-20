@@ -395,11 +395,6 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public IConcept getDomainConcept() {
-      return Concepts.c(NS.SPACE_DOMAIN);
-    }
-
-    @Override
     public IExtent collapse() {
       return getShape().collapse();
     }
@@ -484,15 +479,14 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public long[] getShape(Type dimension) {
+    public Iterable<ILocator> over(Type dimension) {
       // TODO Auto-generated method stub
       return null;
     }
 
     @Override
-    public Iterable<ILocator> over(Type dimension) {
-      // TODO Auto-generated method stub
-      return null;
+    public long[] shape() {
+      return new long[] {1};
     }
   }
 

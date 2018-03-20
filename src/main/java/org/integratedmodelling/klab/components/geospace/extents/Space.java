@@ -31,15 +31,15 @@ import org.integratedmodelling.klab.utils.collections.IteratorAdapter;
 
 public class Space extends Extent implements ISpace {
 
-  private Shape shape;
-  private Grid grid;
-  private Envelope envelope;
-  private Projection projection;
+  private Shape         shape;
+  private Grid          grid;
+  private Envelope      envelope;
+  private Projection    projection;
   private ITessellation features;
-  private boolean consistent = false;
-  private String gridSpecs = null;
+  private boolean       consistent  = false;
+  private String        gridSpecs   = null;
 
-  private static Space EMPTY_SPACE = new Space(Shape.empty());
+  private static Space  EMPTY_SPACE = new Space(Shape.empty());
 
   public static Space create(Shape shape) {
     return new Space(shape);
@@ -98,11 +98,6 @@ public class Space extends Extent implements ISpace {
   @Override
   public int getScaleRank() {
     return envelope.getScaleRank();
-  }
-
-  @Override
-  public IConcept getDomainConcept() {
-    return Concepts.c(NS.SPACE_DOMAIN);
   }
 
   @Override
@@ -448,12 +443,6 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public long[] getShape(Type dimension) {
-    return grid == null ? (features == null ? new long[] {1} : new long[] {features.size()})
-        : new long[] {grid.getXCells(), grid.getYCells()};
-  }
-
-  @Override
   public Iterable<ILocator> over(Type dimension) {
     if (dimension != Dimension.Type.SPACE) {
       throw new IllegalArgumentException("cannot iterate a spatial extent over " + dimension);
@@ -461,6 +450,17 @@ public class Space extends Extent implements ISpace {
     return grid != null ? new IterableAdapter<ILocator>(grid)
         : (features != null ? new IterableAdapter<ILocator>(features)
             : Collections.singleton(shape));
+  }
+
+  @Override
+  public long[] shape() {
+    if (this.grid != null) {
+      return new long[] {this.grid.getXCells(), this.grid.getYCells()};
+    }
+    if (this.features != null) {
+      return new long[] {this.features.size()};
+    }
+    return shape.shape();
   }
 
 }

@@ -9,7 +9,6 @@ import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -99,12 +98,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public INamespace getNamespace() {
     return namespace;
-  }
-
-  @Override
-  public Collection<IObservable> getKnownObservables() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override

@@ -8,8 +8,10 @@ import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 /**
@@ -52,6 +54,17 @@ public class RunHandler implements Annotations.Handler {
         } else {
           monitor.warn("observation of " + observer.getName() + " was unsuccessful");
         }
+        
+        if (subject != null && arguments.get("visualize", false)) {
+          if (subject.getScale().isSpatiallyDistributed()) {
+            SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
+            for (IState state : subject.getStates()) {
+              display.add(state);
+            }
+            display.show();
+          }
+        }
+        
       } else {
         monitor.error("errors in retrieving observer or session");
       }

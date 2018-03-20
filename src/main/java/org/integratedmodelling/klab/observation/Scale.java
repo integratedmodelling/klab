@@ -400,7 +400,7 @@ public class Scale extends AbstractLocator implements IScale {
     int n = 0;
     boolean found = false;
     for (IExtent e : extents) {
-      if (e.getDomainConcept().equals(extent.getDomainConcept())) {
+      if (e.getType().equals(extent.getType())) {
         found = true;
         break;
       }
@@ -408,7 +408,7 @@ public class Scale extends AbstractLocator implements IScale {
     }
     if (!found) {
       throw new KlabRuntimeException(
-          "cannot locate extent " + extent.getDomainConcept() + " in scale");
+          "cannot locate extent " + extent.getType() + " in scale");
     }
     return Scale.this.cursor.getElementIndexes(overallOffset)[n];
   }
@@ -539,9 +539,9 @@ public class Scale extends AbstractLocator implements IScale {
   }
 
   // @Override
-  public IExtent getExtent(int index) {
-    return extents.get(index);
-  }
+//  public IExtent getExtent(int index) {
+//    return extents.get(index);
+//  }
 
   @Override
   public long size() {
@@ -556,7 +556,7 @@ public class Scale extends AbstractLocator implements IScale {
     }
 
     for (IExtent e : extents) {
-      if (!e.contains(((Scale) scale).getExtent(e.getDomainConcept()))) {
+      if (!e.contains(((Scale) scale).getDimension(e.getType()))) {
         return false;
       }
     }
@@ -571,7 +571,7 @@ public class Scale extends AbstractLocator implements IScale {
     }
 
     for (IExtent e : extents) {
-      if (!e.overlaps(((Scale) scale).getExtent(e.getDomainConcept()))) {
+      if (!e.overlaps(((Scale) scale).getDimension(e.getType()))) {
         return false;
       }
     }
@@ -586,7 +586,7 @@ public class Scale extends AbstractLocator implements IScale {
     }
 
     for (IExtent e : extents) {
-      if (!e.intersects(((Scale) scale).getExtent(e.getDomainConcept()))) {
+      if (!e.intersects(((Scale) scale).getDimension(e.getType()))) {
         return false;
       }
     }
@@ -607,7 +607,7 @@ public class Scale extends AbstractLocator implements IScale {
 
     Scale ret = new Scale();
     for (IExtent e : extents) {
-      ret.mergeExtent((IExtent) e.intersection(((Scale) scale).getExtent(e.getDomainConcept())),
+      ret.mergeExtent((IExtent) e.intersection(((Scale) scale).getDimension(e.getType())),
           false);
     }
 
@@ -628,7 +628,7 @@ public class Scale extends AbstractLocator implements IScale {
 
     Scale ret = new Scale();
     for (IExtent e : extents) {
-      ret.mergeExtent((IExtent) e.union(((Scale) scale).getExtent(e.getDomainConcept())), false);
+      ret.mergeExtent((IExtent) e.union(((Scale) scale).getDimension(e.getType())), false);
     }
 
     return ret;
@@ -644,7 +644,7 @@ public class Scale extends AbstractLocator implements IScale {
     IExtent merged = null;
     int i = 0;
     for (IExtent e : extents) {
-      if (e.getDomainConcept().equals(extent.getDomainConcept())) {
+      if (e.getType().equals(extent.getType())) {
         try {
           merged = e.merge(extent, force);
         } catch (KlabException e1) {
@@ -725,31 +725,31 @@ public class Scale extends AbstractLocator implements IScale {
   boolean hasSameExtents(IScale scale) {
 
     for (IExtent e : scale.getExtents()) {
-      if (getExtent(e.getDomainConcept()) == null) {
+      if (getDimension(e.getType()) == null) {
         return false;
       }
     }
 
     for (IExtent e : extents) {
-      if (((Scale) scale).getExtent(e.getDomainConcept()) == null) {
+      if (scale.getDimension(e.getType()) == null) {
         return false;
       }
     }
     return true;
   }
 
-  /*
-   * get the extent with the passed domain concept
-   */
-  @Override
-  public IExtent getExtent(IConcept domainConcept) {
-    for (IExtent e : extents) {
-      if (e.getDomainConcept().equals(domainConcept)) {
-        return e;
-      }
-    }
-    return null;
-  }
+//  /*
+//   * get the extent with the passed domain concept
+//   */
+//  @Override
+//  public IExtent getExtent(IConcept domainConcept) {
+//    for (IExtent e : extents) {
+//      if (e.getDomainConcept().equals(domainConcept)) {
+//        return e;
+//      }
+//    }
+//    return null;
+//  }
 
   // /**
   // * Scan all extents and return the properties and values, if any, that describe
@@ -898,12 +898,12 @@ public class Scale extends AbstractLocator implements IScale {
     Scale other = (Scale) scale;
     Scale ret = new Scale();
     ArrayList<IExtent> common = new ArrayList<>();
-    HashSet<IConcept> commonConcepts = new HashSet<>();
+    HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
     for (IExtent e : extents) {
-      if (other.getExtent(e.getDomainConcept()) != null) {
+      if (other.getDimension(e.getType()) != null) {
         common.add(e);
-        commonConcepts.add(e.getDomainConcept());
+        commonConcepts.add(e.getType());
       } else {
         ret.mergeExtent(e, true);
       }
@@ -911,15 +911,15 @@ public class Scale extends AbstractLocator implements IScale {
 
     if (adopt) {
       for (IExtent e : other.getExtents()) {
-        if (adopt && ret.getExtent(e.getDomainConcept()) == null
-            && !commonConcepts.contains(e.getDomainConcept())) {
+        if (adopt && ret.getDimension(e.getType()) == null
+            && !commonConcepts.contains(e.getType())) {
           ret.mergeExtent(e, true);
         }
       }
     }
 
     for (IExtent e : common) {
-      IExtent oext = other.getExtent(e.getDomainConcept());
+      IExtent oext = other.getDimension(e.getType());
       IExtent merged = null;
       if (how.equals(LogicalConnector.INTERSECTION)) {
         merged = (IExtent) e.intersection(oext);
@@ -938,7 +938,7 @@ public class Scale extends AbstractLocator implements IScale {
   public String toString() {
     String ss = "";
     for (IExtent e : extents) {
-      ss += "<" + e.getDomainConcept() + " # " + e.size() + ">";
+      ss += "<" + e.getType() + " # " + e.size() + ">";
     }
     return "Scale #" + extents.size() + " " + ss;
   }
@@ -987,7 +987,7 @@ public class Scale extends AbstractLocator implements IScale {
     int oridx = -1;
     ArrayList<IExtent> exts = new ArrayList<>();
     for (int i = 0; i < extents.size(); i++) {
-      if (extents.get(i).getDomainConcept().equals(extent)) {
+      if (extents.get(i).getType().equals(extent)) {
         oridx = i;
         continue;
       }
@@ -1025,7 +1025,7 @@ public class Scale extends AbstractLocator implements IScale {
 
     List<IExtent> exts = new ArrayList<>();
     for (IExtent e : scale.getExtents()) {
-      if (e.getDomainConcept().equals(extent.getDomainConcept())) {
+      if (e.getType().equals(extent.getType())) {
         exts.add(extent);
       } else {
         exts.add(e);
@@ -1041,12 +1041,12 @@ public class Scale extends AbstractLocator implements IScale {
    * @return
    * @throws KlabException
    */
-  public IScale collapse(IConcept... domains) throws KlabException {
+  public IScale collapse(Dimension.Type... domains) throws KlabException {
     ArrayList<IExtent> extents = new ArrayList<>();
     for (IExtent e : this.extents) {
       boolean found = false;
-      for (IConcept d : domains) {
-        if (e.getDomainConcept().equals(d)) {
+      for (Dimension.Type d : domains) {
+        if (e.getType().equals(d)) {
           found = true;
           break;
         }
@@ -1135,17 +1135,6 @@ public class Scale extends AbstractLocator implements IScale {
   }
 
   @Override
-  public long[] getShape(Type dimension) {
-    // TODO Auto-generated method stub
-    IExtent ext = getDimension(dimension);
-    if (ext == null) {
-      throw new IllegalArgumentException(
-          "scale does not implement requested " + dimension + " dimension");
-    }
-    return ext.getShape(dimension);
-  }
-
-  @Override
   public IExtent getDimension(Type type) {
     for (IExtent extent : extents) {
       if (extent.getType() == type) {
@@ -1159,6 +1148,16 @@ public class Scale extends AbstractLocator implements IScale {
   public Iterable<ILocator> over(Type dimension) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public long[] shape(Type dimension) {
+    for (IExtent extent : extents) {
+      if (extent.getType() == dimension) {
+        return extent.shape();
+      }
+    }
+    throw new IllegalArgumentException("this scale does not contain the dimension " + dimension);
   }
 
 

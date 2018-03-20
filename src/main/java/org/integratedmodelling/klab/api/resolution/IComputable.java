@@ -6,14 +6,20 @@ import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 /**
  * The computable interface applies to objects that can contribute computations to a dataflow. If
- * so, they must be able to provide a declarative form of the computation as a list of service
- * calls that can be understood in KDL.
+ * so, they must be able to provide a declarative form of the computation as a list of resources
+ * that can be turned into KDL actuators.
  * 
  * @author ferdinando.villa
  *
  */
 public interface IComputable {
 
-  List<IComputableResource> getComputation(ILocator extent);
+  /**
+   * Return the computations for the passed locator.
+   * 
+   * @param locator
+   * @return a list of computable resources, possibly empty.
+   */
+  List<IComputableResource> getComputation(ILocator locator);
 
 }

@@ -40,19 +40,6 @@ public interface ILocator {
    */
   Iterable<ILocator> over(Dimension.Type dimension);
 
-  /**
-   * Return the topological numerosity and shape correspondent to the passed dimension of the
-   * underlying geometry. For example, <code>locator.getShape(Type.SPACE)</code> called on a scale
-   * locator where space is a 10x20 grid will return [10, 20]. This is normally called in
-   * contextualizers when numeric offsets need to be exposed. Because contextualizers are declared
-   * with their geometry, there should be no need for error checking, and asking for a dimension
-   * that is not part of the locator will throw an exception.
-   * 
-   * @param dimension
-   * @return the shape corresponding to the dimension. Never null.
-   * @throws IllegalArgumentException if the locator does not have the requested dimension.
-   */
-  long[] getShape(Dimension.Type dimension);
 
   /**
    * Return another locator to point to a specific state within a shape returned by
