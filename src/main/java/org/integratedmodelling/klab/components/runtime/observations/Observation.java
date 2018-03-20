@@ -30,7 +30,6 @@ public abstract class Observation extends ObservationData implements IObservatio
   private Observable             observable;
   private String                 token            = "o" + NameGenerator.shortUUID();
   private Subject                observer;
-  private DirectObservation      contextObservation;
   private Namespace              namespace;
 
   private IEngineSessionIdentity parentIdentity;
@@ -112,21 +111,6 @@ public abstract class Observation extends ObservationData implements IObservatio
   }
 
   @Override
-  public DirectObservation getContext() {
-    return contextObservation;
-  }
-
-  @Override
-  public Subject getRoot() {
-    if (contextObservation == null) {
-      if (this instanceof Subject) {
-        return (Subject) this;
-      }
-    }
-    return contextObservation == null ? null : contextObservation.getRoot();
-  }
-
-  @Override
   public IProvenance getProvenance() {
     return getRuntimeContext().getProvenance();
   }
@@ -139,13 +123,6 @@ public abstract class Observation extends ObservationData implements IObservatio
     this.token = id;
   }
 
-  public DirectObservation getContextObservation() {
-    return contextObservation;
-  }
-
-  public void setContextObservation(DirectObservation contextObservation) {
-    this.contextObservation = contextObservation;
-  }
 
   public void setObservable(Observable observable) {
     this.observable = observable;
