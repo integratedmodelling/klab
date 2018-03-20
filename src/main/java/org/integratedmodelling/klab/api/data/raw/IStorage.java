@@ -28,6 +28,8 @@ public interface IStorage<T> extends IObservationData {
    *        distribution for it. The state is expected to quickly promote itself to a different
    *        underlying implementation if a compatible value of a new type is expected.
    * 
+   * TODO check if this can be removed from the API
+   * 
    * @throws IllegalArgumentException if value is incompatible with type.
    */
   void set(ILocator index, Object value);

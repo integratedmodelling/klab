@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Objects;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -21,12 +22,18 @@ public abstract class AbstractSingletonStorage<T> implements IStorage<T> {
   IStorage<T> delegate    = null;
   // value was set
   boolean     initialized = false;
-
+  IObjectData parent;
+  
   protected AbstractSingletonStorage(IObservable observable, Scale scale) {
     this.semantics = observable;
     this.scale = scale;
   }
-  
+
+  @Override
+  public IObjectData getParent() {
+    return parent;
+  }
+
 //  @Override
   public IObservable getSemantics() {
     return semantics;
@@ -40,16 +47,6 @@ public abstract class AbstractSingletonStorage<T> implements IStorage<T> {
   @Override
   public IMetadata getMetadata() {
     return metadata;
-  }
-
-  @Override
-  public boolean hasNext() {
-    return false;
-  }
-
-  @Override
-  public IObservationData next() {
-    return null;
   }
 
   @Override

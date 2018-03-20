@@ -6,7 +6,7 @@ import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.observation.Subject;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implements IProvenance {

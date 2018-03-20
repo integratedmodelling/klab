@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.observation;
+package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Process extends DirectObservation implements IProcess {
@@ -23,7 +24,8 @@ public class Process extends DirectObservation implements IProcess {
 
     @Override
     public Process next() {
-      return (Process)getNext();
+      return (Process)super.next();
     }
-    
+
+
 }

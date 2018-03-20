@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.observation;
+package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Subject extends CountableObservation implements ISubject {
@@ -126,6 +127,6 @@ public class Subject extends CountableObservation implements ISubject {
 
   @Override
   public Subject next() {
-    return (Subject)getNext();
+    return (Subject)super.next();
   }
 }

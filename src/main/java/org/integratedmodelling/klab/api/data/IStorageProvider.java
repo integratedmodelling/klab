@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.data;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
  * Interface for a component. If exactly one component implementing this is available, the system
@@ -20,8 +21,9 @@ public interface IStorageProvider {
    * 
    * @param observable
    * @param scale
+   * @param context 
    * @return
    */
-  IStorage<?> createStorage(IObservable observable, IScale scale);
+  IStorage<?> createStorage(IObservable observable, IScale scale, IComputationContext context);
 
 }

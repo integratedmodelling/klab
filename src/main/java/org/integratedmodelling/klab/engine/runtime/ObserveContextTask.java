@@ -6,14 +6,11 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -57,11 +54,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
             System.out.println(dataflow.getKdlCode());
 
-            IObservationData data = dataflow.run(monitor);
-            if (data != null) {
-              return (ISubject) Observations.INSTANCE.createObservation(((ObservationData)data).getSemantics(),
-                  dataflow.getScale(), data, dataflow.getNamespace(), monitor, null);
-            }
+            return (ISubject)dataflow.run(monitor);
           }
 
           return null;

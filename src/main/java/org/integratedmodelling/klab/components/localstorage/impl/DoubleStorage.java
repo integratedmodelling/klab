@@ -4,6 +4,7 @@ import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.data.ObservationData;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LDoubleArray;
@@ -12,22 +13,20 @@ import xerial.larray.japi.LArrayJ;
 public class DoubleStorage extends ObservationData implements IStorage<Double> {
 
   private LDoubleArray data;
-  private Scale scale;
   
-  public DoubleStorage(IObservable observable, Scale scale) {
-      super(observable, null);
-      this.scale = scale;
+  public DoubleStorage(IObservable observable, Scale scale, IRuntimeContext context) {
+      super(scale, context);
       this.data = LArrayJ.newLDoubleArray(scale.size());
   }
 
   @Override
   public long size() {
-    return scale.size();
+    return getGeometry().size();
   }
 
   @Override
   public Double get(ILocator index) {
-    long offset = scale.getOffset(index);
+    long offset = ((Scale)getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
@@ -37,7 +36,7 @@ public class DoubleStorage extends ObservationData implements IStorage<Double> {
 
   @Override
   public void set(ILocator index, Object value) {
-    long offset = scale.getOffset(index);
+    long offset = ((Scale)getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");

@@ -8,11 +8,11 @@ import org.integratedmodelling.klab.api.data.raw.IObjectData;
  * @author ferdinando.villa
  *
  */
-public abstract interface IDirectObservation extends IObservation {
+public abstract interface IDirectObservation extends IObservation, IObjectData {
 
   String getName();
 
-  Collection<IState> getStates();
+  Collection<IState<?>> getStates();
   
   /**
    * Specialize the data for a direct observation.

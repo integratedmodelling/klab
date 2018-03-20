@@ -53,7 +53,7 @@ public enum GeotoolsUtils {
     // IGridMask act = extent.requireActivationLayer(true);
 
     for (Cell cell : grid) {
-      Object o = state.getData().get(cell);
+      Object o = state.get(cell);
       if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
         raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) 0);
       } else if (o instanceof Number) {

@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -39,9 +40,9 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
  * Simply dispatches a topologically sorted computation to a threadpool executor. The JGraphT-based
  * topological order built does not account for possible parallel actuators, which it should.
  * 
- * Besides this, the dataflow only supports a single, fixed computational model.
- * 
- * TODO use a parallelizing sort and use a CompletableFuture for parallel tasks.
+ * The initialization dataflow will build simple objects (essentially storage-only observations)
+ * when the context is not temporal. If the context is temporal, it will create Akka actors for all
+ * direct observations and prepare them for temporal contextualization.
  * 
  * @author Ferd
  *
@@ -53,8 +54,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
   @Override
-  public Future<IObservationData> compute(IActuator actuator, IComputationContext context,
-      IMonitor monitor) throws KlabException {
+  public Future<IObservationData> compute(IActuator actuator, IComputationContext context) throws KlabException {
 
     return executor.submit(new Callable<IObservationData>() {
 
@@ -68,7 +68,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         while (sorter.hasNext()) {
           Actuator active = (Actuator) sorter.next();
-          ret = active.compute(context.getSubjectData(), (IRuntimeContext) context, monitor);
+          ret = active.compute(context.getTarget(), (IRuntimeContext) context);
         }
 
         return ret;
@@ -115,8 +115,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IComputationContext createRuntimeContext() {
-    return new RuntimeContext();
+  public IComputationContext createRuntimeContext(IObservable target, IMonitor monitor) {
+    return new RuntimeContext(target, monitor);
   }
 
   @Override
@@ -139,18 +139,21 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   public IStorage<?> distributeComputation(IStateResolver resolver, IStorage<?> data,
       IRuntimeContext context, IScale scale) {
 
-    // TODO use a distributed loop unless the resolver implements some tag interface to notify non-reentrant behavior
+    // TODO use a distributed loop unless the resolver implements some tag interface to notify
+    // non-reentrant behavior
     // TODO if this is done, the next one must be local to each thread
-    RuntimeContext ctx = new RuntimeContext((RuntimeContext)context);
+    RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
     Collection<Pair<String, IStorage<?>>> variables = ctx.getStateDependentData();
     for (IScale state : scale) {
-      data.set(state, resolver.resolve(data, variables.isEmpty() ? ctx : localizeContext(ctx, state, variables), state));
+      data.set(state, resolver.resolve(data,
+          variables.isEmpty() ? ctx : localizeContext(ctx, state, variables), state));
     }
     return data;
 
   }
 
-  private IComputationContext localizeContext(RuntimeContext context, IScale state, Collection<Pair<String, IStorage<?>>> variables) {
+  private IComputationContext localizeContext(RuntimeContext context, IScale state,
+      Collection<Pair<String, IStorage<?>>> variables) {
     for (Pair<String, IStorage<?>> var : variables) {
       context.set(var.getFirst(), var.getSecond().get(state));
     }

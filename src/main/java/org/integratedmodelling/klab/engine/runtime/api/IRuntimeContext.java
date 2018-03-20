@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
-import java.util.Collection;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * This API extends {@link IComputationContext} to add setters and other functionalities that is
@@ -16,6 +16,15 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
  *
  */
 public interface IRuntimeContext extends IComputationContext {
+  
+  /**
+   * Create a child context for the passed observable, containing the target
+   * observation implementation.
+   * 
+   * @param target
+   * @return
+   */
+  public IRuntimeContext getChild(IObservable target);
   
   /**
    * Set the passed data object in the symbol table.
@@ -60,4 +69,11 @@ public interface IRuntimeContext extends IComputationContext {
    * @param outFile
    */
   void exportStructure(String outFile);
+  
+  /**
+   * Return a valid monitor for any communication.
+   * 
+   * @return
+   */
+  IMonitor getMonitor();
 }

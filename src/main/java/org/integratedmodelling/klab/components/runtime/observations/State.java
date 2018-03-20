@@ -1,16 +1,21 @@
-package org.integratedmodelling.klab.observation;
+package org.integratedmodelling.klab.components.runtime.observations;
 
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
-public class State extends Observation implements IState {
+public class State<T> extends Observation implements IState<T> {
 
-  IStorage<?> storage;
+  IStorage<T> storage;
 
-  private State(Observable observable, Scale scale, IStorage<?> data, Subject context, IMonitor monitor) {
+  private State(Observable observable, Scale scale, IStorage<T> data, Subject context, IMonitor monitor) {
     super(observable, scale, monitor);
     setContextObservation(context);
     this.storage = data;
@@ -40,7 +45,7 @@ public class State extends Observation implements IState {
   }
 
   @Override
-  public State as(IObservable observable) {
+  public State<T> as(IObservable observable) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -52,7 +57,31 @@ public class State extends Observation implements IState {
   }
 
   @Override
-  public State next() {
-    return (State)getNext();
+  public State<?> next() {
+    return (State<?>)super.next();
+  }
+
+  public T get(ILocator index) {
+    return storage.get(index);
+  }
+
+  public void set(ILocator index, Object value) {
+    storage.set(index, value);
+  }
+
+  public IGeometry getGeometry() {
+    return storage.getGeometry();
+  }
+
+  public IMetadata getMetadata() {
+    return storage.getMetadata();
+  }
+
+  public IObjectData getParent() {
+    return storage.getParent();
+  }
+
+  public long size() {
+    return storage.size();
   }
 }

@@ -9,11 +9,11 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.observation.DirectObservation;
-import org.integratedmodelling.klab.observation.Subject;
 
 public class Dataflow extends Actuator implements IDataflow<IObservationData> {
 
@@ -28,13 +28,6 @@ public class Dataflow extends Actuator implements IDataflow<IObservationData> {
   @Override
   public IObservationData run(IMonitor monitor) throws KlabException {
 
-    /*
-     * establish the computation context: if we have a runtime context, take it from it, otherwise
-     * make one.
-     */
-    IComputationContext ctx =
-        context == null ? Klab.INSTANCE.getRuntimeProvider().createRuntimeContext()
-            : ((Subject) context).getRoot().getRuntimeContext();
 
     /*
      * Children at the dataflow level run in parallel, so have the runtime start futures for each
@@ -44,8 +37,11 @@ public class Dataflow extends Actuator implements IDataflow<IObservationData> {
     for (IActuator actuator : actuators) {
       try {
 
-        IObservationData data =
-            Klab.INSTANCE.getRuntimeProvider().compute(actuator, ctx, monitor).get();
+        IObservationData data = Klab.INSTANCE.getRuntimeProvider().compute(actuator,
+            context == null
+                ? Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(((Actuator)actuator).getObservable(), monitor)
+                : ((Subject) context).getRuntimeContext().getChild(((Actuator)actuator).getObservable()))
+            .get();
 
         if (ret == null) {
           ret = data;

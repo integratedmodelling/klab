@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.data.ObservationData;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LBitArray;
@@ -11,25 +13,23 @@ import xerial.larray.japi.LArrayJ;
 
 public class BooleanStorage extends ObservationData implements IStorage<Boolean> {
 
-  private Scale     scale;
   private LBitArray data;
   private LBitArray mask;
 
-  public BooleanStorage(IObservable observable, Scale scale) {
-    super(observable, null);
-    this.scale = scale;
+  public BooleanStorage(IObservable observable, Scale scale, IRuntimeContext context) {
+    super(scale, context);
     this.data = LArrayJ.newLBitArray(scale.size());
     this.mask = LArrayJ.newLBitArray(scale.size());
   }
 
   @Override
   public long size() {
-    return scale.size();
+    return getGeometry().size();
   }
 
   @Override
   public Boolean get(ILocator index) {
-    long offset = scale.getOffset(index);
+    long offset = ((Scale)getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
@@ -39,7 +39,7 @@ public class BooleanStorage extends ObservationData implements IStorage<Boolean>
 
   @Override
   public void set(ILocator index, Object value) {
-    long offset = scale.getOffset(index);
+    long offset = ((Scale)getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");

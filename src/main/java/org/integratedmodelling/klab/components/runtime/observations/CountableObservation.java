@@ -1,7 +1,8 @@
-package org.integratedmodelling.klab.observation;
+package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
 /**

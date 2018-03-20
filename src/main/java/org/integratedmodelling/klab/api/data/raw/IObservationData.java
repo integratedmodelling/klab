@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.api.data.raw;
 
-import java.util.Iterator;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 
 /**
@@ -17,17 +15,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
  * @author Ferd
  *
  */
-public interface IObservationData extends Iterator<IObservationData> {
-
-//  /**
-//   * Semantics is passed down to contextualizers to support any reasoning they want to do, but is
-//   * not essential to the contract of a "raw" observation, which is by definition stripped of all
-//   * semantics except for reporting it to applications that wish to know.
-//   * 
-//   * @return the semantics for the observation. Never null in the k.LAB engine runtime, but possibly
-//   *         null if this API is used outside of it.
-//   */
-//  IObservable getSemantics();
+public interface IObservationData {
 
   /**
    * The geometry linked to the observation. Observational artifacts will specialize this as IScale.
@@ -37,11 +25,17 @@ public interface IObservationData extends Iterator<IObservationData> {
   IGeometry getGeometry();
 
   /**
-   * Metadata. Never null, possibly empty. They are passed to the semantic artifact and may be used
-   * for visualization, provenance etc.
+   * Metadata. Never null, possibly empty. 
    * 
    * @return the metadata
    */
   IMetadata getMetadata();
+  
+  /**
+   * Objects are arranged in a tree where only the top object has no parent.
+   * 
+   * @return the parent, or null.
+   */
+  IObjectData getParent();
 
 }

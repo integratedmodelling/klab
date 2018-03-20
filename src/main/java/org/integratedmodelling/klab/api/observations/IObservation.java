@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 
-public interface IObservation extends IObservationIdentity, Serializable, IArtifact {
+public interface IObservation extends IObservationData, IObservationIdentity, Serializable, IArtifact {
 
   /**
    * The subject observation that contextualized this observation. This is not the same as the

@@ -25,7 +25,6 @@ public class ExpressionResolver implements IResolver<IStorage<?>>, IExpression {
     // TODO Auto-generated constructor stub
   }
 
-
   public static IServiceCall getServiceCall(IComputableResource resource) {
     
     KimServiceCall ret = new KimServiceCall(FUNCTION_ID);

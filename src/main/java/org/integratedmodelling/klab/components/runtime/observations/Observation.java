@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.observation;
+package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -12,39 +12,38 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 
-public abstract class Observation extends Artifact implements IObservation {
+public abstract class Observation extends ObservationData implements IObservation {
 
   private static final long      serialVersionUID = -7645502752899232235L;
 
-  private Scale                  scale;
   private Observable             observable;
   private String                 token            = "o" + NameGenerator.shortUUID();
   private Subject                observer;
   private DirectObservation      contextObservation;
-  private Monitor                monitor;
   private Namespace              namespace;
-  
+
   private IEngineSessionIdentity parentIdentity;
 
   public String getUrn() {
     return "local:observation:" + getParent(Session.class).getToken() + ":" + getToken();
   }
-  
-  protected Observation(Observable observable, Scale scale, IMonitor monitor) {
+
+  protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
+    super(scale, context);
     this.observable = observable;
-    this.scale = scale;
-    this.monitor = ((Monitor) monitor).get(this);
-    this.parentIdentity = monitor.getIdentity().getParent(IEngineSessionIdentity.class);
+    this.parentIdentity =
+        context.getMonitor().getIdentity().getParent(IEngineSessionIdentity.class);
   }
 
   @Override
@@ -59,32 +58,32 @@ public abstract class Observation extends Artifact implements IObservation {
 
   @Override
   public Scale getScale() {
-    return scale;
+    return (Scale) getGeometry();
   }
 
   @Override
   public boolean isSpatiallyDistributed() {
-    return scale.isSpatiallyDistributed();
+    return getScale().isSpatiallyDistributed();
   }
 
   @Override
   public boolean isTemporallyDistributed() {
-    return scale.isTemporallyDistributed();
+    return getScale().isTemporallyDistributed();
   }
 
   @Override
   public boolean isTemporal() {
-    return scale.getTime() != null;
+    return getScale().getTime() != null;
   }
 
   @Override
   public boolean isSpatial() {
-    return scale.getSpace() != null;
+    return getScale().getSpace() != null;
   }
 
   @Override
   public Space getSpace() {
-    return scale.getSpace();
+    return getScale().getSpace();
   }
 
   @Override
@@ -94,7 +93,7 @@ public abstract class Observation extends Artifact implements IObservation {
 
   @Override
   public Monitor getMonitor() {
-    return monitor;
+    return (Monitor) getRuntimeContext().getMonitor();
   }
 
   @Override
@@ -129,7 +128,7 @@ public abstract class Observation extends Artifact implements IObservation {
 
   @Override
   public IProvenance getProvenance() {
-    return ((Subject)getRoot()).getRuntimeContext().getProvenance();
+    return getRuntimeContext().getProvenance();
   }
 
   public String getId() {
@@ -148,10 +147,6 @@ public abstract class Observation extends Artifact implements IObservation {
     this.contextObservation = contextObservation;
   }
 
-  public void setScale(Scale scale) {
-    this.scale = scale;
-  }
-
   public void setObservable(Observable observable) {
     this.observable = observable;
   }
@@ -165,11 +160,11 @@ public abstract class Observation extends Artifact implements IObservation {
   }
 
   public void setNamespace(INamespace namespace) {
-   this.namespace = (Namespace) namespace;
+    this.namespace = (Namespace) namespace;
   }
-  
+
   // Provenance (from IArtifact's contract)
-  
+
   @Override
   public IAgent getConsumer() {
     // TODO Auto-generated method stub
@@ -230,8 +225,48 @@ public abstract class Observation extends Artifact implements IObservation {
     return false;
   }
 
-  public String toString() {
-    return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() +  ": " + getObservable() + "}";
+  @Override
+  public boolean hasNext() {
+    // TODO
+    return false;
   }
+
+  @Override
+  public IObservation next() {
+    // TODO
+    return null;
+  }
+  
+  public String toString() {
+    return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() + ": "
+        + getObservable() + "}";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((token == null) ? 0 : token.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Observation other = (Observation) obj;
+    if (token == null) {
+      if (other.token != null)
+        return false;
+    } else if (!token.equals(other.token))
+      return false;
+    return true;
+  }
+  
+  
 
 }

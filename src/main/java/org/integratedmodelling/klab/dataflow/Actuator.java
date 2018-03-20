@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.ObjectData;
 import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -127,13 +126,11 @@ public class Actuator implements IActuator {
    * @param context The context observation data (null in the root actuator for a new context)
    * @param runtimeContext this one must be passed a context already adapted to the actuator's names
    *        and scale.
-   * @param monitor
    * @return the finalized observation data
    * @throws KlabException
    */
   @SuppressWarnings("unchecked")
-  public IObservationData compute(IObjectData context, IRuntimeContext runtimeContext,
-      IMonitor monitor) throws KlabException {
+  public IObservationData compute(IObjectData context, IRuntimeContext runtimeContext) throws KlabException {
 
     if (computation == null) {
       // compile the contextualization strategy
@@ -212,11 +209,13 @@ public class Actuator implements IActuator {
           // TODO analyze the computation and see if we can create a constant instead
 
         }
+        // NOOO
         runtimeContext.setData(this.name,
             isConstant ? Klab.INSTANCE.getSingletonStorage(this.observable, this.scale)
-                : Klab.INSTANCE.getStorageProvider().createStorage(this.observable, this.scale));
+                : Klab.INSTANCE.getStorageProvider().createStorage(this.observable, this.scale, runtimeContext));
       } else {
         // create object data
+        // NOOO
         runtimeContext.setData(this.name,
             newObjectData(this.name, this.observable, runtimeContext));
       }
@@ -230,11 +229,12 @@ public class Actuator implements IActuator {
     return ret;
   }
 
+  // NOOO
   private IObservationData newObjectData(String name, Observable observable,
       IRuntimeContext runtimeContext) {
-    IObjectData ret = ObjectData.create(name, observable);
-    ((ObjectData)ret).setRuntimeContext(runtimeContext);
-    return ret;
+//    IObjectData ret = ObjectData.create(name, observable);
+//    ((ObjectData)ret).setRuntimeContext(runtimeContext);
+    return null;
   }
 
   public String toString() {

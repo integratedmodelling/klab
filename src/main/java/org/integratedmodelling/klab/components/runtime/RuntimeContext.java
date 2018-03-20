@@ -9,15 +9,17 @@ import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.observation.Relationship;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
@@ -35,23 +37,25 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   Namespace namespace;
-  IObjectData subject;
+  IObservationData target;
   Provenance provenance;
   EventBus eventBus;
   ConfigurationDetector configurationDetector;
   Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
   Map<String, IObservationData> catalog = new HashMap<>();
-    
-  public RuntimeContext() {}
+  IMonitor monitor;
+  RuntimeContext parent;  
+  
+  public RuntimeContext(IObservable target, IMonitor monitor) {}
 
   RuntimeContext(RuntimeContext context) {
     this.putAll(context);
     this.namespace = context.namespace;
-    this.subject = context.subject;
     this.provenance = context.provenance;
     this.eventBus = context.eventBus;
     this.configurationDetector = context.configurationDetector;
     this.structure = context.structure;
+    this.monitor = context.monitor;
     this.catalog.putAll(context.catalog);
   }
 
@@ -83,11 +87,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public Collection<ISubject> getAllSubjects() {
     return structure.vertexSet();
-  }
-
-  @Override
-  public IObjectData getSubjectData() {
-    return subject;
   }
 
   @Override
@@ -139,6 +138,26 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   public void set(String name, Object value) {
     this.put(name, value);
+  }
+
+  @Override
+  public IRuntimeContext getChild(IObservable target) {
+    RuntimeContext ret = new RuntimeContext(this);
+    ret.parent = this;
+    // TODO make target!
+    return null;
+  }
+
+  @Override
+  public IObjectData getTarget() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IMonitor getMonitor() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

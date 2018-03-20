@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.data;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 
 /**
@@ -15,35 +15,14 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
  */
 public abstract class ObservationData implements IObservationData {
 
-  private IObservable semantics;
-  private IGeometry geometry;
+  private IGeometry       geometry;
   private IRuntimeContext runtimeContext;
-  IMetadata metadata = new Metadata();
+  IMetadata               metadata = new Metadata();
+  private IObjectData     parent;
 
-  protected ObservationData(IObservable semantics, IRuntimeContext context) {
-    this.semantics = semantics;
+  protected ObservationData(IGeometry geometry, IRuntimeContext context) {
+    this.geometry = geometry;
     this.runtimeContext = context;
-  }
-
-  @Override
-  public boolean hasNext() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public IObservationData next() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public void chain(IObservationData data) {
-    // TODO
-  }
-
-//  @Override
-  public IObservable getSemantics() {
-    return semantics;
   }
 
   @Override
@@ -60,8 +39,11 @@ public abstract class ObservationData implements IObservationData {
     return this.runtimeContext;
   }
 
-  public void setRuntimeContext(IRuntimeContext runtimeContext) {
-    this.runtimeContext = runtimeContext;
+  public IObjectData getParent() {
+    return parent;
+  }
+
+  public void chain(IObservationData data) {
   }
 
 }

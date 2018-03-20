@@ -81,6 +81,6 @@ public interface IComputationContext extends IParameters {
    * 
    * @return
    */
-  IObjectData getSubjectData();
+  IObjectData getTarget();
 
 }

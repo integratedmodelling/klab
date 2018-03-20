@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.data.storage;
 
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.observation.Scale;
 
