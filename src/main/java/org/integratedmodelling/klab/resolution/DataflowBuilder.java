@@ -180,6 +180,7 @@ public class DataflowBuilder {
 
       if (observer != null) {
         ret.setNamespace(observer.getNamespace());
+        ret.setName(observer.getId());
       }
 
       if (models.size() == 1) {

@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -42,28 +43,30 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class RuntimeContext extends Parameters implements IRuntimeContext {
 
-  INamespace                           namespace;
-  IArtifact                     target;
-  Provenance                           provenance;
-  EventBus                             eventBus;
-  ConfigurationDetector                configurationDetector;
-  Graph<ISubject, IRelationship>       network;
+  INamespace namespace;
+  Provenance provenance;
+  EventBus eventBus;
+  ConfigurationDetector configurationDetector;
+  Graph<ISubject, IRelationship> network;
   Graph<IArtifact, DefaultEdge> structure;
-  Map<String, IArtifact>        catalog = new HashMap<>();
-  IMonitor                             monitor;
-  RuntimeContext                       parent;
+  Map<String, IArtifact> catalog;
+  IMonitor monitor;
+  RuntimeContext parent;
+  IObservation target;
 
   public RuntimeContext(IObservable observable, IScale scale, INamespace namespace,
       IMonitor monitor) {
+    this.catalog = new HashMap<>();
     this.network = new DefaultDirectedGraph<>(Relationship.class);
     this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
     this.provenance = /* TODO new Provenance() */ null;
     this.monitor = monitor;
     this.namespace = namespace;
     this.target = DefaultRuntimeProvider.createObservation(observable, scale, this, null);
-    this.structure.addVertex(this.target);
+    this.catalog.put(observable.getLocalName(), target);
+    this.structure.addVertex(target);
     // TODO provenance (may need to pass the actuator)
-    if (this.target instanceof ISubject) {
+    if (target instanceof ISubject) {
       this.network.addVertex((ISubject) this.target);
     }
   }
@@ -77,7 +80,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.network = context.network;
     this.structure = context.structure;
     this.monitor = context.monitor;
-    this.catalog.putAll(context.catalog);
+    this.catalog = context.catalog;
   }
 
   @Override
@@ -162,8 +165,14 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IArtifact getTarget() {
-    return target;
+  public IArtifact getTarget(IActuator actuator) {
+    IArtifact ret = catalog.get(actuator.getName());
+    if (ret == null) {
+      // secondary artifact, non-semantic. Should be storage.
+      ret = DefaultRuntimeProvider.createArtifact(actuator, this);
+      catalog.put(actuator.getName(), ret);
+    }
+    return ret;
   }
 
   @Override
@@ -196,6 +205,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     }
     ret.target = DefaultRuntimeProvider.createObservation(target,
         ((Observation) this.target).getScale(), this, (DirectObservation) this.target);
+    ret.catalog.put(target.getLocalName(), ret.target);
     this.structure.addVertex(ret.target);
     // create child->parent edge
     this.structure.addEdge(ret.target, this.target);
@@ -205,7 +215,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     }
     return ret;
   }
-  
+
   /**
    * Return all the children of an artifact in the structural graph that match a certain class.
    * 
@@ -219,7 +229,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
       IArtifact source = this.structure.getEdgeSource(edge);
       if (cls.isAssignableFrom(source.getClass())) {
-        ret.add((T)source);
+        ret.add((T) source);
       }
     }
     return ret;

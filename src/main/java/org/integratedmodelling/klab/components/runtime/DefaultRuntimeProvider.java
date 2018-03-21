@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -82,13 +81,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         TopologicalOrderIterator<IActuator, DefaultEdge> sorter =
             new TopologicalOrderIterator<>(graph);
 
-        IArtifact ret = ((IRuntimeContext) context).getTarget();
         while (sorter.hasNext()) {
           Actuator active = (Actuator) sorter.next();
-          ret = active.compute(((RuntimeContext) context).getTarget(), (IRuntimeContext) context);
+          active.compute(((RuntimeContext) context).getTarget(active), (IRuntimeContext) context);
         }
 
-        return ret;
+        return ((IRuntimeContext) context).getTarget(actuator);
       }
     });
 
@@ -198,37 +196,39 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       throw new IllegalArgumentException(
           "createObservation() does not create relationships: use createRelationship()");
     } else if (observable.is(Type.QUALITY)) {
-      
+
       IDataArtifact storage = null;
-      
+
       if (scale.size() == 1) {
         switch (observable.getObservationType()) {
           case CLASSIFICATION:
-            storage = new ConceptSingletonStorage(observable, (Scale)scale);
+            storage = new ConceptSingletonStorage(observable, (Scale) scale);
             break;
           case QUANTIFICATION:
-            storage = new DoubleSingletonStorage(observable, (Scale)scale);
+            storage = new DoubleSingletonStorage(observable, (Scale) scale);
             break;
           case VERIFICATION:
-            storage = new BooleanSingletonStorage(observable, (Scale)scale);
+            storage = new BooleanSingletonStorage(observable, (Scale) scale);
             break;
           case INSTANTIATION:
           case SIMULATION:
           case DETECTION:
           default:
-            throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
+            throw new IllegalArgumentException(
+                "illegal observable for singleton storage: " + observable);
         }
       } else {
-        
+
         // TODO figure out dynamic vs. not
-        storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, runtimeContext);
+        storage =
+            Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, runtimeContext);
       }
-      
+
       switch (observable.getObservationType()) {
         case CLASSIFICATION:
         case QUANTIFICATION:
         case VERIFICATION:
-          ret = new State((Observable)observable, (Scale)scale, runtimeContext, storage);
+          ret = new State((Observable) observable, (Scale) scale, runtimeContext, storage);
           break;
         case INSTANTIATION:
         case SIMULATION:
@@ -237,10 +237,55 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
           throw new IllegalArgumentException("illegal observable for storage: " + observable);
       }
     } else if (observable.is(Type.CONFIGURATION)) {
-      
+
       ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
           observable.getLocalName(), (Observable) observable, (Scale) scale, runtimeContext);
     }
+    return ret;
+  }
+
+  /**
+   * Create non-semantic storage for the passed actuator
+   * 
+   * @param actuator
+   * @return
+   */
+  public static IArtifact createArtifact(IActuator act, RuntimeContext context) {
+    Actuator actuator = (Actuator) act;
+    IArtifact ret = null;
+    if (actuator.getObservable().is(Type.QUALITY)) {
+
+      IDataArtifact storage = null;
+      // FIXME use a isScalar() for the computation in the actuator
+      if (actuator.getScale().size() == 1) {
+        switch (actuator.getObservable().getObservationType()) {
+          case CLASSIFICATION:
+            ret =
+                new ConceptSingletonStorage(actuator.getObservable(), (Scale) actuator.getScale());
+            break;
+          case QUANTIFICATION:
+            ret = new DoubleSingletonStorage(actuator.getObservable(), (Scale) actuator.getScale());
+            break;
+          case VERIFICATION:
+            ret =
+                new BooleanSingletonStorage(actuator.getObservable(), (Scale) actuator.getScale());
+            break;
+          case INSTANTIATION:
+          case SIMULATION:
+          case DETECTION:
+          default:
+            throw new IllegalArgumentException(
+                "illegal observable for singleton storage: " + actuator.getObservable());
+        }
+      } else {
+        // TODO figure out dynamic vs. not
+        ret =
+            Klab.INSTANCE.getStorageProvider().createStorage(actuator.getObservable(), actuator.getScale(), context);
+      }
+    } else {
+// TODO 
+    }
+
     return ret;
   }
 
