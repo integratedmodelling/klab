@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -31,6 +32,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
@@ -283,7 +285,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
             Klab.INSTANCE.getStorageProvider().createStorage(actuator.getObservable(), actuator.getScale(), context);
       }
     } else {
-// TODO 
+    	ret = new ObservedArtifact(actuator.getScale(), context);
     }
 
     return ret;

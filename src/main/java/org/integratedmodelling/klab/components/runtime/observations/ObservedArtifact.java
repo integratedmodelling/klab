@@ -16,14 +16,14 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  * @author Ferd
  *
  */
-public abstract class ObservedArtifact extends Artifact implements IArtifact {
+public class ObservedArtifact extends Artifact implements IArtifact {
 
   private IGeometry      geometry;
   private RuntimeContext runtimeContext;
-  IMetadata              metadata = new Metadata();
+  private IMetadata              metadata = new Metadata();
   private String         token    = "o" + NameGenerator.shortUUID();
 
-  protected ObservedArtifact(IGeometry geometry, RuntimeContext context) {
+  public ObservedArtifact(IGeometry geometry, RuntimeContext context) {
     this.geometry = geometry;
     this.runtimeContext = context;
   }
