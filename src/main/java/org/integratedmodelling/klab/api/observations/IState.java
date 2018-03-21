@@ -1,15 +1,14 @@
 package org.integratedmodelling.klab.api.observations;
 
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 
 /**
  * 
  * @author ferdinando.villa
- * @param <T> the POD type for the stored state
  *
  */
-public interface IState<T> extends IObservation, IStorage<T> {
+public interface IState extends IObservation, IDataArtifact {
 
   /**
    * True if the state has the same value overall independent of scale.
@@ -36,6 +35,6 @@ public interface IState<T> extends IObservation, IStorage<T> {
    *        observation semantics, e.g. a "by" clause or different units/currencies.
    * @return the (possibly wrapped) state
    */
-  IState<T> as(IObservable observable);
+  IState as(IObservable observable);
 
 }

@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  * @param <T> the observation type resolved
  *
  */
-public abstract interface IResolver<T extends IObservationData> extends IContextualizer {
+public abstract interface IResolver<T extends IArtifact> extends IContextualizer {
 
   /**
    * Called once per temporal transition for the scale and the geometry of the observation being

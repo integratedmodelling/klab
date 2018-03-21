@@ -11,15 +11,18 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -30,7 +33,11 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolv
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.data.storage.BooleanSingletonStorage;
+import org.integratedmodelling.klab.data.storage.ConceptSingletonStorage;
+import org.integratedmodelling.klab.data.storage.DoubleSingletonStorage;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -63,19 +70,19 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
   @Override
-  public Future<IObservationData> compute(IActuator actuator, IComputationContext context)
+  public Future<IArtifact> compute(IActuator actuator, IComputationContext context)
       throws KlabException {
 
-    return executor.submit(new Callable<IObservationData>() {
+    return executor.submit(new Callable<IArtifact>() {
 
       @Override
-      public IObservationData call() throws Exception {
+      public IArtifact call() throws Exception {
 
         Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
         TopologicalOrderIterator<IActuator, DefaultEdge> sorter =
             new TopologicalOrderIterator<>(graph);
-        IObservationData ret = null;
 
+        IArtifact ret = ((IRuntimeContext) context).getTarget();
         while (sorter.hasNext()) {
           Actuator active = (Actuator) sorter.next();
           ret = active.compute(((RuntimeContext) context).getTarget(), (IRuntimeContext) context);
@@ -125,8 +132,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IComputationContext createRuntimeContext(IObservable target, IMonitor monitor) {
-    return new RuntimeContext(target, monitor);
+  public IComputationContext createRuntimeContext(IObservable target, IScale scale,
+      INamespace namespace, IMonitor monitor) {
+    return new RuntimeContext(target, scale, namespace, monitor);
   }
 
   @Override
@@ -146,14 +154,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IStorage<?> distributeComputation(IStateResolver resolver, IStorage<?> data,
+  public IDataArtifact distributeComputation(IStateResolver resolver, IDataArtifact data,
       IRuntimeContext context, IScale scale) {
 
     // TODO use a distributed loop unless the resolver implements some tag interface to notify
     // non-reentrant behavior
     // TODO if this is done, the next one must be local to each thread
     RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
-    Collection<Pair<String, IStorage<?>>> variables = ctx.getStateDependentData();
+    Collection<Pair<String, IDataArtifact>> variables = ctx.getStateDependentData();
     for (IScale state : scale) {
       data.set(state, resolver.resolve(data,
           variables.isEmpty() ? ctx : localizeContext(ctx, state, variables), state));
@@ -163,16 +171,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   private IComputationContext localizeContext(RuntimeContext context, IScale state,
-      Collection<Pair<String, IStorage<?>>> variables) {
-    for (Pair<String, IStorage<?>> var : variables) {
+      Collection<Pair<String, IDataArtifact>> variables) {
+    for (Pair<String, IDataArtifact> var : variables) {
       context.set(var.getFirst(), var.getSecond().get(state));
     }
     return context;
   }
 
 
-  public IObservation createObservation(IObservable observable, IScale scale,
-      RuntimeContext runtimeContext, IDirectObservation context) throws KlabException {
+  static IObservation createObservation(IObservable observable, IScale scale,
+      RuntimeContext runtimeContext, IDirectObservation context) {
 
     boolean createActors = scale.getTime() != null;
 
@@ -190,9 +198,46 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       throw new IllegalArgumentException(
           "createObservation() does not create relationships: use createRelationship()");
     } else if (observable.is(Type.QUALITY)) {
-      // ret = new State(observable.getLocalName(), (Observable) observable, (Scale) scale,
-      // runtimeContext);
+      
+      IDataArtifact storage = null;
+      
+      if (scale.size() == 1) {
+        switch (observable.getObservationType()) {
+          case CLASSIFICATION:
+            storage = new ConceptSingletonStorage(observable, (Scale)scale);
+            break;
+          case QUANTIFICATION:
+            storage = new DoubleSingletonStorage(observable, (Scale)scale);
+            break;
+          case VERIFICATION:
+            storage = new BooleanSingletonStorage(observable, (Scale)scale);
+            break;
+          case INSTANTIATION:
+          case SIMULATION:
+          case DETECTION:
+          default:
+            throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
+        }
+      } else {
+        
+        // TODO figure out dynamic vs. not
+        storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, runtimeContext);
+      }
+      
+      switch (observable.getObservationType()) {
+        case CLASSIFICATION:
+        case QUANTIFICATION:
+        case VERIFICATION:
+          ret = new State((Observable)observable, (Scale)scale, runtimeContext, storage);
+          break;
+        case INSTANTIATION:
+        case SIMULATION:
+        case DETECTION:
+        default:
+          throw new IllegalArgumentException("illegal observable for storage: " + observable);
+      }
     } else if (observable.is(Type.CONFIGURATION)) {
+      
       ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
           observable.getLocalName(), (Observable) observable, (Scale) scale, runtimeContext);
     }

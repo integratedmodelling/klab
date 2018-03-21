@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -19,7 +19,7 @@ public class Process extends DirectObservation implements IProcess {
 
     private static final long serialVersionUID = -5563009298178472641L;
     
-    public static Process create(String name, IObservable observable, IScale scale, IObjectData data, ISubject context, IMonitor monitor) {
+    public static Process create(String name, IObservable observable, IScale scale, IObjectArtifact data, ISubject context, IMonitor monitor) {
         return null;
     }
 

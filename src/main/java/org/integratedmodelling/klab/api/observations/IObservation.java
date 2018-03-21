@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IObservationIdentity;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
-public interface IObservation extends IObservationData, IObservationIdentity, Serializable, IArtifact {
+public interface IObservation extends IObservationIdentity, Serializable, IArtifact {
 
   /**
    * The subject observation that contextualized this observation. This is not the same as the

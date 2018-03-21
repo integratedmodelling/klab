@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -10,11 +10,11 @@ import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
-public class State<T> extends Observation implements IState<T> {
+public class State extends Observation implements IState {
 
-  IStorage<T> storage;
+  IDataArtifact storage;
 
-  private State(Observable observable, Scale scale, RuntimeContext context, IStorage<T> data) {
+  public State(Observable observable, Scale scale, RuntimeContext context, IDataArtifact data) {
     super(observable, scale, context);
     this.storage = data;
   }
@@ -33,7 +33,7 @@ public class State<T> extends Observation implements IState<T> {
   }
 
   @Override
-  public State<T> as(IObservable observable) {
+  public State as(IObservable observable) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -45,11 +45,11 @@ public class State<T> extends Observation implements IState<T> {
   }
 
   @Override
-  public State<?> next() {
-    return (State<?>)super.next();
+  public State next() {
+    return (State)super.next();
   }
 
-  public T get(ILocator index) {
+  public Object get(ILocator index) {
     return storage.get(index);
   }
 

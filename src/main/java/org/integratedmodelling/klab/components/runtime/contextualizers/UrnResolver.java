@@ -5,14 +5,14 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class UrnResolver implements IExpression, IResolver<IObservationData> {
+public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
   public final static String FUNCTION_ID = "klab.resolve.urn";
   
@@ -28,7 +28,7 @@ public class UrnResolver implements IExpression, IResolver<IObservationData> {
   }
 
   @Override
-  public IObservationData resolve(IObservationData observation, IComputationContext context, IScale locator) {
+  public IArtifact resolve(IArtifact observation, IComputationContext context, IScale locator) {
     // TODO Auto-generated method stub
     return null;
   }

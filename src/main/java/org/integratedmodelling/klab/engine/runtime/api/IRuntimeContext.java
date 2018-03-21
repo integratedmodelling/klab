@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
@@ -16,24 +18,38 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
  *
  */
 public interface IRuntimeContext extends IComputationContext {
-  
+
   /**
-   * Create a child context for the passed observable, containing the target
-   * observation implementation.
+   * Create a child context for the passed observable, containing a new target observation
+   * implementation. The observation is created with the same scale of the current target and the
+   * current target is set as its parent.
    * 
    * @param target
-   * @return
+   * @param namespace namespace where the target was resolved
+   * @return the child context that will resolve the target
    */
-  public IRuntimeContext getChild(IObservable target);
-  
+  public IRuntimeContext createChild(IObservable target, INamespace namespace);
+
+  /**
+   * Create a child context for a previously instantiated observation, setting it as a target for
+   * the computation. The passed observation must have been created using
+   * {@link #newObservation(IObservable, org.integratedmodelling.kim.api.data.IGeometry)} or
+   * {@link #newRelationship(IObservable, org.integratedmodelling.kim.api.data.IGeometry, IObjectArtifact, IObjectArtifact)}.
+   * 
+   * @param target
+   * @param namespace namespace where the target was instantiated
+   * @return the child context to resolve the target
+   */
+  public IRuntimeContext createChild(IObservation target, INamespace namespace);
+
   /**
    * Set the passed data object in the symbol table.
    * 
    * @param name
    * @param data
    */
-  void setData(String name, IObservationData data);
-  
+  void setData(String name, IArtifact data);
+
   /**
    * Set POD data or parameters.
    * 
@@ -41,7 +57,7 @@ public interface IRuntimeContext extends IComputationContext {
    * @param value
    */
   void set(String name, Object value);
-  
+
   /**
    * 
    * @return
@@ -68,16 +84,14 @@ public interface IRuntimeContext extends IComputationContext {
    * 
    * @param outFile
    */
-  void exportStructure(String outFile);
+  void exportNetwork(String outFile);
 
   /**
-   * The data for the subject that provides the context for this computation. It is null only when
-   * the root subject hasn't been resolved yet, which is not a situation that API users will
-   * normally encounter. The data are wrapped into a semantic ISubject after the computation has
-   * ended.
+   * The data for the target of this computation. In k.LAB usually an IObservation. External
+   * computations may use non-semantic artifacts.
    * 
-   * @return
+   * @return the target artifact.
    */
-  IObjectData getTarget();
+  IArtifact getTarget();
 
 }

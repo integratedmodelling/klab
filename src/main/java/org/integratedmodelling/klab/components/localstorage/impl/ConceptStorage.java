@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
-public class ConceptStorage extends Storage implements IStorage<IConcept> {
+public class ConceptStorage extends Storage implements IDataArtifact {
 
   public ConceptStorage(IObservable observable, IScale scale) {
       super(scale);

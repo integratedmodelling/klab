@@ -3,19 +3,18 @@ package org.integratedmodelling.klab.dataflow;
 import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.Workspaces;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationData;
+import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class Dataflow extends Actuator implements IDataflow<IObservationData> {
+public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
   public Dataflow(IMonitor monitor) {
     super(monitor);
@@ -26,27 +25,31 @@ public class Dataflow extends Actuator implements IDataflow<IObservationData> {
   private double            coverage;
 
   @Override
-  public IObservationData run(IMonitor monitor) throws KlabException {
-
+  public IArtifact run(IMonitor monitor) throws KlabException {
 
     /*
      * Children at the dataflow level run in parallel, so have the runtime start futures for each
      * child and chain the results when they come.
      */
-    IObservationData ret = null;
-    for (IActuator actuator : actuators) {
+    IArtifact ret = null;
+    for (IActuator act : actuators) {
       try {
 
-        IObservationData data = Klab.INSTANCE.getRuntimeProvider().compute(actuator,
-            context == null
-                ? Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(((Actuator)actuator).getObservable(), monitor)
-                : ((Subject) context).getRuntimeContext().getChild(((Actuator)actuator).getObservable()))
-            .get();
+        Actuator actuator = (Actuator) act;
+
+        IRuntimeContext runtimeContext = context == null
+            ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(
+                actuator.getObservable(), actuator.getScale(), actuator.getNamespace(), monitor))
+            : ((Subject) context).getRuntimeContext().createChild(actuator.getObservable(),
+                actuator.getNamespace());
+
+        IArtifact data =
+            Klab.INSTANCE.getRuntimeProvider().compute(actuator, runtimeContext).get();
 
         if (ret == null) {
           ret = data;
         } else {
-          ((ObservationData) ret).chain(data);
+          ((ObservedArtifact) ret).chain(data);
         }
       } catch (InterruptedException e) {
         return null;

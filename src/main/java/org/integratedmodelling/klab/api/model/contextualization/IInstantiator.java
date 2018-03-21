@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import java.util.List;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -25,6 +25,6 @@ public interface IInstantiator extends IContextualizer {
    *
    * @return a list of observations, possibly empty but never null.
    */
-  List<IObjectData> instantiate(IObservable semantics, IComputationContext context, ILocator locator);
+  List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context, ILocator locator);
 
 }

@@ -10,18 +10,18 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationData;
+import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -122,6 +122,7 @@ public class Actuator implements IActuator {
 
   /**
    * Compute the actuator.
+   * @param target 
    * 
    * @param context The context observation data (null in the root actuator for a new context)
    * @param runtimeContext this one must be passed a context already adapted to the actuator's names
@@ -130,7 +131,7 @@ public class Actuator implements IActuator {
    * @throws KlabException
    */
   @SuppressWarnings("unchecked")
-  public IObservationData compute(IObjectData context, IRuntimeContext runtimeContext) throws KlabException {
+  public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
     if (computation == null) {
       // compile the contextualization strategy
@@ -149,7 +150,7 @@ public class Actuator implements IActuator {
     // localize names to this actuator's expectations; create non-semantic storage if needed
     IRuntimeContext ctx = setupContext(runtimeContext);
     // this will be null if the actuator is for an instantiator
-    IObservationData ret = runtimeContext.getData(this.name);
+    IArtifact ret = target;
 
     // run it
     for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
@@ -160,20 +161,20 @@ public class Actuator implements IActuator {
          * instead of hard-coding a loop here.
          */
         ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
-            (IStateResolver) contextualizer.getFirst(), (IStorage<?>) ret,
+            (IStateResolver) contextualizer.getFirst(), (IDataArtifact) ret,
             addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
 
       } else if (contextualizer.getFirst() instanceof IResolver) {
-        ret = ((IResolver<IObservationData>) contextualizer.getFirst()).resolve(ret,
+        ret = ((IResolver<IArtifact>) contextualizer.getFirst()).resolve(ret,
             addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
-        for (IObjectData object : ((IInstantiator) contextualizer.getFirst()).instantiate(
+        for (IObjectArtifact object : ((IInstantiator) contextualizer.getFirst()).instantiate(
             this.observable, addParameters(ctx, contextualizer.getSecond()),
             scale.at(ITime.INITIALIZATION))) {
           if (ret == null) {
             ret = object;
           } else {
-            ((ObservationData) ret).chain(object);
+            ((ObservedArtifact) ret).chain(object);
           }
         }
       }
@@ -207,18 +208,8 @@ public class Actuator implements IActuator {
         boolean isConstant = scale.size() == 1;
         if (!isConstant) {
           // TODO analyze the computation and see if we can create a constant instead
-
         }
-        // NOOO
-        runtimeContext.setData(this.name,
-            isConstant ? Klab.INSTANCE.getSingletonStorage(this.observable, this.scale)
-                : Klab.INSTANCE.getStorageProvider().createStorage(this.observable, this.scale, runtimeContext));
-      } else {
-        // create object data
-        // NOOO
-        runtimeContext.setData(this.name,
-            newObjectData(this.name, this.observable, runtimeContext));
-      }
+      } 
     }
     IRuntimeContext ret = runtimeContext.copy();
     for (IActuator input : getInputs()) {
@@ -227,14 +218,6 @@ public class Actuator implements IActuator {
       }
     }
     return ret;
-  }
-
-  // NOOO
-  private IObservationData newObjectData(String name, Observable observable,
-      IRuntimeContext runtimeContext) {
-//    IObjectData ret = ObjectData.create(name, observable);
-//    ((ObjectData)ret).setRuntimeContext(runtimeContext);
-    return null;
   }
 
   public String toString() {

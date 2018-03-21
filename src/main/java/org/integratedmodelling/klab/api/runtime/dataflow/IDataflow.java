@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -13,7 +12,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Dataflows in k.LAB represent "raw" computations, which create, compute and link
- * {@link IObjectData}s in response to a request for observation of a given semantic
+ * {@link IObjectArtifact}s in response to a request for observation of a given semantic
  * {@link IResolvable}. The computation is stripped of all semantics, except for identifying the
  * identity of each built observation; therefore it can be run by a semantically-unaware workflow
  * system.
@@ -46,7 +45,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @param <T> the most specific type of artifact this dataflow will build when run.
  *
  */
-public interface IDataflow<T extends IObservationData> extends IActuator {
+public interface IDataflow<T extends IArtifact> extends IActuator {
 
   /**
    * Run the dataflow using the configured or default {@link IRuntimeProvider} and return the

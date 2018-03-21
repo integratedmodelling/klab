@@ -1,33 +1,12 @@
 package org.integratedmodelling.klab;
 
-import java.lang.reflect.Constructor;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.runtime.observations.Event;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationData;
-import org.integratedmodelling.klab.components.runtime.observations.Process;
-import org.integratedmodelling.klab.components.runtime.observations.Relationship;
-import org.integratedmodelling.klab.components.runtime.observations.State;
-import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.observation.Scale;
-import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.utils.IntelligentMap;
 
 public enum Observations implements IObservationService {
 

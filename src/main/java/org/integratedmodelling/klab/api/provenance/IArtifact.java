@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Collection;
 import java.util.Iterator;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -25,6 +27,20 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  */
 public interface IArtifact extends Node, Iterator<IArtifact> {
 
+  /**
+   * The geometry linked to the observation. Observational artifacts will specialize this as IScale.
+   * 
+   * @return the geometry
+   */
+  IGeometry getGeometry();
+
+  /**
+   * Metadata. Never null, possibly empty. 
+   * 
+   * @return the metadata
+   */
+  IMetadata getMetadata();
+  
   /**
    * 
    * @return

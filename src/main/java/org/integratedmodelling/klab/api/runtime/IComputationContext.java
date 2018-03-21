@@ -3,8 +3,7 @@ package org.integratedmodelling.klab.api.runtime;
 import java.util.Collection;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -13,6 +12,7 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
@@ -71,14 +71,13 @@ public interface IComputationContext extends IParameters {
   Collection<ISubject> getAllSubjects();
 
   /**
-   * Get the resolved {@link IObservationData object} corresponding to the passed local name. Use
+   * Get the resolved {@link IArtifact object} corresponding to the passed local name. Use
    * {@link #get(String)} to retrieve contextualized values for states or parameters.
    * 
    * @param localName
    * @return
    */
-  IObservationData getData(String localName);
-
+  IArtifact getData(String localName);
 
   /**
    * Return a valid monitor for any communication.
@@ -90,12 +89,12 @@ public interface IComputationContext extends IParameters {
   /**
    * Create a new observation of the specified countable observable and with the specified geometry.
    * Use in {@link IInstantiator instantiators} to create new objects. Use
-   * {@link #newRelationship(IObservable, IGeometry, IObjectData, IObjectData)} to create a
+   * {@link #newRelationship(IObservable, IGeometry, IObjectArtifact, IObjectArtifact)} to create a
    * relationship.
    * <p>
    * While any k.LAB-aware implementation will receive a {@link IScale} instead of a
    * {@link IGeometry} and return a {@link ICountableObservation} rather than just
-   * {@link IObjectData}, we keep the basic, non-semantic types in the signature for consistency
+   * {@link IObjectArtifact}, we keep the basic, non-semantic types in the signature for consistency
    * with derived APIs of remote services and other non-semantic computations.
    * <p>
    * As the runtime provider is responsible for creating the {@code IComputationContext}, this is
@@ -107,7 +106,7 @@ public interface IComputationContext extends IParameters {
    * @return a new observation for the observable and geometry
    * @throw IllegalArgumentException if the observable describes a non-countable or a relationship.
    */
-  IObjectData newObservation(IObservable observable, IGeometry geometry);
+  IObjectArtifact newObservation(IObservable observable, IGeometry geometry);
 
   /**
    * Create a new observation of the specified relationship with with the specified geometry, source
@@ -124,7 +123,7 @@ public interface IComputationContext extends IParameters {
    * @return a new observation for the observable and geometry
    * @throw IllegalArgumentException if the observable does not describe a relationship.
    */
-  IObjectData newRelationship(IObservable observable, IGeometry geometry, IObjectData source,
-      IObjectData target);
+  IObjectArtifact newRelationship(IObservable observable, IGeometry geometry, IObjectArtifact source,
+      IObjectArtifact target);
 
 }

@@ -1,8 +1,7 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -10,7 +9,7 @@ import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LDoubleArray;
 import xerial.larray.japi.LArrayJ;
 
-public class DoubleStorage extends Storage implements IStorage<Double> {
+public class DoubleStorage extends Storage implements IDataArtifact {
 
   private LDoubleArray data;
 
@@ -25,7 +24,7 @@ public class DoubleStorage extends Storage implements IStorage<Double> {
   }
 
   @Override
-  public Double get(ILocator index) {
+  public Double get(ILocator index) {   
     long offset = ((Scale) getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
@@ -53,18 +52,6 @@ public class DoubleStorage extends Storage implements IStorage<Double> {
   protected void finalize() throws Throwable {
     data.free();
     super.finalize();
-  }
-
-  @Override
-  public IGeometry getGeometry() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IMetadata getMetadata() {
-    // TODO Auto-generated method stub
-    return metadata;
   }
 
 

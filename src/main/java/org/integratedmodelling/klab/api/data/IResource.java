@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -81,7 +81,7 @@ public interface IResource extends Serializable {
    * @param monitor
    * @return the result of decoding the resource.
    */
-  IObjectData get(IScale scale, IMonitor monitor);
+  IObjectArtifact get(IScale scale, IMonitor monitor);
 
   /**
    * Resources come with both system-defined and user-defined metadata. User metadata will be

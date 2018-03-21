@@ -21,15 +21,12 @@ import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Path;
 
-public abstract class Observation extends ObservationData implements IObservation {
+public abstract class Observation extends ObservedArtifact implements IObservation {
 
-  private static final long      serialVersionUID = -7645502752899232235L;
+  private static final long serialVersionUID = -7645502752899232235L;
 
-  private Observable             observable;
-  private Subject                observer;
-  private Namespace              namespace;
-
-  private IEngineSessionIdentity parentIdentity;
+  private Observable        observable;
+  private Subject           observer;
 
   public String getUrn() {
     return "local:observation:" + getParentIdentity(Session.class).getToken() + ":" + getToken();
@@ -38,8 +35,6 @@ public abstract class Observation extends ObservationData implements IObservatio
   protected Observation(Observable observable, Scale scale, RuntimeContext context) {
     super(scale, context);
     this.observable = observable;
-    this.parentIdentity =
-        context.getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
   }
 
   @Override
@@ -84,7 +79,7 @@ public abstract class Observation extends ObservationData implements IObservatio
 
   @Override
   public IEngineSessionIdentity getParentIdentity() {
-    return parentIdentity;
+    return getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
   }
 
   @Override
@@ -121,76 +116,12 @@ public abstract class Observation extends ObservationData implements IObservatio
   }
 
   public Namespace getNamespace() {
-    return namespace;
-  }
-
-  public void setNamespace(INamespace namespace) {
-    this.namespace = (Namespace) namespace;
-  }
-
-  public void setContext(DirectObservation context) {
-    // TODO Auto-generated method stub
+    return (Namespace)getRuntimeContext().getNamespace();
   }
 
   @Override
   public DirectObservation getContext() {
-    return (DirectObservation)super.getParent();
-  }
-  
-  // Provenance (from IArtifact's contract)
-
-  @Override
-  public IAgent getConsumer() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IAgent getOwner() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Collection<IArtifact> getAntecedents() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Collection<IArtifact> getConsequents() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IArtifact trace(IConcept concept) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Collection<IArtifact> collect(IConcept concept) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IArtifact trace(IConcept role, IDirectObservation roleContext) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public long getTimestamp() {
-    // TODO Auto-generated method stub
-    return 0;
+    return (DirectObservation) super.getParent();
   }
 
   @Override
@@ -198,15 +129,15 @@ public abstract class Observation extends ObservationData implements IObservatio
     // TODO Auto-generated method stub
     return false;
   }
-  
+
   public String toString() {
     return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() + ": "
         + getObservable() + "}";
   }
 
   public Observation next() {
-    return (Observation)super.next();
+    return (Observation) super.next();
   }
-  
+
 
 }

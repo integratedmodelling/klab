@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.data;
 
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -24,6 +24,6 @@ public interface IStorageProvider {
    * @param context 
    * @return
    */
-  IStorage<?> createStorage(IObservable observable, IScale scale, IComputationContext context);
+  IDataArtifact createStorage(IObservable observable, IScale scale, IComputationContext context);
 
 }

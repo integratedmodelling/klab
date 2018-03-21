@@ -7,25 +7,29 @@ import java.util.List;
 import java.util.Map;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * A runtime context is installed in the root subject to keep track of what happens during
@@ -38,19 +42,30 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  */
 public class RuntimeContext extends Parameters implements IRuntimeContext {
 
-  Namespace namespace;
-  IObservationData target;
-  Provenance provenance;
-  EventBus eventBus;
-  ConfigurationDetector configurationDetector;
-  Graph<ISubject, IRelationship> structure;
-  Map<String, IObservationData> catalog = new HashMap<>();
-  IMonitor monitor;
-  RuntimeContext parent;  
-  
-  public RuntimeContext(IObservable target, IMonitor monitor) {
-    this.structure = new DefaultDirectedGraph<>(Relationship.class);
+  INamespace                           namespace;
+  IArtifact                     target;
+  Provenance                           provenance;
+  EventBus                             eventBus;
+  ConfigurationDetector                configurationDetector;
+  Graph<ISubject, IRelationship>       network;
+  Graph<IArtifact, DefaultEdge> structure;
+  Map<String, IArtifact>        catalog = new HashMap<>();
+  IMonitor                             monitor;
+  RuntimeContext                       parent;
+
+  public RuntimeContext(IObservable observable, IScale scale, INamespace namespace,
+      IMonitor monitor) {
+    this.network = new DefaultDirectedGraph<>(Relationship.class);
+    this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+    this.provenance = /* TODO new Provenance() */ null;
     this.monitor = monitor;
+    this.namespace = namespace;
+    this.target = DefaultRuntimeProvider.createObservation(observable, scale, this, null);
+    this.structure.addVertex(this.target);
+    // TODO provenance (may need to pass the actuator)
+    if (this.target instanceof ISubject) {
+      this.network.addVertex((ISubject) this.target);
+    }
   }
 
   RuntimeContext(RuntimeContext context) {
@@ -59,6 +74,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.provenance = context.provenance;
     this.eventBus = context.eventBus;
     this.configurationDetector = context.configurationDetector;
+    this.network = context.network;
     this.structure = context.structure;
     this.monitor = context.monitor;
     this.catalog.putAll(context.catalog);
@@ -81,21 +97,21 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   @Override
   public Collection<IRelationship> getOutgoingRelationships(ISubject observation) {
-    return structure.outgoingEdgesOf(observation);
+    return network.outgoingEdgesOf(observation);
   }
 
   @Override
   public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
-    return structure.incomingEdgesOf(observation);
+    return network.incomingEdgesOf(observation);
   }
 
   @Override
   public Collection<ISubject> getAllSubjects() {
-    return structure.vertexSet();
+    return network.vertexSet();
   }
 
   @Override
-  public void exportStructure(String outFile) {
+  public void exportNetwork(String outFile) {
     // TODO export a GEFX file
   }
 
@@ -105,7 +121,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IObservationData getData(String localName) {
+  public IArtifact getData(String localName) {
     return catalog.get(localName);
   }
 
@@ -116,7 +132,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   @Override
   public void rename(String name, String alias) {
-    IObservationData obj = catalog.get(name);
+    IArtifact obj = catalog.get(name);
     if (obj != null) {
       catalog.remove(name);
       catalog.put(alias, obj);
@@ -124,18 +140,18 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public void setData(String name, IObservationData data) {
+  public void setData(String name, IArtifact data) {
     catalog.put(name, data);
   }
 
   /*
    * return all states that must be localized when a IStateContextualizer is run.
    */
-  public Collection<Pair<String, IStorage<?>>> getStateDependentData() {
-    List<Pair<String, IStorage<?>>> ret = new ArrayList<>();
+  public Collection<Pair<String, IDataArtifact>> getStateDependentData() {
+    List<Pair<String, IDataArtifact>> ret = new ArrayList<>();
     for (String var : catalog.keySet()) {
-      if (catalog.get(var) instanceof IStorage<?>) {
-        ret.add(new Pair<>(var, (IStorage<?>)catalog.get(var)));
+      if (catalog.get(var) instanceof IDataArtifact) {
+        ret.add(new Pair<>(var, (IDataArtifact) catalog.get(var)));
       }
     }
     return ret;
@@ -146,23 +162,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IRuntimeContext getChild(IObservable target) {
-    RuntimeContext ret = new RuntimeContext(this);
-    ret.parent = this;
-    // TODO make target!
-    return null;
-  }
-
-  @Override
-  public IObjectData getTarget() {
-    // TODO Auto-generated method stub
-    return null;
+  public IArtifact getTarget() {
+    return target;
   }
 
   @Override
   public IMonitor getMonitor() {
-    // TODO Auto-generated method stub
-    return null;
+    return monitor;
   }
 
   @Override
@@ -173,10 +179,59 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IRelationship newRelationship(IObservable observable, IGeometry geometry, IObjectData source,
-      IObjectData target) {
+  public IRelationship newRelationship(IObservable observable, IGeometry geometry,
+      IObjectArtifact source, IObjectArtifact target) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public IRuntimeContext createChild(IObservable target, INamespace namespace) {
+    RuntimeContext ret = new RuntimeContext(this);
+    ret.parent = this;
+    ret.namespace = namespace;
+    if (!(this.target instanceof DirectObservation)) {
+      throw new IllegalArgumentException(
+          "RuntimeContext: cannot add a child observation to a non-direct observation");
+    }
+    ret.target = DefaultRuntimeProvider.createObservation(target,
+        ((Observation) this.target).getScale(), this, (DirectObservation) this.target);
+    this.structure.addVertex(ret.target);
+    // create child->parent edge
+    this.structure.addEdge(ret.target, this.target);
+    // TODO provenance (may need to pass the actuator)
+    if (ret.target instanceof ISubject) {
+      this.network.addVertex((ISubject) ret.target);
+    }
+    return ret;
+  }
+  
+  /**
+   * Return all the children of an artifact in the structural graph that match a certain class.
+   * 
+   * @param artifact
+   * @param cls
+   * @return the set of all children of class cls
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls) {
+    List<T> ret = new ArrayList<>();
+    for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
+      IArtifact source = this.structure.getEdgeSource(edge);
+      if (cls.isAssignableFrom(source.getClass())) {
+        ret.add((T)source);
+      }
+    }
+    return ret;
+  }
+
+  @Override
+  public IRuntimeContext createChild(IObservation target, INamespace namespace) {
+    RuntimeContext ret = new RuntimeContext(this);
+    ret.parent = this;
+    ret.namespace = namespace;
+    ret.target = (Observation) target;
+    return ret;
   }
 
 }

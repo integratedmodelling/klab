@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LBitArray;
 import xerial.larray.japi.LArrayJ;
 
-public class BooleanStorage extends Storage implements IStorage<Boolean> {
+public class BooleanStorage extends Storage implements IDataArtifact {
 
   private LBitArray data;
   private LBitArray mask;

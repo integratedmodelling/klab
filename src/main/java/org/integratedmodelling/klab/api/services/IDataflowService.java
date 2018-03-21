@@ -6,8 +6,8 @@ import java.net.URL;
 import java.util.List;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -59,7 +59,7 @@ public interface IDataflowService {
    * @return a dataflow that will compute an artifact of the requested type when run.
    * @throws KlabException
    */
-  <T extends IObservationData> IDataflow<T> compile(String name, IResolutionScope scope)
+  <T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope)
       throws KlabException;
 
   /**

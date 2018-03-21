@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -21,7 +21,7 @@ public class Relationship extends CountableObservation implements IRelationship 
 
   private static final long serialVersionUID = -3655402547302227307L;
 
-  public static Relationship create(String name, IObservable observable, IScale scale, IObjectData data,
+  public static Relationship create(String name, IObservable observable, IScale scale, IObjectArtifact data,
       ISubject context, ISubject source, ISubject target, IMonitor monitor) {
     return null;
   }

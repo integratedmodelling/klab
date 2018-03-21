@@ -3,26 +3,26 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Objects;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.provenance.Artifact;
 
-public abstract class AbstractSingletonStorage<T> implements IStorage<T> {
+public abstract class AbstractSingletonStorage<T> extends Artifact implements IDataArtifact {
 
   IObservable semantics;
   // we only store the scale to enable promotion to regular if needed
   Scale       scale;
   T           value;
   Metadata    metadata    = new Metadata();
-  IStorage<T> delegate    = null;
+  IDataArtifact delegate    = null;
   // value was set
   boolean     initialized = false;
-  IObjectData parent;
+  IObjectArtifact parent;
   
   protected AbstractSingletonStorage(IObservable observable, Scale scale) {
     this.semantics = observable;
