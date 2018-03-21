@@ -116,7 +116,7 @@ public abstract interface IIdentity {
    * 
    * @return the desired identity or null.
    */
-  <T extends IIdentity> T getParent(Class<T> type);
+  <T extends IIdentity> T getParentIdentity(Class<T> type);
 
   /*
    *  Provided to simplify implementing the getParentIdentity method.

@@ -32,7 +32,7 @@ public interface ILocator {
   ILocator at(ILocator locator);
 
   /**
-   * Iterate over a dimension. This will produce in turn all the locator pointing to each state in
+   * Iterate over a dimension. This will produce in turn all the locators pointing to each state in
    * the requested dimension, everything else being the same as this.
    * 
    * @param dimension

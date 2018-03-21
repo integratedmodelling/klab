@@ -1,22 +1,22 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.data.ObservationData;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LDoubleArray;
 import xerial.larray.japi.LArrayJ;
 
-public class DoubleStorage extends ObservationData implements IStorage<Double> {
+public class DoubleStorage extends Storage implements IStorage<Double> {
 
   private LDoubleArray data;
-  
-  public DoubleStorage(IObservable observable, Scale scale, IRuntimeContext context) {
-      super(scale, context);
-      this.data = LArrayJ.newLDoubleArray(scale.size());
+
+  public DoubleStorage(IObservable observable, IGeometry scale) {
+    super(scale);
+    this.data = LArrayJ.newLDoubleArray(scale.size());
   }
 
   @Override
@@ -26,7 +26,7 @@ public class DoubleStorage extends ObservationData implements IStorage<Double> {
 
   @Override
   public Double get(ILocator index) {
-    long offset = ((Scale)getGeometry()).getOffset(index);
+    long offset = ((Scale) getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
@@ -36,12 +36,12 @@ public class DoubleStorage extends ObservationData implements IStorage<Double> {
 
   @Override
   public void set(ILocator index, Object value) {
-    long offset = ((Scale)getGeometry()).getOffset(index);
+    long offset = ((Scale) getGeometry()).getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    data.update(offset, value instanceof Number ? ((Number)value).doubleValue() : convert(value));
+    data.update(offset, value instanceof Number ? ((Number) value).doubleValue() : convert(value));
   }
 
   private double convert(Object value) {
@@ -54,7 +54,19 @@ public class DoubleStorage extends ObservationData implements IStorage<Double> {
     data.free();
     super.finalize();
   }
-  
-  
-  
+
+  @Override
+  public IGeometry getGeometry() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public IMetadata getMetadata() {
+    // TODO Auto-generated method stub
+    return metadata;
+  }
+
+
+
 }

@@ -13,14 +13,12 @@ import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.data.ObservationData;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 
 public abstract class Observation extends ObservationData implements IObservation {
@@ -28,21 +26,20 @@ public abstract class Observation extends ObservationData implements IObservatio
   private static final long      serialVersionUID = -7645502752899232235L;
 
   private Observable             observable;
-  private String                 token            = "o" + NameGenerator.shortUUID();
   private Subject                observer;
   private Namespace              namespace;
 
   private IEngineSessionIdentity parentIdentity;
 
   public String getUrn() {
-    return "local:observation:" + getParent(Session.class).getToken() + ":" + getToken();
+    return "local:observation:" + getParentIdentity(Session.class).getToken() + ":" + getToken();
   }
 
-  protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
+  protected Observation(Observable observable, Scale scale, RuntimeContext context) {
     super(scale, context);
     this.observable = observable;
     this.parentIdentity =
-        context.getMonitor().getIdentity().getParent(IEngineSessionIdentity.class);
+        context.getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
   }
 
   @Override
@@ -97,7 +94,7 @@ public abstract class Observation extends ObservationData implements IObservatio
 
   @Override
   public String getToken() {
-    return token;
+    return super.getId();
   }
 
   @Override
@@ -106,7 +103,7 @@ public abstract class Observation extends ObservationData implements IObservatio
   }
 
   @Override
-  public <T extends IIdentity> T getParent(Class<T> type) {
+  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
     return IIdentity.findParent(this, type);
   }
 
@@ -114,15 +111,6 @@ public abstract class Observation extends ObservationData implements IObservatio
   public IProvenance getProvenance() {
     return getRuntimeContext().getProvenance();
   }
-
-  public String getId() {
-    return token;
-  }
-
-  public void setId(String id) {
-    this.token = id;
-  }
-
 
   public void setObservable(Observable observable) {
     this.observable = observable;
@@ -140,6 +128,15 @@ public abstract class Observation extends ObservationData implements IObservatio
     this.namespace = (Namespace) namespace;
   }
 
+  public void setContext(DirectObservation context) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public DirectObservation getContext() {
+    return (DirectObservation)super.getParent();
+  }
+  
   // Provenance (from IArtifact's contract)
 
   @Override
@@ -201,49 +198,15 @@ public abstract class Observation extends ObservationData implements IObservatio
     // TODO Auto-generated method stub
     return false;
   }
-
-  @Override
-  public boolean hasNext() {
-    // TODO
-    return false;
-  }
-
-  @Override
-  public IObservation next() {
-    // TODO
-    return null;
-  }
   
   public String toString() {
     return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() + ": "
         + getObservable() + "}";
   }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((token == null) ? 0 : token.hashCode());
-    return result;
+  public Observation next() {
+    return (Observation)super.next();
   }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Observation other = (Observation) obj;
-    if (token == null) {
-      if (other.token != null)
-        return false;
-    } else if (!token.equals(other.token))
-      return false;
-    return true;
-  }
-  
   
 
 }

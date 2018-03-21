@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
@@ -15,9 +14,8 @@ import org.integratedmodelling.klab.owl.Observable;
  */
 public abstract class CountableObservation extends DirectObservation {
 
-  protected CountableObservation(String name, Observable observable, Scale scale, IObjectData data,
-      IMonitor monitor) {
-    super(name, observable, scale, data, monitor);
+  protected CountableObservation(String name, Observable observable, Scale scale, RuntimeContext context) {
+    super(name, observable, scale, context);
     // resolving the observable is always optional
     observable.setOptional(true);
   }

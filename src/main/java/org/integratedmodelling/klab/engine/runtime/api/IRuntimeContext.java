@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
+import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * This API extends {@link IComputationContext} to add setters and other functionalities that is
@@ -69,11 +69,15 @@ public interface IRuntimeContext extends IComputationContext {
    * @param outFile
    */
   void exportStructure(String outFile);
-  
+
   /**
-   * Return a valid monitor for any communication.
+   * The data for the subject that provides the context for this computation. It is null only when
+   * the root subject hasn't been resolved yet, which is not a situation that API users will
+   * normally encounter. The data are wrapped into a semantic ISubject after the computation has
+   * ended.
    * 
    * @return
    */
-  IMonitor getMonitor();
+  IObjectData getTarget();
+
 }

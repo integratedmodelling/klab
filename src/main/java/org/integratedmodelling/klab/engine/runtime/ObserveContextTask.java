@@ -35,7 +35,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
   public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
 
-    Engine engine = session.getParent(Engine.class);
+    Engine engine = session.getParentIdentity(Engine.class);
     try {
 
       this.monitor = (session.getMonitor()).get(this);
@@ -83,7 +83,7 @@ public class ObserveContextTask implements ITask<ISubject> {
   }
 
   @Override
-  public <T extends IIdentity> T getParent(Class<T> type) {
+  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
     return IIdentity.findParent(this, type);
   }
 

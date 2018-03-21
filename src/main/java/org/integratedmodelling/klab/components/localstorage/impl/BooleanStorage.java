@@ -4,20 +4,18 @@ import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.data.ObservationData;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LBitArray;
 import xerial.larray.japi.LArrayJ;
 
-public class BooleanStorage extends ObservationData implements IStorage<Boolean> {
+public class BooleanStorage extends Storage implements IStorage<Boolean> {
 
   private LBitArray data;
   private LBitArray mask;
 
-  public BooleanStorage(IObservable observable, Scale scale, IRuntimeContext context) {
-    super(scale, context);
+  public BooleanStorage(IObservable observable, IScale scale) {
+    super(scale);
     this.data = LArrayJ.newLBitArray(scale.size());
     this.mask = LArrayJ.newLBitArray(scale.size());
   }

@@ -39,7 +39,7 @@ public class Session implements ISession {
   }
 
   @Override
-  public <T extends IIdentity> T getParent(Class<T> type) {
+  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
     return IIdentity.findParent(this, type);
   }
 

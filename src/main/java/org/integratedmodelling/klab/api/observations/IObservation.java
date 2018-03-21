@@ -52,14 +52,6 @@ public interface IObservation extends IObservationData, IObservationIdentity, Se
   IDirectObservation getContext();
 
   /**
-   * The topmost ISubject that acts as a context for everything. This subject's getRoot() will
-   * return null.
-   * 
-   * @return the root subject. Never null.
-   */
-  ISubject getRoot();
-
-  /**
    * True if our scale has an observation of space with more than one state
    * value.
    * 
@@ -94,14 +86,6 @@ public interface IObservation extends IObservationData, IObservationIdentity, Se
    * @return the observation of space
    */
   ISpace getSpace();
-
-  /**
-   * All observations wrap a raw data object, which dataflows and contextualizers operate upon. The
-   * data object also mirrors any chained artifacts' content through its own iterator API.
-   * 
-   * @return the observation data. Never null.
-   */
-  IObservationData getData();
 
   /**
    * Any observation that exists has provenance. Call this on the root observation for the entire

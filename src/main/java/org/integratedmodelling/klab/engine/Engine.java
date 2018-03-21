@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
@@ -27,8 +26,6 @@ import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
-import org.integratedmodelling.klab.api.extensions.SubjectType;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -144,7 +141,7 @@ public class Engine extends Server implements IEngine {
   }
 
   @Override
-  public <T extends IIdentity> T getParent(Class<T> type) {
+  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
     return IIdentity.findParent(this, type);
   }
 
@@ -162,7 +159,7 @@ public class Engine extends Server implements IEngine {
 
   @Override
   public Session createSession() {
-    return createSession(getParent(IEngineUserIdentity.class));
+    return createSession(getParentIdentity(IEngineUserIdentity.class));
   }
 
   @Override
@@ -383,17 +380,17 @@ public class Engine extends Server implements IEngine {
 
     registerCommonAnnotations();
 
-    // TODO reinstate whatever must be kept plus any data services and subsystems
-    Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
-      @SuppressWarnings("unchecked")
-      @Override
-      public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-        String concept = ((SubjectType) annotation).value();
-        if (ISubject.class.isAssignableFrom(cls)) {
-          Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
-        }
-      }
-    });
+//    // TODO reinstate whatever must be kept plus any data services and subsystems
+//    Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
+//      @SuppressWarnings("unchecked")
+//      @Override
+//      public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+//        String concept = ((SubjectType) annotation).value();
+//        if (ISubject.class.isAssignableFrom(cls)) {
+//          Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
+//        }
+//      }
+//    });
 
     Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
       @Override

@@ -5,12 +5,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IObservationData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -41,12 +43,15 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   Provenance provenance;
   EventBus eventBus;
   ConfigurationDetector configurationDetector;
-  Graph<ISubject, IRelationship> structure = new DefaultDirectedGraph<>(Relationship.class);
+  Graph<ISubject, IRelationship> structure;
   Map<String, IObservationData> catalog = new HashMap<>();
   IMonitor monitor;
   RuntimeContext parent;  
   
-  public RuntimeContext(IObservable target, IMonitor monitor) {}
+  public RuntimeContext(IObservable target, IMonitor monitor) {
+    this.structure = new DefaultDirectedGraph<>(Relationship.class);
+    this.monitor = monitor;
+  }
 
   RuntimeContext(RuntimeContext context) {
     this.putAll(context);
@@ -156,6 +161,20 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   @Override
   public IMonitor getMonitor() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ICountableObservation newObservation(IObservable observable, IGeometry geometry) {
+    // TODO Auto-generated method stub
+    // TODO plain objects if scale has no time, Akka actors otherwise
+    return null;
+  }
+
+  @Override
+  public IRelationship newRelationship(IObservable observable, IGeometry geometry, IObjectData source,
+      IObjectData target) {
     // TODO Auto-generated method stub
     return null;
   }

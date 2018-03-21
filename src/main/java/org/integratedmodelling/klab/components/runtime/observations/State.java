@@ -1,13 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
 import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
@@ -15,24 +14,13 @@ public class State<T> extends Observation implements IState<T> {
 
   IStorage<T> storage;
 
-  private State(Observable observable, Scale scale, IStorage<T> data, Subject context, IMonitor monitor) {
-    super(observable, scale, monitor);
-    setContextObservation(context);
+  private State(Observable observable, Scale scale, RuntimeContext context, IStorage<T> data) {
+    super(observable, scale, context);
     this.storage = data;
   }
 
   private static final long serialVersionUID = -7075415960868285693L;
-
-  public static State create(Observable observable, Scale scale, IStorage<?> data, Subject context,
-      IMonitor monitor) {
-    return new State(observable, scale, data, context, monitor);
-  }
-
-  @Override
-  public IStorage<?> getData() {
-      return storage;
-  }
-
+  
   @Override
   public boolean isConstant() {
     // TODO Auto-generated method stub
@@ -75,10 +63,6 @@ public class State<T> extends Observation implements IState<T> {
 
   public IMetadata getMetadata() {
     return storage.getMetadata();
-  }
-
-  public IObjectData getParent() {
-    return storage.getParent();
   }
 
   public long size() {

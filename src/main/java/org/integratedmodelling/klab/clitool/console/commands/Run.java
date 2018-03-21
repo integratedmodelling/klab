@@ -29,7 +29,7 @@ public class Run implements ICommand {
           }
       }
       if (url != null) {
-        Engine engine = session.getParent(Engine.class);
+        Engine engine = session.getParentIdentity(Engine.class);
         session.getMonitor().info(url + " -> " + engine.run(url).get());
       }
     }

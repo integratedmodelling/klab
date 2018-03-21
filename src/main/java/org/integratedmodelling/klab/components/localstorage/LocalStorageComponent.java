@@ -10,26 +10,25 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.localstorage.impl.BooleanStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.ConceptStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.DoubleStorage;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.observation.Scale;
 
-@Component(id="local.storage", version=Version.CURRENT)
+@Component(id = "local.storage", version = Version.CURRENT)
 public class LocalStorageComponent implements IStorageProvider {
 
   public LocalStorageComponent() {
     // TODO Auto-generated constructor stub
-    // TODO install reaper for any leftover storage 
+    // TODO install reaper for any leftover storage
   }
 
   @Override
   public IStorage<?> createStorage(IObservable observable, IScale scale, IComputationContext context) {
     switch (observable.getObservationType()) {
       case CLASSIFICATION:
-        return new ConceptStorage(observable, (Scale)scale, (IRuntimeContext)context);
+        return new ConceptStorage(observable, scale);
       case QUANTIFICATION:
-        return new DoubleStorage(observable, (Scale)scale, (IRuntimeContext)context);
+        return new DoubleStorage(observable, scale);
       case VERIFICATION:
-        return new BooleanStorage(observable, (Scale)scale, (IRuntimeContext)context);
+        return new BooleanStorage(observable, scale);
       case INSTANTIATION:
       case SIMULATION:
       case DETECTION:
@@ -37,5 +36,5 @@ public class LocalStorageComponent implements IStorageProvider {
         throw new IllegalArgumentException("illegal observable for state storage: " + observable);
     }
   }
-  
+
 }

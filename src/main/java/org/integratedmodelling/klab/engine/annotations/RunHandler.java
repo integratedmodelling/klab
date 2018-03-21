@@ -38,7 +38,7 @@ public class RunHandler implements Annotations.Handler {
 
       // safe cast as the annotation is limited to observers
       IObserver observer = (IObserver) target;
-      Session session = monitor.getIdentity().getParent(Session.class);
+      Session session = monitor.getIdentity().getParentIdentity(Session.class);
 
       if (session != null && observer != null) {
         ISubject subject = session.observe(observer.getName()).get();

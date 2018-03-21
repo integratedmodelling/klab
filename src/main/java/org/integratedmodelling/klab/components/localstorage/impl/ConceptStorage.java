@@ -4,14 +4,12 @@ import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.data.ObservationData;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 
-public class ConceptStorage extends ObservationData implements IStorage<IConcept> {
+public class ConceptStorage extends Storage implements IStorage<IConcept> {
 
-  public ConceptStorage(IObservable observable, Scale scale, IRuntimeContext context) {
-      super(scale, context);
+  public ConceptStorage(IObservable observable, IScale scale) {
+      super(scale);
   }
 
   @Override

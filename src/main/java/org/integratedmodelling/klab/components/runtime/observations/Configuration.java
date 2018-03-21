@@ -1,19 +1,14 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import java.util.Collection;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.raw.IObjectData;
-import org.integratedmodelling.klab.api.data.raw.IObservationData;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
 public class Configuration extends CountableObservation implements IConfiguration {
 
-    protected Configuration(String name, Observable observable, Scale scale, IObjectData data, IMonitor monitor) {
-        super(name, observable, scale, data, monitor);
+    public Configuration(String name, Observable observable, Scale scale, RuntimeContext context) {
+        super(name, observable, scale, context);
         // TODO Auto-generated constructor stub
     }
 
@@ -23,5 +18,7 @@ public class Configuration extends CountableObservation implements IConfiguratio
     public Configuration next() {
       return (Configuration)super.next();
     }
+
+
 
 }

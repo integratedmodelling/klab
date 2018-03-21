@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
@@ -16,6 +17,8 @@ import org.integratedmodelling.klab.api.data.raw.IStorage;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
@@ -24,10 +27,16 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
+import org.integratedmodelling.klab.components.runtime.observations.Event;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.Process;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
+import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
@@ -54,7 +63,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
   @Override
-  public Future<IObservationData> compute(IActuator actuator, IComputationContext context) throws KlabException {
+  public Future<IObservationData> compute(IActuator actuator, IComputationContext context)
+      throws KlabException {
 
     return executor.submit(new Callable<IObservationData>() {
 
@@ -68,7 +78,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         while (sorter.hasNext()) {
           Actuator active = (Actuator) sorter.next();
-          ret = active.compute(context.getTarget(), (IRuntimeContext) context);
+          ret = active.compute(((RuntimeContext) context).getTarget(), (IRuntimeContext) context);
         }
 
         return ret;
@@ -158,6 +168,35 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       context.set(var.getFirst(), var.getSecond().get(state));
     }
     return context;
+  }
+
+
+  public IObservation createObservation(IObservable observable, IScale scale,
+      RuntimeContext runtimeContext, IDirectObservation context) throws KlabException {
+
+    boolean createActors = scale.getTime() != null;
+
+    Observation ret = null;
+    if (observable.is(Type.SUBJECT)) {
+      ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale,
+          runtimeContext);
+    } else if (observable.is(Type.EVENT)) {
+      ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale,
+          runtimeContext);
+    } else if (observable.is(Type.PROCESS)) {
+      ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale,
+          runtimeContext);
+    } else if (observable.is(Type.RELATIONSHIP)) {
+      throw new IllegalArgumentException(
+          "createObservation() does not create relationships: use createRelationship()");
+    } else if (observable.is(Type.QUALITY)) {
+      // ret = new State(observable.getLocalName(), (Observable) observable, (Scale) scale,
+      // runtimeContext);
+    } else if (observable.is(Type.CONFIGURATION)) {
+      ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
+          observable.getLocalName(), (Observable) observable, (Scale) scale, runtimeContext);
+    }
+    return ret;
   }
 
 

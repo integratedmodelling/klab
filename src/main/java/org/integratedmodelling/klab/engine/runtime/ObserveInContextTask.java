@@ -41,8 +41,8 @@ public class ObserveInContextTask implements ITask<IObservation> {
   public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
 
     this.context = context;
-    this.monitor = context.getRoot().getMonitor().get(this);
-    this.session = context.getParent(Session.class);
+    this.monitor = context.getMonitor().get(this);
+    this.session = context.getParentIdentity(Session.class);
     this.taskDescription =
         "<task " + token + ": observation of " + urn + " within " + context + ">";
 
@@ -77,7 +77,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
       }
     });
 
-    context.getParent(Engine.class).getTaskExecutor().execute(delegate);
+    context.getParentIdentity(Engine.class).getTaskExecutor().execute(delegate);
   }
 
   public String toString() {
@@ -95,7 +95,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
   }
 
   @Override
-  public <T extends IIdentity> T getParent(Class<T> type) {
+  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
     return IIdentity.findParent(this, type);
   }
 

@@ -31,11 +31,4 @@ public interface IObservationData {
    */
   IMetadata getMetadata();
   
-  /**
-   * Objects are arranged in a tree where only the top object has no parent.
-   * 
-   * @return the parent, or null.
-   */
-  IObjectData getParent();
-
 }

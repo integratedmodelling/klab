@@ -61,8 +61,8 @@ public interface IExtent
   /**
    * If this extent specifies a larger portion of the topology than the modeled world contains,
    * return a < 1.0 coverage. This can happen when the extent semantics constrains the
-   * representation - e.g. regular spatial grids covering more space than there is. Coverage = 0
-   * should never happen as such extents should not be returned by any function.
+   * representation - e.g. regular spatial grids covering more space than there actually is.
+   * Coverage = 0 should never happen as such extents should not be returned by any function.
    * 
    * @return coverage in the range (0 1]
    */

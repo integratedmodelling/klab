@@ -16,11 +16,11 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationData;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.data.ObservationData;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -33,17 +33,17 @@ public enum Observations implements IObservationService {
 
   INSTANCE;
 
-  IntelligentMap<Class<? extends ISubject>> subjectClasses = new IntelligentMap<>();
+//  IntelligentMap<Class<? extends ISubject>> subjectClasses = new IntelligentMap<>();
 
-  /**
-   * Record a Subject class to use to instantiate a specific type of subject.
-   * 
-   * @param concept
-   * @param cls
-   */
-  public void registerSubjectClass(String concept, Class<? extends ISubject> cls) {
-    subjectClasses.put(Observables.INSTANCE.declare(concept), cls);
-  }
+//  /**
+//   * Record a Subject class to use to instantiate a specific type of subject.
+//   * 
+//   * @param concept
+//   * @param cls
+//   */
+//  public void registerSubjectClass(String concept, Class<? extends ISubject> cls) {
+//    subjectClasses.put(Observables.INSTANCE.declare(concept), cls);
+//  }
 
   @Override
   public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
@@ -93,106 +93,43 @@ public enum Observations implements IObservationService {
 //    return result;
 //  }
 
-  public Process createProcess(Observable observable, String name, Scale scale, IObjectData data, Namespace namespace,
-      Monitor monitor, Subject context) throws KlabException {
-    Process result = Process.create(name, observable, scale, data, context, monitor);
-    result.setNamespace(namespace);
-    return result;
-  }
+//  public Subject createSubject(Observable observable, String name, Scale scale, IObjectData data, INamespace namespace,
+//      IMonitor monitor, DirectObservation context) throws KlabException {
+//
+//    Subject result;
+//    Constructor<?> constructor;
+//
+//    Class<?> agentClass = subjectClasses.get(observable.getType());
+//
+//    if (agentClass != null) {
+//      try {
+//        constructor = agentClass.getConstructor(String.class, IObservable.class, IScale.class,
+//            IMonitor.class);
+//      } catch (Exception e) {
+//        throw new KlabInternalErrorException(
+//            "No viable constructor found for Java class '" + agentClass.getCanonicalName()
+//                + "' for agent type '" + observable.getLocalName() + "'");
+//      }
+//
+//      try {
+//        result = (Subject) constructor.newInstance(name, observable, scale, monitor);
+//      } catch (Exception e) {
+//        throw new KlabInternalErrorException(
+//            "Unable to generate new instance of Java class '" + agentClass.getCanonicalName()
+//                + "' for agent type '" + observable.getLocalName() + "'");
+//      }
+//    } else {
+//      result = Subject.create(name, observable, scale, data, monitor);
+//    }
+//
+//    if (context != null) {
+//      result.setContext(context);
+//    }
+//    result.setNamespace(namespace);
+//
+//    return result;
+//  }
 
-  public Event createEvent(Observable observable, String name, Scale scale, IObjectData data, Namespace namespace,
-      Monitor monitor, Subject context) throws KlabException {
-    Event result = Event.create(name, observable, scale, data, context, monitor);
-    result.setNamespace(namespace);
-    return result;
-  }
-
-  public State createState(Observable observable, Scale scale, IStorage<?> data, Namespace namespace, Monitor monitor,
-      Subject context) throws KlabException {
-    State result = State.create(observable, scale, data, context, monitor);
-    result.setNamespace(namespace);
-    return result;
-  }
-
-  public Configuration createConfiguration(Observable observable, String name, Scale scale,
-      Namespace namespace, Monitor monitor, DirectObservation context) throws KlabException {
-    return null;
-  }
-
-  public Relationship createRelationship(Observable observable, String name, Scale scale,
-      Namespace namespace, Monitor monitor, DirectObservation context, Subject source,
-      Subject target) throws KlabException {
-    return null;
-  }
-
-  public Subject createSubject(Observable observable, String name, Scale scale, IObjectData data, INamespace namespace,
-      IMonitor monitor, DirectObservation context) throws KlabException {
-
-    Subject result;
-    Constructor<?> constructor;
-
-    Class<?> agentClass = subjectClasses.get(observable.getType());
-
-    if (agentClass != null) {
-      try {
-        constructor = agentClass.getConstructor(String.class, IObservable.class, IScale.class,
-            IMonitor.class);
-      } catch (Exception e) {
-        throw new KlabInternalErrorException(
-            "No viable constructor found for Java class '" + agentClass.getCanonicalName()
-                + "' for agent type '" + observable.getLocalName() + "'");
-      }
-
-      try {
-        result = (Subject) constructor.newInstance(name, observable, scale, monitor);
-      } catch (Exception e) {
-        throw new KlabInternalErrorException(
-            "Unable to generate new instance of Java class '" + agentClass.getCanonicalName()
-                + "' for agent type '" + observable.getLocalName() + "'");
-      }
-    } else {
-      result = Subject.create(name, observable, scale, data, monitor);
-    }
-
-    if (context != null) {
-      result.setContextObservation(context);
-    }
-    result.setNamespace(namespace);
-
-    return result;
-  }
-
-  public IObservation createObservation(IObservable observable, IScale scale, IObservationData data, INamespace namespace,
-      IMonitor monitor, IDirectObservation context) throws KlabException {
-    
-    // TODO create all chained observations recursively and resolve as needed
-    
-    IObservation ret = null;
-    if (observable.is(Type.SUBJECT)) {
-      ret = createSubject((Observable) observable, observable.getLocalName(), (Scale) scale, (IObjectData)data,
-          (Namespace)namespace, (Monitor) monitor, (DirectObservation) context);
-      
-      if (context == null) {
-        // propagate runtime context from resolved data
-        ((Subject)ret).setRuntimeContext(((ObservationData)data).getRuntimeContext());
-      }
-      
-    } else if (observable.is(Type.EVENT)) {
-      ret = createEvent((Observable) observable, observable.getLocalName(), (Scale) scale, (IObjectData)data,
-          (Namespace)namespace, (Monitor) monitor, (Subject) context);
-    } else if (observable.is(Type.PROCESS)) {
-      ret = createProcess((Observable) observable, observable.getLocalName(), (Scale) scale, (IObjectData)data,
-          (Namespace)namespace, (Monitor) monitor, (Subject) context);
-    } else if (observable.is(Type.RELATIONSHIP)) {
-
-    } else if (observable.is(Type.QUALITY)) {
-      ret = createState((Observable) observable, (Scale) scale, (IStorage<?>)data,
-          (Namespace)namespace, (Monitor) monitor, (Subject) context);
-    } else if (observable.is(Type.CONFIGURATION)) {
-
-    }
-    return ret;
-  }
 
   /*
    * Non-API - sync namespace. TODO check equivalent in Models.

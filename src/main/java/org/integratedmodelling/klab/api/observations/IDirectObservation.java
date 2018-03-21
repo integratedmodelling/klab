@@ -13,11 +13,5 @@ public abstract interface IDirectObservation extends IObservation, IObjectData {
   String getName();
 
   Collection<IState<?>> getStates();
-  
-  /**
-   * Specialize the data for a direct observation.
-   * 
-   * @return the observation data. Never null.
-   */
-  IObjectData getData();
+
 }
