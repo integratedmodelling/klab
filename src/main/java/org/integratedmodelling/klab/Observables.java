@@ -2,10 +2,12 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
@@ -361,13 +363,24 @@ public enum Observables implements IObservableService {
   @Override
   public List<IServiceCall> computeMediators(IObservable from, IObservable to) {
     List<IServiceCall> ret = new ArrayList<>();
-    if (!((Observable)to).canResolve((Observable)from)) {
+    if (!((Observable) to).canResolve((Observable) from)) {
       throw new IllegalArgumentException(
           "cannot compute mediators from an observable to another that does not resolve it: " + from
               + " does not mediate to " + to);
     }
     // TODO oh yes, to do
     return ret;
+  }
+
+  @Override
+  public Type getObservableType(IObservable observable) {
+    EnumSet<Type> type = EnumSet.copyOf(((Observable) observable).getTypeSet());
+    type.retainAll(IKimConcept.BASE_OBSERVABLE_TYPES);
+    if (type.size() != 1) {
+      throw new IllegalArgumentException(
+          "trying to extract the observable type from non-observable " + observable);
+    }
+    return type.iterator().next();
   }
 
 }

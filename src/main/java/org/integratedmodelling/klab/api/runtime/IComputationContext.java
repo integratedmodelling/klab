@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
 import org.eclipse.core.commands.IParameter;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -96,6 +97,13 @@ public interface IComputationContext extends IParameters {
    */
   IMonitor getMonitor();
 
+  /**
+   * Return the concept type describing the artifact being computed.
+   * 
+   * @return the type of the observation
+   */
+  IKimConcept.Type getArtifactType();
+  
   /**
    * Create a new observation of the specified countable observable and with the specified geometry.
    * Use in {@link IInstantiator instantiators} to create new objects. Use

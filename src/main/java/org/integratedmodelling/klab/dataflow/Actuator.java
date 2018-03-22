@@ -202,17 +202,6 @@ public class Actuator implements IActuator {
 
   private IRuntimeContext setupContext(IRuntimeContext runtimeContext) {
 
-    // create non-semantic storage if required
-    if (runtimeContext.getData(this.name) == null) {
-      if (observable.getType().is(Type.QUALITY)) {
-
-        // create storage
-        boolean isConstant = scale.size() == 1;
-        if (!isConstant) {
-          // TODO analyze the computation and see if we can create a constant instead
-        }
-      }
-    }
     IRuntimeContext ret = runtimeContext.copy();
     for (IActuator input : getInputs()) {
       if (ret.getData(input.getName()) != null) {

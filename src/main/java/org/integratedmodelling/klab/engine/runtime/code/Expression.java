@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.code;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -87,6 +88,12 @@ public abstract class Expression implements IExpression {
     @Override
     public <T extends IArtifact> Collection<T> getData(Class<T> type) {
       return new ArrayList<>();
+    }
+
+    @Override
+    public Type getArtifactType() {
+      // TODO Auto-generated method stub
+      return null;
     }
   }
   

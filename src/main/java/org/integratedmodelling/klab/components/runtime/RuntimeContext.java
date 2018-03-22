@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -56,6 +58,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   RuntimeContext                 parent;
   IObservation                   target;
   IScale                         scale;
+  IKimConcept.Type               artifactType;
 
   public RuntimeContext(Actuator actuator, IMonitor monitor) {
 
@@ -69,6 +72,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.target = DefaultRuntimeProvider.createObservation(actuator, this, null);
     this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
+    this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable());
     // TODO provenance (may need to pass the actuator)
     if (target instanceof ISubject) {
       this.network.addVertex((ISubject) this.target);
@@ -86,6 +90,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.monitor = context.monitor;
     this.catalog = context.catalog;
     this.scale = context.scale;
+    this.artifactType = context.artifactType;
   }
 
   @Override
@@ -135,7 +140,10 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   @Override
   public IRuntimeContext copy() {
-    return new RuntimeContext(this);
+    RuntimeContext ret = new RuntimeContext(this);
+    // we want a deep copy of the catalog so we can rename elements
+    ret.catalog = new HashMap<>(ret.catalog);
+    return ret;
   }
 
   @Override
@@ -211,16 +219,18 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     RuntimeContext ret = new RuntimeContext(this);
     ret.parent = this;
     ret.namespace = ((Actuator) actuator).getNamespace();
+    ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)actuator).getObservable());
     if (!(this.target instanceof DirectObservation)) {
       throw new IllegalArgumentException(
           "RuntimeContext: cannot add a child observation to a non-direct observation");
     }
-    
+
     ret.scale = actuator.getScale();
-    
+
     if (!((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
       ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this,
           (DirectObservation) this.target);
+      ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)actuator).getObservable());
       ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
       this.structure.addVertex(ret.target);
       // create child->parent edge
@@ -230,7 +240,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
         this.network.addVertex((ISubject) ret.target);
       }
     }
-    
+
     return ret;
   }
 
@@ -278,6 +288,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public IGeometry getGeometry() {
     return scale;
+  }
+
+  @Override
+  public Type getArtifactType() {
+    return artifactType;
   }
 
 }

@@ -61,15 +61,18 @@ public interface IRuntimeContext extends IComputationContext {
   void set(String name, Object value);
 
   /**
+   * Each context that handles a temporal scale must expose a configuration detector.
    * 
    * @return
    */
   IConfigurationDetector getConfigurationDetector();
 
   /**
-   * Produce an exact copy of this context.
+   * Produce a deep copy of this context, with a new resource catalog, leaving only the original
+   * instances of the context-wide members such as provenance, configuration detector, event bus and
+   * structures. This is meant to be able to rename elements without harm.
    * 
-   * @return
+   * @return an identical context with a rewriteable object catalog and parameters.
    */
   IRuntimeContext copy();
 

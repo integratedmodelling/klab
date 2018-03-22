@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
@@ -477,4 +478,12 @@ public interface IObservableService {
    * @return a list of mediators, never null, possibly empty
    */
   List<IServiceCall> computeMediators(IObservable from, IObservable to);
+
+  /**
+   * Return the base enum type (quality, subject....) for the passed observable.
+   * @param observable
+   * @throws IllegalArgumentException if not an observable
+   * @return the enum type
+   */
+  Type getObservableType(IObservable observable);
 }
