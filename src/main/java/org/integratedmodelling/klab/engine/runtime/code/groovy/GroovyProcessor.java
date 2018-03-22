@@ -2,51 +2,71 @@ package org.integratedmodelling.klab.engine.runtime.code.groovy;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import javassist.compiler.CompileError;
 
 public enum GroovyProcessor implements ILanguageProcessor {
-  
+
   INSTANCE;
 
   class GroovyDescriptor implements Descriptor {
 
-    GroovyExpressionPreprocessor processor;
-    
+    String                        processedCode;
+    Collection<String>            identifiers;
+    private Set<String>           scalarIds;
+    private Set<String>           objectIds;
+    private List<KimNotification> errors;
+
     GroovyDescriptor(String expression, IRuntimeContext context) {
-      // TODO these must all come from the runtime context.
-      processor = new GroovyExpressionPreprocessor(context.getNamespace(), null/* knownIdentifiers */, null /* knownDomains*/);
-      processor.process(expression);
+      GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(
+          // FIXME using the observables isn't right - use aliased names!
+          context.getNamespace(), context.getData(IState.class).stream()
+              .map(data -> data.getObservable().getLocalName()).collect(Collectors.toSet()),
+          context.getGeometry());
+      this.processedCode = processor.process(expression);
+      this.identifiers = processor.getIdentifiers();
+      this.scalarIds = processor.getScalarIdentifiers();
+      this.objectIds = processor.getObjectIdentifiers();
+      this.errors = processor.getErrors();
+      // TODO analyze usage
     }
-    
+
     @Override
     public Collection<String> getIdentifiers() {
-      // TODO Auto-generated method stub
-      return null;
+      return identifiers;
     }
 
     @Override
     public boolean isScalar(Collection<String> stateIdentifiers) {
-      // TODO Auto-generated method stub
+      for (String id : stateIdentifiers) {
+        if (this.scalarIds.contains(id)) {
+          return true;
+        }
+      }
       return false;
     }
-    
+
     public List<KimNotification> getNotifications() {
-      return null;
+      return errors;
     }
-    
+
     public boolean hasErrors() {
-      return false;
+      return errors.size() > 0;
     }
-    
+
   }
-  
+
   @Override
-  public IExpression compile(String expression, IComputationContext context) throws KlabValidationException {
+  public IExpression compile(String expression, IComputationContext context)
+      throws KlabValidationException {
     return new GroovyExpression(expression);
   }
 
@@ -57,9 +77,14 @@ public enum GroovyProcessor implements ILanguageProcessor {
   }
 
   @Override
-  public Descriptor describe(String expression, IComputationContext context) throws KlabValidationException {
-    // TODO Auto-generated method stub
-    return null;
+  public Descriptor describe(String expression, IComputationContext context)
+      throws KlabValidationException {
+    return new GroovyDescriptor(expression, (IRuntimeContext) context);
+  }
+
+  @Override
+  public String negate(String expression) {
+    return "!(" + expression + ")";
   }
 
 }

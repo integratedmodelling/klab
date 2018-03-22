@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import org.eclipse.core.commands.IParameter;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -33,20 +34,19 @@ public interface IComputationContext extends IParameters {
   /**
    * The namespace of reference in this context. Usually that of the running model or observer.
    * 
-   * @return the namespace of reference. Never null in normal circumstances, although it may be null
-   *         in remote services that have no semantic awareness.
+   * @return the namespace of reference. Null in empty contexts or during non-semantic computations.
    */
   INamespace getNamespace();
 
   /**
    * 
-   * @return
+   * @return the provenance graph. Null in an empty context.
    */
   IProvenance getProvenance();
 
   /**
    * 
-   * @return
+   * @return the event bus. Null in an empty context.
    */
   IEventBus getEventBus();
 
@@ -72,17 +72,27 @@ public interface IComputationContext extends IParameters {
 
   /**
    * Get the resolved {@link IArtifact object} corresponding to the passed local name. Use
-   * {@link #get(String)} to retrieve contextualized values for states or parameters.
+   * {@link IParameter IParameter get methods} to retrieve contextualized values for states or
+   * parameters.
    * 
    * @param localName
-   * @return
+   * @return the artifact, null if not found.
    */
   IArtifact getData(String localName);
 
   /**
+   * Return all known artifacts of the passed class. For example, all data artifacts known at the
+   * time of computation can be retrieved using <code>getData(IDataArtifact.class)</code>.
+   * 
+   * @param type
+   * @return a collection of artifacts, possibly empty, never null.
+   */
+  <T extends IArtifact> Collection<T> getData(Class<T> type);
+
+  /**
    * Return a valid monitor for any communication.
    * 
-   * @return
+   * @return the monitor for this computation. Never null.
    */
   IMonitor getMonitor();
 
@@ -123,7 +133,7 @@ public interface IComputationContext extends IParameters {
    * @return a new observation for the observable and geometry
    * @throw IllegalArgumentException if the observable does not describe a relationship.
    */
-  IObjectArtifact newRelationship(IObservable observable, IGeometry geometry, IObjectArtifact source,
-      IObjectArtifact target);
+  IObjectArtifact newRelationship(IObservable observable, IGeometry geometry,
+      IObjectArtifact source, IObjectArtifact target);
 
 }

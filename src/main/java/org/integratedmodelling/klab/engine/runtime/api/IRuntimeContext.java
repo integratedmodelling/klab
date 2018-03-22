@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -97,5 +98,12 @@ public interface IRuntimeContext extends IComputationContext {
    * @return the target artifact for the passed actuator.
    */
   IArtifact getTarget(IActuator actuator);
+
+  /**
+   * Return the current geometry (in k.LAB typically a {@link IScale}).
+   * 
+   * @return the current geometry. Should never be null.
+   */
+  public IGeometry getGeometry();
 
 }

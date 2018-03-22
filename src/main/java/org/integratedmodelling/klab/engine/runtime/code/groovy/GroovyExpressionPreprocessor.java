@@ -30,22 +30,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.codehaus.groovy.antlr.parser.GroovyLexer;
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.util.StringUtils;
 import groovyjarjarantlr.Token;
 import groovyjarjarantlr.TokenStreamException;
-import javassist.compiler.CompileError;
 
 /**
  * Smarter preprocessor to produce proper Groovy from Thinklab expressions. Should remove all needs
@@ -78,11 +77,11 @@ import javassist.compiler.CompileError;
  */
 public class GroovyExpressionPreprocessor {
 
-  private Set<IConcept> domains;
-  private INamespace    namespace;
-  private Set<String>   knownIdentifiers;
-  private Geometry      inferredGeometry;
-  Pattern               extKnowledge = Pattern.compile("[a-z|\\.]+:[A-Za-z][A-Za-z0-9]*");
+  private IGeometry   domains;
+  private INamespace  namespace;
+  private Set<String> knownIdentifiers;
+  private Geometry    inferredGeometry;
+  Pattern             extKnowledge = Pattern.compile("[a-z|\\.]+:[A-Za-z][A-Za-z0-9]*");
 
   static class Lexer extends GroovyLexer {
 
@@ -128,19 +127,21 @@ public class GroovyExpressionPreprocessor {
   /*
    * referenced IDs and knowledge resulting from preprocessing.
    */
-  List<String>       identifiers = new ArrayList<>();
-  List<IKnowledge>   knowledge   = new ArrayList<>();
-  List<CompileError> errors      = new ArrayList<>();
+  Set<String>           identifiers = new HashSet<>();
+  List<IKnowledge>      knowledge   = new ArrayList<>();
+  List<KimNotification> errors      = new ArrayList<>();
+  private Set<String>   objectIds   = new HashSet<>();
+  private Set<String>   scalarIds   = new HashSet<>();
 
-  static final int   KNOWLEDGE   = 1;
-  static final int   DEFINE      = 2;
-  static final int   KNOWN_ID    = 3;
-  static final int   UNKNOWN_ID  = 4;
-  static final int   URN         = 5;
+  static final int      KNOWLEDGE   = 1;
+  static final int      DEFINE      = 2;
+  static final int      KNOWN_ID    = 3;
+  static final int      UNKNOWN_ID  = 4;
+  static final int      URN         = 5;
 
   public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers,
-      Set<IConcept> knownDomains) {
-    this.domains = knownDomains;
+      IGeometry geometry) {
+    this.domains = geometry;
     this.namespace = currentNamespace;
     this.knownIdentifiers = knownIdentifiers;
   }
@@ -148,7 +149,39 @@ public class GroovyExpressionPreprocessor {
   public Geometry getInferredGeometry() {
     return inferredGeometry;
   }
-  
+
+  /**
+   * Return the known identifiers that were used in a scalar context
+   * 
+   * @return
+   */
+  public Set<String> getScalarIdentifiers() {
+    return scalarIds;
+  }
+
+  /**
+   * Return the known identifiers that were used as objects
+   * 
+   * @return
+   */
+  public Set<String> getObjectIdentifiers() {
+    return objectIds;
+  }
+
+  class TokenDescriptor {
+
+    int     type;
+    String  translation;
+    String  token;
+    boolean methodCall = false;
+
+    public TokenDescriptor(int type, String token, String translation) {
+      this.type = type;
+      this.token = token;
+      this.translation = translation;
+    }
+  }
+
   public String process(String code) {
 
     identifiers.clear();
@@ -162,16 +195,16 @@ public class GroovyExpressionPreprocessor {
     // this.originalCode = code;
 
     /*
-     * pre-substitute any \] with ] so that we can use the Groovy lexer without error.
+     * pre-substitute any \] with ] so that we can use the Groovy lexer without error. Don't laugh
+     * at the pattern.
      */
-
     code = code.replaceAll("\\\\\\]", "]");
 
     List<List<Token>> groups = new ArrayList<>();
     Lexer lexer = new Lexer(new StringReader(code));
     lexer.setWhitespaceIncluded(true);
     String ret = "";
-    String remainder = "";
+    // String remainder = "";
 
     try {
       lexer.consume();
@@ -201,6 +234,8 @@ public class GroovyExpressionPreprocessor {
     }
 
     int line = -1;
+    List<TokenDescriptor> tokens = new ArrayList<>();
+
     for (List<Token> group : groups) {
 
       String tk = join(group);
@@ -221,13 +256,12 @@ public class GroovyExpressionPreprocessor {
        * if recognized, add its substituted value; else add as is. If it's an identifier and it's
        * not recognized, add an error to the list.
        */
-      Pair<Integer, String> cls = classify(tk);
-      ret += cls.getSecond();
+      TokenDescriptor cls = classify(tk);
 
       /*
        * report on all unknown identifiers
        */
-      if (cls.getFirst().equals(UNKNOWN_ID)) {
+      if (cls.type == UNKNOWN_ID) {
         for (Token t : group) {
           if (t.getType() == GroovyLexer.IDENT) {
             // NAH - this also flags legitimate method calls, so no joy unless
@@ -239,15 +273,51 @@ public class GroovyExpressionPreprocessor {
           }
         }
       }
+
+      tokens.add(cls);
     }
 
-    // ret += remainder;
+    analyze(tokens);
 
     if (Configuration.INSTANCE.isDebuggingEnabled()) {
       Klab.INSTANCE.info(code + " was preprocessed into " + ret);
     }
 
+    return reconstruct(tokens);
+  }
+
+  private String reconstruct(List<TokenDescriptor> tokens) {
+    String ret = "";
+    for (TokenDescriptor t : tokens) {
+      ret += t.translation;
+    }
     return ret;
+  }
+
+  private void analyze(List<TokenDescriptor> tokens) {
+
+    TokenDescriptor current = null;
+    for (TokenDescriptor t : tokens) {
+      if (t.type == KNOWN_ID) {
+        current = t;
+      } else if (t.type == UNKNOWN_ID) {
+        if (current != null && t.token.trim().equals(".")) {
+          current.methodCall = true;
+        }
+        current = null;
+      }
+    }
+
+    for (TokenDescriptor t : tokens) {
+      if (t.type == KNOWN_ID) {
+        identifiers.add(t.token.trim());
+        if (t.methodCall) {
+          this.objectIds.add(t.token.trim());
+        } else {
+          this.scalarIds.add(t.token.trim());
+        }
+      }
+    }
   }
 
   private int lastLine(List<Token> group) {
@@ -259,7 +329,7 @@ public class GroovyExpressionPreprocessor {
   }
 
   private boolean isRecognized(List<Token> acc) {
-    return classify(join(acc)).getFirst() != UNKNOWN_ID;
+    return classify(join(acc)).type != UNKNOWN_ID;
   }
 
   private String join(List<Token> group) {
@@ -284,25 +354,25 @@ public class GroovyExpressionPreprocessor {
     return t.getText().contains("\n") ? "\"\"\"" : "\"";
   }
 
-  private Pair<Integer, String> classify(String currentToken) {
+  private TokenDescriptor classify(String currentToken) {
 
     /*
      * known ones. Also ensure that "space" and "time" go through unmodified unless the domains do
      * not know them.
      */
     if (currentToken.equals("unknown")) {
-      return new Pair<>(KNOWN_ID, "null");
+      return new TokenDescriptor(KNOWN_ID, currentToken, "null");
     }
 
     if ((currentToken.equals("space")
-        && (domains != null && domains.contains(Concepts.c(NS.SPACE_DOMAIN))))
+        && (domains != null && domains.getDimension(Type.SPACE) != null))
         || (currentToken.equals("time")
-            && (domains != null && domains.contains(Concepts.c(NS.TIME_DOMAIN))))) {
-      return new Pair<>(KNOWN_ID, currentToken);
+            && (domains != null && domains.getDimension(Type.TIME) != null))) {
+      return new TokenDescriptor(KNOWN_ID, currentToken, currentToken);
     }
 
     if (knownIdentifiers != null && knownIdentifiers.contains(currentToken)) {
-      return new Pair<>(KNOWN_ID, translateParameter(currentToken));
+      return new TokenDescriptor(KNOWN_ID, currentToken, translateParameter(currentToken));
     }
 
     IKnowledge k = null;
@@ -311,40 +381,40 @@ public class GroovyExpressionPreprocessor {
     if (currentToken.contains(":")) {
       if (StringUtils.countOccurrencesOf(currentToken, ":") == 3 && !currentToken.endsWith(":")
           && !StringUtils.containsWhitespace(currentToken)) {
-        return new Pair<>(URN, translateUrn(currentToken));
+        return new TokenDescriptor(URN, currentToken, translateUrn(currentToken));
       } else if ((k = Concepts.INSTANCE.getConcept(currentToken)) != null) {
-        return new Pair<>(KNOWLEDGE, translateKnowledge(k));
+        return new TokenDescriptor(KNOWLEDGE, currentToken, translateKnowledge(k));
       }
     }
 
     if (namespace != null) {
       if (namespace.getSymbolTable().get(currentToken) != null) {
-        return new Pair<>(DEFINE, translateDefine(currentToken));
+        return new TokenDescriptor(DEFINE, currentToken, translateDefine(currentToken));
       }
       if ((k = namespace.getOntology().getConcept(currentToken)) != null) {
-        return new Pair<>(KNOWLEDGE, translateKnowledge(k));
+        return new TokenDescriptor(KNOWLEDGE, currentToken, translateKnowledge(k));
       }
       if (!namespace.isProjectKnowledge() && namespace.getProject() != null
           && namespace.getProject().getUserKnowledge() != null && namespace.getProject()
               .getUserKnowledge().getOntology().getConcept(currentToken) != null) {
-        return new Pair<>(KNOWLEDGE, translateKnowledge(
+        return new TokenDescriptor(KNOWLEDGE, currentToken, translateKnowledge(
             namespace.getProject().getUserKnowledge().getOntology().getConcept(currentToken)));
       }
       if ((k = namespace.getOntology().getProperty(currentToken)) != null) {
-        return new Pair<>(KNOWLEDGE, translateKnowledge(k));
+        return new TokenDescriptor(KNOWLEDGE, currentToken, translateKnowledge(k));
       }
       if ((o = namespace.getObject(currentToken)) != null) {
-        return new Pair<>(KNOWN_ID, translateModelObject(o));
+        return new TokenDescriptor(KNOWN_ID, currentToken, translateModelObject(o));
       }
     }
 
     if (currentToken.contains(".")) {
       if ((o = Resources.INSTANCE.getModelObject(currentToken)) != null) {
-        return new Pair<>(KNOWN_ID, translateModelObject(o));
+        return new TokenDescriptor(KNOWN_ID, currentToken, translateModelObject(o));
       }
     }
 
-    return new Pair<>(UNKNOWN_ID, currentToken);
+    return new TokenDescriptor(UNKNOWN_ID, currentToken, currentToken);
   }
 
   private String translateModelObject(IKimObject o) {
@@ -367,15 +437,7 @@ public class GroovyExpressionPreprocessor {
     return "_getUrn(\"" + k + "\")";
   }
 
-  public static void main(String[] args) throws Exception {
-
-    GroovyExpressionPreprocessor p = new GroovyExpressionPreprocessor(null, null, null);
-    String pp = p.process("println zio:cne:porco:dio");
-    System.out.println("preprocessed: " + pp);
-
-  }
-
-  public List<CompileError> getErrors() {
+  public List<KimNotification> getErrors() {
     return errors;
   }
 

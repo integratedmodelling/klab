@@ -33,8 +33,8 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -47,7 +47,6 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
-import javassist.compiler.CompileError;
 
 public class GroovyExpression extends Expression {
 
@@ -62,10 +61,10 @@ public class GroovyExpression extends Expression {
   private Set<String>           defineIfAbsent = new HashSet<>();
 
   Script                        script;
-  Set<IConcept>                 domain;
+  IGeometry                     domain;
   INamespace                    namespace;
 
-  private List<CompileError>    errors         = new ArrayList<>();
+  private List<KimNotification> errors         = new ArrayList<>();
   private CompilerConfiguration compiler       = new CompilerConfiguration();
   private GroovyShell           shell;
   private String                preprocessed   = null;
@@ -88,7 +87,7 @@ public class GroovyExpression extends Expression {
     return errors.size() > 0;
   }
 
-  public List<CompileError> getErrors() {
+  public List<KimNotification> getErrors() {
     return errors;
   }
 
@@ -104,9 +103,12 @@ public class GroovyExpression extends Expression {
    * Simple expression without context or receivers. NOT PREPROCESSED in the context it's in.
    *
    * @param code
+   * @param inputs
+   * @param outputs
+   * @param domain
    */
   public GroovyExpression(String code, Map<String, IObservable> inputs,
-      Map<String, IObservable> outputs, IConcept... domain) {
+      Map<String, IObservable> outputs, IGeometry domain) {
 
     ImportCustomizer customizer = new ImportCustomizer();
     for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
@@ -115,12 +117,7 @@ public class GroovyExpression extends Expression {
     compiler.addCompilationCustomizers(customizer);
 
     this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    this.domain = new HashSet<>();
-    if (domain != null) {
-      for (IConcept c : domain) {
-        this.domain.add(c);
-      }
-    }
+    this.domain = domain;
     this.compiler.setScriptBaseClass(getBaseClass());
     initialize(inputs, outputs);
   }
@@ -147,7 +144,7 @@ public class GroovyExpression extends Expression {
     initialize(inputs, null);
   }
 
-  GroovyExpression(String code, INamespace namespace, Set<IConcept> domain) {
+  GroovyExpression(String code, INamespace namespace, IGeometry domain) {
 
     ImportCustomizer customizer = new ImportCustomizer();
     for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
@@ -157,7 +154,7 @@ public class GroovyExpression extends Expression {
 
     this.namespace = namespace;
     this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    this.domain.addAll(domain);
+    this.domain = domain;
   }
 
   GroovyExpression(String code) {
@@ -169,7 +166,6 @@ public class GroovyExpression extends Expression {
     compiler.addCompilationCustomizers(customizer);
 
     this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    this.domain = new HashSet<>();
   }
 
   private void compile(String code) {
@@ -197,8 +193,7 @@ public class GroovyExpression extends Expression {
     return "org.integratedmodelling.thinklab.actions.ActionScript";
   }
 
-  public Object eval(IParameters parameters, IComputationContext context)
-      throws KlabException {
+  public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
 
     if (isTrue) {
       return true;
@@ -274,7 +269,7 @@ public class GroovyExpression extends Expression {
     this.preprocessed = processor.process(code);
     this.errors.addAll(processor.getErrors());
     this.geometry = processor.getInferredGeometry();
-    
+
     return this.preprocessed;
   }
 

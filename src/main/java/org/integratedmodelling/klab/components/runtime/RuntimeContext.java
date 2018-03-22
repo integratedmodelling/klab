@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -54,6 +55,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   IMonitor                       monitor;
   RuntimeContext                 parent;
   IObservation                   target;
+  IScale                         scale;
 
   public RuntimeContext(Actuator actuator, IMonitor monitor) {
 
@@ -63,6 +65,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.provenance = /* TODO new Provenance() */ null;
     this.monitor = monitor;
     this.namespace = actuator.getNamespace();
+    this.scale = actuator.getScale();
     this.target = DefaultRuntimeProvider.createObservation(actuator, this, null);
     this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
@@ -82,6 +85,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.structure = context.structure;
     this.monitor = context.monitor;
     this.catalog = context.catalog;
+    this.scale = context.scale;
   }
 
   @Override
@@ -168,17 +172,17 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public IArtifact getTarget(IActuator actuator) {
     IArtifact ret = catalog.get(actuator.getName());
-    
+
     /**
      * If we don't have a target and the actuator needs storage (i.e. it's a quality or anything
      * that must be instantiated automatically), create the storage but do not add it to the
      * provenance and structure.
      */
     if (ret == null && !((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
-      ret = DefaultRuntimeProvider.createObservation((Actuator)actuator, this, null);
+      ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this, null);
       catalog.put(actuator.getName(), ret);
     }
-    
+
     return ret;
   }
 
@@ -211,16 +215,22 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
       throw new IllegalArgumentException(
           "RuntimeContext: cannot add a child observation to a non-direct observation");
     }
-    ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this,
-        (DirectObservation) this.target);
-    ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
-    this.structure.addVertex(ret.target);
-    // create child->parent edge
-    this.structure.addEdge(ret.target, this.target);
-    // TODO provenance (may need to pass the actuator)
-    if (ret.target instanceof ISubject) {
-      this.network.addVertex((ISubject) ret.target);
+    
+    ret.scale = actuator.getScale();
+    
+    if (!((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
+      ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this,
+          (DirectObservation) this.target);
+      ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
+      this.structure.addVertex(ret.target);
+      // create child->parent edge
+      this.structure.addEdge(ret.target, this.target);
+      // TODO provenance (may need to pass the actuator)
+      if (ret.target instanceof ISubject) {
+        this.network.addVertex((ISubject) ret.target);
+      }
     }
+    
     return ret;
   }
 
@@ -249,7 +259,25 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     ret.parent = this;
     ret.namespace = ((Actuator) actuator).getNamespace();
     ret.target = (Observation) target;
+    ret.scale = target.getScale();
     return ret;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends IArtifact> Collection<T> getData(Class<T> type) {
+    List<T> ret = new ArrayList<>();
+    for (IArtifact a : catalog.values()) {
+      if (type.isAssignableFrom(a.getClass())) {
+        ret.add((T) a);
+      }
+    }
+    return ret;
+  }
+
+  @Override
+  public IGeometry getGeometry() {
+    return scale;
   }
 
 }

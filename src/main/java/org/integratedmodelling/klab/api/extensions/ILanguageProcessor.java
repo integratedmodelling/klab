@@ -72,5 +72,14 @@ public interface ILanguageProcessor {
    * @throws KlabValidationException if the expression contains syntax of logical errors
    */
   Descriptor describe(String expression, @Nullable IComputationContext context) throws KlabValidationException;
+
+  /**
+   * Assume that the passed expression evaluates to a boolean and produce the language equivalent of its
+   * negation.
+   * 
+   * @param expression
+   * @return another expression producing the opposite truth value as the original
+   */
+  String negate(String expression);
   
 }

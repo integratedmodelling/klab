@@ -134,12 +134,15 @@ public class Actuator implements IActuator {
   @SuppressWarnings("unchecked")
   public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
+    // localize names to this actuator's expectations; create non-semantic storage if needed
+    IRuntimeContext ctx = setupContext(runtimeContext);
+
     if (computation == null) {
       // compile the contextualization strategy
       computation = new ArrayList<>();
       for (Pair<IServiceCall, IComputableResource> service : Collections.join(computationStrategy,
           mediationStrategy)) {
-        Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), runtimeContext);
+        Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
         if (!(contextualizer instanceof IContextualizer)) {
           throw new KlabValidationException(
               "function " + service.getFirst().getName() + " does not produce a contextualizer");
@@ -148,8 +151,6 @@ public class Actuator implements IActuator {
       }
     }
 
-    // localize names to this actuator's expectations; create non-semantic storage if needed
-    IRuntimeContext ctx = setupContext(runtimeContext);
     // this will be null if the actuator is for an instantiator
     IArtifact ret = target;
 

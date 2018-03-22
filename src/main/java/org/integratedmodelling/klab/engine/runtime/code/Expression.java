@@ -83,6 +83,11 @@ public abstract class Expression implements IExpression {
         IObjectArtifact source, IObjectArtifact target) {
       return null;
     }
+
+    @Override
+    public <T extends IArtifact> Collection<T> getData(Class<T> type) {
+      return new ArrayList<>();
+    }
   }
   
   public static IComputationContext emptyContext(IMonitor monitor) {
