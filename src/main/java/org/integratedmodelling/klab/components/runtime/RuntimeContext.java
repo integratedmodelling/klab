@@ -160,19 +160,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     catalog.put(name, data);
   }
 
-  /*
-   * return all states that must be localized when a IStateContextualizer is run.
-   */
-  public Collection<Pair<String, IDataArtifact>> getStateDependentData() {
-    List<Pair<String, IDataArtifact>> ret = new ArrayList<>();
-    for (String var : catalog.keySet()) {
-      if (catalog.get(var) instanceof IDataArtifact) {
-        ret.add(new Pair<>(var, (IDataArtifact) catalog.get(var)));
-      }
-    }
-    return ret;
-  }
-
   public void set(String name, Object value) {
     this.put(name, value);
   }

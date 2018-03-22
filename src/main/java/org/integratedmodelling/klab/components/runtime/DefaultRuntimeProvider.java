@@ -156,7 +156,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     // non-reentrant behavior
     // TODO if this is done, the next one must be local to each thread
     RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
-    Collection<Pair<String, IDataArtifact>> variables = ctx.getStateDependentData();
+    Collection<Pair<String, IDataArtifact>> variables = ctx.getData(IDataArtifact.class);
     for (IScale state : scale) {
       data.set(state, resolver.resolve(data,
           variables.isEmpty() ? ctx : localizeContext(ctx, state, variables), state));
