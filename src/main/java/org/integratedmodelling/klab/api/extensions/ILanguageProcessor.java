@@ -39,6 +39,17 @@ public interface ILanguageProcessor {
      * @return true if any of the identifiers is used in a scalar context.
      */
     boolean isScalar(Collection<String> stateIdentifiers);
+
+    /**
+     * In order to avoid duplicated action, the descriptor alone must be enough to
+     * compile the expression. If we have a valid descriptor the returned expression
+     * must be valid so no exceptions are thrown unless the descriptor has errors,
+     * which causes an IllegalArgumentException.
+     * 
+     * @return a compiled expression ready for execution in the context that produced the descriptor
+     * @throws IllegalArgumentException if the descriptor has errors
+     */
+    IExpression compile();
   }
   
   /**
@@ -50,18 +61,6 @@ public interface ILanguageProcessor {
    * @throws KlabValidationException if compilation produces any errors
    */
   IExpression compile(String expression, @Nullable IComputationContext context) throws KlabValidationException;
-
-  /**
-   * In order to avoid duplicated action, the descriptor alone must be enough to
-   * compile the expression. If we have a valid descriptor the returned expression
-   * must be valid so no exceptions are thrown unless a descriptor with errors is passed,
-   * which causes an IllegalArgumentException.
-   * 
-   * @param expressionDescriptor
-   * @return the descriptor
-   * @throws IllegalArgumentException if the descriptor has errors
-   */
-  IExpression compile(Descriptor expressionDescriptor);
 
   /**
    * Preprocess an expression and return the descriptor. The context may be null.

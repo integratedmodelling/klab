@@ -10,8 +10,8 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpressionPreprocessor.TokenDescriptor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import javassist.compiler.CompileError;
 
 public enum GroovyProcessor implements ILanguageProcessor {
 
@@ -24,19 +24,21 @@ public enum GroovyProcessor implements ILanguageProcessor {
     private Set<String>           scalarIds;
     private Set<String>           objectIds;
     private List<KimNotification> errors;
+    private List<TokenDescriptor> tokens;
+    private IRuntimeContext context;
 
     GroovyDescriptor(String expression, IRuntimeContext context) {
       GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(
-          // FIXME using the observables isn't right - use aliased names!
           context.getNamespace(), context.getData(IState.class).stream()
-              .map(data -> data.getObservable().getLocalName()).collect(Collectors.toSet()),
+              .map(data -> data.getFirst()).collect(Collectors.toSet()),
           context.getGeometry());
       this.processedCode = processor.process(expression);
       this.identifiers = processor.getIdentifiers();
       this.scalarIds = processor.getScalarIdentifiers();
       this.objectIds = processor.getObjectIdentifiers();
       this.errors = processor.getErrors();
-      // TODO analyze usage
+      this.tokens = processor.tokens;
+      this.context = context;
     }
 
     @Override
@@ -61,19 +63,21 @@ public enum GroovyProcessor implements ILanguageProcessor {
     public boolean hasErrors() {
       return errors.size() > 0;
     }
-
+    
+    @Override
+    public IExpression compile() {
+      String ret = "";
+      for (TokenDescriptor token : tokens) {
+        ret += token.translate(context);
+      }
+      return new GroovyExpression(ret, true);
+    }
   }
 
   @Override
   public IExpression compile(String expression, IComputationContext context)
       throws KlabValidationException {
-    return new GroovyExpression(expression);
-  }
-
-  @Override
-  public IExpression compile(Descriptor expressionDescriptor) {
-    // TODO Auto-generated method stub
-    return null;
+    return new GroovyDescriptor(expression, (IRuntimeContext) context).compile();
   }
 
   @Override

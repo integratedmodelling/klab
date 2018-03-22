@@ -275,11 +275,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends IArtifact> Collection<T> getData(Class<T> type) {
-    List<T> ret = new ArrayList<>();
-    for (IArtifact a : catalog.values()) {
-      if (type.isAssignableFrom(a.getClass())) {
-        ret.add((T) a);
+  public <T extends IArtifact> Collection<Pair<String, T>> getData(Class<T> type) {
+    List<Pair<String, T>> ret = new ArrayList<>();
+    for (String s : catalog.keySet()) {
+      if (type.isAssignableFrom(catalog.get(s).getClass())) {
+        ret.add(new Pair<>(s, (T) catalog.get(s)));
       }
     }
     return ret;

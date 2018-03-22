@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The runtime context holds all information about the computation being run. It is passed to
@@ -82,13 +83,14 @@ public interface IComputationContext extends IParameters {
   IArtifact getData(String localName);
 
   /**
-   * Return all known artifacts of the passed class. For example, all data artifacts known at the
-   * time of computation can be retrieved using <code>getData(IDataArtifact.class)</code>.
+   * Return all known artifacts of the passed class along with their ID in this context. For
+   * example, all data artifacts known at the time of computation can be retrieved using
+   * <code>getData(IDataArtifact.class)</code>.
    * 
    * @param type
-   * @return a collection of artifacts, possibly empty, never null.
+   * @return a collection of pair <name, artifact>, possibly empty, never null.
    */
-  <T extends IArtifact> Collection<T> getData(Class<T> type);
+  <T extends IArtifact> Collection<Pair<String, T>> getData(Class<T> type);
 
   /**
    * Return a valid monitor for any communication.
@@ -103,7 +105,7 @@ public interface IComputationContext extends IParameters {
    * @return the type of the observation
    */
   IKimConcept.Type getArtifactType();
-  
+
   /**
    * Create a new observation of the specified countable observable and with the specified geometry.
    * Use in {@link IInstantiator instantiators} to create new objects. Use

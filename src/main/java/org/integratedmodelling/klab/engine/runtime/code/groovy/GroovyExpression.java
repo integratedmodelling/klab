@@ -151,22 +151,32 @@ public class GroovyExpression extends Expression {
       customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
     }
     compiler.addCompilationCustomizers(customizer);
-
     this.namespace = namespace;
     this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
     this.domain = domain;
   }
 
   GroovyExpression(String code) {
-
     ImportCustomizer customizer = new ImportCustomizer();
     for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
       customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
     }
     compiler.addCompilationCustomizers(customizer);
-
     this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
   }
+  
+  GroovyExpression(String code, boolean preprocessed) {
+    ImportCustomizer customizer = new ImportCustomizer();
+    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+    }
+    compiler.addCompilationCustomizers(customizer);
+    this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+    if (preprocessed) {
+      this.preprocessed = this.code;
+    }
+  }
+
 
   private void compile(String code) {
     this.compiler.setScriptBaseClass(getBaseClass());

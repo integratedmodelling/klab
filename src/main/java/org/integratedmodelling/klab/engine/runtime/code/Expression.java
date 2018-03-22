@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.utils.Pair;
 
 public abstract class Expression implements IExpression {
 
@@ -86,14 +87,14 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public <T extends IArtifact> Collection<T> getData(Class<T> type) {
-      return new ArrayList<>();
-    }
-
-    @Override
     public Type getArtifactType() {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public <T extends IArtifact> Collection<Pair<String, T>> getData(Class<T> type) {
+      return new ArrayList<>();
     }
   }
   
