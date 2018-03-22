@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
@@ -15,7 +16,6 @@ import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -43,27 +44,27 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class RuntimeContext extends Parameters implements IRuntimeContext {
 
-  INamespace namespace;
-  Provenance provenance;
-  EventBus eventBus;
-  ConfigurationDetector configurationDetector;
+  INamespace                     namespace;
+  Provenance                     provenance;
+  EventBus                       eventBus;
+  ConfigurationDetector          configurationDetector;
   Graph<ISubject, IRelationship> network;
-  Graph<IArtifact, DefaultEdge> structure;
-  Map<String, IArtifact> catalog;
-  IMonitor monitor;
-  RuntimeContext parent;
-  IObservation target;
+  Graph<IArtifact, DefaultEdge>  structure;
+  Map<String, IArtifact>         catalog;
+  IMonitor                       monitor;
+  RuntimeContext                 parent;
+  IObservation                   target;
 
-  public RuntimeContext(IObservable observable, IScale scale, INamespace namespace,
-      IMonitor monitor) {
+  public RuntimeContext(Actuator actuator, IMonitor monitor) {
+
     this.catalog = new HashMap<>();
     this.network = new DefaultDirectedGraph<>(Relationship.class);
     this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
     this.provenance = /* TODO new Provenance() */ null;
     this.monitor = monitor;
-    this.namespace = namespace;
-    this.target = DefaultRuntimeProvider.createObservation(observable, scale, this, null);
-    this.catalog.put(observable.getLocalName(), target);
+    this.namespace = actuator.getNamespace();
+    this.target = DefaultRuntimeProvider.createObservation(actuator, this, null);
+    this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
     // TODO provenance (may need to pass the actuator)
     if (target instanceof ISubject) {
@@ -167,11 +168,17 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public IArtifact getTarget(IActuator actuator) {
     IArtifact ret = catalog.get(actuator.getName());
-    if (ret == null) {
-      // secondary artifact, non-semantic. Should be storage.
-      ret = DefaultRuntimeProvider.createArtifact(actuator, this);
+    
+    /**
+     * If we don't have a target and the actuator needs storage (i.e. it's a quality or anything
+     * that must be instantiated automatically), create the storage but do not add it to the
+     * provenance and structure.
+     */
+    if (ret == null && !((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
+      ret = DefaultRuntimeProvider.createObservation((Actuator)actuator, this, null);
       catalog.put(actuator.getName(), ret);
     }
+    
     return ret;
   }
 
@@ -195,17 +202,18 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IRuntimeContext createChild(IObservable target, INamespace namespace) {
+  public IRuntimeContext createChild(IActuator actuator) {
+
     RuntimeContext ret = new RuntimeContext(this);
     ret.parent = this;
-    ret.namespace = namespace;
+    ret.namespace = ((Actuator) actuator).getNamespace();
     if (!(this.target instanceof DirectObservation)) {
       throw new IllegalArgumentException(
           "RuntimeContext: cannot add a child observation to a non-direct observation");
     }
-    ret.target = DefaultRuntimeProvider.createObservation(target,
-        ((Observation) this.target).getScale(), this, (DirectObservation) this.target);
-    ret.catalog.put(target.getLocalName(), ret.target);
+    ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this,
+        (DirectObservation) this.target);
+    ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
     this.structure.addVertex(ret.target);
     // create child->parent edge
     this.structure.addEdge(ret.target, this.target);
@@ -236,10 +244,10 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IRuntimeContext createChild(IObservation target, INamespace namespace) {
+  public IRuntimeContext createChild(IObservation target, IActuator actuator) {
     RuntimeContext ret = new RuntimeContext(this);
     ret.parent = this;
-    ret.namespace = namespace;
+    ret.namespace = ((Actuator) actuator).getNamespace();
     ret.target = (Observation) target;
     return ret;
   }

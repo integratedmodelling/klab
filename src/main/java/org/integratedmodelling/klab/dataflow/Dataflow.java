@@ -38,10 +38,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         Actuator actuator = (Actuator) act;
 
         IRuntimeContext runtimeContext = context == null
-            ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(
-                actuator.getObservable(), actuator.getScale(), actuator.getNamespace(), monitor))
-            : ((Subject) context).getRuntimeContext().createChild(actuator.getObservable(),
-                actuator.getNamespace());
+            ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator, monitor))
+            : ((Subject) context).getRuntimeContext().createChild(actuator);
 
         IArtifact data =
             Klab.INSTANCE.getRuntimeProvider().compute(actuator, runtimeContext).get();

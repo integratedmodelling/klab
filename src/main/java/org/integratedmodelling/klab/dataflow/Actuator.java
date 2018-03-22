@@ -32,28 +32,28 @@ import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator implements IActuator {
 
-  protected String name;
-  private String alias;
-  private INamespace namespace;
-  private Observable observable;
-  private Scale scale;
-  private IKdlActuator.Type type;
-  List<IActuator> actuators = new ArrayList<>();
-  IMonitor monitor;
-  Date creationTime = new Date();
-  private boolean createObservation;
-  private boolean reference;
-  private boolean exported;
+  protected String                                         name;
+  private String                                           alias;
+  private INamespace                                       namespace;
+  private Observable                                       observable;
+  private Scale                                            scale;
+  private IKdlActuator.Type                                type;
+  List<IActuator>                                          actuators         = new ArrayList<>();
+  IMonitor                                                 monitor;
+  Date                                                     creationTime      = new Date();
+  private boolean                                          createObservation;
+  private boolean                                          reference;
+  private boolean                                          exported;
 
   // this is only for the API
-  private List<IComputableResource> computedResources = new ArrayList<>();
+  private List<IComputableResource>                        computedResources = new ArrayList<>();
 
   /**
    * The contextualizer chain that implements the computation specified by IServiceCalls. These may
    * be first-class resolvers/instantiators or mediators, in order of execution. Created and
    * populated at compute().
    */
-  private List<Pair<IContextualizer, IComputableResource>> computation = null;
+  private List<Pair<IContextualizer, IComputableResource>> computation       = null;
 
   public void addComputation(IComputableResource resource) {
     computedResources.add(resource);
@@ -75,9 +75,9 @@ public class Actuator implements IActuator {
    * Each list contains a service call and its local target name, null for the main observable.
    */
   private List<Pair<IServiceCall, IComputableResource>> computationStrategy = new ArrayList<>();
-  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy = new ArrayList<>();
+  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy   = new ArrayList<>();
 
-  private boolean definesScale;
+  private boolean                                       definesScale;
 
   @Override
   public String getName() {
@@ -122,7 +122,8 @@ public class Actuator implements IActuator {
 
   /**
    * Compute the actuator.
-   * @param target 
+   * 
+   * @param target
    * 
    * @param context The context observation data (null in the root actuator for a new context)
    * @param runtimeContext this one must be passed a context already adapted to the actuator's names
@@ -209,7 +210,7 @@ public class Actuator implements IActuator {
         if (!isConstant) {
           // TODO analyze the computation and see if we can create a constant instead
         }
-      } 
+      }
     }
     IRuntimeContext ret = runtimeContext.copy();
     for (IActuator input : getInputs()) {
@@ -377,5 +378,16 @@ public class Actuator implements IActuator {
 
   public void setDefinesScale(boolean definesScale) {
     this.definesScale = definesScale;
+  }
+
+  public boolean isStorageScalar() {
+    // TODO inspect the computations and check if we have any local modifications
+    return this.scale.size() == 1;
+  }
+
+  public boolean isStorageDynamic() {
+    // TODO inspect the computations and the observable semantics; check if we have any temporal
+    // modifications
+    return this.scale.isTemporallyDistributed();
   }
 }

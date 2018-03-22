@@ -40,8 +40,7 @@ public interface IRuntimeProvider {
    * @param monitor
    * @return a new runtime context.
    */
-  IComputationContext createRuntimeContext(IObservable target, IScale scale, INamespace namespace,
-      IMonitor monitor);
+  IComputationContext createRuntimeContext(IActuator actuator, IMonitor monitor);
 
   /**
    * Get a service call that, once executed, will turn the passed specification for a resource into
