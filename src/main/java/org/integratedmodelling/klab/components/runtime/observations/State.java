@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;

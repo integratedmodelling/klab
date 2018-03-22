@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
-import java.util.Map;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.utils.Pair;
 public class Space implements IExpression {
 
   @Override
-  public Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
+  public Object eval(IParameters parameters, IComputationContext context)
       throws KlabException {
 
     Shape shape = null;

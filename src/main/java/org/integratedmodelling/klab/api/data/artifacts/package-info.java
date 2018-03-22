@@ -6,4 +6,4 @@
  * {@link IContextualizer contextualizers}. These objects are "dressed" with semantics and
  * provenance API by the k.LAB engine to produce observational artifacts.
  */
-package org.integratedmodelling.klab.api.data.raw;
+package org.integratedmodelling.klab.api.data.artifacts;

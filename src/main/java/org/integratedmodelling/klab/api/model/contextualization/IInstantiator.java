@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import java.util.List;
-import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;

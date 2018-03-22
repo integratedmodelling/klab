@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.components.localstorage;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
-import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;

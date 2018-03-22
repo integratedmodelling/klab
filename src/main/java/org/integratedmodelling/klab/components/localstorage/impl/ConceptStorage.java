@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ILocator;

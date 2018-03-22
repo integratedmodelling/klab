@@ -2,28 +2,37 @@ package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Collection;
 import java.util.Iterator;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IModelArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
- * An Artifact can be any of the first-class products of a k.LAB task: a {@link IObservation} (in
- * most situations) or a {@link IModel} when the model has been produced by another, such as a
- * learning model. Observations are the usual final results of a successful contextualization. By
- * implementing {@link Iterator}, we also allow Artifacts to represent groups of artifacts (e.g. all
- * the Subjects instantiated by resolving a subject {@link IObservable}). This enables much simpler
- * handling of provenance.
- * 
- * Each artifact can return the provenance graph it's part of, allowing all k.LAB tasks to simply
- * return an IArtifact and provide full information on what happened.
+ * An Artifact can be any of the first-class products of a k.LAB task: a non-semantic
+ * {@link IDataArtifact} or {@link IObjectArtifact}, a semantic {@link IObservation} (as produced by
+ * most activities in k.LAB) or a {@link IKimModel k.IM model description} when the model has been
+ * produced by an observation activity, such as a learning model.
+ * <p>
+ * By implementing {@link Iterator}, we also allow Artifacts to represent groups of artifacts (e.g.
+ * all the {@link ISubject subjects} instantiated by resolving a subject {@link IObservable
+ * observable}). This enables simpler handling of provenance.
+ * <p>
+ * Each artifact exposes the provenance graph it's part of, allowing all k.LAB tasks to simply
+ * return an {@code IArtifact} and provide full information on what happened.
+ * <p>
+ * The API to use a {@link IKimModel} as an artifact ({@link IModelArtifact}) is not fully
+ * developed yet.
+ * <p>
  * 
  * @author Ferd
- * @param <T>
  */
 public interface IArtifact extends Node, Iterator<IArtifact> {
 
@@ -35,12 +44,12 @@ public interface IArtifact extends Node, Iterator<IArtifact> {
   IGeometry getGeometry();
 
   /**
-   * Metadata. Never null, possibly empty. 
+   * Metadata. Never null, possibly empty.
    * 
    * @return the metadata
    */
   IMetadata getMetadata();
-  
+
   /**
    * 
    * @return

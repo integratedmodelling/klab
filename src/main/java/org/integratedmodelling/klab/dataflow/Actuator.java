@@ -10,8 +10,8 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
-import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -139,7 +139,7 @@ public class Actuator implements IActuator {
       computation = new ArrayList<>();
       for (Pair<IServiceCall, IComputableResource> service : Collections.join(computationStrategy,
           mediationStrategy)) {
-        Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), monitor);
+        Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), runtimeContext);
         if (!(contextualizer instanceof IContextualizer)) {
           throw new KlabValidationException(
               "function " + service.getFirst().getName() + " does not produce a contextualizer");

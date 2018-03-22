@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
@@ -135,11 +136,11 @@ public class Classifier implements IClassifier {
         /*
          * TODO find an elegant way to communicate external parameter maps, and set :self = o in it.
          */
-        HashMap<String, Object> parms = new HashMap<String, Object>();
+        Parameters parms = new Parameters();
         parms.put("self", o);
         // FIXME pass a proper monitor
-        return negated ? !(Boolean) expressionMatch.eval(parms, monitor, /* TODO pass a context */ null)
-            : (Boolean) expressionMatch.eval(parms, monitor, /* TODO pass a context */ null);
+        return negated ? !(Boolean) expressionMatch.eval(parms, /* TODO pass a context */ Expression.emptyContext(monitor))
+            : (Boolean) expressionMatch.eval(parms, /* TODO pass a context */ Expression.emptyContext(monitor));
 
       } catch (Exception e) {
         throw new KlabRuntimeException(e);

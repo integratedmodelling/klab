@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.observations;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 
 /**
  * 

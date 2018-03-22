@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import org.integratedmodelling.klab.api.data.raw.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;

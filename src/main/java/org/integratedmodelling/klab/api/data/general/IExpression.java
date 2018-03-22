@@ -21,12 +21,9 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.data.general;
 
-import java.util.Map;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -39,51 +36,17 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IExpression {
 
   /**
-   * A context is always passed to exec(), although some or all of its members may be null.
-   * 
-   * FIXME probably not necessary having IComputationContext for expression services.
-   * 
-   * @author Ferd
-   *
-   */
-  interface Context {
-
-    /**
-     * 
-     * @return
-     */
-    INamespace getNamespace();
-
-    /**
-     * 
-     * @return
-     */
-    IModel getModel();
-
-    /**
-     * @return
-     */
-    IObservable getObservable();
-
-    /**
-     * 
-     * @return
-     */
-    IGeometry getGeometry();
-  }
-
-  /**
    * Execute the expression
    * 
    * @param parameters from context or defined in a language call
-   * @param monitor
-   * @param context usually null, may be added to determine the result of the evaluation according
-   *        to the calling context.
+   * @param context possibly empty, may be added to determine the result of the evaluation according
+   *        to the calling context. The {@link IComputationContext#getMonitor() monitor in the
+   *        context} will never be null and can be used to send messages or interrupt the
+   *        computation.
    * @return the result of evaluating the expression
    * @throws KlabException TODO
    */
-  Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
-      throws KlabException;
+  Object eval(IParameters parameters, IComputationContext context) throws KlabException;
 
 
   /**

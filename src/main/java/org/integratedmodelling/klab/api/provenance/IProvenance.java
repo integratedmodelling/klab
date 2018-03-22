@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 
 /**
@@ -32,17 +33,19 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
  * using direct actions (in the "active voice") and can be accessed backwards to build the OPM
  * graph, which is a "passive voice" model. This makes it much easier to build through observations
  * and resolutions. The data models is more compact than the W3's provenance model: it's a graph
- * where the vertices are {@link Node}s and the edges are {@link IActivity}s. Actions may be linked to
- * each other in a causal graph that is independent from the primary graph. Actions that are not
+ * where the vertices are {@link Node}s and the edges are {@link IActivity}s. Actions may be linked
+ * to each other in a causal graph that is independent from the primary graph. Actions that are not
  * caused by another action are called "primary" and can be obtained in chronological order. All
  * nodes and actions are timestamped with their time of creation and hold arbitrary metadata using
  * the standard Dublin Core tags from {@link IMetadata}.
- * 
- * Because k.LAB is an intelligent system, we always have at least two agents: a User and the k.LAB
- * engine. Primary actions are typically caused by users, secondary by the AI in k.LAB,personified
- * by a {@link IEngineIdentity}. Provenance is used to document the model resolution strategy and to
- * build the IReport that documents the model results.
- * 
+ * <p>
+ * Because k.LAB is an intelligent system, we always have at least two agents: a User (personified
+ * by a {@link IUserIdentity} and the k.LAB engine, personifying the AI in the system through a
+ * {@link IEngineIdentity}. Primary actions are typically caused by users (through
+ * <strong>acknowledgement</strong> observations), secondary by the AI in k.LAB (through
+ * <strong>computation</strong> or <strong>detection</strong> observations). Provenance is used to
+ * document the model resolution strategy and to build the IReport that documents the model results.
+ * <p>
  * @author Ferd
  */
 public interface IProvenance {

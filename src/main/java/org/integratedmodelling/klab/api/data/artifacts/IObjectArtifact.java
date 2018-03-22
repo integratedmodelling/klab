@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.api.data.raw;
+package org.integratedmodelling.klab.api.data.artifacts;
 
 import java.util.Collection;
 import org.integratedmodelling.klab.api.provenance.IArtifact;

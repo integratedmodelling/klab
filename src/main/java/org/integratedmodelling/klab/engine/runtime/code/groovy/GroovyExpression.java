@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -195,7 +197,7 @@ public class GroovyExpression extends Expression {
     return "org.integratedmodelling.thinklab.actions.ActionScript";
   }
 
-  public Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
+  public Object eval(IParameters parameters, IComputationContext context)
       throws KlabException {
 
     if (isTrue) {
@@ -213,11 +215,11 @@ public class GroovyExpression extends Expression {
       }
 
       try {
-        setBindings(script.getBinding(), monitor, parameters);
+        setBindings(script.getBinding(), context.getMonitor(), parameters);
         return script.run();
       } catch (MissingPropertyException e) {
         String property = e.getProperty();
-        monitor.warn("variable " + property
+        context.getMonitor().warn("variable " + property
             + " undefined: check naming. Adding as no-data for future evaluations.");
         defineIfAbsent.add(property);
       } catch (Throwable t) {
@@ -226,12 +228,12 @@ public class GroovyExpression extends Expression {
     } else if (object != null) {
       return object;
     } else if (functionCall != null) {
-      return Extensions.INSTANCE.callFunction(functionCall, monitor);
+      return Extensions.INSTANCE.callFunction(functionCall, context);
     }
     return null;
   }
 
-  private void setBindings(Binding binding, IMonitor monitor, Map<String, Object> parameters) {
+  private void setBindings(Binding binding, IMonitor monitor, IParameters parameters) {
 
     for (String key : parameters.keySet()) {
       binding.setVariable(key, parameters.get(key));

@@ -1,16 +1,18 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.Map;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression {
@@ -21,7 +23,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
   public ExpressionResolver() {
   }
 
-  public ExpressionResolver(Map<String, Object> parameters) {
+  public ExpressionResolver(IParameters parameters) {
     // TODO Auto-generated constructor stub
   }
 
@@ -35,9 +37,11 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
 
   @Override
-  public Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
+  public Object eval(IParameters parameters, IComputationContext context)
       throws KlabException {
     // TODO analyze code and create an appropriate contextualizer. May also see context for hand-coded instantiators.
+    ILanguageProcessor processor = Extensions.INSTANCE.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
+    Descriptor descriptor = processor.describe(parameters.get("code", String.class), context);
     return new ExpressionResolver(parameters);
   }
 

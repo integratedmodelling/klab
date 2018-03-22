@@ -117,8 +117,8 @@ public class Engine extends Server implements IEngine {
      * @param error true for abnormal exit
      */
     public void notifyEnd(boolean error) {
-      System.out.println(identity
-          + ((errorCount > 0 || error) ? " finished with errors" : " finished without errors"));
+      ((errorCount > 0 || error) ? System.err : System.out).println(identity
+          + ((errorCount > 0 || error) ? " finished with errors" : " finished with no errors"));
     }
 
   }
@@ -380,17 +380,17 @@ public class Engine extends Server implements IEngine {
 
     registerCommonAnnotations();
 
-//    // TODO reinstate whatever must be kept plus any data services and subsystems
-//    Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
-//      @SuppressWarnings("unchecked")
-//      @Override
-//      public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-//        String concept = ((SubjectType) annotation).value();
-//        if (ISubject.class.isAssignableFrom(cls)) {
-//          Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
-//        }
-//      }
-//    });
+    // // TODO reinstate whatever must be kept plus any data services and subsystems
+    // Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new AnnotationHandler() {
+    // @SuppressWarnings("unchecked")
+    // @Override
+    // public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
+    // String concept = ((SubjectType) annotation).value();
+    // if (ISubject.class.isAssignableFrom(cls)) {
+    // Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends ISubject>) cls);
+    // }
+    // }
+    // });
 
     Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
       @Override

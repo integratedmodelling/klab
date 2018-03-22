@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.Map;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
@@ -34,10 +33,10 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
   }
 
   @Override
-  public Object eval(Map<String, Object> parameters, IMonitor monitor, Context context)
+  public Object eval(IParameters parameters, IComputationContext context)
       throws KlabException {
     // TODO resolve URN, generate the appropriate contextualizer for type and geometry
-    return new UrnResolver(parameters.get("urn").toString());
+    return new UrnResolver(parameters.get("urn", String.class));
   }
 
   @Override

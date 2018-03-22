@@ -35,7 +35,9 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
 
   /**
    * Return the scale seen by this object, merging all the extents declared for the subject in the
-   * observation context.
+   * observation context. This could simply override {@link IArtifact#getGeometry()} as a
+   * {@link IScale} is a {@link IGeometry}, and in a standard implementation should do just that,
+   * but a {@link IScale} is important enough to deserve its own accessor.
    *
    * @return the observation's scale
    */
@@ -51,8 +53,7 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
   IDirectObservation getContext();
 
   /**
-   * True if our scale has an observation of space with more than one state
-   * value.
+   * True if our scale has an observation of space with more than one state value.
    * 
    * @return true if distributed in space
    */

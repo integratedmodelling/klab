@@ -16,7 +16,6 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
@@ -43,6 +42,8 @@ public enum Extensions implements IExtensionService {
 
     INSTANCE;
 
+    public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
+  
     Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
     Map<String, Prototype>  prototypes = Collections.synchronizedMap(new HashMap<>());
 
@@ -94,10 +95,10 @@ public enum Extensions implements IExtensionService {
 
     @Override
     public Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException {
-        return callFunction(functionCall, monitor, Expression.emptyContext);
+        return callFunction(functionCall, Expression.emptyContext(monitor));
     }
     
-    public Object callFunction(IServiceCall functionCall, IMonitor monitor, Context context) throws KlabException {
+    public Object callFunction(IServiceCall functionCall, IComputationContext context) throws KlabException {
 
         Object ret = null;
 
@@ -113,7 +114,7 @@ public enum Extensions implements IExtensionService {
             if (IExpression.class.isAssignableFrom(cls)) {
                 try {
                     IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
-                    ret = expr.eval(functionCall.getParameters(), monitor, context);
+                    ret = expr.eval(functionCall.getParameters(), context);
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException | NoSuchMethodException | SecurityException e) {
                     throw new KlabInternalErrorException(e);
@@ -186,7 +187,7 @@ public enum Extensions implements IExtensionService {
     
     public ILanguageProcessor getLanguageProcessor(String language) {
       // TODO
-      return (language == null || language.equals("groovy")) ? GroovyProcessor.INSTANCE : null;
+      return (language == null || language.equals(DEFAULT_EXPRESSION_LANGUAGE)) ? GroovyProcessor.INSTANCE : null;
     }
     
 }

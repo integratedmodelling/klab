@@ -1,10 +1,12 @@
 package org.integratedmodelling.klab.api.observations;
 
-import org.integratedmodelling.klab.api.data.raw.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 
 /**
- * 
+ * A {@link IState} is the semantic {@link IObservation} that specializes a non-semantic
+ * {@link IDataArtifact data artifact}. Its {@link #getObservable() observable} is always a quality.
+ * <p>
  * @author ferdinando.villa
  *
  */
