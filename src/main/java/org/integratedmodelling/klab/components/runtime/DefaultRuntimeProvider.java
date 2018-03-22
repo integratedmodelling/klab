@@ -164,7 +164,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     return data;
 
   }
-
+  // FIXME JUST THE INPUTS
   private IComputationContext localizeContext(RuntimeContext context, IScale state,
       Collection<Pair<String, IDataArtifact>> variables) {
     for (Pair<String, IDataArtifact> var : variables) {

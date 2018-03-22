@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.components.geospace.processing;
 
 import java.util.Random;
 
+import org.integratedmodelling.kim.utils.Range;
+
 /**
  * Terrain generation using the diamond-square algorithm (Fournier et al. 1982)
  * From http://www.javaworld.com/article/2076745/learn-java/3d-graphic-java--render-fractal-landscapes.html
@@ -20,9 +22,12 @@ public class Terrain {
     /**
      * @param lod level of detail (number of iterations)
      * @param roughness (0 to 1)
+     * @param min 
+     * @param max 
      */
-    public Terrain(int lod, double roughness) {
-
+    public Terrain(int lod, double roughness, double min, double max) {
+    	this.min = min;
+    	this.max = max;
         this.divisions = 1 << lod;
         terrain = new double[divisions + 1][divisions + 1];
         rng = new Random();
@@ -94,7 +99,7 @@ public class Terrain {
      */
     public double getAltitude(double i, double j) {
         double alt = terrain[(int) (i * divisions)][(int) (j * divisions)];
-        return (alt - min) / (max - min);
+        return min + (alt * (max - min));
     }
 
 }

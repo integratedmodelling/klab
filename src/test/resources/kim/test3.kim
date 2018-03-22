@@ -24,6 +24,6 @@ private model geography:Elevation in m
 
 private model geography:Slope in degree_angle 
 	observing geography:Aspect in degree_angle named aspetto
-	using gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360);
+	using gis.terrain(roughness = 0.71, detail = 9, range = 0 to 360);
 
 private model 10 as geography:Aspect in degree_angle;
