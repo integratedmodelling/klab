@@ -6,13 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -160,7 +160,7 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public long getOffset(long... dimOffsets) {
+  public long getOffset(long[] dimOffsets) {
     if (features != null) {
       if (dimOffsets.length != 1) {
         throw new IllegalArgumentException(
@@ -172,7 +172,7 @@ public class Space extends Extent implements ISpace {
       if (dimOffsets.length != 2) {
         throw new IllegalArgumentException("can't address offset: grid space has two dimensions");
       }
-      return grid.getOffset(dimOffsets[0], dimOffsets[0]);
+      return grid.getOffset(dimOffsets[0], dimOffsets[1]);
     }
     if (dimOffsets.length != 1 || dimOffsets[0] != 0) {
       throw new IllegalArgumentException(
@@ -430,19 +430,13 @@ public class Space extends Extent implements ISpace {
     return null;
   }
 
-  @Override
-  public long getOffset(ILocator index) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
+//  @Override
+//  public long getOffset(ILocator index) {
+//    // TODO Auto-generated method stub
+//    return 0;
+//  }
 
-  @Override
-  public ILocator at(Dimension.Type dimension, long... offsets) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
+//  @Override
   public Iterable<ILocator> over(Type dimension) {
     if (dimension != Dimension.Type.SPACE) {
       throw new IllegalArgumentException("cannot iterate a spatial extent over " + dimension);

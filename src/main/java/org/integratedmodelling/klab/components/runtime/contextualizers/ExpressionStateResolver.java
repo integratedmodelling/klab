@@ -5,8 +5,8 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ExpressionStateResolver implements IStateResolver {
 
@@ -21,8 +21,13 @@ public class ExpressionStateResolver implements IStateResolver {
   }
 
   @Override
-  public Object resolve(IDataArtifact ret, IComputationContext context, IScale locator) {
-    return null;
+  public Object resolve(IDataArtifact storage, IComputationContext context) throws KlabException {
+    boolean ok = true;
+    if (condition != null) {
+      Object ret = condition.eval(context, context);
+      ok = ret instanceof Boolean && ((Boolean)ret);
+    }
+    return ok ? expression.eval(context, context) : null;
   }
 
 

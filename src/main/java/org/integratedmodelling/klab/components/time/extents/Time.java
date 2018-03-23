@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.components.time.extents;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
@@ -196,23 +196,11 @@ public class Time extends Extent implements ITime {
       return null;
     }
 
-    @Override
-    public long getOffset(ILocator index) {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public ILocator at(Dimension.Type dimension, long... offsets) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public Iterable<ILocator> over(Type dimension) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+//    @Override
+//    public long getOffset(ILocator index) {
+//      // TODO Auto-generated method stub
+//      return 0;
+//    }
 
     @Override
     public long getOffset(long[] dimOffsets) {

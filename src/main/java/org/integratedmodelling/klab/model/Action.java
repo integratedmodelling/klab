@@ -5,8 +5,8 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimAction.Type;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.model.IAction;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 /*
  * FIXME at this point there is no need for a model-side Action - could simply use the k.IM peer

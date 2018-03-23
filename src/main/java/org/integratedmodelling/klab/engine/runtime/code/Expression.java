@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.code;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
@@ -66,7 +67,7 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public IArtifact getData(String localName) {
+    public IArtifact getArtifact(String localName) {
       return null;
     }
 
@@ -93,8 +94,29 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public <T extends IArtifact> Collection<Pair<String, T>> getData(Class<T> type) {
+    public <T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type) {
       return new ArrayList<>();
+    }
+
+    @Override
+    public IGeometry getGeometry() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public Collection<String> getInputs() {
+      return new HashSet<>();
+    }
+
+    @Override
+    public Collection<String> getOutputs() {
+      return new HashSet<>();
+    }
+
+    @Override
+    public IObservable getSemantics(String identifier) {
+      return null;
     }
   }
   

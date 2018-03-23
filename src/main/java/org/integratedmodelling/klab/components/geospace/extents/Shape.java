@@ -5,12 +5,12 @@ import java.util.Iterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -389,24 +389,6 @@ public class Shape extends AbstractExtent implements IShape {
   @Override
   public int getDimensionality() {
     return 0;
-  }
-
-  @Override
-  public long getOffset(ILocator index) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public ILocator at(Dimension.Type dimension, long... offsets) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Iterable<ILocator> over(Dimension.Type dimension) {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override

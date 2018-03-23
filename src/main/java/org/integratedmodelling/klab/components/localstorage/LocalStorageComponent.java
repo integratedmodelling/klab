@@ -23,11 +23,11 @@ public class LocalStorageComponent implements IStorageProvider {
   public IDataArtifact createStorage(IObservable observable, IScale scale, IComputationContext context) {
     switch (observable.getObservationType()) {
       case CLASSIFICATION:
-        return new ConceptStorage(observable, scale);
+        return new ConceptStorage(scale);
       case QUANTIFICATION:
-        return new DoubleStorage(observable, scale);
+        return new DoubleStorage(scale);
       case VERIFICATION:
-        return new BooleanStorage(observable, scale);
+        return new BooleanStorage(scale);
       case INSTANTIATION:
       case SIMULATION:
       case DETECTION:

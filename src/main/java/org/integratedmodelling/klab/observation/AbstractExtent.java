@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
  * @author Ferd
  *
  */
-public abstract class AbstractExtent extends AbstractLocator implements IExtent {
+public abstract class AbstractExtent implements IExtent {
 
   private transient long scaleId;
 

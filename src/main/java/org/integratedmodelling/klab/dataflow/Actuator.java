@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -134,7 +136,7 @@ public class Actuator implements IActuator {
   public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
     // localize names to this actuator's expectations; create non-semantic storage if needed
-    IRuntimeContext ctx = setupContext(runtimeContext);
+    IRuntimeContext ctx = setupContext(runtimeContext, ITime.INITIALIZATION);
 
     if (computation == null) {
       // compile the contextualization strategy
@@ -167,11 +169,10 @@ public class Actuator implements IActuator {
 
       } else if (contextualizer.getFirst() instanceof IResolver) {
         ret = ((IResolver<IArtifact>) contextualizer.getFirst()).resolve(ret,
-            addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
+            addParameters(ctx, contextualizer.getSecond()));
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
         for (IObjectArtifact object : ((IInstantiator) contextualizer.getFirst()).instantiate(
-            this.observable, addParameters(ctx, contextualizer.getSecond()),
-            scale.at(ITime.INITIALIZATION))) {
+            this.observable, addParameters(ctx, contextualizer.getSecond()))) {
           if (ret == null) {
             ret = object;
           } else {
@@ -199,11 +200,12 @@ public class Actuator implements IActuator {
     return ctx;
   }
 
-  private IRuntimeContext setupContext(IRuntimeContext runtimeContext) {
+  private IRuntimeContext setupContext(IRuntimeContext runtimeContext, ILocator locator) {
 
     IRuntimeContext ret = runtimeContext.copy();
+    ret.setGeometry((IGeometry)ret.getGeometry().at(locator));
     for (IActuator input : getInputs()) {
-      if (ret.getData(input.getName()) != null) {
+      if (ret.getArtifact(input.getName()) != null) {
         ret.rename(input.getName(), input.getAlias());
       }
     }
@@ -378,5 +380,9 @@ public class Actuator implements IActuator {
     // TODO inspect the computations and the observable semantics; check if we have any temporal
     // modifications
     return this.scale.isTemporallyDistributed();
+  }
+
+  public boolean isExported() {
+    return exported;
   }
 }

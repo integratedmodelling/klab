@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.observations.scale;
 
 import java.util.List;
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;

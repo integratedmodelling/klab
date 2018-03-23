@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * A Resolver is a {@link IContextualizer} that <i>explains</i> an existing observation by ensuring
@@ -20,9 +20,9 @@ public abstract interface IResolver<T extends IArtifact> extends IContextualizer
    * 
    * @param ret the observation being resolved.
    * @param context the runtime context of the computation.
-   * @param locator the current location in the topology. This will have unitary time.
    * @return the final observation - either the same passed or a new one if mediation was necessary.
+   * @throws KlabException 
    */
-  T resolve(T ret, IComputationContext context, IScale locator);
+  T resolve(T ret, IComputationContext context) throws KlabException;
 
 }

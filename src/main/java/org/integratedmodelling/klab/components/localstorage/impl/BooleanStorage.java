@@ -1,11 +1,9 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.observation.Scale;
 import xerial.larray.LBitArray;
 import xerial.larray.japi.LArrayJ;
 
@@ -14,7 +12,7 @@ public class BooleanStorage extends Storage implements IDataArtifact {
   private LBitArray data;
   private LBitArray mask;
 
-  public BooleanStorage(IObservable observable, IScale scale) {
+  public BooleanStorage(IGeometry scale) {
     super(scale);
     this.data = LArrayJ.newLBitArray(scale.size());
     this.mask = LArrayJ.newLBitArray(scale.size());
@@ -27,7 +25,7 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 
   @Override
   public Boolean get(ILocator index) {
-    long offset = ((Scale)getGeometry()).getOffset(index);
+    long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
@@ -36,8 +34,8 @@ public class BooleanStorage extends Storage implements IDataArtifact {
   }
 
   @Override
-  public void set(ILocator index, Object value) {
-    long offset = ((Scale)getGeometry()).getOffset(index);
+  public long set(ILocator index, Object value) {
+    long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
@@ -50,6 +48,7 @@ public class BooleanStorage extends Storage implements IDataArtifact {
       data.update(offset, ((Boolean) value));
       mask.update(offset, true);
     }
+    return offset;
   }
   
   @Override

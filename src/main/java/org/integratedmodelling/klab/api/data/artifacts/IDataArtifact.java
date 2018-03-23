@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.data.artifacts;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -41,12 +41,12 @@ public interface IDataArtifact extends IArtifact {
    *        distribution for it. The state is expected to quickly promote itself to a different
    *        underlying implementation if a compatible value of a new type is expected.
    * 
-   *        TODO check if this can be removed from the API
-   * 
+   * @return the linear offset corresponding to the locator in storage (for checking and debugging
+   *         only)
    * @throws IllegalArgumentException if value is incompatible with type or locator is not
    *         compatible with the geometry.
    */
-  void set(ILocator index, Object value);
+  long set(ILocator index, Object value);
 
   /**
    * Total number of values. Must be compatible with the size of the dimensions of the underlying

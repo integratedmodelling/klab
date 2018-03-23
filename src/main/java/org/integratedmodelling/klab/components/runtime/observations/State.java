@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
@@ -53,8 +53,8 @@ public class State extends Observation implements IState {
     return storage.get(index);
   }
 
-  public void set(ILocator index, Object value) {
-    storage.set(index, value);
+  public long set(ILocator index, Object value) {
+    return storage.set(index, value);
   }
 
   public IGeometry getGeometry() {

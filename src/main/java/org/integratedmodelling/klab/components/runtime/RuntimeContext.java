@@ -3,14 +3,15 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -18,7 +19,6 @@ import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -57,8 +57,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   IMonitor                       monitor;
   RuntimeContext                 parent;
   IObservation                   target;
-  IScale                         scale;
+  IGeometry                      scale;
   IKimConcept.Type               artifactType;
+  Set<String>                    inputs;
+  Set<String>                    outputs;
+  Map<String, IObservable>       semantics;
 
   public RuntimeContext(Actuator actuator, IMonitor monitor) {
 
@@ -73,6 +76,28 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
     this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable());
+
+    this.inputs = new HashSet<>();
+    this.outputs = new HashSet<>();
+    this.semantics = new HashMap<>();
+
+    if (!actuator.getObservable().is(Type.COUNTABLE)) {
+      this.outputs.add(actuator.getName());
+      this.semantics.put(actuator.getName(), actuator.getObservable());
+    }
+    for (IActuator a : actuator.getActuators()) {
+      if (!((Actuator) a).isExported()) {
+        String id = a.getAlias() == null ? a.getName() : a.getAlias();
+        this.inputs.add(id);
+        this.semantics.put(id, ((Actuator) a).getObservable());
+      }
+    }
+    for (IActuator a : actuator.getOutputs()) {
+      String id = a.getAlias() == null ? a.getName() : a.getAlias();
+      this.outputs.add(id);
+      this.semantics.put(id, ((Actuator) a).getObservable());
+    }
+
     // TODO provenance (may need to pass the actuator)
     if (target instanceof ISubject) {
       this.network.addVertex((ISubject) this.target);
@@ -91,6 +116,9 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.catalog = context.catalog;
     this.scale = context.scale;
     this.artifactType = context.artifactType;
+    this.inputs = context.inputs;
+    this.outputs = context.outputs;
+    this.semantics = context.semantics;
   }
 
   @Override
@@ -134,15 +162,18 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IArtifact getData(String localName) {
+  public IArtifact getArtifact(String localName) {
     return catalog.get(localName);
   }
 
   @Override
   public IRuntimeContext copy() {
     RuntimeContext ret = new RuntimeContext(this);
-    // we want a deep copy of the catalog so we can rename elements
+    // make a deep copy of all localizable info so we can rename elements
     ret.catalog = new HashMap<>(ret.catalog);
+    ret.semantics = new HashMap<>(ret.semantics);
+    ret.inputs = new HashSet<>(ret.inputs);
+    ret.outputs = new HashSet<>(ret.outputs);
     return ret;
   }
 
@@ -152,6 +183,18 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     if (obj != null) {
       catalog.remove(name);
       catalog.put(alias, obj);
+      if (inputs.contains(name)) {
+        inputs.remove(name);
+        inputs.add(alias);
+      }
+      if (outputs.contains(name)) {
+        outputs.remove(name);
+        outputs.add(alias);
+      }
+      IObservable obs = semantics.remove(name);
+      if (obs != null) {
+        semantics.put(alias, obs);
+      }
     }
   }
 
@@ -206,18 +249,38 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     RuntimeContext ret = new RuntimeContext(this);
     ret.parent = this;
     ret.namespace = ((Actuator) actuator).getNamespace();
-    ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)actuator).getObservable());
+    ret.artifactType =
+        Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
     if (!(this.target instanceof DirectObservation)) {
       throw new IllegalArgumentException(
           "RuntimeContext: cannot add a child observation to a non-direct observation");
     }
 
     ret.scale = actuator.getScale();
+    ret.inputs = new HashSet<>();
+    ret.outputs = new HashSet<>();
+    ret.semantics = new HashMap<>();
+
+    for (IActuator a : actuator.getActuators()) {
+      if (!((Actuator) a).isExported()) {
+        String id = a.getAlias() == null ? a.getName() : a.getAlias();
+        ret.inputs.add(id);
+        ret.semantics.put(id, ((Actuator) a).getObservable());
+      }
+    }
+    for (IActuator a : actuator.getOutputs()) {
+      String id = a.getAlias() == null ? a.getName() : a.getAlias();
+      ret.outputs.add(id);
+      ret.semantics.put(id, ((Actuator) a).getObservable());
+    }
 
     if (!((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
+      ret.outputs.add(actuator.getName());
+      ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
       ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this,
           (DirectObservation) this.target);
-      ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)actuator).getObservable());
+      ret.artifactType =
+          Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
       ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
       this.structure.addVertex(ret.target);
       // create child->parent edge
@@ -257,12 +320,16 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     ret.namespace = ((Actuator) actuator).getNamespace();
     ret.target = (Observation) target;
     ret.scale = target.getScale();
+    ret.inputs = new HashSet<>();
+    ret.outputs = new HashSet<>();
+    ret.semantics = new HashMap<>();
+    // TODO reinitialize as appropriate
     return ret;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends IArtifact> Collection<Pair<String, T>> getData(Class<T> type) {
+  public <T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type) {
     List<Pair<String, T>> ret = new ArrayList<>();
     for (String s : catalog.keySet()) {
       if (type.isAssignableFrom(catalog.get(s).getClass())) {
@@ -280,6 +347,25 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public Type getArtifactType() {
     return artifactType;
+  }
+
+  public void setGeometry(IGeometry scale) {
+    this.scale = scale;
+  }
+
+  @Override
+  public Collection<String> getInputs() {
+    return inputs;
+  }
+
+  @Override
+  public Collection<String> getOutputs() {
+    return outputs;
+  }
+
+  @Override
+  public IObservable getSemantics(String identifier) {
+    return semantics.get(identifier);
   }
 
 }

@@ -25,14 +25,16 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
   static final public String FUNCTION_ID = "klab.runtime.exec";
 
-  IExpression expression = null;
-  IExpression condition = null;
-  
+  IExpression                expression  = null;
+  IExpression                condition   = null;
+  IGeometry                  geometry    = null;
+
   // don't remove - only used as expression
   public ExpressionResolver() {}
 
   public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters parameters,
       IComputationContext context) {
+    this.geometry = context.getGeometry();
     this.expression = descriptor.compile();
     if (condition != null) {
       this.condition = condition.compile();
@@ -90,7 +92,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
   private Collection<String> getDistributedStateIds(IComputationContext context) {
     Set<String> ret = new HashSet<>();
-    for (Pair<String, IState> state : context.getData(IState.class)) {
+    for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
       if (!state.getSecond().isConstant()) {
         ret.add(state.getFirst());
       }
@@ -100,12 +102,11 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
   @Override
   public IGeometry getGeometry() {
-    // TODO Auto-generated method stub
-    return null;
+    return geometry;
   }
 
   @Override
-  public IDataArtifact resolve(IDataArtifact ret, IComputationContext context, IScale locator) {
+  public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) {
     // TODO Auto-generated method stub
     return null;
   }

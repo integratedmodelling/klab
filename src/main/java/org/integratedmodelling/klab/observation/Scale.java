@@ -11,12 +11,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.kim.model.Geometry.OffsetLocator;
+import org.integratedmodelling.kim.utils.MultidimensionalCursor;
+import org.integratedmodelling.kim.utils.MultidimensionalCursor.StorageOrdering;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -27,10 +30,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
-import org.integratedmodelling.klab.utils.MultidimensionalCursor;
-import org.integratedmodelling.klab.utils.MultidimensionalCursor.StorageOrdering;
 
-public class Scale extends AbstractLocator implements IScale {
+public class Scale implements IScale {
 
   private static AtomicLong counter = new AtomicLong(0);
   transient long scaleId = counter.incrementAndGet();
@@ -1126,7 +1127,11 @@ public class Scale extends AbstractLocator implements IScale {
      * TODO single extent locator
      */
 
-    return 0;
+    if (index instanceof OffsetLocator) {
+      return ((OffsetLocator)index).getOffset();
+    }
+    
+    throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
   }
 
   @Override

@@ -21,8 +21,8 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.api.observations.scale.space;
 
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 
 public interface ISpace extends IExtent {
 

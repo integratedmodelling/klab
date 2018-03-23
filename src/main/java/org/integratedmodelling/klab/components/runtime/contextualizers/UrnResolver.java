@@ -6,7 +6,6 @@ import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -27,7 +26,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
   }
 
   @Override
-  public IArtifact resolve(IArtifact observation, IComputationContext context, IScale locator) {
+  public IArtifact resolve(IArtifact observation, IComputationContext context) {
     // TODO Auto-generated method stub
     return null;
   }

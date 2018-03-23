@@ -5,21 +5,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.observation.AbstractExtent;
@@ -466,23 +461,11 @@ public class Grid extends Area implements IGrid {
       return 0;
     }
 
-    @Override
-    public long getOffset(ILocator index) {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    @Override
-    public ILocator at(Dimension.Type dimension, long... offsets) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    @Override
-    public Iterable<ILocator> over(Type dimension) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+//    @Override
+//    public long getOffset(ILocator index) {
+//      // TODO Auto-generated method stub
+//      return 0;
+//    }
 
     @Override
     public long[] shape() {

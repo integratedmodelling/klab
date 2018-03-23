@@ -101,12 +101,13 @@ public interface IRuntimeContext extends IComputationContext {
    * @return the target artifact for the passed actuator.
    */
   IArtifact getTarget(IActuator actuator);
-
+  
   /**
-   * Return the current geometry (in k.LAB typically a {@link IScale}).
+   * The API must be able to set the geometry for downstream computations.
    * 
-   * @return the current geometry. Should never be null.
+   * @param geometry
    */
-  public IGeometry getGeometry();
+  void setGeometry(IGeometry geometry);
+
 
 }

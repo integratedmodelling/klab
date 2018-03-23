@@ -57,8 +57,9 @@ public interface IRuntimeProvider {
    * @param scale the scale, already set to the slice needed for this computation
    * @return the computed result - return the same object passed as data whenever possible. If a
    *         different one is collected, the original one will be garbage collected.
+   * @throws KlabException 
    */
   IDataArtifact distributeComputation(IStateResolver resolver, IDataArtifact data,
-      IRuntimeContext context, IScale scale);
+      IRuntimeContext context, IScale scale) throws KlabException;
 
 }

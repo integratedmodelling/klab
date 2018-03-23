@@ -2,12 +2,12 @@ package org.integratedmodelling.klab.data.storage;
 
 import java.util.Objects;
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -50,7 +50,7 @@ public abstract class AbstractSingletonStorage<T> extends Artifact implements ID
   }
 
   @Override
-  public void set(ILocator index, Object value) {
+  public long set(ILocator index, Object value) {
     if (this.initialized && !Objects.equals(this.value, value)) {
       // TODO the first different value should trigger promotion. Hard because we don't know what was set so far.
 //      this.delegate = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale);
@@ -58,6 +58,7 @@ public abstract class AbstractSingletonStorage<T> extends Artifact implements ID
     }
     this.value = setValue(value);
 //    this.initialized = true;
+    return 0;
   }
 
   protected abstract T setValue(Object value);

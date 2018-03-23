@@ -1,21 +1,26 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.observation.Scale;
-import xerial.larray.LDoubleArray;
+import xerial.larray.LFloatArray;
 import xerial.larray.japi.LArrayJ;
 
+/**
+ * TODO/FIXME: Using Float arrays because LDoubleArray simply DOES NOT WORK (stores X and returns Y).
+ * Of course this should be a good argument to avoid LArrayJ.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class DoubleStorage extends Storage implements IDataArtifact {
 
-  private LDoubleArray data;
+  private LFloatArray data;
 
-  public DoubleStorage(IObservable observable, IGeometry scale) {
+  public DoubleStorage(IGeometry scale) {
     super(scale);
-    this.data = LArrayJ.newLDoubleArray(scale.size());
+    this.data = LArrayJ.newLFloatArray(scale.size());
   }
 
   @Override
@@ -25,27 +30,29 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 
   @Override
   public Double get(ILocator index) {   
-    long offset = ((Scale) getGeometry()).getOffset(index);
+    long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    return data.apply(offset);
+    float ret = data.apply(offset);
+    return Float.isNaN(ret) ? null : (double)ret;
   }
 
   @Override
-  public void set(ILocator index, Object value) {
-    long offset = ((Scale) getGeometry()).getOffset(index);
+  public long set(ILocator index, Object value) {
+    long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
       throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    data.update(offset, value instanceof Number ? ((Number) value).doubleValue() : convert(value));
+    data.update(offset, value instanceof Number ? ((Number) value).floatValue() : convert(value));
+    return offset;
   }
 
-  private double convert(Object value) {
+  private float convert(Object value) {
     // TODO convert distributions and the like
-    return Double.NaN;
+    return Float.NaN;
   }
 
   @Override

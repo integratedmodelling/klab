@@ -150,26 +150,29 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
   @Override
   public IDataArtifact distributeComputation(IStateResolver resolver, IDataArtifact data,
-      IRuntimeContext context, IScale scale) {
+      IRuntimeContext context, IScale scale) throws KlabException {
 
     // TODO use a distributed loop unless the resolver implements some tag interface to notify
     // non-reentrant behavior
     // TODO if this is done, the next one must be local to each thread
     RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
-    Collection<Pair<String, IDataArtifact>> variables = ctx.getData(IDataArtifact.class);
+    Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
     for (IScale state : scale) {
       data.set(state, resolver.resolve(data,
-          variables.isEmpty() ? ctx : localizeContext(ctx, state, variables), state));
+          variables.isEmpty() ? ctx : localizeContext(ctx, state, variables)));
     }
     return data;
-
   }
-  // FIXME JUST THE INPUTS
+  
   private IComputationContext localizeContext(RuntimeContext context, IScale state,
       Collection<Pair<String, IDataArtifact>> variables) {
-    for (Pair<String, IDataArtifact> var : variables) {
-      context.set(var.getFirst(), var.getSecond().get(state));
+    for (String var : context.getInputs()) {
+      IArtifact artifact = context.getArtifact(var);
+      if (artifact instanceof IDataArtifact) {
+        context.set(var, ((IDataArtifact)artifact).get(state));
+      }
     }
+    context.setGeometry(state);
     return context;
   }
 

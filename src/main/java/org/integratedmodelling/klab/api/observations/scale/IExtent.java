@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.observations.scale;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.exceptions.KlabException;
 

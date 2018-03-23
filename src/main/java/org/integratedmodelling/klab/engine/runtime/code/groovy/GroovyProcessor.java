@@ -29,7 +29,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
     GroovyDescriptor(String expression, IRuntimeContext context) {
       GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(
-          context.getNamespace(), context.getData(IState.class).stream()
+          context.getNamespace(), context.getArtifacts(IState.class).stream()
               .map(data -> data.getFirst()).collect(Collectors.toSet()),
           context.getGeometry());
       this.processedCode = processor.process(expression);

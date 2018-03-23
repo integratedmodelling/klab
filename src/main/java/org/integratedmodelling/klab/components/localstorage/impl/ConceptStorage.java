@@ -1,14 +1,13 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ILocator;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 public class ConceptStorage extends Storage implements IDataArtifact {
 
-  public ConceptStorage(IObservable observable, IScale scale) {
+  public ConceptStorage(IGeometry scale) {
       super(scale);
   }
 
@@ -27,9 +26,9 @@ public class ConceptStorage extends Storage implements IDataArtifact {
 
 
   @Override
-  public void set(ILocator index, Object value) {
+  public long set(ILocator index, Object value) {
     // TODO Auto-generated method stub
-    
+    return 0;
   }
 
 }

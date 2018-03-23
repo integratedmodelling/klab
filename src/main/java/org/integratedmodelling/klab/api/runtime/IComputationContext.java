@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * The {@link IParameters} methods access user-defined parameters, including any passed to the
  * calling functions or URNs and, if appropriate, context-localized POD values for states (e.g. the
  * specific value at the point of computation). The actual data objects are always available through
- * {@link #getData(String)}.
+ * {@link #getArtifact(String)}.
  * 
  * @author Ferd
  *
@@ -80,7 +80,7 @@ public interface IComputationContext extends IParameters {
    * @param localName
    * @return the artifact, null if not found.
    */
-  IArtifact getData(String localName);
+  IArtifact getArtifact(String localName);
 
   /**
    * Return all known artifacts of the passed class along with their ID in this context. For
@@ -90,7 +90,7 @@ public interface IComputationContext extends IParameters {
    * @param type
    * @return a collection of pair <name, artifact>, possibly empty, never null.
    */
-  <T extends IArtifact> Collection<Pair<String, T>> getData(Class<T> type);
+  <T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type);
 
   /**
    * Return a valid monitor for any communication.
@@ -105,7 +105,42 @@ public interface IComputationContext extends IParameters {
    * @return the type of the observation
    */
   IKimConcept.Type getArtifactType();
+  
+  /**
+   * Return the geometry for the computation (in k.LAB typically a {@link IScale}).
+   * 
+   * @return the current geometry. Should never be null.
+   */
+  public IGeometry getGeometry();
 
+  /**
+   * Get the names of all inputs for this computation. The correspondent semantics can be
+   * accessed using {@link #getSemantics(String)}; the corresponding artifact can be accessed
+   * using {@link #getArtifact(String)}.
+   * 
+   * @return the names of all inputs in this context
+   */
+  public Collection<String> getInputs();
+  
+  /**
+   * Get the names of all outputs expected from this computation. The correspondent semantics can be
+   * accessed using {@link #getSemantics(String)}; the corresponding artifact can be accessed
+   * using {@link #getArtifact(String)}.
+   * 
+   * @return the names of all outputs in this context
+   */
+  public Collection<String> getOutputs();
+  
+  /**
+   * Get the semantics for the passed identifier, which must be one of those returned by
+   * either {@link #getInputs()} or {@link #getOutputs()}.
+   * 
+   * @param identifier
+   * @return the observable linked to the identifier
+   * @throws IllegalArgumentException if the identifier is unknown
+   */
+  public IObservable getSemantics(String identifier);
+  
   /**
    * Create a new observation of the specified countable observable and with the specified geometry.
    * Use in {@link IInstantiator instantiators} to create new objects. Use
