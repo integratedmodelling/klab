@@ -170,10 +170,10 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   public IRuntimeContext copy() {
     RuntimeContext ret = new RuntimeContext(this);
     // make a deep copy of all localizable info so we can rename elements
-    ret.catalog = new HashMap<>(ret.catalog);
-    ret.semantics = new HashMap<>(ret.semantics);
-    ret.inputs = new HashSet<>(ret.inputs);
-    ret.outputs = new HashSet<>(ret.outputs);
+    ret.catalog = new HashMap<>(this.catalog);
+    ret.semantics = new HashMap<>(this.semantics);
+    ret.inputs = new HashSet<>(this.inputs);
+    ret.outputs = new HashSet<>(this.outputs);
     return ret;
   }
 
