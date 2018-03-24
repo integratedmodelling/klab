@@ -11,13 +11,13 @@ import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -164,7 +164,7 @@ public class Actuator implements IActuator {
          * instead of hard-coding a loop here.
          */
         ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
-            (IStateResolver) contextualizer.getFirst(), (IDataArtifact) ret,
+            (IStateResolver) contextualizer.getFirst(), (IState) ret,
             addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
 
       } else if (contextualizer.getFirst() instanceof IResolver) {

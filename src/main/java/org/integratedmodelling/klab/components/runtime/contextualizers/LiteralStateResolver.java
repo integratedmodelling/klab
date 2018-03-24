@@ -5,8 +5,8 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -70,7 +70,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
   }
 
   @Override
-  public Object resolve(IDataArtifact observation, IComputationContext context) {
+  public Object resolve(IObservable semantics, IComputationContext context) {
     return value;
   }
 }

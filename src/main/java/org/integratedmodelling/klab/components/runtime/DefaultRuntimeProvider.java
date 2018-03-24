@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -94,8 +95,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     DefaultDirectedGraph<IActuator, DefaultEdge> ret =
         new DefaultDirectedGraph<>(DefaultEdge.class);
     insertActuator(actuator, ret, new HashMap<>());
-    if (Configuration.INSTANCE.isDebuggingEnabled()) {
-      Graphs.show(ret);
+    if (System.getProperty("visualize", "false").equals("true")) {
+      Graphs.show(ret, "Actuator dependencies");
     }
     return ret;
   }
@@ -149,7 +150,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IDataArtifact distributeComputation(IStateResolver resolver, IDataArtifact data,
+  public IDataArtifact distributeComputation(IStateResolver resolver, IState data,
       IRuntimeContext context, IScale scale) throws KlabException {
 
     // TODO use a distributed loop unless the resolver implements some tag interface to notify
@@ -158,7 +159,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
     Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
     for (IScale state : scale) {
-      data.set(state, resolver.resolve(data,
+      data.set(state, resolver.resolve(data.getObservable(),
           variables.isEmpty() ? ctx : localizeContext(ctx, state, variables)));
     }
     return data;

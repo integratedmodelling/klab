@@ -461,15 +461,17 @@ public class Grid extends Area implements IGrid {
       return 0;
     }
 
-//    @Override
-//    public long getOffset(ILocator index) {
-//      // TODO Auto-generated method stub
-//      return 0;
-//    }
-
     @Override
     public long[] shape() {
       return new long[] {1};
+    }
+
+    @Override
+    public long getOffset(ILocator index) {
+      if (index instanceof CellImpl && this.equals(index)) {
+        return 0;
+      }
+      throw new IllegalArgumentException("cannot use " + index + " as a cell locator");
     }
   }
 
@@ -925,6 +927,20 @@ public class Grid extends Area implements IGrid {
   @Override
   public IProjection getProjection() {
     return shape.getProjection();
+  }
+
+  /**
+   * Return offset of cell if cell is mine, otherwise throw an illegal arg exception. Only 
+   * handles the non-mediation case.
+   * 
+   * @param index
+   * @return
+   */
+  public long getOffset(Cell index) {
+    if (index instanceof CellImpl && ((CellImpl) index).getGrid().equals(this)) {
+      return ((CellImpl)index).getOffsetInGrid();
+    }
+    throw new IllegalArgumentException("grid: cannot use a cell from a different grid as a locator");
   }
 
 }

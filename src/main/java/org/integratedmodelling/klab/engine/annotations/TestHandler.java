@@ -77,13 +77,17 @@ public class TestHandler implements Annotations.Handler {
               // TODO check assertion
             }
             
-            if (subject != null && arguments.get("visualize", false)) {
+            if (subject != null && (arguments.get("visualize", false) || System.getProperty("visualize", "false").equals("true"))) {
               if (subject.getScale().isSpatiallyDistributed()) {
                 SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
                 for (IState state : subject.getStates()) {
                   display.add(state);
                 }
                 display.show();
+                if (System.getProperty("visualize", "false").equals("true")) {
+                  // just block to see the display
+                  System.in.read();
+                }
               }
             }
             

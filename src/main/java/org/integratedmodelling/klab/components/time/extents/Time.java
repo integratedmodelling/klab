@@ -214,4 +214,10 @@ public class Time extends Extent implements ITime {
       return null;
     }
 
+    @Override
+    public long getOffset(ILocator index) {
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
 }

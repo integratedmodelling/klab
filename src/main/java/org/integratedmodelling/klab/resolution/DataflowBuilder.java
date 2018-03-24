@@ -61,8 +61,8 @@ public class DataflowBuilder {
 
   public Dataflow build(IMonitor monitor) {
 
-    if (Configuration.INSTANCE.isDebuggingEnabled()) {
-      Graphs.show(resolutionGraph);
+    if (System.getProperty("visualize", "false").equals("true")) {
+      Graphs.show(resolutionGraph, "Resolution graph");
     }
 
     Dataflow ret = new Dataflow(monitor);

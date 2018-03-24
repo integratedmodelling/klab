@@ -1126,12 +1126,40 @@ public class Scale implements IScale {
     /*
      * TODO single extent locator
      */
-
+    if (index instanceof IExtent) {
+      IExtent mext = getOnlyMultipleExtent(((IExtent)index).getType());
+      if (mext != null) {
+        // offset is the extent's offset in its extent
+        return mext.getOffset(index);
+      }
+      
+      /*
+       * TODO 
+       */
+    }
     if (index instanceof OffsetLocator) {
       return ((OffsetLocator)index).getOffset();
     }
     
     throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
+  }
+
+  /**
+   * 
+   * @param type
+   * @return
+   */
+  private IExtent getOnlyMultipleExtent(Type type) {
+    IExtent ret = null;
+    for (IExtent extent : extents) {
+      if (extent.getType() != type && extent.size() > 1) {
+        return null;
+      }
+      if (extent.getType() == type) {
+        ret = extent;
+      }
+    }
+    return ret;
   }
 
   @Override

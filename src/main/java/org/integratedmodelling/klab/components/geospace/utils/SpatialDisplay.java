@@ -43,7 +43,6 @@ import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
 import org.geotools.styling.ChannelSelection;
 import org.geotools.styling.ContrastEnhancement;
-import org.geotools.styling.ContrastEnhancementImpl;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
 import org.geotools.styling.Graphic;
@@ -96,17 +95,17 @@ public class SpatialDisplay {
   static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
   class RLDesc {
-    
+
     IState state;
     String name;
-    
+
     Layer getLayer() {
       GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
       return new GridCoverageLayer(coverage, createRGBStyle(coverage));
-   }
-    
+    }
+
   }
-  
+
   class SLDesc {
     SimpleFeatureType fType;
     List<SimpleFeature> features = new ArrayList<>();
@@ -176,7 +175,7 @@ public class SpatialDisplay {
   Space space;
 
   public SpatialDisplay(ISpace space) {
-    this.space = (Space)space;
+    this.space = (Space) space;
   }
 
   /**
@@ -215,7 +214,7 @@ public class SpatialDisplay {
    * @param state
    */
   public void add(IState state) {
-    
+
     RLDesc rlDesc = new RLDesc();
     rlDesc.name = state.getObservable().getLocalName();
     rlDesc.state = state;
@@ -229,15 +228,6 @@ public class SpatialDisplay {
 
     MapContent content = new MapContent();
     content.setViewport(new MapViewport((space.getShape().getJTSEnvelope())));
-
-    for (RLDesc sld : rLayers.values()) {
-      content.addLayer(sld.getLayer());
-    }
-
-    for (SLDesc sld : sLayers.values()) {
-      content.addLayer(sld.getLayer());
-    }
-
     Viewport viewport = new Viewport(800, 800);
     int[] xy = viewport.getSizeFor(space.getEnvelope().getMaxX() - space.getEnvelope().getMinX(),
         space.getEnvelope().getMaxY() - space.getEnvelope().getMinY());
@@ -248,6 +238,15 @@ public class SpatialDisplay {
     display.enableToolBar(true);
     display.enableStatusBar(true);
     display.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+    for (RLDesc sld : rLayers.values()) {
+      content.addLayer(sld.getLayer());
+    }
+
+    for (SLDesc sld : sLayers.values()) {
+      content.addLayer(sld.getLayer());
+    }
+
     display.setVisible(true);
   }
 
@@ -357,14 +356,12 @@ public class SpatialDisplay {
   }
 
   /**
-   * This method examines the names of the sample dimensions in the provided
-   * coverage looking for "red...", "green..." and "blue..." (case insensitive
-   * match). If these names are not found it uses bands 1, 2, and 3 for the red,
-   * green and blue channels. It then sets up a raster symbolizer and returns
-   * this wrapped in a Style.
+   * This method examines the names of the sample dimensions in the provided coverage looking for
+   * "red...", "green..." and "blue..." (case insensitive match). If these names are not found it
+   * uses bands 1, 2, and 3 for the red, green and blue channels. It then sets up a raster
+   * symbolizer and returns this wrapped in a Style.
    *
-   * @return a new Style object containing a raster symbolizer set up for RGB
-   *         image
+   * @return a new Style object containing a raster symbolizer set up for RGB image
    */
   private Style createRGBStyle(GridCoverage2D cov) {
 
@@ -380,7 +377,7 @@ public class SpatialDisplay {
       sampleDimensionNames[i] = dim.getDescription().toString();
     }
     final int RED = 0, GREEN = 1, BLUE = 2;
-    int[] channelNum = { -1, -1, -1 };
+    int[] channelNum = {-1, -1, -1};
     // We examine the band names looking for "red...", "green...", "blue...".
     // Note that the channel numbers we record are indexed from 1, not 0.
     for (int i = 0; i < numBands; i++) {
@@ -404,7 +401,8 @@ public class SpatialDisplay {
     }
     // Now we create a RasterSymbolizer using the selected channels
     SelectedChannelType[] sct = new SelectedChannelType[cov.getNumSampleDimensions()];
-    ContrastEnhancement ce = styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
+    ContrastEnhancement ce =
+        styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
     for (int i = 0; i < 3; i++) {
       sct[i] = styleFactory.createSelectedChannelType(String.valueOf(channelNum[i]), ce);
     }
@@ -416,17 +414,15 @@ public class SpatialDisplay {
   }
 
   private Style createGreyscaleStyle(int band) {
-    ContrastEnhancement ce = new ContrastEnhancementImpl();// sf.contrastEnhancement(ff.literal(1.0),
-                                                           // new Normalize());
+    ContrastEnhancement ce =
+        styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
     SelectedChannelType sct = styleFactory.createSelectedChannelType(String.valueOf(band), ce);
-
     RasterSymbolizer sym = styleFactory.getDefaultRasterSymbolizer();
     ChannelSelection sel = styleFactory.channelSelection(sct);
     sym.setChannelSelection(sel);
-
     return SLD.wrapSymbolizers(sym);
   }
-  
+
   public void add(IGrid grid, String layer) {
     for (IExtent cell : grid) {
       add((Cell) cell, layer);

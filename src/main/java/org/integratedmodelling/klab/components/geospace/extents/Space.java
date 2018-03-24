@@ -6,10 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -18,9 +17,9 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -31,15 +30,15 @@ import org.integratedmodelling.klab.utils.collections.IteratorAdapter;
 
 public class Space extends Extent implements ISpace {
 
-  private Shape         shape;
-  private Grid          grid;
-  private Envelope      envelope;
-  private Projection    projection;
+  private Shape shape;
+  private Grid grid;
+  private Envelope envelope;
+  private Projection projection;
   private ITessellation features;
-  private boolean       consistent  = false;
-  private String        gridSpecs   = null;
+  private boolean consistent = false;
+  private String gridSpecs = null;
 
-  private static Space  EMPTY_SPACE = new Space(Shape.empty());
+  private static Space EMPTY_SPACE = new Space(Shape.empty());
 
   public static Space create(Shape shape) {
     return new Space(shape);
@@ -430,13 +429,13 @@ public class Space extends Extent implements ISpace {
     return null;
   }
 
-//  @Override
-//  public long getOffset(ILocator index) {
-//    // TODO Auto-generated method stub
-//    return 0;
-//  }
+  // @Override
+  // public long getOffset(ILocator index) {
+  // // TODO Auto-generated method stub
+  // return 0;
+  // }
 
-//  @Override
+  // @Override
   public Iterable<ILocator> over(Type dimension) {
     if (dimension != Dimension.Type.SPACE) {
       throw new IllegalArgumentException("cannot iterate a spatial extent over " + dimension);
@@ -455,6 +454,17 @@ public class Space extends Extent implements ISpace {
       return new long[] {this.features.size()};
     }
     return shape.shape();
+  }
+
+  @Override
+  public long getOffset(ILocator index) {
+    // TODO support latlon, shape
+    if (this.grid != null) {
+      if (index instanceof Cell) {
+        return this.grid.getOffset((Cell) index);
+      }
+    }
+    throw new IllegalArgumentException("cannot use " + index + " as a space locator");
   }
 
 }

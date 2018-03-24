@@ -20,7 +20,7 @@ private model geography:Elevation in m
 	observing 
 		geography:Slope in degree_angle,
 		geography:Aspect in degree_angle
-	on definition set to [(slope * 12.44) + aspect.max];
+	on definition set to [(slope * 12.44) + aspect];
 
 private model geography:Slope in degree_angle 
 	observing geography:Aspect in degree_angle named aspetto

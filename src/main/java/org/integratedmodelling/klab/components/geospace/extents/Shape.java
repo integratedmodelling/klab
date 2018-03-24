@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -416,4 +417,13 @@ public class Shape extends AbstractExtent implements IShape {
     return new long[] {1};
   }
 
+  @Override
+  public long getOffset(ILocator index) {
+    // TODO may use a latlon where the point is included.
+    if (index instanceof Shape && this.equals(index)) {
+      return 0;
+    }
+    throw new IllegalArgumentException("cannot use " + index + " as a shape locator");
+  }
+  
 }

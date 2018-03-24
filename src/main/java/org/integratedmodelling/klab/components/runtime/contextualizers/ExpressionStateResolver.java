@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -21,7 +21,7 @@ public class ExpressionStateResolver implements IStateResolver {
   }
 
   @Override
-  public Object resolve(IDataArtifact storage, IComputationContext context) throws KlabException {
+  public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
     boolean ok = true;
     if (condition != null) {
       Object ret = condition.eval(context, context);

@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.media.jai.RasterFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -59,9 +60,9 @@ public enum GeotoolsUtils {
       } else if (o instanceof Number) {
         raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) o).floatValue());
       } else if (o instanceof Boolean) {
-        raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Boolean) o) ? 1 : 0);
+        raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float)(((Boolean) o) ? 1. : 0.));
       } else if (o instanceof IConcept) {
-        raster.setSample((int) cell.getX(), (int) cell.getY(), 0, getConceptIndex((IConcept) o));
+        raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float)getConceptIndex((IConcept) o));
       }
     }
 
@@ -70,6 +71,37 @@ public enum GeotoolsUtils {
 
   }
 
+  public Range getRange(IState state) {
+    
+    Range ret = new Range();
+    
+    Space space = (Space) state.getScale().getSpace();
+    if (space == null || !space.getGrid().isPresent()) {
+      throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
+    }
+    Grid grid = (Grid) space.getGrid().get();
+
+    /*
+     * TODO raster should be pre-filled with a chosen nodata value TODO use activation layer
+     */
+    // IGridMask act = extent.requireActivationLayer(true);
+
+    for (Cell cell : grid) {
+      Object o = state.get(cell);
+      if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
+        // screw it
+      } else if (o instanceof Number) {
+        ret.adapt(((Number) o).doubleValue());
+      } else if (o instanceof Boolean) {
+        ret.adapt(((Boolean) o) ? 1. : 0.);
+      } else if (o instanceof IConcept) {
+        ret.adapt((double)getConceptIndex((IConcept) o));
+      }
+    }
+    
+    return ret;
+  }
+  
   private int getConceptIndex(IConcept o) {
     
     Integer n = conceptMap.get(o);

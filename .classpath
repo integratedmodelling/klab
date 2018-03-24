@@ -102,6 +102,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="src/main/groovy"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/antlr-runtime-3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/aopalliance-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/apache-mime4j-core-0.7.2.jar"/>
@@ -192,5 +193,10 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="target/dependency/groovy-all-2.5.0-beta-2.jar"/>
 	<classpathentry kind="lib" path="target/dependency/jgrapht-core-1.1.0.jar"/>
+	<classpathentry kind="con" path="GROOVY_DSL_SUPPORT">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

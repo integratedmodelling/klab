@@ -12,7 +12,7 @@ import com.jgraph.layout.tree.JGraphRadialTreeLayout;
 
 public class Graphs {
 
-  public static void show(Graph<?,?> graph) {
+  public static void show(Graph<?,?> graph, String title) {
 
     JGraph jgraph = new JGraph(new JGraphModelAdapter<>(graph));
     jgraph.setPreferredSize(new Dimension(800, 800));
@@ -24,6 +24,7 @@ public class Graphs {
     jgraph.getGraphLayoutCache().edit(nestedMap);
 
     JFrame frame = new JFrame();
+    frame.setTitle(title);
     frame.setSize(800, 800);
     frame.getContentPane().add(new JScrollPane(jgraph));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

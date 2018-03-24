@@ -13,6 +13,10 @@ import org.reflections.scanners.ResourcesScanner;
 
 /**
  * Runs every .kim test file in src/main/resources/kim as a k.LAB test namespace.
+ * <p>
+ * If a system property <code>test.case = [kim file name (no extension)]</code> is passed, only run
+ * the specific file named. Otherwise run them all.
+ * <p>
  * 
  * @author ferdinando.villa
  *
@@ -34,13 +38,16 @@ public class ModelTests {
   @Test
   public void runTests() throws Exception {
 
+    String file = System.getProperty("test.case");
+
     /*
      * run every file in the kim/ package, under tests/resources
      */
     for (String test : new Reflections("kim", new ResourcesScanner())
         .getResources(Pattern.compile(".*\\.kim"))) {
-      engine.run(getClass().getClassLoader().getResource(test)).get();
+      if (file == null || test.endsWith(file + ".kim")) {
+        engine.run(getClass().getClassLoader().getResource(test)).get();
+      }
     }
   }
-
 }

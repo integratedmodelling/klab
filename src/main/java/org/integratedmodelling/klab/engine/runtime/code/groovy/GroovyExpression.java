@@ -50,6 +50,8 @@ import groovy.lang.Script;
 
 public class GroovyExpression extends Expression {
 
+  private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ActionBase";
+  
   protected String              code;
   protected boolean             negated        = false;
   protected Object              object;
@@ -200,7 +202,7 @@ public class GroovyExpression extends Expression {
     // return "org.integratedmodelling.thinklab.actions.TemporalActionScript";
     // }
     // }
-    return "org.integratedmodelling.thinklab.actions.ActionScript";
+    return BASE_ACTION_CLASS;
   }
 
   public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
@@ -220,12 +222,12 @@ public class GroovyExpression extends Expression {
       }
 
       try {
-        setBindings(script.getBinding(), context.getMonitor(), parameters);
+        setBindings(script.getBinding(), context, parameters);
         return script.run();
       } catch (MissingPropertyException e) {
         String property = e.getProperty();
         context.getMonitor().warn("variable " + property
-            + " undefined: check naming. Adding as no-data for future evaluations.");
+            + " undefined: check naming. Defining as no-data for future evaluations.");
         defineIfAbsent.add(property);
       } catch (Throwable t) {
         throw new KlabException(t);
@@ -238,7 +240,7 @@ public class GroovyExpression extends Expression {
     return null;
   }
 
-  private void setBindings(Binding binding, IMonitor monitor, IParameters parameters) {
+  private void setBindings(Binding binding, IComputationContext context, IParameters parameters) {
 
     for (String key : parameters.keySet()) {
       binding.setVariable(key, parameters.get(key));
@@ -250,14 +252,9 @@ public class GroovyExpression extends Expression {
     }
 
     binding.setVariable("_p", parameters);
-    binding.setVariable("_ns", namespace);
-    // binding.setVariable("_mmanager", KLAB.MMANAGER);
-    // binding.setVariable("_engine", KLAB.ENGINE);
-    // binding.setVariable("_pmanager", KLAB.PMANAGER);
-    // binding.setVariable("_kmanager", KLAB.KM);
-    // binding.setVariable("_config", KLAB.CONFIG);
-    // binding.setVariable("_network", KLAB.ENGINE.getNetwork());
-    binding.setVariable("_monitor", monitor);
+    binding.setVariable("_ns", context.getNamespace());
+    binding.setVariable("_c", context);
+    binding.setVariable("_monitor", context.getMonitor());
   }
 
   private String preprocess(String code, Map<String, IObservable> inputs,

@@ -5,6 +5,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -29,8 +30,9 @@ public interface IRuntimeProvider {
   /**
    * Create an empty runtime context for the dataflow that will build the context subject. The
    * context will also create the subject itself according to the runtime's expectations.
-   * @param actuator 
-   * @param monitor 
+   * 
+   * @param actuator
+   * @param monitor
    * 
    * @return a new runtime context.
    */
@@ -57,9 +59,9 @@ public interface IRuntimeProvider {
    * @param scale the scale, already set to the slice needed for this computation
    * @return the computed result - return the same object passed as data whenever possible. If a
    *         different one is collected, the original one will be garbage collected.
-   * @throws KlabException 
+   * @throws KlabException
    */
-  IDataArtifact distributeComputation(IStateResolver resolver, IDataArtifact data,
-      IRuntimeContext context, IScale scale) throws KlabException;
+  IDataArtifact distributeComputation(IStateResolver resolver, IState data, IRuntimeContext context,
+      IScale scale) throws KlabException;
 
 }
