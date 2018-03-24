@@ -31,6 +31,18 @@ public interface IDataArtifact extends IArtifact {
    * @throws IllegalArgumentException if the locator is not compatible with the artifact's geometry.
    */
   Object get(ILocator index);
+  
+  /**
+   * Get the POD object pointed to by the locator. If the locator implies mediation, this should be
+   * supported. If the locator is incompatible with the geometry, throw an exception.
+   * 
+   * @param index a locator for the state. If the locator implies mediation, propagation or
+   *        aggregation should be done.
+   * @param cls the class of the result we want
+   * @return value at index
+   * @throws IllegalArgumentException if the locator is not compatible with the artifact's geometry.
+   */
+  <T> T get(ILocator index, Class<T> cls);
 
   /**
    * Set the value(s) at given index. Improper values or locators cause an unchecked exception.

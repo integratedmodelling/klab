@@ -64,10 +64,4 @@ public class Space implements IExpression {
     return mm.convert(pd.getFirst().doubleValue(), uu).doubleValue();
   }
 
-  @Override
-  public IGeometry getGeometry() {
-    return Geometry.create("S2");
-  }
-
-
 }

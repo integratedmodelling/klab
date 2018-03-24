@@ -14,10 +14,5 @@ public class Assert implements IExpression {
     // TODO Auto-generated method stub
     return null;
   }
-
-  @Override
-  public IGeometry getGeometry() {
-    return null;
-  }
-
+  
 }

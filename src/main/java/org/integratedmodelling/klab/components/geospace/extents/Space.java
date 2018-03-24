@@ -430,12 +430,6 @@ public class Space extends Extent implements ISpace {
   }
 
   // @Override
-  // public long getOffset(ILocator index) {
-  // // TODO Auto-generated method stub
-  // return 0;
-  // }
-
-  // @Override
   public Iterable<ILocator> over(Type dimension) {
     if (dimension != Dimension.Type.SPACE) {
       throw new IllegalArgumentException("cannot iterate a spatial extent over " + dimension);

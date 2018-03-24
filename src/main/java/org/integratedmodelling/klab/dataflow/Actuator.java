@@ -8,7 +8,6 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -19,6 +18,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -127,12 +127,11 @@ public class Actuator implements IActuator {
   /**
    * Compute the actuator.
    * 
-   * @param target
-   * 
-   * @param context The context observation data (null in the root actuator for a new context)
-   * @param runtimeContext this one must be passed a context already adapted to the actuator's names
-   *        and scale.
-   * @return the finalized observation data
+   * @param target the artifact being computed. If this actuator handles an instantiation, the
+   *        passed target is null and will be set to the first object in the result chain.
+   * @param runtimeContext the runtime context
+   * @return the finalized observation data. TODO when an instantiator returns no instances, should
+   *         return an empty observation. Currently it returns null.
    * @throws KlabException
    */
   @SuppressWarnings("unchecked")
@@ -184,10 +183,10 @@ public class Actuator implements IActuator {
         }
       }
     }
-    
+
     /*
-     * when computation is finished, pass the annotations to the context so it can decide what to
-     * do with them.
+     * when computation is finished, pass the annotations to the context so it can decide what to do
+     * with them.
      */
     for (IKimAnnotation annotation : annotations) {
       ctx.processAnnotation(annotation);
@@ -211,11 +210,12 @@ public class Actuator implements IActuator {
     return ctx;
   }
 
-  private IRuntimeContext setupContext(IArtifact target, IRuntimeContext runtimeContext, ILocator locator) {
+  private IRuntimeContext setupContext(IArtifact target, IRuntimeContext runtimeContext,
+      ILocator locator) {
 
     IRuntimeContext ret = runtimeContext.copy();
     ret.setTarget(target);
-    ret.setGeometry((IGeometry) ret.getGeometry().at(locator));
+    ret.setScale(ret.getScale().at(locator));
     for (IActuator input : getInputs()) {
       if (ret.getArtifact(input.getName()) != null) {
         ret.rename(input.getName(), input.getAlias());

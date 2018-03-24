@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -82,10 +83,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         while (sorter.hasNext()) {
           Actuator active = (Actuator) sorter.next();
-          active.compute(((RuntimeContext) context).getTarget(active), (IRuntimeContext) context);
+          active.compute(((RuntimeContext) context).getTargetArtifact(active),
+              (IRuntimeContext) context);
         }
 
-        return ((IRuntimeContext) context).getTarget(actuator);
+        return ((IRuntimeContext) context).getTargetArtifact(actuator);
       }
     });
 
@@ -164,89 +166,93 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     }
     return data;
   }
-  
+
   private IComputationContext localizeContext(RuntimeContext context, IScale state,
       Collection<Pair<String, IDataArtifact>> variables) {
     for (String var : context.getInputs()) {
       IArtifact artifact = context.getArtifact(var);
       if (artifact instanceof IDataArtifact) {
-        context.set(var, ((IDataArtifact)artifact).get(state));
+        context.set(var, ((IDataArtifact) artifact).get(state));
       }
     }
-    context.setGeometry(state);
+    context.setScale(state);
     return context;
   }
 
 
-  static IObservation createObservation(Actuator actuator, RuntimeContext runtimeContext,
-      IDirectObservation context) {
+  static IObservation createObservation(Actuator actuator, RuntimeContext context) {
+    return createObservation(actuator.getObservable(), actuator.getScale(), context,
+        actuator.isStorageScalar());
+  }
 
-    boolean createActors = actuator.getScale().getTime() != null;
+  static IObservation createObservation(IObservable observable, IScale scale,
+      RuntimeContext context) {
+    return createObservation(observable, scale, context, false);
+  }
+  
+  static IObservation createObservation(IObservable observable, IScale scale,
+      RuntimeContext context, boolean scalarStorage) {
+
+    boolean createActors = scale.getTime() != null;
 
     Observation ret = null;
-    if (actuator.getObservable().is(Type.SUBJECT)) {
-      ret = new Subject(actuator.getObservable().getLocalName(),
-          (Observable) actuator.getObservable(), (Scale) actuator.getScale(), runtimeContext);
-    } else if (actuator.getObservable().is(Type.EVENT)) {
-      ret = new Event(actuator.getObservable().getLocalName(),
-          (Observable) actuator.getObservable(), (Scale) actuator.getScale(), runtimeContext);
-    } else if (actuator.getObservable().is(Type.PROCESS)) {
-      ret = new Process(actuator.getObservable().getLocalName(),
-          (Observable) actuator.getObservable(), (Scale) actuator.getScale(), runtimeContext);
-    } else if (actuator.getObservable().is(Type.RELATIONSHIP)) {
+    if (observable.is(Type.SUBJECT)) {
+      ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale,
+          context);
+    } else if (observable.is(Type.EVENT)) {
+      ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale,
+          context);
+    } else if (observable.is(Type.PROCESS)) {
+      ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale,
+          context);
+    } else if (observable.is(Type.RELATIONSHIP)) {
       throw new IllegalArgumentException(
           "createObservation() does not create relationships: use createRelationship()");
-    } else if (actuator.getObservable().is(Type.QUALITY)) {
+    } else if (observable.is(Type.QUALITY)) {
 
       IDataArtifact storage = null;
 
-      if (actuator.isStorageScalar()) {
-        switch (actuator.getObservable().getObservationType()) {
+      if (scalarStorage) {
+        switch (observable.getObservationType()) {
           case CLASSIFICATION:
-            storage =
-                new ConceptSingletonStorage(actuator.getObservable(), (Scale) actuator.getScale());
+            storage = new ConceptSingletonStorage(observable, (Scale) scale);
             break;
           case QUANTIFICATION:
-            storage =
-                new DoubleSingletonStorage(actuator.getObservable(), (Scale) actuator.getScale());
+            storage = new DoubleSingletonStorage(observable, (Scale) scale);
             break;
           case VERIFICATION:
-            storage =
-                new BooleanSingletonStorage(actuator.getObservable(), (Scale) actuator.getScale());
+            storage = new BooleanSingletonStorage(observable, (Scale) scale);
             break;
           case INSTANTIATION:
           case SIMULATION:
           case DETECTION:
           default:
             throw new IllegalArgumentException(
-                "illegal observable for singleton storage: " + actuator.getObservable());
+                "illegal observable for singleton storage: " + observable);
         }
       } else {
 
         // TODO figure out dynamic vs. not, using Actuator.isStorageDynamic()
-        storage = Klab.INSTANCE.getStorageProvider().createStorage(actuator.getObservable(),
-            actuator.getScale(), runtimeContext);
+        storage =
+            Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, context);
       }
 
-      switch (actuator.getObservable().getObservationType()) {
+      switch (observable.getObservationType()) {
         case CLASSIFICATION:
         case QUANTIFICATION:
         case VERIFICATION:
-          ret = new State((Observable) actuator.getObservable(), (Scale) actuator.getScale(),
-              runtimeContext, storage);
+          ret = new State((Observable) observable, (Scale) scale, context, storage);
           break;
         case INSTANTIATION:
         case SIMULATION:
         case DETECTION:
         default:
-          throw new IllegalArgumentException(
-              "illegal observable for storage: " + actuator.getObservable());
+          throw new IllegalArgumentException("illegal observable for storage: " + observable);
       }
-    } else if (actuator.getObservable().is(Type.CONFIGURATION)) {
+    } else if (observable.is(Type.CONFIGURATION)) {
 
       ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
-          actuator.getObservable().getLocalName(), (Observable) actuator.getObservable(),
-          (Scale) actuator.getScale(), runtimeContext);
+          observable.getLocalName(), (Observable) observable, (Scale) scale, context);
     }
 
     // TODO if actors must be created (i.e. there are temporal transitions etc) wrap into an Akka

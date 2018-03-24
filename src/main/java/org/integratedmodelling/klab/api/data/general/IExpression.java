@@ -22,7 +22,6 @@
 package org.integratedmodelling.klab.api.data.general;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -47,14 +46,5 @@ public interface IExpression {
    * @throws KlabException TODO
    */
   Object eval(IParameters parameters, IComputationContext context) throws KlabException;
-
-
-  /**
-   * Infer the geometry from the source code if possible. Used to define if and how to distribute
-   * the computation.
-   * 
-   * @return the inferred geometry for the expression, or null.
-   */
-  IGeometry getGeometry();
 
 }

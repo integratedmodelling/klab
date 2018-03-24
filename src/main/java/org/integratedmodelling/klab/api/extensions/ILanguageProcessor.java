@@ -28,6 +28,18 @@ public interface ILanguageProcessor {
      * @return set of identifiers 
      */
     Collection<String> getIdentifiers();
+
+    /**
+     * Return true if the expression contains scalar usage for the
+     * passed identifiers within a transition (i.e. used alone or with locator semantics for
+     * space or other non-temporal domain). 
+     * 
+     * @param identifier identifiers representing states
+     * 
+     * @return true if the identifier is used in a scalar context.
+     */
+    boolean isScalar(String identifier);
+
     
     /**
      * Return true if the expression contains scalar usage for any of the

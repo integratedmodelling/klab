@@ -68,4 +68,9 @@ public class State extends Observation implements IState {
   public long size() {
     return storage.size();
   }
+
+  @Override
+  public <T> T get(ILocator index, Class<T> cls) {
+    return storage.get(index, cls);
+  }
 }

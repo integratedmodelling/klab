@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.kim.utils.Utils;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import xerial.larray.LBitArray;
@@ -56,6 +57,11 @@ public class BooleanStorage extends Storage implements IDataArtifact {
     data.free();
     mask.free();
     super.finalize();
+  }
+
+  @Override
+  public <T> T get(ILocator index, Class<T> cls) {
+    return Utils.asType(get(index), cls);
   }
   
 

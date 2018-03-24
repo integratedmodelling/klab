@@ -42,6 +42,7 @@ import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
 import org.geotools.styling.ChannelSelection;
+import org.geotools.styling.ColorMap;
 import org.geotools.styling.ContrastEnhancement;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
@@ -56,6 +57,7 @@ import org.geotools.styling.SLD;
 import org.geotools.styling.SelectedChannelType;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -101,7 +103,7 @@ public class SpatialDisplay {
 
     Layer getLayer() {
       GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
-      Layer layer = new GridCoverageLayer(coverage, createRGBStyle(coverage));
+      Layer layer = new GridCoverageLayer(coverage, createRGBStyle(state, coverage));
       layer.setTitle(state.getObservable().getLocalName());
       return layer;
     }
@@ -221,6 +223,31 @@ public class SpatialDisplay {
     rlDesc.name = state.getObservable().getLocalName();
     rlDesc.state = state;
     rLayers.put(rlDesc.name, rlDesc);
+  }
+
+  private RasterSymbolizer getRasterSymbolizer(IState state) {
+    
+    if (!state.getMetadata().contains("colormap")) {
+      return  styleFactory.getDefaultRasterSymbolizer();
+    }
+
+    // create style 
+    // TODO use colormaps and do it right, then export to GeotoolsUtils for map generation also as
+    // Image
+    StyleBuilder sb = new StyleBuilder();
+    ColorMap colorMap =
+        sb.createColorMap(
+            new String[] {"poco", "meglio", "buono", "ostia"}, // labels
+            new double[] {100, 400, 2000, 3000}, // values that begin a category, or break points in a ramp, or isolated values, according to the type of color map specified by Type 
+            new Color[] { 
+                new Color(0, 100, 0), 
+                new Color(150, 150, 50), 
+                new Color(200, 200, 50), 
+                Color.WHITE
+            }, 
+            ColorMap.TYPE_RAMP);
+
+    return sb.createRasterSymbolizer(colorMap, 1.0 /* opacity */);
   }
 
   /**
@@ -365,12 +392,12 @@ public class SpatialDisplay {
    *
    * @return a new Style object containing a raster symbolizer set up for RGB image
    */
-  private Style createRGBStyle(GridCoverage2D cov) {
+  private Style createRGBStyle(IState state, GridCoverage2D cov) {
 
     // We need at least three bands to create an RGB style
     int numBands = cov.getNumSampleDimensions();
     if (numBands < 3) {
-      return createGreyscaleStyle(1);
+      return createGreyscaleStyle(state, 1);
     }
     // Get the names of the bands
     String[] sampleDimensionNames = new String[numBands];
@@ -408,18 +435,18 @@ public class SpatialDisplay {
     for (int i = 0; i < 3; i++) {
       sct[i] = styleFactory.createSelectedChannelType(String.valueOf(channelNum[i]), ce);
     }
-    RasterSymbolizer sym = styleFactory.getDefaultRasterSymbolizer();
+    RasterSymbolizer sym = getRasterSymbolizer(state);
     ChannelSelection sel = styleFactory.channelSelection(sct[RED], sct[GREEN], sct[BLUE]);
     sym.setChannelSelection(sel);
 
     return SLD.wrapSymbolizers(sym);
   }
 
-  private Style createGreyscaleStyle(int band) {
+  private Style createGreyscaleStyle(IState state, int band) {
     ContrastEnhancement ce =
         styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
     SelectedChannelType sct = styleFactory.createSelectedChannelType(String.valueOf(band), ce);
-    RasterSymbolizer sym = styleFactory.getDefaultRasterSymbolizer();
+    RasterSymbolizer sym = getRasterSymbolizer(state);
     ChannelSelection sel = styleFactory.channelSelection(sct);
     sym.setChannelSelection(sel);
     return SLD.wrapSymbolizers(sym);

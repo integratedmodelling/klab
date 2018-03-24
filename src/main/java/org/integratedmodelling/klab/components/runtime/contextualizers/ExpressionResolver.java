@@ -34,13 +34,14 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
   IExpression                expression  = null;
   IExpression                condition   = null;
   IGeometry                  geometry    = null;
+  boolean isScalar;
 
   // don't remove - only used as expression
   public ExpressionResolver() {}
 
   public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters parameters,
       IComputationContext context) {
-    this.geometry = context.getGeometry();
+    this.geometry = context.getScale();
     this.expression = descriptor.compile();
     if (condition != null) {
       this.condition = condition.compile();
@@ -107,11 +108,6 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
   }
 
   @Override
-  public IGeometry getGeometry() {
-    return geometry;
-  }
-
-  @Override
   public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
     
     boolean ok = true;
@@ -126,6 +122,12 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
       }
     }
     return ret;
+  }
+
+  @Override
+  public IGeometry getGeometry() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 

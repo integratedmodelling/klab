@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -30,5 +32,9 @@ public class ExpressionStateResolver implements IStateResolver {
     return ok ? expression.eval(context, context) : null;
   }
 
+  @Override
+  public IGeometry getGeometry() {
+    return Geometry.scalar();
+  }
 
 }

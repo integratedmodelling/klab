@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.observation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -251,9 +252,32 @@ public class Scale implements IScale {
       this.originalScaleOffset = expos;
       this.originalScaleId = scale.scaleId;
     }
-
   }
 
+  /**
+   * Create a scale like the passed one, adding the passed extents or substituting
+   * existing ones of the same type.
+   * @param scale 
+   * @param extents 
+   * @return 
+   */
+  public static Scale createLike(IScale scale, IExtent... extents) {
+    List<IExtent> exts = Arrays.asList(extents);
+    for (IExtent existing : scale.getExtents()) {
+      boolean add = true;
+      for (IExtent added : exts) {
+        if (added.getType() == existing.getType()) {
+          add = false;
+          break;
+        }
+      }
+      if (add) {
+        exts.add(((Extent)existing).copy());
+      }
+    }
+    return create(exts);
+}
+  
   /**
    * Create a scale from an array of extents.
    * 

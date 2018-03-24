@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
@@ -26,5 +27,17 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  *
  */
 public abstract interface IContextualizer {
+
+  /**
+   * Contextualizers can be linked to a geometry, which is set in the corresponding function
+   * prototype. The stated geometry defines whether the contextualizer is interrogated in time and
+   * whether it is applicable to a specific type of scale. Geometries along a computational chain
+   * must be compatible and propagate to the models, so they can be used during resolution to choose
+   * or rank models for the scale of contextualization.
+   * 
+   * @return the geometry. A contextualizer that reports a null geometry is a mediator and must be
+   *         able to take any input geometry for its type.
+   */
+  IGeometry getGeometry();
 
 }

@@ -19,10 +19,10 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
   class GroovyDescriptor implements Descriptor {
 
-    String                        processedCode;
-    Collection<String>            identifiers;
-    private Set<String>           scalarIds;
-    private Set<String>           objectIds;
+    String processedCode;
+    Collection<String> identifiers;
+    private Set<String> scalarIds;
+    private Set<String> objectIds;
     private List<KimNotification> errors;
     private List<TokenDescriptor> tokens;
     private IRuntimeContext context;
@@ -31,7 +31,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
       GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(
           context.getNamespace(), context.getArtifacts(IState.class).stream()
               .map(data -> data.getFirst()).collect(Collectors.toSet()),
-          context.getGeometry());
+          context.getScale());
       this.processedCode = processor.process(expression);
       this.identifiers = processor.getIdentifiers();
       this.scalarIds = processor.getScalarIdentifiers();
@@ -63,7 +63,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
     public boolean hasErrors() {
       return errors.size() > 0;
     }
-    
+
     @Override
     public IExpression compile() {
       String ret = "";
@@ -71,6 +71,11 @@ public enum GroovyProcessor implements ILanguageProcessor {
         ret += token.translate(context);
       }
       return new GroovyExpression(ret, true);
+    }
+
+    @Override
+    public boolean isScalar(String identifier) {
+      return scalarIds.contains(identifier);
     }
   }
 

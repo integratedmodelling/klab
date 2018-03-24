@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -33,6 +34,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
@@ -60,7 +62,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   IMonitor monitor;
   RuntimeContext parent;
   IArtifact target;
-  IGeometry scale;
+  IScale scale;
   IKimConcept.Type artifactType;
   Set<String> inputs;
   Set<String> outputs;
@@ -75,7 +77,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.monitor = monitor;
     this.namespace = actuator.getNamespace();
     this.scale = actuator.getScale();
-    this.target = DefaultRuntimeProvider.createObservation(actuator, this, null);
+    this.target = DefaultRuntimeProvider.createObservation(actuator, this);
     this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
     this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable());
@@ -151,11 +153,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public Collection<ISubject> getAllSubjects() {
-    return network.vertexSet();
-  }
-
-  @Override
   public void exportNetwork(String outFile) {
     // TODO export a GEFX file
   }
@@ -163,6 +160,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public INamespace getNamespace() {
     return namespace;
+  }
+
+  @Override
+  public IArtifact getTargetArtifact() {
+    return target;
   }
 
   @Override
@@ -212,7 +214,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IArtifact getTarget(IActuator actuator) {
+  public IArtifact getTargetArtifact(IActuator actuator) {
     IArtifact ret = catalog.get(actuator.getName());
 
     /**
@@ -221,7 +223,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
      * provenance and structure.
      */
     if (ret == null && !((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
-      ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this, null);
+      ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this);
       catalog.put(actuator.getName(), ret);
     }
 
@@ -234,10 +236,23 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public ICountableObservation newObservation(IObservable observable, IGeometry geometry) {
-    // TODO Auto-generated method stub
-    // TODO plain objects if scale has no time, Akka actors otherwise
-    return null;
+  public ICountableObservation newObservation(IObservable observable, String name,
+      IGeometry geometry) {
+
+    if (!observable.is(Type.COUNTABLE)) {
+      throw new IllegalArgumentException(
+          "RuntimeContext: cannot create a non-countable observation with newObservation()");
+    }
+
+    Observable obs = new Observable((Observable) observable);
+    obs.setName(name);
+    ICountableObservation ret = (ICountableObservation) DefaultRuntimeProvider.createObservation(observable,
+        (IScale) geometry, this);
+
+    if (this.target instanceof DirectObservation) {
+      // 
+    }
+    return ret;
   }
 
   @Override
@@ -281,8 +296,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     if (!((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
       ret.outputs.add(actuator.getName());
       ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-      ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this,
-          (DirectObservation) this.target);
+      ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this);
       ret.artifactType =
           Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
       ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
@@ -344,7 +358,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IGeometry getGeometry() {
+  public IScale getScale() {
     return scale;
   }
 
@@ -353,7 +367,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     return artifactType;
   }
 
-  public void setGeometry(IGeometry scale) {
+  public void setScale(IScale scale) {
     this.scale = scale;
   }
 
@@ -404,6 +418,16 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public void setTarget(IArtifact target) {
     this.target = target;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends IArtifact> T getArtifact(String localName, Class<T> cls) {
+    IArtifact ret = getArtifact(localName);
+    if (ret != null && cls.isAssignableFrom(ret.getClass())) {
+      return (T) ret;
+    }
+    return null;
   }
 
 }

@@ -30,7 +30,7 @@ public class TerrainService implements IResolver<IDataArtifact>, IExpression {
   public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) {
 
     Range range = context.get("range", new Range(0., 4000., false, true));
-    long[] xy = context.getGeometry().shape(Dimension.Type.SPACE);
+    long[] xy = context.getScale().shape(Dimension.Type.SPACE);
     Terrain terrain = new Terrain(context.get("detail", 8), context.get("roughness", 0.55),
         range.getLowerBound(), range.getUpperBound());
 
@@ -38,7 +38,7 @@ public class TerrainService implements IResolver<IDataArtifact>, IExpression {
     double dy = 1.0 / xy[1];
     for (long x = 0; x < xy[0]; x++) {
       for (long y = 0; y < xy[1]; y++) {
-        ret.set(context.getGeometry().at(Dimension.Type.SPACE, x, y), terrain.getAltitude(dx * x, dy * y));
+        ret.set(context.getScale().at(Dimension.Type.SPACE, x, y), terrain.getAltitude(dx * x, dy * y));
       }
     }
 

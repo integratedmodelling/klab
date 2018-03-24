@@ -70,7 +70,6 @@ public class GroovyExpression extends Expression {
   private CompilerConfiguration compiler       = new CompilerConfiguration();
   private GroovyShell           shell;
   private String                preprocessed   = null;
-  private Geometry              geometry;
 
   /*
    * used by k.LAB to instantiate Groovy expressions. Will automatically add imports for any
@@ -275,7 +274,6 @@ public class GroovyExpression extends Expression {
         new GroovyExpressionPreprocessor(namespace, knownKeys, domain);
     this.preprocessed = processor.process(code);
     this.errors.addAll(processor.getErrors());
-    this.geometry = processor.getInferredGeometry();
 
     return this.preprocessed;
   }
@@ -292,14 +290,5 @@ public class GroovyExpression extends Expression {
     return negated;
   }
 
-  @Override
-  public IGeometry getGeometry() {
-
-    if (geometry == null) {
-      // TODO Auto-generated method stub
-    }
-
-    return geometry;
-  }
 
 }

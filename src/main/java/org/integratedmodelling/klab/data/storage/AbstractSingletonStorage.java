@@ -4,6 +4,7 @@ import java.util.Objects;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.kim.utils.Utils;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -68,5 +69,9 @@ public abstract class AbstractSingletonStorage<T> extends Artifact implements ID
     return scale.size();
   }
 
-
+  @Override
+  public <K> K get(ILocator index, Class<K> cls) {
+    return Utils.asType(get(index), cls);
+  }
+  
 }

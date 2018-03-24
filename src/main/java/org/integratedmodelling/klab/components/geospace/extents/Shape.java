@@ -6,10 +6,7 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -18,8 +15,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
-import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -84,10 +79,10 @@ public class Shape extends AbstractExtent implements IShape {
     return ret;
   }
 
-  public static Shape create(Geometry geometry, Projection projection) {
+  public static Shape create(Geometry geometry, IProjection projection) {
     Shape ret = new Shape();
     ret.geometry = geometry;
-    ret.projection = projection;
+    ret.projection = (Projection)projection;
     ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
     return ret;
   }

@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -62,11 +63,6 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public Collection<ISubject> getAllSubjects() {
-      return new ArrayList<>();
-    }
-
-    @Override
     public IArtifact getArtifact(String localName) {
       return null;
     }
@@ -77,7 +73,7 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public IObjectArtifact newObservation(IObservable observable, IGeometry geometry) {
+    public IObjectArtifact newObservation(IObservable observable, String name, IGeometry geometry) {
       return null;
     }
 
@@ -99,7 +95,7 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public IGeometry getGeometry() {
+    public IScale getScale() {
       // TODO Auto-generated method stub
       return null;
     }
@@ -116,6 +112,18 @@ public abstract class Expression implements IExpression {
 
     @Override
     public IObservable getSemantics(String identifier) {
+      return null;
+    }
+
+    @Override
+    public IArtifact getTargetArtifact() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public <T extends IArtifact> T getArtifact(String localName, Class<T> cls) {
+      // TODO Auto-generated method stub
       return null;
     }
   }
