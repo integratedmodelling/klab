@@ -151,11 +151,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public Collection<ISubject> getAllSubjects() {
-    return network.vertexSet();
-  }
-
-  @Override
   public void exportNetwork(String outFile) {
     // TODO export a GEFX file
   }
@@ -163,6 +158,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public INamespace getNamespace() {
     return namespace;
+  }
+  
+  @Override
+  public IArtifact getTargetArtifact() {
+    return target;
   }
 
   @Override
@@ -212,7 +212,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IArtifact getTarget(IActuator actuator) {
+  public IArtifact getTargetArtifact(IActuator actuator) {
     IArtifact ret = catalog.get(actuator.getName());
 
     /**
@@ -404,6 +404,16 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public void setTarget(IArtifact target) {
     this.target = target;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends IArtifact> T getArtifact(String localName, Class<T> cls) {
+    IArtifact ret = getArtifact(localName);
+    if (ret != null && cls.isAssignableFrom(ret.getClass())) {
+      return (T)ret;
+    }
+    return null;
   }
 
 }

@@ -62,11 +62,6 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public Collection<ISubject> getAllSubjects() {
-      return new ArrayList<>();
-    }
-
-    @Override
     public IArtifact getArtifact(String localName) {
       return null;
     }
@@ -116,6 +111,18 @@ public abstract class Expression implements IExpression {
 
     @Override
     public IObservable getSemantics(String identifier) {
+      return null;
+    }
+
+    @Override
+    public IArtifact getTargetArtifact() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public <T extends IArtifact> T getArtifact(String localName, Class<T> cls) {
+      // TODO Auto-generated method stub
       return null;
     }
   }

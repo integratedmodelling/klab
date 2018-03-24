@@ -4,7 +4,6 @@ worldview im;
 	name = "tests.core.qgen-dep-2",
 	description  = "Shared dependency chain",
 	observations = ("geography:Elevation"),
-	visualize = true,
 	assertions = (
 		assert.nodata.percentage(state="geography:Elevation", max=0)
 		assert.nodata.percentage(state="geography:Slope", max=0)

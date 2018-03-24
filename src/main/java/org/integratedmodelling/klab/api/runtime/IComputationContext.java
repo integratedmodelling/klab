@@ -19,14 +19,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * The runtime context holds all information about the computation being run. It is passed to
- * dataflows and down to actuators and contextualizers, appropriately customized to reflect names
- * and locators that each actuator expects.
+ * The runtime context holds all information about the computation being run and the artifacts
+ * computed this far. It is passed to dataflows and down to actuators and contextualizers,
+ * customized to reflect names, states and locators as each actuator expects them.
  * 
  * The {@link IParameters} methods access user-defined parameters, including any passed to the
  * calling functions or URNs and, if appropriate, context-localized POD values for states (e.g. the
- * specific value at the point of computation). The actual data objects are always available through
- * {@link #getArtifact(String)}.
+ * specific values at the point of computation). The actual input and output artifacts are always
+ * available through {@link #getArtifact(String)}.
  * 
  * @author Ferd
  *
@@ -53,6 +53,8 @@ public interface IComputationContext extends IParameters {
   IEventBus getEventBus();
 
   /**
+   * Inspect the network graph of the current context, returning all relationships that have the
+   * passed subject as target.
    * 
    * @param observation
    * @return
@@ -60,6 +62,8 @@ public interface IComputationContext extends IParameters {
   Collection<IRelationship> getOutgoingRelationships(ISubject observation);
 
   /**
+   * Inspect the network graph of the current context, returning all relationships that have the
+   * passed subject as target.
    * 
    * @param observation
    * @return
@@ -67,10 +71,13 @@ public interface IComputationContext extends IParameters {
   Collection<IRelationship> getIncomingRelationships(ISubject observation);
 
   /**
+   * Even computations that have more than one output have a single target artifact, which
+   * corresponds to the primary observable of the model that has defined the computation. If the
+   * computation is an instantiation, the target artifact is null.
    * 
-   * @return
+   * @return the target artifact, or null in instantiation computations.
    */
-  Collection<ISubject> getAllSubjects();
+  IArtifact getTargetArtifact();
 
   /**
    * Get the resolved {@link IArtifact object} corresponding to the passed local name. Use
@@ -81,6 +88,17 @@ public interface IComputationContext extends IParameters {
    * @return the artifact, null if not found.
    */
   IArtifact getArtifact(String localName);
+
+  /**
+   * Get the resolved {@link IArtifact object} corresponding to the passed local name as an object
+   * of the passed class. If the artifact is not there or it is not of a compatible type, return
+   * null with no error.
+   * 
+   * @param localName
+   * @param cls
+   * @return the artifact, null if not found or not of passed class.
+   */
+  <T extends IArtifact> T getArtifact(String localName, Class<T> cls);
 
   /**
    * Return all known artifacts of the passed class along with their ID in this context. For
@@ -105,7 +123,7 @@ public interface IComputationContext extends IParameters {
    * @return the type of the observation
    */
   IKimConcept.Type getArtifactType();
-  
+
   /**
    * Return the geometry for the computation (in k.LAB typically a {@link IScale}).
    * 
@@ -114,33 +132,33 @@ public interface IComputationContext extends IParameters {
   public IGeometry getGeometry();
 
   /**
-   * Get the names of all inputs for this computation. The correspondent semantics can be
-   * accessed using {@link #getSemantics(String)}; the corresponding artifact can be accessed
-   * using {@link #getArtifact(String)}.
+   * Get the names of all inputs for this computation. The correspondent semantics can be accessed
+   * using {@link #getSemantics(String)}; the corresponding artifact can be accessed using
+   * {@link #getArtifact(String)}.
    * 
    * @return the names of all inputs in this context
    */
   public Collection<String> getInputs();
-  
+
   /**
    * Get the names of all outputs expected from this computation. The correspondent semantics can be
-   * accessed using {@link #getSemantics(String)}; the corresponding artifact can be accessed
-   * using {@link #getArtifact(String)}.
+   * accessed using {@link #getSemantics(String)}; the corresponding artifact can be accessed using
+   * {@link #getArtifact(String)}.
    * 
    * @return the names of all outputs in this context
    */
   public Collection<String> getOutputs();
-  
+
   /**
-   * Get the semantics for the passed identifier, which must be one of those returned by
-   * either {@link #getInputs()} or {@link #getOutputs()}.
+   * Get the semantics for the passed identifier, which must be one of those returned by either
+   * {@link #getInputs()} or {@link #getOutputs()}.
    * 
    * @param identifier
    * @return the observable linked to the identifier
    * @throws IllegalArgumentException if the identifier is unknown
    */
   public IObservable getSemantics(String identifier);
-  
+
   /**
    * Create a new observation of the specified countable observable and with the specified geometry.
    * Use in {@link IInstantiator instantiators} to create new objects. Use
@@ -180,5 +198,6 @@ public interface IComputationContext extends IParameters {
    */
   IObjectArtifact newRelationship(IObservable observable, IGeometry geometry,
       IObjectArtifact source, IObjectArtifact target);
+
 
 }

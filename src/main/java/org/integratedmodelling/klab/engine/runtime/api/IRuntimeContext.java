@@ -4,7 +4,6 @@ import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -13,9 +12,9 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 
 /**
- * This API extends {@link IComputationContext} to add setters and other functionalities that is
- * needed at runtime. It is provided to allow any {@link IRuntimeProvider} to define contexts as
- * they need.
+ * This API extends {@link IComputationContext} to add setters and other functionalities that are
+ * needed at runtime. It is used within common computation code so that any {@link IRuntimeProvider}
+ * may implement the computation contexts as needed.
  * 
  * @author Ferd
  *
@@ -101,15 +100,16 @@ public interface IRuntimeContext extends IComputationContext {
    * 
    * @return the target artifact for the passed actuator.
    */
-  IArtifact getTarget(IActuator actuator);
-  
+  IArtifact getTargetArtifact(IActuator actuator);
+
   /**
-   * Set the main target of the computation being carried on by the actuator. Used by Actuator.compute(). 
+   * Set the main target of the computation being carried on by the actuator. Used by
+   * Actuator.compute().
    * 
    * @param target
    */
   void setTarget(IArtifact target);
-  
+
   /**
    * The API must be able to set the geometry for downstream computations.
    * 
@@ -118,7 +118,7 @@ public interface IRuntimeContext extends IComputationContext {
   void setGeometry(IGeometry geometry);
 
   /**
-   * Called after successful computation passing each annotation that was defined for the model. 
+   * Called after successful computation passing each annotation that was defined for the model.
    * 
    * @param annotation
    */

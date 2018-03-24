@@ -82,10 +82,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         while (sorter.hasNext()) {
           Actuator active = (Actuator) sorter.next();
-          active.compute(((RuntimeContext) context).getTarget(active), (IRuntimeContext) context);
+          active.compute(((RuntimeContext) context).getTargetArtifact(active), (IRuntimeContext) context);
         }
 
-        return ((IRuntimeContext) context).getTarget(actuator);
+        return ((IRuntimeContext) context).getTargetArtifact(actuator);
       }
     });
 
