@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
@@ -33,28 +34,30 @@ import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator implements IActuator {
 
-  protected String                                         name;
-  private String                                           alias;
-  private INamespace                                       namespace;
-  private Observable                                       observable;
-  private Scale                                            scale;
-  private IKdlActuator.Type                                type;
-  List<IActuator>                                          actuators         = new ArrayList<>();
-  IMonitor                                                 monitor;
-  Date                                                     creationTime      = new Date();
-  private boolean                                          createObservation;
-  private boolean                                          reference;
-  private boolean                                          exported;
+  protected String name;
+  private String alias;
+  private INamespace namespace;
+  private Observable observable;
+  private Scale scale;
+  private IKdlActuator.Type type;
+  List<IActuator> actuators = new ArrayList<>();
+  IMonitor monitor;
+  Date creationTime = new Date();
+  private boolean createObservation;
+  private boolean reference;
+  private boolean exported;
 
   // this is only for the API
-  private List<IComputableResource>                        computedResources = new ArrayList<>();
+  private List<IComputableResource> computedResources = new ArrayList<>();
+  // we store the annotations from the model to enable probes or other non-semantic options
+  private List<IKimAnnotation> annotations = new ArrayList<>();
 
   /**
    * The contextualizer chain that implements the computation specified by IServiceCalls. These may
    * be first-class resolvers/instantiators or mediators, in order of execution. Created and
    * populated at compute().
    */
-  private List<Pair<IContextualizer, IComputableResource>> computation       = null;
+  private List<Pair<IContextualizer, IComputableResource>> computation = null;
 
   public void addComputation(IComputableResource resource) {
     computedResources.add(resource);
@@ -76,9 +79,9 @@ public class Actuator implements IActuator {
    * Each list contains a service call and its local target name, null for the main observable.
    */
   private List<Pair<IServiceCall, IComputableResource>> computationStrategy = new ArrayList<>();
-  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy   = new ArrayList<>();
+  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy = new ArrayList<>();
 
-  private boolean                                       definesScale;
+  private boolean definesScale;
 
   @Override
   public String getName() {
@@ -136,7 +139,7 @@ public class Actuator implements IActuator {
   public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
     // localize names to this actuator's expectations; create non-semantic storage if needed
-    IRuntimeContext ctx = setupContext(runtimeContext, ITime.INITIALIZATION);
+    IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
 
     if (computation == null) {
       // compile the contextualization strategy
@@ -171,8 +174,8 @@ public class Actuator implements IActuator {
         ret = ((IResolver<IArtifact>) contextualizer.getFirst()).resolve(ret,
             addParameters(ctx, contextualizer.getSecond()));
       } else if (contextualizer.getFirst() instanceof IInstantiator) {
-        for (IObjectArtifact object : ((IInstantiator) contextualizer.getFirst()).instantiate(
-            this.observable, addParameters(ctx, contextualizer.getSecond()))) {
+        for (IObjectArtifact object : ((IInstantiator) contextualizer.getFirst())
+            .instantiate(this.observable, addParameters(ctx, contextualizer.getSecond()))) {
           if (ret == null) {
             ret = object;
           } else {
@@ -180,6 +183,14 @@ public class Actuator implements IActuator {
           }
         }
       }
+    }
+    
+    /*
+     * when computation is finished, pass the annotations to the context so it can decide what to
+     * do with them.
+     */
+    for (IKimAnnotation annotation : annotations) {
+      ctx.processAnnotation(annotation);
     }
 
     return ret;
@@ -200,10 +211,11 @@ public class Actuator implements IActuator {
     return ctx;
   }
 
-  private IRuntimeContext setupContext(IRuntimeContext runtimeContext, ILocator locator) {
+  private IRuntimeContext setupContext(IArtifact target, IRuntimeContext runtimeContext, ILocator locator) {
 
     IRuntimeContext ret = runtimeContext.copy();
-    ret.setGeometry((IGeometry)ret.getGeometry().at(locator));
+    ret.setTarget(target);
+    ret.setGeometry((IGeometry) ret.getGeometry().at(locator));
     for (IActuator input : getInputs()) {
       if (ret.getArtifact(input.getName()) != null) {
         ret.rename(input.getName(), input.getAlias());
@@ -384,5 +396,9 @@ public class Actuator implements IActuator {
 
   public boolean isExported() {
     return exported;
+  }
+
+  public List<IKimAnnotation> getAnnotations() {
+    return annotations;
   }
 }

@@ -51,4 +51,11 @@ public interface IBehavior extends Iterable<IAction> {
      * @return true if the event concept has actions associated
      */
     boolean respondsTo(IConcept eventType);
+    
+    /**
+     * If true, the behavior specifies no actions.
+     * 
+     * @return whether the behavior contains any actions.
+     */
+    boolean isEmpty();
 }

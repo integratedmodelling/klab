@@ -11,6 +11,7 @@ public class Worldview extends MonitorableGitWorkspace implements IWorldview {
     public Worldview(String name, File root, Collection<String> gitUrls, File... overridingProjects) {
         super(root, gitUrls, overridingProjects);
         this.setName(name);
+        this.setSkipSync(System.getProperty("skipWorldviewSync") != null);
     }
 
     @Override

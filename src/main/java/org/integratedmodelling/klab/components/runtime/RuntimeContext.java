@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.data.IGeometry;
@@ -16,8 +17,10 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -47,21 +50,21 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class RuntimeContext extends Parameters implements IRuntimeContext {
 
-  INamespace                     namespace;
-  Provenance                     provenance;
-  EventBus                       eventBus;
-  ConfigurationDetector          configurationDetector;
+  INamespace namespace;
+  Provenance provenance;
+  EventBus eventBus;
+  ConfigurationDetector configurationDetector;
   Graph<ISubject, IRelationship> network;
-  Graph<IArtifact, DefaultEdge>  structure;
-  Map<String, IArtifact>         catalog;
-  IMonitor                       monitor;
-  RuntimeContext                 parent;
-  IObservation                   target;
-  IGeometry                      scale;
-  IKimConcept.Type               artifactType;
-  Set<String>                    inputs;
-  Set<String>                    outputs;
-  Map<String, IObservable>       semantics;
+  Graph<IArtifact, DefaultEdge> structure;
+  Map<String, IArtifact> catalog;
+  IMonitor monitor;
+  RuntimeContext parent;
+  IArtifact target;
+  IGeometry scale;
+  IKimConcept.Type artifactType;
+  Set<String> inputs;
+  Set<String> outputs;
+  Map<String, IObservable> semantics;
 
   public RuntimeContext(Actuator actuator, IMonitor monitor) {
 
@@ -119,6 +122,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.inputs = context.inputs;
     this.outputs = context.outputs;
     this.semantics = context.semantics;
+    this.parent = context.parent;
   }
 
   @Override
@@ -366,6 +370,40 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   @Override
   public IObservable getSemantics(String identifier) {
     return semantics.get(identifier);
+  }
+
+  @Override
+  public void processAnnotation(IKimAnnotation annotation) {
+    switch (annotation.getName()) {
+      case "probe":
+        addTargetToStructure(annotation);
+        break;
+      default:
+        break;
+    }
+  }
+
+  private void addTargetToStructure(IKimAnnotation probe) {
+
+    IState state = null;
+    if (probe.getParameters().get("observable") == null) {
+      // TODO check if collapsing is requested
+      state = target instanceof IState ? (IState) target : null;
+    } else {
+      // TODO build requested observation
+    }
+
+    if (state != null && !structure.vertexSet().contains(state) && parent != null
+        && parent.target instanceof IDirectObservation) {
+      structure.addVertex(state);
+      structure.addEdge(state, parent.target);
+    }
+
+  }
+
+  @Override
+  public void setTarget(IArtifact target) {
+    this.target = target;
   }
 
 }

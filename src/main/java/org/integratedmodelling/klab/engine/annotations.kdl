@@ -86,23 +86,3 @@ annotation test for observers
 	class org.integratedmodelling.klab.engine.annotations.TestHandler
 
 }
-
-/**
- * Probe definition for models: creates additional states for display of outputs, not
- * usable as outputs and only visible to modelers through the IDE.
- */
- annotation probe for models 
- 	"Create additional states to display specific views of outputs, optionally
- 	 in modified scales. Models for these states may be created automatically (for
- 	 example for counts or presences) from the context. The resulting states cannot
- 	 be used as outputs, and are only visible to modelers using the IDE."
-{
-	text input observable
-		"The declaration of the concept to be probed. For example 'count of demography:HumanIndividual'"
-		
-	optional input collapse
-		"A list of the domain concepts corresponding to scale dimensions to collapse"
-		default ()
-		
-	// TODO class
-}

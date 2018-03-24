@@ -101,7 +101,9 @@ public class SpatialDisplay {
 
     Layer getLayer() {
       GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
-      return new GridCoverageLayer(coverage, createRGBStyle(coverage));
+      Layer layer = new GridCoverageLayer(coverage, createRGBStyle(coverage));
+      layer.setTitle(state.getObservable().getLocalName());
+      return layer;
     }
 
   }

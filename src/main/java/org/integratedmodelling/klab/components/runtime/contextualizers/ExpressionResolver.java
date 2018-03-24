@@ -16,11 +16,17 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
+/**
+ * Resolver that evaluates an expression computing a data artifact. If the expression
+ * returns a data artifact, that substitutes the previous artifact.
+ * 
+ * @author Ferd
+ *
+ */
 public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression {
 
   static final public String FUNCTION_ID = "klab.runtime.exec";
@@ -106,9 +112,20 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
   }
 
   @Override
-  public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) {
-    // TODO Auto-generated method stub
-    return null;
+  public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+    
+    boolean ok = true;
+    if (condition != null) {
+      Object cond = condition.eval(context, context);
+      ok = cond instanceof Boolean && ((Boolean)cond);
+    }
+    if (ok) { 
+      Object o = expression.eval(context, context);
+      if (o instanceof IDataArtifact) {
+        ret = (IDataArtifact)o;
+      }
+    }
+    return ret;
   }
 
 

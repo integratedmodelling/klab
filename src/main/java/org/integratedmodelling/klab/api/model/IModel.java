@@ -24,7 +24,6 @@ package org.integratedmodelling.klab.api.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -39,11 +38,11 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * Models may be unresolved (extensional, i.e. they leave their observable specified only at a
  * semantic level) or resolved (intensional, i.e. they can build their observations as they are and
  * provide observation semantics for it). Models may need to make additional observations, which are
- * specified as pure semantics through dependencies (see {@link #getDependencies()}.
+ * specified as pure semantics through {@link #getDependencies() dependencies}.
  * 
  */
 public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable,
-    IComputable /* TODO , IArtifact<> */ {
+    IComputable /* TODO , IModelArtifact<> */ {
 
   /**
    * Return the semantics of all observables we are observing. The first in the list is the actual

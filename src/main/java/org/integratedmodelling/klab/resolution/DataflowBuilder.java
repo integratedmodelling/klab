@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -188,13 +188,14 @@ public class DataflowBuilder {
         // have the runtime provider turn each resource into a call that produces a contextualizer
         Model theModel = models.iterator().next().model;
         ret.setName(theModel.getLocalNameFor(observable));
-
+        
         if (!generated.contains(theModel)) {
           generated.add(theModel);
           for (IComputableResource resource : models.iterator().next().model
               .getComputation(ITime.INITIALIZATION)) {
             ret.addComputation(resource);
           }
+          ret.getAnnotations().addAll(theModel.getAnnotations());
         } else {
           ret.setReference(true);
           ret.setAlias(observable.getLocalName());

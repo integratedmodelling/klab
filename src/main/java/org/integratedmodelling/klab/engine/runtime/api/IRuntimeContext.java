@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -103,11 +104,25 @@ public interface IRuntimeContext extends IComputationContext {
   IArtifact getTarget(IActuator actuator);
   
   /**
+   * Set the main target of the computation being carried on by the actuator. Used by Actuator.compute(). 
+   * 
+   * @param target
+   */
+  void setTarget(IArtifact target);
+  
+  /**
    * The API must be able to set the geometry for downstream computations.
    * 
    * @param geometry
    */
   void setGeometry(IGeometry geometry);
+
+  /**
+   * Called after successful computation passing each annotation that was defined for the model. 
+   * 
+   * @param annotation
+   */
+  public void processAnnotation(IKimAnnotation annotation);
 
 
 }

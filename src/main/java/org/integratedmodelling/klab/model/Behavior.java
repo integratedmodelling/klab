@@ -79,4 +79,9 @@ public class Behavior implements IBehavior {
         return false;
     }
 
+    @Override
+    public boolean isEmpty() {
+      return actions.isEmpty();
+    }
+
 }

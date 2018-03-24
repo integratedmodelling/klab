@@ -11,6 +11,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
 
     Collection<String> gitUrls;
     boolean synced;
+    boolean skipSync = false;
     
     public MonitorableGitWorkspace(File root, Collection<String> gitUrls, File... overridingProjects) {
         
@@ -21,7 +22,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
             @Override
             public void readProjects() throws IOException {
                 
-                if (!synced) {
+                if (!synced && (!skipSync || !root.exists())) {
                     synced = true;
                     for (String url : gitUrls) {
                         try {
@@ -36,6 +37,10 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
             }
         };
         this.gitUrls = gitUrls;
+    }
+    
+    public void setSkipSync(boolean skipSync) {
+      this.skipSync = skipSync;
     }
     
 }
