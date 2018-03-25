@@ -87,7 +87,7 @@ public class DataflowBuilder {
 
       // this will overwrite scale and namespace - another way of saying that these should either be
       // identical or we shouldn't even allow more than one root resolvable.
-      ret.setScale(actuator.getScale());
+//      ret.setScale(scope.getScale());
       ret.setNamespace(actuator.getNamespace());
     }
 
@@ -160,7 +160,7 @@ public class DataflowBuilder {
       Actuator ret = Actuator.create(monitor);
 
       ret.setObservable(observable);
-      ret.setScale(scale);
+//      ret.setScale(scale);
       ret.setDefinesScale(definesScale);
       
       switch (observable.getObservationType()) {

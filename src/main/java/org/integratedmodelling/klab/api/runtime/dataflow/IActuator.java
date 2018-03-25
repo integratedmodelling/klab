@@ -47,13 +47,13 @@ public interface IActuator {
      */
     List<IActuator> getOutputs();
 
-    /**
-     * Each actuator may have a specific scale.
-     * 
-     * @return the scale. Only the root dataflow and those actuators for which a scale was
-     *         specifically given will return a non-empty scale.
-     */
-    IScale getScale();
+//    /**
+//     * Each actuator may have a specific scale.
+//     * 
+//     * @return the scale. Only the root dataflow and those actuators for which a scale was
+//     *         specifically given will return a non-empty scale.
+//     */
+//    IScale getScale();
 
     /**
      * Return the list of all computations in this actuator, or an empty list. Should always be empty

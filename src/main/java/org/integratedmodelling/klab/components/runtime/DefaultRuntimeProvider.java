@@ -131,8 +131,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IMonitor monitor) {
-    return new RuntimeContext((Actuator) actuator, scope, monitor);
+  public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
+    return new RuntimeContext((Actuator) actuator, scope, scale, monitor);
   }
 
   @Override
@@ -181,8 +181,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 
   static IObservation createObservation(Actuator actuator, RuntimeContext context) {
-    return createObservation(actuator.getObservable(), actuator.getScale(), context,
-        actuator.isStorageScalar());
+    return createObservation(actuator.getObservable(), context.getScale(), context,
+        actuator.isStorageScalar(context.getScale()));
   }
 
   static IObservation createObservation(IObservable observable, IScale scale,

@@ -199,7 +199,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
       Shape shape = getShape(blob);
       if (shape != null) {
         ret.add(context.newObservation(semantics, baseName + "_" + (created + 1),
-            Scale.createLike(context.getScale(), shape)));
+            Scale.createLike(context.getScale(), shape))); 
         created++;
       } else {
         skipped++;

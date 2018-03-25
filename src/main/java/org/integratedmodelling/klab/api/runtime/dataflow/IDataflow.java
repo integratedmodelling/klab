@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.runtime.dataflow;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
@@ -48,14 +49,17 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IDataflow<T extends IArtifact> extends IActuator {
 
   /**
-   * Run the dataflow using the configured or default {@link IRuntimeProvider} and return the
-   * resulting artifact.
+   * Run the dataflow in the passed scale using the configured or default {@link IRuntimeProvider}
+   * and return the resulting artifact.
+   * 
+   * @param scale the scale of contextualization. Assumed (and not checked) compatible with the
+   *        scale of the resolution that generated this dataflow.
    * 
    * @param monitor
    * @return the built artifact. May be empty, never null.
    * @throws KlabException
    */
-  public T run(IMonitor monitor) throws KlabException;
+  public T run(IScale scale, IMonitor monitor) throws KlabException;
 
   /**
    * Return the KDL source code for the dataflow. If the dataflow has been read from a KLD stream,

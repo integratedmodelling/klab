@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.dataflow;
 import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -27,7 +28,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
   IResolutionScope scope;
 
   @Override
-  public IArtifact run(IMonitor monitor) throws KlabException {
+  public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
     /*
      * Children at the dataflow level run in parallel, so have the runtime start futures for each
@@ -41,8 +42,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
         IRuntimeContext runtimeContext = context == null
             ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator,
-                scope, monitor))
-            : ((Subject) context).getRuntimeContext().createChild(actuator);
+                scope, scale, monitor))
+            : ((Subject) context).getRuntimeContext().createChild(scale, actuator);
 
         IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, runtimeContext).get();
 

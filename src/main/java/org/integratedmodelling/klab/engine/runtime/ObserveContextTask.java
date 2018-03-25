@@ -54,7 +54,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
             System.out.println(dataflow.getKdlCode());
 
-            return (ISubject)dataflow.run(monitor);
+            return (ISubject)dataflow.run(scope.getScale(), monitor);
           }
 
           return null;

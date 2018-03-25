@@ -18,8 +18,10 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -37,7 +39,7 @@ public class Actuator implements IActuator {
   private String alias;
   private INamespace namespace;
   private Observable observable;
-  private Scale scale;
+  private ICoverage coverage;
   private IKdlActuator.Type type;
   List<IActuator> actuators = new ArrayList<>();
   IMonitor monitor;
@@ -91,10 +93,10 @@ public class Actuator implements IActuator {
     this.monitor = monitor;
   }
 
-  @Override
-  public Scale getScale() {
-    return scale;
-  }
+//  @Override
+//  public Scale getScale() {
+//    return scale;
+//  }
 
   @Override
   public List<IActuator> getActuators() {
@@ -166,7 +168,7 @@ public class Actuator implements IActuator {
          */
         ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
             (IStateResolver) contextualizer.getFirst(), (IState) ret,
-            addParameters(ctx, contextualizer.getSecond()), scale.at(ITime.INITIALIZATION));
+            addParameters(ctx, contextualizer.getSecond()), runtimeContext.getScale().at(ITime.INITIALIZATION));
 
       } else if (contextualizer.getFirst() instanceof IResolver) {
         ret = ((IResolver<IArtifact>) contextualizer.getFirst()).resolve(ret,
@@ -294,8 +296,8 @@ public class Actuator implements IActuator {
       ret += " as " + getAlias();
     }
 
-    if (definesScale && getScale() != null && !getScale().isEmpty()) {
-      List<IServiceCall> scaleSpecs = getScale().getKimSpecification();
+    if (definesScale && coverage != null && !coverage.isEmpty()) {
+      List<IServiceCall> scaleSpecs = ((Scale)coverage.getScale()).getKimSpecification();
       if (!scaleSpecs.isEmpty()) {
         ret += " over";
         for (int i = 0; i < scaleSpecs.size(); i++) {
@@ -334,10 +336,6 @@ public class Actuator implements IActuator {
 
   public void setNamespace(INamespace namespace) {
     this.namespace = namespace;
-  }
-
-  public void setScale(Scale scale) {
-    this.scale = scale;
   }
 
   public IKdlActuator.Type getType() {
@@ -382,15 +380,15 @@ public class Actuator implements IActuator {
     this.definesScale = definesScale;
   }
 
-  public boolean isStorageScalar() {
+  public boolean isStorageScalar(IScale scale) {
     // TODO inspect the computations and check if we have any local modifications
-    return this.scale.size() == 1;
+    return scale.size() == 1;
   }
 
-  public boolean isStorageDynamic() {
+  public boolean isStorageDynamic(IScale scale) {
     // TODO inspect the computations and the observable semantics; check if we have any temporal
     // modifications
-    return this.scale.isTemporallyDistributed();
+    return scale.isTemporallyDistributed();
   }
 
   public boolean isExported() {

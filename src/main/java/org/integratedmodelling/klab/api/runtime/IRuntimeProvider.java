@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -22,7 +21,8 @@ public interface IRuntimeProvider {
    * 
    * @param actuator a top-level actuator that has no dependencies on external ones.
    * @param context an appropriate context for the computation (see
-   *        {@link #createRuntimeContext(IActuator, IMonitor)}) containing the target observation.
+   *        {@link #createRuntimeContext(IActuator, IResolutionScope, IScale, IMonitor)}) containing
+   *        the target observation.
    * @param monitor
    * @return a future that is computing the final artifact for the actuator.
    * @throws KlabException
@@ -34,11 +34,15 @@ public interface IRuntimeProvider {
    * context will also create the subject itself according to the runtime's expectations.
    * 
    * @param actuator
+   * @param scope
+   * @param scale the scale for the contextualization (must be compatible with scope.getScale() but
+   *        can be different)
    * @param monitor
    * 
    * @return a new runtime context.
    */
-  IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IMonitor monitor);
+  IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
+      IMonitor monitor);
 
   /**
    * Get a service call that, once executed, will turn the passed specification for a resource into

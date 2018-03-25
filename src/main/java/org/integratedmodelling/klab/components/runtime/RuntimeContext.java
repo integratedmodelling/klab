@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -30,7 +29,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -78,7 +76,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   // root scope of the entire dataflow, unchanging, for downstream resolutions
   ResolutionScope resolutionScope;
 
-  public RuntimeContext(Actuator actuator, IResolutionScope scope, IMonitor monitor) {
+  public RuntimeContext(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
     this.catalog = new HashMap<>();
     this.network = new DefaultDirectedGraph<>(Relationship.class);
@@ -86,7 +84,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.provenance = /* TODO new Provenance() */ null;
     this.monitor = monitor;
     this.namespace = actuator.getNamespace();
-    this.scale = actuator.getScale();
+    this.scale = scale;
     this.target = DefaultRuntimeProvider.createObservation(actuator, this);
     this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
@@ -271,7 +269,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     if (scope.isRelevant()) {
       Dataflow dataflow = Dataflows.INSTANCE
           .compile("local:task:" /* wazzafuck + session.getToken() + ":" + token */, scope);
-      ret = (ICountableObservation) dataflow.run(monitor);
+      ret = (ICountableObservation) dataflow.run(scale, monitor);
     }
     return ret;
   }
@@ -284,7 +282,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IRuntimeContext createChild(IActuator actuator) {
+  public IRuntimeContext createChild(IScale scale, IActuator actuator) {
 
     RuntimeContext ret = new RuntimeContext(this);
     ret.parent = this;
@@ -296,7 +294,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
           "RuntimeContext: cannot add a child observation to a non-direct observation");
     }
 
-    ret.scale = actuator.getScale();
+    ret.scale = scale;
     ret.inputs = new HashSet<>();
     ret.outputs = new HashSet<>();
     ret.semantics = new HashMap<>();
@@ -349,20 +347,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
         ret.add((T) source);
       }
     }
-    return ret;
-  }
-
-  @Override
-  public IRuntimeContext createChild(IObservation target, IActuator actuator) {
-    RuntimeContext ret = new RuntimeContext(this);
-    ret.parent = this;
-    ret.namespace = ((Actuator) actuator).getNamespace();
-    ret.target = (Observation) target;
-    ret.scale = target.getScale();
-    ret.inputs = new HashSet<>();
-    ret.outputs = new HashSet<>();
-    ret.semantics = new HashMap<>();
-    // TODO reinitialize as appropriate
     return ret;
   }
 
