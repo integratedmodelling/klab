@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
@@ -89,46 +90,46 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * The three main pieces of info in each scope: only the root node has none of these, other nodes
    * have one and only one of these.
    */
-  private Observable         observable;
-  private Model              model;
-  private Observer           observer;
+  private Observable observable;
+  private Model model;
+  private Observer observer;
 
   /*
    * These two are built at merge() and thrown away if a resolution ends up empty.
    */
-  Set<Link>                  links               = new HashSet<>();
-  Set<ResolutionScope>       resolvedObservables = new HashSet<>();
+  Set<Link> links = new HashSet<>();
+  Set<ResolutionScope> resolvedObservables = new HashSet<>();
 
   /*
    * These change during resolution and influence the choice of models
    */
-  private Mode               mode                = Mode.RESOLUTION;
-  private Namespace          resolutionNamespace;
+  private Mode mode = Mode.RESOLUTION;
+  private Namespace resolutionNamespace;
 
   /*
    * these do not change during an individual resolution.
    */
-  private Subject            context;
-  private Collection<String> scenarios           = new ArrayList<>();
-  private boolean            interactive;
-  private IMonitor           monitor;
+  private DirectObservation context;
+  private Collection<String> scenarios = new ArrayList<>();
+  private boolean interactive;
+  private IMonitor monitor;
 
   /*
    * The parent is only used during model ranking, to establish project and namespace nesting and
    * distance
    */
-  private ResolutionScope    parent;
+  private ResolutionScope parent;
 
   /*
    * this is only used to correctly merge in dependencies.
    */
-  int                        mergedObservables   = 0;
+  int mergedObservables = 0;
 
   /*
    * this controls whether indirect resolution can happen at all. Set to true and not modified; may
    * want to configure it at some point.
    */
-  private boolean            resolveIndirectly   = true;
+  private boolean resolveIndirectly = true;
 
   /**
    * Get a root scope based on the definition of an observation.
@@ -228,7 +229,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   public Collection<Link> getLinks() {
     return links;
   }
-  
+
   /**
    * Create a child coverage for a passed observable with the same scale but initial coverage set at
    * 0.
@@ -258,6 +259,36 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   }
 
   /**
+   * Create a child coverage for a passed observable with a new scale and initial coverage set at 0.
+   * Used to resolve new direct observables within an existing context.
+   * 
+   * @param observable
+   * @param scale
+   * @param mode
+   * @return a new scope for the passed observable
+   */
+  public ResolutionScope getChildScope(Observable observable, Scale scale, Mode mode) {
+
+    ResolutionScope ret = new ResolutionScope(this);
+    ret.observable = observable;
+    ret.setTo(new Coverage(scale, 1.0));
+    ret.mode = mode;
+
+    /*
+     * check if we already can resolve this (directly or indirectly), and if so, set coverage so
+     * that it can be accepted as is. This should be a model; we should make the link, increment the
+     * use count for the observable, and return coverage.
+     */
+    ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
+    if (previous != null) {
+      ret.setTo(previous);
+    }
+
+    return ret;
+  }
+
+
+  /**
    * 
    * @param model
    * @return a scope to resolve the passed model
@@ -284,7 +315,8 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      * intersected should depend on the geometry that the model handles.
      */
     if (model.getBehavior().hasScale()) {
-      Coverage rcov = super.and(new Coverage(Scale.create(model.getBehavior().getExtents(this.monitor))));
+      Coverage rcov =
+          super.and(new Coverage(Scale.create(model.getBehavior().getExtents(this.monitor))));
       ret.setTo(rcov);
     }
 
@@ -699,6 +731,10 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
       return false;
     }
     return true;
+  }
+
+  public void setContext(IDirectObservation target) {
+    this.context = (DirectObservation)target;
   }
 
 }

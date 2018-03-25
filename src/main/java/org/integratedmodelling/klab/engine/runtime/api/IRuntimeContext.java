@@ -36,7 +36,7 @@ public interface IRuntimeContext extends IComputationContext {
    * Create a child context for a previously instantiated observation, setting it as a target for
    * the computation. The passed observation must have been created using
    * {@link #newObservation(IObservable, org.integratedmodelling.kim.api.data.IGeometry)} or
-   * {@link #newRelationship(IObservable, org.integratedmodelling.kim.api.data.IGeometry, IObjectArtifact, IObjectArtifact)}.
+   * {@link #newRelationship(IObservable, IScale, IObjectArtifact, IObjectArtifact)}.
    * 
    * @param target
    * @param actuator the actuator handling the instantiation

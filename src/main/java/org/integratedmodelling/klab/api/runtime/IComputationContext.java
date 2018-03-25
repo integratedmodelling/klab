@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -160,9 +161,9 @@ public interface IComputationContext extends IParameters {
   public IObservable getSemantics(String identifier);
 
   /**
-   * Create a new observation of the specified countable observable and with the specified geometry.
-   * Use in {@link IInstantiator instantiators} to create new objects. Use
-   * {@link #newRelationship(IObservable, IGeometry, IObjectArtifact, IObjectArtifact)} to create a
+   * Create and resolve a new observation of the specified countable observable and with the
+   * specified geometry. Use in {@link IInstantiator instantiators} to create new objects. Use
+   * {@link #newRelationship(IObservable, IScale, IObjectArtifact, IObjectArtifact)} to create a
    * relationship.
    * <p>
    * While any k.LAB-aware implementation will receive a {@link IScale} instead of a
@@ -176,29 +177,31 @@ public interface IComputationContext extends IParameters {
    * 
    * @param observable
    * @param name
-   * @param geometry
+   * @param scale
    * @return a new observation for the observable and geometry
+   * @throws KlabException from the resolution
    * @throw IllegalArgumentException if the observable describes a non-countable or a relationship.
    */
-  IObjectArtifact newObservation(IObservable observable, String name, IGeometry geometry);
+  IObjectArtifact newObservation(IObservable observable, String name, IScale scale)
+      throws KlabException;
 
   /**
-   * Create a new observation of the specified relationship with with the specified geometry, source
-   * and target subjects. Use in {@link IInstantiator relationship instantiators} to create new
-   * objects.
+   * Create and resolve a new observation of the specified relationship with with the specified
+   * geometry, source and target subjects. Use in {@link IInstantiator relationship instantiators}
+   * to create new objects.
    * <p>
-   * See {@link #newObservation(IObservable, IGeometry)} for API design choices.
+   * See {@link #newObservation(IObservable, String, IScale)} for API design choices.
    * <p>
    * 
    * @param observable
-   * @param geometry
+   * @param scale
    * @param source
    * @param target
    * @return a new observation for the observable and geometry
    * @throw IllegalArgumentException if the observable does not describe a relationship.
    */
-  IObjectArtifact newRelationship(IObservable observable, IGeometry geometry,
-      IObjectArtifact source, IObjectArtifact target);
+  IObjectArtifact newRelationship(IObservable observable, IScale scale, IObjectArtifact source,
+      IObjectArtifact target);
 
 
 }

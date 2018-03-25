@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -20,9 +21,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     super(monitor);
   }
 
-  String                    description;
+  String description;
   private DirectObservation context;
-  private double            coverage;
+  private double coverage;
+  IResolutionScope scope;
 
   @Override
   public IArtifact run(IMonitor monitor) throws KlabException {
@@ -38,11 +40,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         Actuator actuator = (Actuator) act;
 
         IRuntimeContext runtimeContext = context == null
-            ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator, monitor))
+            ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator,
+                scope, monitor))
             : ((Subject) context).getRuntimeContext().createChild(actuator);
 
-        IArtifact data =
-            Klab.INSTANCE.getRuntimeProvider().compute(actuator, runtimeContext).get();
+        IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, runtimeContext).get();
 
         if (ret == null) {
           ret = data;
@@ -117,6 +119,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
   public void setContext(DirectObservation context) {
     this.context = context;
+  }
+
+  public void setResolutionScope(IResolutionScope scope) {
+    this.scope = scope;
   }
 
 

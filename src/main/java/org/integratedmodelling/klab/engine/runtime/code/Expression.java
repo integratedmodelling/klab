@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -73,12 +72,12 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public IObjectArtifact newObservation(IObservable observable, String name, IGeometry geometry) {
+    public IObjectArtifact newObservation(IObservable observable, String name, IScale scale) {
       return null;
     }
 
     @Override
-    public IObjectArtifact newRelationship(IObservable observable, IGeometry geometry,
+    public IObjectArtifact newRelationship(IObservable observable, IScale scale,
         IObjectArtifact source, IObjectArtifact target) {
       return null;
     }

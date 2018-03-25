@@ -55,14 +55,6 @@ public abstract class Extent extends AbstractExtent {
   public abstract IExtent getExtent(long stateIndex);
 
   /**
-   * Return the single-valued topological value that represents the total extent covered, ignoring
-   * the subdivisions.
-   * 
-   * @return the full, 1-dim extent.
-   */
-  public abstract ITopologicallyComparable<?> getExtent();
-
-  /**
    * True if the i-th state of the topology correspond to a concrete subdivision where observations
    * can be made. Determines the status of "data" vs. "no-data" for the state of an observation
    * defined over this extent.

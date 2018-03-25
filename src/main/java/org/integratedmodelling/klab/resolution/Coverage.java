@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.observation.AbstractExtent;
 import org.integratedmodelling.klab.observation.Extent;
 import org.integratedmodelling.klab.observation.Scale;
 
@@ -78,7 +79,7 @@ public class Coverage implements ICoverage {
     current.clear();
     if (scale != null) {
       for (IExtent e : scale.getExtents()) {
-        ITopologicallyComparable<?> orig = ((Extent) e).getExtent();
+        ITopologicallyComparable<?> orig = ((AbstractExtent) e).getExtent();
         ITopologicallyComparable<?> curr = coverage > 0 ? orig : null;
         current.add(new CExt(e.getType(), orig, curr, coverage));
       }
@@ -144,7 +145,7 @@ public class Coverage implements ICoverage {
     this.coverage = coverage;
     if (scale != null) {
       for (IExtent e : scale.getExtents()) {
-        ITopologicallyComparable<?> orig = ((Extent) e).getExtent();
+        ITopologicallyComparable<?> orig = ((AbstractExtent) e).getExtent();
         ITopologicallyComparable<?> curr = coverage > 0 ? orig : null;
         current.add(new CExt(e.getType(), orig, curr, coverage));
       }

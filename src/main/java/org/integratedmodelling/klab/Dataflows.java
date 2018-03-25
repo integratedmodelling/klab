@@ -78,9 +78,7 @@ public enum Dataflows implements IDataflowService {
     public Dataflow compile(String name, IResolutionScope scope)
         throws KlabException {
 
-      DataflowBuilder builder = new DataflowBuilder(name)
-          .withCoverage(scope.getCoverage())
-          .within(scope.getContext());
+      DataflowBuilder builder = new DataflowBuilder(name, scope);
 
       if (((ResolutionScope)scope).getObserver() != null) {
         builder = builder.withResolvable(((ResolutionScope)scope).getObserver());

@@ -330,18 +330,27 @@ public class Shape extends AbstractExtent implements IShape {
 
   @Override
   public boolean contains(IExtent o) throws KlabException {
+    if (this.equals(o)) {
+      return true;
+    }
     // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public boolean overlaps(IExtent o) throws KlabException {
+    if (this.equals(o)) {
+      return true;
+    }
     // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public boolean intersects(IExtent o) throws KlabException {
+    if (this.equals(o)) {
+      return true;
+    }
     // TODO Auto-generated method stub
     return false;
   }
@@ -349,6 +358,9 @@ public class Shape extends AbstractExtent implements IShape {
   @Override
   public ITopologicallyComparable<? extends IExtent> union(ITopologicallyComparable<?> other)
       throws KlabException {
+    if (this.equals(other)) {
+      return this;
+    }
     // TODO Auto-generated method stub
     return null;
   }
@@ -356,6 +368,9 @@ public class Shape extends AbstractExtent implements IShape {
   @Override
   public ITopologicallyComparable<? extends IExtent> intersection(ITopologicallyComparable<?> other)
       throws KlabException {
+    if (this.equals(other)) {
+      return this;
+    }
     // TODO Auto-generated method stub
     return null;
   }
@@ -420,5 +435,48 @@ public class Shape extends AbstractExtent implements IShape {
     }
     throw new IllegalArgumentException("cannot use " + index + " as a shape locator");
   }
+
+  @Override
+  public ITopologicallyComparable<?> getExtent() {
+    return this;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((geometry == null) ? 0 : geometry.hashCode());
+    result = prime * result + ((projection == null) ? 0 : projection.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Shape other = (Shape) obj;
+    if (geometry == null) {
+      if (other.geometry != null) {
+        return false;
+      }
+    } else if (!geometry.equals(other.geometry)) {
+      return false;
+    }
+    if (projection == null) {
+      if (other.projection != null) {
+        return false;
+      }
+    } else if (!projection.equals(other.projection)) {
+      return false;
+    }
+    return true;
+  }
+  
+  
   
 }

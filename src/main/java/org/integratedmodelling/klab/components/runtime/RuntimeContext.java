@@ -10,8 +10,8 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -25,17 +25,24 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -68,7 +75,10 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   Set<String> outputs;
   Map<String, IObservable> semantics;
 
-  public RuntimeContext(Actuator actuator, IMonitor monitor) {
+  // root scope of the entire dataflow, unchanging, for downstream resolutions
+  ResolutionScope resolutionScope;
+
+  public RuntimeContext(Actuator actuator, IResolutionScope scope, IMonitor monitor) {
 
     this.catalog = new HashMap<>();
     this.network = new DefaultDirectedGraph<>(Relationship.class);
@@ -81,7 +91,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.catalog.put(actuator.getObservable().getLocalName(), target);
     this.structure.addVertex(target);
     this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable());
-
+    
+    // store and set up for further resolutions
+    this.resolutionScope = (ResolutionScope) scope;
+    if (this.target instanceof IDirectObservation) {
+      this.resolutionScope.setContext((IDirectObservation)this.target);
+    }
+    
     this.inputs = new HashSet<>();
     this.outputs = new HashSet<>();
     this.semantics = new HashMap<>();
@@ -125,6 +141,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     this.outputs = context.outputs;
     this.semantics = context.semantics;
     this.parent = context.parent;
+    this.resolutionScope = context.resolutionScope;
   }
 
   @Override
@@ -161,12 +178,12 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   public INamespace getNamespace() {
     return namespace;
   }
-  
+
   @Override
   public IArtifact getTargetArtifact() {
     return target;
   }
-  
+
   @Override
   public IArtifact getArtifact(String localName) {
     return catalog.get(localName);
@@ -236,28 +253,32 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public ICountableObservation newObservation(IObservable observable, String name,
-      IGeometry geometry) {
+  public ICountableObservation newObservation(IObservable observable, String name, IScale scale)
+      throws KlabException {
 
     if (!observable.is(Type.COUNTABLE)) {
       throw new IllegalArgumentException(
           "RuntimeContext: cannot create a non-countable observation with newObservation()");
     }
 
+    ICountableObservation ret = null;
     Observable obs = new Observable((Observable) observable);
     obs.setName(name);
-    ICountableObservation ret = (ICountableObservation) DefaultRuntimeProvider.createObservation(observable,
-        (IScale) geometry, this);
 
-    if (this.target instanceof DirectObservation) {
-      // 
+    ResolutionScope scope = Resolver.INSTANCE.resolve(observable,
+        this.resolutionScope.getChildScope(obs, (Scale) scale, Mode.RESOLUTION));
+
+    if (scope.isRelevant()) {
+      Dataflow dataflow = Dataflows.INSTANCE
+          .compile("local:task:" /* wazzafuck + session.getToken() + ":" + token */, scope);
+      ret = (ICountableObservation) dataflow.run(monitor);
     }
     return ret;
   }
 
   @Override
-  public IRelationship newRelationship(IObservable observable, IGeometry geometry,
-      IObjectArtifact source, IObjectArtifact target) {
+  public IRelationship newRelationship(IObservable observable, IScale scale, IObjectArtifact source,
+      IObjectArtifact target) {
     // TODO Auto-generated method stub
     return null;
   }

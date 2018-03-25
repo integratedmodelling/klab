@@ -473,6 +473,11 @@ public class Grid extends Area implements IGrid {
       }
       throw new IllegalArgumentException("cannot use " + index + " as a cell locator");
     }
+
+    @Override
+    public ITopologicallyComparable<?> getExtent() {
+      return this;
+    }
   }
 
   Shape shape;
@@ -608,7 +613,10 @@ public class Grid extends Area implements IGrid {
 
   @Override
   public Shape getShape() {
-    return Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
+    if (shape == null) {
+      shape = Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
+    } 
+    return shape;
   }
 
   /**
@@ -926,7 +934,7 @@ public class Grid extends Area implements IGrid {
 
   @Override
   public IProjection getProjection() {
-    return shape.getProjection();
+    return getShape().getProjection();
   }
 
   /**

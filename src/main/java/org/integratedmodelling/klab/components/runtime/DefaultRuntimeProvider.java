@@ -17,11 +17,11 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -131,8 +131,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IComputationContext createRuntimeContext(IActuator actuator, IMonitor monitor) {
-    return new RuntimeContext((Actuator) actuator, monitor);
+  public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IMonitor monitor) {
+    return new RuntimeContext((Actuator) actuator, scope, monitor);
   }
 
   @Override

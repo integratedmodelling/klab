@@ -10,11 +10,10 @@ import java.util.Map;
 import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -32,9 +31,10 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class DataflowBuilder {
 
-  String name;
-  DirectObservation context;
-  double coverage;
+  private String name;
+  private DirectObservation context;
+  private double coverage;
+  private IResolutionScope scope;
 
   Graph<IResolvable, ResolutionEdge> resolutionGraph =
       new DefaultDirectedGraph<>(ResolutionEdge.class);
@@ -55,8 +55,11 @@ public class DataflowBuilder {
     }
   }
 
-  public DataflowBuilder(String name) {
+  public DataflowBuilder(String name, IResolutionScope scope) {
     this.name = name;
+    this.coverage = scope.getCoverage();
+    this.context = (DirectObservation) scope.getContext();
+    this.scope = scope;
   }
 
   public Dataflow build(IMonitor monitor) {
@@ -69,6 +72,7 @@ public class DataflowBuilder {
     ret.setName(this.name);
     ret.setContext(this.context);
     ret.setCoverage(this.coverage);
+    ret.setResolutionScope(scope);
 
     for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
@@ -158,7 +162,7 @@ public class DataflowBuilder {
       ret.setObservable(observable);
       ret.setScale(scale);
       ret.setDefinesScale(definesScale);
-
+      
       switch (observable.getObservationType()) {
         case CLASSIFICATION:
           ret.setType(Type.CONCEPT);
@@ -188,7 +192,7 @@ public class DataflowBuilder {
         // have the runtime provider turn each resource into a call that produces a contextualizer
         Model theModel = models.iterator().next().model;
         ret.setName(theModel.getLocalNameFor(observable));
-        
+
         if (!generated.contains(theModel)) {
           generated.add(theModel);
           for (IComputableResource resource : models.iterator().next().model
@@ -269,13 +273,13 @@ public class DataflowBuilder {
     }
   }
 
-  /*
+  /**
    * The simple compilation strategy keeps a catalog of models and a builds a tree of models usage
-   * for each observable. Then node are scanned from the root and an actuator is built the first
-   * time a model is encountered, a reference is built from the second on. If the model is only used
-   * once and for a single observable, the original actuator for a model is given the name of its
-   * use and the mediators are compiled in it; otherwise, a link is created and mediators are put in
-   * the import instruction.
+   * for each observable. The nodes are scanned from the root and an actuator is built the first
+   * time a model is encountered; a reference to the same actuator is built from the second time
+   * onwards. If the model is only used once and for a single observable, the original actuator for
+   * a model is given the name of its use and the mediators, if any, are compiled directly in it;
+   * otherwise, a link is created and mediators are put in the reference import.
    */
   private Node compileActuator(IResolvable resolvable, Graph<IResolvable, ResolutionEdge> graph,
       Scale scale, IMonitor monitor) {
@@ -326,16 +330,6 @@ public class DataflowBuilder {
     }
     ret.useCount++;
     return ret;
-  }
-
-  public DataflowBuilder within(IDirectObservation context) {
-    this.context = (DirectObservation) context;
-    return this;
-  }
-
-  public DataflowBuilder withCoverage(double coverage) {
-    this.coverage = coverage;
-    return this;
   }
 
   public DataflowBuilder withResolution(IResolvable source, IResolvable target,

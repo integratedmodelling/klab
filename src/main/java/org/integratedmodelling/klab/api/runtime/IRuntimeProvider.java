@@ -8,6 +8,8 @@ import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -36,7 +38,7 @@ public interface IRuntimeProvider {
    * 
    * @return a new runtime context.
    */
-  IComputationContext createRuntimeContext(IActuator actuator, IMonitor monitor);
+  IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IMonitor monitor);
 
   /**
    * Get a service call that, once executed, will turn the passed specification for a resource into
