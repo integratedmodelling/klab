@@ -189,7 +189,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       RuntimeContext context) {
     return createObservation(observable, scale, context, false);
   }
-  
+
   static IObservation createObservation(IObservable observable, IScale scale,
       RuntimeContext context, boolean scalarStorage) {
 
@@ -197,14 +197,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
     Observation ret = null;
     if (observable.is(Type.SUBJECT)) {
-      ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale,
-          context);
+      ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
     } else if (observable.is(Type.EVENT)) {
-      ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale,
-          context);
+      ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
     } else if (observable.is(Type.PROCESS)) {
-      ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale,
-          context);
+      ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
     } else if (observable.is(Type.RELATIONSHIP)) {
       throw new IllegalArgumentException(
           "createObservation() does not create relationships: use createRelationship()");
@@ -233,8 +230,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
       } else {
 
         // TODO figure out dynamic vs. not, using Actuator.isStorageDynamic()
-        storage =
-            Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, context);
+        storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, context);
       }
 
       switch (observable.getObservationType()) {

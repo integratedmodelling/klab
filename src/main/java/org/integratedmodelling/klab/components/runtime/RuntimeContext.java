@@ -161,12 +161,12 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   public INamespace getNamespace() {
     return namespace;
   }
-
+  
   @Override
   public IArtifact getTargetArtifact() {
     return target;
   }
-
+  
   @Override
   public IArtifact getArtifact(String localName) {
     return catalog.get(localName);
