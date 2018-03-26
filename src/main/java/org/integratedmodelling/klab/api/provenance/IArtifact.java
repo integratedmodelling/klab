@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Collection;
-import java.util.Iterator;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -21,9 +20,10 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  * most activities in k.LAB) or a {@link IKimModel k.IM model description} when the model has been
  * produced by an observation activity, such as a learning model.
  * <p>
- * By implementing {@link Iterator}, we also allow Artifacts to represent groups of artifacts (e.g.
+ * By implementing {@link Iterable}, we also allow Artifacts to represent groups of artifacts (e.g.
  * all the {@link ISubject subjects} instantiated by resolving a subject {@link IObservable
- * observable}). This enables simpler handling of provenance.
+ * observable}). This enables simpler handling of provenance, as each observation activity returns
+ * one artifact, possibly iterable as a group.
  * <p>
  * Each artifact exposes the provenance graph it's part of, allowing all k.LAB tasks to simply
  * return an {@code IArtifact} and provide full information on what happened.
@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  * 
  * @author Ferd
  */
-public interface IArtifact extends Node, Iterator<IArtifact> {
+public interface IArtifact extends Node, Iterable<IArtifact> {
 
   /**
    * The geometry linked to the observation. Observational artifacts will specialize this as IScale.

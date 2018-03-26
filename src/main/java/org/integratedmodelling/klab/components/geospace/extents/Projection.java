@@ -159,4 +159,9 @@ public class Projection implements IProjection {
     return R * c;
   }
 
+  public int getSRID() {
+    // TODO Auto-generated method stub
+    return Integer.parseInt(code.split(":")[1]);
+  }
+
 }

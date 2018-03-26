@@ -27,12 +27,12 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.rest.resources.Model;
 import org.integratedmodelling.klab.data.rest.resources.Model.Mediation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.observation.AbstractExtent;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -297,16 +297,16 @@ public class ModelKbox extends ObservableKbox {
   /*
    * select models that intersect the given space or have no space at all.
    */
-  private String spaceQuery(Space space) {
+  private String spaceQuery(ISpace space) {
 
-    if (space.getExtent().getShape().isEmpty()) {
+    if (((ISpace)((AbstractExtent)space).getExtent()).getShape().isEmpty()) {
       return "";
     }
 
     String scalequery =
         space.getScaleRank() + " BETWEEN model.minspatialscale AND model.maxspatialscale";
 
-    String spacequery = "model.space && '" + space.getShape().getStandardizedGeometry()
+    String spacequery = "model.space && '" + ((Shape)space.getShape()).getStandardizedGeometry()
         + "' OR ST_IsEmpty(model.space)";
 
     return "(" + scalequery + ") AND (" + spacequery + ")";
@@ -571,7 +571,7 @@ public class ModelKbox extends ObservableKbox {
 
       scaleMultiplicity = scale.size();
       if (scale.getSpace() != null) {
-        spaceExtent = scale.getSpace().getShape();
+        spaceExtent = (Shape)scale.getSpace().getShape();
         // may be null when we just say 'over space'.
         if (spaceExtent != null) {
           spaceMultiplicity = scale.getSpace().size();
@@ -579,7 +579,7 @@ public class ModelKbox extends ObservableKbox {
         isSpatial = true;
       }
       if (scale.getTime() != null) {
-        timeExtent = scale.getTime().getExtent();
+        timeExtent = (ITime) ((AbstractExtent)scale.getTime()).getExtent();
         if (timeExtent != null) {
           if (timeExtent.getStart() != null) {
             timeStart = timeExtent.getStart().getMillis();

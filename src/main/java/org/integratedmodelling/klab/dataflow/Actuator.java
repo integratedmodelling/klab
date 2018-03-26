@@ -180,6 +180,10 @@ public class Actuator implements IActuator {
       }
     }
 
+    if (ret != null) {
+      ctx.getProvenance().addArtifact(ret);
+    }
+    
     /*
      * when computation is finished, pass the annotations to the context so it can decide what to do
      * with them.

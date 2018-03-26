@@ -66,7 +66,8 @@ public class DataflowBuilder {
 
   public Dataflow build(IMonitor monitor) {
 
-    if (System.getProperty("visualize", "false").equals("true")) {
+    if (System.getProperty("visualize", "false").equals("true")
+        && resolutionGraph.vertexSet().size() > 1) {
       Graphs.show(resolutionGraph, "Resolution graph");
     }
 
@@ -107,7 +108,7 @@ public class DataflowBuilder {
       actuator.setType(Type.OBJECT);
       actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
       actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
-      
+
       ret.getActuators().add(actuator);
       ret.setNamespace(actuator.getNamespace());
     }

@@ -97,7 +97,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     DefaultDirectedGraph<IActuator, DefaultEdge> ret =
         new DefaultDirectedGraph<>(DefaultEdge.class);
     insertActuator(actuator, ret, new HashMap<>());
-    if (System.getProperty("visualize", "false").equals("true")) {
+    if (System.getProperty("visualize", "false").equals("true") && ret.vertexSet().size() > 1) {
       Graphs.show(ret, "Actuator dependencies");
     }
     return ret;
@@ -131,7 +131,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
   }
 
   @Override
-  public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
+  public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope,
+      IScale scale, IMonitor monitor) {
     return new RuntimeContext((Actuator) actuator, scope, scale, monitor);
   }
 

@@ -95,16 +95,4 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
    */
   IProvenance getProvenance();
 
-  /**
-   * Retrieve the observation following this in a group of artifacts. The return value has no
-   * relationship with the observation structure; it only describes the provenance, i.e. the
-   * grouping of observations that were created within the same activity (observation task).
-   * 
-   * Overrides the {@link Iterator#next()} from {@link IArtifact} to return a {@code IObservation}.
-   * 
-   * @return the next observation in a group, if {@link #hasNext()} returns true.
-   * 
-   */
-  @Override
-  IObservation next();
 }

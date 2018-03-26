@@ -1,18 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.provenance.IAgent;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -73,7 +67,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
   }
 
   @Override
-  public Space getSpace() {
+  public ISpace getSpace() {
     return getScale().getSpace();
   }
 
@@ -134,10 +128,5 @@ public abstract class Observation extends ObservedArtifact implements IObservati
     return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() + ": "
         + getObservable() + "}";
   }
-
-  public Observation next() {
-    return (Observation) super.next();
-  }
-
 
 }

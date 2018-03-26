@@ -23,10 +23,4 @@ public class Process extends DirectObservation implements IProcess {
         return null;
     }
 
-    @Override
-    public Process next() {
-      return (Process)super.next();
-    }
-
-
 }

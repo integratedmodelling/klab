@@ -23,10 +23,9 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -34,8 +33,8 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 
 public class Scale implements IScale {
 
-  private static AtomicLong counter = new AtomicLong(0);
-  transient long scaleId = counter.incrementAndGet();
+  private static AtomicLong counter          = new AtomicLong(0);
+  transient long            scaleId          = counter.incrementAndGet();
 
   /**
    * 
@@ -151,33 +150,33 @@ public class Scale implements IScale {
   //
   // }
 
-  protected List<IExtent> extents = new ArrayList<>();
-  protected long multiplicity = 0;
-  protected int sIndex = -1;
-  protected int tIndex = -1;
-  protected Time time = null;
-  protected Space space = null;
+  protected List<IExtent>          extents             = new ArrayList<>();
+  protected long                   multiplicity        = 0;
+  protected int                    sIndex              = -1;
+  protected int                    tIndex              = -1;
+  protected ITime                  time                = null;
+  protected ISpace                 space               = null;
   protected MultidimensionalCursor cursor;
 
   // this is copied to transitions so that we can quickly assess if two transitions
   // come from the same scale.
-  protected InstanceIdentifier identifier = new InstanceIdentifier();
+  protected InstanceIdentifier     identifier          = new InstanceIdentifier();
 
   /*
    * Next four are to support subscales built as views of another
    */
   // originalCursor != null means we derive from a previous scale and are representing
   // one slice of it...
-  private MultidimensionalCursor originalCursor = null;
+  private MultidimensionalCursor   originalCursor      = null;
   // ... identified by this offset...
-  private long sliceOffset = -1;
+  private long                     sliceOffset         = -1;
   // ... along this dimension
-  private int sliceDimension = -1;
+  private int                      sliceDimension      = -1;
   // the ID of the originating scale. If size() == 1, we can locate directly in it using the offset
   // below.
-  private long originalScaleId = -1;
+  private long                     originalScaleId     = -1;
   // the offset in the original scale (only applies if originalScaleId > 0);
-  long originalScaleOffset = -1;
+  long                             originalScaleOffset = -1;
 
 
   protected Scale() {}
@@ -235,8 +234,7 @@ public class Scale implements IScale {
         simple = false;
       }
       pos[i++] =
-          extent.getType() == dimension
-              ? (expos = ((AbstractExtent) extent).getOffset(offsets))
+          extent.getType() == dimension ? (expos = ((AbstractExtent) extent).getOffset(offsets))
               : extent.size();
     }
 
@@ -245,6 +243,11 @@ public class Scale implements IScale {
         extents.add(((Extent) extent).getExtent(expos));
       } else {
         extents.add(extent);
+      }
+      if (extent.getType() == Dimension.Type.SPACE) {
+        space = (ISpace) extents.get(extents.size() - 1);
+      } else if (extent.getType() == Dimension.Type.TIME) {
+        time = (ITime) extents.get(extents.size() - 1);
       }
     }
 
@@ -255,11 +258,12 @@ public class Scale implements IScale {
   }
 
   /**
-   * Create a scale like the passed one, adding the passed extents or substituting
-   * existing ones of the same type.
-   * @param scale 
-   * @param extents 
-   * @return 
+   * Create a scale like the passed one, adding the passed extents or substituting existing ones of
+   * the same type.
+   * 
+   * @param scale
+   * @param extents
+   * @return
    */
   public static Scale createLike(IScale scale, IExtent... extents) {
     List<IExtent> exts = Arrays.asList(extents);
@@ -272,12 +276,12 @@ public class Scale implements IScale {
         }
       }
       if (add) {
-        exts.add(((Extent)existing).copy());
+        exts.add(((Extent) existing).copy());
       }
     }
     return create(exts);
-}
-  
+  }
+
   /**
    * Create a scale from an array of extents.
    * 
@@ -432,8 +436,7 @@ public class Scale implements IScale {
       n++;
     }
     if (!found) {
-      throw new KlabRuntimeException(
-          "cannot locate extent " + extent.getType() + " in scale");
+      throw new KlabRuntimeException("cannot locate extent " + extent.getType() + " in scale");
     }
     return Scale.this.cursor.getElementIndexes(overallOffset)[n];
   }
@@ -481,12 +484,12 @@ public class Scale implements IScale {
       if (e.size() == INFINITE) {
         multiplicity = INFINITE;
       }
-      if (e instanceof Time) {
+      if (e.getType() == Dimension.Type.TIME) {
         tIndex = idx;
-        time = (Time) e;
-      } else if (e instanceof Space) {
+        time = (ITime) e;
+      } else if (e.getType() == Dimension.Type.SPACE) {
         sIndex = idx;
-        space = (Space) e;
+        space = (ISpace) e;
       }
 
       if (multiplicity != INFINITE)
@@ -535,12 +538,12 @@ public class Scale implements IScale {
   }
 
   @Override
-  public Space getSpace() {
+  public ISpace getSpace() {
     return space;
   }
 
   @Override
-  public Time getTime() {
+  public ITime getTime() {
     return time;
   }
 
@@ -564,9 +567,9 @@ public class Scale implements IScale {
   }
 
   // @Override
-//  public IExtent getExtent(int index) {
-//    return extents.get(index);
-//  }
+  // public IExtent getExtent(int index) {
+  // return extents.get(index);
+  // }
 
   @Override
   public long size() {
@@ -632,8 +635,7 @@ public class Scale implements IScale {
 
     Scale ret = new Scale();
     for (IExtent e : extents) {
-      ret.mergeExtent((IExtent) e.intersection(((Scale) scale).getDimension(e.getType())),
-          false);
+      ret.mergeExtent((IExtent) e.intersection(((Scale) scale).getDimension(e.getType())), false);
     }
 
     return ret;
@@ -763,18 +765,18 @@ public class Scale implements IScale {
     return true;
   }
 
-//  /*
-//   * get the extent with the passed domain concept
-//   */
-//  @Override
-//  public IExtent getExtent(IConcept domainConcept) {
-//    for (IExtent e : extents) {
-//      if (e.getDomainConcept().equals(domainConcept)) {
-//        return e;
-//      }
-//    }
-//    return null;
-//  }
+  // /*
+  // * get the extent with the passed domain concept
+  // */
+  // @Override
+  // public IExtent getExtent(IConcept domainConcept) {
+  // for (IExtent e : extents) {
+  // if (e.getDomainConcept().equals(domainConcept)) {
+  // return e;
+  // }
+  // }
+  // return null;
+  // }
 
   // /**
   // * Scan all extents and return the properties and values, if any, that describe
@@ -1151,20 +1153,20 @@ public class Scale implements IScale {
      * TODO single extent locator
      */
     if (index instanceof IExtent) {
-      IExtent mext = getOnlyMultipleExtent(((IExtent)index).getType());
+      IExtent mext = getOnlyMultipleExtent(((IExtent) index).getType());
       if (mext != null) {
         // offset is the extent's offset in its extent
         return mext.getOffset(index);
       }
-      
+
       /*
-       * TODO 
+       * TODO
        */
     }
     if (index instanceof OffsetLocator) {
-      return ((OffsetLocator)index).getOffset();
+      return ((OffsetLocator) index).getOffset();
     }
-    
+
     throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
   }
 

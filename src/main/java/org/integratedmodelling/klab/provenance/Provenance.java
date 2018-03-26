@@ -12,17 +12,14 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implements IProvenance {
 
   private static final long serialVersionUID = -699663910228938188L;
-
-  Subject root;
   
   /**
    * TODO this should also take the agent and activity that created the initial subject.
    * 
    * @param root
    */
-  public Provenance(Subject root) {
+  public Provenance() {
     super(Activity.class);
-    this.root = root;
   }
 
   @Override
@@ -44,12 +41,16 @@ public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implem
 
   @Override
   public IArtifact getRootArtifact() {
-    return root;
+    return null;
   }
 
   @Override
   public Collection<IArtifact> getArtifacts() {
     return vertexSet();
+  }
+
+  public void addArtifact(IArtifact ret) {
+    addVertex(ret);
   }
 
 }

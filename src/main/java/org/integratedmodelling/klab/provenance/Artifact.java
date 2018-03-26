@@ -2,15 +2,15 @@ package org.integratedmodelling.klab.provenance;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IAgent;
-import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 
 /**
  * All the provenance-related functions of IArtifact. Can be used as delegate for those
@@ -36,18 +36,6 @@ public class Artifact implements IArtifact {
     ((Artifact) data).idx = group.size() - 1;
   }
 
-  public boolean hasNext() {
-    return group != null && group.size() > idx;
-  }
-
-  public Artifact next() {
-    if (!hasNext()) {
-      throw new NoSuchElementException(
-          "ObservationData.next() called when hasNext() returns false");
-    }
-    return (Artifact) group.get(idx + 1);
-  }
-  
   @Override
   public long getTimestamp() {
     // TODO Auto-generated method stub
@@ -130,6 +118,18 @@ public class Artifact implements IArtifact {
   public IMetadata getMetadata() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public Iterator<IArtifact> iterator() {
+    List<IArtifact> list = new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
+    list.add(this);
+    if (group != null) {
+      for (int i = (idx < 0 ? 0 : idx); i < group.size(); i++) {
+        list.add(group.get(i));
+      }
+    }
+    return list.iterator();
   }
   
 }

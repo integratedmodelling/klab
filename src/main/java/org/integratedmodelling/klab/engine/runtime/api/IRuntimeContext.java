@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.provenance.Provenance;
 
 /**
  * This API extends {@link IComputationContext} to add setters and other functionalities that are
@@ -110,7 +111,13 @@ public interface IRuntimeContext extends IComputationContext {
    * 
    * @param annotation
    */
-  public void processAnnotation(IKimAnnotation annotation);
+  void processAnnotation(IKimAnnotation annotation);
 
+  /**
+   * Specialize the provenance so we can use setting methods on it.
+   * 
+   */
+  @Override
+  Provenance getProvenance();
 
 }

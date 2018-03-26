@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.util.Collection;
+import java.util.Iterator;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -97,13 +98,8 @@ public class Storage implements IArtifact {
   }
 
   @Override
-  public boolean hasNext() {
-    return artifact.hasNext();
-  }
-
-  @Override
-  public IArtifact next() {
-    return artifact.next();
+  public Iterator<IArtifact> iterator() {
+    return artifact.iterator();
   }
 
 }

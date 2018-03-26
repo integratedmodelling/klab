@@ -44,11 +44,6 @@ public class State extends Observation implements IState {
     // that or promote to probabilistic.
   }
 
-  @Override
-  public State next() {
-    return (State)super.next();
-  }
-
   public Object get(ILocator index) {
     return storage.get(index);
   }

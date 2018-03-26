@@ -36,9 +36,4 @@ public class Relationship extends CountableObservation implements IRelationship 
     return target;
   }
 
-  @Override
-  public Relationship next() {
-    return (Relationship)super.next();
-  }
-
 }

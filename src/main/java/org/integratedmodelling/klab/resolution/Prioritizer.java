@@ -19,9 +19,10 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.rest.resources.Model;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -406,9 +407,9 @@ public class Prioritizer implements IPrioritizer<Model> {
                 /*
                  * compute intersection if we're spatial
                  */
-                Space space = context.getScale().getSpace();
+                ISpace space = context.getScale().getSpace();
                 if (space != null) {
-                    Geometry cspace = space.getShape().getStandardizedGeometry();
+                    Geometry cspace = ((Shape)space.getShape()).getStandardizedGeometry();
                     Geometry intersection = cspace.intersection(model.getShape().getStandardizedGeometry());
                     specificityS = 100.0 * (intersection.getArea() / model.getShape()
                             .getStandardizedGeometry()

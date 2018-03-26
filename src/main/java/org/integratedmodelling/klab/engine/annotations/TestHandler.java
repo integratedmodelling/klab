@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -78,11 +81,27 @@ public class TestHandler implements Annotations.Handler {
             }
             
             if (subject != null && (arguments.get("visualize", false) || System.getProperty("visualize", "false").equals("true"))) {
+              
               if (subject.getScale().isSpatiallyDistributed()) {
                 SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
-                for (IState state : subject.getStates()) {
-                  display.add(state);
+
+                for (IArtifact artifact : subject.getProvenance().getArtifacts()) {
+                  
+                  if (artifact instanceof IState) {
+                    display.add((IState)artifact);
+                  } else {
+                    String layerName = null;
+                    for (IArtifact a : artifact) {
+                      if (a instanceof IDirectObservation && a.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
+                        if (layerName == null) {
+                          layerName = ((IDirectObservation)a).getObservable().getType().getName();
+                        }
+                        display.add(((IDirectObservation)a).getScale().getSpace(), layerName);
+                      }
+                    }
+                  }
                 }
+                
                 display.show();
                 if (System.getProperty("visualize", "false").equals("true")) {
                   // just block to see the display

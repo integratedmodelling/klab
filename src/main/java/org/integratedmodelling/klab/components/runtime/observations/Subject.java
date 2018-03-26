@@ -79,10 +79,4 @@ public class Subject extends CountableObservation implements ISubject {
     return new ObserveInContextTask(this, urn, CollectionUtils.arrayToList(scenarios));
   }
 
-
-  @Override
-  public Subject next() {
-    return (Subject)super.next();
-  }
-
 }

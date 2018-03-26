@@ -13,9 +13,4 @@ public class Event extends CountableObservation implements IEvent {
 
   private static final long serialVersionUID = -5518029878668042674L;
 
-  @Override
-  public Event next() {
-    return (Event)next();
-  }
-
 }

@@ -62,6 +62,7 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -147,7 +148,7 @@ public class SpatialDisplay {
           geometryClass = shape.getJTSGeometry().getClass();
           fType = DataUtilities.createType("Location",
               "the_geom:" + shape.getJTSGeometry().getGeometryType() + ":srid="
-                  + shape.getJTSGeometry().getSRID() + ",number:Integer");
+                  + shape.getProjection().getSRID() + ",number:Integer");
           featureBuilder = new SimpleFeatureBuilder(fType);
         } catch (SchemaException e) {
           throw new KlabRuntimeException(e);
@@ -176,10 +177,10 @@ public class SpatialDisplay {
 
   Map<String, RLDesc> rLayers = new HashMap<>();
   Map<String, SLDesc> sLayers = new HashMap<>();
-  Space space;
+  ISpace space;
 
   public SpatialDisplay(ISpace space) {
-    this.space = (Space) space;
+    this.space = space;
   }
 
   /**
@@ -198,6 +199,25 @@ public class SpatialDisplay {
     add(JTS.toGeometry(shape), layer);
   }
 
+  /**
+   * Add a spatial extent to a layer
+   * 
+   * @param space
+   * @param layer 
+   */
+  public void add(ISpace space, String layer) {
+    /*if (space instanceof Space && ((Space)space).getGrid().isPresent()) {
+      add(((Space)space).getGrid().get(), layer);
+    } else*/ if (space instanceof Space && ((Space)space).getTessellation().isPresent()) {
+      for (IExtent shape : ((Space)space).getTessellation().get()) {
+        add((IShape)shape, layer);
+      }
+    } else {
+      add((Shape)space.getShape(), layer);
+    }
+  }
+
+  
   /**
    * Add shape to named layer, creating if necessary. All must be projected like the scale.
    * 
@@ -256,7 +276,7 @@ public class SpatialDisplay {
   public void show() {
 
     MapContent content = new MapContent();
-    content.setViewport(new MapViewport((space.getShape().getJTSEnvelope())));
+    content.setViewport(new MapViewport((((Shape)space.getShape()).getJTSEnvelope())));
     Viewport viewport = new Viewport(800, 800);
     int[] xy = viewport.getSizeFor(space.getEnvelope().getMaxX() - space.getEnvelope().getMinX(),
         space.getEnvelope().getMaxY() - space.getEnvelope().getMinY());
