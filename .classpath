@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-annotations-2.9.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/commons-math3-3.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jgraph-5.13.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jgrapht-ext-1.1.0.jar"/>
@@ -136,8 +137,6 @@
 	<classpathentry exported="true" kind="lib" path="target/dependency/hibernate-validator-5.2.4.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/httpclient-4.3.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/httpcore-4.3.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-annotations-2.8.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-core-2.8.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/jackson-databind-2.8.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/JavaEWAH-0.7.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/javassist-3.21.0-GA.jar"/>
