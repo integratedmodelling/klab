@@ -117,4 +117,12 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
    */
   Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext);
 
+  /**
+   * The size of the group that this artifact is part of. Any artifact is part of
+   * a group including at least itself.
+   * 
+   * @return 1 or more
+   */
+  int groupSize();
+
 }

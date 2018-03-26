@@ -60,6 +60,7 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -93,8 +94,8 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class SpatialDisplay {
 
-  int SLID = 0;
-  static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+  int                  SLID          = 0;
+  static StyleFactory  styleFactory  = CommonFactoryFinder.getStyleFactory();
   static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
   class RLDesc {
@@ -112,12 +113,12 @@ public class SpatialDisplay {
   }
 
   class SLDesc {
-    SimpleFeatureType fType;
-    List<SimpleFeature> features = new ArrayList<>();
-    int nShapes = 0;
+    SimpleFeatureType    fType;
+    List<SimpleFeature>  features = new ArrayList<>();
+    int                  nShapes  = 0;
     SimpleFeatureBuilder featureBuilder;
-    String name;
-    Class<?> geometryClass;
+    String               name;
+    Class<?>             geometryClass;
 
     SLDesc(String name) {
       this.name = name;
@@ -177,7 +178,7 @@ public class SpatialDisplay {
 
   Map<String, RLDesc> rLayers = new HashMap<>();
   Map<String, SLDesc> sLayers = new HashMap<>();
-  ISpace space;
+  ISpace              space;
 
   public SpatialDisplay(ISpace space) {
     this.space = space;
@@ -203,21 +204,22 @@ public class SpatialDisplay {
    * Add a spatial extent to a layer
    * 
    * @param space
-   * @param layer 
+   * @param layer
    */
   public void add(ISpace space, String layer) {
-    /*if (space instanceof Space && ((Space)space).getGrid().isPresent()) {
-      add(((Space)space).getGrid().get(), layer);
-    } else*/ if (space instanceof Space && ((Space)space).getTessellation().isPresent()) {
-      for (IExtent shape : ((Space)space).getTessellation().get()) {
-        add((IShape)shape, layer);
+    /*
+     * if (space instanceof Space && ((Space)space).getGrid().isPresent()) {
+     * add(((Space)space).getGrid().get(), layer); } else
+     */ if (space instanceof Space && ((Space) space).getTessellation().isPresent()) {
+      for (IExtent shape : ((Space) space).getTessellation().get()) {
+        add((IShape) shape, layer);
       }
     } else {
-      add((Shape)space.getShape(), layer);
+      add((Shape) space.getShape(), layer);
     }
   }
 
-  
+
   /**
    * Add shape to named layer, creating if necessary. All must be projected like the scale.
    * 
@@ -240,32 +242,28 @@ public class SpatialDisplay {
   public void add(IState state) {
 
     RLDesc rlDesc = new RLDesc();
-    rlDesc.name = state.getObservable().getLocalName();
+    rlDesc.name = Concepts.INSTANCE.getDisplayName(state.getObservable().getType());
     rlDesc.state = state;
     rLayers.put(rlDesc.name, rlDesc);
   }
 
   private RasterSymbolizer getRasterSymbolizer(IState state) {
-    
+
     if (!state.getMetadata().contains("colormap")) {
-      return  styleFactory.getDefaultRasterSymbolizer();
+      return styleFactory.getDefaultRasterSymbolizer();
     }
 
-    // create style 
+    // create style
     // TODO use colormaps and do it right, then export to GeotoolsUtils for map generation also as
     // Image
     StyleBuilder sb = new StyleBuilder();
-    ColorMap colorMap =
-        sb.createColorMap(
-            new String[] {"poco", "meglio", "buono", "ostia"}, // labels
-            new double[] {100, 400, 2000, 3000}, // values that begin a category, or break points in a ramp, or isolated values, according to the type of color map specified by Type 
-            new Color[] { 
-                new Color(0, 100, 0), 
-                new Color(150, 150, 50), 
-                new Color(200, 200, 50), 
-                Color.WHITE
-            }, 
-            ColorMap.TYPE_RAMP);
+    ColorMap colorMap = sb.createColorMap(new String[] {"poco", "meglio", "buono", "ostia"}, // labels
+        new double[] {100, 400, 2000, 3000}, // values that begin a category, or break points in a
+                                             // ramp, or isolated values, according to the type of
+                                             // color map specified by Type
+        new Color[] {new Color(0, 100, 0), new Color(150, 150, 50), new Color(200, 200, 50),
+            Color.WHITE},
+        ColorMap.TYPE_RAMP);
 
     return sb.createRasterSymbolizer(colorMap, 1.0 /* opacity */);
   }
@@ -276,7 +274,7 @@ public class SpatialDisplay {
   public void show() {
 
     MapContent content = new MapContent();
-    content.setViewport(new MapViewport((((Shape)space.getShape()).getJTSEnvelope())));
+    content.setViewport(new MapViewport((((Shape) space.getShape()).getJTSEnvelope())));
     Viewport viewport = new Viewport(800, 800);
     int[] xy = viewport.getSizeFor(space.getEnvelope().getMaxX() - space.getEnvelope().getMinX(),
         space.getEnvelope().getMaxY() - space.getEnvelope().getMinY());

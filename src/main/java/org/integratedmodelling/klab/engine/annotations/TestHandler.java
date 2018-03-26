@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -75,33 +76,41 @@ public class TestHandler implements Annotations.Handler {
             } else {
               monitor.warn(id + ": observation of " + observer.getName() + " was unsuccessful");
             }
-            
-            for (IServiceCall assertion : arguments.get("assertions", new ArrayList<IServiceCall>())) {
+
+            for (IServiceCall assertion : arguments.get("assertions",
+                new ArrayList<IServiceCall>())) {
               // TODO check assertion
             }
-            
-            if (subject != null && (arguments.get("visualize", false) || System.getProperty("visualize", "false").equals("true"))) {
-              
+
+            if (subject != null && (arguments.get("visualize", false)
+                || System.getProperty("visualize", "false").equals("true"))) {
+
               if (subject.getScale().isSpatiallyDistributed()) {
                 SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
 
                 for (IArtifact artifact : subject.getProvenance().getArtifacts()) {
-                  
+
                   if (artifact instanceof IState) {
-                    display.add((IState)artifact);
+                    display.add((IState) artifact);
                   } else {
                     String layerName = null;
                     for (IArtifact a : artifact) {
-                      if (a instanceof IDirectObservation && a.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
+                      if (a instanceof IDirectObservation
+                          && a.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
                         if (layerName == null) {
-                          layerName = ((IDirectObservation)a).getObservable().getType().getName();
+                          int gsize = a.groupSize();
+                          layerName =
+                              gsize == 1 ? (((IDirectObservation) a).getObservable().getLocalName())
+                                  : (Concepts.INSTANCE.getDisplayName(
+                                      ((IDirectObservation) a).getObservable().getType())
+                                      + " [" + gsize + "]");
                         }
-                        display.add(((IDirectObservation)a).getScale().getSpace(), layerName);
+                        display.add(((IDirectObservation) a).getScale().getSpace(), layerName);
                       }
                     }
                   }
                 }
-                
+
                 display.show();
                 if (System.getProperty("visualize", "false").equals("true")) {
                   // just block to see the display
@@ -109,7 +118,7 @@ public class TestHandler implements Annotations.Handler {
                 }
               }
             }
-            
+
           } else {
             monitor.error(id + ": errors in retrieving observer or session");
           }
@@ -120,7 +129,7 @@ public class TestHandler implements Annotations.Handler {
 
       Klab.INSTANCE.info("Finished test " + id + " on " + new Date() + " with "
           + ((monitor.hasErrors() || exceptions.size() > 0) ? "errors" : "no errors"));
-      
+
       for (Throwable t : exceptions) {
         Klab.INSTANCE.info("   EXCEPTION: " + t.getMessage());
       }

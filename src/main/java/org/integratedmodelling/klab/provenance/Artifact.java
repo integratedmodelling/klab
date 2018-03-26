@@ -132,4 +132,9 @@ public class Artifact implements IArtifact {
     return list.iterator();
   }
   
+  @Override
+  public int groupSize() {
+    return 1 + (group == null ? 0 : group.size());
+  }
+  
 }

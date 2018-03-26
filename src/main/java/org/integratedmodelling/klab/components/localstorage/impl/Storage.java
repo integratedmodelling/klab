@@ -102,4 +102,9 @@ public class Storage implements IArtifact {
     return artifact.iterator();
   }
 
+  @Override
+  public int groupSize() {
+    return artifact.groupSize();
+  }
+
 }
