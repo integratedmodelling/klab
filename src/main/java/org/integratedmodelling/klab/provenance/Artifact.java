@@ -13,8 +13,12 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 
 /**
- * All the provenance-related functions of IArtifact. Can be used as delegate for those
- * within any runtime provider that produces artifacts.
+ * All the provenance-related functions of IArtifact. Can be used as delegate for those within any
+ * runtime provider that produces artifacts.
+ * <p>
+ * Artifacts in provenance graphs can also represent externally available resources, expressing the
+ * lineage of the information retrieved through URNs. The history is reconstructed based on the
+ * resource's metadata.
  * 
  * @author ferdinando.villa
  *
@@ -23,9 +27,9 @@ public class Artifact implements IArtifact {
 
   // all observation data in a group share the same list and contain their index in it; established
   // at chain()
-  List<IArtifact> group    = null;
+  List<IArtifact> group = null;
   // first observation in a group has idx = -1; the others have their own index
-  int                    idx      = -1;
+  int             idx   = -1;
 
   public void chain(IArtifact data) {
     if (group == null) {
@@ -122,7 +126,8 @@ public class Artifact implements IArtifact {
 
   @Override
   public Iterator<IArtifact> iterator() {
-    List<IArtifact> list = new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
+    List<IArtifact> list =
+        new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
     list.add(this);
     if (group != null) {
       for (int i = (idx < 0 ? 0 : idx); i < group.size(); i++) {
@@ -131,10 +136,10 @@ public class Artifact implements IArtifact {
     }
     return list.iterator();
   }
-  
+
   @Override
   public int groupSize() {
     return 1 + (group == null ? 0 : group.size());
   }
-  
+
 }

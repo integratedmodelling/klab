@@ -30,32 +30,36 @@ public enum Resolver {
   INSTANCE;
 
   /**
-   * Resolve the passed object in the passed scope, using the resolution strategy appropriate to the
-   * type.
+   * Resolve the passed object in the passed parent scope, using the resolution strategy appropriate
+   * to the type.
+   * 
+   * TODO expose the version that returns a dataflow.
    * 
    * @param resolvable
-   * @param scope
+   * @param parentScope
    * @return the resolved scope
    * @throws KlabException
    */
-  public ResolutionScope resolve(IResolvable resolvable, ResolutionScope scope)
+  public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope)
       throws KlabException {
 
     if (resolvable instanceof Observable) {
-      return resolve((Observable) resolvable, scope,
+      return resolve((Observable) resolvable, parentScope,
           ((Observable) resolvable).is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
     } else if (resolvable instanceof Model) {
-      return resolve((Model) resolvable, scope);
+      return resolve((Model) resolvable, parentScope);
     } else if (resolvable instanceof Observer) {
-      return resolve((Observer) resolvable, scope);
+      return resolve((Observer) resolvable, parentScope);
     }
 
     return ResolutionScope.empty();
   }
 
   /**
-   * Resolve the root observer to an acknowledged observation tree. This being an acknowledgement,
+   * Resolve a root observer to an acknowledged observation tree. This being an acknowledgement,
    * coverage will always be 100% unless errors happen.
+   * 
+   * TODO expose the version that returns a dataflow.
    * 
    * @param observer
    * @param monitor
@@ -76,7 +80,9 @@ public enum Resolver {
   /**
    * Resolve an observer in a previously existing context using passed mode and scale.
    * 
-   * @param resolvable
+   * TODO expose the version that returns a dataflow.
+   * 
+   * @param observable
    * @param parentScope
    * @param mode
    * @param scale
@@ -102,7 +108,7 @@ public enum Resolver {
    * @return the merged scope
    * @throws KlabException
    */
-  public ResolutionScope resolve(Observer observer, ResolutionScope parentScope)
+  private ResolutionScope resolve(Observer observer, ResolutionScope parentScope)
       throws KlabException {
 
     ResolutionScope ret =
@@ -126,7 +132,7 @@ public enum Resolver {
    *         coverage if the observable is mandatory, or the passed scope's coverage if it's
    *         optional.
    */
-  public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
+  private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
 
     ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
@@ -174,7 +180,7 @@ public enum Resolver {
    * @return the merged scope, or an empty one.
    * @throws KlabException
    */
-  public ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
+  private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
 
     ResolutionScope ret = parentScope.getChildScope(model);
     // use the reasoner to infer any missing dependency from the semantics
