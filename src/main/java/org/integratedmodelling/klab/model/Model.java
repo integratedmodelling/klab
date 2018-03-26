@@ -41,6 +41,9 @@ public class Model extends KimObject implements IModel {
   private Behavior behavior;
   private List<IComputableResource> resources = new ArrayList<>();
   private boolean isPrivate;
+  private boolean instantiator;
+  private boolean reinterpreter;
+  private boolean inactive;
 
   // only for the delegate RankedModel
   protected Model() {
@@ -65,7 +68,9 @@ public class Model extends KimObject implements IModel {
     this.id = model.getName();
     this.namespace = namespace;
     this.isPrivate = model.isPrivate();
-
+    this.instantiator = model.isInstantiator();
+    this.inactive = model.isInactive();
+    
     setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
     for (IKimObservable observable : model.getObservables()) {
@@ -136,6 +141,10 @@ public class Model extends KimObject implements IModel {
     // no parameters.
     // TODO also check 'change to' status on main observable. And maybe geometry (vs. context?
     // Should we check in context?)
+    if (dependencies.size() > 0) {
+      return false;
+    }
+    
     for (IComputableResource resource : resources) {
       // TODO TODO this is a temp fix to make the tests run.
       if (!resource.getRequiredResourceNames().isEmpty()) {
@@ -154,20 +163,19 @@ public class Model extends KimObject implements IModel {
 
   @Override
   public boolean isInstantiator() {
-    // TODO Auto-generated method stub
-    return false;
+    return instantiator;
   }
 
   @Override
   public boolean isReinterpreter() {
     // TODO Auto-generated method stub
-    return false;
+    return reinterpreter;
   }
 
   @Override
   public boolean isAvailable() {
     // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   @Override

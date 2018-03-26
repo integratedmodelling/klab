@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -14,6 +15,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
 /**
@@ -72,6 +74,27 @@ public enum Resolver {
   }
 
   /**
+   * Resolve an observer in a previously existing context using passed mode and scale.
+   * 
+   * @param resolvable
+   * @param parentScope
+   * @param mode
+   * @param scale
+   * @return the merged scope
+   * @throws KlabException
+   */
+  public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode,
+      IScale scale) throws KlabException {
+
+    ResolutionScope ret =
+        resolve(observable, parentScope.getChildScope(observable, (Scale) scale), mode);
+    if (ret.isRelevant()) {
+      parentScope.merge(ret);
+    }
+    return ret;
+  }
+
+  /**
    * Resolve an observer in a previously existing context.
    * 
    * @param observer
@@ -114,7 +137,7 @@ public enum Resolver {
       for (Iterator<Observable> it = reasoner.iterator(); it.hasNext();) {
         Observable candidate = it.next();
         try {
-          for (IRankedModel model : Models.INSTANCE.resolve(candidate, parentScope)) {
+          for (IRankedModel model : Models.INSTANCE.resolve(candidate, ret)) {
             ret.merge(resolve((RankedModel) model, ret), LogicalConnector.UNION);
             if (ret.isComplete()) {
               break;
@@ -130,9 +153,17 @@ public enum Resolver {
 
     if (ret.isRelevant()) {
       parentScope.merge(ret);
+    } else if (observable.isOptional()
+        || (observable.is(Type.SUBJECT) && mode == Mode.RESOLUTION)) {
+      /*
+       * empty strategy is OK for optional dependencies and resolved subjects. The latter are never
+       * resolved unless there has been an implicit instantiation from an instantiator, so a
+       * dataflow that creates them is generated.
+       */
+      ret.acceptEmpty();
     }
 
-    return (!ret.isRelevant() && observable.isOptional()) ? parentScope : ret;
+    return ret;
   }
 
   /**

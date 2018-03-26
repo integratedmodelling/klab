@@ -10,10 +10,12 @@ import java.util.Map;
 import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -31,14 +33,14 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class DataflowBuilder {
 
-  private String name;
-  private DirectObservation context;
-  private double coverage;
-  private IResolutionScope scope;
+  private String                     name;
+  private DirectObservation          context;
+  private double                     coverage;
+  private IResolutionScope           scope;
 
   Graph<IResolvable, ResolutionEdge> resolutionGraph =
       new DefaultDirectedGraph<>(ResolutionEdge.class);
-  Map<Model, ModelD> modelCatalog = new HashMap<>();
+  Map<Model, ModelD>                 modelCatalog    = new HashMap<>();
 
   static class ResolutionEdge {
 
@@ -87,7 +89,26 @@ public class DataflowBuilder {
 
       // this will overwrite scale and namespace - another way of saying that these should either be
       // identical or we shouldn't even allow more than one root resolvable.
-//      ret.setScale(scope.getScale());
+      // ret.setScale(scope.getScale());
+      ret.setNamespace(actuator.getNamespace());
+    }
+
+    /**
+     * This happens when we resolved a subject observable (from a previous instantiator calls)
+     * without an observer and resolution did not find any models.
+     */
+    if (ret.getActuators().isEmpty()
+        && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.SUBJECT)
+        && scope.getMode() == Mode.RESOLUTION) {
+
+      Actuator actuator = Actuator.create(monitor);
+      actuator.setObservable(((ResolutionScope) scope).getObservable());
+      actuator.setCreateObservation(true);
+      actuator.setType(Type.OBJECT);
+      actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
+      actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
+      
+      ret.getActuators().add(actuator);
       ret.setNamespace(actuator.getNamespace());
     }
 
@@ -96,9 +117,9 @@ public class DataflowBuilder {
 
   static class ModelD {
 
-    Model model;
+    Model    model;
     // how many nodes reference this model's observables
-    int useCount;
+    int      useCount;
     // this is null unless the model covers only a part of the context
     Coverage coverage;
 
@@ -133,12 +154,12 @@ public class DataflowBuilder {
    */
   class Node {
 
-    Observable observable;
-    Observer observer;
-    Set<ModelD> models = new HashSet<>();
-    List<Node> children = new ArrayList<>();
-    Scale scale;
-    boolean definesScale;
+    Observable  observable;
+    Observer    observer;
+    Set<ModelD> models   = new HashSet<>();
+    List<Node>  children = new ArrayList<>();
+    Scale       scale;
+    boolean     definesScale;
 
     public Node(IResolvable observable) {
       if (observable instanceof Observable) {
@@ -160,9 +181,9 @@ public class DataflowBuilder {
       Actuator ret = Actuator.create(monitor);
 
       ret.setObservable(observable);
-//      ret.setScale(scale);
+      // ret.setScale(scale);
       ret.setDefinesScale(definesScale);
-      
+
       switch (observable.getObservationType()) {
         case CLASSIFICATION:
           ret.setType(Type.CONCEPT);

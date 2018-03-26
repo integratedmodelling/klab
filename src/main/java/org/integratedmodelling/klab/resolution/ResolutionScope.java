@@ -90,46 +90,46 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * The three main pieces of info in each scope: only the root node has none of these, other nodes
    * have one and only one of these.
    */
-  private Observable observable;
-  private Model model;
-  private Observer observer;
+  private Observable         observable;
+  private Model              model;
+  private Observer           observer;
 
   /*
    * These two are built at merge() and thrown away if a resolution ends up empty.
    */
-  Set<Link> links = new HashSet<>();
-  Set<ResolutionScope> resolvedObservables = new HashSet<>();
+  Set<Link>                  links               = new HashSet<>();
+  Set<ResolutionScope>       resolvedObservables = new HashSet<>();
 
   /*
    * These change during resolution and influence the choice of models
    */
-  private Mode mode = Mode.RESOLUTION;
-  private Namespace resolutionNamespace;
+  private Mode               mode                = Mode.RESOLUTION;
+  private Namespace          resolutionNamespace;
 
   /*
    * these do not change during an individual resolution.
    */
-  private DirectObservation context;
-  private Collection<String> scenarios = new ArrayList<>();
-  private boolean interactive;
-  private IMonitor monitor;
+  private DirectObservation  context;
+  private Collection<String> scenarios           = new ArrayList<>();
+  private boolean            interactive;
+  private IMonitor           monitor;
 
   /*
    * The parent is only used during model ranking, to establish project and namespace nesting and
    * distance
    */
-  private ResolutionScope parent;
+  private ResolutionScope    parent;
 
   /*
    * this is only used to correctly merge in dependencies.
    */
-  int mergedObservables = 0;
+  int                        mergedObservables   = 0;
 
   /*
    * this controls whether indirect resolution can happen at all. Set to true and not modified; may
    * want to configure it at some point.
    */
-  private boolean resolveIndirectly = true;
+  private boolean            resolveIndirectly   = true;
 
   /**
    * Get a root scope based on the definition of an observation.
@@ -273,6 +273,25 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     ret.observable = observable;
     ret.setTo(new Coverage(scale, 1.0));
     ret.mode = mode;
+
+    /*
+     * check if we already can resolve this (directly or indirectly), and if so, set coverage so
+     * that it can be accepted as is. This should be a model; we should make the link, increment the
+     * use count for the observable, and return coverage.
+     */
+    ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
+    if (previous != null) {
+      ret.setTo(previous);
+    }
+
+    return ret;
+  }
+
+  public ResolutionScope getChildScope(Observable observable, Scale scale) {
+
+    ResolutionScope ret = new ResolutionScope(this);
+    ret.observable = observable;
+    ret.setTo(new Coverage(scale, 1.0));
 
     /*
      * check if we already can resolve this (directly or indirectly), and if so, set coverage so
@@ -734,7 +753,18 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
   }
 
   public void setContext(IDirectObservation target) {
-    this.context = (DirectObservation)target;
+    this.context = (DirectObservation) target;
+  }
+
+  /**
+   * Called on an empty coverage to accept anyway, setting coverage to 1.0 and removing any remnants
+   * from a possibly failed resolution.
+   */
+  public void acceptEmpty() {
+    setCoverage(1.0);
+    this.model = null;
+    this.links.clear();
+    this.resolvedObservables.clear();
   }
 
 }

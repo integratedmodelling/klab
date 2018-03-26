@@ -1,11 +1,9 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
@@ -26,11 +24,13 @@ public interface IRuntimeContext extends IComputationContext {
    * implementation for the artifact type and geometry specified in the actuator. The observation is
    * created with the same scale of the current target and the current target is set as its parent.
    * 
+   * @param scale 
    * @param target
+   * @param scope 
    * 
    * @return the child context that will resolve the target
    */
-  public IRuntimeContext createChild(IScale scale, IActuator target);
+  public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope);
 
   /**
    * Set the passed data object in the symbol table.

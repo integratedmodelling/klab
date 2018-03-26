@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -263,8 +262,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     Observable obs = new Observable((Observable) observable);
     obs.setName(name);
 
-    ResolutionScope scope = Resolver.INSTANCE.resolve(observable,
-        this.resolutionScope.getChildScope(obs, (Scale) scale, Mode.RESOLUTION));
+    // TODO have these public resolvers return dataflows or null, reusing dataflows from previous runs
+    ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, Mode.RESOLUTION, scale);
 
     if (scope.isRelevant()) {
       Dataflow dataflow = Dataflows.INSTANCE
@@ -282,11 +281,12 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
   }
 
   @Override
-  public IRuntimeContext createChild(IScale scale, IActuator actuator) {
+  public IRuntimeContext createChild(IScale scale, IActuator actuator, IResolutionScope scope) {
 
     RuntimeContext ret = new RuntimeContext(this);
     ret.parent = this;
     ret.namespace = ((Actuator) actuator).getNamespace();
+    ret.resolutionScope = (ResolutionScope)scope;
     ret.artifactType =
         Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
     if (!(this.target instanceof DirectObservation)) {
@@ -312,7 +312,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
       ret.semantics.put(id, ((Actuator) a).getObservable());
     }
 
-    if (!((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
+//    if (!((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
+      
       ret.outputs.add(actuator.getName());
       ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
       ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator), this);
@@ -326,7 +327,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
       if (ret.target instanceof ISubject) {
         this.network.addVertex((ISubject) ret.target);
       }
-    }
+//    }
 
     return ret;
   }
