@@ -438,7 +438,7 @@ public class Grid extends Area implements IGrid {
 
     @Override
     public double getCoveredExtent() {
-      return 1;
+      return getShape().getStandardizedGeometry().getArea();
     }
 
     @Override

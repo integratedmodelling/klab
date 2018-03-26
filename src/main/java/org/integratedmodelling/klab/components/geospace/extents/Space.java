@@ -316,8 +316,7 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public double getCoveredExtent() {
-    // TODO Auto-generated method stub
-    return 0;
+    return getShape().getStandardizedGeometry().getArea();
   }
 
   @Override

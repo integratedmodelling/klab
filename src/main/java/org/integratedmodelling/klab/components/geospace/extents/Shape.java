@@ -377,8 +377,7 @@ public class Shape extends AbstractExtent implements IShape {
 
   @Override
   public double getCoveredExtent() {
-    // TODO Auto-generated method stub
-    return 0;
+    return getStandardizedGeometry().getArea();
   }
 
   @Override
