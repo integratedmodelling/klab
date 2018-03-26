@@ -7,12 +7,14 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -200,7 +202,7 @@ public class RankedModel extends Model implements IRankedModel {
   }
 
   @Override
-  public ICoverage getCoverage() {
+  public ICoverage getContextCoverage() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -230,6 +232,15 @@ public class RankedModel extends Model implements IRankedModel {
     return getDelegate().getResources();
   }
 
+  @Override
+  public IScale getNativeCoverage() {
+    try {
+      return getDelegate().getCoverage(Klab.INSTANCE.getRootMonitor());
+    } catch (KlabException e) {
+      Klab.INSTANCE.getRootMonitor().error(e);
+    }
+    return null;
+  }
 
 
 }

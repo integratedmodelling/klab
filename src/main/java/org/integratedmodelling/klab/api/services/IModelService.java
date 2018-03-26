@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -29,9 +30,17 @@ public interface IModelService {
      * Coverage resulting from resolution, i.e. the portion of the scale that will be covered once
      * the model has been used to produce the observation.
      * 
-     * @return the coverage of the resolution
+     * @return the model's coverage of the resolution context
      */
-    ICoverage getCoverage();
+    ICoverage getContextCoverage();
+    
+    /**
+     * Native coverage of the model independent of resolution. Intersected with any other model to compute
+     * the coverage of the resulting dataflow.
+     * 
+     * @return coverage as a scale, or null for global coverage.
+     */
+    IScale getNativeCoverage();
 
     /**
      * Breakdown of the resolution criteria with the corresponding ranks.

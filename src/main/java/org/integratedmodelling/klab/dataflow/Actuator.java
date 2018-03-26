@@ -35,30 +35,23 @@ import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator implements IActuator {
 
-  protected String name;
-  private String alias;
-  private INamespace namespace;
-  private Observable observable;
-  private ICoverage coverage;
-  private IKdlActuator.Type type;
-  List<IActuator> actuators = new ArrayList<>();
-  IMonitor monitor;
-  Date creationTime = new Date();
-  private boolean createObservation;
-  private boolean reference;
-  private boolean exported;
+  protected String                  name;
+  private String                    alias;
+  private INamespace                namespace;
+  private Observable                observable;
+  private ICoverage                 coverage;
+  private IKdlActuator.Type         type;
+  List<IActuator>                   actuators         = new ArrayList<>();
+  IMonitor                          monitor;
+  Date                              creationTime      = new Date();
+  private boolean                   createsObservation;
+  private boolean                   reference;
+  private boolean                   exported;
 
   // this is only for the API
   private List<IComputableResource> computedResources = new ArrayList<>();
   // we store the annotations from the model to enable probes or other non-semantic options
-  private List<IKimAnnotation> annotations = new ArrayList<>();
-
-  /**
-   * The contextualizer chain that implements the computation specified by IServiceCalls. These may
-   * be first-class resolvers/instantiators or mediators, in order of execution. Created and
-   * populated at compute().
-   */
-  private List<Pair<IContextualizer, IComputableResource>> computation = null;
+  private List<IKimAnnotation>      annotations       = new ArrayList<>();
 
   public void addComputation(IComputableResource resource) {
     computedResources.add(resource);
@@ -80,9 +73,9 @@ public class Actuator implements IActuator {
    * Each list contains a service call and its local target name, null for the main observable.
    */
   private List<Pair<IServiceCall, IComputableResource>> computationStrategy = new ArrayList<>();
-  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy = new ArrayList<>();
+  private List<Pair<IServiceCall, IComputableResource>> mediationStrategy   = new ArrayList<>();
 
-  private boolean definesScale;
+  private boolean                                       definesScale;
 
   @Override
   public String getName() {
@@ -93,10 +86,10 @@ public class Actuator implements IActuator {
     this.monitor = monitor;
   }
 
-//  @Override
-//  public Scale getScale() {
-//    return scale;
-//  }
+  // @Override
+  // public Scale getScale() {
+  // return scale;
+  // }
 
   @Override
   public List<IActuator> getActuators() {
@@ -138,21 +131,22 @@ public class Actuator implements IActuator {
   @SuppressWarnings("unchecked")
   public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
+    /**
+     * The contextualizer chain that implements the computation specified by IServiceCalls. These
+     * may be first-class resolvers/instantiators or mediators, in order of execution.
+     */
+    List<Pair<IContextualizer, IComputableResource>> computation = new ArrayList<>();
+
     // localize names to this actuator's expectations; create non-semantic storage if needed
     IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
-
-    if (computation == null) {
-      // compile the contextualization strategy
-      computation = new ArrayList<>();
-      for (Pair<IServiceCall, IComputableResource> service : Collections.join(computationStrategy,
-          mediationStrategy)) {
-        Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
-        if (!(contextualizer instanceof IContextualizer)) {
-          throw new KlabValidationException(
-              "function " + service.getFirst().getName() + " does not produce a contextualizer");
-        }
-        computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
+    for (Pair<IServiceCall, IComputableResource> service : Collections.join(computationStrategy,
+        mediationStrategy)) {
+      Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
+      if (!(contextualizer instanceof IContextualizer)) {
+        throw new KlabValidationException(
+            "function " + service.getFirst().getName() + " does not produce a contextualizer");
       }
+      computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
     }
 
     // this will be null if the actuator is for an instantiator
@@ -168,7 +162,8 @@ public class Actuator implements IActuator {
          */
         ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
             (IStateResolver) contextualizer.getFirst(), (IState) ret,
-            addParameters(ctx, contextualizer.getSecond()), runtimeContext.getScale().at(ITime.INITIALIZATION));
+            addParameters(ctx, contextualizer.getSecond()),
+            runtimeContext.getScale().at(ITime.INITIALIZATION));
 
       } else if (contextualizer.getFirst() instanceof IResolver) {
         ret = ((IResolver<IArtifact>) contextualizer.getFirst()).resolve(ret,
@@ -260,7 +255,7 @@ public class Actuator implements IActuator {
   protected String encodeBody(int offset, String ofs) {
 
     boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0
-        || mediationStrategy.size() > 0 || createObservation;
+        || mediationStrategy.size() > 0 || createsObservation;
 
     String ret = "";
 
@@ -297,7 +292,7 @@ public class Actuator implements IActuator {
     }
 
     if (definesScale && coverage != null && !coverage.isEmpty()) {
-      List<IServiceCall> scaleSpecs = ((Scale)coverage.getScale()).getKimSpecification();
+      List<IServiceCall> scaleSpecs = ((Scale) coverage.getScale()).getKimSpecification();
       if (!scaleSpecs.isEmpty()) {
         ret += " over";
         for (int i = 0; i < scaleSpecs.size(); i++) {
@@ -350,12 +345,12 @@ public class Actuator implements IActuator {
     this.name = name;
   }
 
-  public boolean isCreateObservation() {
-    return createObservation;
-  }
-
+  // public boolean isCreateObservation() {
+  // return createObservation;
+  // }
+  //
   public void setCreateObservation(boolean createObservation) {
-    this.createObservation = createObservation;
+    this.createsObservation = createObservation;
   }
 
   public void setReference(boolean reference) {
