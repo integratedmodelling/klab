@@ -7,12 +7,11 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class Coverage extends Scale implements ICoverage {
 
-  private static final long   serialVersionUID      = 7035851173441618273L;
+  private static final long serialVersionUID = 7035851173441618273L;
 
   /*
    * Default - do not accept a state model unless its coverage is greater than this. Instantiator
@@ -20,27 +19,28 @@ public class Coverage extends Scale implements ICoverage {
    * 
    * TODO make this configurable
    */
-  private static double       MIN_MODEL_COVERAGE    = 0.01;
+  private static double MIN_MODEL_COVERAGE = 0.01;
 
   /*
    * Default - we accept models if they cover at least an additional 20% of the whole context TODO
    * make this configurable
    */
-  private static double       MIN_TOTAL_COVERAGE    = 0.20;
+  private static double MIN_TOTAL_COVERAGE = 0.20;
 
   /*
    * Default - we stop adding models when we cover at least 95% of the whole context. TODO make this
    * configurable
    */
-  private static double       MIN_REQUIRED_COVERAGE = 0.95;
+  private static double MIN_REQUIRED_COVERAGE = 0.95;
 
   // make local copies that may be modified and are inherited by children
-  private double              minModelCoverage      = MIN_MODEL_COVERAGE;
-  private double              minTotalCoverage      = MIN_TOTAL_COVERAGE;
-  private double              minRequiredCoverage   = MIN_REQUIRED_COVERAGE;
+  private double minModelCoverage = MIN_MODEL_COVERAGE;
+  private double minTotalCoverage = MIN_TOTAL_COVERAGE;
+  private double minRequiredCoverage = MIN_REQUIRED_COVERAGE;
 
-  List<Pair<IExtent, Double>> coverages             = new ArrayList<>();
-  double                      coverage;
+  List<Pair<IExtent, Double>> coverages = new ArrayList<>();
+  double coverage;
+  double gain = 0;
 
   /**
    * Create a coverage with full coverage, which can be reduced by successive AND merges.
@@ -51,7 +51,7 @@ public class Coverage extends Scale implements ICoverage {
   public static Coverage full(Scale original) {
     return new Coverage(original, 1.0);
   }
-  
+
   protected void setTo(Coverage other) {
     extents.clear();
     extents.addAll(other.extents);
@@ -100,7 +100,15 @@ public class Coverage extends Scale implements ICoverage {
     this.coverage = c;
     for (Pair<IExtent, Double> cov : coverages) {
       cov.setSecond(c);
+      if (c == 0) {
+        cov.setFirst(null);
+      }
     }
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return coverage == 0;
   }
 
   @Override
@@ -143,8 +151,14 @@ public class Coverage extends Scale implements ICoverage {
     return new Coverage(this, newcoverages);
   }
 
+  @Override
+  public double getGain() {
+    return gain;
+  }
+
   /**
-   * WRONG! What it must do is:
+   * Merging logics - not the simplest, so summarized here:
+   * <p>
    * 
    * <pre>
    * Given
@@ -154,7 +168,7 @@ public class Coverage extends Scale implements ICoverage {
    *    curr  = the current extent at coverages.get(i).getFirst() (possibly null)
    *    
    * if UNION:
-   *    set X to orig INTERSECTION other;
+   *    set X to orig.equals(other) ? other : orig INTERSECTION other;
    *    determine benefit of swapping curr with X
    *       if   (curr == null)
    *         ok = X.extent > relevant

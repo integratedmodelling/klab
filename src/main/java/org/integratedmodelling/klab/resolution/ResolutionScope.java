@@ -272,35 +272,6 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return ret;
   }
 
-
-//  /**
-//   * Create a child coverage for a passed observable with a new scale and initial coverage set at 0.
-//   * Used to resolve new direct observables within an existing context.
-//   * 
-//   * @param observable
-//   * @param scale
-//   * @param mode
-//   * @return a new scope for the passed observable
-//   */
-//  public ResolutionScope getChildScope(Observable observable, Scale scale, Mode mode) {
-//
-//    ResolutionScope ret = new ResolutionScope(scale, 1.0, this, false);
-//    ret.observable = observable;
-//    ret.mode = mode;
-//
-//    /*
-//     * check if we already can resolve this (directly or indirectly), and if so, set coverage so
-//     * that it can be accepted as is. This should be a model; we should make the link, increment the
-//     * use count for the observable, and return coverage.
-//     */
-//    ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
-//    if (previous != null) {
-//      ret.setTo(previous);
-//    }
-//
-//    return ret;
-//  }
-
   public ResolutionScope getChildScope(Observable observable, Scale scale) {
 
     // TODO copy of this with 1.0 coverage
@@ -373,13 +344,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
     return ret;
   }
-
-  // @Override
-  // public boolean resolves(Observable observable) {
-  // // TODO use the dependency graph
-  // return false;
-  // }
-
+  
   @Override
   public Collection<String> getScenarios() {
     return scenarios;
@@ -492,52 +457,6 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     ret.mode = o.getType().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION;
     return ret;
   }
-
-//  /**
-//   * TODO reimplement the regular merge(), return a new scope
-//   * 
-//   * Merge in a child scope that contributes to the coverage according to the passed connector.
-//   * 
-//   * If the connector is OR, we start at zero coverage and each merge adds to it, proportionally to
-//   * the amount of NEW coverage it adds. This happens when observables merge in models that
-//   * contributed partially to coverage.
-//   * 
-//   * If the connector is AND, we start at zero coverage; the first child merged sets the current
-//   * coverage, and all others intersect it, finishing with a coverage that is the intersection of
-//   * all merged children. This happens when models merge in observables that satisfy their
-//   * dependencies.
-//   * 
-//   * @param childScope
-//   * @param connector
-//   * @return true if the merge did anything significant
-//   * @throws KlabException
-//   */
-//  boolean merge(ResolutionScope childScope, LogicalConnector connector) throws KlabException {
-//
-//    // TODO if the coverage 
-//    
-//    boolean successful = false;
-//    if (connector.equals(LogicalConnector.INTERSECTION) && mergedObservables == 0) {
-//      successful = merge(childScope);
-//    } else {
-//      Coverage c = connector.equals(LogicalConnector.INTERSECTION) ? super.and(childScope)
-//          : super.or(childScope);
-//      if ((successful = c.isMergeSignificant())) {
-//        if (childScope.getObservable() != null) {
-//          resolvedObservables.add(childScope);
-//        }
-//        links.addAll(childScope.links);
-//        links.add(new Link(childScope));
-//        resolvedObservables.addAll(childScope.resolvedObservables);
-//        setTo(c);
-//      }
-//    }
-//
-//    if (successful) {
-//      mergedObservables++;
-//    }
-//    return successful;
-//  }
 
   /*
    * observables are actually resolved only if this is used within merge()
@@ -676,24 +595,6 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     }
     return null;
   }
-
-//  /**
-//   * Report the coverage of the passed observable in the passed mode. Return empty if the observable
-//   * isn't part of the graph.
-//   * 
-//   * Shorthand for getDependency(observable, mode)?.getCoverage()
-//   * 
-//   * @param observable
-//   * @param mode
-//   * @return
-//   */
-//  public Coverage getCoverage(Observable observable, Mode mode) {
-//    ResolutionScope dependency = getObservable(observable, mode, false);
-//    if (dependency != null) {
-//      return dependency;
-//    }
-//    return Coverage.empty(this);
-//  }
 
   /*
    * (non-Javadoc)

@@ -24,24 +24,18 @@ package org.integratedmodelling.klab.api.resolution;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * A {@code ICoverage} A coverage is a scale that keeps coverage information compared with other
- * extents along with its own extents. It represents the total coverage for an observation or a
- * computation during or after resolution. Like a scale, a coverage may be empty, in which case it
- * cannot be relied on for any other method call. A non-empty coverage can only be created from a
- * scale, passing an initial coverage. It will store the scale internally. Successive merge
- * operations do not change the underlying scale but will modify the fraction of the original
- * extents that is covered.
+ * A {@code ICoverage} A coverage is a scale that keeps information about how much of its extents is
+ * being covered by other extents. Coverage is initialized at 0 or 1 and can be modified only by
+ * merging in conformant scales. It represents the total coverage for an observation or a
+ * computation during or after resolution. Merge operations do not change the underlying scale but
+ * will modify the fraction of the original extents that is covered.
  * <p>
- * A {@code ICoverage} redefines the {@link IScale#merge(IScale, LogicalConnector)} method to only
- * perform a union when the resulting coverage adds enough coverage.
- * <p>
- * TODO Partial scale specifications, such as those only mentioning a specific resolution or a range
- * of extents, should also be represented as ICoverage and returned by extent functions with partial
- * specifications. Scales should be able to merge an extent and return either a coverage or a
- * complete scale.
+ * A {@code ICoverage} redefines the
+ * {@link IScale#merge(ITopologicallyComparable, LogicalConnector)} method to only perform a union
+ * when the resulting coverage adds enough coverage. The {@link #getGain()} can be called on the
+ * result to check if the merge produced any significant increment or decrement in coverage.
  * <p>
  * 
  * @author Ferd
@@ -94,7 +88,7 @@ public interface ICoverage extends IScale {
   boolean isEmpty();
 
   /**
-   * true if the coverage is at least as much as the minimum required coverage of a context (95% by
+   * True if the coverage is at least as much as the minimum required coverage of a context (95% by
    * default). Note that setting this to 1.0 may trigger lots of resolutions to resolve minute
    * portions of the context.
    * 
@@ -110,10 +104,13 @@ public interface ICoverage extends IScale {
    */
   boolean isRelevant();
 
-  // /**
-  // *
-  // * @return
-  // */
-  // IScale getScale();
+  /**
+   * Proportion of coverage gained or lost during the merge operation that generated this coverage,
+   * if any.
+   * 
+   * @return The coverage gained or lost (negative if lost). Always [-1, 1]. If zero, the coverage
+   *         was not created by a merge.
+   */
+  double getGain();
 
 }
