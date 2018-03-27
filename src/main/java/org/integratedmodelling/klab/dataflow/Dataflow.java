@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -24,7 +25,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
   String description;
   private DirectObservation context;
-  private double coverage;
   IResolutionScope scope;
 
   @Override
@@ -106,12 +106,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     this.description = description;
   }
 
-  public double getCoverage() {
-    return coverage;
-  }
-
-  public void setCoverage(double coverage) {
-    this.coverage = coverage;
+  @Override
+  public ICoverage getCoverage() {
+    return scope;
   }
 
   public DirectObservation getContext() {

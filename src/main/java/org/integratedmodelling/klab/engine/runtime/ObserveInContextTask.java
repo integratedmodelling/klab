@@ -51,6 +51,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
       @Override
       public IObservation run() throws Exception {
 
+        // TODO put all this logics in the resolver, call it from within Observations and use that here.
         IObservation ret = null;
         /*
          * obtain the resolvable object corresponding to the URN - either a concept or a model

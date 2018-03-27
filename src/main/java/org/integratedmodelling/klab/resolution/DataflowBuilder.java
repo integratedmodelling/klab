@@ -74,7 +74,6 @@ public class DataflowBuilder {
     Dataflow ret = new Dataflow(monitor);
     ret.setName(this.name);
     ret.setContext(this.context);
-    ret.setCoverage(this.coverage);
     ret.setResolutionScope(scope);
 
     for (IResolvable root : getRootResolvables(resolutionGraph)) {

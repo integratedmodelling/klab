@@ -47,6 +47,7 @@ public class ObserveContextTask implements ITask<ISubject> {
         @Override
         public ISubject run() throws Exception {
 
+          // TODO put all this logics in the resolver, call it from within Observations and use that here.
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
           if (scope.isRelevant()) {
             Dataflow dataflow =

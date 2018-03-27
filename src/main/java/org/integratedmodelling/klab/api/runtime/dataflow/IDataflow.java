@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -49,17 +50,30 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IDataflow<T extends IArtifact> extends IActuator {
 
   /**
+   * The dataflow is the result of resolving a URN. If {@link ICoverage#isEmpty() its coverage is
+   * empty}, the dataflow will produce an {@link IArtifact#isEmpty() empty artifact} when run.
+   * Otherwise the coverage reflects the applicable scale of the dataflow, i.e. the range of extents
+   * and resolutions where it applies.
+   * 
+   * @return the coverage of this dataflow.
+   */
+  ICoverage getCoverage();
+
+  /**
    * Run the dataflow in the passed scale using the configured or default {@link IRuntimeProvider}
    * and return the resulting artifact.
    * 
    * @param scale the scale of contextualization. Assumed (and not checked) compatible with the
    *        scale of the resolution that generated this dataflow.
    * 
+   *        TODO the scale should be checked against the coverage and the empty artifact should be
+   *        returned if incompatible.
+   * 
    * @param monitor
    * @return the built artifact. May be empty, never null.
    * @throws KlabException
    */
-  public T run(IScale scale, IMonitor monitor) throws KlabException;
+  T run(IScale scale, IMonitor monitor) throws KlabException;
 
   /**
    * Return the KDL source code for the dataflow. If the dataflow has been read from a KLD stream,
@@ -67,6 +81,6 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
    * 
    * @return the KDL code. Never null.
    */
-  public String getKdlCode();
+  String getKdlCode();
 
 }
