@@ -4,7 +4,9 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -69,5 +71,18 @@ public interface IRuntimeProvider {
    */
   IDataArtifact distributeComputation(IStateResolver resolver, IState data, IRuntimeContext context,
       IScale scale) throws KlabException;
+
+  /**
+   * The "empty" observation must contain the observable and the scale. It is returned when an
+   * instantiator is run with no error and produces no instances, to add to the context notifying
+   * that no instances were produced but the observation was made. The observation must adhere to
+   * the contract of an empty artifact, i.e. its {@link IArtifact#isEmpty()} method must return true
+   * and it must produce no artifacts when iterated.
+   * 
+   * @param observable
+   * @param scale
+   * @return
+   */
+  IObservation createEmptyObservation(IObservable observable, IScale scale);
 
 }

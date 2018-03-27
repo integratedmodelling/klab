@@ -191,6 +191,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     return createObservation(observable, scale, context, false);
   }
 
+  @Override
+  public IObservation createEmptyObservation(IObservable observable, IScale scale) {
+    return Observation.empty(observable, scale);
+  }
+
   static IObservation createObservation(IObservable observable, IScale scale,
       RuntimeContext context, boolean scalarStorage) {
 

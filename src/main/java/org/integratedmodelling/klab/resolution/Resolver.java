@@ -196,7 +196,7 @@ public enum Resolver {
     }
 
     if (ret.isRelevant()) {
-      parentScope.merge(ret, LogicalConnector.UNION);
+      parentScope.merge(ret/* TODO check , LogicalConnector.UNION*/);
     }
 
     return ret;

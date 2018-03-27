@@ -30,6 +30,7 @@ public class Artifact implements IArtifact {
   List<IArtifact> group = null;
   // first observation in a group has idx = -1; the others have their own index
   int             idx   = -1;
+  boolean         empty;
 
   public void chain(IArtifact data) {
     if (group == null) {
@@ -54,8 +55,7 @@ public class Artifact implements IArtifact {
 
   @Override
   public boolean isEmpty() {
-    // TODO Auto-generated method stub
-    return false;
+    return empty;
   }
 
   @Override
@@ -126,6 +126,11 @@ public class Artifact implements IArtifact {
 
   @Override
   public Iterator<IArtifact> iterator() {
+
+    if (empty) {
+      return new ArrayList<IArtifact>().iterator();
+    }
+    
     List<IArtifact> list =
         new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
     list.add(this);
@@ -134,6 +139,7 @@ public class Artifact implements IArtifact {
         list.add(group.get(i));
       }
     }
+    
     return list.iterator();
   }
 
@@ -141,5 +147,11 @@ public class Artifact implements IArtifact {
   public int groupSize() {
     return 1 + (group == null ? 0 : group.size());
   }
+  
+
+  protected void setEmpty(boolean b) {
+    this.empty = b;
+  }
+
 
 }

@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.components.runtime.observations;
 import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
@@ -15,7 +17,13 @@ import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Path;
 
-public abstract class Observation extends ObservedArtifact implements IObservation {
+/**
+ * The base class for all observations can only be instantiated as the empty observation.
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public class Observation extends ObservedArtifact implements IObservation {
 
   private static final long serialVersionUID = -7645502752899232235L;
 
@@ -127,6 +135,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
   public String toString() {
     return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() + ": "
         + getObservable() + "}";
+  }
+
+  public static IObservation empty(IObservable observable, IScale scale) {
+    Observation ret = new Observation((Observable)observable, (Scale)scale, null);
+    ret.setEmpty(true);
+    return ret;
   }
 
 }

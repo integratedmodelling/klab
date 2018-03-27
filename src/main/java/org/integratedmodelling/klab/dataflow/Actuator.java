@@ -177,13 +177,20 @@ public class Actuator implements IActuator {
             ((ObservedArtifact) ret).chain(object);
           }
         }
+        if (ret == null) {
+          // return an empty observation for this observable, so we know we made the
+          // observation.
+          ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(this.observable,
+              ctx.getScale());
+        }
       }
     }
 
-    if (ret != null) {
-      ctx.getProvenance().addArtifact(ret);
-    }
-    
+    // should never happen
+    assert (ret != null);
+
+    ctx.getProvenance().addArtifact(ret);
+
     /*
      * when computation is finished, pass the annotations to the context so it can decide what to do
      * with them.

@@ -114,6 +114,7 @@ public class TestHandler implements Annotations.Handler {
                 display.show();
                 if (System.getProperty("visualize", "false").equals("true")) {
                   // just block to see the display
+                  System.out.print("Press a key to continue...");
                   System.in.read();
                 }
               }
