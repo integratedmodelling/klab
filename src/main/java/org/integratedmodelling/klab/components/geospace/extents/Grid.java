@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -395,8 +396,8 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public IExtent merge(IExtent extent, boolean force) throws KlabException {
-      return getShape().merge(extent, force);
+    public IExtent merge(IExtent extent) throws KlabException {
+      return getShape().merge(extent);
     }
 
     @Override
@@ -422,18 +423,6 @@ public class Grid extends Area implements IGrid {
     @Override
     public boolean intersects(IExtent o) throws KlabException {
       return getShape().intersects(o);
-    }
-
-    @Override
-    public ITopologicallyComparable<? extends IExtent> union(ITopologicallyComparable<?> other)
-        throws KlabException {
-      return getShape().union(other);
-    }
-
-    @Override
-    public ITopologicallyComparable<? extends IExtent> intersection(
-        ITopologicallyComparable<?> other) throws KlabException {
-      return getShape().intersection(other);
     }
 
     @Override
@@ -475,8 +464,13 @@ public class Grid extends Area implements IGrid {
     }
 
     @Override
-    public ITopologicallyComparable<?> getExtent() {
+    public IExtent getExtent() {
       return this;
+    }
+
+    @Override
+    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+      return getShape().merge(other, how);
     }
   }
 

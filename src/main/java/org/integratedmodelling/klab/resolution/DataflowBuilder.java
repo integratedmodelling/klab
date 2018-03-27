@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.observation.Coverage;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.graph.Graphs;
@@ -329,7 +330,7 @@ public class DataflowBuilder {
       for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
 
         Node child = compileActuator(graph.getEdgeSource(o), graph,
-            o.coverage == null ? scale : o.coverage.getScale(), monitor);
+            o.coverage == null ? scale : o.coverage, monitor);
 
         if (hasPartials) {
           md.coverage = d.coverage;

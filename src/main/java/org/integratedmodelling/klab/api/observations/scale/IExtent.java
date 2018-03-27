@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.api.observations.scale;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -43,21 +44,25 @@ public interface IExtent
   IExtent collapse();
 
   /**
-   * Return an extent of the same domainConcept that represents the merge of the two. If force is
-   * false, this operation should just complete the semantics - e.g. add a shape to a grid or such -
-   * and complain if things are incompatible.
+   * Return an extent of the same domainConcept that represents the merge of the two. The meaning of
+   * merging depends on the extent. It should accommodate partially specified extents, such as adding
+   * a grid resolution to a shape.
    * 
-   * If force is true, return an extent that is capable of representing the passed one through the
-   * "lens" of our semantics. Return null if the operation is legal but it results in no context,
-   * throw an exception if we don't know what to do with the passed context.
-   * 
+   * TODO add LogicalConnector parameter and eliminate union/intersection.
    * 
    * @param extent
-   * @param force
    * @return the merged extent
    * @throws KlabException
    */
-  IExtent merge(IExtent extent, boolean force) throws KlabException;
+  IExtent merge(IExtent extent) throws KlabException;
+
+  /**
+   * Return a double that describes the extent of this topological object. It should only be used to
+   * compare objects of the same type.
+   * 
+   * @return the covered extent
+   */
+  double getCoveredExtent();
 
   /**
    * If this extent specifies a larger portion of the topology than the modeled world contains,
@@ -68,5 +73,15 @@ public interface IExtent
    * @return coverage in the range (0 1]
    */
   double getCoverage();
+
+  /**
+   *
+   * 
+   * @param other
+   * @return the union of other and this
+   * @throws KlabException
+   */
+  @Override
+  IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how);
 
 }

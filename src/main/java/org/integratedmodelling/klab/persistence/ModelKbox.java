@@ -209,14 +209,14 @@ public class ModelKbox extends ObservableKbox {
 
     query += "(" + scopeQuery(context, observable) + ")";
     query += " AND (" + typequery + ")";
-    if (context.getScale().getSpace() != null) {
-      String sq = spaceQuery(context.getScale().getSpace());
+    if (context.getSpace() != null) {
+      String sq = spaceQuery(context.getSpace());
       if (!sq.isEmpty()) {
         query += " AND (" + sq + ")";
       }
     }
 
-    String tquery = timeQuery(context.getScale().getTime());
+    String tquery = timeQuery(context.getTime());
     if (!tquery.isEmpty()) {
       query += " AND (" + tquery + ");";
     }

@@ -303,7 +303,7 @@ public class Actuator implements IActuator {
     }
 
     if (definesScale && coverage != null && !coverage.isEmpty()) {
-      List<IServiceCall> scaleSpecs = ((Scale) coverage.getScale()).getKimSpecification();
+      List<IServiceCall> scaleSpecs = ((Scale)coverage).getKimSpecification();
       if (!scaleSpecs.isEmpty()) {
         ret += " over";
         for (int i = 0; i < scaleSpecs.size(); i++) {

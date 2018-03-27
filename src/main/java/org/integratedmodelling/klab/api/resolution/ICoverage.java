@@ -22,43 +22,69 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * An object that represents the total coverage for a subject after resolution in a context.
+ * A {@code ICoverage} A coverage is a scale that keeps coverage information compared with other
+ * extents along with its own extents. It represents the total coverage for an observation or a
+ * computation during or after resolution. Like a scale, a coverage may be empty, in which case it
+ * cannot be relied on for any other method call. A non-empty coverage can only be created from a
+ * scale, passing an initial coverage. It will store the scale internally. Successive merge
+ * operations do not change the underlying scale but will modify the fraction of the original
+ * extents that is covered.
+ * <p>
+ * A {@code ICoverage} redefines the {@link IScale#merge(IScale, LogicalConnector)} method to only
+ * perform a union when the resulting coverage adds enough coverage.
+ * <p>
+ * TODO Partial scale specifications, such as those only mentioning a specific resolution or a range
+ * of extents, should also be represented as ICoverage and returned by extent functions with partial
+ * specifications. Scales should be able to merge an extent and return either a coverage or a
+ * complete scale.
+ * <p>
  * 
  * @author Ferd
  *
  */
-public interface ICoverage {
+public interface ICoverage extends IScale {
 
   /**
-   * Return the proportion of total coverage as a double 0-1.
+   * Return the proportion of total coverage as a double 0-1. It is the product of the coverages for
+   * all the extents.
    * 
    * @return the proportional coverage
    */
-  Double getCoverage();
+  double getCoverage();
 
   /**
+   * Return the proportion of total coverage for one extent as a double 0-1.
    * 
-   * Union of the coverages. NOTE: this will not unite the passed coverage if the ADDITIONAL
-   * coverage resulting from the union is less than the proportion returned by isRelevant(). The
-   * proportion of coverage should be checked after or() to see if anything has changed.
+   * @param dimension
    * 
-   * @param coverage
-   * @return the union of coverates
-   * 
-   * @throws KlabException
+   * @return the proportional coverage covered in the passed extent.
    */
-  ICoverage or(ICoverage coverage) throws KlabException;
+  double getCoverage(Dimension.Type dimension);
+
 
   /**
+   * Reimplements {@link IScale#merge(ITopologicallyComparable, LogicalConnector)} to return a
+   * coverage and implement {@code ICoverage}-specific behavior.
+   * <p>
+   * If the coverage is a union, it will return the unaltered receiver {@code this}) unless the
+   * <strong>additional</strong> coverage resulting from the union is higher than the proportion
+   * returned by {@link #isRelevant()}. The proportion of coverage should be checked after this is
+   * called to see if anything has changed.
+   * <p>
+   * Must not modify the original scales.
    * 
    * @param coverage
-   * @return the intersection of coverages
-   * @throws KlabException
+   * @param how
+   *
+   * @return a new merged coverage
    */
-  ICoverage and(ICoverage coverage) throws KlabException;
+  @Override
+  ICoverage merge(ITopologicallyComparable<?> coverage, LogicalConnector how);
 
   /**
    * True if the coverage is less than the global setting defining a usable coverage (default 1%).
@@ -84,10 +110,10 @@ public interface ICoverage {
    */
   boolean isRelevant();
 
-  /**
-   * 
-   * @return
-   */
-  IScale getScale();
+  // /**
+  // *
+  // * @return
+  // */
+  // IScale getScale();
 
 }

@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -311,7 +312,7 @@ public class Shape extends AbstractExtent implements IShape {
   }
 
   @Override
-  public IExtent merge(IExtent extent, boolean force) throws KlabException {
+  public IExtent merge(IExtent extent) throws KlabException {
     // TODO Auto-generated method stub
     return null;
   }
@@ -353,26 +354,6 @@ public class Shape extends AbstractExtent implements IShape {
     }
     // TODO Auto-generated method stub
     return false;
-  }
-
-  @Override
-  public ITopologicallyComparable<? extends IExtent> union(ITopologicallyComparable<?> other)
-      throws KlabException {
-    if (this.equals(other)) {
-      return this;
-    }
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ITopologicallyComparable<? extends IExtent> intersection(ITopologicallyComparable<?> other)
-      throws KlabException {
-    if (this.equals(other)) {
-      return this;
-    }
-    // TODO Auto-generated method stub
-    return null;
   }
 
   @Override
@@ -436,7 +417,7 @@ public class Shape extends AbstractExtent implements IShape {
   }
 
   @Override
-  public ITopologicallyComparable<?> getExtent() {
+  public IExtent getExtent() {
     return this;
   }
 
@@ -474,6 +455,28 @@ public class Shape extends AbstractExtent implements IShape {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    Shape shape = other instanceof Shape ? (Shape)other : null;
+    if (shape == null && other instanceof ISpace) {
+      shape = (Shape)((ISpace)other).getShape();
+    }
+    if (how == LogicalConnector.UNION) {
+      try {
+        return create(geometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
+      } catch (KlabValidationException e) {
+        throw new KlabRuntimeException(e);
+      }
+    } else if (how == LogicalConnector.INTERSECTION) {
+      try {
+        return create(geometry.intersection(shape.transform(this.projection).getJTSGeometry()), this.projection);
+      } catch (KlabValidationException e) {
+        throw new KlabRuntimeException(e);
+      }
+    }
+    throw new IllegalArgumentException("cannot merge a shape with " + other);
   }
   
   

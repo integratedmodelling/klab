@@ -27,7 +27,7 @@ public class Graphs {
     frame.setTitle(title);
     frame.setSize(800, 800);
     frame.getContentPane().add(new JScrollPane(jgraph));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
   }

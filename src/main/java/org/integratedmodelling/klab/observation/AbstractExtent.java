@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.observation;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 
 /**
  * Common superclass for all Extents.
@@ -50,5 +49,5 @@ public abstract class AbstractExtent implements IExtent {
    * 
    * @return the full, 1-dim extent.
    */
-  public abstract ITopologicallyComparable<?> getExtent();
+  public abstract IExtent getExtent();
 }

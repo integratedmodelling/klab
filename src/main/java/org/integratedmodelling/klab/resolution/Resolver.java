@@ -52,7 +52,7 @@ public enum Resolver {
       return resolve((Observer) resolvable, parentScope);
     }
 
-    return ResolutionScope.empty();
+    return parentScope.empty();
   }
 
   /**
@@ -74,7 +74,7 @@ public enum Resolver {
     if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).isRelevant()) {
       return ret;
     }
-    return ResolutionScope.empty();
+    return ret.empty();
   }
 
   /**
@@ -144,7 +144,7 @@ public enum Resolver {
         Observable candidate = it.next();
         try {
           for (IRankedModel model : Models.INSTANCE.resolve(candidate, ret)) {
-            ret.merge(resolve((RankedModel) model, ret), LogicalConnector.UNION);
+            ret = resolve((RankedModel) model, ret);
             if (ret.isComplete()) {
               break;
             }
@@ -152,7 +152,7 @@ public enum Resolver {
         } catch (KlabException e) {
           parentScope.getMonitor()
               .error("error during resolution of " + candidate + ": " + e.getMessage());
-          return ResolutionScope.empty();
+          return parentScope.empty();
         }
       }
     }
@@ -196,7 +196,7 @@ public enum Resolver {
     }
 
     if (ret.isRelevant()) {
-      parentScope.merge(ret/* TODO check , LogicalConnector.UNION*/);
+      parentScope.merge(ret, LogicalConnector.UNION);
     }
 
     return ret;

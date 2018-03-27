@@ -71,7 +71,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
         if (scope.isRelevant()) {
           Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope);
           System.out.println(dataflow.getKdlCode());
-          return (IObservation)dataflow.run(scope.getScale(), monitor);
+          return (IObservation)dataflow.run(scope, monitor);
         }
 
         return ret;

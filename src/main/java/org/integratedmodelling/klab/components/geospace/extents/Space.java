@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
@@ -30,15 +31,15 @@ import org.integratedmodelling.klab.utils.collections.IteratorAdapter;
 
 public class Space extends Extent implements ISpace {
 
-  private Shape shape;
-  private Grid grid;
-  private Envelope envelope;
-  private Projection projection;
+  private Shape         shape;
+  private Grid          grid;
+  private Envelope      envelope;
+  private Projection    projection;
   private ITessellation features;
-  private boolean consistent = false;
-  private String gridSpecs = null;
+  private boolean       consistent  = false;
+  private String        gridSpecs   = null;
 
-  private static Space EMPTY_SPACE = new Space(Shape.empty());
+  private static Space  EMPTY_SPACE = new Space(Shape.empty());
 
   public static Space create(Shape shape) {
     return new Space(shape);
@@ -112,7 +113,7 @@ public class Space extends Extent implements ISpace {
   }
 
   @Override
-  public IExtent merge(IExtent extent, boolean force) throws KlabException {
+  public IExtent merge(IExtent extent) throws KlabException {
 
     if (!(extent instanceof Space)) {
       throw new KlabValidationException("space extent cannot merge non-space extent");
@@ -231,7 +232,6 @@ public class Space extends Extent implements ISpace {
     return 1;
   }
 
-  @Override
   public IExtent intersection(ITopologicallyComparable<?> obj) throws KlabException {
 
 
@@ -257,7 +257,6 @@ public class Space extends Extent implements ISpace {
     return new Space(common);
   }
 
-  @Override
   public IExtent union(ITopologicallyComparable<?> obj) throws KlabException {
 
     Space ret = new Space(this);
@@ -458,6 +457,20 @@ public class Space extends Extent implements ISpace {
       }
     }
     throw new IllegalArgumentException("cannot use " + index + " as a space locator");
+  }
+
+  @Override
+  public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    try {
+      if (how == LogicalConnector.UNION) {
+        return union(other);
+      } else if (how == LogicalConnector.INTERSECTION) {
+        return intersection(other);
+      }
+    } catch (KlabException e) {
+      throw new KlabRuntimeException(e);
+    }
+    throw new IllegalArgumentException("cannot merge a shape with " + other);
   }
 
 }

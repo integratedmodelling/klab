@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.observation.Coverage;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
@@ -40,6 +42,8 @@ import org.integratedmodelling.klab.owl.Observable;
  *
  */
 public class ResolutionScope extends Coverage implements IResolutionScope {
+
+  private static final long serialVersionUID = -4951273645207213875L;
 
   /**
    * Each successful merge creates a link that is saved in the scope. At the end of the resolution,
@@ -162,7 +166,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
   private ResolutionScope(Subject observer, IMonitor monitor, Collection<String> scenarios)
       throws KlabException {
-    super(observer.getScale());
+    super(observer.getScale(), 1.0);
     this.context = observer;
     this.scenarios.addAll(scenarios);
     this.resolutionNamespace = observer.getNamespace();
@@ -176,7 +180,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
   private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios)
       throws KlabException {
-    super(Scale.create(observer.getBehavior().getExtents(monitor)));
+    super(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0);
     this.scenarios.addAll(scenarios);
     this.resolutionNamespace = observer.getNamespace();
     this.observer = observer;
@@ -195,9 +199,26 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     this(other, false);
   }
 
+  private ResolutionScope(Scale other, double coverage) {
+    super(other, coverage);
+  }
+  
+  private ResolutionScope(IScale scale, double coverage, ResolutionScope other, boolean copyResolution) {
+    super((Scale)scale, 1);
+    copy(other, copyResolution);
+  }
+
+  private ResolutionScope(Coverage coverage, ResolutionScope other, boolean copyResolution) {
+    super(coverage);
+    copy(other, copyResolution);
+  }
+  
   private ResolutionScope(ResolutionScope other, boolean copyResolution) {
     super(other);
-    this.scale = other.scale;
+    copy(other, copyResolution);
+  }
+
+  private void copy(ResolutionScope other, boolean copyResolution) {
     this.scenarios.addAll(other.scenarios);
     this.resolutionNamespace = other.resolutionNamespace;
     this.mode = other.mode;
@@ -212,18 +233,11 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
       this.links.addAll(other.links);
       this.resolvedObservables.addAll(other.resolvedObservables);
     }
-  }
 
-  public static final ResolutionScope empty() {
-    return new ResolutionScope();
   }
-
-  public static ICoverage full(Scale scale) {
-    return new Coverage(scale, 1.0);
-  }
-
-  public ResolutionScope() {
-    super(null, 0.0);
+  
+  public final ResolutionScope empty() {
+    return new ResolutionScope(this, 0.0);
   }
 
   public Collection<Link> getLinks() {
@@ -258,40 +272,40 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return ret;
   }
 
-  /**
-   * Create a child coverage for a passed observable with a new scale and initial coverage set at 0.
-   * Used to resolve new direct observables within an existing context.
-   * 
-   * @param observable
-   * @param scale
-   * @param mode
-   * @return a new scope for the passed observable
-   */
-  public ResolutionScope getChildScope(Observable observable, Scale scale, Mode mode) {
 
-    ResolutionScope ret = new ResolutionScope(this);
-    ret.observable = observable;
-    ret.setTo(new Coverage(scale, 1.0));
-    ret.mode = mode;
-
-    /*
-     * check if we already can resolve this (directly or indirectly), and if so, set coverage so
-     * that it can be accepted as is. This should be a model; we should make the link, increment the
-     * use count for the observable, and return coverage.
-     */
-    ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
-    if (previous != null) {
-      ret.setTo(previous);
-    }
-
-    return ret;
-  }
+//  /**
+//   * Create a child coverage for a passed observable with a new scale and initial coverage set at 0.
+//   * Used to resolve new direct observables within an existing context.
+//   * 
+//   * @param observable
+//   * @param scale
+//   * @param mode
+//   * @return a new scope for the passed observable
+//   */
+//  public ResolutionScope getChildScope(Observable observable, Scale scale, Mode mode) {
+//
+//    ResolutionScope ret = new ResolutionScope(scale, 1.0, this, false);
+//    ret.observable = observable;
+//    ret.mode = mode;
+//
+//    /*
+//     * check if we already can resolve this (directly or indirectly), and if so, set coverage so
+//     * that it can be accepted as is. This should be a model; we should make the link, increment the
+//     * use count for the observable, and return coverage.
+//     */
+//    ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
+//    if (previous != null) {
+//      ret.setTo(previous);
+//    }
+//
+//    return ret;
+//  }
 
   public ResolutionScope getChildScope(Observable observable, Scale scale) {
 
-    ResolutionScope ret = new ResolutionScope(this);
+    // TODO copy of this with 1.0 coverage
+    ResolutionScope ret = new ResolutionScope(scale, 1.0, this, false);
     ret.observable = observable;
-    ret.setTo(new Coverage(scale, 1.0));
 
     /*
      * check if we already can resolve this (directly or indirectly), and if so, set coverage so
@@ -334,9 +348,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      * intersected should depend on the geometry that the model handles.
      */
     if (model.getBehavior().hasScale()) {
-      Coverage rcov =
-          super.and(new Coverage(Scale.create(model.getBehavior().getExtents(this.monitor))));
-      ret.setTo(rcov);
+      ret = ret.and(Coverage.full(Scale.create(model.getBehavior().getExtents(this.monitor))));
     }
 
     return ret;
@@ -356,7 +368,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
     ret.setCoverage(1.0);
     if (observer.getBehavior().hasScale()) {
-      ret.setTo(new Coverage(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0));
+      ret = new ResolutionScope(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0, ret, false);
     }
 
     return ret;
@@ -411,7 +423,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     String ret = "<" + (observable == null ? "" : ("OBS " + observable))
         + (model == null ? "" : ("MOD " + model.getName()))
         + (observer == null ? "" : ("SUB " + observer.getName()));
-    return ret + (ret.length() == 1 ? "ROOT " : " ") + coverage + ">";
+    return ret + (ret.length() == 1 ? "ROOT " : " ") + getCoverage() + ">";
   }
 
   /**
@@ -433,7 +445,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     /*
      * my coverage becomes the child's
      */
-    this.coverage = childScope.coverage;
+    this.setTo(childScope);
 
     if (successful) {
 
@@ -481,47 +493,51 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return ret;
   }
 
-  /**
-   * Merge in a child scope that contributes to the coverage according to the passed connector.
-   * 
-   * If the connector is OR, we start at zero coverage and each merge adds to it, proportionally to
-   * the amount of NEW coverage it adds. This happens when observables merge in models that
-   * contributed partially to coverage.
-   * 
-   * If the connector is AND, we start at zero coverage; the first child merged sets the current
-   * coverage, and all others intersect it, finishing with a coverage that is the intersection of
-   * all merged children. This happens when models merge in observables that satisfy their
-   * dependencies.
-   * 
-   * @param childScope
-   * @param connector
-   * @return true if the merge did anything significant
-   * @throws KlabException
-   */
-  boolean merge(ResolutionScope childScope, LogicalConnector connector) throws KlabException {
-
-    boolean successful = false;
-    if (connector.equals(LogicalConnector.INTERSECTION) && mergedObservables == 0) {
-      successful = merge(childScope);
-    } else {
-      Coverage c = connector.equals(LogicalConnector.INTERSECTION) ? super.and(childScope)
-          : super.or(childScope);
-      if ((successful = c.isMergeSignificant())) {
-        if (childScope.getObservable() != null) {
-          resolvedObservables.add(childScope);
-        }
-        links.addAll(childScope.links);
-        links.add(new Link(childScope));
-        resolvedObservables.addAll(childScope.resolvedObservables);
-        setTo(c);
-      }
-    }
-
-    if (successful) {
-      mergedObservables++;
-    }
-    return successful;
-  }
+//  /**
+//   * TODO reimplement the regular merge(), return a new scope
+//   * 
+//   * Merge in a child scope that contributes to the coverage according to the passed connector.
+//   * 
+//   * If the connector is OR, we start at zero coverage and each merge adds to it, proportionally to
+//   * the amount of NEW coverage it adds. This happens when observables merge in models that
+//   * contributed partially to coverage.
+//   * 
+//   * If the connector is AND, we start at zero coverage; the first child merged sets the current
+//   * coverage, and all others intersect it, finishing with a coverage that is the intersection of
+//   * all merged children. This happens when models merge in observables that satisfy their
+//   * dependencies.
+//   * 
+//   * @param childScope
+//   * @param connector
+//   * @return true if the merge did anything significant
+//   * @throws KlabException
+//   */
+//  boolean merge(ResolutionScope childScope, LogicalConnector connector) throws KlabException {
+//
+//    // TODO if the coverage 
+//    
+//    boolean successful = false;
+//    if (connector.equals(LogicalConnector.INTERSECTION) && mergedObservables == 0) {
+//      successful = merge(childScope);
+//    } else {
+//      Coverage c = connector.equals(LogicalConnector.INTERSECTION) ? super.and(childScope)
+//          : super.or(childScope);
+//      if ((successful = c.isMergeSignificant())) {
+//        if (childScope.getObservable() != null) {
+//          resolvedObservables.add(childScope);
+//        }
+//        links.addAll(childScope.links);
+//        links.add(new Link(childScope));
+//        resolvedObservables.addAll(childScope.resolvedObservables);
+//        setTo(c);
+//      }
+//    }
+//
+//    if (successful) {
+//      mergedObservables++;
+//    }
+//    return successful;
+//  }
 
   /*
    * observables are actually resolved only if this is used within merge()
@@ -545,31 +561,18 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return observer;
   }
 
-  /**
-   * OR the coverages, everything else remains the same.
-   */
-  @Override
-  public ResolutionScope or(ICoverage child) throws KlabException {
+  public ResolutionScope or(ICoverage child) {
     if (child.isRelevant()) {
-      Coverage c = super.or(child);
-      ResolutionScope rs = new ResolutionScope(this, true);
-      rs.setTo(c);
-      return rs;
+      Coverage c = (Coverage) super.merge(child, LogicalConnector.UNION);
+      return new ResolutionScope(c, this, true);
     }
     return empty();
   }
 
-  /**
-   * If passed coverage is relevant, AND the coverage with ours and merge the dependencies. If not,
-   * return this coverage unaltered.
-   */
-  @Override
-  public ResolutionScope and(ICoverage child) throws KlabException {
+  public ResolutionScope and(ICoverage child) {
     if (child.isRelevant()) {
-      Coverage c = super.and(child);
-      ResolutionScope rs = new ResolutionScope(this, true);
-      rs.setTo(c);
-      return rs;
+      Coverage c = (Coverage) super.merge(child, LogicalConnector.INTERSECTION);
+      return new ResolutionScope(c, this, true);
     }
     return this;
   }
@@ -674,23 +677,23 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return null;
   }
 
-  /**
-   * Report the coverage of the passed observable in the passed mode. Return empty if the observable
-   * isn't part of the graph.
-   * 
-   * Shorthand for getDependency(observable, mode)?.getCoverage()
-   * 
-   * @param observable
-   * @param mode
-   * @return
-   */
-  public Coverage getCoverage(Observable observable, Mode mode) {
-    ResolutionScope dependency = getObservable(observable, mode, false);
-    if (dependency != null) {
-      return dependency;
-    }
-    return empty();
-  }
+//  /**
+//   * Report the coverage of the passed observable in the passed mode. Return empty if the observable
+//   * isn't part of the graph.
+//   * 
+//   * Shorthand for getDependency(observable, mode)?.getCoverage()
+//   * 
+//   * @param observable
+//   * @param mode
+//   * @return
+//   */
+//  public Coverage getCoverage(Observable observable, Mode mode) {
+//    ResolutionScope dependency = getObservable(observable, mode, false);
+//    if (dependency != null) {
+//      return dependency;
+//    }
+//    return Coverage.empty(this);
+//  }
 
   /*
    * (non-Javadoc)

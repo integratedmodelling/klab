@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.Extent;
 import org.integratedmodelling.klab.observation.Scale.Mediator;
@@ -28,7 +29,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public IExtent merge(IExtent extent, boolean force) throws KlabException {
+    public IExtent merge(IExtent extent) throws KlabException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -49,12 +50,6 @@ public class Time extends Extent implements ITime {
     public long size() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public IExtent union(ITopologicallyComparable<?> other) throws KlabException {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -89,12 +84,6 @@ public class Time extends Extent implements ITime {
 
     @Override
     public ITimePeriod collapse() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ITime intersection(ITopologicallyComparable<?> other) throws KlabException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -218,6 +207,12 @@ public class Time extends Extent implements ITime {
     public long getOffset(ILocator index) {
       // TODO Auto-generated method stub
       return 0;
+    }
+
+    @Override
+    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+      // TODO Auto-generated method stub
+      return null;
     }
 
 }

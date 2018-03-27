@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.api.observations.scale;
 
 import java.util.List;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -72,22 +72,18 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   boolean isEmpty();
 
   /**
-   * Merge all common extents from the given scale, using the force parameter to define how the
-   * extents are merged (see IExtent.merge). Extents in common are merged according to the passed
-   * operator to compute the merged extent. The adopt parameter controls whether extents in the
-   * passed scale that are not in the original one appear in the result. All extents in the original
-   * scale will appear in the result.
-   *
+   * Return a new scale merging all extents from the passed parameter. Extents in common are merged
+   * according to how the merge is implemented, any others are added as they are.
+   * <p>
    * Must not modify the original scales.
    * 
-   * @param scale
+   * @param coverage can pass a scale or an extent.
    * @param how
-   * @param adopt
    *
    * @return a new merged scale
-   * @throws KlabException
    */
-  IScale merge(IScale scale, LogicalConnector how, boolean adopt) throws KlabException;
+  @Override
+  IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
 
   /**
    * The scale implementation of {@link ILocator#at(ILocator)} always return a scale and can use an

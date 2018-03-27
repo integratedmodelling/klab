@@ -28,7 +28,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
 
 public class Scale implements IScale {
@@ -181,6 +180,13 @@ public class Scale implements IScale {
 
   protected Scale() {}
 
+  protected Scale(Collection<IExtent> extents) {
+    for (IExtent e : extents) {
+      mergeExtent(e);
+    }
+    sort();
+  }
+
   private Scale(IExtent[] topologies, MultidimensionalCursor cursor, int sliceExtentIndex,
       long sliceExtentOffset) throws KlabException {
 
@@ -189,9 +195,11 @@ public class Scale implements IScale {
     sliceOffset = sliceExtentOffset;
 
     for (IExtent e : topologies) {
-      mergeExtent(e, true);
+      mergeExtent(e);
     }
   }
+
+
 
   /**
    * 1-sized scale localized to the position passed in the parent scale, and needing no sort. Used
@@ -285,6 +293,8 @@ public class Scale implements IScale {
   /**
    * Create a scale from an array of extents.
    * 
+   * TODO this should be able to create a ICoverage when extents are partially specified.
+   * 
    * @param extents
    * @return
    */
@@ -292,7 +302,7 @@ public class Scale implements IScale {
     Scale ret = new Scale();
     if (extents != null) {
       for (IExtent e : extents) {
-        ret.mergeExtent(e, true);
+        ret.mergeExtent(e);
       }
     }
     ret.sort();
@@ -621,51 +631,30 @@ public class Scale implements IScale {
     return true;
   }
 
-  @Override
-  public IScale intersection(ITopologicallyComparable<?> scale_) throws KlabException {
-
-    if (!(scale_ instanceof Scale)) {
-      return null;
-    }
-    Scale scale = (Scale) scale_;
-
-    if (!hasSameExtents(scale)) {
-      return null;
-    }
-
-    Scale ret = new Scale();
-    for (IExtent e : extents) {
-      ret.mergeExtent((IExtent) e.intersection(((Scale) scale).getDimension(e.getType())), false);
-    }
-
-    return ret;
-  }
-
-  @Override
-  public IScale union(ITopologicallyComparable<?> scale_) throws KlabException {
-
-    if (!(scale_ instanceof Scale)) {
-      return null;
-    }
-    Scale scale = (Scale) scale_;
-
-    if (!hasSameExtents(scale)) {
-      return null;
-    }
-
-    Scale ret = new Scale();
-    for (IExtent e : extents) {
-      ret.mergeExtent((IExtent) e.union(((Scale) scale).getDimension(e.getType())), false);
-    }
-
-    return ret;
-  }
+//  public IScale merge(ITopologicallyComparable<?> scale_, LogicalConnector how) {
+//
+//    if (!(scale_ instanceof Scale)) {
+//      return null;
+//    }
+//    Scale scale = (Scale) scale_;
+//
+//    if (!hasSameExtents(scale)) {
+//      return null;
+//    }
+//
+//    Scale ret = new Scale();
+//    for (IExtent e : extents) {
+//      ret.mergeExtent((IExtent) e.merge(((Scale) scale).getDimension(e.getType()), how));
+//    }
+//
+//    return ret;
+//  }
 
   /**
    * @param extent
    * @param force
    */
-  public void mergeExtent(IExtent extent, boolean force) {
+  public void mergeExtent(IExtent extent) {
 
 
     IExtent merged = null;
@@ -673,7 +662,7 @@ public class Scale implements IScale {
     for (IExtent e : extents) {
       if (e.getType().equals(extent.getType())) {
         try {
-          merged = e.merge(extent, force);
+          merged = e.merge(extent);
         } catch (KlabException e1) {
           throw new KlabRuntimeException(e1);
         }
@@ -912,53 +901,45 @@ public class Scale implements IScale {
   // }
 
   @Override
-  public double getCoveredExtent() {
-    /*
-     * TODO multiply extents of extents.
-     */
-    return 1;
-  }
+  public IScale merge(ITopologicallyComparable<?> coverage, LogicalConnector how) {
 
-  @Override
-  public IScale merge(IScale scale, LogicalConnector how, boolean adopt) throws KlabException {
+    if (coverage instanceof Scale) {
 
-    Scale other = (Scale) scale;
-    Scale ret = new Scale();
-    ArrayList<IExtent> common = new ArrayList<>();
-    HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
-    for (IExtent e : extents) {
-      if (other.getDimension(e.getType()) != null) {
-        common.add(e);
-        commonConcepts.add(e.getType());
-      } else {
-        ret.mergeExtent(e, true);
-      }
-    }
+      Scale other = (Scale) coverage;
+      Scale ret = new Scale();
+      ArrayList<IExtent> common = new ArrayList<>();
+      HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
-    if (adopt) {
-      for (IExtent e : other.getExtents()) {
-        if (adopt && ret.getDimension(e.getType()) == null
-            && !commonConcepts.contains(e.getType())) {
-          ret.mergeExtent(e, true);
+      for (IExtent e : extents) {
+        if (other.getDimension(e.getType()) != null) {
+          common.add(e);
+          commonConcepts.add(e.getType());
+        } else {
+          ret.mergeExtent(e);
         }
       }
-    }
 
-    for (IExtent e : common) {
-      IExtent oext = other.getDimension(e.getType());
-      IExtent merged = null;
-      if (how.equals(LogicalConnector.INTERSECTION)) {
-        merged = (IExtent) e.intersection(oext);
-      } else if (how.equals(LogicalConnector.UNION)) {
-        merged = (IExtent) e.union(oext);
-      } else {
-        throw new KlabValidationException("extents are being merged with illegal operator" + how);
+      // if (adopt) {
+      for (IExtent e : other.getExtents()) {
+        if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
+          ret.mergeExtent(e);
+        }
       }
-      ret.mergeExtent(merged, true);
+      // }
+
+      for (IExtent e : common) {
+        IExtent oext = other.getDimension(e.getType());
+        IExtent merged = (IExtent) e.merge(oext, how);
+        ret.mergeExtent(merged);
+      }
+
+      return ret;
     }
 
-    return ret;
+    // TODO enable merging of coverages with partial extents
+    throw new IllegalArgumentException("Scale merge() called with a non-scale parameter");
+
   }
 
   @Override
@@ -1218,6 +1199,5 @@ public class Scale implements IScale {
     }
     throw new IllegalArgumentException("this scale does not contain the dimension " + dimension);
   }
-
 
 }
