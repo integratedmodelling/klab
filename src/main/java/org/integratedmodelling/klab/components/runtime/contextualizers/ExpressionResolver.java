@@ -21,8 +21,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * Resolver that evaluates an expression computing a data artifact. If the expression
- * returns a data artifact, that substitutes the previous artifact.
+ * Resolver that evaluates an expression computing a data artifact. If the expression returns a data
+ * artifact, that substitutes the previous artifact.
  * 
  * @author Ferd
  *
@@ -34,7 +34,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
   IExpression                expression  = null;
   IExpression                condition   = null;
   IGeometry                  geometry    = null;
-  boolean isScalar;
+  boolean                    isScalar;
 
   // don't remove - only used as expression
   public ExpressionResolver() {}
@@ -52,7 +52,10 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
     IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
     ret.getParameters().put("code", resource.getExpression());
-    // TODO conditions are upstream!
+    if (resource.getCondition().isPresent()) {
+      ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition",
+          resource.getCondition().get());
+    }
     return ret;
   }
 
@@ -108,17 +111,18 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
   }
 
   @Override
-  public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
-    
+  public IDataArtifact resolve(IDataArtifact ret, IComputationContext context)
+      throws KlabException {
+
     boolean ok = true;
     if (condition != null) {
       Object cond = condition.eval(context, context);
-      ok = cond instanceof Boolean && ((Boolean)cond);
+      ok = cond instanceof Boolean && ((Boolean) cond);
     }
-    if (ok) { 
+    if (ok) {
       Object o = expression.eval(context, context);
       if (o instanceof IDataArtifact) {
-        ret = (IDataArtifact)o;
+        ret = (IDataArtifact) o;
       }
     }
     return ret;

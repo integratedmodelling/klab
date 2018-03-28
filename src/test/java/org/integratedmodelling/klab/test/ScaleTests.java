@@ -97,6 +97,7 @@ public class ScaleTests {
     total = total.merge(top, LogicalConnector.INTERSECTION);
     assert (total.getCoverage() == 0);
     
+    // TODO test with multiple dimensions
   }
 
 }

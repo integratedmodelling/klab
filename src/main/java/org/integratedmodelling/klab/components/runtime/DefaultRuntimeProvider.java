@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -10,6 +11,8 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
@@ -26,6 +29,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ArtifactMerger;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
@@ -261,6 +265,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     // actor and register with the actor
 
     return ret;
+  }
+
+  @Override
+  public IComputableResource getMergeArtifactServiceCall(IObservable observable,
+      List<String> modelIds) {
+    return new ComputableResource(ArtifactMerger.getServiceCall(observable, modelIds));
   }
 
 }

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.runtime;
 
+import java.util.List;
 import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -84,5 +85,16 @@ public interface IRuntimeProvider {
    * @return
    */
   IObservation createEmptyObservation(IObservable observable, IScale scale);
+
+  /**
+   * Return the computable that will merge the artifacts produced by the passed models, each
+   * indicated by the model ID it is paired with. Normally a service call implemented in the runtime
+   * provider. 
+   * 
+   * @param observable the observable corresponding to the artifact produced and passed
+   * @param modelIds the IDs that will identify the artifacts when the function is called.
+   * @return a computable that will merge artifacts over their different coverages.
+   */
+  IComputableResource getMergeArtifactServiceCall(IObservable observable, List<String> modelIds);
 
 }

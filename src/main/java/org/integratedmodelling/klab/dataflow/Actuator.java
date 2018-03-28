@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservedArti
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.observation.Coverage;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
@@ -85,11 +86,6 @@ public class Actuator implements IActuator {
   public Actuator(IMonitor monitor) {
     this.monitor = monitor;
   }
-
-  // @Override
-  // public Scale getScale() {
-  // return scale;
-  // }
 
   @Override
   public List<IActuator> getActuators() {
@@ -255,7 +251,7 @@ public class Actuator implements IActuator {
 
     String ofs = StringUtils.repeat(" ", offset);
     String ret = ofs + getType().name().toLowerCase() + " "
-        + (getObservable() == null ? getName() : getObservable().getLocalName());
+        + /* (getObservable() == null ? */ getName() /* : getObservable().getLocalName()) */;
 
     ret += encodeBody(offset, ofs);
 
@@ -303,7 +299,7 @@ public class Actuator implements IActuator {
     }
 
     if (definesScale && coverage != null && !coverage.isEmpty()) {
-      List<IServiceCall> scaleSpecs = ((Scale)coverage).getKimSpecification();
+      List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
       if (!scaleSpecs.isEmpty()) {
         ret += " over";
         for (int i = 0; i < scaleSpecs.size(); i++) {
@@ -403,5 +399,11 @@ public class Actuator implements IActuator {
 
   public List<IKimAnnotation> getAnnotations() {
     return annotations;
+  }
+
+  // coverage in an actuator is only set when it covers a sub-scale compared to that of resolution.
+  // The same field is used in a dataflow to define the overall coverage.
+  public void setCoverage(Coverage coverage) {
+    this.coverage = coverage;
   }
 }

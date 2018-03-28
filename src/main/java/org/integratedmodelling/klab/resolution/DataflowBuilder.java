@@ -11,6 +11,7 @@ import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -29,6 +30,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.Coverage;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -212,48 +214,74 @@ public class DataflowBuilder {
 
       if (models.size() == 1) {
 
-        // have the runtime provider turn each resource into a call that produces a contextualizer
         Model theModel = models.iterator().next().model;
-        ret.setName(theModel.getLocalNameFor(observable));
-
-        if (!generated.contains(theModel)) {
-          generated.add(theModel);
-          for (IComputableResource resource : models.iterator().next().model
-              .getComputation(ITime.INITIALIZATION)) {
-            ret.addComputation(resource);
-          }
-          ret.getAnnotations().addAll(theModel.getAnnotations());
-        } else {
-          ret.setReference(true);
-          ret.setAlias(observable.getLocalName());
-        }
-
-        /*
-         * build in the models' computation or set to a reference
-         */
-        if (models.iterator().next().useCount == 1) {
-
-          /*
-           * ignore the model's observer id, use the entire computation for this observable
-           */
-
-        } else {
-
-          /*
-           * compile in a reference with the original model's observable ID 'as' our observable's
-           * name
-           */
-        }
+        defineActuator(ret, theModel.getLocalNameFor(observable), theModel, generated);
 
       } else if (models.size() > 1) {
 
         /*
-         * duplicate the observable into ad-hoc separate sub-actuators with independent scale and
+         * output the independent actuators
+         */
+        int i = 1;
+        List<String> modelIds = new ArrayList<>();
+        for (ModelD modelDesc : models) {
+
+          Actuator partial = Actuator.create(monitor);
+
+          // rename
+          String name = modelDesc.model.getLocalNameFor(observable) + "_" + (i++);
+          
+          partial.setType(ret.getType());
+          partial.setObservable(observable);
+          partial.setDefinesScale(true);
+          defineActuator(partial, name, modelDesc.model, generated);
+          partial.setCoverage(modelDesc.coverage);
+          
+          modelIds.add(name);
+
+          ret.getActuators().add(partial);
+        }
+
+        /*
          * compile in a function to merge the resulting artifacts
          */
+        ret.addComputation(
+            Klab.INSTANCE.getRuntimeProvider().getMergeArtifactServiceCall(observable, modelIds));
       }
 
       return ret;
+    }
+
+    private void defineActuator(Actuator ret, String name, Model model, Set<Model> generated) {
+
+      ret.setName(name);
+
+      if (!generated.contains(model)) {
+        generated.add(model);
+        for (IComputableResource resource : model.getComputation(ITime.INITIALIZATION)) {
+          ret.addComputation(resource);
+        }
+        ret.getAnnotations().addAll(model.getAnnotations());
+      } else {
+        ret.setReference(true);
+        ret.setAlias(observable.getLocalName());
+      }
+
+      /*
+       * build in the models' computation or set to a reference
+       */
+      if (models.iterator().next().useCount == 1) {
+
+        /*
+         * ignore the model's observer id, use the entire computation for this observable
+         */
+
+      } else {
+
+        /*
+         * compile in a reference with the original model's observable ID 'as' our observable's name
+         */
+      }
     }
 
     /*
@@ -334,9 +362,11 @@ public class DataflowBuilder {
             o.coverage == null ? scale : o.coverage, monitor);
         ret.children.add(child);
       }
+
       if (hasPartials) {
         md.coverage = d.coverage;
       }
+
       ret.models.add(md);
     }
 
