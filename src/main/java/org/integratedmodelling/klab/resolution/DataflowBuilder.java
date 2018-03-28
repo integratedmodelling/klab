@@ -12,7 +12,6 @@ import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -30,7 +29,6 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.observation.Coverage;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -39,7 +37,6 @@ public class DataflowBuilder {
 
   private String                     name;
   private DirectObservation          context;
-  private double                     coverage;
   private IResolutionScope           scope;
 
   Graph<IResolvable, ResolutionEdge> resolutionGraph =
@@ -63,9 +60,8 @@ public class DataflowBuilder {
 
   public DataflowBuilder(String name, IResolutionScope scope) {
     this.name = name;
-    this.coverage = scope.getCoverage().getCoverage();
-    this.context = (DirectObservation) scope.getContext();
     this.scope = scope;
+    this.context = (DirectObservation) scope.getContext();
   }
 
   public Dataflow build(IMonitor monitor) {
@@ -80,6 +76,11 @@ public class DataflowBuilder {
     ret.setContext(this.context);
     ret.setResolutionScope(scope);
 
+    /*
+     * TODO compute coverage from the intersection of models (union of multiple) and
+     * assign to this.coverage.
+     */
+    
     for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
       modelCatalog.clear();
@@ -210,6 +211,8 @@ public class DataflowBuilder {
       if (observer != null) {
         ret.setNamespace(observer.getNamespace());
         ret.setName(observer.getId());
+      } else {
+        ret.setName(observable.getLocalName());
       }
 
       if (models.size() == 1) {

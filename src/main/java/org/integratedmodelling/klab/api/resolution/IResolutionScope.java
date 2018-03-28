@@ -28,14 +28,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * The resolution scope contains all the contextual information gathered during resolution,
- * including scale, traits and resolution criteria for all models being contextualized. During
- * resolution, any new condition spawns a child scope that is merged with the parent upon successful
- * resolution of the state. The resolution contexts compute the total coverage, build the provenance
- * graph and harmonize the merged scale as new models are accepted.
+ * including scale with coverage, traits and resolution criteria for all models being
+ * contextualized. During resolution, any new condition spawns a child scope that is merged with the
+ * parent upon successful resolution of the state. The resolution contexts compute the total
+ * coverage, build the provenance graph and harmonize the merged scale as new models are accepted.
  * 
  * Created and passed around during resolution, notably to the model query so that it can be used to
  * rank the outputs. Model query on network nodes gets passed enough information to build a
- * mock-scope locally.
+ * mock-scope at the query endpoint.
  * 
  * @author ferdinando.villa
  *

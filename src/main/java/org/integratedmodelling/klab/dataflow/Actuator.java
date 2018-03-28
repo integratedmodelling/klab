@@ -240,23 +240,9 @@ public class Actuator implements IActuator {
    * @return
    */
   protected String encode(int offset) {
-
-    // TODO near-identical, combine
-    if (reference) {
-      String ofs = StringUtils.repeat(" ", offset);
-      String ret =
-          ofs + "import " + type.name().toLowerCase() + " " + getName() + encodeBody(offset, ofs);
-      return ret;
-    }
-
     String ofs = StringUtils.repeat(" ", offset);
-    String ret = ofs + getType().name().toLowerCase() + " "
-        + /* (getObservable() == null ? */ getName() /* : getObservable().getLocalName()) */;
-
-    ret += encodeBody(offset, ofs);
-
-    return ret;
-
+    return ofs + (reference ? "import " : "") + getType().name().toLowerCase() + " " + getName()
+        + encodeBody(offset, ofs);
   }
 
   protected String encodeBody(int offset, String ofs) {

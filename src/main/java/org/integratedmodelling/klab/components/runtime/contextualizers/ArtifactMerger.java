@@ -27,6 +27,7 @@ public class ArtifactMerger implements IExpression {
   @Override
   public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
     // TODO Auto-generated method stub
+    // TODO return a state merger if the observable is a quality, an object merger otherwise 
     return null;
   }
 

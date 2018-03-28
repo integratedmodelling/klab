@@ -27,23 +27,7 @@ import org.integratedmodelling.klab.observation.Coverage;
 import org.integratedmodelling.klab.observation.Scale;
 import org.integratedmodelling.klab.owl.Observable;
 
-/**
- * Each resolution scope acts as the context for successive ones. Scopes may be:
- * <ul>
- * <li>the root scope, created as the context for an entire resolution, either empty or in the
- * context of a subject;</li>
- * <li>an observer scope, context for resolving an observation;</li>
- * <li>an observable scope, or
- * <li>
- * <li>a model scope</li>
- * </ul>
- * 
- * @author Ferd
- *
- */
 public class ResolutionScope implements IResolutionScope {
-
-  private static final long serialVersionUID = -4951273645207213875L;
 
   /**
    * Each successful merge creates a link that is saved in the scope. At the end of the resolution,
