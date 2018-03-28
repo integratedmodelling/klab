@@ -88,6 +88,11 @@ public class Space extends Extent implements ISpace {
     }
   }
 
+  public String toString() {
+    return "<SPACE " + (grid != null ? grid.toString() : "")
+        + (features != null ? features.toString() : "") + " @" + shape + ">";
+  }
+
   private Space(Shape shape) {
     this.shape = shape;
     this.projection = shape.getProjection();
@@ -254,6 +259,8 @@ public class Space extends Extent implements ISpace {
 
     Shape common = this.shape.intersection(other);
 
+    // TODO adapt grid, features 
+
     return new Space(common);
   }
 
@@ -278,9 +285,9 @@ public class Space extends Extent implements ISpace {
 
     Shape common = this.shape.union(other);
 
-    ret.shape = ret.shape.intersection(common);
-
-    return ret;
+    // TODO adapt grid, features 
+    
+    return new Space(common);
   }
 
   @Override

@@ -154,7 +154,7 @@ public enum Extensions implements IExtensionService {
     }
 
     public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
-
+      // TODO
     }
 
     public void exportPrototypes(File file) {

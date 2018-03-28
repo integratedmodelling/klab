@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class Coverage extends Scale implements ICoverage {
 
-  private static final long serialVersionUID = 7035851173441618273L;
+  private static final long   serialVersionUID      = 7035851173441618273L;
 
   /*
    * Default - do not accept a state model unless its coverage is greater than this. Instantiator
@@ -19,28 +19,28 @@ public class Coverage extends Scale implements ICoverage {
    * 
    * TODO make this configurable
    */
-  private static double MIN_MODEL_COVERAGE = 0.01;
+  private static double       MIN_MODEL_COVERAGE    = 0.01;
 
   /*
    * Default - we accept models if they cover at least an additional 20% of the whole context TODO
    * make this configurable
    */
-  private static double MIN_TOTAL_COVERAGE = 0.20;
+  private static double       MIN_TOTAL_COVERAGE    = 0.20;
 
   /*
    * Default - we stop adding models when we cover at least 95% of the whole context. TODO make this
    * configurable
    */
-  private static double MIN_REQUIRED_COVERAGE = 0.95;
+  private static double       MIN_REQUIRED_COVERAGE = 0.95;
 
   // make local copies that may be modified and are inherited by children
-  private double minModelCoverage = MIN_MODEL_COVERAGE;
-  private double minTotalCoverage = MIN_TOTAL_COVERAGE;
-  private double minRequiredCoverage = MIN_REQUIRED_COVERAGE;
+  private double              minModelCoverage      = MIN_MODEL_COVERAGE;
+  private double              minTotalCoverage      = MIN_TOTAL_COVERAGE;
+  private double              minRequiredCoverage   = MIN_REQUIRED_COVERAGE;
 
-  List<Pair<IExtent, Double>> coverages = new ArrayList<>();
-  double coverage;
-  double gain = 0;
+  List<Pair<IExtent, Double>> coverages             = new ArrayList<>();
+  double                      coverage;
+  double                      gain                  = 0;
 
   /**
    * Create a coverage with full coverage, which can be reduced by successive AND merges.
@@ -79,9 +79,10 @@ public class Coverage extends Scale implements ICoverage {
     }
   }
 
-  private Coverage(Coverage original, List<Pair<IExtent, Double>> newcoverages) {
+  private Coverage(Coverage original, List<Pair<IExtent, Double>> newcoverages, double gain) {
     super(original.extents);
     this.coverage = Double.NaN;
+    this.gain = gain;
     for (Pair<IExtent, Double> cov : newcoverages) {
       coverages.add(cov);
       this.coverage =
@@ -90,7 +91,7 @@ public class Coverage extends Scale implements ICoverage {
   }
 
   public Coverage(Coverage other) {
-    this(other, other.coverages);
+    this(other, other.coverages, other.gain);
   }
 
   protected void setCoverage(double c) {
@@ -98,10 +99,13 @@ public class Coverage extends Scale implements ICoverage {
       throw new IllegalArgumentException("a coverage can only be explicitly set to 0 or 1");
     }
     this.coverage = c;
-    for (Pair<IExtent, Double> cov : coverages) {
+    for (int i = 0; i < coverages.size(); i++) {
+      Pair<IExtent, Double> cov = coverages.get(i);
       cov.setSecond(c);
       if (c == 0) {
         cov.setFirst(null);
+      } else if (cov.getFirst() == null) {
+        cov.setFirst(extents.get(i));
       }
     }
   }
@@ -129,17 +133,20 @@ public class Coverage extends Scale implements ICoverage {
   @Override
   public ICoverage merge(ITopologicallyComparable<?> other, LogicalConnector how) {
 
-    if (!(other instanceof Coverage)) {
-      throw new IllegalArgumentException("a coverage can only merge another coverage");
+    if (!(other instanceof Scale)) {
+      throw new IllegalArgumentException("a coverage can only merge another scale");
     }
 
-    Coverage coverage = (Coverage) other;
+    Scale coverage = (Scale) other;
     List<Pair<IExtent, Double>> newcoverages = new ArrayList<>();
-
     if (coverage.getExtentCount() != getExtentCount()) {
       throw new IllegalArgumentException(
           "cannot merge a coverage with a scale with different dimensions");
     }
+
+    // flag gain for extents to recompute it; save previous and put it back after
+    double pgain = this.gain;
+    this.gain = Double.NaN;
     for (int i = 0; i < coverage.getExtentCount(); i++) {
       if (extents.get(i).getType() != coverage.getExtents().get(i).getType()) {
         throw new IllegalArgumentException(
@@ -148,7 +155,15 @@ public class Coverage extends Scale implements ICoverage {
       newcoverages.add(mergeExtent(i, coverage.getExtents().get(i), how));
     }
 
-    return new Coverage(this, newcoverages);
+    double gain = this.gain;
+    this.gain = pgain;
+
+    // if nothing happened, reset gain to 0
+    if (Double.isNaN(gain)) {
+      gain = 0;
+    }
+
+    return new Coverage(this, newcoverages, gain);
   }
 
   @Override
@@ -198,29 +213,57 @@ public class Coverage extends Scale implements ICoverage {
    */
   private Pair<IExtent, Double> mergeExtent(int i, IExtent other, LogicalConnector how) {
 
-    IExtent current = coverages.get(i).getFirst().merge(other, how);
+    IExtent orig = extents.get(i);
+    IExtent current = coverages.get(i).getFirst();
+    double ccover = coverages.get(i).getSecond();
+    double newcover = 0;
+    double gain = 0;
+    double previouscoverage = current == null ? 0 : ccover;
 
     if (how == LogicalConnector.UNION) {
 
-      double ncoverage = current.getCoveredExtent() / extents.get(i).getCoveredExtent();
+      double origcover = orig.getCoveredExtent();
 
-      /*
-       * only add it if the increment is enough to justify
-       */
-      if ((ncoverage - coverages.get(i).getSecond()) >= minRequiredCoverage) {
-        return new Pair<>(current, ncoverage);
+      // guarantee that we don't union with anything larger. Use outer extent.
+      IExtent x = orig.equals(other) ? other
+          : ((AbstractExtent) orig).getExtent().merge(((AbstractExtent) other).getExtent(),
+              LogicalConnector.INTERSECTION);
+
+      IExtent union = null;
+      if (current == null) {
+        newcover = x.getCoveredExtent();
       } else {
-        return coverages.get(i);
+        union = x.equals(current) ? x : x.merge(current, LogicalConnector.UNION);
+        newcover = union.getCoveredExtent();
       }
+
+      boolean proceed = ((newcover / origcover) - ccover) > minModelCoverage;
+      if (proceed) {
+        gain = (newcover/origcover) - previouscoverage;
+        this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
+        return new Pair<>(newcover == 0 ? null : (current == null ? x : union), newcover);
+      }
+
     } else if (how == LogicalConnector.INTERSECTION) {
 
-      double ncoverage = current.getCoveredExtent() / extents.get(i).getCoveredExtent();
-      return new Pair<>(current, ncoverage);
+      // if intersecting nothing with X, leave it at nothing
+      if (current != null) {
+        double origcover = orig.getCoveredExtent();
+        IExtent x =
+            current.merge(((AbstractExtent) other).getExtent(), LogicalConnector.INTERSECTION);
+        newcover = x.getCoveredExtent();
+        gain = (newcover / origcover) - previouscoverage;
+        this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
+        return new Pair<>(newcover == 0 ? null : x, newcover);
+      }
 
     } else {
       throw new IllegalArgumentException(
           "cannot merge a coverage with another using operation: " + how);
     }
+
+    // return the original, let gain untouched
+    return coverages.get(i);
   }
 
   @Override

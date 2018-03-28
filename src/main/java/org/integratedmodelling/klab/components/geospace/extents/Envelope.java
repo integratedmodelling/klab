@@ -28,6 +28,9 @@ public class Envelope implements IEnvelope {
     return ret;
   }
 
+  public String toString() {
+    return envelope.toString();
+  }
 
   private Envelope() {
     // TODO Auto-generated constructor stub

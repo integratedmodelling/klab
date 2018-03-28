@@ -58,10 +58,10 @@ import joptsimple.OptionSpecBuilder;
 public class CommandProcessor
     extends org.integratedmodelling.klab.clitool.contrib.console.CommandProcessor {
 
-  IMonitor               monitor;
-  protected IConsole     terminal;
-  Map<String, Map<String, Prototype>> packages = new HashMap<>();
-  Stack<String> currentPackage = new Stack<>();
+  IMonitor                            monitor;
+  protected IConsole                  terminal;
+  Map<String, Map<String, Prototype>> packages       = new HashMap<>();
+  Stack<String>                       currentPackage = new Stack<>();
 
   public CommandProcessor(IConsole console, IMonitor monitor) {
 
@@ -119,30 +119,29 @@ public class CommandProcessor
         inline = true;
       }
     }
-    
+
     /*
-     * TODO verify if command starts with a first token that is a package name or
-     * includes <package.command>; in that case, exec the package's command without
-     * pushing it on the stack.
+     * TODO verify if command starts with a first token that is a package name or includes
+     * <package.command>; in that case, exec the package's command without pushing it on the stack.
      */
-    
+
     if (input.equals("exit")) {
-      
+
       if (currentPackage.size() == 1) {
         System.exit(0);
       } else {
         currentPackage.pop();
-        terminal.setPrompt((getCurrentPackage().equals("main") ? ">" : getCurrentPackage()) + "> "); 
+        terminal.setPrompt((getCurrentPackage().equals("main") ? ">" : getCurrentPackage()) + "> ");
       }
-      
+
     } else if (input.equals("quit")) {
-    
+
       System.exit(0);
-    
+
     } else if (packages.containsKey(input) && !input.equals("main")) {
-    
+
       currentPackage.push(input);
-      terminal.setPrompt(getCurrentPackage() + "> "); 
+      terminal.setPrompt(getCurrentPackage() + "> ");
 
     } else if (input.length() > 0) {
 
@@ -157,7 +156,8 @@ public class CommandProcessor
             /*
              * TODO run asynchronously if command requires it.
              */
-            terminal.echo((getCurrentPackage().equals("main") ? "" : getCurrentPackage()) + "> " + input);
+            terminal.echo(
+                (getCurrentPackage().equals("main") ? "" : getCurrentPackage()) + "> " + input);
             Object ret = execute(command, cpack);
             terminal.outputResult(input, ret);
           } catch (Throwable e) {
@@ -180,7 +180,8 @@ public class CommandProcessor
         || !ICommand.class.isAssignableFrom(prototype.getExecutorClass())) {
       terminal.error("command " + command.getName() + " unknown or not executable");
     }
-    ICommand executor = (ICommand) prototype.getExecutorClass().getDeclaredConstructor().newInstance();
+    ICommand executor =
+        (ICommand) prototype.getExecutorClass().getDeclaredConstructor().newInstance();
     return executor.execute(command, CliRuntime.INSTANCE.getSession());
   }
 
@@ -210,13 +211,10 @@ public class CommandProcessor
     return ret;
   }
 
-
-
-  public IServiceCall parseCommandLine(String line, String pack)
-      throws KlabValidationException {
+  public IServiceCall parseCommandLine(String line, String pack) throws KlabValidationException {
 
     String[] a = line.split("\\s");
-    KimServiceCall ret = null;
+    IServiceCall ret = null;
 
     if (a.length < 1) {
       return null;
@@ -226,7 +224,7 @@ public class CommandProcessor
     if (prototype == null)
       return null;
 
-    ret = new KimServiceCall(prototype.getName());
+    ret = KimServiceCall.create(prototype.getName());
 
     String[] args = new String[a.length - 1];
     System.arraycopy(a, 1, args, 0, a.length - 1);
@@ -241,11 +239,11 @@ public class CommandProcessor
         ret.getParameters().put(s.getName(), options.valueOf(s.getName()));
       }
     }
-    
+
     List<Object> aaa = new ArrayList<>(options.nonOptionArguments());
     ret.getParameters().put("arguments", aaa);
-    
-    
+
+
     // TODO later
     // int n = 0;
     // int argn = 0;

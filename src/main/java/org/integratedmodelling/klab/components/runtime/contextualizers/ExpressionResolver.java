@@ -50,7 +50,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
   public static IServiceCall getServiceCall(IComputableResource resource) {
 
-    KimServiceCall ret = new KimServiceCall(FUNCTION_ID);
+    IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
     ret.getParameters().put("code", resource.getExpression());
     // TODO conditions are upstream!
     return ret;

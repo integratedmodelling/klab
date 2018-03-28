@@ -118,6 +118,10 @@ public class Grid extends Area implements IGrid {
     setResolution(xDivs, yDivs);
   }
 
+  public String toString() {
+    return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
+  }
+  
   public class CellImpl extends AbstractExtent implements Cell {
 
     long x;

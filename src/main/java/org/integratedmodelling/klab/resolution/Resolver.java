@@ -144,7 +144,7 @@ public enum Resolver {
         Observable candidate = it.next();
         try {
           for (IRankedModel model : Models.INSTANCE.resolve(candidate, ret)) {
-            ret = resolve((RankedModel) model, ret);
+            ret.merge(resolve((RankedModel) model, ret));
             if (ret.isComplete()) {
               break;
             }

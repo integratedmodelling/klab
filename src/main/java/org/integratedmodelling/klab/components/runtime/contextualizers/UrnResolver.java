@@ -22,7 +22,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
   }
 
   public static IServiceCall getServiceCall(String urn) {
-    return new KimServiceCall(FUNCTION_ID, "urn", urn);
+    return KimServiceCall.create(FUNCTION_ID, "urn", urn);
   }
 
   @Override

@@ -11,6 +11,7 @@ import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -306,6 +307,10 @@ public class DataflowBuilder {
   private Node compileActuator(IResolvable resolvable, Graph<IResolvable, ResolutionEdge> graph,
       Scale scale, IMonitor monitor) {
 
+    if (resolvable instanceof IModel) {
+      System.out.println(" WHAT?");
+    }
+    
     Node ret = new Node(resolvable);
 
     if (scale == null && resolvable instanceof Observer) {
