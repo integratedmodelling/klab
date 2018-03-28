@@ -270,7 +270,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
     ResolutionScope scope =
         Resolver.INSTANCE.resolve(obs, this.resolutionScope, Mode.RESOLUTION, scale);
 
-    if (scope.isRelevant()) {
+    if (scope.getCoverage().isRelevant()) {
       Dataflow dataflow = Dataflows.INSTANCE
           .compile("local:task:" /* wazzafuck + session.getToken() + ":" + token */, scope);
       ret = (ICountableObservation) dataflow.run(scale, monitor);

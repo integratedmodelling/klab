@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @author ferdinando.villa
  *
  */
-public interface IResolutionScope extends ICoverage {
+public interface IResolutionScope {
 
   public enum Mode {
     /**
@@ -98,11 +98,18 @@ public interface IResolutionScope extends ICoverage {
   IMonitor getMonitor();
 
   /**
-   * Return the context in which this resolution is happening. Null for scopes
-   * that resolve a root context.
+   * Return the context in which this resolution is happening. Null for scopes that resolve a root
+   * context.
    * 
    * @return the context, or null
    */
   IDirectObservation getContext();
+
+  /**
+   * The scale of the resolution, including how much the resolution process managed to cover it.
+   * 
+   * @return the coverage
+   */
+  ICoverage getCoverage();
 
 }

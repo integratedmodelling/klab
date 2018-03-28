@@ -49,13 +49,13 @@ public class ObserveContextTask implements ITask<ISubject> {
 
           // TODO put all this logics in the resolver, call it from within Observations and use that here.
           ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
-          if (scope.isRelevant()) {
+          if (scope.getCoverage().isRelevant()) {
             Dataflow dataflow =
                 Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope);
 
             System.out.println(dataflow.getKdlCode());
 
-            return (ISubject)dataflow.run(scope, monitor);
+            return (ISubject)dataflow.run(scope.getCoverage(), monitor);
           }
 
           return null;

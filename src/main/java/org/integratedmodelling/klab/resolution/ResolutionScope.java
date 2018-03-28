@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.owl.Observable;
  * @author Ferd
  *
  */
-public class ResolutionScope extends Coverage implements IResolutionScope {
+public class ResolutionScope implements IResolutionScope {
 
   private static final long serialVersionUID = -4951273645207213875L;
 
@@ -134,6 +134,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * want to configure it at some point.
    */
   private boolean            resolveIndirectly   = true;
+  private Coverage           coverage;
 
   /**
    * Get a root scope based on the definition of an observation.
@@ -166,7 +167,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
   private ResolutionScope(Subject observer, IMonitor monitor, Collection<String> scenarios)
       throws KlabException {
-    super(observer.getScale(), 1.0);
+    this.coverage = Coverage.full(observer.getScale());
     this.context = observer;
     this.scenarios.addAll(scenarios);
     this.resolutionNamespace = observer.getNamespace();
@@ -180,7 +181,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
 
   private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios)
       throws KlabException {
-    super(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0);
+    this.coverage = Coverage.full(Scale.create(observer.getBehavior().getExtents(monitor)));
     this.scenarios.addAll(scenarios);
     this.resolutionNamespace = observer.getNamespace();
     this.observer = observer;
@@ -199,22 +200,24 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     this(other, false);
   }
 
-  private ResolutionScope(Scale other, double coverage) {
-    super(other, coverage);
+  private ResolutionScope(ResolutionScope other, double coverage) {
+    this(other);
+    this.coverage = new Coverage(this.coverage);
+    this.coverage.setCoverage(coverage);
   }
-  
-  private ResolutionScope(IScale scale, double coverage, ResolutionScope other, boolean copyResolution) {
-    super((Scale)scale, 1);
+
+  private ResolutionScope(IScale scale, double coverage, ResolutionScope other,
+      boolean copyResolution) {
     copy(other, copyResolution);
+    this.coverage = coverage == 1 ? Coverage.full(scale) : Coverage.empty(scale);
   }
 
   private ResolutionScope(Coverage coverage, ResolutionScope other, boolean copyResolution) {
-    super(coverage);
     copy(other, copyResolution);
+    this.coverage = coverage;
   }
-  
+
   private ResolutionScope(ResolutionScope other, boolean copyResolution) {
-    super(other);
     copy(other, copyResolution);
   }
 
@@ -226,6 +229,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     this.monitor = other.monitor;
     this.parent = other;
     this.context = other.context;
+    this.coverage = other.coverage;
     if (copyResolution) {
       this.observable = other.observable;
       this.model = other.model;
@@ -235,7 +239,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     }
 
   }
-  
+
   public final ResolutionScope empty() {
     return new ResolutionScope(this, 0.0);
   }
@@ -257,7 +261,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     ResolutionScope ret = new ResolutionScope(this);
     ret.observable = observable;
     ret.mode = mode;
-    ret.setCoverage(0);
+    ret.coverage.setCoverage(0);
 
     /*
      * check if we already can resolve this (directly or indirectly), and if so, set coverage so
@@ -266,7 +270,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      */
     ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
     if (previous != null) {
-      ret.setTo(previous);
+      ret.coverage = previous.coverage;
     }
 
     return ret;
@@ -285,7 +289,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      */
     ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
     if (previous != null) {
-      ret.setTo(previous);
+      ret.coverage = previous.coverage;
     }
 
     return ret;
@@ -309,7 +313,8 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      * resolved models start with full coverage...
      */
     if (model.isResolved()) {
-      ret.setCoverage(1.0);
+      ret.coverage = new Coverage(this.coverage);
+      ret.coverage.setCoverage(1.0);
     }
 
     /*
@@ -319,7 +324,9 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
      * intersected should depend on the geometry that the model handles.
      */
     if (model.getBehavior().hasScale()) {
-      ret = ret.and(Coverage.full(Scale.create(model.getBehavior().getExtents(this.monitor))));
+      ret.coverage = (Coverage) ret.coverage.merge(
+          Coverage.full(Scale.create(model.getBehavior().getExtents(this.monitor))),
+          LogicalConnector.INTERSECTION);
     }
 
     return ret;
@@ -337,14 +344,17 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     ret.observer = observer;
     ret.resolutionNamespace = (Namespace) observer.getNamespace();
 
-    ret.setCoverage(1.0);
     if (observer.getBehavior().hasScale()) {
-      ret = new ResolutionScope(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0, ret, false);
+      ret = new ResolutionScope(Scale.create(observer.getBehavior().getExtents(monitor)), 1.0, ret,
+          false);
+    } else {
+      ret.coverage = new Coverage(this.coverage);
+      ret.coverage.setCoverage(1.0);
     }
 
     return ret;
   }
-  
+
   @Override
   public Collection<String> getScenarios() {
     return scenarios;
@@ -401,7 +411,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    */
   boolean merge(ResolutionScope childScope) {
 
-    boolean successful = childScope.isRelevant();
+    boolean successful = childScope.coverage.isRelevant();
 
     /*
      * Accept the observation and merge in the model if any
@@ -410,7 +420,7 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     /*
      * my coverage becomes the child's
      */
-    this.setTo(childScope);
+    this.coverage = childScope.coverage;
 
     if (successful) {
 
@@ -480,20 +490,12 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
     return observer;
   }
 
-  public ResolutionScope or(ICoverage child) {
-    if (child.isRelevant()) {
-      Coverage c = (Coverage) super.merge(child, LogicalConnector.UNION);
-      return new ResolutionScope(c, this, true);
-    }
-    return empty();
+  public void or(ResolutionScope child) {
+    this.coverage = (Coverage) coverage.merge(child.coverage, LogicalConnector.UNION);
   }
 
-  public ResolutionScope and(ICoverage child) {
-    if (child.isRelevant()) {
-      Coverage c = (Coverage) super.merge(child, LogicalConnector.INTERSECTION);
-      return new ResolutionScope(c, this, true);
-    }
-    return this;
+  public void and(ResolutionScope child) {
+    this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.INTERSECTION);
   }
 
   public Observable findObservable() {
@@ -665,10 +667,15 @@ public class ResolutionScope extends Coverage implements IResolutionScope {
    * from a possibly failed resolution.
    */
   public void acceptEmpty() {
-    setCoverage(1.0);
+    this.coverage.setCoverage(1.0);
     this.model = null;
     this.links.clear();
     this.resolvedObservables.clear();
+  }
+
+  @Override
+  public ICoverage getCoverage() {
+    return this.coverage;
   }
 
 }

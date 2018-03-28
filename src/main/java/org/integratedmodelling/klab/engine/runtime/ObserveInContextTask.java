@@ -68,10 +68,10 @@ public class ObserveInContextTask implements ITask<IObservation> {
          */
         ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
             ResolutionScope.create(context, monitor, scenarios));
-        if (scope.isRelevant()) {
+        if (scope.getCoverage().isRelevant()) {
           Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getToken() + ":" + token, scope);
           System.out.println(dataflow.getKdlCode());
-          return (IObservation)dataflow.run(scope, monitor);
+          return (IObservation)dataflow.run(scope.getCoverage(), monitor);
         }
 
         return ret;

@@ -61,7 +61,7 @@ public class DataflowBuilder {
 
   public DataflowBuilder(String name, IResolutionScope scope) {
     this.name = name;
-    this.coverage = scope.getCoverage();
+    this.coverage = scope.getCoverage().getCoverage();
     this.context = (DirectObservation) scope.getContext();
     this.scope = scope;
   }

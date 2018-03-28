@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -48,8 +49,8 @@ public class Coverage extends Scale implements ICoverage {
    * @param original
    * @return a full coverage for the passed scale.
    */
-  public static Coverage full(Scale original) {
-    return new Coverage(original, 1.0);
+  public static Coverage full(IScale original) {
+    return new Coverage((Scale)original, 1.0);
   }
 
   protected void setTo(Coverage other) {
@@ -67,8 +68,8 @@ public class Coverage extends Scale implements ICoverage {
    * @param original
    * @return
    */
-  public static Coverage empty(Scale original) {
-    return new Coverage(original, 0.0);
+  public static Coverage empty(IScale original) {
+    return new Coverage((Scale)original, 0.0);
   }
 
   protected Coverage(Scale original, double initialCoverage) {
@@ -94,7 +95,7 @@ public class Coverage extends Scale implements ICoverage {
     this(other, other.coverages, other.gain);
   }
 
-  protected void setCoverage(double c) {
+  public void setCoverage(double c) {
     if (!(c == 0 || c == 1)) {
       throw new IllegalArgumentException("a coverage can only be explicitly set to 0 or 1");
     }

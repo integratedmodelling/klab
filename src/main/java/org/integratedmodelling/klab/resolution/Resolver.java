@@ -71,7 +71,7 @@ public enum Resolver {
       throws KlabException {
 
     ResolutionScope ret = ResolutionScope.create(observer, monitor, scenarios);
-    if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).isRelevant()) {
+    if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).getCoverage().isRelevant()) {
       return ret;
     }
     return ret.empty();
@@ -94,7 +94,7 @@ public enum Resolver {
 
     ResolutionScope ret =
         resolve(observable, parentScope.getChildScope(observable, (Scale) scale), mode);
-    if (ret.isRelevant()) {
+    if (ret.getCoverage().isRelevant()) {
       parentScope.merge(ret);
     }
     return ret;
@@ -113,7 +113,7 @@ public enum Resolver {
 
     ResolutionScope ret =
         resolve(observer.getObservable(), parentScope.getChildScope(observer), Mode.RESOLUTION);
-    if (ret.isRelevant()) {
+    if (ret.getCoverage().isRelevant()) {
       parentScope.merge(ret);
     }
     return ret;
@@ -137,15 +137,15 @@ public enum Resolver {
     ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
     // will be non-empty if this observable was resolved before, empty otherwise
-    if (ret.isEmpty()) {
+    if (ret.getCoverage().isEmpty()) {
 
       ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
       for (Iterator<Observable> it = reasoner.iterator(); it.hasNext();) {
         Observable candidate = it.next();
         try {
           for (IRankedModel model : Models.INSTANCE.resolve(candidate, ret)) {
-            ret.merge(resolve((RankedModel) model, ret));
-            if (ret.isComplete()) {
+            ret.or(resolve((RankedModel) model, ret));
+            if (ret.getCoverage().isComplete()) {
               break;
             }
           }
@@ -157,7 +157,7 @@ public enum Resolver {
       }
     }
 
-    if (ret.isRelevant()) {
+    if (ret.getCoverage().isRelevant()) {
       parentScope.merge(ret);
     } else if (observable.isOptional()
         || (observable.is(Type.SUBJECT) && mode == Mode.RESOLUTION)) {
@@ -186,17 +186,16 @@ public enum Resolver {
     // use the reasoner to infer any missing dependency from the semantics
     ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable());
     for (Observable observable : reasoner.getObservables()) {
-      ret.merge(
+      ret.and(
           resolve(observable, ret,
-              observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION),
-          LogicalConnector.INTERSECTION);
-      if (ret.isEmpty()) {
+              observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+      if (ret.getCoverage().isEmpty()) {
         break;
       }
     }
 
-    if (ret.isRelevant()) {
-      parentScope.merge(ret, LogicalConnector.UNION);
+    if (ret.getCoverage().isRelevant()) {
+      parentScope.merge(ret);
     }
 
     return ret;

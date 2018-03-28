@@ -407,7 +407,7 @@ public class Prioritizer implements IPrioritizer<Model> {
                 /*
                  * compute intersection if we're spatial
                  */
-                ISpace space = context.getSpace();
+                ISpace space = context.getCoverage().getSpace();
                 if (space != null) {
                     Geometry cspace = ((Shape)space.getShape()).getStandardizedGeometry();
                     Geometry intersection = cspace.intersection(model.getShape().getStandardizedGeometry());
