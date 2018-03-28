@@ -58,7 +58,9 @@ public class Coverage extends Scale implements ICoverage {
     extents.addAll(other.extents);
     sort();
     coverages.clear();
-    coverages.addAll(other.coverages);
+    for (Pair<IExtent, Double> pair : other.coverages) {
+      coverages.add(new Pair<>(pair.getFirst(), pair.getSecond()));
+    }
     coverage = other.coverage;
   }
 
@@ -85,10 +87,14 @@ public class Coverage extends Scale implements ICoverage {
     this.coverage = Double.NaN;
     this.gain = gain;
     for (Pair<IExtent, Double> cov : newcoverages) {
-      coverages.add(cov);
+      coverages.add(new Pair<>(cov.getFirst(), cov.getSecond()));
       this.coverage =
           Double.isNaN(this.coverage) ? cov.getSecond() : (this.coverage * cov.getSecond());
     }
+    if (Double.isNaN(this.coverage)) {
+      this.coverage = 0;
+    }
+    assert(this.coverage >= 0 && this.coverage <= 1);
   }
 
   public Coverage(Coverage other) {
@@ -242,7 +248,7 @@ public class Coverage extends Scale implements ICoverage {
       if (proceed) {
         gain = (newcover/origcover) - previouscoverage;
         this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
-        return new Pair<>(newcover == 0 ? null : (current == null ? x : union), newcover);
+        return new Pair<>(newcover == 0 ? null : (current == null ? x : union), newcover/origcover);
       }
 
     } else if (how == LogicalConnector.INTERSECTION) {
@@ -255,7 +261,7 @@ public class Coverage extends Scale implements ICoverage {
         newcover = x.getCoveredExtent();
         gain = (newcover / origcover) - previouscoverage;
         this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
-        return new Pair<>(newcover == 0 ? null : x, newcover);
+        return new Pair<>(newcover == 0 ? null : x, newcover/origcover);
       }
 
     } else {
@@ -264,7 +270,7 @@ public class Coverage extends Scale implements ICoverage {
     }
 
     // return the original, let gain untouched
-    return coverages.get(i);
+    return new Pair<>(coverages.get(i).getFirst(), coverages.get(i).getSecond());
   }
 
   @Override

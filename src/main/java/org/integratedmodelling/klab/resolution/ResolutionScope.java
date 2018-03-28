@@ -261,7 +261,6 @@ public class ResolutionScope implements IResolutionScope {
     ResolutionScope ret = new ResolutionScope(this);
     ret.observable = observable;
     ret.mode = mode;
-    ret.coverage.setCoverage(0);
 
     /*
      * check if we already can resolve this (directly or indirectly), and if so, set coverage so
@@ -271,6 +270,8 @@ public class ResolutionScope implements IResolutionScope {
     ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
     if (previous != null) {
       ret.coverage = previous.coverage;
+    } else {
+      ret.coverage = Coverage.empty(ret.coverage);
     }
 
     return ret;
@@ -278,7 +279,6 @@ public class ResolutionScope implements IResolutionScope {
 
   public ResolutionScope getChildScope(Observable observable, Scale scale) {
 
-    // TODO copy of this with 1.0 coverage
     ResolutionScope ret = new ResolutionScope(scale, 1.0, this, false);
     ret.observable = observable;
 
@@ -310,25 +310,18 @@ public class ResolutionScope implements IResolutionScope {
     ret.resolutionNamespace = (Namespace) model.getNamespace();
 
     /*
-     * resolved models start with full coverage...
+     * models start with full coverage...
      */
-    if (model.isResolved()) {
-      ret.coverage = new Coverage(this.coverage);
-      ret.coverage.setCoverage(1.0);
-    }
+    ret.coverage = new Coverage(this.coverage);
+    ret.coverage.setCoverage(1.0);
 
-    /*
-     * ...and redefine it based on their own coverage if they have any.
-     * 
-     * TODO coverages should be separated for the various scale dimensions, and which ones get
-     * intersected should depend on the geometry that the model handles.
-     */
     if (model.getBehavior().hasScale()) {
-      ret.coverage = (Coverage) ret.coverage.merge(
-          Coverage.full(Scale.create(model.getBehavior().getExtents(this.monitor))),
-          LogicalConnector.INTERSECTION);
+      /*
+       * ...and redefine it based on their own coverage if they have any.
+       */
+      ret.coverage = Coverage
+          .full(Scale.createLike(ret.coverage, model.getBehavior().getExtents(this.monitor)));
     }
-
     return ret;
   }
 
@@ -398,9 +391,21 @@ public class ResolutionScope implements IResolutionScope {
     String ret = "<" + (observable == null ? "" : ("OBS " + observable))
         + (model == null ? "" : ("MOD " + model.getName()))
         + (observer == null ? "" : ("SUB " + observer.getName()));
-    return ret + (ret.length() == 1 ? "ROOT " : " ") + getCoverage() + ">";
+    return ret + (ret.length() == 1 ? "ROOT " : " ") + getCoverage().getCoverage() + ">";
   }
 
+  /**
+   * Link a scope but leave the definition of the resolution (including the coverage and
+   * the catalog update) to an upstream resolver. Used when models are accepted but we still
+   * don't know if their contribution finalizes the needed coverage.
+   * 
+   * @param childScope
+   */
+  void link(ResolutionScope childScope) {
+    links.addAll(childScope.links);
+    links.add(new Link(childScope));
+  }
+  
   /**
    * Merge an accepted child scope (which has, in turn, been merged before this is called). The
    * scope must represent the entire result of a downstream resolution, not just partially - if not,
@@ -436,7 +441,6 @@ public class ResolutionScope implements IResolutionScope {
 
       // when the child is OBS, update all resolution records with the new observable
       if (childScope.getObservable() != null) {
-
         // usage count goes up every time an observable is explicitly merged.
         resolvedObservables.add(childScope);
       }
@@ -491,7 +495,7 @@ public class ResolutionScope implements IResolutionScope {
   }
 
   public void or(ResolutionScope child) {
-    this.coverage = (Coverage) coverage.merge(child.coverage, LogicalConnector.UNION);
+    this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.UNION);
   }
 
   public void and(ResolutionScope child) {

@@ -291,6 +291,16 @@ public class Scale implements IScale {
   }
 
   /**
+   * Like {@link #createLike(IScale, IExtent...)} with a collection.
+   * 
+   * @param scale
+   * @param extents
+   * @return
+   */
+  public static Scale createLike(IScale scale, Collection<IExtent> extents) {
+    return createLike(scale, extents.toArray(new Extent[extents.size()]));
+  }
+  /**
    * Create a scale from an array of extents.
    * 
    * TODO this should be able to create a ICoverage when extents are partially specified.

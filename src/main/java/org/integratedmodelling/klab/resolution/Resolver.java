@@ -195,7 +195,9 @@ public enum Resolver {
     }
 
     if (ret.getCoverage().isRelevant()) {
-      parentScope.merge(ret);
+      // we're certain to use it but we don't know if it's enough yet. Merge() will be
+      // done upstream.
+      parentScope.link(ret);
     }
 
     return ret;
