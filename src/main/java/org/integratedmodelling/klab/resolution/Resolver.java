@@ -11,7 +11,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
-import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
@@ -144,7 +143,10 @@ public enum Resolver {
         Observable candidate = it.next();
         try {
           for (IRankedModel model : Models.INSTANCE.resolve(candidate, ret)) {
-            ret.or(resolve((RankedModel) model, ret));
+            ResolutionScope mscope = resolve((RankedModel) model, ret);
+            if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
+              ret.link(mscope);
+            }
             if (ret.getCoverage().isComplete()) {
               break;
             }
@@ -193,13 +195,6 @@ public enum Resolver {
         break;
       }
     }
-
-    if (ret.getCoverage().isRelevant()) {
-      // we're certain to use it but we don't know if it's enough yet. Merge() will be
-      // done upstream.
-      parentScope.link(ret);
-    }
-
     return ret;
   }
 

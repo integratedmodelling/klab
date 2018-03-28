@@ -494,10 +494,23 @@ public class ResolutionScope implements IResolutionScope {
     return observer;
   }
 
-  public void or(ResolutionScope child) {
+  /**
+   * OR the passed scope, already established as relevant, and return whether it causes
+   * enough coverage gain to bother. If so, the model should be linked to the scope.
+   * 
+   * @param child
+   * @return true if gain > 0, meaning the child coverage was merged into us.
+   */
+  public boolean or(ResolutionScope child) {
     this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.UNION);
+    return this.coverage.getGain() > 0;
   }
 
+  /**
+   * AND the passed child scope coverage. 
+   * 
+   * @param child
+   */
   public void and(ResolutionScope child) {
     this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.INTERSECTION);
   }

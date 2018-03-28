@@ -55,7 +55,7 @@ public class DataflowBuilder {
     ResolutionEdge() {}
 
     public String toString() {
-      return "resolves";
+      return "resolves" + (coverage == null ? "" : " partially");
     }
   }
 
@@ -249,7 +249,7 @@ public class DataflowBuilder {
 
         /*
          * duplicate the observable into ad-hoc separate sub-actuators with independent scale and
-         * compile in a merge
+         * compile in a function to merge the resulting artifacts
          */
       }
 
@@ -307,10 +307,6 @@ public class DataflowBuilder {
   private Node compileActuator(IResolvable resolvable, Graph<IResolvable, ResolutionEdge> graph,
       Scale scale, IMonitor monitor) {
 
-    if (resolvable instanceof IModel) {
-      System.out.println(" WHAT?");
-    }
-    
     Node ret = new Node(resolvable);
 
     if (scale == null && resolvable instanceof Observer) {
@@ -336,12 +332,10 @@ public class DataflowBuilder {
 
         Node child = compileActuator(graph.getEdgeSource(o), graph,
             o.coverage == null ? scale : o.coverage, monitor);
-
-        if (hasPartials) {
-          md.coverage = d.coverage;
-          child.definesScale = true;
-        }
         ret.children.add(child);
+      }
+      if (hasPartials) {
+        md.coverage = d.coverage;
       }
       ret.models.add(md);
     }
