@@ -12,11 +12,16 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * Manage observations stored locally (as IObserver specifications) and provide an API to query and
- * retrieve those stored on the k.LAB network.
+ * The {@code IObservationService} handles the main task in k.LAB, resolving user-specified semantic
+ * assets to computations that build the corresponding observational artifacts in a context of
+ * choice. The context is itself an observational artifact, built by user acknowledgement.
+ * <p>
+ * This service also manages observations stored locally (as IObserver specifications) and provides
+ * an API to query and retrieve those stored on the k.LAB network.
+ * <p>
  * 
  * @author ferdinando.villa
- *
+ * @since 0.10.0
  */
 public interface IObservationService {
 
@@ -28,14 +33,18 @@ public interface IObservationService {
    * The {@link ISession#observe(String, String...)} method calls this function and runs the
    * dataflow in a {@link ITask}.
    * <p>
+   * The dataflow can be run right away to produce a {@link IObservation} artifact or serialized
+   * using {@link IDataflow#getKdlCode()} to be loaded and run another time. It will include a
+   * specification of its total context of applicability if any exists.
+   * <p>
    * 
    * @param urn the identifier for a top-level observation (describing a IObserver or a remote
    *        context).
    * @param session a valid engine session
    * @param scenarios zero or more scenario IDs to affect the resolution
-   * @return the computation to observe the URN.
+   * @return the computation to observe the URN. Never null, possibly empty.
    */
-  IDataflow<IObservation> resolve(String urn, ISession session, String[] scenarios);
+  IDataflow<ISubject> resolve(String urn, ISession session, String[] scenarios);
 
   /**
    * Resolve the passed URN to to the computation that will produce the corresponding observation in
@@ -47,11 +56,15 @@ public interface IObservationService {
    * The {@link ISubject#observe(String, String...)} method calls this function and runs the
    * dataflow in a {@link ITask}.
    * <p>
+   * The dataflow can be run right away to produce a {@link IObservation} artifact or serialized
+   * using {@link IDataflow#getKdlCode()} to be loaded and run another time. It will include a
+   * specification of its total context of applicability if any exists.
+   * <p>
    * 
    * @param urn
    * @param context
    * @param scenarios zero or more scenario IDs to affect the resolution
-   * @return the computation to observe the URN in the passed context.
+   * @return the computation to observe the URN in the passed context. Never null, possibly empty.
    */
   IDataflow<IObservation> resolve(String urn, IDirectObservation context, String[] scenarios);
 
