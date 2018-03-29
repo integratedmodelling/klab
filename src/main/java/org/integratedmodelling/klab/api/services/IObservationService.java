@@ -2,9 +2,9 @@ package org.integratedmodelling.klab.api.services;
 
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -28,7 +28,7 @@ public interface IObservationService {
   /**
    * Resolve the URN for a top-level resolvable to the computation that will produce the
    * corresponding observation when run. Unsuccessful resolution is indicated by a dataflow with
-   * empty coverage, which will produce an empty observation.
+   * empty coverage, which will produce an empty observation when run.
    * <p>
    * The {@link ISession#observe(String, String...)} method calls this function and runs the
    * dataflow in a {@link ITask}.
@@ -43,13 +43,15 @@ public interface IObservationService {
    * @param session a valid engine session
    * @param scenarios zero or more scenario IDs to affect the resolution
    * @return the computation to observe the URN. Never null, possibly empty.
+   * @throws KlabException
    */
-  IDataflow<ISubject> resolve(String urn, ISession session, String[] scenarios);
+  IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
+      throws KlabException;
 
   /**
    * Resolve the passed URN to to the computation that will produce the corresponding observation in
-   * the context of the passed one. Unsuccessful resolution is indicated by a dataflow with empty
-   * coverage, which will produce an empty observation.
+   * the context of the passed {@link ISubject subject}. Unsuccessful resolution is indicated by a
+   * dataflow with empty coverage, which will produce an empty observation when run.
    * <p>
    * The resolution is done in the {@link ISession} that owns the passed observation.
    * <p>
@@ -65,8 +67,10 @@ public interface IObservationService {
    * @param context
    * @param scenarios zero or more scenario IDs to affect the resolution
    * @return the computation to observe the URN in the passed context. Never null, possibly empty.
+   * @throws KlabException
    */
-  IDataflow<IObservation> resolve(String urn, IDirectObservation context, String[] scenarios);
+  IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
+      throws KlabException;
 
   /**
    * Release all information pertaining to named namespace, both in live and persistent storage.

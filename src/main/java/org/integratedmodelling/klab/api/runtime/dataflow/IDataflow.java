@@ -10,40 +10,47 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IDataflowService;
+import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Dataflows in k.LAB represent "raw" computations, which create, compute and link
  * {@link IObjectArtifact}s in response to a request for observation of a given semantic
- * {@link IResolvable}. The computation is stripped of all semantics, except for identifying the
- * identity of each built observation; therefore it can be run by a semantically-unaware workflow
- * system.
- * 
- * The end result of running a dataflow is a {@link IArtifact}. In k.LAB, this corresponds to either
- * a {@link IObservation} (the usual case) or a {@link IModel} (when the computation is a learning
- * activity, which builds an explanation of a process).
- * 
+ * {@link IResolvable}. The computation is stripped of all semantics; therefore it can be run by a
+ * semantically-unaware workflow system.
+ * <p>
+ * Dataflows are serialized and rebuilt from KDL specifications by {@link IDataflowService}.
+ * Dataflows are also built by the engine after resolving a IResolvable, and can be serialized to
+ * KDL if necessary using {@link #getKdlCode()}.
+ * <p>
+ * The end result of {@link #run(IScale, IMonitor) running a dataflow} in a given scale is a
+ * {@link IArtifact}. In k.LAB, this corresponds to either a {@link IObservation} (the usual case)
+ * or a {@link IModel} (when the computation is a learning activity, which builds an explanation of
+ * a process). Dataflows built
+ * {@link IObservationService#resolve(String, org.integratedmodelling.klab.api.runtime.ISession, String[])
+ * within the k.LAB runtime} as a result of a semantic resolution will produce {@link IObservation
+ * observations}, i.e. semantic artifacts. But if those dataflows are {@link #getKdlCode()
+ * serialized}, loaded and run, they will produce non-semantic artifacts as the semantic information
+ * is not preserved in the dataflow specifications.
+ * <p>
  * Dataflows written by users or created by k.LAB can be stored on k.LAB nodes as URN-specified
- * computations and referenced in k.LAB models. The KDL language that specified dataflows is also
- * used to define service contracts for k.IM-callable services or remote computations accessed
- * through REST calls.
- * 
+ * computations, which can be referenced in k.LAB models. The KDL language that specified dataflows
+ * is also used to define service contracts for k.IM-callable services or remote computations
+ * accessed through REST calls.
+ * <p>
  * A dataflow is the top-level {@link IActuator actuator} of a k.LAB computation. It adds top-level
  * semantics to the actuator's contract. Only a dataflow can be run and serialized from the API.
- * 
- * 
- * Dataflows are created from KDL specifications by {@link IDataflowService}. Dataflows are also
- * built by the engine after resolving a IResolvable, and can be serialized to KDL if necessary
- * using {@link #getKdlCode()}.
- * 
+ * <p>
  * The KDL specification and the parser provided in the klab-kdl project provide a bridge to
  * different workflow systems. Models of computation are inferred in k.LAB and depend on the
  * specific {@link IRuntimeProvider runtime} adopted as well as on the semantics of the services
  * (actors) used; exposing the computational model is work in progress.
- * 
+ * <p>
  * TODO expose all metadata and context fields.
+ * <p>
  * 
  * @author ferdinando.villa
+ * @since 0.10.0
  * @param <T> the most specific type of artifact this dataflow will build when run.
  *
  */
@@ -82,5 +89,13 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
    * @return the KDL code. Never null.
    */
   String getKdlCode();
+
+  /**
+   * An empty dataflow results from an unsuccessful resolution and produces an
+   * {@link IArtifact#isEmpty() empty artifact} when run.
+   * 
+   * @return true if the dataflow is empty
+   */
+  boolean isEmpty();
 
 }

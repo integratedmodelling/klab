@@ -1,16 +1,29 @@
 package org.integratedmodelling.klab.resolution;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
+import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
@@ -27,6 +40,62 @@ import org.integratedmodelling.klab.owl.Observable;
 public enum Resolver {
 
   INSTANCE;
+
+  /**
+   * Implements the {@link IObservationService#resolve(String, ISession, String[])} method, exposed
+   * by {@link Observations}.
+   * 
+   * @param urn
+   * @param session
+   * @param scenarios
+   * @return
+   * @throws KlabException
+   */
+  public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
+      throws KlabException {
+
+    IKimObject object = Resources.INSTANCE.getModelObject(urn);
+    if (!(object instanceof Observer)) {
+      throw new IllegalArgumentException("URN " + urn + " does not specify an observation");
+    }
+    IMonitor monitor = session.getMonitor();
+    String taskId = "local:task:" + session.getToken() + ":" + object.getId();
+    ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
+    if (scope.getCoverage().isRelevant()) {
+      return Dataflows.INSTANCE.compile(taskId, scope);
+    }
+    return Dataflow.empty(monitor);
+  }
+
+  /**
+   * Implements the {@link IObservationService#resolve(String, IDirectObservation, String[])}
+   * method, exposed by {@link Observations}.
+   * 
+   * @param urn
+   * @param context
+   * @param scenarios
+   * @return a dataflow, possibly empty.
+   * @throws KlabException 
+   */
+  public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
+
+    IMonitor monitor = context.getMonitor();
+    IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
+    String taskId = "local:task:" + context.getToken() + ":" + ""; // TODO encode resolvable in URN
+    if (resolvable == null) {
+      return Dataflow.empty(monitor);
+    }
+
+    /*
+     * resolve and run
+     */
+    ResolutionScope scope = resolve(resolvable, ResolutionScope.create((Subject)context, monitor, Arrays.asList(scenarios)));
+    if (scope.getCoverage().isRelevant()) {
+      return Dataflows.INSTANCE.compile(taskId, scope);
+    }
+
+    return Dataflow.empty(monitor);
+  }
 
   /**
    * Resolve the passed object in the passed parent scope, using the resolution strategy appropriate
@@ -188,9 +257,8 @@ public enum Resolver {
     // use the reasoner to infer any missing dependency from the semantics
     ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable());
     for (Observable observable : reasoner.getObservables()) {
-      ret.and(
-          resolve(observable, ret,
-              observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+      ret.and(resolve(observable, ret,
+          observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
       if (ret.getCoverage().isEmpty()) {
         break;
       }
@@ -208,5 +276,6 @@ public enum Resolver {
       ResolutionScope context) {
     return new Prioritizer(context);
   }
+
 
 }

@@ -2,9 +2,8 @@ package org.integratedmodelling.klab;
 
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -12,20 +11,22 @@ import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.resolution.Resolver;
 
 public enum Observations implements IObservationService {
 
   INSTANCE;
 
   @Override
-  public IDataflow<ISubject> resolve(String urn, ISession session, String[] scenarios) {
-    return null;
+  public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
+      throws KlabException {
+    return Resolver.INSTANCE.resolve(urn, session, scenarios);
   }
 
   @Override
-  public IDataflow<IObservation> resolve(String urn, IDirectObservation context,
-      String[] scenarios) {
-    return null;
+  public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
+      throws KlabException {
+    return Resolver.INSTANCE.resolve(urn, context, scenarios);
   }
 
   @Override

@@ -153,5 +153,11 @@ public class Artifact implements IArtifact {
     this.empty = b;
   }
 
+  public static IArtifact empty() {
+    Artifact ret = new Artifact();
+    ret.empty = true;
+    return ret;
+  }
+
 
 }

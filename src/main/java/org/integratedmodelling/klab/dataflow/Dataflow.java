@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -19,7 +20,21 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.observation.Scale;
+import org.integratedmodelling.klab.provenance.Artifact;
 
+/**
+ * The semantically aware implementation of {@link IDataflow}, built by the k.LAB runtime as a
+ * result of a semantic resolution. Its {@link #run(IScale, IMonitor)} produces {@link IObservation
+ * observations} unless the dataflow is {@link #isEmpty() empty}.
+ * <p>
+ * A matching implementation may be provided to run non-semantic workflows in semantically unaware
+ * computation engines, or a translator could be used to provide commodity semantics to use this one
+ * so that k.LAB servers can serve computations through URNs.
+ * <p>
+ * 
+ * @author Ferd
+ *
+ */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
   public Dataflow(IMonitor monitor) {
@@ -32,6 +47,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
   @Override
   public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
+
+    if (actuators.size() == 0) {
+      return Artifact.empty();
+    }
 
     /*
      * Children at the dataflow level run in parallel, so have the runtime start futures for each
@@ -135,6 +154,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
   public void setResolutionScope(IResolutionScope scope) {
     this.scope = scope;
+  }
+
+  public static IDataflow<IArtifact> empty(IMonitor monitor) {
+    return new Dataflow(monitor);
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return actuators.size() == 0;
   }
 
 
