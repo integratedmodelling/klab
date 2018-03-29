@@ -168,6 +168,7 @@ public class ModelKbox extends ObservableKbox {
      * If we're a modeling engine, dispatch the request to all nodes that allow it, which we do
      * simply by using the result list as a distributed operation.
      */
+    if (Configuration.INSTANCE.isRemoteResolutionEnabled()) {
     // if (KLAB.ENGINE instanceof IModelingEngine && workRemotely) {
     //
     // ModelQuery mquery = new ModelQuery();
@@ -178,7 +179,7 @@ public class ModelKbox extends ObservableKbox {
     // ret.setQuery(mquery);
     //
     // KLAB.ENGINE.getNetwork().broadcast(ret, ((ResolutionScope) context).getMonitor());
-    // }
+    }
 
     return ret;
   }

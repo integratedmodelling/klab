@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -35,13 +36,14 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class DataflowBuilder {
 
-  private String                     name;
-  private DirectObservation          context;
-  private IResolutionScope           scope;
+  private String name;
+  private DirectObservation context;
+  private IResolutionScope scope;
+  private Coverage coverage;
 
   Graph<IResolvable, ResolutionEdge> resolutionGraph =
       new DefaultDirectedGraph<>(ResolutionEdge.class);
-  Map<Model, ModelD>                 modelCatalog    = new HashMap<>();
+  Map<Model, ModelD> modelCatalog = new HashMap<>();
 
   static class ResolutionEdge {
 
@@ -77,10 +79,10 @@ public class DataflowBuilder {
     ret.setResolutionScope(scope);
 
     /*
-     * TODO compute coverage from the intersection of models (union of multiple) and
-     * assign to this.coverage.
+     * TODO compute coverage from the intersection of models (union of multiple) and assign to
+     * this.coverage.
      */
-    
+
     for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
       modelCatalog.clear();
@@ -92,6 +94,16 @@ public class DataflowBuilder {
           || !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
       ret.getActuators().add(actuator);
 
+      // compute coverage
+      try {
+        Scale cov = node.computeCoverage(null);
+        if (cov != null) {
+          ret.setCoverage(Coverage.full(cov));
+        }
+      } catch (KlabException e) {
+        monitor.error("error computing dataflow coverage: " + e.getMessage());
+      }
+      
       // this will overwrite scale and namespace - another way of saying that these should either be
       // identical or we shouldn't even allow more than one root resolvable.
       // ret.setScale(scope.getScale());
@@ -122,9 +134,9 @@ public class DataflowBuilder {
 
   static class ModelD {
 
-    Model    model;
+    Model model;
     // how many nodes reference this model's observables
-    int      useCount;
+    int useCount;
     // this is null unless the model covers only a part of the context
     Coverage coverage;
 
@@ -159,12 +171,12 @@ public class DataflowBuilder {
    */
   class Node {
 
-    Observable  observable;
-    Observer    observer;
-    Set<ModelD> models   = new HashSet<>();
-    List<Node>  children = new ArrayList<>();
-    Scale       scale;
-    boolean     definesScale;
+    Observable observable;
+    Observer observer;
+    Set<ModelD> models = new HashSet<>();
+    List<Node> children = new ArrayList<>();
+    Scale scale;
+    boolean definesScale;
 
     public Node(IResolvable observable) {
       if (observable instanceof Observable) {
@@ -233,13 +245,13 @@ public class DataflowBuilder {
 
           // rename
           String name = modelDesc.model.getLocalNameFor(observable) + "_" + (i++);
-          
+
           partial.setType(ret.getType());
           partial.setObservable(observable);
           partial.setDefinesScale(true);
           defineActuator(partial, name, modelDesc.model, generated);
           partial.setCoverage(modelDesc.coverage);
-          
+
           modelIds.add(name);
 
           ret.getActuators().add(partial);
@@ -298,6 +310,35 @@ public class DataflowBuilder {
         // .computeMediators(child.originalObservable, child.observable));
       }
       return ret;
+    }
+
+    Scale computeCoverage(Scale current) throws KlabException {
+
+      Scale myCov = null;
+      for (ModelD model : models) {
+        if (model.model.getBehavior().hasScale()) {
+          if (myCov == null) {
+            myCov = Scale.create(model.model.getBehavior().getExtents(scope.getMonitor()));
+          } else {
+            myCov =
+                myCov.merge(Scale.create(model.model.getBehavior().getExtents(scope.getMonitor())),
+                    LogicalConnector.UNION);
+          }
+        }
+      }
+      if (myCov != null) {
+        if (current == null) {
+          current = myCov;
+        } else {
+          current = current.merge(myCov, LogicalConnector.INTERSECTION);
+        }
+      }
+      
+      for (Node child : children) {
+        current = child.computeCoverage(current);
+      }
+      
+      return current;
     }
 
     // sort by reverse refcount of model, so that the actuators with references are output before
@@ -367,7 +408,15 @@ public class DataflowBuilder {
       }
 
       if (hasPartials) {
-        md.coverage = d.coverage;
+        try {
+          /*
+           * store the total model coverage, not the resolved coverage that is specific to the
+           * resolution extents.
+           */
+          md.coverage = Coverage.full(Scale.create(model.getBehavior().getExtents(monitor)));
+        } catch (KlabException e) {
+          monitor.error("error computing model coverage: " + e.getMessage());
+        }
       }
 
       ret.models.add(md);

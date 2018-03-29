@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.dataflow;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -16,6 +18,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.observation.Scale;
 
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
@@ -74,6 +77,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
       ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
       if (getContext() != null) {
         ret += "@context " + getContext().getUrn() + "\n";
+      }
+      if (coverage != null && coverage.getExtentCount() > 0) {
+        List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
+        if (!scaleSpecs.isEmpty()) {
+          ret += "@coverage ";
+          for (int i = 0; i < scaleSpecs.size(); i++) {
+            ret += " " + scaleSpecs.get(i).getSourceCode()
+                + ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+          }
+          ret += "\n";
+        }
       }
       ret += "\n";
     }

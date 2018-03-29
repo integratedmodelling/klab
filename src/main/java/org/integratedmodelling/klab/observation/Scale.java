@@ -32,8 +32,8 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 
 public class Scale implements IScale {
 
-  private static AtomicLong counter          = new AtomicLong(0);
-  transient long            scaleId          = counter.incrementAndGet();
+  private static AtomicLong counter = new AtomicLong(0);
+  transient long scaleId = counter.incrementAndGet();
 
   /**
    * 
@@ -149,33 +149,33 @@ public class Scale implements IScale {
   //
   // }
 
-  protected List<IExtent>          extents             = new ArrayList<>();
-  protected long                   multiplicity        = 0;
-  protected int                    sIndex              = -1;
-  protected int                    tIndex              = -1;
-  protected ITime                  time                = null;
-  protected ISpace                 space               = null;
+  protected List<IExtent> extents = new ArrayList<>();
+  protected long multiplicity = 0;
+  protected int sIndex = -1;
+  protected int tIndex = -1;
+  protected ITime time = null;
+  protected ISpace space = null;
   protected MultidimensionalCursor cursor;
 
   // this is copied to transitions so that we can quickly assess if two transitions
   // come from the same scale.
-  protected InstanceIdentifier     identifier          = new InstanceIdentifier();
+  protected InstanceIdentifier identifier = new InstanceIdentifier();
 
   /*
    * Next four are to support subscales built as views of another
    */
   // originalCursor != null means we derive from a previous scale and are representing
   // one slice of it...
-  private MultidimensionalCursor   originalCursor      = null;
+  private MultidimensionalCursor originalCursor = null;
   // ... identified by this offset...
-  private long                     sliceOffset         = -1;
+  private long sliceOffset = -1;
   // ... along this dimension
-  private int                      sliceDimension      = -1;
+  private int sliceDimension = -1;
   // the ID of the originating scale. If size() == 1, we can locate directly in it using the offset
   // below.
-  private long                     originalScaleId     = -1;
+  private long originalScaleId = -1;
   // the offset in the original scale (only applies if originalScaleId > 0);
-  long                             originalScaleOffset = -1;
+  long originalScaleOffset = -1;
 
 
   protected Scale() {}
@@ -300,6 +300,7 @@ public class Scale implements IScale {
   public static Scale createLike(IScale scale, Collection<IExtent> extents) {
     return createLike(scale, extents.toArray(new Extent[extents.size()]));
   }
+
   /**
    * Create a scale from an array of extents.
    * 
@@ -641,26 +642,29 @@ public class Scale implements IScale {
     return true;
   }
 
-//  public IScale merge(ITopologicallyComparable<?> scale_, LogicalConnector how) {
-//
-//    if (!(scale_ instanceof Scale)) {
-//      return null;
-//    }
-//    Scale scale = (Scale) scale_;
-//
-//    if (!hasSameExtents(scale)) {
-//      return null;
-//    }
-//
-//    Scale ret = new Scale();
-//    for (IExtent e : extents) {
-//      ret.mergeExtent((IExtent) e.merge(((Scale) scale).getDimension(e.getType()), how));
-//    }
-//
-//    return ret;
-//  }
+  // public IScale merge(ITopologicallyComparable<?> scale_, LogicalConnector how) {
+  //
+  // if (!(scale_ instanceof Scale)) {
+  // return null;
+  // }
+  // Scale scale = (Scale) scale_;
+  //
+  // if (!hasSameExtents(scale)) {
+  // return null;
+  // }
+  //
+  // Scale ret = new Scale();
+  // for (IExtent e : extents) {
+  // ret.mergeExtent((IExtent) e.merge(((Scale) scale).getDimension(e.getType()), how));
+  // }
+  //
+  // return ret;
+  // }
 
   /**
+   * Add a missing extent or use the custom merge() function to inherit the usable info from the
+   * passed one. Do not confuse this with the ones from ITopology.
+   * 
    * @param extent
    * @param force
    */
@@ -687,6 +691,27 @@ public class Scale implements IScale {
     } else {
       extents.add(extent);
       ((AbstractExtent) extent).setScaleId(scaleId);
+    }
+
+    sort();
+  }
+
+  private void mergeExtent(IExtent extent, LogicalConnector how) {
+
+    IExtent merged = null;
+    int i = 0;
+    for (IExtent e : extents) {
+      if (e.getType().equals(extent.getType())) {
+        merged = e.merge(extent, how);
+        break;
+      }
+      i++;
+    }
+
+    if (merged != null) {
+      extents.add(i, merged);
+    } else {
+      extents.add(extent);
     }
 
     sort();
@@ -911,10 +936,9 @@ public class Scale implements IScale {
   // }
 
   @Override
-  public IScale merge(ITopologicallyComparable<?> coverage, LogicalConnector how) {
+  public Scale merge(ITopologicallyComparable<?> coverage, LogicalConnector how) {
 
     if (coverage instanceof Scale) {
-
 
       Scale other = (Scale) coverage;
       Scale ret = new Scale();
@@ -926,14 +950,14 @@ public class Scale implements IScale {
           common.add(e);
           commonConcepts.add(e.getType());
         } else {
-          ret.mergeExtent(e);
+          ret.mergeExtent(e, how);
         }
       }
 
       // if (adopt) {
       for (IExtent e : other.getExtents()) {
         if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
-          ret.mergeExtent(e);
+          ret.mergeExtent(e, how);
         }
       }
       // }

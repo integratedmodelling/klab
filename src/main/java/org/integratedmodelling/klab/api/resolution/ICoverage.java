@@ -63,12 +63,14 @@ public interface ICoverage extends IScale {
 
   /**
    * Reimplements {@link IScale#merge(ITopologicallyComparable, LogicalConnector)} to return a
-   * coverage and implement {@code ICoverage}-specific behavior.
+   * coverage and implement {@code ICoverage}-specific behavior. Note that this breaks the
+   * {@link IScale} contract by returning a coverage where the underlying scale is
+   * <strong>unmodified</strong>, but only its coverage information has potentially changed.
    * <p>
    * If the coverage is a union, it will return the unaltered receiver {@code this}) unless the
    * <strong>additional</strong> coverage resulting from the union is higher than the proportion
-   * returned by {@link #isRelevant()}. The proportion of coverage should be checked after this is
-   * called to see if anything has changed.
+   * returned by {@link #isRelevant()}. The proportion of coverage that has changed should be
+   * checked after this is called using {@link #getGain()} to see if anything has changed.
    * <p>
    * Must not modify the original scales.
    * 

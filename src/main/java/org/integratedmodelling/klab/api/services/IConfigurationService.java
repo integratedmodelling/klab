@@ -211,6 +211,8 @@ public interface IConfigurationService {
      */
     boolean isDebuggingEnabled();
 
+    boolean isRemoteResolutionEnabled();
+    
     int getDataflowThreadCount();
 
     int getTaskThreadCount();

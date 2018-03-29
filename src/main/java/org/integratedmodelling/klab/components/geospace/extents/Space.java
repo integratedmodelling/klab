@@ -477,7 +477,7 @@ public class Space extends Extent implements ISpace {
     } catch (KlabException e) {
       throw new KlabRuntimeException(e);
     }
-    throw new IllegalArgumentException("cannot merge a shape with " + other);
+    throw new IllegalArgumentException("cannot merge a spatial extent with " + other);
   }
 
 }

@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -40,7 +39,7 @@ public class Actuator implements IActuator {
   private String                    alias;
   private INamespace                namespace;
   private Observable                observable;
-  private ICoverage                 coverage;
+  protected Coverage                coverage;
   private IKdlActuator.Type         type;
   List<IActuator>                   actuators         = new ArrayList<>();
   IMonitor                          monitor;

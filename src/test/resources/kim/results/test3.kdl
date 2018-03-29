@@ -5,7 +5,6 @@
 @context local:observation:zxdddaddf99djj:xsdd99d // the observation URN (session)
 
 number elevation {
-	observe new geography:Elevation in degree_angle
 	number aspect {
 		compute 10
 	}

@@ -32,7 +32,7 @@ public enum Resolver {
    * Resolve the passed object in the passed parent scope, using the resolution strategy appropriate
    * to the type.
    * 
-   * TODO expose the version that returns a dataflow.
+   * TODO expose the version that returns a dataflow, make this private
    * 
    * @param resolvable
    * @param parentScope
@@ -58,7 +58,7 @@ public enum Resolver {
    * Resolve a root observer to an acknowledged observation tree. This being an acknowledgement,
    * coverage will always be 100% unless errors happen.
    * 
-   * TODO expose the version that returns a dataflow.
+   * TODO expose the version that returns a dataflow, make this private
    * 
    * @param observer
    * @param monitor
@@ -79,7 +79,7 @@ public enum Resolver {
   /**
    * Resolve an observer in a previously existing context using passed mode and scale.
    * 
-   * TODO expose the version that returns a dataflow.
+   * TODO expose the version that returns a dataflow, make this private
    * 
    * @param observable
    * @param parentScope

@@ -196,4 +196,10 @@ public enum Configuration implements IConfigurationService {
       // TODO Auto-generated method stub
       return 3;
     }
+
+    @Override
+    public boolean isRemoteResolutionEnabled() {
+      // TODO tie to option + live setting
+      return true;
+    }
 }
