@@ -3,11 +3,17 @@ package org.integratedmodelling.klab;
 /**
  * All the API endpoints supported in the k.LAB engine.
  * 
+ * TODO to be restructured 
+ * 
  * @author ferdinando.villa
  *
  */
 public interface API {
 
+	/*
+	 * TODO use subinterfaces for different components or types of endpoint
+	 */
+	
     /**
      * construct the JSON-requesting endpoint to get the passed resource URN as the passed
      * service
