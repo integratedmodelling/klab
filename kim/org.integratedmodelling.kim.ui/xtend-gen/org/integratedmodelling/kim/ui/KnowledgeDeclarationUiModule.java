@@ -14,7 +14,7 @@ import org.integratedmodelling.kim.ui.AbstractKnowledgeDeclarationUiModule;
 @FinalFieldsConstructor
 @SuppressWarnings("all")
 public class KnowledgeDeclarationUiModule extends AbstractKnowledgeDeclarationUiModule {
-  public KnowledgeDeclarationUiModule(final AbstractUIPlugin arg0) {
-    super(arg0);
+  public KnowledgeDeclarationUiModule(final AbstractUIPlugin plugin) {
+    super(plugin);
   }
 }

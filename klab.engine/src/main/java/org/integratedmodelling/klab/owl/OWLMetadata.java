@@ -22,10 +22,12 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.HashMap;
+
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -41,8 +43,8 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  */
 public class OWLMetadata extends Metadata implements IMetadata {
 
-  OWLEntity _owl;
-  OWLOntology _ontology;
+//  OWLEntity _owl;
+//  OWLOntology _ontology;
 
   static HashMap<String, String> _metadataVocabulary = new HashMap<>();
 
@@ -87,8 +89,14 @@ public class OWLMetadata extends Metadata implements IMetadata {
   }
 
   public OWLMetadata(OWLEntity owl, OWLOntology ontology) {
-    _owl = owl;
-    _ontology = ontology;
+    for (OWLAnnotation zio : owl.getAnnotations(ontology)) {
+        OWLAnnotationValue val = zio.getValue();
+        String piri = zio.getProperty().getIRI().toString();
+        String prop = _metadataVocabulary.get(piri);
+        if (prop != null) {
+            this.put(prop, literal2obj(val));
+        }
+    }
   }
 
   /*
