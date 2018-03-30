@@ -21,5 +21,10 @@
 			<artifactId>jopt-simple </artifactId>
 			<version>4.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.testing</artifactId>
+			<version>${xtextVersion}</version>
+		</dependency>
 	</dependencies>
-</project>
+</project>	
