@@ -12,8 +12,8 @@ public interface IServiceCall extends IKimStatement {
 
 	/**
 	 * If the function does not have named parameters, any parameters passed are
-	 * named like this; if there is more than one parameter, the ones after the
-	 * first are named DEFAULT_PARAMETER_NAME_n with N starting at 1.
+	 * named like this; if there is more than one parameter they will be grouped into
+	 * a list returned with this key.
 	 */
 	public static String DEFAULT_PARAMETER_NAME = "value";
 

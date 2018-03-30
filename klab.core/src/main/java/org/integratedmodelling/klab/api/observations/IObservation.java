@@ -87,12 +87,4 @@ public interface IObservation extends IObservationIdentity, Serializable, IArtif
    */
   ISpace getSpace();
 
-  /**
-   * Any observation that exists has provenance. Call this on the root observation for the entire
-   * graph.
-   * 
-   * @return the provenance record leading to this
-   */
-  IProvenance getProvenance();
-
 }

@@ -124,5 +124,15 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
    * @return 1 or more
    */
   int groupSize();
+  
+
+  /**
+   * Any observation that exists has provenance. Call this on the root observation for the entire
+   * graph.
+   * 
+   * @return the provenance record leading to this
+   */
+  IProvenance getProvenance();
+
 
 }

@@ -12,9 +12,9 @@ worldview im;
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 
-private model geography:Elevation in m 
+model geography:Elevation in m 
 	observing geography:Slope in degree_angle
 	on definition set to [slope * 12.44];
 
-private model geography:Slope in degree_angle 
+model geography:Slope in degree_angle 
 	using gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360);

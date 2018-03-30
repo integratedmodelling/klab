@@ -9,10 +9,10 @@ worldview im;
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 
-private model each earth:Mountain 
+model each earth:Mountain 
 	observing geography:Elevation in m
 	using gis.features.extract(select = "elevation > 3000");
 
 @probe
-private model geography:Elevation in m
+model geography:Elevation in m
 	using gis.terrain(roughness = 0.88, range = 0 to 3500);
