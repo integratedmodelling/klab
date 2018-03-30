@@ -10,10 +10,9 @@
 	<modules>
 		<module>kdl</module>
 		<module>kim</module>
-		<module>api</module>
-		<module>core</module>
-		<module>engine</module>
-		<module>components</module>
+		<module>klab.core</module>
+		<module>klab.engine</module>
+		<module>klab.tools</module>
 	</modules>
 
 	<properties>
