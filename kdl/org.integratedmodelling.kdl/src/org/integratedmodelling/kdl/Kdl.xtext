@@ -1,0 +1,214 @@
+grammar org.integratedmodelling.kdl.Kdl with org.eclipse.xtext.common.Terminals
+
+generate kdl "http://www.integratedmodelling.org/kdl/Kdl"
+
+/*
+ * The root model is the body of the dataflow for the context observation
+ */
+Model:
+	(('@dataflow' name=(Path|UrnId))? &
+	 ('@var' variables+=Parameter)* &
+	 ('@val' constants+=Parameter)* &
+	 ('@author' authors+=STRING)* &
+	 ('@version' version=VersionNumber)? &
+	 ('@klab' klabVersion=VersionNumber)? &
+	 ('@worldview' worldview=LOWERCASE_ID)? &
+	 ('@geometry' geometry=Geometry)? &
+	 ('@endpoint' endpoint=STRING)? &
+	 ('@namespace' package=PathName)? &
+	 ('@coverage' scale+=Function (',' scale+=Function)*)? &
+	 ('@context' contextUrn=Urn)?) 
+	actors+=ActorDefinition*;
+
+	// 'as' must ONLY BE LEGAL FOR IMPORTS
+// if multiple, semantics must be given to recognize the observables
+ActorDefinition:
+	((exported?='export' |
+	((optional?='optional')? imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))?
+	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID) ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)?
+	('{' body=DataflowBody '}')?
+	('as' localName=LOWERCASE_ID)?
+	('over' coverage+=Function (',' coverage+=Function)*)? |
+
+	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
+	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=LOWERCASE_ID
+	// enum values, only for enum type
+	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
+	(docstring=STRING)
+	('default' default=Value)?
+	('{' body=DataflowBody '}')?;
+DataflowBody:
+	{DataflowBody}
+	('observe' (('new' newObservation=ObservableSemantics) | (urnObservation=Urn)))?
+	(dataflows+=ActorDefinition*)
+	(('geometry' geometry=Geometry)? &
+	('units' units=Unit)? &
+	(computations+=Computation*) &
+	('semantics' semantics=ObservableSemantics)? &
+	('metadata' metadata=Metadata)?
+	('class' javaClass=JavaClass)?);
+Computation:
+	'compute' functions+=Function (',' functions+=Function)*;
+Geometry:
+	'*' | SHAPE (',' SHAPE)*;
+ConceptDeclaration:
+	(name=STRING)? main+=Concept+ ('of' inherency=SimpleConceptDeclaration)? ('within' context=SimpleConceptDeclaration)?;
+ConceptReference:
+	CAMELCASE_ID | NamespaceId;
+Concept:
+	(negated?='not')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by'
+	authority=(UPPERCASE_ID | UPPERCASE_PATH))? |
+	presence?='presence' 'of' concept=SimpleConceptDeclaration |
+	count?='count' 'of' concept=SimpleConceptDeclaration |
+	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
+	probability?='probability' 'of' concept=SimpleConceptDeclaration |
+	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
+	proportion?='proportion' 'of' concept=SimpleConceptDeclaration => ('in' other=SimpleConceptDeclaration)? |
+	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
+	value?='value' 'of' concept=SimpleConceptDeclaration => ('over' other=SimpleConceptDeclaration)? |
+	occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
+	'(' declaration=ConceptDeclaration ')';
+
+ObservableSemantics:
+	declaration=ConceptDeclaration
+	(
+		('by' by=Concept)? &
+		('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? &
+		('as' role=Concept)? &
+		(
+			('in' (unit=Unit | currency=Currency)) |
+			('per' unit=Unit)
+		)? &
+		(from=Number 'to' to=Number)? 
+	);
+	
+	/*
+ * Declaration without inherency and context, used in Concept to ensure that
+ * the 'within' and 'of' remain outer-level unless parenthesesized.
+ */
+SimpleConceptDeclaration returns ConceptDeclaration:
+	(name=STRING)? main+=Concept+;
+Parameter:
+	name=LOWERCASE_ID value=Value (docstring=STRING)?;
+ACTOR:
+// countable, so always a dataflow for direct object instantiation
+	'object' |
+	// non-countable, so one object only
+	'process' |
+	// any acceptable quality type, for declarations only
+	'value' |
+	// all the next are in quality scope; number type is handled internally
+	'number' | 'concept' | 'boolean' | 'text' |
+	// specialized functions that produce extents
+	'extent' | 'spatialextent' | 'temporalextent' |
+	// only contracts for annotations
+	'annotation' |
+	// only contracts for contextualizers returned by runtime functions
+	'contextualizer' |
+	// only for command prototypes
+	'void';
+	
+TARGET:
+	'models' | 'concepts' | 'observers';
+Classification:
+	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;
+Classifier:
+	declaration=ConceptDeclaration (otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?;
+ClassifierRHS:
+	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
+	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration |
+	'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
+	nodata='unknown' | star?='*';
+List:
+	{List} '(' contents+=Value* ')';
+Literal:
+	number=Number | from=Number 'to' to=Number | string=STRING | boolean=('true' | 'false');
+LiteralOrIdOrComma returns Literal:
+	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
+LiteralOrID returns Literal:
+	number=Number | string=STRING | boolean=('true' | 'false') | id=ID;
+Metadata:
+	{Metadata} '{' (ids+=(LOWERCASE_ID | PropertyId) values+=(LiteralOrID | Metadata | List))* '}';
+ParameterList:
+	values+=Value (',' values+=Value)* | pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+Value:
+	literal=LiteralOrIdOrComma | function=Function | urn=Urn unit=Unit | currency=Currency | list=List |
+	enumId=UPPERCASE_ID;
+Urn:
+// String used when there are strange chars or keywords in the URN.
+	name=(UrnId | STRING | LocalFilePath);
+
+	/**
+ * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
+ * legal, but not required, to start with the default prefix urn:klab:
+ */
+UrnId:
+	('urn:klab:')? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
+
+	/**
+ * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
+ * on whether there is an encoder for their file extension.
+ */
+LocalFilePath:
+	(CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID) ('/' (CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID))* ('.'
+	LOWERCASE_ID)? ('#' LOWERCASE_ID)?;
+KeyValuePair:
+	name=LOWERCASE_ID (interactive?='=?' | '=') value=Value;
+Function:
+	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal) ('as'
+	variable=LOWERCASE_ID)? |
+	'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? |
+	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+	/**
+ * ---------------------------------------
+ * Unit of measurement re: jsr-108, parseable by Java
+ * TODO implement expression syntax and provide validator
+ * ---------------------------------------
+ */
+UnitElement:
+	id=(CAMELCASE_ID | LOWERCASE_ID) |
+	num=Number |
+	'(' unit=Unit ')';
+enum UnitOp:
+	OVER='/' | CARET='^' | STAR='*';
+REL_OPERATOR:
+	(gt?='>' |
+	lt?='<' |
+	eq?='=' |
+	ne?='!=' |
+	le?='<=' |
+	ge?='>=');
+Unit:
+	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+Currency:
+	id=ID ('@' year=INT) |
+	concept=(CAMELCASE_ID | NamespaceId);
+Number:
+	('+' | negative?='-')? => real=INT => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
+	expNegative?='-')? exp=INT)?;
+terminal LOWERCASE_ID:
+	('a'..'z') ('a'..'z' | '0'..'9' | '_')*;
+terminal LOWERCASE_DASHID:
+	('a'..'z') ('a'..'z' | '0'..'9' | '-')*;
+terminal SHAPE:
+	('#') | ('#')? (('A'..'z') ('.' | ('0'..'3')))+;
+PathName:
+	LOWERCASE_ID ('.' LOWERCASE_ID)*;
+Path:
+	LOWERCASE_ID (('.' | '/') LOWERCASE_ID)*;
+JavaClass:
+	PathName '.' CAMELCASE_ID;
+terminal UPPERCASE_ID:
+	('A'..'Z') ('A'..'Z')*;
+terminal UPPERCASE_PATH:
+	UPPERCASE_ID ('.' UPPERCASE_ID)*;
+terminal CAMELCASE_ID:
+	('A'..'Z') ('A'..'z' | '0'..'9')*;
+NamespaceId:
+	PathName ':' CAMELCASE_ID;
+PropertyId:
+	PathName ':' (LOWERCASE_ID | LOWERCASE_DASHID);
+VersionNumber:
+	INT ('.' INT ('.' INT)?)? ('-')? ((LOWERCASE_ID | UPPERCASE_ID))?;
+
+

@@ -1,0 +1,5 @@
+Deploy command for nexus staging:
+
+
+mvn clean deploy -Prelease -DaltDeploymentRepository=ossrh::default::https://oss.sonatype.org/service/local/staging/deploy/maven2/
+

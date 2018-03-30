@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.integratedmodelling.kdl.ide
+Bundle-Vendor: My Company
+Bundle-Version: 0.10.0.qualifier
+Bundle-SymbolicName: org.integratedmodelling.kdl.ide; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.integratedmodelling.kdl,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide,
+ org.antlr.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.integratedmodelling.kdl.ide.contentassist.antlr,
+ org.integratedmodelling.kdl.ide.contentassist.antlr.internal
+Automatic-Module-Name: org.integratedmodelling.kdl.ide
+

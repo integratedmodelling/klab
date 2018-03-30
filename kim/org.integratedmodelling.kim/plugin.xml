@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package 
+			uri = "http://www.integratedmodelling.org/kim/KnowledgeDeclaration"
+			class = "org.integratedmodelling.kim.kdecl.KdeclPackage"
+			genModel = "model/generated/KnowledgeDeclaration.genmodel" />
+	</extension>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package 
+			uri = "http://www.integratedmodelling.org/kim/Kim"
+			class = "org.integratedmodelling.kim.kim.KimPackage"
+			genModel = "model/generated/Kim.genmodel" />
+	</extension>
+</plugin>

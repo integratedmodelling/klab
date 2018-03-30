@@ -1,0 +1,239 @@
+grammar org.integratedmodelling.kim.Kim with org.integratedmodelling.kim.KnowledgeDeclaration
+
+generate kim "http://www.integratedmodelling.org/kim/Kim"
+
+/*
+ * Namespace is mandatory at the beginning, but we check at validation of the
+ * first statement, so that special situations such as empty files or default 
+ * namespaces are possible without errors.
+ */
+Model:
+	namespace=Namespace? statements+=Statement*
+;
+
+Statement:
+	conceptStatement=ConceptStatement ';' |
+	modelStatement=ModelStatement ';' |
+	upperOntologyStatement=UpperOntologyDefinition ';' |
+	observeStatement=ObserveStatement ';' 
+;
+
+ModelStatement:
+	 annotations+=Annotation* ((inactive?='void')? & (private?='private')?) model=MODEL_TYPE body=ModelBodyStatement
+;
+
+ModelBodyStatement:
+	(instantiator?='each')? 
+		(
+			(urn=Urn | function=Function | number=Number | boolean=('true' | 'false') | concept=SimpleObservableSemantics)
+			 'as'
+		)? 
+		/*
+		 * If the observable is a single role, then concept must be the actual observable and we're reinterpreting it.
+		 */
+		 ( name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
+		 ('observing' dependencies+=ObservableSemantics (',' dependencies+=ObservableSemantics)* )?
+		 ('using' contextualizers+=Contextualization (',' contextualizers+=Contextualization)*)?
+		 actions+=ActionSpecification*
+		 ('with' 'metadata' metadata=Metadata)? 
+		 ('with' 'documentation' documentation=Documentation)? 
+;
+
+Contextualization:
+	value=ValueExecution |
+	(('classification'|discretization?='discretization') '(' classification=Classification ')' ) |
+	('lookup' lookupTable=LookupTable) |
+	('classified'|discretization?='discretized') 'according' 'to'  classificationProperty=PropertyId
+;
+
+AttributeIdentifier:
+	name=(LOWERCASE_ID|UPPERCASE_ID) |
+	function=Function |
+	expression=EXPR
+;
+
+Classification:
+	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;
+
+Classifier:
+	declaration=ConceptDeclaration (otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?;
+
+ClassifierRHS:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	'in' set=List | 
+	string=STRING | 
+	concept=ConceptDeclaration | 
+	'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | 
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*';
+	
+LookupTable:
+	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
+//	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
+;
+
+Urn:
+	// String used when there are strange chars or keywords in the URN.
+	name=(UrnId|STRING|LocalFilePath)
+;
+
+Table:
+	'(' ((args+=LOWERCASE_ID (',' args+=LOWERCASE_ID)*) | (expr+=EXPR (expr+=EXPR)*)) ')' ':' elements+=TableClassifier
+	(=> ',' elements+=TableClassifier)*;
+
+TableClassifier returns ClassifierRHS:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	'in' set=List | 
+	string=STRING | 
+	concept=ConceptDeclaration | 
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*' |
+	anything?='#';
+
+ActionSpecification:
+	(integrated?='aggregated')? 'over' 
+		(domain+=FunctionOrID) (=> ',' (domain+=FunctionOrID))* 
+		(actions+=Action (=> ',' actions+=Action)*)? | 
+	(trigger?='on' (
+		initialization?='definition' | 
+		resolution?='resolution' | 
+		instantiation ?= 'instantiation' | 
+		termination ?='termination' | 
+		stateInitialization ?= 'initialization'| 
+		event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related' eventContext=ConceptDeclaration)))?
+	)
+		(parameters = List)? 
+		(actions+=Action (=> ',' actions+=Action)*)?);
+
+FunctionOrID:
+	function=Function | functionId=(LOWERCASE_ID|NamespaceId);
+
+Action:
+	(change?='change' | set?='set') 
+		assignments+=ValueAssignment (',' assignments+=ValueAssignment)*
+		(=> ('if' | conditionNegative?='unless') condition=Value)? |
+	integrate?='integrate'  
+		assignments+=ValueAssignment (',' assignments+=ValueAssignment)*
+		(=> ('if' | conditionNegative?='unless') condition=Value)? |
+	do?='do'
+		executed+=ValueExecution (',' executed+=ValueExecution)*
+		(=> ('if' | conditionNegative?='unless') condition=Value)? |
+	/*
+	 * 'move away' sounds a lot nicer than 'die'
+	 */
+	move?='move' (where=Value | away?='away') (=> condition=Value)?;
+
+ValueAssignment:
+	((target = LOWERCASE_ID)? 'to')? assignedValue=ComputableValue
+;
+
+/*
+ * this is made necessary by Xtext's inability of properly generating code when
+ * superclasses come from imported grammars.
+ */
+ComputableValue:
+	literal=LiteralOrIdOrComma |
+	function=Function |
+	expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
+	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
+	list=List |
+	null?='unknown';
+	
+
+ValueExecution returns ValueAssignment:
+	execValue=ExecutableValue ('as' target=LOWERCASE_ID)?
+;
+	
+ExecutableValue returns ComputableValue:
+	function=Function |
+	expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
+	urn=UrnId
+;
+
+MODEL_TYPE:
+	'model' |
+	'assess' |
+	'learn' |
+	'number' |
+	'text' |
+	'boolean' 
+;
+
+/*
+ * Namespace - entry point of all files. Only interactive session may start without this statement.
+ * A namespace may be a scenario - if so, nothing changes except its models will never be used from
+ * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
+ */
+Namespace:
+	annotations+=Annotation* 
+	(
+		(private?='private')? & 
+		(inactive?='void')?
+	) 
+	('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName (docstring=STRING)? 
+	(
+		('using' imported+=Import (=> ',' imported+=Import)*)? & 
+		('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & 
+		('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
+		('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & 
+		('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? & 
+		('version' version=VersionNumber)? & 
+		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?
+	)
+	('with' 'metadata' metadata=Metadata)? 
+	('with' 'documentation' documentation=Metadata)? 
+	';';	
+
+OwlImport:
+	name=STRING ('as' prefix=LOWERCASE_ID)
+;
+
+Import:
+	((imports=List | star?='*') 'from')? name=PathName/*[Namespace|PathName]*/;	
+
+/**
+ * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
+ * legal, but not required, to start with the default prefix urn:klab:
+ */
+UrnId:
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
+	
+/**
+ * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
+ * on whether there is an encoder for their file extension.
+ */	
+LocalFilePath:
+	(CAMELCASE_ID|LOWERCASE_ID|LOWERCASE_DASHID) ('/' (CAMELCASE_ID|LOWERCASE_ID|LOWERCASE_DASHID))* ('.' LOWERCASE_ID)? ('#' LOWERCASE_ID)?
+;	
+	
+ObserveStatement:
+	annotations+=Annotation* 'observe' body=ObserveStatementBody
+;
+		
+/**
+ * FIXME the child observation in parenthesis conflicts with a standard declaration and cannot be
+ * specified.
+ */
+ObserveStatementBody:
+	concept=NamedObservableSemantics
+		(docstring = STRING)?
+		('extends' parents+=PathName (',' parents+=PathName)*)?
+		(
+			'observing' 
+				// validator will ensure that the semantics has an associated value
+				('(' observations+=ObserveStatementBody ')' | states+=ObservableSemantics) 
+					(',' ('(' observations+=ObserveStatementBody ')'| states+=ObservableSemantics))*
+		)?
+		('using' (accessor=Function)?)? &
+		actions+=ActionSpecification*
+		('with' 'metadata' metadata=Metadata)? 
+		('with' 'documentation' documentation=Metadata)? 
+;
+
+

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.integratedmodelling.kim.ide
+Bundle-Vendor: org.integratedmodelling
+Bundle-Version: 0.10.0.qualifier
+Bundle-SymbolicName: org.integratedmodelling.kim.ide; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.integratedmodelling.kim,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide,
+ org.antlr.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.integratedmodelling.kim.ide.contentassist.antlr.internal,
+ org.integratedmodelling.kim.ide.contentassist.antlr
+Automatic-Module-Name: org.integratedmodelling.kim.ide
+
