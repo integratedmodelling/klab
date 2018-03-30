@@ -6,7 +6,7 @@
 	<artifactId>klab</artifactId>
 	<version>0.10.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<modules>
 		<module>kdl</module>
 		<module>kim</module>
@@ -16,7 +16,7 @@
 	</modules>
 
 	<properties>
-	
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -32,7 +32,7 @@
 
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.12.0</xtextVersion>
-		
+
 		<!-- the five below go together. Never change one without checking the 
 			others -->
 		<spring-boot-version>1.4.2.RELEASE</spring-boot-version>
@@ -68,48 +68,4 @@
 		</repository>
 	</repositories>
 
-	<build>
-
-		<plugins>
-			<!--  <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
-				<configuration>
-					<additionalparam>-Xdoclint:none</additionalparam>
-					<excludePackageNames>com.elet.dragonconsole.*:org.integratedmodelling.common.utils.jtopas.*</excludePackageNames>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>  -->
-		</plugins>
-	</build>
-
-	<dependencies>
-
-		<!-- COMMON DEPENDENCIES -->
-		<!-- language support
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.kim</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.kdl</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
-		</dependency>  -->
-
-
-
-		<!-- ENGINE DEPENDENCIES -->
-
-
-	</dependencies>
 </project>
