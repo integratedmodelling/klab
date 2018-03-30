@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.persistence.ModelKbox;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 

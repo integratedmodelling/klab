@@ -1,16 +1,178 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.integratedmodelling</groupId>
-    <artifactId>klab</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>klab.engine</artifactId>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.integratedmodelling</groupId>
-  		<artifactId>klab.core</artifactId>
-  		<version>0.10.0-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.integratedmodelling</groupId>
+		<artifactId>klab</artifactId>
+		<version>0.10.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>klab.engine</artifactId>
+	<dependencies>
+
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.core</artifactId>
+			<version>0.10.0-SNAPSHOT</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext</artifactId>
+			<version>${xtextVersion}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.util -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.util</artifactId>
+			<version>${xtextVersion}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing 
+			Used in compile scope to provide simple, reentrant parser injector for repeated 
+			calls to declaration parser. -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.testing</artifactId>
+			<version>${xtextVersion}</version>
+			<scope>test</scope>
+		</dependency>
+
+
+		<!-- ijblob - feature extractor for spatial rasters -->
+		<dependency>
+			<groupId>de.biomedical-imaging.ij</groupId>
+			<artifactId>ij_blob</artifactId>
+			<version>1.4.9</version>
+		</dependency>
+
+		<!-- larray: memory-mapped arrays that support the default storage provider -->
+		<dependency>
+			<groupId>org.xerial.larray</groupId>
+			<artifactId>larray_2.12</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+
+		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
+			but Spring shouldn't be needed in the embedded engine and the API is better 
+			here. -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.11</version>
+		</dependency>
+
+		<!-- Groovy -->
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.5.0-beta-2</version>
+		</dependency>
+
+		<!-- basic graph API -->
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core </artifactId>
+			<version>1.1.0</version>
+		</dependency>
+
+		<!-- OWL and DL reasoning -->
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-distribution </artifactId>
+			<version>3.4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hermit-reasoner</groupId>
+			<artifactId>org.semanticweb.hermit</artifactId>
+			<version>1.3.8.4</version>
+		</dependency>
+
+		<!-- spatial H2 database for kboxes -->
+		<dependency>
+			<groupId>org.orbisgis</groupId>
+			<artifactId>h2spatial</artifactId>
+			<version>1.2.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
+		<dependency>
+			<groupId>args4j</groupId>
+			<artifactId>args4j</artifactId>
+			<version>2.33</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- GEOTOOLS mess starts -->
+		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
+			<version>${geotools.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-referencing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geotiff</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-extension</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<!-- GEOTOOLS mess ends -->
+
+		<!-- NO2 database (for local storage of file metadata and URN metadata 
+			caching) -->
+		<dependency>
+			<groupId>org.dizitart</groupId>
+			<artifactId>nitrite</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+
+		<!-- Actor system (for the default runtime provider) -->
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-actor_2.12</artifactId>
+			<version>2.5.11</version>
+		</dependency>
+
+		<!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
+
+		<!-- for map display with JMapFrame/MapDisplay -->
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-render</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-swing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-ext</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+	</dependencies>
 </project>
