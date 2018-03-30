@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -29,12 +30,12 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-import org.integratedmodelling.kim.kdecl.Literal;
-import org.integratedmodelling.kim.kdecl.Metadata;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
-import org.integratedmodelling.kim.kdecl.Value;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.Literal;
+import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.kim.validation.KimNotification;
@@ -338,7 +339,7 @@ public enum Kim {
 
     private static UrnDescriptor okUrn = new UrnDescriptor(ALIVE | KNOWN | ACCESSIBLE, "Demo URN");
 
-    public Number parseNumber(org.integratedmodelling.kim.kdecl.Number number) {
+    public Number parseNumber(org.integratedmodelling.kim.kim.Number number) {
         ICompositeNode node = NodeModelUtils.findActualNodeFor(number);
         if (number.isExponential() || number.isDecimal()) {
             return Double.parseDouble(node.getText().trim());

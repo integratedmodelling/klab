@@ -2,9 +2,10 @@ package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.kdecl.Metadata;
+import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimValidator;
 

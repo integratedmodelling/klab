@@ -11,7 +11,54 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kim.*;
+import org.integratedmodelling.kim.kim.Action;
+import org.integratedmodelling.kim.kim.ActionSpecification;
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.ApplicableTarget;
+import org.integratedmodelling.kim.kim.AttributeIdentifier;
+import org.integratedmodelling.kim.kim.Classification;
+import org.integratedmodelling.kim.kim.Classifier;
+import org.integratedmodelling.kim.kim.ClassifierRHS;
+import org.integratedmodelling.kim.kim.ComputableValue;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ConceptStatement;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DocSelector;
+import org.integratedmodelling.kim.kim.Documentation;
+import org.integratedmodelling.kim.kim.Function;
+import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.IdentityRequirement;
+import org.integratedmodelling.kim.kim.Import;
+import org.integratedmodelling.kim.kim.KeyValuePair;
+import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.Literal;
+import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Model;
+import org.integratedmodelling.kim.kim.ModelBodyStatement;
+import org.integratedmodelling.kim.kim.ModelStatement;
+import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.ObserveStatement;
+import org.integratedmodelling.kim.kim.ObserveStatementBody;
+import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.REL_OPERATOR;
+import org.integratedmodelling.kim.kim.RestrictionDefinition;
+import org.integratedmodelling.kim.kim.RestrictionStatement;
+import org.integratedmodelling.kim.kim.Statement;
+import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.Unit;
+import org.integratedmodelling.kim.kim.UnitElement;
+import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
+import org.integratedmodelling.kim.kim.Urn;
+import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.kim.ValueAssignment;
 
 /**
  * <!-- begin-user-doc -->
@@ -185,6 +232,136 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseObserveStatementBody(ObserveStatementBody object)
       {
         return createObserveStatementBodyAdapter();
+      }
+      @Override
+      public Adapter caseObservableSemantics(ObservableSemantics object)
+      {
+        return createObservableSemanticsAdapter();
+      }
+      @Override
+      public Adapter caseConceptDeclaration(ConceptDeclaration object)
+      {
+        return createConceptDeclarationAdapter();
+      }
+      @Override
+      public Adapter caseConceptReference(ConceptReference object)
+      {
+        return createConceptReferenceAdapter();
+      }
+      @Override
+      public Adapter caseConcept(Concept object)
+      {
+        return createConceptAdapter();
+      }
+      @Override
+      public Adapter caseUpperOntologyDefinition(UpperOntologyDefinition object)
+      {
+        return createUpperOntologyDefinitionAdapter();
+      }
+      @Override
+      public Adapter caseConceptStatement(ConceptStatement object)
+      {
+        return createConceptStatementAdapter();
+      }
+      @Override
+      public Adapter caseConceptStatementBody(ConceptStatementBody object)
+      {
+        return createConceptStatementBodyAdapter();
+      }
+      @Override
+      public Adapter caseApplicableTarget(ApplicableTarget object)
+      {
+        return createApplicableTargetAdapter();
+      }
+      @Override
+      public Adapter caseIdentityRequirement(IdentityRequirement object)
+      {
+        return createIdentityRequirementAdapter();
+      }
+      @Override
+      public Adapter caseRestrictionStatement(RestrictionStatement object)
+      {
+        return createRestrictionStatementAdapter();
+      }
+      @Override
+      public Adapter caseRestrictionDefinition(RestrictionDefinition object)
+      {
+        return createRestrictionDefinitionAdapter();
+      }
+      @Override
+      public Adapter caseAnnotation(Annotation object)
+      {
+        return createAnnotationAdapter();
+      }
+      @Override
+      public Adapter caseList(List object)
+      {
+        return createListAdapter();
+      }
+      @Override
+      public Adapter caseLiteral(Literal object)
+      {
+        return createLiteralAdapter();
+      }
+      @Override
+      public Adapter caseMetadata(Metadata object)
+      {
+        return createMetadataAdapter();
+      }
+      @Override
+      public Adapter caseDocumentation(Documentation object)
+      {
+        return createDocumentationAdapter();
+      }
+      @Override
+      public Adapter caseDocSelector(DocSelector object)
+      {
+        return createDocSelectorAdapter();
+      }
+      @Override
+      public Adapter caseKeyValuePair(KeyValuePair object)
+      {
+        return createKeyValuePairAdapter();
+      }
+      @Override
+      public Adapter caseParameterList(ParameterList object)
+      {
+        return createParameterListAdapter();
+      }
+      @Override
+      public Adapter caseValue(Value object)
+      {
+        return createValueAdapter();
+      }
+      @Override
+      public Adapter caseFunction(Function object)
+      {
+        return createFunctionAdapter();
+      }
+      @Override
+      public Adapter caseUnitElement(UnitElement object)
+      {
+        return createUnitElementAdapter();
+      }
+      @Override
+      public Adapter caseREL_OPERATOR(REL_OPERATOR object)
+      {
+        return createREL_OPERATORAdapter();
+      }
+      @Override
+      public Adapter caseUnit(Unit object)
+      {
+        return createUnitAdapter();
+      }
+      @Override
+      public Adapter caseCurrency(Currency object)
+      {
+        return createCurrencyAdapter();
+      }
+      @Override
+      public Adapter caseNumber(org.integratedmodelling.kim.kim.Number object)
+      {
+        return createNumberAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -534,6 +711,396 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createObserveStatementBodyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ObservableSemantics <em>Observable Semantics</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics
+   * @generated
+   */
+  public Adapter createObservableSemanticsAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ConceptDeclaration <em>Concept Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration
+   * @generated
+   */
+  public Adapter createConceptDeclarationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ConceptReference <em>Concept Reference</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ConceptReference
+   * @generated
+   */
+  public Adapter createConceptReferenceAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Concept <em>Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Concept
+   * @generated
+   */
+  public Adapter createConceptAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.UpperOntologyDefinition <em>Upper Ontology Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.UpperOntologyDefinition
+   * @generated
+   */
+  public Adapter createUpperOntologyDefinitionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ConceptStatement <em>Concept Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ConceptStatement
+   * @generated
+   */
+  public Adapter createConceptStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ConceptStatementBody <em>Concept Statement Body</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ConceptStatementBody
+   * @generated
+   */
+  public Adapter createConceptStatementBodyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ApplicableTarget <em>Applicable Target</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ApplicableTarget
+   * @generated
+   */
+  public Adapter createApplicableTargetAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.IdentityRequirement <em>Identity Requirement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.IdentityRequirement
+   * @generated
+   */
+  public Adapter createIdentityRequirementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.RestrictionStatement <em>Restriction Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.RestrictionStatement
+   * @generated
+   */
+  public Adapter createRestrictionStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.RestrictionDefinition <em>Restriction Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.RestrictionDefinition
+   * @generated
+   */
+  public Adapter createRestrictionDefinitionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Annotation <em>Annotation</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Annotation
+   * @generated
+   */
+  public Adapter createAnnotationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.List <em>List</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.List
+   * @generated
+   */
+  public Adapter createListAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Literal <em>Literal</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Literal
+   * @generated
+   */
+  public Adapter createLiteralAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Metadata <em>Metadata</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Metadata
+   * @generated
+   */
+  public Adapter createMetadataAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Documentation <em>Documentation</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Documentation
+   * @generated
+   */
+  public Adapter createDocumentationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.DocSelector <em>Doc Selector</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.DocSelector
+   * @generated
+   */
+  public Adapter createDocSelectorAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.KeyValuePair <em>Key Value Pair</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.KeyValuePair
+   * @generated
+   */
+  public Adapter createKeyValuePairAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ParameterList <em>Parameter List</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ParameterList
+   * @generated
+   */
+  public Adapter createParameterListAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Value <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Value
+   * @generated
+   */
+  public Adapter createValueAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Function <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Function
+   * @generated
+   */
+  public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.UnitElement <em>Unit Element</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.UnitElement
+   * @generated
+   */
+  public Adapter createUnitElementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.REL_OPERATOR <em>REL OPERATOR</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.REL_OPERATOR
+   * @generated
+   */
+  public Adapter createREL_OPERATORAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Unit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Unit
+   * @generated
+   */
+  public Adapter createUnitAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Currency <em>Currency</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Currency
+   * @generated
+   */
+  public Adapter createCurrencyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Number <em>Number</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Number
+   * @generated
+   */
+  public Adapter createNumberAdapter()
   {
     return null;
   }

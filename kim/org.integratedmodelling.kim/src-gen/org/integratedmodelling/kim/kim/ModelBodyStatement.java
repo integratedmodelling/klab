@@ -8,11 +8,6 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.Documentation;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.Metadata;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Model Body Statement</b></em>'.
@@ -130,12 +125,12 @@ public interface ModelBodyStatement extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Number</em>' containment reference.
-   * @see #setNumber(org.integratedmodelling.kim.kdecl.Number)
+   * @see #setNumber(org.integratedmodelling.kim.kim.Number)
    * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Number()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kim.kdecl.Number getNumber();
+  org.integratedmodelling.kim.kim.Number getNumber();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getNumber <em>Number</em>}' containment reference.
@@ -145,7 +140,7 @@ public interface ModelBodyStatement extends EObject
    * @see #getNumber()
    * @generated
    */
-  void setNumber(org.integratedmodelling.kim.kdecl.Number value);
+  void setNumber(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Boolean</b></em>' attribute.
@@ -227,7 +222,7 @@ public interface ModelBodyStatement extends EObject
 
   /**
    * Returns the value of the '<em><b>Observables</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.ObservableSemantics}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Observables</em>' containment reference list isn't clear,
@@ -243,7 +238,7 @@ public interface ModelBodyStatement extends EObject
 
   /**
    * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.ObservableSemantics}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Dependencies</em>' containment reference list isn't clear,

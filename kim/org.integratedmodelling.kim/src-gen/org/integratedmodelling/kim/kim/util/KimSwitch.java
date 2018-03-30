@@ -9,7 +9,54 @@ import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.Switch;
 
-import org.integratedmodelling.kim.kim.*;
+import org.integratedmodelling.kim.kim.Action;
+import org.integratedmodelling.kim.kim.ActionSpecification;
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.ApplicableTarget;
+import org.integratedmodelling.kim.kim.AttributeIdentifier;
+import org.integratedmodelling.kim.kim.Classification;
+import org.integratedmodelling.kim.kim.Classifier;
+import org.integratedmodelling.kim.kim.ClassifierRHS;
+import org.integratedmodelling.kim.kim.ComputableValue;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ConceptStatement;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DocSelector;
+import org.integratedmodelling.kim.kim.Documentation;
+import org.integratedmodelling.kim.kim.Function;
+import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.IdentityRequirement;
+import org.integratedmodelling.kim.kim.Import;
+import org.integratedmodelling.kim.kim.KeyValuePair;
+import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.Literal;
+import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Model;
+import org.integratedmodelling.kim.kim.ModelBodyStatement;
+import org.integratedmodelling.kim.kim.ModelStatement;
+import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.ObserveStatement;
+import org.integratedmodelling.kim.kim.ObserveStatementBody;
+import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.REL_OPERATOR;
+import org.integratedmodelling.kim.kim.RestrictionDefinition;
+import org.integratedmodelling.kim.kim.RestrictionStatement;
+import org.integratedmodelling.kim.kim.Statement;
+import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.Unit;
+import org.integratedmodelling.kim.kim.UnitElement;
+import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
+import org.integratedmodelling.kim.kim.Urn;
+import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.kim.ValueAssignment;
 
 /**
  * <!-- begin-user-doc -->
@@ -225,6 +272,189 @@ public class KimSwitch<T> extends Switch<T>
       {
         ObserveStatementBody observeStatementBody = (ObserveStatementBody)theEObject;
         T result = caseObserveStatementBody(observeStatementBody);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.OBSERVABLE_SEMANTICS:
+      {
+        ObservableSemantics observableSemantics = (ObservableSemantics)theEObject;
+        T result = caseObservableSemantics(observableSemantics);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.CONCEPT_DECLARATION:
+      {
+        ConceptDeclaration conceptDeclaration = (ConceptDeclaration)theEObject;
+        T result = caseConceptDeclaration(conceptDeclaration);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.CONCEPT_REFERENCE:
+      {
+        ConceptReference conceptReference = (ConceptReference)theEObject;
+        T result = caseConceptReference(conceptReference);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.CONCEPT:
+      {
+        Concept concept = (Concept)theEObject;
+        T result = caseConcept(concept);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.UPPER_ONTOLOGY_DEFINITION:
+      {
+        UpperOntologyDefinition upperOntologyDefinition = (UpperOntologyDefinition)theEObject;
+        T result = caseUpperOntologyDefinition(upperOntologyDefinition);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.CONCEPT_STATEMENT:
+      {
+        ConceptStatement conceptStatement = (ConceptStatement)theEObject;
+        T result = caseConceptStatement(conceptStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.CONCEPT_STATEMENT_BODY:
+      {
+        ConceptStatementBody conceptStatementBody = (ConceptStatementBody)theEObject;
+        T result = caseConceptStatementBody(conceptStatementBody);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.APPLICABLE_TARGET:
+      {
+        ApplicableTarget applicableTarget = (ApplicableTarget)theEObject;
+        T result = caseApplicableTarget(applicableTarget);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.IDENTITY_REQUIREMENT:
+      {
+        IdentityRequirement identityRequirement = (IdentityRequirement)theEObject;
+        T result = caseIdentityRequirement(identityRequirement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.RESTRICTION_STATEMENT:
+      {
+        RestrictionStatement restrictionStatement = (RestrictionStatement)theEObject;
+        T result = caseRestrictionStatement(restrictionStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.RESTRICTION_DEFINITION:
+      {
+        RestrictionDefinition restrictionDefinition = (RestrictionDefinition)theEObject;
+        T result = caseRestrictionDefinition(restrictionDefinition);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.ANNOTATION:
+      {
+        Annotation annotation = (Annotation)theEObject;
+        T result = caseAnnotation(annotation);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.LIST:
+      {
+        List list = (List)theEObject;
+        T result = caseList(list);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.LITERAL:
+      {
+        Literal literal = (Literal)theEObject;
+        T result = caseLiteral(literal);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.METADATA:
+      {
+        Metadata metadata = (Metadata)theEObject;
+        T result = caseMetadata(metadata);
+        if (result == null) result = caseDocumentation(metadata);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.DOCUMENTATION:
+      {
+        Documentation documentation = (Documentation)theEObject;
+        T result = caseDocumentation(documentation);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.DOC_SELECTOR:
+      {
+        DocSelector docSelector = (DocSelector)theEObject;
+        T result = caseDocSelector(docSelector);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.KEY_VALUE_PAIR:
+      {
+        KeyValuePair keyValuePair = (KeyValuePair)theEObject;
+        T result = caseKeyValuePair(keyValuePair);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.PARAMETER_LIST:
+      {
+        ParameterList parameterList = (ParameterList)theEObject;
+        T result = caseParameterList(parameterList);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.VALUE:
+      {
+        Value value = (Value)theEObject;
+        T result = caseValue(value);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.FUNCTION:
+      {
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.UNIT_ELEMENT:
+      {
+        UnitElement unitElement = (UnitElement)theEObject;
+        T result = caseUnitElement(unitElement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.REL_OPERATOR:
+      {
+        REL_OPERATOR reL_OPERATOR = (REL_OPERATOR)theEObject;
+        T result = caseREL_OPERATOR(reL_OPERATOR);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.UNIT:
+      {
+        Unit unit = (Unit)theEObject;
+        T result = caseUnit(unit);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.CURRENCY:
+      {
+        Currency currency = (Currency)theEObject;
+        T result = caseCurrency(currency);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.NUMBER:
+      {
+        org.integratedmodelling.kim.kim.Number number = (org.integratedmodelling.kim.kim.Number)theEObject;
+        T result = caseNumber(number);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -580,6 +810,422 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseObserveStatementBody(ObserveStatementBody object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Observable Semantics</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Observable Semantics</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseObservableSemantics(ObservableSemantics object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Concept Declaration</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Concept Declaration</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConceptDeclaration(ConceptDeclaration object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Concept Reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Concept Reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConceptReference(ConceptReference object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Concept</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Concept</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConcept(Concept object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Upper Ontology Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Upper Ontology Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUpperOntologyDefinition(UpperOntologyDefinition object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Concept Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Concept Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConceptStatement(ConceptStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Concept Statement Body</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Concept Statement Body</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConceptStatementBody(ConceptStatementBody object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Applicable Target</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Applicable Target</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseApplicableTarget(ApplicableTarget object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Identity Requirement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Identity Requirement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIdentityRequirement(IdentityRequirement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Restriction Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Restriction Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRestrictionStatement(RestrictionStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Restriction Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Restriction Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRestrictionDefinition(RestrictionDefinition object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Annotation</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Annotation</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAnnotation(Annotation object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>List</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>List</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseList(List object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Literal</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Literal</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLiteral(Literal object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Metadata</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Metadata</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMetadata(Metadata object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Documentation</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Documentation</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDocumentation(Documentation object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Doc Selector</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Doc Selector</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDocSelector(DocSelector object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Key Value Pair</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Key Value Pair</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseKeyValuePair(KeyValuePair object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Parameter List</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Parameter List</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseParameterList(ParameterList object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Value</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Value</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseValue(Value object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Unit Element</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Unit Element</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUnitElement(UnitElement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>REL OPERATOR</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>REL OPERATOR</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseREL_OPERATOR(REL_OPERATOR object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Unit</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Unit</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUnit(Unit object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Currency</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Currency</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCurrency(Currency object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Number</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Number</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseNumber(org.integratedmodelling.kim.kim.Number object)
   {
     return null;
   }

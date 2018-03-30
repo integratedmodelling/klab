@@ -8,8 +8,6 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.Annotation;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Model Statement</b></em>'.
@@ -34,7 +32,7 @@ public interface ModelStatement extends EObject
 {
   /**
    * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.Annotation}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Annotation}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Annotations</em>' containment reference list isn't clear,

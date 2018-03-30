@@ -9,7 +9,7 @@ import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.integratedmodelling.kim.kdecl.Function;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.ui.contentassist.AbstractKimProposalProvider;
 import org.integratedmodelling.kim.ui.elink.ConceptHelper;
 import org.integratedmodelling.kim.ui.elink.FunctionParameterHelper;

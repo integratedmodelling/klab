@@ -13,58 +13,58 @@ import org.eclipse.xtext.Parameter;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.serializer.ISerializationContext;
 import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
+import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
-import org.integratedmodelling.kim.kdecl.Annotation;
-import org.integratedmodelling.kim.kdecl.ApplicableTarget;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-import org.integratedmodelling.kim.kdecl.ConceptReference;
-import org.integratedmodelling.kim.kdecl.ConceptStatement;
-import org.integratedmodelling.kim.kdecl.ConceptStatementBody;
-import org.integratedmodelling.kim.kdecl.Currency;
-import org.integratedmodelling.kim.kdecl.DocSelector;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.IdentityRequirement;
-import org.integratedmodelling.kim.kdecl.KdeclPackage;
-import org.integratedmodelling.kim.kdecl.KeyValuePair;
-import org.integratedmodelling.kim.kdecl.List;
-import org.integratedmodelling.kim.kdecl.Literal;
-import org.integratedmodelling.kim.kdecl.Metadata;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
-import org.integratedmodelling.kim.kdecl.ParameterList;
-import org.integratedmodelling.kim.kdecl.REL_OPERATOR;
-import org.integratedmodelling.kim.kdecl.RestrictionDefinition;
-import org.integratedmodelling.kim.kdecl.RestrictionStatement;
-import org.integratedmodelling.kim.kdecl.Unit;
-import org.integratedmodelling.kim.kdecl.UnitElement;
-import org.integratedmodelling.kim.kdecl.UpperOntologyDefinition;
-import org.integratedmodelling.kim.kdecl.Value;
 import org.integratedmodelling.kim.kim.ActionSpecification;
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.ApplicableTarget;
 import org.integratedmodelling.kim.kim.AttributeIdentifier;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ComputableValue;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ConceptStatement;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DocSelector;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
+import org.integratedmodelling.kim.kim.KeyValuePair;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.REL_OPERATOR;
+import org.integratedmodelling.kim.kim.RestrictionDefinition;
+import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.Unit;
+import org.integratedmodelling.kim.kim.UnitElement;
+import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 import org.integratedmodelling.kim.kim.Urn;
+import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 
 @SuppressWarnings("all")
-public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationSemanticSequencer {
+public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 
 	@Inject
 	private KimGrammarAccess grammarAccess;
@@ -75,143 +75,19 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 		ParserRule rule = context.getParserRule();
 		Action action = context.getAssignedAction();
 		Set<Parameter> parameters = context.getEnabledBooleanParameters();
-		if (epackage == KdeclPackage.eINSTANCE)
-			switch (semanticObject.eClass().getClassifierID()) {
-			case KdeclPackage.ANNOTATION:
-				sequence_Annotation(context, (Annotation) semanticObject); 
-				return; 
-			case KdeclPackage.APPLICABLE_TARGET:
-				sequence_ApplicableTarget(context, (ApplicableTarget) semanticObject); 
-				return; 
-			case KdeclPackage.CONCEPT:
-				sequence_Concept(context, (Concept) semanticObject); 
-				return; 
-			case KdeclPackage.CONCEPT_DECLARATION:
-				if (rule == grammarAccess.getConceptDeclarationRule()) {
-					sequence_ConceptDeclaration(context, (ConceptDeclaration) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getFactorRule()) {
-					sequence_ConceptDeclaration_Factor(context, (ConceptDeclaration) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getExpressionRule()
-						|| rule == grammarAccess.getTermRule()) {
-					sequence_ConceptDeclaration_Factor_Term(context, (ConceptDeclaration) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getSimpleConceptDeclarationRule()) {
-					sequence_SimpleConceptDeclaration(context, (ConceptDeclaration) semanticObject); 
-					return; 
-				}
-				else break;
-			case KdeclPackage.CONCEPT_REFERENCE:
-				sequence_ConceptReference(context, (ConceptReference) semanticObject); 
-				return; 
-			case KdeclPackage.CONCEPT_STATEMENT:
-				sequence_ConceptStatement(context, (ConceptStatement) semanticObject); 
-				return; 
-			case KdeclPackage.CONCEPT_STATEMENT_BODY:
-				if (rule == grammarAccess.getChildConceptRule()) {
-					sequence_ChildConcept_ConceptStatementBody(context, (ConceptStatementBody) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getConceptStatementBodyRule()) {
-					sequence_ConceptStatementBody(context, (ConceptStatementBody) semanticObject); 
-					return; 
-				}
-				else break;
-			case KdeclPackage.CURRENCY:
-				sequence_Currency(context, (Currency) semanticObject); 
-				return; 
-			case KdeclPackage.DOC_SELECTOR:
-				sequence_DocSelector(context, (DocSelector) semanticObject); 
-				return; 
-			case KdeclPackage.FUNCTION:
-				sequence_Function(context, (Function) semanticObject); 
-				return; 
-			case KdeclPackage.IDENTITY_REQUIREMENT:
-				sequence_IdentityRequirement(context, (IdentityRequirement) semanticObject); 
-				return; 
-			case KdeclPackage.KEY_VALUE_PAIR:
-				sequence_KeyValuePair(context, (KeyValuePair) semanticObject); 
-				return; 
-			case KdeclPackage.LIST:
-				sequence_List(context, (List) semanticObject); 
-				return; 
-			case KdeclPackage.LITERAL:
-				if (rule == grammarAccess.getLiteralOrIDRule()) {
-					sequence_LiteralOrID(context, (Literal) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getLiteralOrIdOrCommaRule()) {
-					sequence_LiteralOrIdOrComma(context, (Literal) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getLiteralRule()) {
-					sequence_Literal(context, (Literal) semanticObject); 
-					return; 
-				}
-				else break;
-			case KdeclPackage.METADATA:
-				if (rule == grammarAccess.getDocumentationRule()) {
-					sequence_Documentation(context, (Metadata) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getMetadataRule()) {
-					sequence_Metadata(context, (Metadata) semanticObject); 
-					return; 
-				}
-				else break;
-			case KdeclPackage.NUMBER:
-				sequence_Number(context, (org.integratedmodelling.kim.kdecl.Number) semanticObject); 
-				return; 
-			case KdeclPackage.OBSERVABLE_SEMANTICS:
-				if (rule == grammarAccess.getNamedObservableSemanticsRule()) {
-					sequence_NamedObservableSemantics(context, (ObservableSemantics) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getObservableSemanticsRule()) {
-					sequence_ObservableSemantics(context, (ObservableSemantics) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getSimpleObservableSemanticsRule()) {
-					sequence_SimpleObservableSemantics(context, (ObservableSemantics) semanticObject); 
-					return; 
-				}
-				else break;
-			case KdeclPackage.PARAMETER_LIST:
-				sequence_ParameterList(context, (ParameterList) semanticObject); 
-				return; 
-			case KdeclPackage.REL_OPERATOR:
-				sequence_REL_OPERATOR(context, (REL_OPERATOR) semanticObject); 
-				return; 
-			case KdeclPackage.RESTRICTION_DEFINITION:
-				sequence_RestrictionDefinition(context, (RestrictionDefinition) semanticObject); 
-				return; 
-			case KdeclPackage.RESTRICTION_STATEMENT:
-				sequence_RestrictionStatement(context, (RestrictionStatement) semanticObject); 
-				return; 
-			case KdeclPackage.UNIT:
-				sequence_Unit(context, (Unit) semanticObject); 
-				return; 
-			case KdeclPackage.UNIT_ELEMENT:
-				sequence_UnitElement(context, (UnitElement) semanticObject); 
-				return; 
-			case KdeclPackage.UPPER_ONTOLOGY_DEFINITION:
-				sequence_UpperOntologyDefinition(context, (UpperOntologyDefinition) semanticObject); 
-				return; 
-			case KdeclPackage.VALUE:
-				sequence_Value(context, (Value) semanticObject); 
-				return; 
-			}
-		else if (epackage == KimPackage.eINSTANCE)
+		if (epackage == KimPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
 			case KimPackage.ACTION:
 				sequence_Action(context, (org.integratedmodelling.kim.kim.Action) semanticObject); 
 				return; 
 			case KimPackage.ACTION_SPECIFICATION:
 				sequence_ActionSpecification(context, (ActionSpecification) semanticObject); 
+				return; 
+			case KimPackage.ANNOTATION:
+				sequence_Annotation(context, (Annotation) semanticObject); 
+				return; 
+			case KimPackage.APPLICABLE_TARGET:
+				sequence_ApplicableTarget(context, (ApplicableTarget) semanticObject); 
 				return; 
 			case KimPackage.ATTRIBUTE_IDENTIFIER:
 				sequence_AttributeIdentifier(context, (AttributeIdentifier) semanticObject); 
@@ -242,18 +118,98 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 					return; 
 				}
 				else break;
+			case KimPackage.CONCEPT:
+				sequence_Concept(context, (Concept) semanticObject); 
+				return; 
+			case KimPackage.CONCEPT_DECLARATION:
+				if (rule == grammarAccess.getConceptDeclarationRule()) {
+					sequence_ConceptDeclaration(context, (ConceptDeclaration) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getFactorRule()) {
+					sequence_ConceptDeclaration_Factor(context, (ConceptDeclaration) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExpressionRule()
+						|| rule == grammarAccess.getTermRule()) {
+					sequence_ConceptDeclaration_Factor_Term(context, (ConceptDeclaration) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSimpleConceptDeclarationRule()) {
+					sequence_SimpleConceptDeclaration(context, (ConceptDeclaration) semanticObject); 
+					return; 
+				}
+				else break;
+			case KimPackage.CONCEPT_REFERENCE:
+				sequence_ConceptReference(context, (ConceptReference) semanticObject); 
+				return; 
+			case KimPackage.CONCEPT_STATEMENT:
+				sequence_ConceptStatement(context, (ConceptStatement) semanticObject); 
+				return; 
+			case KimPackage.CONCEPT_STATEMENT_BODY:
+				if (rule == grammarAccess.getChildConceptRule()) {
+					sequence_ChildConcept_ConceptStatementBody(context, (ConceptStatementBody) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getConceptStatementBodyRule()) {
+					sequence_ConceptStatementBody(context, (ConceptStatementBody) semanticObject); 
+					return; 
+				}
+				else break;
 			case KimPackage.CONTEXTUALIZATION:
 				sequence_Contextualization(context, (Contextualization) semanticObject); 
+				return; 
+			case KimPackage.CURRENCY:
+				sequence_Currency(context, (Currency) semanticObject); 
+				return; 
+			case KimPackage.DOC_SELECTOR:
+				sequence_DocSelector(context, (DocSelector) semanticObject); 
+				return; 
+			case KimPackage.FUNCTION:
+				sequence_Function(context, (Function) semanticObject); 
 				return; 
 			case KimPackage.FUNCTION_OR_ID:
 				sequence_FunctionOrID(context, (FunctionOrID) semanticObject); 
 				return; 
+			case KimPackage.IDENTITY_REQUIREMENT:
+				sequence_IdentityRequirement(context, (IdentityRequirement) semanticObject); 
+				return; 
 			case KimPackage.IMPORT:
 				sequence_Import(context, (Import) semanticObject); 
 				return; 
+			case KimPackage.KEY_VALUE_PAIR:
+				sequence_KeyValuePair(context, (KeyValuePair) semanticObject); 
+				return; 
+			case KimPackage.LIST:
+				sequence_List(context, (List) semanticObject); 
+				return; 
+			case KimPackage.LITERAL:
+				if (rule == grammarAccess.getLiteralOrIDRule()) {
+					sequence_LiteralOrID(context, (Literal) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getLiteralOrIdOrCommaRule()) {
+					sequence_LiteralOrIdOrComma(context, (Literal) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getLiteralRule()) {
+					sequence_Literal(context, (Literal) semanticObject); 
+					return; 
+				}
+				else break;
 			case KimPackage.LOOKUP_TABLE:
 				sequence_LookupTable(context, (LookupTable) semanticObject); 
 				return; 
+			case KimPackage.METADATA:
+				if (rule == grammarAccess.getDocumentationRule()) {
+					sequence_Documentation(context, (Metadata) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getMetadataRule()) {
+					sequence_Metadata(context, (Metadata) semanticObject); 
+					return; 
+				}
+				else break;
 			case KimPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
 				return; 
@@ -266,6 +222,23 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 			case KimPackage.NAMESPACE:
 				sequence_Namespace(context, (Namespace) semanticObject); 
 				return; 
+			case KimPackage.NUMBER:
+				sequence_Number(context, (org.integratedmodelling.kim.kim.Number) semanticObject); 
+				return; 
+			case KimPackage.OBSERVABLE_SEMANTICS:
+				if (rule == grammarAccess.getNamedObservableSemanticsRule()) {
+					sequence_NamedObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getObservableSemanticsRule()) {
+					sequence_ObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSimpleObservableSemanticsRule()) {
+					sequence_SimpleObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
+				else break;
 			case KimPackage.OBSERVE_STATEMENT:
 				sequence_ObserveStatement(context, (ObserveStatement) semanticObject); 
 				return; 
@@ -275,14 +248,38 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 			case KimPackage.OWL_IMPORT:
 				sequence_OwlImport(context, (OwlImport) semanticObject); 
 				return; 
+			case KimPackage.PARAMETER_LIST:
+				sequence_ParameterList(context, (ParameterList) semanticObject); 
+				return; 
+			case KimPackage.REL_OPERATOR:
+				sequence_REL_OPERATOR(context, (REL_OPERATOR) semanticObject); 
+				return; 
+			case KimPackage.RESTRICTION_DEFINITION:
+				sequence_RestrictionDefinition(context, (RestrictionDefinition) semanticObject); 
+				return; 
+			case KimPackage.RESTRICTION_STATEMENT:
+				sequence_RestrictionStatement(context, (RestrictionStatement) semanticObject); 
+				return; 
 			case KimPackage.STATEMENT:
 				sequence_Statement(context, (Statement) semanticObject); 
 				return; 
 			case KimPackage.TABLE:
 				sequence_Table(context, (Table) semanticObject); 
 				return; 
+			case KimPackage.UNIT:
+				sequence_Unit(context, (Unit) semanticObject); 
+				return; 
+			case KimPackage.UNIT_ELEMENT:
+				sequence_UnitElement(context, (UnitElement) semanticObject); 
+				return; 
+			case KimPackage.UPPER_ONTOLOGY_DEFINITION:
+				sequence_UpperOntologyDefinition(context, (UpperOntologyDefinition) semanticObject); 
+				return; 
 			case KimPackage.URN:
 				sequence_Urn(context, (Urn) semanticObject); 
+				return; 
+			case KimPackage.VALUE:
+				sequence_Value(context, (Value) semanticObject); 
 				return; 
 			case KimPackage.VALUE_ASSIGNMENT:
 				if (rule == grammarAccess.getValueAssignmentRule()) {
@@ -345,12 +342,99 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	
 	/**
 	 * Contexts:
+	 *     Annotation returns Annotation
+	 *
+	 * Constraint:
+	 *     (name=ANNOTATION_ID parameters=ParameterList?)
+	 */
+	protected void sequence_Annotation(ISerializationContext context, Annotation semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ApplicableTarget returns ApplicableTarget
+	 *
+	 * Constraint:
+	 *     (target=ConceptDeclaration (linkFrom=ConceptDeclaration linkTo=ConceptDeclaration)?)
+	 */
+	protected void sequence_ApplicableTarget(ISerializationContext context, ApplicableTarget semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     AttributeIdentifier returns AttributeIdentifier
 	 *
 	 * Constraint:
 	 *     (name=LOWERCASE_ID | name=UPPERCASE_ID | function=Function | expression=EXPR)
 	 */
 	protected void sequence_AttributeIdentifier(ISerializationContext context, AttributeIdentifier semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ChildConcept returns ConceptStatementBody
+	 *
+	 * Constraint:
+	 *     (
+	 *         <unknown> 
+	 *         (
+	 *             (
+	 *                 annotations+=Annotation* 
+	 *                 abstract?='abstract'? 
+	 *                 (
+	 *                     root?='root' | 
+	 *                     (name=CAMELCASE_ID ((stringIdentifier=ID | stringIdentifier=STRING | intIdentifier=INT) (authority=UPPERCASE_ID | authority=UPPERCASE_PATH))?)
+	 *                 ) 
+	 *                 (
+	 *                     (
+	 *                         docstring=STRING | 
+	 *                         definedAuthority=UPPERCASE_PATH | 
+	 *                         upperConcept=Concept | 
+	 *                         describedQuality=ConceptDeclaration | 
+	 *                         describedProportionality=ConceptDeclaration | 
+	 *                         describedInverseProportionalityQuality=ConceptDeclaration | 
+	 *                         describedNonzeroQuality=ConceptDeclaration | 
+	 *                         classifiesQuality=ConceptDeclaration | 
+	 *                         discretizesQuality=ConceptDeclaration | 
+	 *                         inverse=ConceptDeclaration | 
+	 *                         restrictions+=RestrictionStatement | 
+	 *                         metadata=Metadata
+	 *                     )? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
+	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
+	 *                     (
+	 *                         roles+=ConceptDeclaration 
+	 *                         roles+=ConceptDeclaration* 
+	 *                         (targetObservables+=ConceptDeclaration targetObservables+=ConceptDeclaration*)? 
+	 *                         restrictedObservables+=ConceptDeclaration 
+	 *                         restrictedObservables+=ConceptDeclaration*
+	 *                     )? 
+	 *                     (
+	 *                         (coreConcept?='core' | alias?='equals')? 
+	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
+	 *                     )?
+	 *                 )+
+	 *             ) | 
+	 *             (abstract?='abstract'? name=CAMELCASE_ID)
+	 *         )
+	 *     )
+	 */
+	protected void sequence_ChildConcept_ConceptStatementBody(ISerializationContext context, ConceptStatementBody semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -426,6 +510,197 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	
 	/**
 	 * Contexts:
+	 *     ConceptDeclaration returns ConceptDeclaration
+	 *
+	 * Constraint:
+	 *     (
+	 *         name=STRING? 
+	 *         main+=Concept+ 
+	 *         (
+	 *             inherency=SimpleConceptDeclaration | 
+	 *             motivation=SimpleConceptDeclaration | 
+	 *             compresent=SimpleConceptDeclaration | 
+	 *             causant=SimpleConceptDeclaration | 
+	 *             adjacent=SimpleConceptDeclaration | 
+	 *             container=SimpleConceptDeclaration | 
+	 *             contained=SimpleConceptDeclaration | 
+	 *             caused=SimpleConceptDeclaration
+	 *         )* 
+	 *         context=SimpleConceptDeclaration?
+	 *     )
+	 */
+	protected void sequence_ConceptDeclaration(ISerializationContext context, ConceptDeclaration semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Factor returns ConceptDeclaration
+	 *
+	 * Constraint:
+	 *     (
+	 *         name=STRING? 
+	 *         main+=Concept+ 
+	 *         (
+	 *             inherency=SimpleConceptDeclaration | 
+	 *             motivation=SimpleConceptDeclaration | 
+	 *             compresent=SimpleConceptDeclaration | 
+	 *             causant=SimpleConceptDeclaration | 
+	 *             adjacent=SimpleConceptDeclaration | 
+	 *             container=SimpleConceptDeclaration | 
+	 *             contained=SimpleConceptDeclaration | 
+	 *             caused=SimpleConceptDeclaration
+	 *         )* 
+	 *         context=SimpleConceptDeclaration? 
+	 *         ((operators+='and' | operators+='follows') operands+=Term)*
+	 *     )
+	 */
+	protected void sequence_ConceptDeclaration_Factor(ISerializationContext context, ConceptDeclaration semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns ConceptDeclaration
+	 *     Term returns ConceptDeclaration
+	 *
+	 * Constraint:
+	 *     (
+	 *         name=STRING? 
+	 *         main+=Concept+ 
+	 *         (
+	 *             inherency=SimpleConceptDeclaration | 
+	 *             motivation=SimpleConceptDeclaration | 
+	 *             compresent=SimpleConceptDeclaration | 
+	 *             causant=SimpleConceptDeclaration | 
+	 *             adjacent=SimpleConceptDeclaration | 
+	 *             container=SimpleConceptDeclaration | 
+	 *             contained=SimpleConceptDeclaration | 
+	 *             caused=SimpleConceptDeclaration
+	 *         )* 
+	 *         context=SimpleConceptDeclaration? 
+	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
+	 *         (operators+='or' operands+=Factor)*
+	 *     )
+	 */
+	protected void sequence_ConceptDeclaration_Factor_Term(ISerializationContext context, ConceptDeclaration semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ConceptReference returns ConceptReference
+	 *
+	 * Constraint:
+	 *     (
+	 *         name=CAMELCASE_ID | 
+	 *         name=NamespaceId | 
+	 *         (
+	 *             (templateType='${' | templateType='#{') 
+	 *             (
+	 *                 (name='context' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='inherent' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='compresent' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='adjacent' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='container' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='contained' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='purpose' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='causant' (type=CONCEPT_TYPE | extends=Concept)) | 
+	 *                 (name='caused' (type=CONCEPT_TYPE | extends=Concept))
+	 *             ) 
+	 *             template?='}'
+	 *         )
+	 *     )
+	 */
+	protected void sequence_ConceptReference(ISerializationContext context, ConceptReference semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ConceptStatementBody returns ConceptStatementBody
+	 *
+	 * Constraint:
+	 *     (
+	 *         <unknown> 
+	 *         annotations+=Annotation* 
+	 *         abstract?='abstract'? 
+	 *         (
+	 *             root?='root' | 
+	 *             (name=CAMELCASE_ID ((stringIdentifier=ID | stringIdentifier=STRING | intIdentifier=INT) (authority=UPPERCASE_ID | authority=UPPERCASE_PATH))?)
+	 *         )
+	 *     )
+	 */
+	protected void sequence_ConceptStatementBody(ISerializationContext context, ConceptStatementBody semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ConceptStatement returns ConceptStatement
+	 *
+	 * Constraint:
+	 *     (
+	 *         annotations+=Annotation* 
+	 *         (
+	 *             (
+	 *                 abstract?='abstract' | 
+	 *                 deniable?='deniable' | 
+	 *                 subjective?='subjective' | 
+	 *                 agentSpecifier='deliberative' | 
+	 *                 agentSpecifier='interactive' | 
+	 *                 agentSpecifier='reactive'
+	 *             )? 
+	 *             (propertySpecifiers+=PROPERTY_TYPE propertySpecifiers+=PROPERTY_TYPE*)?
+	 *         )+ 
+	 *         concept=CONCEPT_TYPE 
+	 *         body=ConceptStatementBody 
+	 *         name=NamespaceId?
+	 *     )
+	 */
+	protected void sequence_ConceptStatement(ISerializationContext context, ConceptStatement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Concept returns Concept
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (negated?='not' | negated?='no')? 
+	 *             name=ConceptReference 
+	 *             ((stringIdentifier=ID | stringIdentifier=STRING | intIdentifier=INT) (authority=UPPERCASE_ID | authority=UPPERCASE_PATH))?
+	 *         ) | 
+	 *         (presence?='presence' concept=SimpleConceptDeclaration) | 
+	 *         (count?='count' concept=SimpleConceptDeclaration) | 
+	 *         (distance?='distance' concept=SimpleConceptDeclaration) | 
+	 *         (probability?='probability' concept=SimpleConceptDeclaration) | 
+	 *         (assessment?='assessment' concept=SimpleConceptDeclaration) | 
+	 *         (uncertainty?='uncertainty' concept=SimpleConceptDeclaration) | 
+	 *         (type?='type' concept=SimpleConceptDeclaration) | 
+	 *         (observability?='observability' concept=SimpleConceptDeclaration) | 
+	 *         (proportion?='proportion' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
+	 *         (ratio?='ratio' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration) | 
+	 *         (value?='value' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
+	 *         (occurrence?='occurrence' concept=SimpleConceptDeclaration) | 
+	 *         declaration=Expression
+	 *     )
+	 */
+	protected void sequence_Concept(ISerializationContext context, Concept semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Contextualization returns Contextualization
 	 *
 	 * Constraint:
@@ -437,6 +712,42 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	 *     )
 	 */
 	protected void sequence_Contextualization(ISerializationContext context, Contextualization semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Currency returns Currency
+	 *
+	 * Constraint:
+	 *     ((id=UPPERCASE_ID year=INT) | concept=CAMELCASE_ID | concept=NamespaceId)
+	 */
+	protected void sequence_Currency(ISerializationContext context, Currency semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     DocSelector returns DocSelector
+	 *
+	 * Constraint:
+	 *     (id=PropertyId | definition?='definition' | initialization?='initialization' | termination?='termination' | transition?='transition')
+	 */
+	protected void sequence_DocSelector(ISerializationContext context, DocSelector semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Documentation returns Metadata
+	 *
+	 * Constraint:
+	 *     (selectors+=DocSelector values+=LiteralOrID)*
+	 */
+	protected void sequence_Documentation(ISerializationContext context, Metadata semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -467,6 +778,30 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	
 	/**
 	 * Contexts:
+	 *     Function returns Function
+	 *
+	 * Constraint:
+	 *     (name=PathName parameters=ParameterList?)
+	 */
+	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     IdentityRequirement returns IdentityRequirement
+	 *
+	 * Constraint:
+	 *     ((identities+=ConceptDeclaration identities+=ConceptDeclaration*) | authority=UPPERCASE_ID | authority=UPPERCASE_PATH)
+	 */
+	protected void sequence_IdentityRequirement(ISerializationContext context, IdentityRequirement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Import returns Import
 	 *
 	 * Constraint:
@@ -479,12 +814,92 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	
 	/**
 	 * Contexts:
+	 *     KeyValuePair returns KeyValuePair
+	 *
+	 * Constraint:
+	 *     ((name=LOWERCASE_ID | name=PathName) interactive?='?='? value=Value)
+	 */
+	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     List returns List
+	 *
+	 * Constraint:
+	 *     contents+=Value*
+	 */
+	protected void sequence_List(ISerializationContext context, List semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     LiteralOrID returns Literal
+	 *
+	 * Constraint:
+	 *     (number=Number | string=STRING | boolean='true' | boolean='false' | id=ID)
+	 */
+	protected void sequence_LiteralOrID(ISerializationContext context, Literal semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     LiteralOrIdOrComma returns Literal
+	 *
+	 * Constraint:
+	 *     (
+	 *         (from=Number to=Number) | 
+	 *         number=Number | 
+	 *         string=STRING | 
+	 *         boolean='true' | 
+	 *         boolean='false' | 
+	 *         id=ID | 
+	 *         comma?=','
+	 *     )
+	 */
+	protected void sequence_LiteralOrIdOrComma(ISerializationContext context, Literal semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Literal returns Literal
+	 *
+	 * Constraint:
+	 *     ((from=Number to=Number) | number=Number | string=STRING | boolean='true' | boolean='false')
+	 */
+	protected void sequence_Literal(ISerializationContext context, Literal semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     LookupTable returns LookupTable
 	 *
 	 * Constraint:
 	 *     ((args+=LOWERCASE_ID | args+='?') args+=LOWERCASE_ID? (args+='?'? args+=LOWERCASE_ID?)* (table=Table | ref=LOWERCASE_ID))
 	 */
 	protected void sequence_LookupTable(ISerializationContext context, LookupTable semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Metadata returns Metadata
+	 *
+	 * Constraint:
+	 *     ((ids+=LOWERCASE_ID | ids+=PropertyId) (values+=LiteralOrID | values+=Metadata | values+=List))*
+	 */
+	protected void sequence_Metadata(ISerializationContext context, Metadata semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -534,9 +949,21 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	 *     Model returns Model
 	 *
 	 * Constraint:
-	 *     ((namespace=Namespace statements+=Statement+) | statements+=Statement+)?
+	 *     (observable=ObservableSemantics | (namespace=Namespace statements+=Statement+) | statements+=Statement+)?
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     NamedObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (declaration=ConceptDeclaration (name=LOWERCASE_ID | name=LOWERCASE_DASHID))
+	 */
+	protected void sequence_NamedObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -571,6 +998,49 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	 *     )
 	 */
 	protected void sequence_Namespace(ISerializationContext context, Namespace semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Number returns Number
+	 *
+	 * Constraint:
+	 *     (negative?='-'? real=INT (decimal?='.' decimalPart=INT)? ((exponential?='e' | exponential?='E') expNegative?='-'? exp=INT)?)
+	 */
+	protected void sequence_Number(ISerializationContext context, org.integratedmodelling.kim.kim.Number semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (
+	 *         value=Value? 
+	 *         generic?='any'? 
+	 *         declaration=ConceptDeclaration 
+	 *         (
+	 *             (
+	 *                 by=Concept | 
+	 *                 downTo=CAMELCASE_ID | 
+	 *                 downTo=NamespaceId | 
+	 *                 role=Concept | 
+	 *                 accordingTo=PropertyId | 
+	 *                 unit=Unit | 
+	 *                 currency=Currency | 
+	 *                 unit=Unit | 
+	 *                 optional?='optional' | 
+	 *                 name=LOWERCASE_ID
+	 *             )? 
+	 *             (from=Number to=Number)?
+	 *         )+
+	 *     )
+	 */
+	protected void sequence_ObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -637,6 +1107,120 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	
 	/**
 	 * Contexts:
+	 *     ParameterList returns ParameterList
+	 *
+	 * Constraint:
+	 *     (singleValue=Value | (pairs+=KeyValuePair pairs+=KeyValuePair*))
+	 */
+	protected void sequence_ParameterList(ISerializationContext context, ParameterList semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     REL_OPERATOR returns REL_OPERATOR
+	 *
+	 * Constraint:
+	 *     (
+	 *         gt?='>' | 
+	 *         lt?='<' | 
+	 *         eq?='=' | 
+	 *         ne?='!=' | 
+	 *         le?='<=' | 
+	 *         ge?='>='
+	 *     )
+	 */
+	protected void sequence_REL_OPERATOR(ISerializationContext context, REL_OPERATOR semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     RestrictionDefinition returns RestrictionDefinition
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (only?='only' | none?='no' | ((exactly?='exactly' | atLeast?='least' | atMost?='most') howmany=INT))? 
+	 *             (source=ConceptDeclaration | dataType=DataType) 
+	 *             traitType=ConceptDeclaration? 
+	 *             subject=ConceptDeclaration?
+	 *         ) | 
+	 *         (value=Literal maxValue=Number? property=PropertyId)
+	 *     )
+	 */
+	protected void sequence_RestrictionDefinition(ISerializationContext context, RestrictionDefinition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     RestrictionStatement returns RestrictionStatement
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (relType='uses' | relType='has' | relType='contains' | relType='implies') 
+	 *             definitions+=RestrictionDefinition 
+	 *             definitions+=RestrictionDefinition*
+	 *         ) | 
+	 *         (
+	 *             (authorities+=UPPERCASE_ID | authorities+=UPPERCASE_PATH) 
+	 *             authorities+=UPPERCASE_ID? 
+	 *             (authorities+=UPPERCASE_PATH? authorities+=UPPERCASE_ID?)*
+	 *         ) | 
+	 *         (value=Literal literal?='for' (subject=CAMELCASE_ID | subject=NamespaceId))
+	 *     )
+	 */
+	protected void sequence_RestrictionStatement(ISerializationContext context, RestrictionStatement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SimpleConceptDeclaration returns ConceptDeclaration
+	 *
+	 * Constraint:
+	 *     (name=STRING? main+=Concept+)
+	 */
+	protected void sequence_SimpleConceptDeclaration(ISerializationContext context, ConceptDeclaration semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SimpleObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (
+	 *         declaration=ConceptDeclaration 
+	 *         (
+	 *             (
+	 *                 by=Concept | 
+	 *                 downTo=CAMELCASE_ID | 
+	 *                 downTo=NamespaceId | 
+	 *                 accordingTo=PropertyId | 
+	 *                 unit=Unit | 
+	 *                 currency=Currency | 
+	 *                 unit=Unit | 
+	 *                 name=LOWERCASE_ID
+	 *             )? 
+	 *             (from=Number to=Number)?
+	 *         )+
+	 *     )
+	 */
+	protected void sequence_SimpleObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
@@ -690,6 +1274,51 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	
 	/**
 	 * Contexts:
+	 *     UnitElement returns UnitElement
+	 *
+	 * Constraint:
+	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | num=Number | unit=Unit)
+	 */
+	protected void sequence_UnitElement(ISerializationContext context, UnitElement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Unit returns Unit
+	 *
+	 * Constraint:
+	 *     (root=UnitElement? (connectors+=UnitOp units+=UnitElement)*)
+	 */
+	protected void sequence_Unit(ISerializationContext context, Unit semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     UpperOntologyDefinition returns UpperOntologyDefinition
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (
+	 *                 ((agentSpecifier='deliberative' | agentSpecifier='interactive' | agentSpecifier='reactive') concept='agent') | 
+	 *                 (propertySpecifiers+=PROPERTY_TYPE propertySpecifiers+=PROPERTY_TYPE* concept='relationship')
+	 *             )? 
+	 *             (coreconcept=NamespaceId | coreconcept=PropertyId)
+	 *         ) | 
+	 *         (operand=OPERATOR_TARGET (property=PropertyId | property=NamespaceId))
+	 *     )
+	 */
+	protected void sequence_UpperOntologyDefinition(ISerializationContext context, UpperOntologyDefinition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Urn returns Urn
 	 *
 	 * Constraint:
@@ -720,6 +1349,28 @@ public abstract class AbstractKimSemanticSequencer extends KnowledgeDeclarationS
 	 *     (execValue=ExecutableValue target=LOWERCASE_ID?)
 	 */
 	protected void sequence_ValueExecution(ISerializationContext context, ValueAssignment semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Value returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         literal=LiteralOrIdOrComma | 
+	 *         function=Function | 
+	 *         expr=EXPR | 
+	 *         id=LOWERCASE_ID | 
+	 *         id=UPPERCASE_ID | 
+	 *         id=CAMELCASE_ID | 
+	 *         list=List | 
+	 *         map=Metadata | 
+	 *         null?='unknown'
+	 *     )
+	 */
+	protected void sequence_Value(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

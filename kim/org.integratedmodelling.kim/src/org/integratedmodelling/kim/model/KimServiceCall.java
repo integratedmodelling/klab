@@ -3,11 +3,12 @@ package org.integratedmodelling.kim.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.KeyValuePair;
+import org.integratedmodelling.kim.kim.Function;
+import org.integratedmodelling.kim.kim.KeyValuePair;
 import org.integratedmodelling.kim.utils.Escape;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;

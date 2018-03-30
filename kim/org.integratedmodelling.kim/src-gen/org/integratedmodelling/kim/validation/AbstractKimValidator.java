@@ -7,12 +7,13 @@ package org.integratedmodelling.kim.validation;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 
-public abstract class AbstractKimValidator extends KnowledgeDeclarationValidator {
+public abstract class AbstractKimValidator extends AbstractDeclarativeValidator {
 	
 	@Override
 	protected List<EPackage> getEPackages() {
-		List<EPackage> result = new ArrayList<EPackage>(super.getEPackages());
+		List<EPackage> result = new ArrayList<EPackage>();
 		result.add(org.integratedmodelling.kim.kim.KimPackage.eINSTANCE);
 		return result;
 	}

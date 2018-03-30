@@ -10,24 +10,24 @@ import org.eclipse.xtext.testing.XtextRunner;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.InputOutput;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
-import org.integratedmodelling.kim.tests.KnowledgeDeclarationInjectorProvider;
+import org.integratedmodelling.kim.tests.KimInjectorProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
-@InjectWith(KnowledgeDeclarationInjectorProvider.class)
+@InjectWith(KimInjectorProvider.class)
 @SuppressWarnings("all")
 public class KnowledgeDeclarationParsingTest {
   @Inject
-  private ParseHelper<ObservableSemantics> parseHelper;
+  private ParseHelper<Model> parseHelper;
   
-  private static String[] testsOK = { "im:Potential ratio of (not im:Large) infrastructure:City to infrastructure:City within earth:Region", "im:Normalized geography:Slope", "count of (im:Tall infrastructure:Building) per m^2", "count of im:Tall infrastructure:Building per m^2", "count of im:Slope", "geography:Slope", "im:SlopeCamel", "geography:SlopeCamel", "im:Normalized geography:SlopeCamel identified as 2122 by GBIF.SPECIES", "im:Normalized geography:Slope named normslope", "(not im:Normalized) geography:Slope", "im:Normalized im:Slope", "im:Potential presence of (not im:Large) infrastructure:City", "count of infrastructure:Building per km^2", "im:Normalized count of im:Tall infrastructure:Building per m^2 1 to 20", "(not im:Normalized) im:Height of materials:Concrete infrastructure:Building in m", "im:Normalized im:Height of materials:Concrete infrastructure:Building in m", "im:Normalized count of (not im:Tall) (materials:Concrete infrastructure:Building) within im:Small infrastructure:City per km^2 by im:Level" };
+  private static String[] testsOK = { "im:Normalized geography:Slope", "count of (im:Tall infrastructure:Building) per m^2", "count of im:Tall infrastructure:Building per m^2", "count of im:Slope", "geography:Slope", "im:SlopeCamel", "geography:SlopeCamel", "im:Normalized geography:SlopeCamel identified as 2122 by GBIF.SPECIES", "im:Normalized geography:Slope named normslope", "(not im:Normalized) geography:Slope", "im:Normalized im:Slope", "im:Potential presence of (not im:Large) infrastructure:City", "count of infrastructure:Building per km^2", "im:Normalized count of im:Tall infrastructure:Building per m^2 1 to 20", "(not im:Normalized) im:Height of materials:Concrete infrastructure:Building in m", "im:Normalized im:Height of materials:Concrete infrastructure:Building in m", "im:Normalized count of (not im:Tall) (materials:Concrete infrastructure:Building) within im:Small infrastructure:City per km^2 by im:Level" };
   
-  private static String[] testsBAD = { "count of slope", "geography:slope", "slopeCamel", "im:Potential presence (not im:Large) infrastructure:City" };
+  private static String[] testsBAD = { "count of slope", "geography:slope", "slopeCamel" };
   
   @Test
   public void testGrouping() {
@@ -45,11 +45,11 @@ public class KnowledgeDeclarationParsingTest {
     try {
       for (final String test : KnowledgeDeclarationParsingTest.testsOK) {
         {
-          final ObservableSemantics result1 = this.parseHelper.parse(test);
-          KimObservable observable = Kim.INSTANCE.declareObservable(result1);
+          final Model result1 = this.parseHelper.parse(test);
+          KimObservable observable = Kim.INSTANCE.declareObservable(result1.getObservable());
           final String obstring = observable.toString();
-          final ObservableSemantics result2 = this.parseHelper.parse(obstring);
-          observable = Kim.INSTANCE.declareObservable(result2);
+          final Model result2 = this.parseHelper.parse(obstring);
+          observable = Kim.INSTANCE.declareObservable(result2.getObservable());
           Assert.assertEquals(observable.toString(), obstring);
         }
       }
@@ -63,16 +63,16 @@ public class KnowledgeDeclarationParsingTest {
     try {
       for (final String test : KnowledgeDeclarationParsingTest.testsOK) {
         {
-          final ObservableSemantics result = this.parseHelper.parse(test);
-          final KimObservable observable = Kim.INSTANCE.declareObservable(result);
+          final Model result = this.parseHelper.parse(test);
+          final KimObservable observable = Kim.INSTANCE.declareObservable(result.getObservable());
           Assert.assertNotNull(observable);
           InputOutput.<String>println(observable.getDefinition());
         }
       }
       for (final String test_1 : KnowledgeDeclarationParsingTest.testsBAD) {
         {
-          final ObservableSemantics result = this.parseHelper.parse(test_1);
-          final KimObservable observable = Kim.INSTANCE.declareObservable(result);
+          final Model result = this.parseHelper.parse(test_1);
+          final KimObservable observable = Kim.INSTANCE.declareObservable(result.getObservable());
           Assert.assertNull(observable);
         }
       }
@@ -83,8 +83,8 @@ public class KnowledgeDeclarationParsingTest {
   
   public boolean isEquivalent(final String d1, final String d2) {
     try {
-      final KimObservable obs1 = Kim.INSTANCE.declareObservable(this.parseHelper.parse(d1));
-      final KimObservable obs2 = Kim.INSTANCE.declareObservable(this.parseHelper.parse(d2));
+      final KimObservable obs1 = Kim.INSTANCE.declareObservable(this.parseHelper.parse(d1).getObservable());
+      final KimObservable obs2 = Kim.INSTANCE.declareObservable(this.parseHelper.parse(d2).getObservable());
       return obs1.equals(obs2);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);

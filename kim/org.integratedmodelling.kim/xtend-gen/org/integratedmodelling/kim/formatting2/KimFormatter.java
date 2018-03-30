@@ -8,21 +8,24 @@ import com.google.inject.Inject;
 import java.util.Arrays;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.formatting2.AbstractFormatter2;
 import org.eclipse.xtext.formatting2.IFormattableDocument;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.integratedmodelling.kim.formatting2.KnowledgeDeclarationFormatter;
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-import org.integratedmodelling.kim.kdecl.ConceptStatement;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ConceptStatement;
+import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Statement;
+import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 
 @SuppressWarnings("all")
-public class KimFormatter extends KnowledgeDeclarationFormatter {
+public class KimFormatter extends AbstractFormatter2 {
   @Inject
   @Extension
   private KimGrammarAccess _kimGrammarAccess;
@@ -40,34 +43,52 @@ public class KimFormatter extends KnowledgeDeclarationFormatter {
     document.<ModelStatement>format(statement.getModelStatement());
   }
   
-  public void format(final Object model, final IFormattableDocument document) {
-    if (model instanceof XtextResource) {
-      _format((XtextResource)model, document);
+  protected void _format(final ObservableSemantics observableSemantics, @Extension final IFormattableDocument document) {
+    document.<ConceptDeclaration>format(observableSemantics.getDeclaration());
+    document.<Concept>format(observableSemantics.getBy());
+    document.<Unit>format(observableSemantics.getUnit());
+    document.<Currency>format(observableSemantics.getCurrency());
+    document.<org.integratedmodelling.kim.kim.Number>format(observableSemantics.getFrom());
+    document.<org.integratedmodelling.kim.kim.Number>format(observableSemantics.getTo());
+  }
+  
+  protected void _format(final ConceptDeclaration conceptDeclaration, @Extension final IFormattableDocument document) {
+    EList<Concept> _main = conceptDeclaration.getMain();
+    for (final Concept concept : _main) {
+      document.<Concept>format(concept);
+    }
+    document.<ConceptDeclaration>format(conceptDeclaration.getInherency());
+    document.<ConceptDeclaration>format(conceptDeclaration.getContext());
+  }
+  
+  public void format(final Object conceptDeclaration, final IFormattableDocument document) {
+    if (conceptDeclaration instanceof XtextResource) {
+      _format((XtextResource)conceptDeclaration, document);
       return;
-    } else if (model instanceof ConceptDeclaration) {
-      _format((ConceptDeclaration)model, document);
+    } else if (conceptDeclaration instanceof ConceptDeclaration) {
+      _format((ConceptDeclaration)conceptDeclaration, document);
       return;
-    } else if (model instanceof ObservableSemantics) {
-      _format((ObservableSemantics)model, document);
+    } else if (conceptDeclaration instanceof Model) {
+      _format((Model)conceptDeclaration, document);
       return;
-    } else if (model instanceof Model) {
-      _format((Model)model, document);
+    } else if (conceptDeclaration instanceof ObservableSemantics) {
+      _format((ObservableSemantics)conceptDeclaration, document);
       return;
-    } else if (model instanceof Statement) {
-      _format((Statement)model, document);
+    } else if (conceptDeclaration instanceof Statement) {
+      _format((Statement)conceptDeclaration, document);
       return;
-    } else if (model instanceof EObject) {
-      _format((EObject)model, document);
+    } else if (conceptDeclaration instanceof EObject) {
+      _format((EObject)conceptDeclaration, document);
       return;
-    } else if (model == null) {
+    } else if (conceptDeclaration == null) {
       _format((Void)null, document);
       return;
-    } else if (model != null) {
-      _format(model, document);
+    } else if (conceptDeclaration != null) {
+      _format(conceptDeclaration, document);
       return;
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
-        Arrays.<Object>asList(model, document).toString());
+        Arrays.<Object>asList(conceptDeclaration, document).toString());
     }
   }
 }

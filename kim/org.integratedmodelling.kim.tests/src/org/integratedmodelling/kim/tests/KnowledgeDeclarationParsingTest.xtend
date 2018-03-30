@@ -8,21 +8,20 @@ import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.integratedmodelling.kim.kdecl.ObservableSemantics
+import org.integratedmodelling.kim.kim.Model
 import org.integratedmodelling.kim.model.Kim
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
-@InjectWith(KnowledgeDeclarationInjectorProvider)
+@InjectWith(KimInjectorProvider)
 class KnowledgeDeclarationParsingTest {
 
 	@Inject
-	ParseHelper<ObservableSemantics> parseHelper
+	ParseHelper<Model> parseHelper
 
 	static String[] testsOK = #[
-		'im:Potential ratio of (not im:Large) infrastructure:City to infrastructure:City within earth:Region',
 		'im:Normalized geography:Slope',
 		'count of (im:Tall infrastructure:Building) per m^2',
 		'count of im:Tall infrastructure:Building per m^2',
@@ -45,8 +44,8 @@ class KnowledgeDeclarationParsingTest {
 	static String[] testsBAD = #[
 		'count of slope',
 		'geography:slope',
-		'slopeCamel',
-		'im:Potential presence (not im:Large) infrastructure:City'
+		'slopeCamel'//,
+//		'im:Potential presence (not im:Large) infrastructure:City'
 	]
 
 	@Test
@@ -71,10 +70,10 @@ class KnowledgeDeclarationParsingTest {
 
 		for (String test : testsOK) {
 			val result1 = parseHelper.parse(test);
-			var observable = Kim.INSTANCE.declareObservable(result1);
+			var observable = Kim.INSTANCE.declareObservable(result1.observable);
 			val obstring = observable.toString();
 			val result2 = parseHelper.parse(obstring);
-			observable = Kim.INSTANCE.declareObservable(result2);
+			observable = Kim.INSTANCE.declareObservable(result2.observable);
 			Assert.assertEquals(observable.toString(), obstring);
 		}
 	}
@@ -84,21 +83,21 @@ class KnowledgeDeclarationParsingTest {
 
 		for (String test : testsOK) {
 			val result = parseHelper.parse(test)
-			val observable = Kim.INSTANCE.declareObservable(result);
+			val observable = Kim.INSTANCE.declareObservable(result.observable);
 			Assert.assertNotNull(observable)
 			println(observable.getDefinition())
 		}
 		for (String test : testsBAD) {
 			val result = parseHelper.parse(test)
-			val observable = Kim.INSTANCE.declareObservable(result);
+			val observable = Kim.INSTANCE.declareObservable(result.observable);
 			Assert.assertNull(observable)
 		}
 	}
 
 	def boolean isEquivalent(String d1, String d2) {
 
-		val obs1 = Kim.INSTANCE.declareObservable(parseHelper.parse(d1));
-		val obs2 = Kim.INSTANCE.declareObservable(parseHelper.parse(d2));
+		val obs1 = Kim.INSTANCE.declareObservable(parseHelper.parse(d1).observable);
+		val obs2 = Kim.INSTANCE.declareObservable(parseHelper.parse(d2).observable);
 
 		return obs1.equals(obs2);
 	}

@@ -32,6 +32,7 @@ public class KimParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
+					put(grammarAccess.getModelAccess().getAlternatives(), "rule__Model__Alternatives");
 					put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
 					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_1_0(), "rule__ModelBodyStatement__Alternatives_1_0");
 					put(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_3_0(), "rule__ModelBodyStatement__BooleanAlternatives_1_0_3_0");
@@ -175,7 +176,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getVersionNumberAccess().getAlternatives_3(), "rule__VersionNumber__Alternatives_3");
 					put(grammarAccess.getDataTypeAccess().getAlternatives(), "rule__DataType__Alternatives");
 					put(grammarAccess.getUnitOpAccess().getAlternatives(), "rule__UnitOp__Alternatives");
-					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
+					put(grammarAccess.getModelAccess().getGroup_1(), "rule__Model__Group_1__0");
 					put(grammarAccess.getStatementAccess().getGroup_0(), "rule__Statement__Group_0__0");
 					put(grammarAccess.getStatementAccess().getGroup_1(), "rule__Statement__Group_1__0");
 					put(grammarAccess.getStatementAccess().getGroup_2(), "rule__Statement__Group_2__0");
@@ -463,8 +464,9 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getVersionNumberAccess().getGroup(), "rule__VersionNumber__Group__0");
 					put(grammarAccess.getVersionNumberAccess().getGroup_1(), "rule__VersionNumber__Group_1__0");
 					put(grammarAccess.getVersionNumberAccess().getGroup_1_2(), "rule__VersionNumber__Group_1_2__0");
-					put(grammarAccess.getModelAccess().getNamespaceAssignment_0(), "rule__Model__NamespaceAssignment_0");
-					put(grammarAccess.getModelAccess().getStatementsAssignment_1(), "rule__Model__StatementsAssignment_1");
+					put(grammarAccess.getModelAccess().getObservableAssignment_0(), "rule__Model__ObservableAssignment_0");
+					put(grammarAccess.getModelAccess().getNamespaceAssignment_1_0(), "rule__Model__NamespaceAssignment_1_0");
+					put(grammarAccess.getModelAccess().getStatementsAssignment_1_1(), "rule__Model__StatementsAssignment_1_1");
 					put(grammarAccess.getStatementAccess().getConceptStatementAssignment_0_0(), "rule__Statement__ConceptStatementAssignment_0_0");
 					put(grammarAccess.getStatementAccess().getModelStatementAssignment_1_0(), "rule__Statement__ModelStatementAssignment_1_0");
 					put(grammarAccess.getStatementAccess().getUpperOntologyStatementAssignment_2_0(), "rule__Statement__UpperOntologyStatementAssignment_2_0");

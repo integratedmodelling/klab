@@ -5,11 +5,12 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;

@@ -20,15 +20,14 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kim.kdecl.Documentation;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.Metadata;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
-
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Documentation;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Urn;
 
 /**
@@ -106,7 +105,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    * @ordered
    */
-  protected org.integratedmodelling.kim.kdecl.Number number;
+  protected org.integratedmodelling.kim.kim.Number number;
 
   /**
    * The default value of the '{@link #getBoolean() <em>Boolean</em>}' attribute.
@@ -363,7 +362,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public org.integratedmodelling.kim.kdecl.Number getNumber()
+  public org.integratedmodelling.kim.kim.Number getNumber()
   {
     return number;
   }
@@ -373,9 +372,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetNumber(org.integratedmodelling.kim.kdecl.Number newNumber, NotificationChain msgs)
+  public NotificationChain basicSetNumber(org.integratedmodelling.kim.kim.Number newNumber, NotificationChain msgs)
   {
-    org.integratedmodelling.kim.kdecl.Number oldNumber = number;
+    org.integratedmodelling.kim.kim.Number oldNumber = number;
     number = newNumber;
     if (eNotificationRequired())
     {
@@ -390,7 +389,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setNumber(org.integratedmodelling.kim.kdecl.Number newNumber)
+  public void setNumber(org.integratedmodelling.kim.kim.Number newNumber)
   {
     if (newNumber != number)
     {
@@ -747,7 +746,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         setFunction((Function)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
-        setNumber((org.integratedmodelling.kim.kdecl.Number)newValue);
+        setNumber((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         setBoolean((String)newValue);
@@ -804,7 +803,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         setFunction((Function)null);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
-        setNumber((org.integratedmodelling.kim.kdecl.Number)null);
+        setNumber((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         setBoolean(BOOLEAN_EDEFAULT);

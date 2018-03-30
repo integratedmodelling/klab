@@ -1,6 +1,6 @@
 package org.integratedmodelling.kim.api;
 
-import org.integratedmodelling.kim.kdecl.DataType;
+import org.integratedmodelling.kim.kim.DataType;
 
 public interface IKimRestriction extends IKimStatement {
 

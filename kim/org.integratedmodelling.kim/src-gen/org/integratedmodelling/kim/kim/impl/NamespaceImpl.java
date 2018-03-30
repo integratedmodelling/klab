@@ -21,13 +21,12 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kim.kdecl.Annotation;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.Metadata;
-
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
 

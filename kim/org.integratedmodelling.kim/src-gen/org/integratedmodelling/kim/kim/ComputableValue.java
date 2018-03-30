@@ -6,10 +6,6 @@ package org.integratedmodelling.kim.kim;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.List;
-import org.integratedmodelling.kim.kdecl.Literal;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Computable Value</b></em>'.

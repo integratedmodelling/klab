@@ -13,13 +13,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.integratedmodelling.kim.kdecl.ConceptStatement;
-import org.integratedmodelling.kim.kdecl.UpperOntologyDefinition;
-
+import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.Statement;
+import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 
 /**
  * <!-- begin-user-doc -->

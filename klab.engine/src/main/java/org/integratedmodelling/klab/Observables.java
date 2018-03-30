@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+
 import javax.annotation.Nullable;
+
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -12,7 +14,8 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Model;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -33,7 +36,8 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.utils.xtext.KnowledgeDeclarationInjectorProvider;
+import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -42,10 +46,10 @@ public enum Observables implements IObservableService {
   INSTANCE;
 
   @Inject
-  ParseHelper<ObservableSemantics> observableParser;
+  ParseHelper<Model> observableParser;
 
   private Observables() {
-    IInjectorProvider injectorProvider = new KnowledgeDeclarationInjectorProvider();
+    IInjectorProvider injectorProvider = new KimInjectorProvider();
     Injector injector = injectorProvider.getInjector();
     if (injector != null) {
       injector.injectMembers(this);
@@ -57,7 +61,7 @@ public enum Observables implements IObservableService {
 
     IMonitor monitor = Klab.INSTANCE.getRootMonitor();
     try {
-      ObservableSemantics parsed = observableParser.parse(declaration);
+      ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
       KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
       return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
     } catch (Exception e) {

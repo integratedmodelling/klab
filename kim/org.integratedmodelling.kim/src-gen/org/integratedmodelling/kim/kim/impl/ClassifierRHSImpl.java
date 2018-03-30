@@ -20,12 +20,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-import org.integratedmodelling.kim.kdecl.List;
-import org.integratedmodelling.kim.kdecl.REL_OPERATOR;
-
 import org.integratedmodelling.kim.kim.ClassifierRHS;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.REL_OPERATOR;
 
 /**
  * <!-- begin-user-doc -->
@@ -84,7 +83,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @generated
    * @ordered
    */
-  protected org.integratedmodelling.kim.kdecl.Number int0;
+  protected org.integratedmodelling.kim.kim.Number int0;
 
   /**
    * The default value of the '{@link #getLeftLimit() <em>Left Limit</em>}' attribute.
@@ -114,7 +113,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @generated
    * @ordered
    */
-  protected org.integratedmodelling.kim.kdecl.Number int1;
+  protected org.integratedmodelling.kim.kim.Number int1;
 
   /**
    * The default value of the '{@link #getRightLimit() <em>Right Limit</em>}' attribute.
@@ -144,7 +143,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @generated
    * @ordered
    */
-  protected org.integratedmodelling.kim.kdecl.Number num;
+  protected org.integratedmodelling.kim.kim.Number num;
 
   /**
    * The cached value of the '{@link #getSet() <em>Set</em>}' containment reference.
@@ -214,7 +213,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @generated
    * @ordered
    */
-  protected org.integratedmodelling.kim.kdecl.Number expression;
+  protected org.integratedmodelling.kim.kim.Number expression;
 
   /**
    * The default value of the '{@link #getNodata() <em>Nodata</em>}' attribute.
@@ -325,7 +324,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public org.integratedmodelling.kim.kdecl.Number getInt0()
+  public org.integratedmodelling.kim.kim.Number getInt0()
   {
     return int0;
   }
@@ -335,9 +334,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetInt0(org.integratedmodelling.kim.kdecl.Number newInt0, NotificationChain msgs)
+  public NotificationChain basicSetInt0(org.integratedmodelling.kim.kim.Number newInt0, NotificationChain msgs)
   {
-    org.integratedmodelling.kim.kdecl.Number oldInt0 = int0;
+    org.integratedmodelling.kim.kim.Number oldInt0 = int0;
     int0 = newInt0;
     if (eNotificationRequired())
     {
@@ -352,7 +351,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setInt0(org.integratedmodelling.kim.kdecl.Number newInt0)
+  public void setInt0(org.integratedmodelling.kim.kim.Number newInt0)
   {
     if (newInt0 != int0)
     {
@@ -396,7 +395,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public org.integratedmodelling.kim.kdecl.Number getInt1()
+  public org.integratedmodelling.kim.kim.Number getInt1()
   {
     return int1;
   }
@@ -406,9 +405,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetInt1(org.integratedmodelling.kim.kdecl.Number newInt1, NotificationChain msgs)
+  public NotificationChain basicSetInt1(org.integratedmodelling.kim.kim.Number newInt1, NotificationChain msgs)
   {
-    org.integratedmodelling.kim.kdecl.Number oldInt1 = int1;
+    org.integratedmodelling.kim.kim.Number oldInt1 = int1;
     int1 = newInt1;
     if (eNotificationRequired())
     {
@@ -423,7 +422,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setInt1(org.integratedmodelling.kim.kdecl.Number newInt1)
+  public void setInt1(org.integratedmodelling.kim.kim.Number newInt1)
   {
     if (newInt1 != int1)
     {
@@ -467,7 +466,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public org.integratedmodelling.kim.kdecl.Number getNum()
+  public org.integratedmodelling.kim.kim.Number getNum()
   {
     return num;
   }
@@ -477,9 +476,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetNum(org.integratedmodelling.kim.kdecl.Number newNum, NotificationChain msgs)
+  public NotificationChain basicSetNum(org.integratedmodelling.kim.kim.Number newNum, NotificationChain msgs)
   {
-    org.integratedmodelling.kim.kdecl.Number oldNum = num;
+    org.integratedmodelling.kim.kim.Number oldNum = num;
     num = newNum;
     if (eNotificationRequired())
     {
@@ -494,7 +493,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setNum(org.integratedmodelling.kim.kdecl.Number newNum)
+  public void setNum(org.integratedmodelling.kim.kim.Number newNum)
   {
     if (newNum != num)
     {
@@ -696,7 +695,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public org.integratedmodelling.kim.kdecl.Number getExpression()
+  public org.integratedmodelling.kim.kim.Number getExpression()
   {
     return expression;
   }
@@ -706,9 +705,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetExpression(org.integratedmodelling.kim.kdecl.Number newExpression, NotificationChain msgs)
+  public NotificationChain basicSetExpression(org.integratedmodelling.kim.kim.Number newExpression, NotificationChain msgs)
   {
-    org.integratedmodelling.kim.kdecl.Number oldExpression = expression;
+    org.integratedmodelling.kim.kim.Number oldExpression = expression;
     expression = newExpression;
     if (eNotificationRequired())
     {
@@ -723,7 +722,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setExpression(org.integratedmodelling.kim.kdecl.Number newExpression)
+  public void setExpression(org.integratedmodelling.kim.kim.Number newExpression)
   {
     if (newExpression != expression)
     {
@@ -897,19 +896,19 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         setBoolean((String)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__INT0:
-        setInt0((org.integratedmodelling.kim.kdecl.Number)newValue);
+        setInt0((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__LEFT_LIMIT:
         setLeftLimit((String)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__INT1:
-        setInt1((org.integratedmodelling.kim.kdecl.Number)newValue);
+        setInt1((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__RIGHT_LIMIT:
         setRightLimit((String)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__NUM:
-        setNum((org.integratedmodelling.kim.kdecl.Number)newValue);
+        setNum((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__SET:
         setSet((List)newValue);
@@ -928,7 +927,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         setOp((REL_OPERATOR)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__EXPRESSION:
-        setExpression((org.integratedmodelling.kim.kdecl.Number)newValue);
+        setExpression((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.CLASSIFIER_RHS__NODATA:
         setNodata((String)newValue);
@@ -957,19 +956,19 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         setBoolean(BOOLEAN_EDEFAULT);
         return;
       case KimPackage.CLASSIFIER_RHS__INT0:
-        setInt0((org.integratedmodelling.kim.kdecl.Number)null);
+        setInt0((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.CLASSIFIER_RHS__LEFT_LIMIT:
         setLeftLimit(LEFT_LIMIT_EDEFAULT);
         return;
       case KimPackage.CLASSIFIER_RHS__INT1:
-        setInt1((org.integratedmodelling.kim.kdecl.Number)null);
+        setInt1((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.CLASSIFIER_RHS__RIGHT_LIMIT:
         setRightLimit(RIGHT_LIMIT_EDEFAULT);
         return;
       case KimPackage.CLASSIFIER_RHS__NUM:
-        setNum((org.integratedmodelling.kim.kdecl.Number)null);
+        setNum((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.CLASSIFIER_RHS__SET:
         setSet((List)null);
@@ -987,7 +986,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         setOp((REL_OPERATOR)null);
         return;
       case KimPackage.CLASSIFIER_RHS__EXPRESSION:
-        setExpression((org.integratedmodelling.kim.kdecl.Number)null);
+        setExpression((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.CLASSIFIER_RHS__NODATA:
         setNodata(NODATA_EDEFAULT);

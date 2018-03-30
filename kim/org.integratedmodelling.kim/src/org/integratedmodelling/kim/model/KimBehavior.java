@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimActiveStatement;
@@ -18,6 +19,7 @@ import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.FunctionOrID;
 import org.integratedmodelling.kim.validation.KimNotification;
+
 import com.google.common.collect.Sets;
 
 public class KimBehavior implements IKimBehavior {

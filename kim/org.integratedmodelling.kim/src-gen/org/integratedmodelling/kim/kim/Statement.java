@@ -6,9 +6,6 @@ package org.integratedmodelling.kim.kim;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.ConceptStatement;
-import org.integratedmodelling.kim.kdecl.UpperOntologyDefinition;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Statement</b></em>'.

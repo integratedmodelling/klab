@@ -6,8 +6,8 @@ package org.integratedmodelling.kim.ui.labeling
 import com.google.inject.Inject
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
-import org.integratedmodelling.kim.kdecl.ObservableSemantics
 import org.integratedmodelling.kim.kim.ModelStatement
+import org.integratedmodelling.kim.kim.ObservableSemantics
 import org.integratedmodelling.kim.model.Kim
 
 /**

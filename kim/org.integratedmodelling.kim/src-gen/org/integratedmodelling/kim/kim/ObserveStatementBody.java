@@ -8,10 +8,6 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.Metadata;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Observe Statement Body</b></em>'.
@@ -124,7 +120,7 @@ public interface ObserveStatementBody extends EObject
 
   /**
    * Returns the value of the '<em><b>States</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.ObservableSemantics}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>States</em>' containment reference list isn't clear,

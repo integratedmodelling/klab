@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Statement;
 
 /**
@@ -33,6 +34,7 @@ import org.integratedmodelling.kim.kim.Statement;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelImpl#getNamespace <em>Namespace</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelImpl#getStatements <em>Statements</em>}</li>
  * </ul>
@@ -41,6 +43,16 @@ import org.integratedmodelling.kim.kim.Statement;
  */
 public class ModelImpl extends MinimalEObjectImpl.Container implements Model
 {
+  /**
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getObservable()
+   * @generated
+   * @ordered
+   */
+  protected ObservableSemantics observable;
+
   /**
    * The cached value of the '{@link #getNamespace() <em>Namespace</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -80,6 +92,54 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.MODEL;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ObservableSemantics getObservable()
+  {
+    return observable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetObservable(ObservableSemantics newObservable, NotificationChain msgs)
+  {
+    ObservableSemantics oldObservable = observable;
+    observable = newObservable;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL__OBSERVABLE, oldObservable, newObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setObservable(ObservableSemantics newObservable)
+  {
+    if (newObservable != observable)
+    {
+      NotificationChain msgs = null;
+      if (observable != null)
+        msgs = ((InternalEObject)observable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL__OBSERVABLE, null, msgs);
+      if (newObservable != null)
+        msgs = ((InternalEObject)newObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL__OBSERVABLE, null, msgs);
+      msgs = basicSetObservable(newObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL__OBSERVABLE, newObservable, newObservable));
   }
 
   /**
@@ -154,6 +214,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
+      case KimPackage.MODEL__OBSERVABLE:
+        return basicSetObservable(null, msgs);
       case KimPackage.MODEL__NAMESPACE:
         return basicSetNamespace(null, msgs);
       case KimPackage.MODEL__STATEMENTS:
@@ -172,6 +234,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
+      case KimPackage.MODEL__OBSERVABLE:
+        return getObservable();
       case KimPackage.MODEL__NAMESPACE:
         return getNamespace();
       case KimPackage.MODEL__STATEMENTS:
@@ -191,6 +255,9 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
+      case KimPackage.MODEL__OBSERVABLE:
+        setObservable((ObservableSemantics)newValue);
+        return;
       case KimPackage.MODEL__NAMESPACE:
         setNamespace((Namespace)newValue);
         return;
@@ -212,6 +279,9 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
+      case KimPackage.MODEL__OBSERVABLE:
+        setObservable((ObservableSemantics)null);
+        return;
       case KimPackage.MODEL__NAMESPACE:
         setNamespace((Namespace)null);
         return;
@@ -232,6 +302,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
+      case KimPackage.MODEL__OBSERVABLE:
+        return observable != null;
       case KimPackage.MODEL__NAMESPACE:
         return namespace != null;
       case KimPackage.MODEL__STATEMENTS:

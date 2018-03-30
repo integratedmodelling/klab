@@ -8,10 +8,6 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-import org.integratedmodelling.kim.kdecl.List;
-import org.integratedmodelling.kim.kdecl.REL_OPERATOR;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Classifier RHS</b></em>'.
@@ -79,12 +75,12 @@ public interface ClassifierRHS extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Int0</em>' containment reference.
-   * @see #setInt0(org.integratedmodelling.kim.kdecl.Number)
+   * @see #setInt0(org.integratedmodelling.kim.kim.Number)
    * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Int0()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kim.kdecl.Number getInt0();
+  org.integratedmodelling.kim.kim.Number getInt0();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getInt0 <em>Int0</em>}' containment reference.
@@ -94,7 +90,7 @@ public interface ClassifierRHS extends EObject
    * @see #getInt0()
    * @generated
    */
-  void setInt0(org.integratedmodelling.kim.kdecl.Number value);
+  void setInt0(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Left Limit</b></em>' attribute.
@@ -131,12 +127,12 @@ public interface ClassifierRHS extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Int1</em>' containment reference.
-   * @see #setInt1(org.integratedmodelling.kim.kdecl.Number)
+   * @see #setInt1(org.integratedmodelling.kim.kim.Number)
    * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Int1()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kim.kdecl.Number getInt1();
+  org.integratedmodelling.kim.kim.Number getInt1();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getInt1 <em>Int1</em>}' containment reference.
@@ -146,7 +142,7 @@ public interface ClassifierRHS extends EObject
    * @see #getInt1()
    * @generated
    */
-  void setInt1(org.integratedmodelling.kim.kdecl.Number value);
+  void setInt1(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Right Limit</b></em>' attribute.
@@ -183,12 +179,12 @@ public interface ClassifierRHS extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Num</em>' containment reference.
-   * @see #setNum(org.integratedmodelling.kim.kdecl.Number)
+   * @see #setNum(org.integratedmodelling.kim.kim.Number)
    * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Num()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kim.kdecl.Number getNum();
+  org.integratedmodelling.kim.kim.Number getNum();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getNum <em>Num</em>}' containment reference.
@@ -198,7 +194,7 @@ public interface ClassifierRHS extends EObject
    * @see #getNum()
    * @generated
    */
-  void setNum(org.integratedmodelling.kim.kdecl.Number value);
+  void setNum(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Set</b></em>' containment reference.
@@ -280,7 +276,7 @@ public interface ClassifierRHS extends EObject
 
   /**
    * Returns the value of the '<em><b>To Resolve</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.ConceptDeclaration}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ConceptDeclaration}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>To Resolve</em>' containment reference list isn't clear,
@@ -329,12 +325,12 @@ public interface ClassifierRHS extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Expression</em>' containment reference.
-   * @see #setExpression(org.integratedmodelling.kim.kdecl.Number)
+   * @see #setExpression(org.integratedmodelling.kim.kim.Number)
    * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Expression()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kim.kdecl.Number getExpression();
+  org.integratedmodelling.kim.kim.Number getExpression();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpression <em>Expression</em>}' containment reference.
@@ -344,7 +340,7 @@ public interface ClassifierRHS extends EObject
    * @see #getExpression()
    * @generated
    */
-  void setExpression(org.integratedmodelling.kim.kdecl.Number value);
+  void setExpression(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Nodata</b></em>' attribute.

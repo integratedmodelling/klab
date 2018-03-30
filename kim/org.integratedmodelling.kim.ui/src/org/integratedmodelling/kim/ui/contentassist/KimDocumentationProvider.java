@@ -2,9 +2,9 @@ package org.integratedmodelling.kim.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.ConceptReference;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 

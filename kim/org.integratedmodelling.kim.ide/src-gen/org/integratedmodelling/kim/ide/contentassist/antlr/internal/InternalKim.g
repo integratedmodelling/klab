@@ -67,9 +67,9 @@ ruleModel
 	}
 	:
 	(
-		{ before(grammarAccess.getModelAccess().getGroup()); }
-		(rule__Model__Group__0)
-		{ after(grammarAccess.getModelAccess().getGroup()); }
+		{ before(grammarAccess.getModelAccess().getAlternatives()); }
+		(rule__Model__Alternatives)
+		{ after(grammarAccess.getModelAccess().getAlternatives()); }
 	)
 ;
 finally {
@@ -1952,6 +1952,27 @@ ruleUnitOp
 		{ before(grammarAccess.getUnitOpAccess().getAlternatives()); }
 		(rule__UnitOp__Alternatives)
 		{ after(grammarAccess.getUnitOpAccess().getAlternatives()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Model__Alternatives
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getModelAccess().getObservableAssignment_0()); }
+		(rule__Model__ObservableAssignment_0)
+		{ after(grammarAccess.getModelAccess().getObservableAssignment_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getModelAccess().getGroup_1()); }
+		(rule__Model__Group_1__0)
+		{ after(grammarAccess.getModelAccess().getGroup_1()); }
 	)
 ;
 finally {
@@ -5789,53 +5810,53 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Model__Group__0
+rule__Model__Group_1__0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__Model__Group__0__Impl
-	rule__Model__Group__1
+	rule__Model__Group_1__0__Impl
+	rule__Model__Group_1__1
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Model__Group__0__Impl
+rule__Model__Group_1__0__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getModelAccess().getNamespaceAssignment_0()); }
-	(rule__Model__NamespaceAssignment_0)?
-	{ after(grammarAccess.getModelAccess().getNamespaceAssignment_0()); }
+	{ before(grammarAccess.getModelAccess().getNamespaceAssignment_1_0()); }
+	(rule__Model__NamespaceAssignment_1_0)?
+	{ after(grammarAccess.getModelAccess().getNamespaceAssignment_1_0()); }
 )
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Model__Group__1
+rule__Model__Group_1__1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__Model__Group__1__Impl
+	rule__Model__Group_1__1__Impl
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Model__Group__1__Impl
+rule__Model__Group_1__1__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getModelAccess().getStatementsAssignment_1()); }
-	(rule__Model__StatementsAssignment_1)*
-	{ after(grammarAccess.getModelAccess().getStatementsAssignment_1()); }
+	{ before(grammarAccess.getModelAccess().getStatementsAssignment_1_1()); }
+	(rule__Model__StatementsAssignment_1_1)*
+	{ after(grammarAccess.getModelAccess().getStatementsAssignment_1_1()); }
 )
 ;
 finally {
@@ -28429,30 +28450,45 @@ finally {
 }
 
 
-rule__Model__NamespaceAssignment_0
+rule__Model__ObservableAssignment_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getModelAccess().getNamespaceNamespaceParserRuleCall_0_0()); }
-		ruleNamespace
-		{ after(grammarAccess.getModelAccess().getNamespaceNamespaceParserRuleCall_0_0()); }
+		{ before(grammarAccess.getModelAccess().getObservableObservableSemanticsParserRuleCall_0_0()); }
+		ruleObservableSemantics
+		{ after(grammarAccess.getModelAccess().getObservableObservableSemanticsParserRuleCall_0_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Model__StatementsAssignment_1
+rule__Model__NamespaceAssignment_1_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_1_0()); }
+		{ before(grammarAccess.getModelAccess().getNamespaceNamespaceParserRuleCall_1_0_0()); }
+		ruleNamespace
+		{ after(grammarAccess.getModelAccess().getNamespaceNamespaceParserRuleCall_1_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Model__StatementsAssignment_1_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_1_1_0()); }
 		ruleStatement
-		{ after(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_1_0()); }
+		{ after(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_1_1_0()); }
 	)
 ;
 finally {

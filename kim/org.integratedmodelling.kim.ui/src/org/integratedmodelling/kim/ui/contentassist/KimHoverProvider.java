@@ -3,9 +3,9 @@ package org.integratedmodelling.kim.ui.contentassist;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.ConceptReference;
-import org.integratedmodelling.kim.kdecl.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 

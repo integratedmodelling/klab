@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+
 import org.eclipse.xtext.util.Pair;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -12,7 +13,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
-import org.integratedmodelling.kim.kdecl.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
 
 /**
  * Concept definition

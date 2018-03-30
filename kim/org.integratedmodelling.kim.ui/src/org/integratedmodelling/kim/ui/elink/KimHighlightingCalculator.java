@@ -1,6 +1,7 @@
 package org.integratedmodelling.kim.ui.elink;
 
 import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.AbstractRule;
 import org.eclipse.xtext.Assignment;
@@ -13,21 +14,22 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.kdecl.Annotation;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.ConceptReference;
-import org.integratedmodelling.kim.kdecl.ConceptStatementBody;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.KdeclPackage;
-import org.integratedmodelling.kim.kdecl.Value;
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.Function;
+import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.Urn;
+import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 import org.integratedmodelling.kim.validation.KimValidator;
+
 import com.google.inject.Inject;
 
 public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalculator {
@@ -194,7 +196,7 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
               && ((ConceptStatementBody) node.getSemanticElement()).getName() != null) {
 
             List<INode> nodes = NodeModelUtils.findNodesForFeature(node.getSemanticElement(),
-                KdeclPackage.Literals.CONCEPT_STATEMENT_BODY__NAME);
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME);
             if (nodes.size() == 1 && nodes.get(0).getOffset() > start) {
               acceptor.addPosition(start = nodes.get(0).getOffset(), nodes.get(0).getLength(),
                   KimHighlightingConfiguration.DEFINITION_ID);

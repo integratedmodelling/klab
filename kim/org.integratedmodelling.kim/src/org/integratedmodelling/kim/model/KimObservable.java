@@ -5,7 +5,7 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.kdecl.ObservableSemantics;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.kim.validation.KimValidator;

@@ -4,6 +4,7 @@
  */
 package org.integratedmodelling.kim.scoping;
 
+import org.eclipse.xtext.scoping.impl.DelegatingScopeProvider;
 
-public abstract class AbstractKimScopeProvider extends KnowledgeDeclarationScopeProvider {
+public abstract class AbstractKimScopeProvider extends DelegatingScopeProvider {
 }

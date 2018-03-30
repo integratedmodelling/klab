@@ -13,10 +13,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
-
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.KimPackage;
 
 /**

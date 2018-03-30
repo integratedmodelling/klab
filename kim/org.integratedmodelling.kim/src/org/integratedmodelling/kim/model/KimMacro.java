@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.xtext.util.Pair;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -14,7 +15,7 @@ import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
-import org.integratedmodelling.kim.kdecl.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConcept;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;

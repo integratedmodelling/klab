@@ -223,6 +223,240 @@ public interface KimFactory extends EFactory
   ObserveStatementBody createObserveStatementBody();
 
   /**
+   * Returns a new object of class '<em>Observable Semantics</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Observable Semantics</em>'.
+   * @generated
+   */
+  ObservableSemantics createObservableSemantics();
+
+  /**
+   * Returns a new object of class '<em>Concept Declaration</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept Declaration</em>'.
+   * @generated
+   */
+  ConceptDeclaration createConceptDeclaration();
+
+  /**
+   * Returns a new object of class '<em>Concept Reference</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept Reference</em>'.
+   * @generated
+   */
+  ConceptReference createConceptReference();
+
+  /**
+   * Returns a new object of class '<em>Concept</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept</em>'.
+   * @generated
+   */
+  Concept createConcept();
+
+  /**
+   * Returns a new object of class '<em>Upper Ontology Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Upper Ontology Definition</em>'.
+   * @generated
+   */
+  UpperOntologyDefinition createUpperOntologyDefinition();
+
+  /**
+   * Returns a new object of class '<em>Concept Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept Statement</em>'.
+   * @generated
+   */
+  ConceptStatement createConceptStatement();
+
+  /**
+   * Returns a new object of class '<em>Concept Statement Body</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept Statement Body</em>'.
+   * @generated
+   */
+  ConceptStatementBody createConceptStatementBody();
+
+  /**
+   * Returns a new object of class '<em>Applicable Target</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Applicable Target</em>'.
+   * @generated
+   */
+  ApplicableTarget createApplicableTarget();
+
+  /**
+   * Returns a new object of class '<em>Identity Requirement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Identity Requirement</em>'.
+   * @generated
+   */
+  IdentityRequirement createIdentityRequirement();
+
+  /**
+   * Returns a new object of class '<em>Restriction Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Restriction Statement</em>'.
+   * @generated
+   */
+  RestrictionStatement createRestrictionStatement();
+
+  /**
+   * Returns a new object of class '<em>Restriction Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Restriction Definition</em>'.
+   * @generated
+   */
+  RestrictionDefinition createRestrictionDefinition();
+
+  /**
+   * Returns a new object of class '<em>Annotation</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Annotation</em>'.
+   * @generated
+   */
+  Annotation createAnnotation();
+
+  /**
+   * Returns a new object of class '<em>List</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>List</em>'.
+   * @generated
+   */
+  List createList();
+
+  /**
+   * Returns a new object of class '<em>Literal</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Literal</em>'.
+   * @generated
+   */
+  Literal createLiteral();
+
+  /**
+   * Returns a new object of class '<em>Metadata</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Metadata</em>'.
+   * @generated
+   */
+  Metadata createMetadata();
+
+  /**
+   * Returns a new object of class '<em>Documentation</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Documentation</em>'.
+   * @generated
+   */
+  Documentation createDocumentation();
+
+  /**
+   * Returns a new object of class '<em>Doc Selector</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Doc Selector</em>'.
+   * @generated
+   */
+  DocSelector createDocSelector();
+
+  /**
+   * Returns a new object of class '<em>Key Value Pair</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Key Value Pair</em>'.
+   * @generated
+   */
+  KeyValuePair createKeyValuePair();
+
+  /**
+   * Returns a new object of class '<em>Parameter List</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Parameter List</em>'.
+   * @generated
+   */
+  ParameterList createParameterList();
+
+  /**
+   * Returns a new object of class '<em>Value</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Value</em>'.
+   * @generated
+   */
+  Value createValue();
+
+  /**
+   * Returns a new object of class '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function</em>'.
+   * @generated
+   */
+  Function createFunction();
+
+  /**
+   * Returns a new object of class '<em>Unit Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit Element</em>'.
+   * @generated
+   */
+  UnitElement createUnitElement();
+
+  /**
+   * Returns a new object of class '<em>REL OPERATOR</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>REL OPERATOR</em>'.
+   * @generated
+   */
+  REL_OPERATOR createREL_OPERATOR();
+
+  /**
+   * Returns a new object of class '<em>Unit</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit</em>'.
+   * @generated
+   */
+  Unit createUnit();
+
+  /**
+   * Returns a new object of class '<em>Currency</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Currency</em>'.
+   * @generated
+   */
+  Currency createCurrency();
+
+  /**
+   * Returns a new object of class '<em>Number</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Number</em>'.
+   * @generated
+   */
+  Number createNumber();
+
+  /**
    * Returns the package supported by this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

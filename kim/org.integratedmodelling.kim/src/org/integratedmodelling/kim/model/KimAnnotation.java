@@ -1,11 +1,12 @@
 package org.integratedmodelling.kim.model;
 
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.kdecl.Annotation;
-import org.integratedmodelling.kim.kdecl.KeyValuePair;
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.KeyValuePair;
 import org.integratedmodelling.kim.validation.KimNotification;
 
 public class KimAnnotation extends KimServiceCall implements IKimAnnotation {

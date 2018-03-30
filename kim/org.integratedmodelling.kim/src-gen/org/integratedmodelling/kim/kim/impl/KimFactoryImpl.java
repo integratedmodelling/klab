@@ -5,6 +5,7 @@
 package org.integratedmodelling.kim.kim.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -12,7 +13,57 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
-import org.integratedmodelling.kim.kim.*;
+import org.integratedmodelling.kim.kim.Action;
+import org.integratedmodelling.kim.kim.ActionSpecification;
+import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.ApplicableTarget;
+import org.integratedmodelling.kim.kim.AttributeIdentifier;
+import org.integratedmodelling.kim.kim.Classification;
+import org.integratedmodelling.kim.kim.Classifier;
+import org.integratedmodelling.kim.kim.ClassifierRHS;
+import org.integratedmodelling.kim.kim.ComputableValue;
+import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.ConceptStatement;
+import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DataType;
+import org.integratedmodelling.kim.kim.DocSelector;
+import org.integratedmodelling.kim.kim.Documentation;
+import org.integratedmodelling.kim.kim.Function;
+import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.IdentityRequirement;
+import org.integratedmodelling.kim.kim.Import;
+import org.integratedmodelling.kim.kim.KeyValuePair;
+import org.integratedmodelling.kim.kim.KimFactory;
+import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.Literal;
+import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Model;
+import org.integratedmodelling.kim.kim.ModelBodyStatement;
+import org.integratedmodelling.kim.kim.ModelStatement;
+import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.ObserveStatement;
+import org.integratedmodelling.kim.kim.ObserveStatementBody;
+import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.REL_OPERATOR;
+import org.integratedmodelling.kim.kim.RestrictionDefinition;
+import org.integratedmodelling.kim.kim.RestrictionStatement;
+import org.integratedmodelling.kim.kim.Statement;
+import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.Unit;
+import org.integratedmodelling.kim.kim.UnitElement;
+import org.integratedmodelling.kim.kim.UnitOp;
+import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
+import org.integratedmodelling.kim.kim.Urn;
+import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.kim.ValueAssignment;
 
 /**
  * <!-- begin-user-doc -->
@@ -88,8 +139,72 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.IMPORT: return createImport();
       case KimPackage.OBSERVE_STATEMENT: return createObserveStatement();
       case KimPackage.OBSERVE_STATEMENT_BODY: return createObserveStatementBody();
+      case KimPackage.OBSERVABLE_SEMANTICS: return createObservableSemantics();
+      case KimPackage.CONCEPT_DECLARATION: return createConceptDeclaration();
+      case KimPackage.CONCEPT_REFERENCE: return createConceptReference();
+      case KimPackage.CONCEPT: return createConcept();
+      case KimPackage.UPPER_ONTOLOGY_DEFINITION: return createUpperOntologyDefinition();
+      case KimPackage.CONCEPT_STATEMENT: return createConceptStatement();
+      case KimPackage.CONCEPT_STATEMENT_BODY: return createConceptStatementBody();
+      case KimPackage.APPLICABLE_TARGET: return createApplicableTarget();
+      case KimPackage.IDENTITY_REQUIREMENT: return createIdentityRequirement();
+      case KimPackage.RESTRICTION_STATEMENT: return createRestrictionStatement();
+      case KimPackage.RESTRICTION_DEFINITION: return createRestrictionDefinition();
+      case KimPackage.ANNOTATION: return createAnnotation();
+      case KimPackage.LIST: return createList();
+      case KimPackage.LITERAL: return createLiteral();
+      case KimPackage.METADATA: return createMetadata();
+      case KimPackage.DOCUMENTATION: return createDocumentation();
+      case KimPackage.DOC_SELECTOR: return createDocSelector();
+      case KimPackage.KEY_VALUE_PAIR: return createKeyValuePair();
+      case KimPackage.PARAMETER_LIST: return createParameterList();
+      case KimPackage.VALUE: return createValue();
+      case KimPackage.FUNCTION: return createFunction();
+      case KimPackage.UNIT_ELEMENT: return createUnitElement();
+      case KimPackage.REL_OPERATOR: return createREL_OPERATOR();
+      case KimPackage.UNIT: return createUnit();
+      case KimPackage.CURRENCY: return createCurrency();
+      case KimPackage.NUMBER: return createNumber();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object createFromString(EDataType eDataType, String initialValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case KimPackage.DATA_TYPE:
+        return createDataTypeFromString(eDataType, initialValue);
+      case KimPackage.UNIT_OP:
+        return createUnitOpFromString(eDataType, initialValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String convertToString(EDataType eDataType, Object instanceValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case KimPackage.DATA_TYPE:
+        return convertDataTypeToString(eDataType, instanceValue);
+      case KimPackage.UNIT_OP:
+        return convertUnitOpToString(eDataType, instanceValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -333,6 +448,336 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     ObserveStatementBodyImpl observeStatementBody = new ObserveStatementBodyImpl();
     return observeStatementBody;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ObservableSemantics createObservableSemantics()
+  {
+    ObservableSemanticsImpl observableSemantics = new ObservableSemanticsImpl();
+    return observableSemantics;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptDeclaration createConceptDeclaration()
+  {
+    ConceptDeclarationImpl conceptDeclaration = new ConceptDeclarationImpl();
+    return conceptDeclaration;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptReference createConceptReference()
+  {
+    ConceptReferenceImpl conceptReference = new ConceptReferenceImpl();
+    return conceptReference;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Concept createConcept()
+  {
+    ConceptImpl concept = new ConceptImpl();
+    return concept;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UpperOntologyDefinition createUpperOntologyDefinition()
+  {
+    UpperOntologyDefinitionImpl upperOntologyDefinition = new UpperOntologyDefinitionImpl();
+    return upperOntologyDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptStatement createConceptStatement()
+  {
+    ConceptStatementImpl conceptStatement = new ConceptStatementImpl();
+    return conceptStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptStatementBody createConceptStatementBody()
+  {
+    ConceptStatementBodyImpl conceptStatementBody = new ConceptStatementBodyImpl();
+    return conceptStatementBody;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ApplicableTarget createApplicableTarget()
+  {
+    ApplicableTargetImpl applicableTarget = new ApplicableTargetImpl();
+    return applicableTarget;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IdentityRequirement createIdentityRequirement()
+  {
+    IdentityRequirementImpl identityRequirement = new IdentityRequirementImpl();
+    return identityRequirement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RestrictionStatement createRestrictionStatement()
+  {
+    RestrictionStatementImpl restrictionStatement = new RestrictionStatementImpl();
+    return restrictionStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RestrictionDefinition createRestrictionDefinition()
+  {
+    RestrictionDefinitionImpl restrictionDefinition = new RestrictionDefinitionImpl();
+    return restrictionDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Annotation createAnnotation()
+  {
+    AnnotationImpl annotation = new AnnotationImpl();
+    return annotation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public List createList()
+  {
+    ListImpl list = new ListImpl();
+    return list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Literal createLiteral()
+  {
+    LiteralImpl literal = new LiteralImpl();
+    return literal;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Metadata createMetadata()
+  {
+    MetadataImpl metadata = new MetadataImpl();
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Documentation createDocumentation()
+  {
+    DocumentationImpl documentation = new DocumentationImpl();
+    return documentation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DocSelector createDocSelector()
+  {
+    DocSelectorImpl docSelector = new DocSelectorImpl();
+    return docSelector;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public KeyValuePair createKeyValuePair()
+  {
+    KeyValuePairImpl keyValuePair = new KeyValuePairImpl();
+    return keyValuePair;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ParameterList createParameterList()
+  {
+    ParameterListImpl parameterList = new ParameterListImpl();
+    return parameterList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Value createValue()
+  {
+    ValueImpl value = new ValueImpl();
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Function createFunction()
+  {
+    FunctionImpl function = new FunctionImpl();
+    return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UnitElement createUnitElement()
+  {
+    UnitElementImpl unitElement = new UnitElementImpl();
+    return unitElement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public REL_OPERATOR createREL_OPERATOR()
+  {
+    REL_OPERATORImpl reL_OPERATOR = new REL_OPERATORImpl();
+    return reL_OPERATOR;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Unit createUnit()
+  {
+    UnitImpl unit = new UnitImpl();
+    return unit;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Currency createCurrency()
+  {
+    CurrencyImpl currency = new CurrencyImpl();
+    return currency;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public org.integratedmodelling.kim.kim.Number createNumber()
+  {
+    NumberImpl number = new NumberImpl();
+    return number;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DataType createDataTypeFromString(EDataType eDataType, String initialValue)
+  {
+    DataType result = DataType.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertDataTypeToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UnitOp createUnitOpFromString(EDataType eDataType, String initialValue)
+  {
+    UnitOp result = UnitOp.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertUnitOpToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

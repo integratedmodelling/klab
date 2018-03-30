@@ -5,15 +5,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import org.eclipse.xtext.util.Pair;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.kdecl.Value;
 import org.integratedmodelling.kim.kim.ComputableValue;
 import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 
 public class ComputableResource extends KimStatement implements IComputableResource {

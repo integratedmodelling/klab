@@ -88,41 +88,63 @@ ruleModel returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getModelAccess().getNamespaceNamespaceParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getModelAccess().getObservableObservableSemanticsParserRuleCall_0_0());
 				}
-				lv_namespace_0_0=ruleNamespace
+				lv_observable_0_0=ruleObservableSemantics
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getModelRule());
 					}
 					set(
 						$current,
-						"namespace",
-						lv_namespace_0_0,
-						"org.integratedmodelling.kim.Kim.Namespace");
+						"observable",
+						lv_observable_0_0,
+						"org.integratedmodelling.kim.Kim.ObservableSemantics");
 					afterParserOrEnumRuleCall();
 				}
 			)
-		)?
+		)
+		    |
 		(
 			(
-				{
-					newCompositeNode(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_1_0());
-				}
-				lv_statements_1_0=ruleStatement
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getModelRule());
+				(
+					{
+						newCompositeNode(grammarAccess.getModelAccess().getNamespaceNamespaceParserRuleCall_1_0_0());
 					}
-					add(
-						$current,
-						"statements",
-						lv_statements_1_0,
-						"org.integratedmodelling.kim.Kim.Statement");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)*
+					lv_namespace_1_0=ruleNamespace
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getModelRule());
+						}
+						set(
+							$current,
+							"namespace",
+							lv_namespace_1_0,
+							"org.integratedmodelling.kim.Kim.Namespace");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)?
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getModelAccess().getStatementsStatementParserRuleCall_1_1_0());
+					}
+					lv_statements_2_0=ruleStatement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getModelRule());
+						}
+						add(
+							$current,
+							"statements",
+							lv_statements_2_0,
+							"org.integratedmodelling.kim.Kim.Statement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)*
+		)
 	)
 ;
 
@@ -157,7 +179,7 @@ ruleStatement returns [EObject current=null]
 							$current,
 							"conceptStatement",
 							lv_conceptStatement_0_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptStatement");
+							"org.integratedmodelling.kim.Kim.ConceptStatement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -209,7 +231,7 @@ ruleStatement returns [EObject current=null]
 							$current,
 							"upperOntologyStatement",
 							lv_upperOntologyStatement_4_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.UpperOntologyDefinition");
+							"org.integratedmodelling.kim.Kim.UpperOntologyDefinition");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -288,7 +310,7 @@ ruleModelStatement returns [EObject current=null]
 						$current,
 						"annotations",
 						lv_annotations_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Annotation");
+						"org.integratedmodelling.kim.Kim.Annotation");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -463,7 +485,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"function",
 								lv_function_2_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+								"org.integratedmodelling.kim.Kim.Function");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -483,7 +505,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"number",
 								lv_number_3_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+								"org.integratedmodelling.kim.Kim.Number");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -531,7 +553,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"concept",
 								lv_concept_5_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleObservableSemantics");
+								"org.integratedmodelling.kim.Kim.SimpleObservableSemantics");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -557,7 +579,7 @@ ruleModelBodyStatement returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_7_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 				)
 			)
@@ -577,7 +599,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"observables",
 								lv_observables_8_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+								"org.integratedmodelling.kim.Kim.ObservableSemantics");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -601,7 +623,7 @@ ruleModelBodyStatement returns [EObject current=null]
 									$current,
 									"observables",
 									lv_observables_10_0,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+									"org.integratedmodelling.kim.Kim.ObservableSemantics");
 								afterParserOrEnumRuleCall();
 							}
 						)
@@ -628,7 +650,7 @@ ruleModelBodyStatement returns [EObject current=null]
 							$current,
 							"dependencies",
 							lv_dependencies_12_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+							"org.integratedmodelling.kim.Kim.ObservableSemantics");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -652,7 +674,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"dependencies",
 								lv_dependencies_14_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+								"org.integratedmodelling.kim.Kim.ObservableSemantics");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -751,7 +773,7 @@ ruleModelBodyStatement returns [EObject current=null]
 							$current,
 							"metadata",
 							lv_metadata_22_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -780,7 +802,7 @@ ruleModelBodyStatement returns [EObject current=null]
 							$current,
 							"documentation",
 							lv_documentation_25_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Documentation");
+							"org.integratedmodelling.kim.Kim.Documentation");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -946,7 +968,7 @@ ruleContextualization returns [EObject current=null]
 							$current,
 							"classificationProperty",
 							lv_classificationProperty_12_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+							"org.integratedmodelling.kim.Kim.PropertyId");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1051,7 +1073,7 @@ ruleClassifier returns [EObject current=null]
 						$current,
 						"declaration",
 						lv_declaration_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1181,7 +1203,7 @@ ruleClassifierRHS returns [EObject current=null]
 							$current,
 							"int0",
 							lv_int0_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1232,7 +1254,7 @@ ruleClassifierRHS returns [EObject current=null]
 							$current,
 							"int1",
 							lv_int1_6_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1274,7 +1296,7 @@ ruleClassifierRHS returns [EObject current=null]
 						$current,
 						"num",
 						lv_num_9_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+						"org.integratedmodelling.kim.Kim.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1299,7 +1321,7 @@ ruleClassifierRHS returns [EObject current=null]
 							$current,
 							"set",
 							lv_set_11_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+							"org.integratedmodelling.kim.Kim.List");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1339,7 +1361,7 @@ ruleClassifierRHS returns [EObject current=null]
 						$current,
 						"concept",
 						lv_concept_13_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -1364,7 +1386,7 @@ ruleClassifierRHS returns [EObject current=null]
 							$current,
 							"toResolve",
 							lv_toResolve_15_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1391,7 +1413,7 @@ ruleClassifierRHS returns [EObject current=null]
 								$current,
 								"toResolve",
 								lv_toResolve_17_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1418,7 +1440,7 @@ ruleClassifierRHS returns [EObject current=null]
 							$current,
 							"op",
 							lv_op_19_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.REL_OPERATOR");
+							"org.integratedmodelling.kim.Kim.REL_OPERATOR");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1437,7 +1459,7 @@ ruleClassifierRHS returns [EObject current=null]
 							$current,
 							"expression",
 							lv_expression_20_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1511,7 +1533,7 @@ ruleLookupTable returns [EObject current=null]
 							$current,
 							"args",
 							lv_args_1_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					lv_args_1_2='?'
@@ -1547,7 +1569,7 @@ ruleLookupTable returns [EObject current=null]
 								$current,
 								"args",
 								lv_args_3_1,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+								"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 						}
 						    |
 						lv_args_3_2='?'
@@ -1613,7 +1635,7 @@ ruleLookupTable returns [EObject current=null]
 							$current,
 							"ref",
 							lv_ref_8_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 				)
 			)
@@ -1726,7 +1748,7 @@ ruleTable returns [EObject current=null]
 								$current,
 								"args",
 								lv_args_1_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+								"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 						}
 					)
 				)
@@ -1749,7 +1771,7 @@ ruleTable returns [EObject current=null]
 									$current,
 									"args",
 									lv_args_3_0,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+									"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 							}
 						)
 					)
@@ -1771,7 +1793,7 @@ ruleTable returns [EObject current=null]
 								$current,
 								"expr",
 								lv_expr_4_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.EXPR");
+								"org.integratedmodelling.kim.Kim.EXPR");
 						}
 					)
 				)
@@ -1789,7 +1811,7 @@ ruleTable returns [EObject current=null]
 								$current,
 								"expr",
 								lv_expr_5_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.EXPR");
+								"org.integratedmodelling.kim.Kim.EXPR");
 						}
 					)
 				)*
@@ -1916,7 +1938,7 @@ ruleTableClassifier returns [EObject current=null]
 							$current,
 							"int0",
 							lv_int0_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -1967,7 +1989,7 @@ ruleTableClassifier returns [EObject current=null]
 							$current,
 							"int1",
 							lv_int1_6_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -2009,7 +2031,7 @@ ruleTableClassifier returns [EObject current=null]
 						$current,
 						"num",
 						lv_num_9_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+						"org.integratedmodelling.kim.Kim.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2034,7 +2056,7 @@ ruleTableClassifier returns [EObject current=null]
 							$current,
 							"set",
 							lv_set_11_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+							"org.integratedmodelling.kim.Kim.List");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -2074,7 +2096,7 @@ ruleTableClassifier returns [EObject current=null]
 						$current,
 						"concept",
 						lv_concept_13_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2095,7 +2117,7 @@ ruleTableClassifier returns [EObject current=null]
 							$current,
 							"op",
 							lv_op_14_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.REL_OPERATOR");
+							"org.integratedmodelling.kim.Kim.REL_OPERATOR");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -2114,7 +2136,7 @@ ruleTableClassifier returns [EObject current=null]
 							$current,
 							"expression",
 							lv_expression_15_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -2407,7 +2429,7 @@ ruleActionSpecification returns [EObject current=null]
 									$current,
 									"event",
 									lv_event_14_0,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+									"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 								afterParserOrEnumRuleCall();
 							}
 						)
@@ -2462,7 +2484,7 @@ ruleActionSpecification returns [EObject current=null]
 												$current,
 												"eventContext",
 												lv_eventContext_18_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -2486,7 +2508,7 @@ ruleActionSpecification returns [EObject current=null]
 							$current,
 							"parameters",
 							lv_parameters_19_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+							"org.integratedmodelling.kim.Kim.List");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -2574,7 +2596,7 @@ ruleFunctionOrID returns [EObject current=null]
 						$current,
 						"function",
 						lv_function_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+						"org.integratedmodelling.kim.Kim.Function");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2595,7 +2617,7 @@ ruleFunctionOrID returns [EObject current=null]
 							$current,
 							"functionId",
 							lv_functionId_1_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					{
@@ -2610,7 +2632,7 @@ ruleFunctionOrID returns [EObject current=null]
 							$current,
 							"functionId",
 							lv_functionId_1_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+							"org.integratedmodelling.kim.Kim.NamespaceId");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -2759,7 +2781,7 @@ ruleAction returns [EObject current=null]
 								$current,
 								"condition",
 								lv_condition_7_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+								"org.integratedmodelling.kim.Kim.Value");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -2874,7 +2896,7 @@ ruleAction returns [EObject current=null]
 								$current,
 								"condition",
 								lv_condition_14_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+								"org.integratedmodelling.kim.Kim.Value");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -2989,7 +3011,7 @@ ruleAction returns [EObject current=null]
 								$current,
 								"condition",
 								lv_condition_21_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+								"org.integratedmodelling.kim.Kim.Value");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -3027,7 +3049,7 @@ ruleAction returns [EObject current=null]
 								$current,
 								"where",
 								lv_where_23_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+								"org.integratedmodelling.kim.Kim.Value");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -3066,7 +3088,7 @@ ruleAction returns [EObject current=null]
 							$current,
 							"condition",
 							lv_condition_25_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+							"org.integratedmodelling.kim.Kim.Value");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -3106,7 +3128,7 @@ ruleValueAssignment returns [EObject current=null]
 							$current,
 							"target",
 							lv_target_0_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 				)
 			)?
@@ -3167,7 +3189,7 @@ ruleComputableValue returns [EObject current=null]
 						$current,
 						"literal",
 						lv_literal_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.LiteralOrIdOrComma");
+						"org.integratedmodelling.kim.Kim.LiteralOrIdOrComma");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3187,7 +3209,7 @@ ruleComputableValue returns [EObject current=null]
 						$current,
 						"function",
 						lv_function_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+						"org.integratedmodelling.kim.Kim.Function");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3208,7 +3230,7 @@ ruleComputableValue returns [EObject current=null]
 							$current,
 							"expr",
 							lv_expr_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.EXPR");
+							"org.integratedmodelling.kim.Kim.EXPR");
 					}
 				)
 			)
@@ -3232,7 +3254,7 @@ ruleComputableValue returns [EObject current=null]
 									$current,
 									"language",
 									lv_language_4_1,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+									"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 							}
 							    |
 							lv_language_4_2=RULE_UPPERCASE_ID
@@ -3247,7 +3269,7 @@ ruleComputableValue returns [EObject current=null]
 									$current,
 									"language",
 									lv_language_4_2,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 							}
 							    |
 							lv_language_4_3=RULE_CAMELCASE_ID
@@ -3262,7 +3284,7 @@ ruleComputableValue returns [EObject current=null]
 									$current,
 									"language",
 									lv_language_4_3,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+									"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 							}
 						)
 					)
@@ -3285,7 +3307,7 @@ ruleComputableValue returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_5_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					lv_id_5_2=RULE_UPPERCASE_ID
@@ -3300,7 +3322,7 @@ ruleComputableValue returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_5_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 					    |
 					lv_id_5_3=RULE_CAMELCASE_ID
@@ -3315,7 +3337,7 @@ ruleComputableValue returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_5_3,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 				)
 			)
@@ -3335,7 +3357,7 @@ ruleComputableValue returns [EObject current=null]
 						$current,
 						"list",
 						lv_list_6_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+						"org.integratedmodelling.kim.Kim.List");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3412,7 +3434,7 @@ ruleValueExecution returns [EObject current=null]
 							$current,
 							"target",
 							lv_target_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 				)
 			)
@@ -3450,7 +3472,7 @@ ruleExecutableValue returns [EObject current=null]
 						$current,
 						"function",
 						lv_function_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+						"org.integratedmodelling.kim.Kim.Function");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3471,7 +3493,7 @@ ruleExecutableValue returns [EObject current=null]
 							$current,
 							"expr",
 							lv_expr_1_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.EXPR");
+							"org.integratedmodelling.kim.Kim.EXPR");
 					}
 				)
 			)
@@ -3495,7 +3517,7 @@ ruleExecutableValue returns [EObject current=null]
 									$current,
 									"language",
 									lv_language_3_1,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+									"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 							}
 							    |
 							lv_language_3_2=RULE_UPPERCASE_ID
@@ -3510,7 +3532,7 @@ ruleExecutableValue returns [EObject current=null]
 									$current,
 									"language",
 									lv_language_3_2,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 							}
 							    |
 							lv_language_3_3=RULE_CAMELCASE_ID
@@ -3525,7 +3547,7 @@ ruleExecutableValue returns [EObject current=null]
 									$current,
 									"language",
 									lv_language_3_3,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+									"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 							}
 						)
 					)
@@ -3653,7 +3675,7 @@ ruleNamespace returns [EObject current=null]
 						$current,
 						"annotations",
 						lv_annotations_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Annotation");
+						"org.integratedmodelling.kim.Kim.Annotation");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3768,7 +3790,7 @@ ruleNamespace returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_7_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+						"org.integratedmodelling.kim.Kim.PathName");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3942,7 +3964,7 @@ ruleNamespace returns [EObject current=null]
 												$current,
 												"coverage",
 												lv_coverage_19_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+												"org.integratedmodelling.kim.Kim.Function");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -3969,7 +3991,7 @@ ruleNamespace returns [EObject current=null]
 													$current,
 													"coverage",
 													lv_coverage_21_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+													"org.integratedmodelling.kim.Kim.Function");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -4024,7 +4046,7 @@ ruleNamespace returns [EObject current=null]
 													$current,
 													"domainConcept",
 													lv_domainConcept_25_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+													"org.integratedmodelling.kim.Kim.Concept");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -4063,7 +4085,7 @@ ruleNamespace returns [EObject current=null]
 												$current,
 												"disjointNamespaces",
 												lv_disjointNamespaces_28_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+												"org.integratedmodelling.kim.Kim.PathName");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -4087,7 +4109,7 @@ ruleNamespace returns [EObject current=null]
 													$current,
 													"disjointNamespaces",
 													lv_disjointNamespaces_30_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+													"org.integratedmodelling.kim.Kim.PathName");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -4122,7 +4144,7 @@ ruleNamespace returns [EObject current=null]
 												$current,
 												"version",
 												lv_version_32_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.VersionNumber");
+												"org.integratedmodelling.kim.Kim.VersionNumber");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -4172,7 +4194,7 @@ ruleNamespace returns [EObject current=null]
 																		$current,
 																		"lookupNamespace",
 																		lv_lookupNamespace_36_0,
-																		"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+																		"org.integratedmodelling.kim.Kim.PathName");
 																	afterParserOrEnumRuleCall();
 																}
 															)
@@ -4207,7 +4229,7 @@ ruleNamespace returns [EObject current=null]
 																	$current,
 																	"blacklistNamespace",
 																	lv_blacklistNamespace_38_0,
-																	"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+																	"org.integratedmodelling.kim.Kim.PathName");
 																afterParserOrEnumRuleCall();
 															}
 														)
@@ -4241,7 +4263,7 @@ ruleNamespace returns [EObject current=null]
 																	$current,
 																	"weights",
 																	lv_weights_40_0,
-																	"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+																	"org.integratedmodelling.kim.Kim.Metadata");
 																afterParserOrEnumRuleCall();
 															}
 														)
@@ -4295,7 +4317,7 @@ ruleNamespace returns [EObject current=null]
 							$current,
 							"metadata",
 							lv_metadata_43_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -4324,7 +4346,7 @@ ruleNamespace returns [EObject current=null]
 							$current,
 							"documentation",
 							lv_documentation_46_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -4393,7 +4415,7 @@ ruleOwlImport returns [EObject current=null]
 							$current,
 							"prefix",
 							lv_prefix_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 				)
 			)
@@ -4433,7 +4455,7 @@ ruleImport returns [EObject current=null]
 								$current,
 								"imports",
 								lv_imports_0_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+								"org.integratedmodelling.kim.Kim.List");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -4473,7 +4495,7 @@ ruleImport returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_3_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+						"org.integratedmodelling.kim.Kim.PathName");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -4727,7 +4749,7 @@ ruleObserveStatement returns [EObject current=null]
 						$current,
 						"annotations",
 						lv_annotations_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Annotation");
+						"org.integratedmodelling.kim.Kim.Annotation");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -4809,7 +4831,7 @@ ruleObserveStatementBody returns [EObject current=null]
 											$current,
 											"concept",
 											lv_concept_1_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.NamedObservableSemantics");
+											"org.integratedmodelling.kim.Kim.NamedObservableSemantics");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -4851,7 +4873,7 @@ ruleObserveStatementBody returns [EObject current=null]
 												$current,
 												"parents",
 												lv_parents_4_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+												"org.integratedmodelling.kim.Kim.PathName");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -4875,7 +4897,7 @@ ruleObserveStatementBody returns [EObject current=null]
 													$current,
 													"parents",
 													lv_parents_6_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+													"org.integratedmodelling.kim.Kim.PathName");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -4932,7 +4954,7 @@ ruleObserveStatementBody returns [EObject current=null]
 													$current,
 													"states",
 													lv_states_11_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+													"org.integratedmodelling.kim.Kim.ObservableSemantics");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -4988,7 +5010,7 @@ ruleObserveStatementBody returns [EObject current=null]
 														$current,
 														"states",
 														lv_states_16_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+														"org.integratedmodelling.kim.Kim.ObservableSemantics");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -5015,7 +5037,7 @@ ruleObserveStatementBody returns [EObject current=null]
 												$current,
 												"accessor",
 												lv_accessor_18_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+												"org.integratedmodelling.kim.Kim.Function");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5074,7 +5096,7 @@ ruleObserveStatementBody returns [EObject current=null]
 												$current,
 												"metadata",
 												lv_metadata_22_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+												"org.integratedmodelling.kim.Kim.Metadata");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5103,7 +5125,7 @@ ruleObserveStatementBody returns [EObject current=null]
 												$current,
 												"documentation",
 												lv_documentation_25_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+												"org.integratedmodelling.kim.Kim.Metadata");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5169,7 +5191,7 @@ ruleObservableSemantics returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_0_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+							"org.integratedmodelling.kim.Kim.Value");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -5207,7 +5229,7 @@ ruleObservableSemantics returns [EObject current=null]
 						$current,
 						"declaration",
 						lv_declaration_3_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -5242,7 +5264,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_6_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+												"org.integratedmodelling.kim.Kim.Concept");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5281,7 +5303,7 @@ ruleObservableSemantics returns [EObject current=null]
 													$current,
 													"downTo",
 													lv_downTo_9_1,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+													"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 											}
 											    |
 											{
@@ -5296,7 +5318,7 @@ ruleObservableSemantics returns [EObject current=null]
 													$current,
 													"downTo",
 													lv_downTo_9_2,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+													"org.integratedmodelling.kim.Kim.NamespaceId");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -5331,7 +5353,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"role",
 												lv_role_11_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+												"org.integratedmodelling.kim.Kim.Concept");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5369,7 +5391,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"accordingTo",
 												lv_accordingTo_14_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+												"org.integratedmodelling.kim.Kim.PropertyId");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5405,7 +5427,7 @@ ruleObservableSemantics returns [EObject current=null]
 														$current,
 														"unit",
 														lv_unit_16_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.Unit");
+														"org.integratedmodelling.kim.Kim.Unit");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -5425,7 +5447,7 @@ ruleObservableSemantics returns [EObject current=null]
 														$current,
 														"currency",
 														lv_currency_17_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.Currency");
+														"org.integratedmodelling.kim.Kim.Currency");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -5452,7 +5474,7 @@ ruleObservableSemantics returns [EObject current=null]
 													$current,
 													"unit",
 													lv_unit_19_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.Unit");
+													"org.integratedmodelling.kim.Kim.Unit");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -5513,7 +5535,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"from",
 												lv_from_22_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+												"org.integratedmodelling.kim.Kim.Number");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5536,7 +5558,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"to",
 												lv_to_24_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+												"org.integratedmodelling.kim.Kim.Number");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5570,7 +5592,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"name",
 												lv_name_26_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+												"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 										}
 									)
 								)
@@ -5651,7 +5673,7 @@ ruleConceptDeclaration returns [EObject current=null]
 						$current,
 						"main",
 						lv_main_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+						"org.integratedmodelling.kim.Kim.Concept");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -5686,7 +5708,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"inherency",
 												lv_inherency_4_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5720,7 +5742,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"motivation",
 												lv_motivation_6_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5754,7 +5776,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"compresent",
 												lv_compresent_8_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5792,7 +5814,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"causant",
 												lv_causant_11_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5830,7 +5852,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"adjacent",
 												lv_adjacent_14_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5868,7 +5890,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"container",
 												lv_container_17_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5902,7 +5924,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"contained",
 												lv_contained_19_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5936,7 +5958,7 @@ ruleConceptDeclaration returns [EObject current=null]
 												$current,
 												"caused",
 												lv_caused_21_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -5973,7 +5995,7 @@ ruleConceptDeclaration returns [EObject current=null]
 							$current,
 							"context",
 							lv_context_23_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -6015,7 +6037,7 @@ ruleConceptReference returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+						"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 				}
 			)
 		)
@@ -6034,7 +6056,7 @@ ruleConceptReference returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+						"org.integratedmodelling.kim.Kim.NamespaceId");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -6099,7 +6121,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_4_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6124,7 +6146,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_6_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6163,7 +6185,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_8_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6188,7 +6210,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_10_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6227,7 +6249,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_12_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6252,7 +6274,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_14_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6291,7 +6313,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_16_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6316,7 +6338,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_18_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6355,7 +6377,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_20_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6380,7 +6402,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_22_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6419,7 +6441,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_24_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6444,7 +6466,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_26_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6483,7 +6505,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_28_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6508,7 +6530,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_30_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6547,7 +6569,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_32_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6572,7 +6594,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_34_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6611,7 +6633,7 @@ ruleConceptReference returns [EObject current=null]
 										$current,
 										"type",
 										lv_type_36_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+										"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -6636,7 +6658,7 @@ ruleConceptReference returns [EObject current=null]
 											$current,
 											"extends",
 											lv_extends_38_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+											"org.integratedmodelling.kim.Kim.Concept");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -6793,7 +6815,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_1_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptReference");
+							"org.integratedmodelling.kim.Kim.ConceptReference");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -6882,7 +6904,7 @@ ruleConcept returns [EObject current=null]
 									$current,
 									"authority",
 									lv_authority_7_1,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 							}
 							    |
 							lv_authority_7_2=RULE_UPPERCASE_PATH
@@ -6897,7 +6919,7 @@ ruleConcept returns [EObject current=null]
 									$current,
 									"authority",
 									lv_authority_7_2,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_PATH");
+									"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 							}
 						)
 					)
@@ -6938,7 +6960,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_10_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -6978,7 +7000,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_13_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7025,7 +7047,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_17_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7065,7 +7087,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_20_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7105,7 +7127,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_23_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7145,7 +7167,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_26_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7185,7 +7207,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_29_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7225,7 +7247,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_32_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7265,7 +7287,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_35_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7292,7 +7314,7 @@ ruleConcept returns [EObject current=null]
 								$current,
 								"other",
 								lv_other_37_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -7333,7 +7355,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_40_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7359,7 +7381,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"other",
 							lv_other_42_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7399,7 +7421,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_45_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7426,7 +7448,7 @@ ruleConcept returns [EObject current=null]
 								$current,
 								"other",
 								lv_other_47_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -7467,7 +7489,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_50_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7493,7 +7515,7 @@ ruleConcept returns [EObject current=null]
 							$current,
 							"declaration",
 							lv_declaration_52_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Expression");
+							"org.integratedmodelling.kim.Kim.Expression");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7590,7 +7612,7 @@ ruleTerm returns [EObject current=null]
 							$current,
 							"operands",
 							lv_operands_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Factor");
+							"org.integratedmodelling.kim.Kim.Factor");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7668,7 +7690,7 @@ ruleFactor returns [EObject current=null]
 							$current,
 							"operands",
 							lv_operands_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Term");
+							"org.integratedmodelling.kim.Kim.Term");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -7725,7 +7747,7 @@ ruleSimpleConceptDeclaration returns [EObject current=null]
 						$current,
 						"main",
 						lv_main_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+						"org.integratedmodelling.kim.Kim.Concept");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -7826,7 +7848,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 										$current,
 										"propertySpecifiers",
 										lv_propertySpecifiers_3_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.PROPERTY_TYPE");
+										"org.integratedmodelling.kim.Kim.PROPERTY_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -7845,7 +7867,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 										$current,
 										"propertySpecifiers",
 										lv_propertySpecifiers_4_0,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.PROPERTY_TYPE");
+										"org.integratedmodelling.kim.Kim.PROPERTY_TYPE");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -7885,7 +7907,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 									$current,
 									"coreconcept",
 									lv_coreconcept_7_1,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+									"org.integratedmodelling.kim.Kim.NamespaceId");
 								afterParserOrEnumRuleCall();
 							}
 							    |
@@ -7901,7 +7923,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 									$current,
 									"coreconcept",
 									lv_coreconcept_7_2,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+									"org.integratedmodelling.kim.Kim.PropertyId");
 								afterParserOrEnumRuleCall();
 							}
 						)
@@ -7924,7 +7946,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 								$current,
 								"operand",
 								lv_operand_8_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.OPERATOR_TARGET");
+								"org.integratedmodelling.kim.Kim.OPERATOR_TARGET");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -7948,7 +7970,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 									$current,
 									"property",
 									lv_property_10_1,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+									"org.integratedmodelling.kim.Kim.PropertyId");
 								afterParserOrEnumRuleCall();
 							}
 							    |
@@ -7964,7 +7986,7 @@ ruleUpperOntologyDefinition returns [EObject current=null]
 									$current,
 									"property",
 									lv_property_10_2,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+									"org.integratedmodelling.kim.Kim.NamespaceId");
 								afterParserOrEnumRuleCall();
 							}
 						)
@@ -8015,7 +8037,7 @@ ruleConceptStatement returns [EObject current=null]
 						$current,
 						"annotations",
 						lv_annotations_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Annotation");
+						"org.integratedmodelling.kim.Kim.Annotation");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -8155,7 +8177,7 @@ ruleConceptStatement returns [EObject current=null]
 													$current,
 													"propertySpecifiers",
 													lv_propertySpecifiers_6_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.PROPERTY_TYPE");
+													"org.integratedmodelling.kim.Kim.PROPERTY_TYPE");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -8174,7 +8196,7 @@ ruleConceptStatement returns [EObject current=null]
 													$current,
 													"propertySpecifiers",
 													lv_propertySpecifiers_7_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.PROPERTY_TYPE");
+													"org.integratedmodelling.kim.Kim.PROPERTY_TYPE");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -8207,7 +8229,7 @@ ruleConceptStatement returns [EObject current=null]
 						$current,
 						"concept",
 						lv_concept_8_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.CONCEPT_TYPE");
+						"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -8226,7 +8248,7 @@ ruleConceptStatement returns [EObject current=null]
 						$current,
 						"body",
 						lv_body_9_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptStatementBody");
+						"org.integratedmodelling.kim.Kim.ConceptStatementBody");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -8250,7 +8272,7 @@ ruleConceptStatement returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_11_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+							"org.integratedmodelling.kim.Kim.NamespaceId");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -8302,7 +8324,7 @@ ruleConceptStatementBody returns [EObject current=null]
 						$current,
 						"annotations",
 						lv_annotations_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Annotation");
+						"org.integratedmodelling.kim.Kim.Annotation");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -8352,7 +8374,7 @@ ruleConceptStatementBody returns [EObject current=null]
 								$current,
 								"name",
 								lv_name_3_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+								"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 						}
 					)
 				)
@@ -8440,7 +8462,7 @@ ruleConceptStatementBody returns [EObject current=null]
 										$current,
 										"authority",
 										lv_authority_9_1,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+										"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 								}
 								    |
 								lv_authority_9_2=RULE_UPPERCASE_PATH
@@ -8455,7 +8477,7 @@ ruleConceptStatementBody returns [EObject current=null]
 										$current,
 										"authority",
 										lv_authority_9_2,
-										"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_PATH");
+										"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 								}
 							)
 						)
@@ -8570,7 +8592,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"parents",
 														lv_parents_16_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+														"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -8628,7 +8650,7 @@ ruleConceptStatementBody returns [EObject current=null]
 															$current,
 															"parents",
 															lv_parents_18_0,
-															"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+															"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 														afterParserOrEnumRuleCall();
 													}
 												)
@@ -8666,7 +8688,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"contextualizedTraits",
 													lv_contextualizedTraits_20_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+													"org.integratedmodelling.kim.Kim.ObservableSemantics");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -8690,7 +8712,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"contextualizedTraits",
 														lv_contextualizedTraits_22_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ObservableSemantics");
+														"org.integratedmodelling.kim.Kim.ObservableSemantics");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -8727,7 +8749,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"contextualizesTraits",
 													lv_contextualizesTraits_24_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -8751,7 +8773,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"contextualizesTraits",
 														lv_contextualizesTraits_26_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+														"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -8793,7 +8815,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"definedAuthority",
 														lv_definedAuthority_29_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_PATH");
+														"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 												}
 											)
 										)
@@ -8813,7 +8835,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"upperConcept",
 													lv_upperConcept_30_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+													"org.integratedmodelling.kim.Kim.Concept");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -8848,7 +8870,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"requirements",
 												lv_requirements_32_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.IdentityRequirement");
+												"org.integratedmodelling.kim.Kim.IdentityRequirement");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -8872,7 +8894,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"requirements",
 													lv_requirements_34_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.IdentityRequirement");
+													"org.integratedmodelling.kim.Kim.IdentityRequirement");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -8907,7 +8929,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"describedQuality",
 												lv_describedQuality_36_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -8945,7 +8967,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"describedProportionality",
 												lv_describedProportionality_39_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -8983,7 +9005,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"describedInverseProportionalityQuality",
 												lv_describedInverseProportionalityQuality_42_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9017,7 +9039,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"describedNonzeroQuality",
 												lv_describedNonzeroQuality_44_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9051,7 +9073,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"classifiesQuality",
 												lv_classifiesQuality_46_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9085,7 +9107,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"discretizesQuality",
 												lv_discretizesQuality_48_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9119,7 +9141,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"actuallyInheritedTraits",
 												lv_actuallyInheritedTraits_50_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9143,7 +9165,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"actuallyInheritedTraits",
 													lv_actuallyInheritedTraits_52_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9182,7 +9204,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"roles",
 												lv_roles_55_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9206,7 +9228,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"roles",
 													lv_roles_57_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9231,7 +9253,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"targetObservables",
 													lv_targetObservables_59_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9255,7 +9277,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"targetObservables",
 														lv_targetObservables_61_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+														"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -9281,7 +9303,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"restrictedObservables",
 													lv_restrictedObservables_63_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9305,7 +9327,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"restrictedObservables",
 														lv_restrictedObservables_65_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+														"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -9341,7 +9363,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"conferredTraits",
 												lv_conferredTraits_67_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9365,7 +9387,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"conferredTraits",
 													lv_conferredTraits_69_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9390,7 +9412,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"conferredTargets",
 													lv_conferredTargets_71_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9414,7 +9436,7 @@ ruleConceptStatementBody returns [EObject current=null]
 														$current,
 														"conferredTargets",
 														lv_conferredTargets_73_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+														"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -9496,7 +9518,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"whole",
 												lv_whole_78_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9530,7 +9552,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"creates",
 												lv_creates_80_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9554,7 +9576,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"creates",
 													lv_creates_82_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9593,7 +9615,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"traitTargets",
 												lv_traitTargets_85_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ApplicableTarget");
+												"org.integratedmodelling.kim.Kim.ApplicableTarget");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9617,7 +9639,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"traitTargets",
 													lv_traitTargets_87_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ApplicableTarget");
+													"org.integratedmodelling.kim.Kim.ApplicableTarget");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9652,7 +9674,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"domains",
 												lv_domains_89_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9678,7 +9700,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"ranges",
 												lv_ranges_91_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9702,7 +9724,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"domains",
 													lv_domains_93_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9728,7 +9750,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"ranges",
 													lv_ranges_95_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.SimpleConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9767,7 +9789,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"inverse",
 												lv_inverse_98_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9801,7 +9823,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"qualitiesAffected",
 												lv_qualitiesAffected_100_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9825,7 +9847,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"qualitiesAffected",
 													lv_qualitiesAffected_102_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+													"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9878,7 +9900,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"children",
 												lv_children_106_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.ChildConcept");
+												"org.integratedmodelling.kim.Kim.ChildConcept");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -9902,7 +9924,7 @@ ruleConceptStatementBody returns [EObject current=null]
 													$current,
 													"children",
 													lv_children_108_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.ChildConcept");
+													"org.integratedmodelling.kim.Kim.ChildConcept");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -9932,7 +9954,7 @@ ruleConceptStatementBody returns [EObject current=null]
 											$current,
 											"restrictions",
 											lv_restrictions_109_0,
-											"org.integratedmodelling.kim.KnowledgeDeclaration.RestrictionStatement");
+											"org.integratedmodelling.kim.Kim.RestrictionStatement");
 										afterParserOrEnumRuleCall();
 									}
 								)
@@ -9969,7 +9991,7 @@ ruleConceptStatementBody returns [EObject current=null]
 												$current,
 												"metadata",
 												lv_metadata_112_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+												"org.integratedmodelling.kim.Kim.Metadata");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -10023,7 +10045,7 @@ ruleApplicableTarget returns [EObject current=null]
 						$current,
 						"target",
 						lv_target_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -10047,7 +10069,7 @@ ruleApplicableTarget returns [EObject current=null]
 							$current,
 							"linkFrom",
 							lv_linkFrom_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10070,7 +10092,7 @@ ruleApplicableTarget returns [EObject current=null]
 							$current,
 							"linkTo",
 							lv_linkTo_4_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10124,7 +10146,7 @@ ruleChildConcept returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_1_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 				)
 			)
@@ -10206,7 +10228,7 @@ ruleIdentityRequirement returns [EObject current=null]
 							$current,
 							"identities",
 							lv_identities_4_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+							"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10230,7 +10252,7 @@ ruleIdentityRequirement returns [EObject current=null]
 								$current,
 								"identities",
 								lv_identities_6_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10258,7 +10280,7 @@ ruleIdentityRequirement returns [EObject current=null]
 								$current,
 								"authority",
 								lv_authority_8_1,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+								"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 						}
 						    |
 						lv_authority_8_2=RULE_UPPERCASE_PATH
@@ -10273,7 +10295,7 @@ ruleIdentityRequirement returns [EObject current=null]
 								$current,
 								"authority",
 								lv_authority_8_2,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_PATH");
+								"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 						}
 					)
 				)
@@ -10362,7 +10384,7 @@ ruleRestrictionStatement returns [EObject current=null]
 							$current,
 							"definitions",
 							lv_definitions_1_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.RestrictionDefinition");
+							"org.integratedmodelling.kim.Kim.RestrictionDefinition");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10386,7 +10408,7 @@ ruleRestrictionStatement returns [EObject current=null]
 								$current,
 								"definitions",
 								lv_definitions_3_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.RestrictionDefinition");
+								"org.integratedmodelling.kim.Kim.RestrictionDefinition");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10418,7 +10440,7 @@ ruleRestrictionStatement returns [EObject current=null]
 								$current,
 								"authorities",
 								lv_authorities_6_1,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+								"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 						}
 						    |
 						lv_authorities_6_2=RULE_UPPERCASE_PATH
@@ -10433,7 +10455,7 @@ ruleRestrictionStatement returns [EObject current=null]
 								$current,
 								"authorities",
 								lv_authorities_6_2,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_PATH");
+								"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 						}
 					)
 				)
@@ -10461,7 +10483,7 @@ ruleRestrictionStatement returns [EObject current=null]
 									$current,
 									"authorities",
 									lv_authorities_8_1,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 							}
 							    |
 							lv_authorities_8_2=RULE_UPPERCASE_PATH
@@ -10476,7 +10498,7 @@ ruleRestrictionStatement returns [EObject current=null]
 									$current,
 									"authorities",
 									lv_authorities_8_2,
-									"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_PATH");
+									"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 							}
 						)
 					)
@@ -10503,7 +10525,7 @@ ruleRestrictionStatement returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_10_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Literal");
+							"org.integratedmodelling.kim.Kim.Literal");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10537,7 +10559,7 @@ ruleRestrictionStatement returns [EObject current=null]
 								$current,
 								"subject",
 								lv_subject_12_1,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+								"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 						}
 						    |
 						{
@@ -10552,7 +10574,7 @@ ruleRestrictionStatement returns [EObject current=null]
 								$current,
 								"subject",
 								lv_subject_12_2,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+								"org.integratedmodelling.kim.Kim.NamespaceId");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10704,7 +10726,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 								$current,
 								"source",
 								lv_source_8_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10724,7 +10746,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 								$current,
 								"dataType",
 								lv_dataType_9_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.DataType");
+								"org.integratedmodelling.kim.Kim.DataType");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10749,7 +10771,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 								$current,
 								"traitType",
 								lv_traitType_11_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10781,7 +10803,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 								$current,
 								"subject",
 								lv_subject_14_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10804,7 +10826,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_15_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Literal");
+							"org.integratedmodelling.kim.Kim.Literal");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10828,7 +10850,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 								$current,
 								"maxValue",
 								lv_maxValue_17_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+								"org.integratedmodelling.kim.Kim.Number");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -10852,7 +10874,7 @@ ruleRestrictionDefinition returns [EObject current=null]
 							$current,
 							"property",
 							lv_property_19_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+							"org.integratedmodelling.kim.Kim.PropertyId");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10891,7 +10913,7 @@ ruleAnnotation returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ANNOTATION_ID");
+						"org.integratedmodelling.kim.Kim.ANNOTATION_ID");
 				}
 			)
 		)
@@ -10914,7 +10936,7 @@ ruleAnnotation returns [EObject current=null]
 							$current,
 							"parameters",
 							lv_parameters_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.ParameterList");
+							"org.integratedmodelling.kim.Kim.ParameterList");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10971,7 +10993,7 @@ ruleList returns [EObject current=null]
 						$current,
 						"contents",
 						lv_contents_2_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+						"org.integratedmodelling.kim.Kim.Value");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11014,7 +11036,7 @@ ruleLiteral returns [EObject current=null]
 							$current,
 							"from",
 							lv_from_0_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11044,7 +11066,7 @@ ruleLiteral returns [EObject current=null]
 							$current,
 							"to",
 							lv_to_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11065,7 +11087,7 @@ ruleLiteral returns [EObject current=null]
 						$current,
 						"number",
 						lv_number_3_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+						"org.integratedmodelling.kim.Kim.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11150,7 +11172,7 @@ ruleLiteralOrID returns [EObject current=null]
 						$current,
 						"number",
 						lv_number_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+						"org.integratedmodelling.kim.Kim.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11255,7 +11277,7 @@ ruleLiteralOrIdOrComma returns [EObject current=null]
 							$current,
 							"from",
 							lv_from_0_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11285,7 +11307,7 @@ ruleLiteralOrIdOrComma returns [EObject current=null]
 							$current,
 							"to",
 							lv_to_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11306,7 +11328,7 @@ ruleLiteralOrIdOrComma returns [EObject current=null]
 						$current,
 						"number",
 						lv_number_3_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+						"org.integratedmodelling.kim.Kim.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11441,7 +11463,7 @@ ruleMetadata returns [EObject current=null]
 								$current,
 								"ids",
 								lv_ids_2_1,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+								"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 						}
 						    |
 						{
@@ -11456,7 +11478,7 @@ ruleMetadata returns [EObject current=null]
 								$current,
 								"ids",
 								lv_ids_2_2,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+								"org.integratedmodelling.kim.Kim.PropertyId");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -11477,7 +11499,7 @@ ruleMetadata returns [EObject current=null]
 								$current,
 								"values",
 								lv_values_3_1,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.LiteralOrID");
+								"org.integratedmodelling.kim.Kim.LiteralOrID");
 							afterParserOrEnumRuleCall();
 						}
 						    |
@@ -11493,7 +11515,7 @@ ruleMetadata returns [EObject current=null]
 								$current,
 								"values",
 								lv_values_3_2,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+								"org.integratedmodelling.kim.Kim.Metadata");
 							afterParserOrEnumRuleCall();
 						}
 						    |
@@ -11509,7 +11531,7 @@ ruleMetadata returns [EObject current=null]
 								$current,
 								"values",
 								lv_values_3_3,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+								"org.integratedmodelling.kim.Kim.List");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -11568,7 +11590,7 @@ ruleDocumentation returns [EObject current=null]
 							$current,
 							"selectors",
 							lv_selectors_2_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.DocSelector");
+							"org.integratedmodelling.kim.Kim.DocSelector");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11587,7 +11609,7 @@ ruleDocumentation returns [EObject current=null]
 							$current,
 							"values",
 							lv_values_3_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LiteralOrID");
+							"org.integratedmodelling.kim.Kim.LiteralOrID");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11630,7 +11652,7 @@ ruleDocSelector returns [EObject current=null]
 						$current,
 						"id",
 						lv_id_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+						"org.integratedmodelling.kim.Kim.PropertyId");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11737,7 +11759,7 @@ ruleKeyValuePair returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_0_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					{
@@ -11752,7 +11774,7 @@ ruleKeyValuePair returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_0_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+							"org.integratedmodelling.kim.Kim.PathName");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11793,7 +11815,7 @@ ruleKeyValuePair returns [EObject current=null]
 						$current,
 						"value",
 						lv_value_3_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+						"org.integratedmodelling.kim.Kim.Value");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11831,7 +11853,7 @@ ruleParameterList returns [EObject current=null]
 						$current,
 						"singleValue",
 						lv_singleValue_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Value");
+						"org.integratedmodelling.kim.Kim.Value");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11852,7 +11874,7 @@ ruleParameterList returns [EObject current=null]
 							$current,
 							"pairs",
 							lv_pairs_1_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.KeyValuePair");
+							"org.integratedmodelling.kim.Kim.KeyValuePair");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -11879,7 +11901,7 @@ ruleParameterList returns [EObject current=null]
 								$current,
 								"pairs",
 								lv_pairs_3_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.KeyValuePair");
+								"org.integratedmodelling.kim.Kim.KeyValuePair");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -11919,7 +11941,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"literal",
 						lv_literal_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.LiteralOrIdOrComma");
+						"org.integratedmodelling.kim.Kim.LiteralOrIdOrComma");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11939,7 +11961,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"function",
 						lv_function_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Function");
+						"org.integratedmodelling.kim.Kim.Function");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -11959,7 +11981,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"expr",
 						lv_expr_2_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.EXPR");
+						"org.integratedmodelling.kim.Kim.EXPR");
 				}
 			)
 		)
@@ -11979,7 +12001,7 @@ ruleValue returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_3_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					lv_id_3_2=RULE_UPPERCASE_ID
@@ -11994,7 +12016,7 @@ ruleValue returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_3_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 					    |
 					lv_id_3_3=RULE_CAMELCASE_ID
@@ -12009,7 +12031,7 @@ ruleValue returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_3_3,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 				)
 			)
@@ -12029,7 +12051,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"list",
 						lv_list_4_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.List");
+						"org.integratedmodelling.kim.Kim.List");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -12049,7 +12071,7 @@ ruleValue returns [EObject current=null]
 						$current,
 						"map",
 						lv_map_5_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Metadata");
+						"org.integratedmodelling.kim.Kim.Metadata");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -12102,7 +12124,7 @@ ruleFunction returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.PathName");
+						"org.integratedmodelling.kim.Kim.PathName");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -12125,7 +12147,7 @@ ruleFunction returns [EObject current=null]
 						$current,
 						"parameters",
 						lv_parameters_2_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ParameterList");
+						"org.integratedmodelling.kim.Kim.ParameterList");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -12604,7 +12626,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 						$current,
 						"declaration",
 						lv_declaration_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -12639,7 +12661,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_3_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Concept");
+												"org.integratedmodelling.kim.Kim.Concept");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -12678,7 +12700,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 													$current,
 													"downTo",
 													lv_downTo_6_1,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+													"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 											}
 											    |
 											{
@@ -12693,7 +12715,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 													$current,
 													"downTo",
 													lv_downTo_6_2,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+													"org.integratedmodelling.kim.Kim.NamespaceId");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -12732,7 +12754,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												$current,
 												"accordingTo",
 												lv_accordingTo_9_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.PropertyId");
+												"org.integratedmodelling.kim.Kim.PropertyId");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -12768,7 +12790,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 														$current,
 														"unit",
 														lv_unit_11_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.Unit");
+														"org.integratedmodelling.kim.Kim.Unit");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -12788,7 +12810,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 														$current,
 														"currency",
 														lv_currency_12_0,
-														"org.integratedmodelling.kim.KnowledgeDeclaration.Currency");
+														"org.integratedmodelling.kim.Kim.Currency");
 													afterParserOrEnumRuleCall();
 												}
 											)
@@ -12815,7 +12837,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 													$current,
 													"unit",
 													lv_unit_14_0,
-													"org.integratedmodelling.kim.KnowledgeDeclaration.Unit");
+													"org.integratedmodelling.kim.Kim.Unit");
 												afterParserOrEnumRuleCall();
 											}
 										)
@@ -12846,7 +12868,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												$current,
 												"from",
 												lv_from_15_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+												"org.integratedmodelling.kim.Kim.Number");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -12869,7 +12891,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												$current,
 												"to",
 												lv_to_17_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+												"org.integratedmodelling.kim.Kim.Number");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -12903,7 +12925,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												$current,
 												"name",
 												lv_name_19_0,
-												"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+												"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 										}
 									)
 								)
@@ -12956,7 +12978,7 @@ ruleNamedObservableSemantics returns [EObject current=null]
 						$current,
 						"declaration",
 						lv_declaration_0_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.ConceptDeclaration");
+						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -12980,7 +13002,7 @@ ruleNamedObservableSemantics returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_2_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					lv_name_2_2=RULE_LOWERCASE_DASHID
@@ -12995,7 +13017,7 @@ ruleNamedObservableSemantics returns [EObject current=null]
 							$current,
 							"name",
 							lv_name_2_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_DASHID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_DASHID");
 					}
 				)
 			)
@@ -13034,7 +13056,7 @@ ruleUnitElement returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_0_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 					    |
 					lv_id_0_2=RULE_LOWERCASE_ID
@@ -13049,7 +13071,7 @@ ruleUnitElement returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_0_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.LOWERCASE_ID");
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 				)
 			)
@@ -13069,7 +13091,7 @@ ruleUnitElement returns [EObject current=null]
 						$current,
 						"num",
 						lv_num_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.Number");
+						"org.integratedmodelling.kim.Kim.Number");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -13094,7 +13116,7 @@ ruleUnitElement returns [EObject current=null]
 							$current,
 							"unit",
 							lv_unit_3_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.Unit");
+							"org.integratedmodelling.kim.Kim.Unit");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -13255,7 +13277,7 @@ ruleUnit returns [EObject current=null]
 						$current,
 						"root",
 						lv_root_1_0,
-						"org.integratedmodelling.kim.KnowledgeDeclaration.UnitElement");
+						"org.integratedmodelling.kim.Kim.UnitElement");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -13282,7 +13304,7 @@ ruleUnit returns [EObject current=null]
 								$current,
 								"connectors",
 								lv_connectors_2_0,
-								"org.integratedmodelling.kim.KnowledgeDeclaration.UnitOp");
+								"org.integratedmodelling.kim.Kim.UnitOp");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -13302,7 +13324,7 @@ ruleUnit returns [EObject current=null]
 							$current,
 							"units",
 							lv_units_3_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.UnitElement");
+							"org.integratedmodelling.kim.Kim.UnitElement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -13342,7 +13364,7 @@ ruleCurrency returns [EObject current=null]
 							$current,
 							"id",
 							lv_id_0_0,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.UPPERCASE_ID");
+							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 				)
 			)
@@ -13387,7 +13409,7 @@ ruleCurrency returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_3_1,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.CAMELCASE_ID");
+							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 					    |
 					{
@@ -13402,7 +13424,7 @@ ruleCurrency returns [EObject current=null]
 							$current,
 							"concept",
 							lv_concept_3_2,
-							"org.integratedmodelling.kim.KnowledgeDeclaration.NamespaceId");
+							"org.integratedmodelling.kim.Kim.NamespaceId");
 						afterParserOrEnumRuleCall();
 					}
 				)

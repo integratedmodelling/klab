@@ -5,12 +5,16 @@
 package org.integratedmodelling.kim.formatting2
 
 import com.google.inject.Inject
+import org.eclipse.xtext.formatting2.AbstractFormatter2
 import org.eclipse.xtext.formatting2.IFormattableDocument
+import org.integratedmodelling.kim.kim.Concept
+import org.integratedmodelling.kim.kim.ConceptDeclaration
 import org.integratedmodelling.kim.kim.Model
+import org.integratedmodelling.kim.kim.ObservableSemantics
 import org.integratedmodelling.kim.kim.Statement
 import org.integratedmodelling.kim.services.KimGrammarAccess
 
-class KimFormatter extends KnowledgeDeclarationFormatter {
+class KimFormatter extends AbstractFormatter2 {
 	
 	@Inject extension KimGrammarAccess
 
@@ -26,6 +30,26 @@ class KimFormatter extends KnowledgeDeclarationFormatter {
 		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		statement.getConceptStatement.format;
 		statement.getModelStatement.format;
+	}
+	
+	
+	def dispatch void format(ObservableSemantics observableSemantics, extension IFormattableDocument document) {
+		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
+		observableSemantics.getDeclaration.format;
+		observableSemantics.getBy.format;
+		observableSemantics.getUnit.format;
+		observableSemantics.getCurrency.format;
+		observableSemantics.getFrom.format;
+		observableSemantics.getTo.format;
+	}
+
+	def dispatch void format(ConceptDeclaration conceptDeclaration, extension IFormattableDocument document) {
+		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
+		for (Concept concept : conceptDeclaration.getMain()) {
+			concept.format;
+		}
+		conceptDeclaration.getInherency.format;
+		conceptDeclaration.getContext.format;
 	}
 	
 	// TODO: implement for ModelStatement, ModelBodyStatement, Classification, Classifier, ClassifierRHS, LookupTable, Table, Contextualization, FunctionOrID, Action, Condition, Namespace, Import

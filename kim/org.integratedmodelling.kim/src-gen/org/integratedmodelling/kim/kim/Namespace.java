@@ -8,11 +8,6 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.Annotation;
-import org.integratedmodelling.kim.kdecl.Concept;
-import org.integratedmodelling.kim.kdecl.Function;
-import org.integratedmodelling.kim.kdecl.Metadata;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Namespace</b></em>'.
@@ -51,7 +46,7 @@ public interface Namespace extends EObject
 {
   /**
    * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.Annotation}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Annotation}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Annotations</em>' containment reference list isn't clear,
@@ -255,7 +250,7 @@ public interface Namespace extends EObject
 
   /**
    * Returns the value of the '<em><b>Coverage</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kdecl.Function}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Function}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Coverage</em>' containment reference list isn't clear,

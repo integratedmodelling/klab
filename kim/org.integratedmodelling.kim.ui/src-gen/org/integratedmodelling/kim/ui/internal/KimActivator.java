@@ -15,9 +15,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.shared.SharedStateModule;
 import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kim.KimRuntimeModule;
-import org.integratedmodelling.kim.KnowledgeDeclarationRuntimeModule;
 import org.integratedmodelling.kim.ui.KimUiModule;
-import org.integratedmodelling.kim.ui.KnowledgeDeclarationUiModule;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -26,7 +24,6 @@ import org.osgi.framework.BundleContext;
  */
 public class KimActivator extends AbstractUIPlugin {
 
-	public static final String ORG_INTEGRATEDMODELLING_KIM_KNOWLEDGEDECLARATION = "org.integratedmodelling.kim.KnowledgeDeclaration";
 	public static final String ORG_INTEGRATEDMODELLING_KIM_KIM = "org.integratedmodelling.kim.Kim";
 	
 	private static final Logger logger = Logger.getLogger(KimActivator.class);
@@ -77,9 +74,6 @@ public class KimActivator extends AbstractUIPlugin {
 	}
 	
 	protected Module getRuntimeModule(String grammar) {
-		if (ORG_INTEGRATEDMODELLING_KIM_KNOWLEDGEDECLARATION.equals(grammar)) {
-			return new KnowledgeDeclarationRuntimeModule();
-		}
 		if (ORG_INTEGRATEDMODELLING_KIM_KIM.equals(grammar)) {
 			return new KimRuntimeModule();
 		}
@@ -87,9 +81,6 @@ public class KimActivator extends AbstractUIPlugin {
 	}
 	
 	protected Module getUiModule(String grammar) {
-		if (ORG_INTEGRATEDMODELLING_KIM_KNOWLEDGEDECLARATION.equals(grammar)) {
-			return new KnowledgeDeclarationUiModule(this);
-		}
 		if (ORG_INTEGRATEDMODELLING_KIM_KIM.equals(grammar)) {
 			return new KimUiModule(this);
 		}

@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
-import org.integratedmodelling.kim.kdecl.Function
+import org.integratedmodelling.kim.kim.Function
 import org.integratedmodelling.kim.ui.elink.ConceptHelper
 import org.integratedmodelling.kim.ui.elink.FunctionParameterHelper
 

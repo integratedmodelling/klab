@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.Model#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Model#getNamespace <em>Namespace</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Model#getStatements <em>Statements</em>}</li>
  * </ul>
@@ -27,6 +28,32 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Model extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Observable</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Observable</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Observable</em>' containment reference.
+   * @see #setObservable(ObservableSemantics)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModel_Observable()
+   * @model containment="true"
+   * @generated
+   */
+  ObservableSemantics getObservable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Model#getObservable <em>Observable</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Observable</em>' containment reference.
+   * @see #getObservable()
+   * @generated
+   */
+  void setObservable(ObservableSemantics value);
+
   /**
    * Returns the value of the '<em><b>Namespace</b></em>' containment reference.
    * <!-- begin-user-doc -->

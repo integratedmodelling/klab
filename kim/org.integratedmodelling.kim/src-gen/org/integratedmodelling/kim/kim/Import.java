@@ -6,8 +6,6 @@ package org.integratedmodelling.kim.kim;
 
 import org.eclipse.emf.ecore.EObject;
 
-import org.integratedmodelling.kim.kdecl.List;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Import</b></em>'.
