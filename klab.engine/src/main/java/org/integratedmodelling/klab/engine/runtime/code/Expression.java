@@ -125,6 +125,12 @@ public abstract class Expression implements IExpression {
       // TODO Auto-generated method stub
       return null;
     }
+
+	@Override
+	public IObservable getTargetSemantics() {
+		// TODO Auto-generated method stub
+		return null;
+	}
   }
   
   public static IComputationContext emptyContext(IMonitor monitor) {

@@ -30,13 +30,28 @@ contextualizer exec
 }
 
 contextualizer literal
-	"Return a contextualizer for a literal value"
+	"Return a mediating resolver that wraps a state into another with compatible, but 
+	 different value semantics"
 {
 	
 	object val
 		"The value to be contextualized"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
+
+}
+
+contextualizer convert
+	"Return a contextualizer for a literal value"
+{
+	
+	object from
+		"The value mediator (unit, range, currency) describing the source values"
+
+	object to
+		"The value mediator (unit, range, currency) describing the target values"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver
 
 }
 

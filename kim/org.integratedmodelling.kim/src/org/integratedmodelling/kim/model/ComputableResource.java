@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.xtext.util.Pair;
+import org.eclipse.xtext.util.Tuples;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimLookupTable;
@@ -111,6 +112,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
 		}
+	}
+	
+	public ComputableResource(IValueMediator from, IValueMediator to) {
+		this.conversion = Tuples.create(from, to);
 	}
 
 	public ComputableResource(ValueAssignment statement, ComputableResource condition) {
