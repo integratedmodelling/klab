@@ -31,373 +31,380 @@ import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 
 /**
- * A singleton that handles translation of k.IM knowledge statements to internal OWL-based knowledge.
+ * A singleton that handles translation of k.IM knowledge statements to internal
+ * OWL-based knowledge.
  * 
  * @author Ferd
  *
  */
 public enum KimKnowledgeProcessor {
 
-    INSTANCE;
+	INSTANCE;
 
-    public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, final IMonitor monitor) {
-        return build(concept, namespace, null, monitor);
-    }
+	public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
+			final IMonitor monitor) {
+		return build(concept, namespace, null, monitor);
+	}
 
-    public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject, final IMonitor monitor) {
+	public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
+			ConceptStatement kimObject, final IMonitor monitor) {
 
-        if (concept.isMacro()) {
-            return null;
-        }
+		if (concept.isMacro()) {
+			return null;
+		}
 
-        Namespace ns = (Namespace) namespace;
-        try {
+		Namespace ns = (Namespace) namespace;
+		try {
 
-            Concept ret = buildInternal(concept, ns, kimObject, monitor);
-            if (concept.getParents().isEmpty()) {
-                IConcept parent = null;
-                if (concept.getUpperConceptDefined() != null) {
-                    parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
-                    if (parent == null) {
-                        monitor.error("Core concept " + concept.getUpperConceptDefined()
-                                + " unknown", concept);
-                    }
-                } else {
-                    parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
-                }
+			Concept ret = buildInternal(concept, ns, kimObject, monitor);
+			if (concept.getParents().isEmpty()) {
+				IConcept parent = null;
+				if (concept.getUpperConceptDefined() != null) {
+					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
+					if (parent == null) {
+						monitor.error("Core concept " + concept.getUpperConceptDefined() + " unknown", concept);
+					}
+				} else {
+					parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+				}
 
-                if (parent != null) {
-                    ns.addAxiom(Axiom.SubClass(parent.getUrn(), ret.getName()));
-                }
-            }
+				if (parent != null) {
+					ns.addAxiom(Axiom.SubClass(parent.getUrn(), ret.getName()));
+				}
+			}
 
-            if (ret != null) {
-                ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
-                createProperties(ret, ns);
-                ns.define();
-            }
+			if (ret != null) {
+				ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
+				createProperties(ret, ns);
+				ns.define();
+			}
 
-            return ret;
+			return ret;
 
-        } catch (Throwable e) {
-            monitor.error(e);
-        }
-        return null;
-    }
+		} catch (Throwable e) {
+			monitor.error(e);
+		}
+		return null;
+	}
 
-    private @Nullable Concept buildInternal(final IKimConceptStatement concept, final Namespace namespace, ConceptStatement kimObject, final IMonitor monitor) {
+	private @Nullable Concept buildInternal(final IKimConceptStatement concept, final Namespace namespace,
+			ConceptStatement kimObject, final IMonitor monitor) {
 
-        Concept main = null;
-        String mainId = concept.getName();
+		Concept main = null;
+		String mainId = concept.getName();
 
-        namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
+		namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
-        // set the k.IM definition
-        namespace.addAxiom(Axiom
-                .AnnotationAssertion(mainId, NS.CONCEPT_DEFINITION_PROPERTY, namespace.getName() + ":"
-                        + concept.getName()));
+		// set the k.IM definition
+		namespace.addAxiom(Axiom.AnnotationAssertion(mainId, NS.CONCEPT_DEFINITION_PROPERTY,
+				namespace.getName() + ":" + concept.getName()));
 
-        /*
-         * basic attributes subjective deniable internal uni/bidirectional (relationship)
-         */
-        if (concept.isAbstract()) {
-            namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
-        }
+		/*
+		 * basic attributes subjective deniable internal uni/bidirectional
+		 * (relationship)
+		 */
+		if (concept.isAbstract()) {
+			namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
+		}
 
-        namespace.define();
-        main = namespace.getOntology().getConcept(mainId);
+		namespace.define();
+		main = namespace.getOntology().getConcept(mainId);
 
-        for (ParentConcept parent : concept.getParents()) {
+		for (ParentConcept parent : concept.getParents()) {
 
-            List<IConcept> concepts = new ArrayList<>();
-            for (IKimConcept pdecl : parent.getConcepts()) {
-                IConcept declared = declare(pdecl, monitor);
-                if (declared == null) {
-                    monitor.error("parent declaration " + pdecl + " does not identify known concepts", pdecl);
-                    return null;
-                }
-                concepts.add(declared);
-            }
+			List<IConcept> concepts = new ArrayList<>();
+			for (IKimConcept pdecl : parent.getConcepts()) {
+				IConcept declared = declare(pdecl, monitor);
+				if (declared == null) {
+					monitor.error("parent declaration " + pdecl + " does not identify known concepts", pdecl);
+					return null;
+				}
+				concepts.add(declared);
+			}
 
-            if (concepts.size() == 1) {
-                namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
-            } else {
-                IConcept expr = null;
-                switch (parent.getConnector()) {
-                case INTERSECTION:
-                    expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology());
-                    break;
-                case UNION:
-                    expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology());
-                    break;
-                case FOLLOWS:
-                    expr = OWL.INSTANCE.getConsequentialityEvent(concepts, namespace.getOntology());
-                    break;
-                default:
-                    // won't happen
-                    break;
-                }
-                namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
-            }
-            namespace.define();
-        }
+			if (concepts.size() == 1) {
+				namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
+			} else {
+				IConcept expr = null;
+				switch (parent.getConnector()) {
+				case INTERSECTION:
+					expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology());
+					break;
+				case UNION:
+					expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology());
+					break;
+				case FOLLOWS:
+					expr = OWL.INSTANCE.getConsequentialityEvent(concepts, namespace.getOntology());
+					break;
+				default:
+					// won't happen
+					break;
+				}
+				namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
+			}
+			namespace.define();
+		}
 
-        for (IKimScope child : concept.getChildren()) {
-            if (child instanceof IKimConceptStatement) {
-                try {
-                    ConceptStatement chobj = kimObject == null ? null
-                            : new ConceptStatement((IKimConceptStatement) child);
-                    IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, chobj, monitor);
-                    namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getName()));
-                    namespace.define();
-                    kimObject.getChildren().add(chobj);
-                } catch (Throwable e) {
-                    monitor.error(e);
-                }
-            }
-        }
-        
-        for (KimConcept inherited : concept.getTraitsInherited()) {
-            IConcept trait = declare(inherited, monitor);
-            if (trait == null) {
-                monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);
-                return null;
-            }
-            try {
-                Traits.INSTANCE.addTrait(main, trait);
-            } catch (KlabValidationException e) {
-                monitor.error(e, inherited);
-            }
-        }
+		for (IKimScope child : concept.getChildren()) {
+			if (child instanceof IKimConceptStatement) {
+				try {
+					ConceptStatement chobj = kimObject == null ? null
+							: new ConceptStatement((IKimConceptStatement) child);
+					IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, chobj, monitor);
+					namespace.addAxiom(Axiom.SubClass(mainId, childConcept.getName()));
+					namespace.define();
+					kimObject.getChildren().add(chobj);
+				} catch (Throwable e) {
+					monitor.error(e);
+				}
+			}
+		}
 
-        if (kimObject != null) {
-            kimObject.set(main);
-        }
+		for (KimConcept inherited : concept.getTraitsInherited()) {
+			IConcept trait = declare(inherited, monitor);
+			if (trait == null) {
+				monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);
+				return null;
+			}
+			try {
+				Traits.INSTANCE.addTrait(main, trait);
+			} catch (KlabValidationException e) {
+				monitor.error(e, inherited);
+			}
+		}
 
-        return main; 
-    }
+		if (kimObject != null) {
+			kimObject.set(main);
+		}
 
-    public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
+		return main;
+	}
 
-        Concept main = declareInternal(concept.getMain(), monitor);
+	public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
 
-        if (main == null) {
-            return null;
-        }
+		Concept main = declareInternal(concept.getMain(), monitor);
 
-        Concept observable = main;
+		if (main == null) {
+			return null;
+		}
 
-        Observable ret = new Observable(observable);
+		Concept observable = main;
 
-        if (concept.getBy() != null) {
-            // TODO modify observable AND declaration
-        }
+		Observable ret = new Observable(observable);
 
-        if (concept.getDownTo() != null) {
-            // TODO modify observable AND declaration
-        }
+		if (concept.getBy() != null) {
+			// TODO modify observable AND declaration
+		}
 
-        String declaration = observable.getType().getDefinition();
+		if (concept.getDownTo() != null) {
+			// TODO modify observable AND declaration. If it's downTo the full detail, don't
+			// add anything.
+		}
 
-        if (concept.getUnit() != null) {
-            ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
-            declaration += " in " + ret.getUnit();
-        }
+		String declaration = observable.getType().getDefinition();
 
-        if (concept.getCurrency() != null) {
-            ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getUnit()));
-            declaration += " in " + ret.getCurrency();
-        }
+		if (concept.getUnit() != null) {
+			ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
+			declaration += " in " + ret.getUnit();
+		}
 
-        if (concept.getValue() != null) {
-            ret.setValue(concept.getValue());
-        }
+		if (concept.getCurrency() != null) {
+			ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getUnit()));
+			declaration += " in " + ret.getCurrency();
+		}
 
-        ret.setOptional(concept.isOptional());
-        ret.setGeneric(concept.isAbstractObservable());
+		if (concept.getValue() != null) {
+			ret.setValue(concept.getValue());
+		}
 
-        /*
-         * TODO redefine observable if modifiers (by) were given
-         */
+		if (concept.getRange() != null) {
+			ret.setRange(concept.getRange());
+		}
 
-        String name = concept.getFormalName();
-        if (name == null) {
-            name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(main), '_');
-        }
+		ret.setOptional(concept.isOptional());
+		ret.setGeneric(concept.isAbstractObservable());
 
-        ret.setName(name);
+		/*
+		 * TODO redefine observable if modifiers (by) were given
+		 */
 
-        /*
-         * set default unit if any is appropriate
-         */
-        if (ret.getUnit() == null) {
-            ret.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
-            if (ret.getUnit() != null) {
-                declaration += " in " + ret.getUnit();
-            }
-        }
+		String name = concept.getFormalName();
+		if (name == null) {
+			name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(main), '_');
+		}
 
-        ret.setDeclaration(declaration);
+		ret.setName(name);
 
-        return ret;
-    }
+		/*
+		 * set default unit if any is appropriate
+		 */
+		if (ret.getUnit() == null) {
+			ret.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
+			if (ret.getUnit() != null) {
+				declaration += " in " + ret.getUnit();
+			}
+		}
 
-    private @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
-        return declareInternal(concept, monitor);
-    }
+		ret.setDeclaration(declaration);
 
-    private @Nullable Concept declareInternal(final IKimConcept concept, final IMonitor monitor) {
+		return ret;
+	}
 
-        Concept main = null;
+	private @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
+		return declareInternal(concept, monitor);
+	}
 
-        if (concept.getObservable() != null) {
-            main = declareInternal(concept.getObservable(), monitor);
-        } else if (concept.getName() != null) {
-            main = Concepts.INSTANCE.getConcept(concept.getName());
-        } 
+	private @Nullable Concept declareInternal(final IKimConcept concept, final IMonitor monitor) {
 
-        if (main == null) {
-            return null;
-        }
+		Concept main = null;
 
-        Builder builder = 
-                new ObservableBuilder(main, (Ontology) (Configuration.INSTANCE.useCommonOntology()
-                        ? Reasoner.INSTANCE.getOntology()
-                                : null))
-                        .withDeclaration(concept, monitor);
+		if (concept.getObservable() != null) {
+			main = declareInternal(concept.getObservable(), monitor);
+		} else if (concept.getName() != null) {
+			main = Concepts.INSTANCE.getConcept(concept.getName());
+		}
 
-        /*
-         * transformations first
-         */
+		if (main == null) {
+			return null;
+		}
 
-        if (concept.getInherent() != null) {
-            IConcept c = declareInternal(concept.getInherent(), monitor);
-            if (c != null) {
-                builder.of(c);
-            }
-        }
-        if (concept.getContext() != null) {
-            IConcept c = declareInternal(concept.getContext(), monitor);
-            if (c != null) {
-                builder.within(c);
-            }
-        }
-        if (concept.getCompresent() != null) {
-            IConcept c = declareInternal(concept.getCompresent(), monitor);
-            if (c != null) {
-                builder.with(c);
-            }
-        }
-        if (concept.getCausant() != null) {
-            IConcept c = declareInternal(concept.getCausant(), monitor);
-            if (c != null) {
-                builder.from(c);
-            }
-        }
-        if (concept.getCaused() != null) {
-            IConcept c = declareInternal(concept.getCaused(), monitor);
-            if (c != null) {
-                builder.to(c);
-            }
-        }
-        if (concept.getMotivation() != null) {
-            IConcept c = declareInternal(concept.getMotivation(), monitor);
-            if (c != null) {
-                builder.withGoal(c);
-            }
-        }
+		Builder builder = new ObservableBuilder(main,
+				(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null))
+						.withDeclaration(concept, monitor);
 
-        for (IKimConcept c : concept.getTraits()) {
-            IConcept trait = declareInternal(c, monitor);
-            if (trait != null) {
-                builder.withTrait(trait);
-            }
-        }
+		/*
+		 * transformations first
+		 */
 
-        for (IKimConcept c : concept.getRoles()) {
-            IConcept role = declareInternal(c, monitor);
-            if (role != null) {
-                builder.as(role);
-            }
-        }
+		if (concept.getInherent() != null) {
+			IConcept c = declareInternal(concept.getInherent(), monitor);
+			if (c != null) {
+				builder.of(c);
+			}
+		}
+		if (concept.getContext() != null) {
+			IConcept c = declareInternal(concept.getContext(), monitor);
+			if (c != null) {
+				builder.within(c);
+			}
+		}
+		if (concept.getCompresent() != null) {
+			IConcept c = declareInternal(concept.getCompresent(), monitor);
+			if (c != null) {
+				builder.with(c);
+			}
+		}
+		if (concept.getCausant() != null) {
+			IConcept c = declareInternal(concept.getCausant(), monitor);
+			if (c != null) {
+				builder.from(c);
+			}
+		}
+		if (concept.getCaused() != null) {
+			IConcept c = declareInternal(concept.getCaused(), monitor);
+			if (c != null) {
+				builder.to(c);
+			}
+		}
+		if (concept.getMotivation() != null) {
+			IConcept c = declareInternal(concept.getMotivation(), monitor);
+			if (c != null) {
+				builder.withGoal(c);
+			}
+		}
 
-        if (concept.isNegated()) {
-            builder.negated();
-        }
-        
-        // semantic operator goes last as it builds the operand and resets all predicates
-        if (concept.getObservationType() != null) {
-            IConcept other = null;
-            if (concept.getComparisonConcept() != null) {
-                other = declareInternal(concept.getComparisonConcept(), monitor);
-            }
-            try {
-                builder.as(concept.getObservationType(), other == null ? (IConcept[]) null
-                        : new IConcept[] { other });
-            } catch (KlabValidationException e) {
-                monitor.error(e);
-            }
-        }
+		for (IKimConcept c : concept.getTraits()) {
+			IConcept trait = declareInternal(c, monitor);
+			if (trait != null) {
+				builder.withTrait(trait);
+			}
+		}
 
-        Concept ret = null;
-        try {
+		for (IKimConcept c : concept.getRoles()) {
+			IConcept role = declareInternal(c, monitor);
+			if (role != null) {
+				builder.as(role);
+			}
+		}
 
-            ret = (Concept) builder.build();
+		if (concept.isNegated()) {
+			builder.negated();
+		}
 
-            /*
-             * handle unions and intersections
-             */
-            if (concept.getOperands().size() > 0) {
-                List<IConcept> concepts = new ArrayList<>();
-                concepts.add(ret);
-                for (IKimConcept op : concept.getOperands()) {
-                    concepts.add(declareInternal(op, monitor));
-                }
-                ret = concept.getExpressionType() == Expression.INTERSECTION
-                        ? OWL.INSTANCE.getIntersection(concepts, ret.getOntology())
-                        : OWL.INSTANCE.getUnion(concepts, ret.getOntology());
-            }
+		// semantic operator goes last as it builds the operand and resets all
+		// predicates
+		if (concept.getObservationType() != null) {
+			IConcept other = null;
+			if (concept.getComparisonConcept() != null) {
+				other = declareInternal(concept.getComparisonConcept(), monitor);
+			}
+			try {
+				builder.as(concept.getObservationType(), other == null ? (IConcept[]) null : new IConcept[] { other });
+			} catch (KlabValidationException e) {
+				monitor.error(e);
+			}
+		}
 
-            // set the k.IM definition in the concept FIXME this must only happen if the concept wasn't there - within build() and repeat if mods are made
-            ret.getOntology().define(Collections.singletonList(Axiom
-                    .AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.getDefinition())));
+		Concept ret = null;
+		try {
 
-            // consistency check
-            if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
-                ((Concept) ret).getTypeSet().add(Type.NOTHING);
-                monitor.error("the definition of this concept has logical errors and is inconsistent", concept);
-            }
+			ret = (Concept) builder.build();
 
-        } catch (Throwable e) {
-            monitor.error(e, concept);
-        }
+			/*
+			 * handle unions and intersections
+			 */
+			if (concept.getOperands().size() > 0) {
+				List<IConcept> concepts = new ArrayList<>();
+				concepts.add(ret);
+				for (IKimConcept op : concept.getOperands()) {
+					concepts.add(declareInternal(op, monitor));
+				}
+				ret = concept.getExpressionType() == Expression.INTERSECTION
+						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology())
+						: OWL.INSTANCE.getUnion(concepts, ret.getOntology());
+			}
 
-        return ret;
-    }
+			// set the k.IM definition in the concept FIXME this must only happen if the
+			// concept wasn't there - within build() and repeat if mods are made
+			ret.getOntology().define(Collections.singletonList(
+					Axiom.AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.getDefinition())));
 
-    private void createProperties(IConcept ret, Namespace ns) {
+			// consistency check
+			if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
+				((Concept) ret).getTypeSet().add(Type.NOTHING);
+				monitor.error("the definition of this concept has logical errors and is inconsistent", concept);
+			}
 
-        String pName = null;
-        String pProp = null;
-        if (ret.is(Type.ATTRIBUTE)) {
-            // hasX
-            pName = "has" + ret.getName();
-            pProp = NS.HAS_ATTRIBUTE_PROPERTY;
-        } else if (ret.is(Type.REALM)) {
-            // inX
-            pName = "in" + ret.getName();
-            pProp = NS.HAS_REALM_PROPERTY;
-        } else if (ret.is(Type.IDENTITY)) {
-            // isX
-            pName = "is" + ret.getName();
-            pProp = NS.HAS_IDENTITY_PROPERTY;
-        }
-        if (pName != null) {
-            ns.addAxiom(Axiom.ObjectPropertyAssertion(pName));
-            ns.addAxiom(Axiom.ObjectPropertyRange(pName, ret.getName()));
-            ns.addAxiom(Axiom.SubObjectProperty(pProp, pName));
-            ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.TRAIT_RESTRICTING_PROPERTY, ns.getName()
-                    + ":" + pName));
-        }
-    }
+		} catch (Throwable e) {
+			monitor.error(e, concept);
+		}
+
+		return ret;
+	}
+
+	private void createProperties(IConcept ret, Namespace ns) {
+
+		String pName = null;
+		String pProp = null;
+		if (ret.is(Type.ATTRIBUTE)) {
+			// hasX
+			pName = "has" + ret.getName();
+			pProp = NS.HAS_ATTRIBUTE_PROPERTY;
+		} else if (ret.is(Type.REALM)) {
+			// inX
+			pName = "in" + ret.getName();
+			pProp = NS.HAS_REALM_PROPERTY;
+		} else if (ret.is(Type.IDENTITY)) {
+			// isX
+			pName = "is" + ret.getName();
+			pProp = NS.HAS_IDENTITY_PROPERTY;
+		}
+		if (pName != null) {
+			ns.addAxiom(Axiom.ObjectPropertyAssertion(pName));
+			ns.addAxiom(Axiom.ObjectPropertyRange(pName, ret.getName()));
+			ns.addAxiom(Axiom.SubObjectProperty(pProp, pName));
+			ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.TRAIT_RESTRICTING_PROPERTY,
+					ns.getName() + ":" + pName));
+		}
+	}
 }

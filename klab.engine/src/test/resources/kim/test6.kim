@@ -3,10 +3,12 @@ worldview im;
 @test(
 	name = "tests.core.mediations-1",
 	description  = "Simplest unit translation",
-	observations = ("geography:Elevation in mm")
-	// TODO Assertions - range should be 0 - 4000000 w/o nodata
+	observations = ("geography:Elevation in m", "chemistry:Reactivity 0 to 1")
+	// TODO Assertions - elevation values within 0 - 4 w/o nodata, reactivity within 0 to 1
 )
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 
-model geography:Elevation in m using gis.terrain();
+model geography:Elevation in mm using gis.terrain(range = 0 to 4000);
+model chemistry:Reactivity 0 to 360 using gis.terrain(range = 0 to 360);
+// TODO test case with currency

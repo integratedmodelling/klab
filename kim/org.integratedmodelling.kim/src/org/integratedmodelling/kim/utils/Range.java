@@ -338,12 +338,12 @@ public class Range implements IValueMediator {
 			throw new IllegalArgumentException("range " + this + " cannot convert value " + d + " to " + other
 					+ " because the target is not a range or is unbound");
 		}
-		if (!contains(d.doubleValue())) {
-			throw new IllegalArgumentException("range " + this + " cannot convert value " + d + " to range " + other
+		if (!((Range)other).contains(d.doubleValue())) {
+			throw new IllegalArgumentException("range " + other + " cannot convert value " + d + " to range " + this
 					+ " because it does not contain it");
 		}
 		
-		return ((Range)other).lowerBound + (((Range)other).getWidth() * normalize(d.doubleValue()));
+		return this.lowerBound + (this.getWidth() * ((Range)other).normalize(d.doubleValue()));
 	}
 
 }
