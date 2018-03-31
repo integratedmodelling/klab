@@ -35,16 +35,6 @@ public abstract class AbstractResource implements IResource {
     }
 
     /**
-     * Pattern to validate a RFC 2141-compliant URN, just to be on the right side of things.
-     */
-    public final static Pattern URN_PATTERN = Pattern
-            .compile("^urn:[a-z0-9][a-z0-9-]{0,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
-
-    public static boolean isCompliant(String urn) {
-        return URN_PATTERN.matcher(urn).matches();
-    }
-
-    /**
      * Available after resolution unless the version was explicitly part of the URN.
      * 
      * @return

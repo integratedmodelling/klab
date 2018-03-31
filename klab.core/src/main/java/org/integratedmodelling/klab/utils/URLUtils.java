@@ -34,11 +34,31 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.regex.Pattern;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 public class URLUtils {
 
+
+    /**
+     * Pattern to validate a RFC 2141-compliant URN.
+     */
+    public final static Pattern URN_PATTERN = Pattern
+            .compile("^urn:[a-z0-9][a-z0-9-]{0,31}:([a-z0-9()+,\\-.:=@;$_!*']|%[0-9a-f]{2})+$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Check if passed URN string can be really called a URN according to RFC 2141 conventions.
+     * 
+     * @param urn
+     * @return true if compliant
+     */
+    public static boolean isCompliant(String urn) {
+        return URN_PATTERN.matcher(urn).matches();
+    }
+
+	
     /**
      * Ping the url by requesting the header and inspecting the return code.
      * 

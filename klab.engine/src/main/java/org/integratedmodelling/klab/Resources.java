@@ -3,10 +3,12 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -200,6 +202,13 @@ public enum Resources implements IResourceService {
     }
     if (obj instanceof IConceptDefinition) {
       return Observable.promote((IConceptDefinition) obj);
+    }
+    // if it has spaces or parentheses it may be a declaration; try that one last time before giving up
+    if (urn.contains(" ") || urn.contains("(")) {
+    	IObservable obs = Observables.INSTANCE.declare(urn);
+    	if (obs != null) {
+    		return obs;
+    	}
     }
     return null;
   }

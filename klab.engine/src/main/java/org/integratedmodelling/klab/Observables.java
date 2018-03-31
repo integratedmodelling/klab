@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
@@ -365,8 +366,8 @@ public enum Observables implements IObservableService {
   }
 
   @Override
-  public List<IServiceCall> computeMediators(IObservable from, IObservable to) {
-    List<IServiceCall> ret = new ArrayList<>();
+  public List<IComputableResource> computeMediators(IObservable from, IObservable to) {
+    List<IComputableResource> ret = new ArrayList<>();
     if (!((Observable) to).canResolve((Observable) from)) {
       throw new IllegalArgumentException(
           "cannot compute mediators from an observable to another that does not resolve it: " + from

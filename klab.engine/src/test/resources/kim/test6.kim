@@ -1,0 +1,12 @@
+worldview im;
+
+@test(
+	name = "tests.core.mediations-1",
+	description  = "Simplest unit translation",
+	observations = ("geography:Elevation in mm")
+	// TODO Assertions - range should be 0 - 4000000 w/o nodata
+)
+observe earth:Terrestrial earth:Region named tanzania-grr
+	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
+
+model geography:Elevation in m using gis.terrain();

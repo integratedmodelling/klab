@@ -98,7 +98,7 @@ public class ObservableReasoner implements Iterable<Observable> {
    * Compute all possible alternatives for the original observable, or the entire set of appropriate
    * dependencies for the passed model in the context.
    * 
-   * @return all alternatives, including the original when appropriate.
+   * @return all alternatives, including the original when it can be observed directly.
    */
   public List<Observable> getObservables() {
     if (!this.alternativesComputed) {

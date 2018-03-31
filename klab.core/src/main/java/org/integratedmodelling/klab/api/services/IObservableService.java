@@ -3,12 +3,14 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -477,7 +479,7 @@ public interface IObservableService {
    * @throws IllegalArgumentException if observables are incompatible
    * @return a list of mediators, never null, possibly empty
    */
-  List<IServiceCall> computeMediators(IObservable from, IObservable to);
+  List<IComputableResource> computeMediators(IObservable from, IObservable to);
 
   /**
    * Return the base enum type (quality, subject....) for the passed observable.

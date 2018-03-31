@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
@@ -60,8 +61,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
         IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
 
         if (resolvable == null) {
-          // TODO should be an empty artifact
-          return null;
+        	throw new IllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
         }
 
         /*
