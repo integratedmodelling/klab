@@ -21,9 +21,9 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.common.mediation;
 
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.mediation.INumericRange;
-import org.integratedmodelling.klab.api.data.mediation.IValueMediator;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
 /**

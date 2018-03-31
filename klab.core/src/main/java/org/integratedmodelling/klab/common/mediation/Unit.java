@@ -23,8 +23,9 @@ package org.integratedmodelling.klab.common.mediation;
 
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.UnitFormat;
+
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.mediation.IValueMediator;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;

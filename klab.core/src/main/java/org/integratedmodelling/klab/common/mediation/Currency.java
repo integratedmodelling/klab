@@ -27,8 +27,8 @@
 
 package org.integratedmodelling.klab.common.mediation;
 
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.IValueMediator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.joda.time.DateTime;

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.data.mediation;
 
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.services.IUnitService;
 
 /**

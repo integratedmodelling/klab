@@ -19,6 +19,7 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
 
   private static final long      serialVersionUID = -1426788695739147795L;
 
+  // ACHTUNG if these are added to, ensure that the copy constructor is updated.
   protected int                  firstLine;
   protected int                  lastLine;
   protected int                  firstCharOffset;
@@ -30,6 +31,7 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
   protected boolean              deprecated       = false;
   protected String               deprecation      = null;
   protected String               sourceCode       = null;
+  // ACHTUNG if these are added to, ensure that the copy constructor is updated.
 
   public KimStatement() {}
 
