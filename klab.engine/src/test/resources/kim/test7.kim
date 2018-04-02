@@ -1,0 +1,35 @@
+worldview im;
+
+@test(
+	name = "tests.core.mediations-2",
+	description  = "Mediation in multiply referenced dependencies",
+	observations = ("geography:Elevation"),
+	assertions = (
+		assert.nodata.percentage(state="geography:Elevation", max=0)
+		assert.nodata.percentage(state="geography:Slope", max=0)
+		assert.match(state="geography:Aspect", exact=10)
+		assert.match(state="geography:Elevation", min=10)
+	)//,
+//	resultkdl = 'results/test3.kdl'
+)
+observe earth:Terrestrial earth:Region named tanzania-grr
+	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
+
+model geography:Elevation in m 
+	observing 
+		geography:Slope in degree_angle,
+		geography:Aspect in degree_angle,
+		chemistry:Reactivity 0 to 100 named react
+	on definition set to [
+        if (react <= 5) fail("MEDIATION FAILED! Value of reactivity should be 50")
+        return (slope * 12.44) + aspect
+    ];
+
+@probe
+model geography:Slope in degree_angle 
+	observing geography:Aspect in degree_angle named aspetto,
+	chemistry:Reactivity 0 to 1
+	using gis.terrain(roughness = 0.71, detail = 9, range = 0 to 360);
+
+model 10 as geography:Aspect in degree_angle;
+model 5 as chemistry:Reactivity 0 to 10;

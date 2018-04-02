@@ -45,6 +45,10 @@ public class DataflowBuilder {
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
 	Map<Model, ModelD> modelCatalog = new HashMap<>();
+	// maps the original name on each non-reference actuator to the original
+	// observable coming out of the model. Used to set up mediators in models that
+	// depend on them.
+	Map<String, Observable> observableCatalog = new HashMap<>();
 
 	static class ResolutionEdge {
 
@@ -108,7 +112,6 @@ public class DataflowBuilder {
 			// this will overwrite scale and namespace - another way of saying that these
 			// should either be
 			// identical or we shouldn't even allow more than one root resolvable.
-			// ret.setScale(scope.getScale());
 			ret.setNamespace(actuator.getNamespace());
 		}
 
@@ -179,6 +182,7 @@ public class DataflowBuilder {
 		List<Node> children = new ArrayList<>();
 		Scale scale;
 		boolean definesScale;
+		String alias;
 
 		public Node(IResolvable observable) {
 			if (observable instanceof Observable) {
@@ -200,8 +204,8 @@ public class DataflowBuilder {
 			Actuator ret = Actuator.create(monitor);
 
 			ret.setObservable(observable);
-			// ret.setScale(scale);
 			ret.setDefinesScale(definesScale);
+			ret.setAlias(observable.getLocalName());
 
 			switch (observable.getObservationType()) {
 			case CLASSIFICATION:
@@ -260,7 +264,9 @@ public class DataflowBuilder {
 				}
 
 				/*
-				 * compile in a function to merge the resulting artifacts
+				 * compile in a function to merge the resulting artifacts. FIXME this is not the
+				 * right way: must be automatically merged in computation, shifting extents as
+				 * needed
 				 */
 				ret.addComputation(
 						Klab.INSTANCE.getRuntimeProvider().getMergeArtifactServiceCall(observable, modelIds));
@@ -281,16 +287,8 @@ public class DataflowBuilder {
 				ret.getAnnotations().addAll(model.getAnnotations());
 			} else {
 				ret.setReference(true);
-				ret.setAlias(observable.getLocalName());
 			}
 
-			/*
-			 * add any needed mediators to turn the model's observable into ours
-			 */
-			for (IComputableResource mediator : Observables.INSTANCE
-					.computeMediators(model.getCompatibleOutput(ret.getObservable()), ret.getObservable())) {
-				ret.addMediation(mediator);
-			}
 		}
 
 		/*
@@ -302,9 +300,10 @@ public class DataflowBuilder {
 			for (Node child : sortChildren()) {
 				// this may be a new actuator or a reference to an existing one
 				Actuator achild = child.getActuatorTree(monitor, generated);
-				// compile in any necessary mediation
-				// ret.getMediationStrategy().addAll(Observables.INSTANCE
-				// .computeMediators(child.originalObservable, child.observable));
+				for (IComputableResource mediator : Observables.INSTANCE
+						.computeMediators(observableCatalog.get(achild.getName()), achild.getObservable())) {
+					ret.addMediation(mediator, achild);
+				}
 				ret.getActuators().add(achild);
 			}
 			return ret;
@@ -338,11 +337,10 @@ public class DataflowBuilder {
 			return current;
 		}
 
-		// sort by reverse refcount of model, so that the actuators with references are
-		// output before
-		// the
-		// ones without.
-		// TODO revise for 1 ModelD and 1+ models in it.
+		/*
+		 * sort by reverse refcount of model, so that actuators are always output before
+		 * any references to them.
+		 */
 		private List<Node> sortChildren() {
 			List<Node> ret = new ArrayList<>(children);
 			Collections.sort(ret, new Comparator<Node>() {
@@ -398,20 +396,17 @@ public class DataflowBuilder {
 		for (ResolutionEdge d : graph.incomingEdgesOf(resolvable)) {
 
 			Model model = (Model) graph.getEdgeSource(d);
+
+			observableCatalog.put(ret.observable.getLocalName(), model.getCompatibleOutput(ret.observable));
+
 			ModelD md = compileModel(model);
 			for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
-
-				Node child = compileActuator(graph.getEdgeSource(o), graph, o.coverage == null ? scale : o.coverage,
-						monitor);
-				ret.children.add(child);
+				ret.children.add(compileActuator(graph.getEdgeSource(o), graph, o.coverage == null ? scale : o.coverage,
+						monitor));
 			}
 
 			if (hasPartials) {
 				try {
-					/*
-					 * store the total model coverage, not the resolved coverage that is specific to
-					 * the resolution extents.
-					 */
 					md.coverage = Coverage.full(Scale.create(model.getBehavior().getExtents(monitor)));
 				} catch (KlabException e) {
 					monitor.error("error computing model coverage: " + e.getMessage());

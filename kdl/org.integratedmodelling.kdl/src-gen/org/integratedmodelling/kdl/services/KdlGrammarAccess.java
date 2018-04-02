@@ -2669,22 +2669,26 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Function");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
-		private final Group cGroup_0_0_0 = (Group)cAlternatives_0_0.eContents().get(0);
-		private final Assignment cNameAssignment_0_0_0_0 = (Assignment)cGroup_0_0_0.eContents().get(0);
-		private final RuleCall cNamePathNameParserRuleCall_0_0_0_0_0 = (RuleCall)cNameAssignment_0_0_0_0.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_0_0_0_1 = (Keyword)cGroup_0_0_0.eContents().get(1);
-		private final Assignment cParametersAssignment_0_0_0_2 = (Assignment)cGroup_0_0_0.eContents().get(2);
-		private final RuleCall cParametersParameterListParserRuleCall_0_0_0_2_0 = (RuleCall)cParametersAssignment_0_0_0_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_0_0_0_3 = (Keyword)cGroup_0_0_0.eContents().get(3);
-		private final Assignment cUrnAssignment_0_0_1 = (Assignment)cAlternatives_0_0.eContents().get(1);
-		private final RuleCall cUrnUrnParserRuleCall_0_0_1_0 = (RuleCall)cUrnAssignment_0_0_1.eContents().get(0);
-		private final Assignment cValueAssignment_0_0_2 = (Assignment)cAlternatives_0_0.eContents().get(2);
-		private final RuleCall cValueLiteralParserRuleCall_0_0_2_0 = (RuleCall)cValueAssignment_0_0_2.eContents().get(0);
-		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
-		private final Keyword cAsKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
-		private final Assignment cVariableAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
-		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_0_1_1_0 = (RuleCall)cVariableAssignment_0_1_1.eContents().get(0);
+		private final Group cGroup_0_0 = (Group)cGroup_0.eContents().get(0);
+		private final Assignment cMediatedAssignment_0_0_0 = (Assignment)cGroup_0_0.eContents().get(0);
+		private final RuleCall cMediatedLOWERCASE_IDTerminalRuleCall_0_0_0_0 = (RuleCall)cMediatedAssignment_0_0_0.eContents().get(0);
+		private final Keyword cGreaterThanSignGreaterThanSignKeyword_0_0_1 = (Keyword)cGroup_0_0.eContents().get(1);
+		private final Alternatives cAlternatives_0_1 = (Alternatives)cGroup_0.eContents().get(1);
+		private final Group cGroup_0_1_0 = (Group)cAlternatives_0_1.eContents().get(0);
+		private final Assignment cNameAssignment_0_1_0_0 = (Assignment)cGroup_0_1_0.eContents().get(0);
+		private final RuleCall cNamePathNameParserRuleCall_0_1_0_0_0 = (RuleCall)cNameAssignment_0_1_0_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_0_1_0_1 = (Keyword)cGroup_0_1_0.eContents().get(1);
+		private final Assignment cParametersAssignment_0_1_0_2 = (Assignment)cGroup_0_1_0.eContents().get(2);
+		private final RuleCall cParametersParameterListParserRuleCall_0_1_0_2_0 = (RuleCall)cParametersAssignment_0_1_0_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_0_1_0_3 = (Keyword)cGroup_0_1_0.eContents().get(3);
+		private final Assignment cUrnAssignment_0_1_1 = (Assignment)cAlternatives_0_1.eContents().get(1);
+		private final RuleCall cUrnUrnParserRuleCall_0_1_1_0 = (RuleCall)cUrnAssignment_0_1_1.eContents().get(0);
+		private final Assignment cValueAssignment_0_1_2 = (Assignment)cAlternatives_0_1.eContents().get(2);
+		private final RuleCall cValueLiteralParserRuleCall_0_1_2_0 = (RuleCall)cValueAssignment_0_1_2.eContents().get(0);
+		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
+		private final Keyword cAsKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
+		private final Assignment cVariableAssignment_0_2_1 = (Assignment)cGroup_0_2.eContents().get(1);
+		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0 = (RuleCall)cVariableAssignment_0_2_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
 		private final Keyword cClassifyKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
@@ -2710,66 +2714,79 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_2_4_1_0 = (RuleCall)cVariableAssignment_2_4_1.eContents().get(0);
 		
 		//Function:
-		//	(name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as' variable=LOWERCASE_ID)? |
-		//	'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '(' chain+=Function (','
-		//	chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+		//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
+		//	variable=LOWERCASE_ID)? | 'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '('
+		//	chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as' variable=LOWERCASE_ID)? | 'classify'
-		//'(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '(' chain+=Function (',' chain+=Function)* ')'
-		//('as' variable=LOWERCASE_ID)?
+		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
+		//variable=LOWERCASE_ID)? | 'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '('
+		//chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as' variable=LOWERCASE_ID)?
+		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
+		//variable=LOWERCASE_ID)?
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal
-		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
+		//(mediated=LOWERCASE_ID '>>')?
+		public Group getGroup_0_0() { return cGroup_0_0; }
 		
-		//name=PathName '(' parameters=ParameterList? ')'
-		public Group getGroup_0_0_0() { return cGroup_0_0_0; }
-		
-		//name=PathName
-		public Assignment getNameAssignment_0_0_0_0() { return cNameAssignment_0_0_0_0; }
-		
-		//PathName
-		public RuleCall getNamePathNameParserRuleCall_0_0_0_0_0() { return cNamePathNameParserRuleCall_0_0_0_0_0; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_0_0_0_1() { return cLeftParenthesisKeyword_0_0_0_1; }
-		
-		//parameters=ParameterList?
-		public Assignment getParametersAssignment_0_0_0_2() { return cParametersAssignment_0_0_0_2; }
-		
-		//ParameterList
-		public RuleCall getParametersParameterListParserRuleCall_0_0_0_2_0() { return cParametersParameterListParserRuleCall_0_0_0_2_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_0_0_0_3() { return cRightParenthesisKeyword_0_0_0_3; }
-		
-		//urn=Urn
-		public Assignment getUrnAssignment_0_0_1() { return cUrnAssignment_0_0_1; }
-		
-		//Urn
-		public RuleCall getUrnUrnParserRuleCall_0_0_1_0() { return cUrnUrnParserRuleCall_0_0_1_0; }
-		
-		//value=Literal
-		public Assignment getValueAssignment_0_0_2() { return cValueAssignment_0_0_2; }
-		
-		//Literal
-		public RuleCall getValueLiteralParserRuleCall_0_0_2_0() { return cValueLiteralParserRuleCall_0_0_2_0; }
-		
-		//('as' variable=LOWERCASE_ID)?
-		public Group getGroup_0_1() { return cGroup_0_1; }
-		
-		//'as'
-		public Keyword getAsKeyword_0_1_0() { return cAsKeyword_0_1_0; }
-		
-		//variable=LOWERCASE_ID
-		public Assignment getVariableAssignment_0_1_1() { return cVariableAssignment_0_1_1; }
+		//mediated=LOWERCASE_ID
+		public Assignment getMediatedAssignment_0_0_0() { return cMediatedAssignment_0_0_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_0_1_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_0_1_1_0; }
+		public RuleCall getMediatedLOWERCASE_IDTerminalRuleCall_0_0_0_0() { return cMediatedLOWERCASE_IDTerminalRuleCall_0_0_0_0; }
+		
+		//'>>'
+		public Keyword getGreaterThanSignGreaterThanSignKeyword_0_0_1() { return cGreaterThanSignGreaterThanSignKeyword_0_0_1; }
+		
+		//name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal
+		public Alternatives getAlternatives_0_1() { return cAlternatives_0_1; }
+		
+		//name=PathName '(' parameters=ParameterList? ')'
+		public Group getGroup_0_1_0() { return cGroup_0_1_0; }
+		
+		//name=PathName
+		public Assignment getNameAssignment_0_1_0_0() { return cNameAssignment_0_1_0_0; }
+		
+		//PathName
+		public RuleCall getNamePathNameParserRuleCall_0_1_0_0_0() { return cNamePathNameParserRuleCall_0_1_0_0_0; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_0_1_0_1() { return cLeftParenthesisKeyword_0_1_0_1; }
+		
+		//parameters=ParameterList?
+		public Assignment getParametersAssignment_0_1_0_2() { return cParametersAssignment_0_1_0_2; }
+		
+		//ParameterList
+		public RuleCall getParametersParameterListParserRuleCall_0_1_0_2_0() { return cParametersParameterListParserRuleCall_0_1_0_2_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_0_1_0_3() { return cRightParenthesisKeyword_0_1_0_3; }
+		
+		//urn=Urn
+		public Assignment getUrnAssignment_0_1_1() { return cUrnAssignment_0_1_1; }
+		
+		//Urn
+		public RuleCall getUrnUrnParserRuleCall_0_1_1_0() { return cUrnUrnParserRuleCall_0_1_1_0; }
+		
+		//value=Literal
+		public Assignment getValueAssignment_0_1_2() { return cValueAssignment_0_1_2; }
+		
+		//Literal
+		public RuleCall getValueLiteralParserRuleCall_0_1_2_0() { return cValueLiteralParserRuleCall_0_1_2_0; }
+		
+		//('as' variable=LOWERCASE_ID)?
+		public Group getGroup_0_2() { return cGroup_0_2; }
+		
+		//'as'
+		public Keyword getAsKeyword_0_2_0() { return cAsKeyword_0_2_0; }
+		
+		//variable=LOWERCASE_ID
+		public Assignment getVariableAssignment_0_2_1() { return cVariableAssignment_0_2_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0; }
 		
 		//'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)?
 		public Group getGroup_1() { return cGroup_1; }
@@ -3859,9 +3876,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Function:
-	//	(name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as' variable=LOWERCASE_ID)? |
-	//	'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '(' chain+=Function (','
-	//	chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+	//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
+	//	variable=LOWERCASE_ID)? | 'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '('
+	//	chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	public FunctionElements getFunctionAccess() {
 		return pFunction;
 	}

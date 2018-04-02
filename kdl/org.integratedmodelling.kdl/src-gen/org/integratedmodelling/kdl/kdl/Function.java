@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getMediated <em>Mediated</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getUrn <em>Urn</em>}</li>
@@ -31,6 +32,32 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Function extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Mediated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Mediated</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Mediated</em>' attribute.
+   * @see #setMediated(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getFunction_Mediated()
+   * @model
+   * @generated
+   */
+  String getMediated();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Function#getMediated <em>Mediated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Mediated</em>' attribute.
+   * @see #getMediated()
+   * @generated
+   */
+  void setMediated(String value);
+
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->

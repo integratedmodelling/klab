@@ -157,4 +157,13 @@ public interface IComputableResource {
 	 */
 	boolean isNegated();
 
+	/**
+	 * True if this computation is a mediation, expected to output a transformation
+	 * of the artifact passed to it, to be used in its place to match a specific
+	 * observation semantics.
+	 * 
+	 * @return
+	 */
+	boolean isMediation();
+
 }

@@ -118,7 +118,7 @@ public class TestHandler implements Annotations.Handler {
                   System.in.read();
                 }
               }
-            }
+            } 
 
           } else {
             monitor.error(id + ": errors in retrieving observer or session");

@@ -34,6 +34,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private String accordingTo;
 	private boolean postProcessor;
 	private boolean negated;
+	private boolean mediation;
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, Type>> requiredResourceNames = new ArrayList<>();
@@ -262,4 +263,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.conversion = conversion;
 	}
 
+	public void setMediation(boolean b) {
+		this.mediation = b;
+	}
+
+	@Override
+	public boolean isMediation() {
+		return this.mediation;
+	}
 }

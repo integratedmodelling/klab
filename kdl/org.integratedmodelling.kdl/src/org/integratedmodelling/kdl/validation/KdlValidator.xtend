@@ -35,10 +35,10 @@ class KdlValidator extends AbstractKdlValidator {
 			error("Only annotations can specify their targets", actor,
 					KdlPackage.Literals.ACTOR_DEFINITION__TARGETS);
 		}		
-		if (actor.localName !== null && !actor.imported) {
-				error("Only imports can specify a formal name", actor,
-					KdlPackage.Literals.ACTOR_DEFINITION__LOCAL_NAME);
-		}
+//		if (actor.localName !== null && !actor.imported) {
+//				error("Only imports can specify a formal name", actor,
+//					KdlPackage.Literals.ACTOR_DEFINITION__LOCAL_NAME);
+//		}
 		if (actor.isParameter && actor.isOptional && actor.getDefault() === null) {
 				error("Optional parameters must specify a default value", actor,
 					KdlPackage.Literals.ACTOR_DEFINITION__OPTIONAL);

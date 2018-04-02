@@ -31,12 +31,12 @@ public class ConversionResolver implements IResolver<IState>, IExpression {
 	}
 
 	public static IServiceCall getServiceCall(Pair<IValueMediator, IValueMediator> literal) {
-		return KimServiceCall.create(FUNCTION_ID, "from", literal.getFirst(), "to", literal.getSecond());
+		return KimServiceCall.create(FUNCTION_ID, "original", literal.getFirst(), "target", literal.getSecond());
 	}
 
 	@Override
 	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
-		return new ConversionResolver((IValueMediator) parameters.get("from"), (IValueMediator) parameters.get("to"));
+		return new ConversionResolver((IValueMediator) parameters.get("original"), (IValueMediator) parameters.get("target"));
 	}
 
 	@Override

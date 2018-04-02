@@ -34,6 +34,7 @@ import org.integratedmodelling.kdl.kdl.Urn;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getMediated <em>Mediated</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getUrn <em>Urn</em>}</li>
@@ -47,6 +48,26 @@ import org.integratedmodelling.kdl.kdl.Urn;
  */
 public class FunctionImpl extends MinimalEObjectImpl.Container implements Function
 {
+  /**
+   * The default value of the '{@link #getMediated() <em>Mediated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMediated()
+   * @generated
+   * @ordered
+   */
+  protected static final String MEDIATED_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getMediated() <em>Mediated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMediated()
+   * @generated
+   * @ordered
+   */
+  protected String mediated = MEDIATED_EDEFAULT;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -156,6 +177,29 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
   protected EClass eStaticClass()
   {
     return KdlPackage.Literals.FUNCTION;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getMediated()
+  {
+    return mediated;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMediated(String newMediated)
+  {
+    String oldMediated = mediated;
+    mediated = newMediated;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.FUNCTION__MEDIATED, oldMediated, mediated));
   }
 
   /**
@@ -444,6 +488,8 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
   {
     switch (featureID)
     {
+      case KdlPackage.FUNCTION__MEDIATED:
+        return getMediated();
       case KdlPackage.FUNCTION__NAME:
         return getName();
       case KdlPackage.FUNCTION__PARAMETERS:
@@ -473,6 +519,9 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
   {
     switch (featureID)
     {
+      case KdlPackage.FUNCTION__MEDIATED:
+        setMediated((String)newValue);
+        return;
       case KdlPackage.FUNCTION__NAME:
         setName((String)newValue);
         return;
@@ -509,6 +558,9 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
   {
     switch (featureID)
     {
+      case KdlPackage.FUNCTION__MEDIATED:
+        setMediated(MEDIATED_EDEFAULT);
+        return;
       case KdlPackage.FUNCTION__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -544,6 +596,8 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
   {
     switch (featureID)
     {
+      case KdlPackage.FUNCTION__MEDIATED:
+        return MEDIATED_EDEFAULT == null ? mediated != null : !MEDIATED_EDEFAULT.equals(mediated);
       case KdlPackage.FUNCTION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KdlPackage.FUNCTION__PARAMETERS:
@@ -573,7 +627,9 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
+    result.append(" (mediated: ");
+    result.append(mediated);
+    result.append(", name: ");
     result.append(name);
     result.append(", variable: ");
     result.append(variable);

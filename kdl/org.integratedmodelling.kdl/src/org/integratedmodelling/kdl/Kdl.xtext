@@ -155,6 +155,7 @@ LocalFilePath:
 KeyValuePair:
 	name=LOWERCASE_ID (interactive?='=?' | '=') value=Value;
 Function:
+	(mediated=LOWERCASE_ID '>>')?
 	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal) ('as'
 	variable=LOWERCASE_ID)? |
 	'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? |

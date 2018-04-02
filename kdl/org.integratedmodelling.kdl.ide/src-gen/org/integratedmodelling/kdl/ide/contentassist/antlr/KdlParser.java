@@ -72,7 +72,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_1_1(), "rule__LocalFilePath__Alternatives_1_1");
 					put(grammarAccess.getKeyValuePairAccess().getAlternatives_1(), "rule__KeyValuePair__Alternatives_1");
 					put(grammarAccess.getFunctionAccess().getAlternatives(), "rule__Function__Alternatives");
-					put(grammarAccess.getFunctionAccess().getAlternatives_0_0(), "rule__Function__Alternatives_0_0");
+					put(grammarAccess.getFunctionAccess().getAlternatives_0_1(), "rule__Function__Alternatives_0_1");
 					put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
 					put(grammarAccess.getUnitElementAccess().getIdAlternatives_0_0(), "rule__UnitElement__IdAlternatives_0_0");
 					put(grammarAccess.getREL_OPERATORAccess().getAlternatives(), "rule__REL_OPERATOR__Alternatives");
@@ -183,8 +183,9 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getLocalFilePathAccess().getGroup_3(), "rule__LocalFilePath__Group_3__0");
 					put(grammarAccess.getKeyValuePairAccess().getGroup(), "rule__KeyValuePair__Group__0");
 					put(grammarAccess.getFunctionAccess().getGroup_0(), "rule__Function__Group_0__0");
-					put(grammarAccess.getFunctionAccess().getGroup_0_0_0(), "rule__Function__Group_0_0_0__0");
-					put(grammarAccess.getFunctionAccess().getGroup_0_1(), "rule__Function__Group_0_1__0");
+					put(grammarAccess.getFunctionAccess().getGroup_0_0(), "rule__Function__Group_0_0__0");
+					put(grammarAccess.getFunctionAccess().getGroup_0_1_0(), "rule__Function__Group_0_1_0__0");
+					put(grammarAccess.getFunctionAccess().getGroup_0_2(), "rule__Function__Group_0_2__0");
 					put(grammarAccess.getFunctionAccess().getGroup_1(), "rule__Function__Group_1__0");
 					put(grammarAccess.getFunctionAccess().getGroup_1_4(), "rule__Function__Group_1_4__0");
 					put(grammarAccess.getFunctionAccess().getGroup_2(), "rule__Function__Group_2__0");
@@ -361,11 +362,12 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getKeyValuePairAccess().getNameAssignment_0(), "rule__KeyValuePair__NameAssignment_0");
 					put(grammarAccess.getKeyValuePairAccess().getInteractiveAssignment_1_0(), "rule__KeyValuePair__InteractiveAssignment_1_0");
 					put(grammarAccess.getKeyValuePairAccess().getValueAssignment_2(), "rule__KeyValuePair__ValueAssignment_2");
-					put(grammarAccess.getFunctionAccess().getNameAssignment_0_0_0_0(), "rule__Function__NameAssignment_0_0_0_0");
-					put(grammarAccess.getFunctionAccess().getParametersAssignment_0_0_0_2(), "rule__Function__ParametersAssignment_0_0_0_2");
-					put(grammarAccess.getFunctionAccess().getUrnAssignment_0_0_1(), "rule__Function__UrnAssignment_0_0_1");
-					put(grammarAccess.getFunctionAccess().getValueAssignment_0_0_2(), "rule__Function__ValueAssignment_0_0_2");
-					put(grammarAccess.getFunctionAccess().getVariableAssignment_0_1_1(), "rule__Function__VariableAssignment_0_1_1");
+					put(grammarAccess.getFunctionAccess().getMediatedAssignment_0_0_0(), "rule__Function__MediatedAssignment_0_0_0");
+					put(grammarAccess.getFunctionAccess().getNameAssignment_0_1_0_0(), "rule__Function__NameAssignment_0_1_0_0");
+					put(grammarAccess.getFunctionAccess().getParametersAssignment_0_1_0_2(), "rule__Function__ParametersAssignment_0_1_0_2");
+					put(grammarAccess.getFunctionAccess().getUrnAssignment_0_1_1(), "rule__Function__UrnAssignment_0_1_1");
+					put(grammarAccess.getFunctionAccess().getValueAssignment_0_1_2(), "rule__Function__ValueAssignment_0_1_2");
+					put(grammarAccess.getFunctionAccess().getVariableAssignment_0_2_1(), "rule__Function__VariableAssignment_0_2_1");
 					put(grammarAccess.getFunctionAccess().getClassificationAssignment_1_2(), "rule__Function__ClassificationAssignment_1_2");
 					put(grammarAccess.getFunctionAccess().getVariableAssignment_1_4_1(), "rule__Function__VariableAssignment_1_4_1");
 					put(grammarAccess.getFunctionAccess().getChainAssignment_2_1(), "rule__Function__ChainAssignment_2_1");

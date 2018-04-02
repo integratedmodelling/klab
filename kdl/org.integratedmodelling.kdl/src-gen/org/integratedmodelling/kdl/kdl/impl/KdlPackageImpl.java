@@ -1608,7 +1608,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getFunction_Name()
+  public EAttribute getFunction_Mediated()
   {
     return (EAttribute)functionEClass.getEStructuralFeatures().get(0);
   }
@@ -1618,9 +1618,9 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFunction_Parameters()
+  public EAttribute getFunction_Name()
   {
-    return (EReference)functionEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)functionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1628,7 +1628,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFunction_Urn()
+  public EReference getFunction_Parameters()
   {
     return (EReference)functionEClass.getEStructuralFeatures().get(2);
   }
@@ -1638,7 +1638,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFunction_Value()
+  public EReference getFunction_Urn()
   {
     return (EReference)functionEClass.getEStructuralFeatures().get(3);
   }
@@ -1648,9 +1648,19 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getFunction_Value()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getFunction_Variable()
   {
-    return (EAttribute)functionEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)functionEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1660,7 +1670,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getFunction_Classification()
   {
-    return (EReference)functionEClass.getEStructuralFeatures().get(5);
+    return (EReference)functionEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -1670,7 +1680,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getFunction_Chain()
   {
-    return (EReference)functionEClass.getEStructuralFeatures().get(6);
+    return (EReference)functionEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -2133,6 +2143,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(keyValuePairEClass, KEY_VALUE_PAIR__VALUE);
 
     functionEClass = createEClass(FUNCTION);
+    createEAttribute(functionEClass, FUNCTION__MEDIATED);
     createEAttribute(functionEClass, FUNCTION__NAME);
     createEReference(functionEClass, FUNCTION__PARAMETERS);
     createEReference(functionEClass, FUNCTION__URN);
@@ -2358,6 +2369,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getKeyValuePair_Value(), this.getValue(), null, "value", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getFunction_Mediated(), ecorePackage.getEString(), "mediated", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Urn(), this.getUrn(), null, "urn", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
