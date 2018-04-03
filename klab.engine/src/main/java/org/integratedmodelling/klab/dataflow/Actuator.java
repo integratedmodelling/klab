@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.collections.Collections;
 
 public class Actuator implements IActuator {
 
@@ -128,20 +127,21 @@ public class Actuator implements IActuator {
    *         return an empty observation. Currently it returns null.
    * @throws KlabException
    */
-  @SuppressWarnings("unchecked")
   public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
-    /**
-     * The contextualizer chain that implements the computation specified by IServiceCalls. These
-     * may be first-class resolvers/instantiators or mediators, in order of execution.
+    /*
+     * The contextualizer chain that implements the computation is specified by service calls, so it
+     * can survive dataflow serialization/deserialization.
      */
     List<Pair<IContextualizer, IComputableResource>> computation = new ArrayList<>();
 
-    // localize names to this actuator's expectations; create non-semantic storage
-    // if needed
+    /*
+     * this localizes the names in the context to those understood by this actuator and applies any
+     * necessary mediation to the inputs
+     */
     IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
-    for (Pair<IServiceCall, IComputableResource> service : Collections.join(computationStrategy,
-        mediationStrategy)) {
+
+    for (Pair<IServiceCall, IComputableResource> service : computationStrategy) {
       Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
       if (!(contextualizer instanceof IContextualizer)) {
         throw new KlabValidationException(
@@ -150,54 +150,66 @@ public class Actuator implements IActuator {
       computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
     }
 
-    // this will be null if the actuator is for an instantiator
+    /*
+     * Initial target will be null if the actuator is for an instantiator
+     */
     IArtifact ret = target;
 
-    // run it
+    /*
+     * run the contextualization strategy with the localized context
+     */
     for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
-
-      if (contextualizer.getFirst() instanceof IStateResolver) {
-        /*
-         * pass the distributed computation to the runtime provider for possible parallelization
-         * instead of hard-coding a loop here.
-         */
-        ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
-            (IStateResolver) contextualizer.getFirst(), (IState) ret,
-            addParameters(ctx, contextualizer.getSecond()),
-            runtimeContext.getScale().at(ITime.INITIALIZATION));
-
-      } else if (contextualizer.getFirst() instanceof IResolver) {
-        ret = ((IResolver<IArtifact>) contextualizer.getFirst()).resolve(ret,
-            addParameters(ctx, contextualizer.getSecond()));
-      } else if (contextualizer.getFirst() instanceof IInstantiator) {
-        for (IObjectArtifact object : ((IInstantiator) contextualizer.getFirst())
-            .instantiate(this.observable, addParameters(ctx, contextualizer.getSecond()))) {
-          if (ret == null) {
-            ret = object;
-          } else {
-            ((ObservedArtifact) ret).chain(object);
-          }
-        }
-        if (ret == null) {
-          // return an empty observation for this observable, so we know we made the
-          // observation.
-          ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(this.observable,
-              ctx.getScale());
-        }
-      }
+      ret = runContextualizer(contextualizer.getFirst(), contextualizer.getSecond(), ret, ctx,
+          runtimeContext.getScale());
     }
 
-    // should never happen
+    // this should never happen as even empty instantiations produce the empty artifact
     assert (ret != null);
 
+    // also add the empty artifact to the provenance. TODO this needs to store the full causal
+    // chain.
     ctx.getProvenance().addArtifact(ret);
 
     /*
-     * when computation is finished, pass the annotations to the context so it can decide what to do
-     * with them.
+     * when computation is finished, pass all annotations from the models to the context, so it can
+     * execute any post-contextualization actions.
      */
     for (IKimAnnotation annotation : annotations) {
       ctx.processAnnotation(annotation);
+    }
+
+    return ret;
+  }
+
+  @SuppressWarnings("unchecked")
+  private IArtifact runContextualizer(IContextualizer contextualizer, IComputableResource resource,
+      IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
+    if (contextualizer instanceof IStateResolver) {
+      /*
+       * pass the distributed computation to the runtime provider for possible parallelization
+       * instead of hard-coding a loop here.
+       */
+      ret =
+          Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
+              (IState) ret, addParameters(ctx, resource), scale.at(ITime.INITIALIZATION));
+
+    } else if (contextualizer instanceof IResolver) {
+      ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, resource));
+    } else if (contextualizer instanceof IInstantiator) {
+      for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(this.observable,
+          addParameters(ctx, resource))) {
+        if (ret == null) {
+          ret = object;
+        } else {
+          ((ObservedArtifact) ret).chain(object);
+        }
+      }
+      if (ret == null) {
+        // return an empty observation for this observable, so we know we made the
+        // observation.
+        ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(this.observable,
+            ctx.getScale());
+      }
     }
 
     return ret;
@@ -219,14 +231,34 @@ public class Actuator implements IActuator {
   }
 
   private IRuntimeContext setupContext(IArtifact target, IRuntimeContext runtimeContext,
-      ILocator locator) {
+      ILocator locator) throws KlabException {
+
+    // compile mediators
+    List<Pair<IContextualizer, IComputableResource>> mediation = new ArrayList<>();
+    for (Pair<IServiceCall, IComputableResource> service : mediationStrategy) {
+      Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), runtimeContext);
+      if (!(contextualizer instanceof IContextualizer)) {
+        throw new KlabValidationException(
+            "function " + service.getFirst().getName() + " does not produce a contextualizer");
+      }
+      mediation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
+    }
 
     IRuntimeContext ret = runtimeContext.copy();
     ret.setTarget(target);
     ret.setScale(ret.getScale().at(locator));
-    for (IActuator input : getInputs()) {
+    for (IActuator input : getActuators()) {
       if (ret.getArtifact(input.getName()) != null) {
         ret.rename(input.getName(), input.getAlias());
+        /*
+         * scan mediations and apply them as needed
+         */
+        for (Pair<IContextualizer, IComputableResource> mediator : mediation) {
+          String targetArtifactId = mediator.getSecond().getTarget();
+          IArtifact mediated = runContextualizer(mediator.getFirst(), mediator.getSecond(),
+              ret.getArtifact(targetArtifactId), ret, runtimeContext.getScale());
+          ret.setData(targetArtifactId, mediated);
+        }
       }
     }
     return ret;
@@ -278,7 +310,7 @@ public class Actuator implements IActuator {
         nout++;
       }
       for (int i = 0; i < computationStrategy.size(); i++) {
-        ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "      ")))
+        ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     ")))
             : ofs + "     ")
             + computationStrategy.get(i).getFirst().getSourceCode()
             + (computationStrategy.get(i).getSecond().getTarget() == null ? ""

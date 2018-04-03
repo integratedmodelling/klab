@@ -35,6 +35,7 @@ public class MediatingState implements IState {
 	IValueMediator to;
 	
 	public MediatingState(IState state, IValueMediator from, IValueMediator to) {
+	  // FIXME this gets an already mediated state!
 		this.delegate = state;
 		this.from = from;
 		this.to = to;
