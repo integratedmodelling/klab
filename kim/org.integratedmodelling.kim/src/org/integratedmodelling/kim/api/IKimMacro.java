@@ -2,7 +2,6 @@ package org.integratedmodelling.kim.api;
 
 import java.util.Collection;
 import java.util.EnumSet;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim;

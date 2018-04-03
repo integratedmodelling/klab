@@ -36,8 +36,6 @@ import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.IKimObject;

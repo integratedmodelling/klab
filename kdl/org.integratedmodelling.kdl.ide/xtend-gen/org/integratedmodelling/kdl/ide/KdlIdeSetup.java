@@ -3,12 +3,11 @@
  */
 package org.integratedmodelling.kdl.ide;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kdl.KdlRuntimeModule;
 import org.integratedmodelling.kdl.KdlStandaloneSetup;
-import org.integratedmodelling.kdl.ide.KdlIdeModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Initialization support for running Xtext languages as language servers.

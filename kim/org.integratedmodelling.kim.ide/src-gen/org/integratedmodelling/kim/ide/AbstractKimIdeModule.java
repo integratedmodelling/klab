@@ -4,8 +4,6 @@
  */
 package org.integratedmodelling.kim.ide;
 
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 import org.eclipse.xtext.ide.DefaultIdeModule;
 import org.eclipse.xtext.ide.LexerIdeBindings;
 import org.eclipse.xtext.ide.editor.contentassist.FQNPrefixMatcher;
@@ -16,6 +14,8 @@ import org.eclipse.xtext.ide.editor.contentassist.antlr.IContentAssistParser;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 import org.integratedmodelling.kim.ide.contentassist.antlr.KimParser;
 import org.integratedmodelling.kim.ide.contentassist.antlr.internal.InternalKimLexer;
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link KimIdeModule}.

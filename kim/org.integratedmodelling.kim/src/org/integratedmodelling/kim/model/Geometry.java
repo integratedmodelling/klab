@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.model.Geometry.OffsetLocator;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.utils.MultidimensionalCursor;
 import org.integratedmodelling.kim.utils.Utils;

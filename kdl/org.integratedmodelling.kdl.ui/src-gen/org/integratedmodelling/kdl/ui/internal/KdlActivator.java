@@ -3,10 +3,6 @@
  */
 package org.integratedmodelling.kdl.ui.internal;
 
-import com.google.common.collect.Maps;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -16,6 +12,10 @@ import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kdl.KdlRuntimeModule;
 import org.integratedmodelling.kdl.ui.KdlUiModule;
 import org.osgi.framework.BundleContext;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * This class was generated. Customizations should only happen in a newly

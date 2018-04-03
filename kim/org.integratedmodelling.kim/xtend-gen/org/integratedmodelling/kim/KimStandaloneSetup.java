@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kim;
 
-import org.integratedmodelling.kim.KimStandaloneSetupGenerated;
-
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */

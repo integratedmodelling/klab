@@ -1,11 +1,9 @@
 package org.integratedmodelling.klab.components.geospace.api;
 
-import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.scale.Scale;
 
 /**
  * Spatial index with k.LAB semantics (as well as more basic functions for now). Much to

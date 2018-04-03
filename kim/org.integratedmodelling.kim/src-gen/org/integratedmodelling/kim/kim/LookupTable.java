@@ -5,7 +5,6 @@
 package org.integratedmodelling.kim.kim;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**

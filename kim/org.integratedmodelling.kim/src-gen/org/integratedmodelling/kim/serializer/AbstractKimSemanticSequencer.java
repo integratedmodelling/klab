@@ -4,7 +4,6 @@
  */
 package org.integratedmodelling.kim.serializer;
 
-import com.google.inject.Inject;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -62,6 +61,7 @@ import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
+import com.google.inject.Inject;
 
 @SuppressWarnings("all")
 public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSemanticSequencer {

@@ -4,14 +4,14 @@
  */
 package org.integratedmodelling.kim.tests;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.eclipse.xtext.testing.GlobalRegistries;
 import org.eclipse.xtext.testing.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.IRegistryConfigurator;
 import org.integratedmodelling.kim.KimRuntimeModule;
 import org.integratedmodelling.kim.KimStandaloneSetup;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class KimInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 

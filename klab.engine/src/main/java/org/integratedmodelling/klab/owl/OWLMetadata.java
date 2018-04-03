@@ -22,7 +22,6 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.HashMap;
-
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;

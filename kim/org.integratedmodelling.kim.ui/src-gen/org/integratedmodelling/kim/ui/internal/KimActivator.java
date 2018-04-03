@@ -4,10 +4,6 @@
  */
 package org.integratedmodelling.kim.ui.internal;
 
-import com.google.common.collect.Maps;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -17,6 +13,10 @@ import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kim.KimRuntimeModule;
 import org.integratedmodelling.kim.ui.KimUiModule;
 import org.osgi.framework.BundleContext;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * This class was generated. Customizations should only happen in a newly

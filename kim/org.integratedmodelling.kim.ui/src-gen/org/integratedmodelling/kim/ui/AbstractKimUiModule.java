@@ -4,9 +4,6 @@
  */
 package org.integratedmodelling.kim.ui;
 
-import com.google.inject.Binder;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
 import org.eclipse.compare.IViewerCreator;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -79,6 +76,9 @@ import org.integratedmodelling.kim.ui.labeling.KimDescriptionLabelProvider;
 import org.integratedmodelling.kim.ui.labeling.KimLabelProvider;
 import org.integratedmodelling.kim.ui.outline.KimOutlineTreeProvider;
 import org.integratedmodelling.kim.ui.quickfix.KimQuickfixProvider;
+import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link KimUiModule}.

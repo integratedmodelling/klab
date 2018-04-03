@@ -4,10 +4,10 @@
  */
 package org.integratedmodelling.kim.ui;
 
-import com.google.inject.Injector;
 import org.eclipse.xtext.ui.guice.AbstractGuiceAwareExecutableExtensionFactory;
 import org.integratedmodelling.kim.ui.internal.KimActivator;
 import org.osgi.framework.Bundle;
+import com.google.inject.Injector;
 
 /**
  * This class was generated. Customizations should only happen in a newly

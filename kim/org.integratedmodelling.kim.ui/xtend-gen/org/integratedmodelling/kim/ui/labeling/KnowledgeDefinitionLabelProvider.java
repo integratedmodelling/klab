@@ -4,9 +4,9 @@
  */
 package org.integratedmodelling.kim.ui.labeling;
 
-import com.google.inject.Inject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import com.google.inject.Inject;
 
 /**
  * Provides labels for EObjects.

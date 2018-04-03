@@ -1,7 +1,6 @@
 package org.integratedmodelling.kim.model;
 
 import java.util.List;
-
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;

@@ -3,13 +3,13 @@
  */
 package org.integratedmodelling.kdl.ide.contentassist.antlr;
 
-import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.AbstractContentAssistParser;
 import org.integratedmodelling.kdl.ide.contentassist.antlr.internal.InternalKdlParser;
 import org.integratedmodelling.kdl.services.KdlGrammarAccess;
+import com.google.inject.Inject;
 
 public class KdlParser extends AbstractContentAssistParser {
 

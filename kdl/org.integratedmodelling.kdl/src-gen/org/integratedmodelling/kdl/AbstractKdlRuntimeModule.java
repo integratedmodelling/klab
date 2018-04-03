@@ -3,9 +3,6 @@
  */
 package org.integratedmodelling.kdl;
 
-import com.google.inject.Binder;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
 import java.util.Properties;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.IGrammarAccess;
@@ -51,6 +48,9 @@ import org.integratedmodelling.kdl.serializer.KdlSemanticSequencer;
 import org.integratedmodelling.kdl.serializer.KdlSyntacticSequencer;
 import org.integratedmodelling.kdl.services.KdlGrammarAccess;
 import org.integratedmodelling.kdl.validation.KdlValidator;
+import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link KdlRuntimeModule}.

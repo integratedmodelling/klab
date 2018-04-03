@@ -4,13 +4,13 @@
  */
 package org.integratedmodelling.kim.ide.contentassist.antlr;
 
-import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.AbstractContentAssistParser;
 import org.integratedmodelling.kim.ide.contentassist.antlr.internal.InternalKimParser;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
+import com.google.inject.Inject;
 
 public class KimParser extends AbstractContentAssistParser {
 

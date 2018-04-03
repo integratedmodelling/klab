@@ -28,6 +28,7 @@
 package org.integratedmodelling.klab.common.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -39,7 +40,7 @@ public class Currency implements ICurrency {
     private String       currency;
     private DateTime     date;
     private IConcept     concept;
-    private NumericRange scale;
+    private Range scale;
 
     private boolean ok = true;
 
@@ -55,7 +56,7 @@ public class Currency implements ICurrency {
 
     public void setConcept(IConcept concept, double from, double to) {
         this.concept = concept;
-        this.scale = new NumericRange(from, to, false, false);
+        this.scale = new Range(from, to, false, false);
     }
 
     public boolean isOK() {

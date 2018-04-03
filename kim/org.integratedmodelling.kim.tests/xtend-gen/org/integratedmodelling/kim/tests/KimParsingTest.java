@@ -4,14 +4,13 @@
  */
 package org.integratedmodelling.kim.tests;
 
-import com.google.inject.Inject;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.XtextRunner;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.kim.Model;
-import org.integratedmodelling.kim.tests.KimInjectorProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.google.inject.Inject;
 
 @RunWith(XtextRunner.class)
 @InjectWith(KimInjectorProvider.class)

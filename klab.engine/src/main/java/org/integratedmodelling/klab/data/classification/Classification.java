@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.data.classification;
 
 import java.util.Iterator;
-
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;

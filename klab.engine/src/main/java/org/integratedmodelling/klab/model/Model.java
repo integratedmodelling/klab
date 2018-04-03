@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.CompatibleObservable;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.Pair;
 
 public class Model extends KimObject implements IModel {
 

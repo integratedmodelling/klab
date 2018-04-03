@@ -21,10 +21,8 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.clitool.console;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;

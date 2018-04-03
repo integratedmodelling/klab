@@ -2,7 +2,6 @@ package org.integratedmodelling.kim.api;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.integratedmodelling.kim.model.KimObservable;
 
 public interface IKimModel extends IKimActiveStatement {

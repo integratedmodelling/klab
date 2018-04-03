@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;

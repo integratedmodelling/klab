@@ -4,9 +4,6 @@
  */
 package org.integratedmodelling.kim;
 
-import com.google.inject.Binder;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
 import java.util.Properties;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.IGrammarAccess;
@@ -57,6 +54,9 @@ import org.integratedmodelling.kim.serializer.KimSemanticSequencer;
 import org.integratedmodelling.kim.serializer.KimSyntacticSequencer;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 import org.integratedmodelling.kim.validation.KimValidator;
+import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link KimRuntimeModule}.

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.data.resources;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;

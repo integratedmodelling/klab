@@ -3,7 +3,6 @@ package org.integratedmodelling.kim.api.data;
 import java.io.Serializable;
 import java.util.List;
 import org.integratedmodelling.kim.api.IPrototype;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 
 /**

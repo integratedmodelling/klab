@@ -7,8 +7,8 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IAgent;
-import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.provenance.Artifact;
 

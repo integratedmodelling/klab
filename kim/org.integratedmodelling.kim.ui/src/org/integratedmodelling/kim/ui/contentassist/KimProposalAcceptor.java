@@ -2,7 +2,6 @@ package org.integratedmodelling.kim.ui.contentassist;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
-
 import com.google.inject.Inject;
 
 public class KimProposalAcceptor extends ICompletionProposalAcceptor.Delegate {

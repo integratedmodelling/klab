@@ -1,7 +1,6 @@
 package org.integratedmodelling.kim.ui.elink;
 
 import java.util.List;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.AbstractRule;
 import org.eclipse.xtext.Assignment;
@@ -29,7 +28,6 @@ import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 import org.integratedmodelling.kim.validation.KimValidator;
-
 import com.google.inject.Inject;
 
 public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalculator {

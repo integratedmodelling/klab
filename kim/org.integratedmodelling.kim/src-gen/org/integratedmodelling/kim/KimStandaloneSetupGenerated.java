@@ -4,8 +4,6 @@
  */
 package org.integratedmodelling.kim;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.ISetup;
@@ -13,6 +11,8 @@ import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.integratedmodelling.kim.kim.KimPackage;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @SuppressWarnings("all")
 public class KimStandaloneSetupGenerated implements ISetup {

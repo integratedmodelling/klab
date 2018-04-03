@@ -4,7 +4,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.ui.editor.outline.impl.OutlineNodeLabelProvider;
-
 import com.google.inject.Inject;
 
 // for later

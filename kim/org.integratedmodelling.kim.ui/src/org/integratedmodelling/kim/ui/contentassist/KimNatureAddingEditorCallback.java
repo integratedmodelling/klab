@@ -3,7 +3,6 @@ package org.integratedmodelling.kim.ui.contentassist;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -31,7 +30,6 @@ import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.kim.utils.ResourceSorter;
-
 import com.google.inject.Inject;
 
 public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {

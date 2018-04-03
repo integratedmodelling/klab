@@ -3,9 +3,9 @@
  */
 package org.integratedmodelling.kdl.ui.tests;
 
-import com.google.inject.Injector;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kdl.ui.internal.KdlActivator;
+import com.google.inject.Injector;
 
 public class KdlUiInjectorProvider implements IInjectorProvider {
 

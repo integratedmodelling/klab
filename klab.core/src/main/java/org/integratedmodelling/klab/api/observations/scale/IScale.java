@@ -7,7 +7,6 @@ import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * 

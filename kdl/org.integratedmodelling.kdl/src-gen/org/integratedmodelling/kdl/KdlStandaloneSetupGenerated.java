@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kdl;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.ISetup;
@@ -12,6 +10,8 @@ import org.eclipse.xtext.common.TerminalsStandaloneSetup;
 import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @SuppressWarnings("all")
 public class KdlStandaloneSetupGenerated implements ISetup {
