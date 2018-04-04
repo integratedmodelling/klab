@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kim.ui;
 
+import com.google.inject.Binder;
+import com.google.inject.Provider;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor;
@@ -19,6 +21,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
 import org.eclipse.xtext.ui.shared.Access;
+import org.integratedmodelling.kim.ui.AbstractKimUiModule;
 import org.integratedmodelling.kim.ui.contentassist.KimDocumentationProvider;
 import org.integratedmodelling.kim.ui.contentassist.KimHoverProvider;
 import org.integratedmodelling.kim.ui.contentassist.KimNatureAddingEditorCallback;
@@ -29,8 +32,6 @@ import org.integratedmodelling.kim.ui.elink.KimHyperlinkHelper;
 import org.integratedmodelling.kim.ui.elink.KimJavaClassPathResourceForIEditorInputFactory;
 import org.integratedmodelling.kim.ui.elink.KimLinkDetector;
 import org.integratedmodelling.kim.ui.elink.KimSyntaxHighlighter;
-import com.google.inject.Binder;
-import com.google.inject.Provider;
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.

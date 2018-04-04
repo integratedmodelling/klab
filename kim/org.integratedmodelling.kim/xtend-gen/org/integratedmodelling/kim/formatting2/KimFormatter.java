@@ -4,6 +4,7 @@
  */
 package org.integratedmodelling.kim.formatting2;
 
+import com.google.inject.Inject;
 import java.util.Arrays;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -22,7 +23,6 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
-import com.google.inject.Inject;
 
 @SuppressWarnings("all")
 public class KimFormatter extends AbstractFormatter2 {

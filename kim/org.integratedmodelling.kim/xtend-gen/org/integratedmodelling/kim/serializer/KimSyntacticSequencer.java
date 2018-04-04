@@ -4,6 +4,8 @@
  */
 package org.integratedmodelling.kim.serializer;
 
+import org.integratedmodelling.kim.serializer.AbstractKimSyntacticSequencer;
+
 @SuppressWarnings("all")
 public class KimSyntacticSequencer extends AbstractKimSyntacticSequencer {
 }

@@ -3,16 +3,17 @@
  */
 package org.integratedmodelling.kim;
 
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
 import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider;
+import org.integratedmodelling.kim.AbstractKimRuntimeModule;
 import org.integratedmodelling.kim.scoping.KimGlobalScopeProvider;
 import org.integratedmodelling.kim.scoping.KimScopeProvider;
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.

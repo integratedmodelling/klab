@@ -3,6 +3,7 @@
  */
 package org.integratedmodelling.kdl.validation;
 
+import com.google.common.base.Objects;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.validation.Check;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
@@ -10,7 +11,7 @@ import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.kdl.ObservableSemantics;
-import com.google.common.base.Objects;
+import org.integratedmodelling.kdl.validation.AbstractKdlValidator;
 
 /**
  * Only basic validation for now.

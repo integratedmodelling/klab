@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kdl;
 
+import org.integratedmodelling.kdl.KdlStandaloneSetupGenerated;
+
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */

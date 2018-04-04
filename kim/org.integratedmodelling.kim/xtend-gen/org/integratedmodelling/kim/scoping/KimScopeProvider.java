@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.scoping.IScope;
 import org.integratedmodelling.kim.kim.Import;
+import org.integratedmodelling.kim.scoping.AbstractKimScopeProvider;
 
 /**
  * This class contains custom scoping description. For now just make it namespace-aware

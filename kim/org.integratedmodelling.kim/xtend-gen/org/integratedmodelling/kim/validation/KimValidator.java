@@ -4,6 +4,7 @@
  */
 package org.integratedmodelling.kim.validation;
 
+import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -73,7 +74,8 @@ import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.utils.CamelCase;
-import com.google.common.base.Objects;
+import org.integratedmodelling.kim.validation.AbstractKimValidator;
+import org.integratedmodelling.kim.validation.KimNotification;
 
 /**
  * This class contains custom validation rules.

@@ -5,6 +5,7 @@ package org.integratedmodelling.kdl.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor;
+import org.integratedmodelling.kdl.ui.AbstractKdlUiModule;
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.

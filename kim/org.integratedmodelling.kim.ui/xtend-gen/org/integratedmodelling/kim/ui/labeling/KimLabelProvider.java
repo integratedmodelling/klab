@@ -3,13 +3,13 @@
  */
 package org.integratedmodelling.kim.ui.labeling;
 
+import com.google.inject.Inject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
-import com.google.inject.Inject;
 
 /**
  * Provides labels for EObjects.

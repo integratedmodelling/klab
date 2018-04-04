@@ -4,11 +4,12 @@
  */
 package org.integratedmodelling.kim.ide;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kim.KimRuntimeModule;
 import org.integratedmodelling.kim.KimStandaloneSetup;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import org.integratedmodelling.kim.ide.KimIdeModule;
 
 /**
  * Initialization support for running Xtext languages as language servers.

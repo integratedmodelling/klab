@@ -13,6 +13,7 @@
 		<module>klab.core</module>
 		<module>klab.engine</module>
 		<module>klab.tools</module>
+		<module>adapters</module>
 	</modules>
 
 	<properties>
