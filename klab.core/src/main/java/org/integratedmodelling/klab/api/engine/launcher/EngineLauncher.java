@@ -19,7 +19,7 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.invoker.SystemOutLogger;
-import org.integratedmodelling.klab.API;
+import org.integratedmodelling.klab.API_OLD;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
@@ -461,7 +461,7 @@ public abstract class EngineLauncher {
 
             long timeout = 0;
             try (InputStream is = new URL("http://127.0.0.1:" + networkPort + context
-                    + API.SHUTDOWN).openStream()) {
+                    + API_OLD.SHUTDOWN).openStream()) {
                 //
             } catch (Exception e) {
                 error("exception calling shutdown: " + e.getMessage());
