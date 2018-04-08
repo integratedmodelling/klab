@@ -261,9 +261,11 @@ public class Actuator implements IActuator {
 				 */
 				for (Pair<IContextualizer, IComputableResource> mediator : mediation) {
 					String targetArtifactId = mediator.getSecond().getTarget();
-					IArtifact mediated = runContextualizer(mediator.getFirst(), mediator.getSecond(),
+					if (targetArtifactId.equals(input.getAlias())) {
+						IArtifact mediated = runContextualizer(mediator.getFirst(), mediator.getSecond(),
 							ret.getArtifact(targetArtifactId), ret, runtimeContext.getScale());
-					ret.setData(targetArtifactId, mediated);
+						ret.setData(targetArtifactId, mediated);
+					}
 				}
 			}
 		}
