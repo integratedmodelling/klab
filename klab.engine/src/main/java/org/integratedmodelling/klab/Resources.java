@@ -24,192 +24,172 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
- * Static functions related to the management and resolution of URNs. Also holds the URN metadata
- * database for local URNs, synchronized with the META-INF/data.kim file and maintained
- * automatically.
+ * Static functions related to the management and resolution of URNs. Also holds
+ * the URN metadata database for local URNs, synchronized with the
+ * META-INF/data.kim file and maintained automatically.
  * 
  * @author ferdinando.villa
  *
  */
 public enum Resources implements IResourceService {
 
-  INSTANCE;
+	INSTANCE;
 
-  public static String getConceptPrefix() {
-    return Urns.KLAB_URN_PREFIX + "knowledge:" + Workspaces.INSTANCE.getWorldview().getName() + ":";
-  }
+	public static String getConceptPrefix() {
+		return Urns.KLAB_URN_PREFIX + "knowledge:" + Workspaces.INSTANCE.getWorldview().getName() + ":";
+	}
 
-  /**
-   * Model URNs start with this followed either by 'local:' (for local models) or the server ID they
-   * came from.
-   */
-  public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
+	/**
+	 * Model URNs start with this followed either by 'local:' (for local models) or
+	 * the server ID they came from.
+	 */
+	public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
-  @Override
-  public IResource getResource(final String urn)
-      throws KlabUnknownUrnException, KlabUnauthorizedUrnException {
+	@Override
+	public IResource getResource(final String urn) throws KlabUnknownUrnException, KlabUnauthorizedUrnException {
 
-    String id = urn;
-    IResource ret = null;
+		String id = urn;
+		IResource ret = null;
 
-    if (id.startsWith(Urns.LOCAL_URN_PREFIX)) {
-      id = id.substring(Urns.LOCAL_URN_PREFIX.length());
-    } else if (id.startsWith(Urns.KLAB_URN_PREFIX)) {
-      id = id.substring(Urns.KLAB_URN_PREFIX.length());
-    }
+		if (id.startsWith(Urns.LOCAL_URN_PREFIX)) {
+			id = id.substring(Urns.LOCAL_URN_PREFIX.length());
+		} else if (id.startsWith(Urns.KLAB_URN_PREFIX)) {
+			id = id.substring(Urns.KLAB_URN_PREFIX.length());
+		}
 
-/*    if (id.startsWith(Urns.LOCAL_BOOLEAN_PREFIX)) {
+		if (id.startsWith(Urns.LOCAL_FILE_PREFIX)) {
 
-      Boolean b = Boolean.parseBoolean(
-          StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_BOOLEAN_PREFIX.length())));
-      ret = getLiteralResource(b);
+			String text = StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_FILE_PREFIX.length()));
+			ret = getLocalFileResource(new File(text));
 
-    } else*/ if (id.startsWith(Urns.LOCAL_FILE_PREFIX)) {
+		}
 
-      String text = StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_FILE_PREFIX.length()));
-      ret = getLocalFileResource(new File(text));
+		return ret;
+	}
 
-    } /*else if (id.startsWith(Urns.LOCAL_NUMBER_PREFIX)) {
+	@Override
+	public IResource getLocalFileResource(File file) {
 
-      Number number = Double.parseDouble(
-          StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_NUMBER_PREFIX.length())));
-      ret = getLiteralResource(number);
+		IResource ret = null;
 
-    } else if (id.startsWith(Urns.LOCAL_TEXT_PREFIX)) {
+		/**
+		 * 1. create URN
+		 */
 
-      String text = StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_TEXT_PREFIX.length()));
-      ret = getLiteralResource(text);
+		/**
+		 * 2. see if it was processed before and timestamps match; if so, return
+		 * existing resource
+		 */
 
-    } else if (id.startsWith(Urns.LOCAL_FUNCTION_PREFIX)) {
+		/**
+		 * 3. else, spawn resource processing thread and return temporary resource
+		 * record
+		 */
 
-    } */ else {
-      // TODO
-//      ret = getUrnResource(id);
-    }
+		return ret;
+	}
 
-    return ret;
-  }
+	/**
+	 * Extract the OWL assets in the classpath (under /knowledge/**) to the
+	 * specified filesystem directory.
+	 * 
+	 * @param destinationDirectory
+	 * @throws IOException
+	 */
+	public void extractKnowledgeFromClasspath(File destinationDirectory) throws IOException {
 
-  @Override
-  public IResource getLocalFileResource(File file) {
+		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		Resource[] resources = resolver.getResources("/knowledge/**");
+		for (Resource resource : resources) {
 
-    IResource ret = null;
+			String path = null;
+			if (resource instanceof FileSystemResource) {
+				path = ((FileSystemResource) resource).getPath();
+			} else if (resource instanceof ClassPathResource) {
+				path = ((ClassPathResource) resource).getPath();
+			}
+			if (path == null) {
+				throw new IOException("internal: cannot establish path for resource " + resource);
+			}
 
-    /**
-     * 1. create URN
-     */
+			if (!path.endsWith("owl")) {
+				continue;
+			}
 
-    /**
-     * 2. see if it was processed before and timestamps match; if so, return existing resource
-     */
+			String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
 
-    /**
-     * 3. else, spawn resource processing thread and return temporary resource record
-     */
+			int pind = filePath.lastIndexOf('/');
+			if (pind >= 0) {
+				String fileDir = filePath.substring(0, pind);
+				File destDir = new File(destinationDirectory + File.separator + fileDir);
+				destDir.mkdirs();
+			}
+			File dest = new File(destinationDirectory + File.separator + filePath);
+			InputStream is = resource.getInputStream();
+			FileUtils.copyInputStreamToFile(is, dest);
+			is.close();
+		}
+	}
 
-    return ret;
-  }
+	@Override
+	public IKimObject getModelObject(String urn) {
 
-  /**
-   * Extract the OWL assets in the classpath (under /knowledge/**) to the specified filesystem
-   * directory.
-   * 
-   * @param destinationDirectory
-   * @throws IOException
-   */
-  public void extractKnowledgeFromClasspath(File destinationDirectory) throws IOException {
+		String serverId = null;
+		IKimObject ret = null;
 
-    PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-    Resource[] resources = resolver.getResources("/knowledge/**");
-    for (Resource resource : resources) {
+		if (urn.startsWith(Urns.KLAB_URN_PREFIX)) {
+			/*
+			 * remove all needed pieces until we are left with a server ID and a normal
+			 * path, or an observable
+			 */
+		}
 
-      String path = null;
-      if (resource instanceof FileSystemResource) {
-        path = ((FileSystemResource) resource).getPath();
-      } else if (resource instanceof ClassPathResource) {
-        path = ((ClassPathResource) resource).getPath();
-      }
-      if (path == null) {
-        throw new IOException("internal: cannot establish path for resource " + resource);
-      }
+		if (serverId == null) {
 
-      if (!path.endsWith("owl")) {
-        continue;
-      }
+			String ns = Path.getLeading(urn, '.');
+			String ob = Path.getLast(urn, '.');
+			if (ns == null && SemanticType.validate(urn)) {
+				SemanticType st = new SemanticType(urn);
+				ns = st.getNamespace();
+				ob = st.getName();
+			}
 
-      String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
+			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns);
+			if (namespace == null) {
+				return null;
+			}
 
-      int pind = filePath.lastIndexOf('/');
-      if (pind >= 0) {
-        String fileDir = filePath.substring(0, pind);
-        File destDir = new File(destinationDirectory + File.separator + fileDir);
-        destDir.mkdirs();
-      }
-      File dest = new File(destinationDirectory + File.separator + filePath);
-      InputStream is = resource.getInputStream();
-      FileUtils.copyInputStreamToFile(is, dest);
-      is.close();
-    }
-  }
+			ret = namespace.getObject(ob);
 
-  @Override
-  public IKimObject getModelObject(String urn) {
+		} else {
 
-    String serverId = null;
-    IKimObject ret = null;
+			/*
+			 * TODO logics to synchronize the project and its requirements from the server.
+			 */
 
-    if (urn.startsWith(Urns.KLAB_URN_PREFIX)) {
-      /*
-       * remove all needed pieces until we are left with a server ID and a normal path, or an
-       * observable
-       */
-    }
+		}
 
-    if (serverId == null) {
+		return ret;
+	}
 
-      String ns = Path.getLeading(urn, '.');
-      String ob = Path.getLast(urn, '.');
-      if (ns == null && SemanticType.validate(urn)) {
-        SemanticType st = new SemanticType(urn);
-        ns = st.getNamespace();
-        ob = st.getName();
-      }
-
-      INamespace namespace = Namespaces.INSTANCE.getNamespace(ns);
-      if (namespace == null) {
-        return null;
-      }
-
-      ret = namespace.getObject(ob);
-
-    } else {
-
-      /*
-       * TODO logics to synchronize the project and its requirements from the server.
-       */
-
-    }
-
-    return ret;
-  }
-
-  @Override
-  public IResolvable getResolvableResource(String urn) {
-    IKimObject obj = getModelObject(urn);
-    if (obj instanceof IResolvable) {
-      return (IResolvable) obj;
-    }
-    if (obj instanceof IConceptDefinition) {
-      return Observable.promote((IConceptDefinition) obj);
-    }
-    // if it has spaces or parentheses it may be a declaration; try that one last time before giving up
-    if (urn.contains(" ") || urn.contains("(")) {
-    	IObservable obs = Observables.INSTANCE.declare(urn);
-    	if (obs != null) {
-    		return obs;
-    	}
-    }
-    return null;
-  }
+	@Override
+	public IResolvable getResolvableResource(String urn) {
+		IKimObject obj = getModelObject(urn);
+		if (obj instanceof IResolvable) {
+			return (IResolvable) obj;
+		}
+		if (obj instanceof IConceptDefinition) {
+			return Observable.promote((IConceptDefinition) obj);
+		}
+		// if it has spaces or parentheses it may be a declaration; try that one last
+		// time before giving up
+		if (urn.contains(" ") || urn.contains("(")) {
+			IObservable obs = Observables.INSTANCE.declare(urn);
+			if (obs != null) {
+				return obs;
+			}
+		}
+		return null;
+	}
 
 }
