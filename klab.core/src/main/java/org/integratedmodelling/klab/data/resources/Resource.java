@@ -2,10 +2,13 @@ package org.integratedmodelling.klab.data.resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -13,7 +16,6 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
-import org.integratedmodelling.klab.api.runtime.monitoring.INotification;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -41,11 +43,29 @@ public class Resource implements IResource {
   String                    type;
   IGeometry                 geometry;
   Parameters                parameters;
+  long                      resourceTimestamp;
   List<INotification>       history          = new ArrayList<>();
+  List<INotification>       notifications    = new ArrayList<>();
 
   // only meant to be built by the custom deserializer in this package
   Resource() {}
 
+  /**
+   * Create a resource with the passed URN and a list of errors. 
+   * 
+   * @param urn
+   * @param errors
+   * @return
+   */
+  public static Resource error(String urn, List<Throwable> errors) {
+    Resource ret = new Resource();
+    ret.urn = urn;
+    for (Throwable t : errors) {
+      ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
+    }
+    return ret;
+  }
+  
   @Override
   public Version getVersion() {
     return version;
@@ -79,6 +99,22 @@ public class Resource implements IResource {
   @Override
   public String getAdapterType() {
     return type;
+  }
+
+  public long getResourceTimestamp() {
+    return resourceTimestamp;
+  }
+
+  @Override
+  public boolean hasErrors() {
+    if (notifications != null) {
+      for (INotification notification : notifications) {
+        if (notification.getLevel() == Level.SEVERE) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 }

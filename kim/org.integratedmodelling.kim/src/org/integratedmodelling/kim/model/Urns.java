@@ -6,54 +6,43 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.utils.Escape;
 
 /**
- * This class encodes the rules for creating URNs that describe local resources:
- * literal values, local files and function calls.
+ * This class encodes the rules for creating URNs that describe local resources: literal values,
+ * local files and function calls.
  *
  */
 public enum Urns {
 
-	INSTANCE;
+  INSTANCE;
 
-	final public static String KLAB_URN_PREFIX = "urn:klab:";
-	final public static String LOCAL_URN_PREFIX = "urn:klab:local:";
+  final public static String KLAB_URN_PREFIX   = "urn:klab:";
+  final public static String LOCAL_URN_PREFIX  = "urn:klab:local:";
+  final public static String LOCAL_FILE_PREFIX = "file:";
 
-//	final public static String LOCAL_NUMBER_PREFIX = "number:";
-//	final public static String LOCAL_BOOLEAN_PREFIX = "boolean:";
-//	final public static String LOCAL_TEXT_PREFIX = "text:";
-	final public static String LOCAL_FILE_PREFIX = "file:";
-//	final public static String LOCAL_FUNCTION_PREFIX = "function:";
+  public String getFileUrn(File file) {
+    
+    if (file == null) {
+      throw new IllegalArgumentException("null argument to getFileUrn()");
+    }
 
-//	public String getLiteralUrn(Object literal) {
-//
-//		if (literal == null) {
-//			throw new IllegalArgumentException("null argument to getLiteralUrn()");
-//		}
-//
-//		String valuePart = "";
-//		if (literal instanceof Number) {
-//			valuePart = LOCAL_NUMBER_PREFIX;
-//		} else if (literal instanceof Boolean) {
-//			valuePart = LOCAL_BOOLEAN_PREFIX;
-//		} else if (literal instanceof String) {
-//			valuePart = LOCAL_TEXT_PREFIX;
-//		} else {
-//			throw new IllegalArgumentException("literal URNs cannot handle a " + literal.getClass().getCanonicalName());
-//		}
-//		return LOCAL_URN_PREFIX + valuePart + Escape.forURL(literal.toString());
-//	}
+    /*
+     * TODO look inside a project and ensure it is in one; use project ID as namespace. If not in a project,
+     * which should only happen in testing, encode as "absolute" namespace.
+     */
 
-	public String getFileUrn(File file) {
-		if (file == null) {
-			throw new IllegalArgumentException("null argument to getFileUrn()");
-		}
-		try {
-			return LOCAL_URN_PREFIX + LOCAL_FILE_PREFIX + Escape.forURL(file.getCanonicalPath().toString());
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
+    try {
+      return LOCAL_URN_PREFIX + LOCAL_FILE_PREFIX
+          + Escape.forURL(file.getCanonicalPath().toString());
+    } catch (IOException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
 
-	public String getFunctionUrn(IServiceCall functionCall) {
-		return "";
-	}
+  public String getFunctionUrn(IServiceCall functionCall) {
+    return "";
+  }
+
+  public boolean isLocal(String urn) {
+    return urn.startsWith(LOCAL_URN_PREFIX) || urn.startsWith("local:")
+        || urn.startsWith(LOCAL_FILE_PREFIX);
+  }
 }

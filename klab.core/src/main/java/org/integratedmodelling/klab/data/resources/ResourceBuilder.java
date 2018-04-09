@@ -4,8 +4,10 @@ import org.integratedmodelling.klab.api.data.IResource;
 
 public class ResourceBuilder implements IResource.Builder   {
 
-  public ResourceBuilder() {
-    // TODO Auto-generated constructor stub
+  @Override
+  public IResource build() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

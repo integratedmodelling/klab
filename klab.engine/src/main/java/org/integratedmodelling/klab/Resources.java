@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -19,14 +20,19 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.data.storage.FutureResource;
+import org.integratedmodelling.klab.data.storage.ResourceCatalog;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
@@ -41,7 +47,7 @@ public enum Resources implements IResourceService {
 
   INSTANCE;
 
-  Map<String, IResourceAdapter> resourceAdapters = new HashMap<>();
+  Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 
   /**
    * The local resource catalog is a map that can be set by the engine according to implementation.
@@ -54,13 +60,13 @@ public enum Resources implements IResourceService {
     return Urns.KLAB_URN_PREFIX + "knowledge:" + Workspaces.INSTANCE.getWorldview().getName() + ":";
   }
 
-  @Override
+  // @Override
   public IResourceAdapter getResourceAdapter(String id) {
     return resourceAdapters.get(id);
   }
 
 
-  @Override
+  // @Override
   public List<IResourceAdapter> getResourceAdapter(File resource) {
     List<IResourceAdapter> ret = new ArrayList<>();
     return ret;
@@ -73,46 +79,83 @@ public enum Resources implements IResourceService {
   public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
   @Override
-  public IResource getResource(final String urn)
+  public IResource resolveResource(final String urn)
       throws KlabUnknownUrnException, KlabUnauthorizedUrnException {
 
-    String id = urn;
-    IResource ret = null;
+    IResource ret = resourceCatalog.get(urn);
 
-    if (id.startsWith(Urns.LOCAL_URN_PREFIX)) {
-      id = id.substring(Urns.LOCAL_URN_PREFIX.length());
-    } else if (id.startsWith(Urns.KLAB_URN_PREFIX)) {
-      id = id.substring(Urns.KLAB_URN_PREFIX.length());
+    if (ret != null && !Urns.INSTANCE.isLocal(urn)) {
+      /*
+       * TODO check if we need to refresh the URN from the network; if so, set ret to null again.
+       */
     }
 
-    if (id.startsWith(Urns.LOCAL_FILE_PREFIX)) {
+    // TODO use network services; ensure any checks are done
+    
+    // TODO cache data with appropriate expiration time
+    
+    return null;
 
-      String text = StringEscapeUtils.unescapeHtml(id.substring(Urns.LOCAL_FILE_PREFIX.length()));
-      ret = getLocalFileResource(new File(text));
-
-    }
-
-    return ret;
   }
 
   @Override
   public IResource getLocalFileResource(File file) {
 
+    // get URN from k.IM service, unique per file
+    String urn = Urns.INSTANCE.getFileUrn(file);
     IResource ret = null;
 
-    /**
-     * 1. create URN
-     */
 
     /**
      * 2. see if it was processed before and timestamps match; if so, return existing resource
      */
+    ret = getResourceCatalog().get(urn);
+
+    if (ret != null && ret.getResourceTimestamp() >= file.lastModified()) {
+      return ret;
+    }
 
     /**
-     * 3. else, spawn resource processing thread and return temporary resource record
+     * 3. else, spawn resource processing thread for publishing and return temporary resource record
      */
+    new Thread() {
 
-    return ret;
+      @Override
+      public void run() {
+
+        List<Throwable> errors = new ArrayList<>();
+        IResource resource = null;
+        try {
+
+          List<IResourceAdapter> adapters = getResourceAdapter(file);
+          if (adapters.size() > 0) {
+            /*
+             * TODO logics to pick the best
+             */
+            IResourceAdapter adapter = adapters.get(0);
+            Builder builder =
+                adapter.getValidator().validate(file.toURI().toURL(), new Parameters());
+            resource = builder.build();
+
+          } else {
+            errors
+                .add(new KlabValidationException("cannot find an adapter to process file " + file));
+          }
+
+        } catch (Exception e) {
+          errors.add(e);
+        }
+
+        if (resource == null) {
+          resource = Resource.error(urn, errors);
+        }
+
+        resourceCatalog.put(urn, resource);
+      }
+
+    }.start();
+
+    return new FutureResource(urn);
   }
 
   /**
@@ -125,8 +168,8 @@ public enum Resources implements IResourceService {
   public void extractKnowledgeFromClasspath(File destinationDirectory) throws IOException {
 
     PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-    Resource[] resources = resolver.getResources("/knowledge/**");
-    for (Resource resource : resources) {
+    org.springframework.core.io.Resource[] resources = resolver.getResources("/knowledge/**");
+    for (org.springframework.core.io.Resource resource : resources) {
 
       String path = null;
       if (resource instanceof FileSystemResource) {
@@ -222,21 +265,30 @@ public enum Resources implements IResourceService {
     resourceAdapters.put(type, adapter);
   }
 
+  /**
+   * Only call this just after {@link Engine#start()} if overriding the default, persistent resource
+   * catalog is desired.
+   * 
+   * @param catalog
+   */
   public void setResourceCatalog(Map<String, IResource> catalog) {
-    this.resourceCatalog = catalog;
+    this.resourceCatalog = Collections.synchronizedMap(catalog);
   }
 
-  public Map<String, IResource>  getResourceCatalog() {
-      if (resourceCatalog == null) {
-        // TODO create the persistent catalog
-      }
-      return resourceCatalog;
+  /**
+   * 
+   * @return
+   */
+  public Map<String, IResource> getResourceCatalog() {
+    if (resourceCatalog == null) {
+      resourceCatalog = Collections.synchronizedMap(new ResourceCatalog());
+    }
+    return resourceCatalog;
   }
 
   @Override
-  public Builder createBuilder() {
-    // TODO Auto-generated method stub
-    return null;
+  public Builder createResourceBuilder() {
+    return new ResourceBuilder();
   }
 
 }

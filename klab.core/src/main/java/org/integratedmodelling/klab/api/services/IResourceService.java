@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
-import java.util.List;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
@@ -19,7 +17,7 @@ public interface IResourceService {
    * @throws KlabUnknownUrnException
    * @throws KlabUnauthorizedUrnException
    */
-  IResource getResource(String urn) throws KlabUnknownUrnException, KlabUnauthorizedUrnException;
+  IResource resolveResource(String urn) throws KlabUnknownUrnException, KlabUnauthorizedUrnException;
 
   /**
    * 
@@ -48,30 +46,11 @@ public interface IResourceService {
   IResolvable getResolvableResource(String urn);
 
   /**
-   * Get the appropriate resource adapters to handle a local file resource. Use the best inspection
-   * method possible that does not cost too much. Returning more than one adapter should normally
-   * not happen. If applicable and possible, sort the list so that the most appropriate or best
-   * performing is the first.
-   * 
-   * @param resource a local resource file
-   * @return all resource adapters that can handle the passed file, best one on top.
-   */
-  List<IResourceAdapter> getResourceAdapter(File resource);
-
-  /**
-   * Get a previously registered resource adapter to handle the passed resource type.
-   * 
-   * @param id the adapter type ID
-   * @return a resource adapter, or null if none was registered with this id.
-   */
-  IResourceAdapter getResourceAdapter(String id);
-
-  /**
    * Create a builder to describe a future valid resource or the errors that will prevent it
    * from being published.
    * 
    * @return
    */
-  IResource.Builder createBuilder();
+  IResource.Builder createResourceBuilder();
   
 }

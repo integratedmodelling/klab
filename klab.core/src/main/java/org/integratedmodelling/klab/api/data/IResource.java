@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
+import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.Version;
@@ -13,7 +14,6 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.monitoring.INotification;
 import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
@@ -94,7 +94,7 @@ public interface IResource extends Serializable {
   IParameters getParameters();
 
   /**
-   * A builder can be obtained through {@link IResourceService#createBuilder()} and is used to set
+   * A builder can be obtained through {@link IResourceService#createResourceBuilder()} and is used to set
    * all the properties of a {@link IResource} that will be built at publication. The builder is
    * returned by {@link IResourceValidator#validate}.
    * 
@@ -103,5 +103,27 @@ public interface IResource extends Serializable {
    */
   interface Builder {
 
+    /**
+     * Build the resource. If there are errors, build a resource with errors; never return null.
+     * 
+     * @return
+     */
+    IResource build();
+
   }
+
+  /**
+   * Return a timestamp that matches the time of last modification of the resource described.
+   * 
+   * @return
+   */
+  long getResourceTimestamp();
+  
+  /**
+   * True if there is any error notification for this resource. Should
+   * always be checked after URN retrieval.
+   * 
+   * @return
+   */
+  boolean hasErrors();
 }

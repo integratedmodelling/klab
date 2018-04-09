@@ -1,4 +1,6 @@
-package org.integratedmodelling.klab.api.runtime.monitoring;
+package org.integratedmodelling.kim.api;
+
+import java.util.logging.Level;
 
 public interface INotification {
     
@@ -15,11 +17,13 @@ public interface INotification {
         updatedMetadata,
     }
     
+    Level getLevel();
+    
     long getTimestamp();
     
-    String getUser();
-    
-    String getNotes();
+//    String getUser();
+//    
+//    String getNotes();
 
     Type getType();
     

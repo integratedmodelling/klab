@@ -1,0 +1,24 @@
+worldview im;
+
+//@test(
+//	name = "tests.core.instances-resolved-1",
+//	description  = "Spatial instantiation through feature extraction and resolution through context",
+//	observations = ("earth:Mountain")
+//	// TODO assertions
+//)
+observe earth:Terrestrial earth:Region named tanzania-grr
+	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
+
+// @resolveOnce <-- use to copy dataflows w/o search - OR the other way around, to force resolution of each one
+model each earth:Mountain
+	observing geography:Elevation in m
+	using gis.features.extract(select = "elevation > 3000")
+	// should be able to add over space( grid = 30m ) <-- to combine scale within each instance
+;
+
+// @useContext(if = "conditions on zoom levels", for = "optional list of qualities")
+model earth:Mountain
+	observing geography:Elevation in ft;
+
+model geography:Elevation in m
+	using gis.terrain(roughness = 0.88, range = 0 to 3500);

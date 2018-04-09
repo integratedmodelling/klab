@@ -7,6 +7,12 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
+/**
+ * The raster publisher will attempt WCS publishing if a WCS server is connected.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class RasterPublisher implements IResourcePublisher {
 
   @Override
