@@ -5,4 +5,4 @@
  * @author ferdinando.villa
  *
  */
-package org.integratedmodelling.klab.resources;
+package org.integratedmodelling.klab.raster.wcs;

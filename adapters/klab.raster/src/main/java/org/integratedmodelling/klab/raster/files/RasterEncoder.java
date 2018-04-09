@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.raster.encoder;
+package org.integratedmodelling.klab.raster.files;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;

@@ -66,4 +66,12 @@ public interface IResourceService {
    */
   IResourceAdapter getResourceAdapter(String id);
 
+  /**
+   * Create a builder to describe a future valid resource or the errors that will prevent it
+   * from being published.
+   * 
+   * @return
+   */
+  IResource.Builder createBuilder();
+  
 }

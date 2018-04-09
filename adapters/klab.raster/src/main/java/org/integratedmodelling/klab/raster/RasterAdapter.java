@@ -6,9 +6,9 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
-import org.integratedmodelling.klab.raster.encoder.RasterEncoder;
-import org.integratedmodelling.klab.raster.publisher.RasterPublisher;
-import org.integratedmodelling.klab.raster.validator.RasterValidator;
+import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.integratedmodelling.klab.raster.files.RasterPublisher;
+import org.integratedmodelling.klab.raster.files.RasterValidator;
 
 @ResourceAdapter(type = "raster", version = Version.CURRENT)
 public class RasterAdapter implements IResourceAdapter {

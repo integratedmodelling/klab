@@ -65,8 +65,8 @@ public interface IResource extends Serializable {
   /**
    * The data adapter that published this resource and will be used to encode it.
    * 
-   * @return the adapter. Should only be null when no adapter is used: resources that
-   *    depend on an adapter should never be created if the adapter isn't found.
+   * @return the adapter. Should only be null when no adapter is used: resources that depend on an
+   *         adapter should never be created if the adapter isn't found.
    */
   String getAdapterType();
 
@@ -92,4 +92,16 @@ public interface IResource extends Serializable {
    * @return parameter map, possibly empty, never null.
    */
   IParameters getParameters();
+
+  /**
+   * A builder can be obtained through {@link IResourceService#createBuilder()} and is used to set
+   * all the properties of a {@link IResource} that will be built at publication. The builder is
+   * returned by {@link IResourceValidator#validate}.
+   * 
+   * @author ferdinando.villa
+   *
+   */
+  interface Builder {
+
+  }
 }

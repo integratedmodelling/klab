@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
@@ -230,6 +231,12 @@ public enum Resources implements IResourceService {
         // TODO create the persistent catalog
       }
       return resourceCatalog;
+  }
+
+  @Override
+  public Builder createBuilder() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }
