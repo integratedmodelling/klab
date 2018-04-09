@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.raster.files;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;

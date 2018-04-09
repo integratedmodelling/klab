@@ -340,26 +340,4 @@ public class URLUtils {
         }
     }
 
-    // public static void copyChanneled(File src, File dst) throws
-    // ThinklabIOException {
-    //
-    // try {
-    // // Create channel on the source
-    // FileChannel srcChannel = new FileInputStream(src).getChannel();
-    //
-    // // Create channel on the destination
-    // FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-    //
-    // // Copy file contents from source to destination
-    // dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-    //
-    // // Close the channels
-    // srcChannel.close();
-    // dstChannel.close();
-    //
-    // } catch (IOException e) {
-    // throw new ThinklabIOException(e.getMessage());
-    // }
-    // }
-
 }
