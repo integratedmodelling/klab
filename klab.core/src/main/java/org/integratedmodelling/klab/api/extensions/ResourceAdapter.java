@@ -26,12 +26,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 
 /**
- * Defines a component by annotating a Java class that becomes the component's initializer. The
- * class may be empty or have methods for initialization, setup and shutdown. The package that class
- * belongs on tells Thinklab where to look for services, functions, and TQL files to load with the
- * component.
+ * Used on a {@link IResourceAdapter resource adapter class} to declare a new resource type. The
+ * information in this annotation is used to validate resources using this adapter before they are
+ * processed by the adapter itself.
  * 
  * @author ferdinando.villa
  *
@@ -55,5 +56,23 @@ public @interface ResourceAdapter {
    * @return version string
    */
   String version();
+
+  /**
+   * Any required type-specific parameters names can be added here. If the fields listed here are
+   * not present in the {@link IResource#getParameters() parameters) of a {@link IResource resource}
+   * with this type, the resource is invalid and cannot be used.
+   * 
+   * @return
+   */
+  String[] requires() default {};
+
+  /**
+   * Any optional type-specific parameters names can be added here. Same as {@link #requires()} but
+   * does not cause invalidation when not present. All parameters in a resource must be declared in
+   * the annotation.
+   * 
+   * @return
+   */
+  String[] optional() default {};
 
 }

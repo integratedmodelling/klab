@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Shutdown;
@@ -38,12 +37,5 @@ public interface IResourceAdapter {
    * @return
    */
   IResourceEncoder getEncoder();
-
-  /**
-   * Prototype for the required and optional metadata that this adapter will require or accept.
-   * Implementations should be able to provide KDL specs for this.
-   * 
-   * @return a prototype for the metadata, with the same name as the adapter.
-   */
-  IPrototype metadataPrototype();
+  
 }

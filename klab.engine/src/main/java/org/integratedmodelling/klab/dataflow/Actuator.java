@@ -142,7 +142,7 @@ public class Actuator implements IActuator {
 
 		/*
 		 * this localizes the names in the context to those understood by this actuator
-		 * and applies any necessary mediation to the inputs
+		 * and applies any requested mediation to the inputs
 		 */
 		IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
 

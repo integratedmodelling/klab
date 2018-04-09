@@ -118,7 +118,7 @@ abstract class ActionBase extends Script {
      * @return
      */
     def nodata(Object o) {
-        return o == null || (o instanceof Double && Double.isNaN(o));
+        return o == null || (o instanceof Double && Double.isNaN(o)) || (o instanceof Float && Float.isNaN(o));
     }
 
     /**

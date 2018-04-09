@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.raster.validator;
 
-public class RasterValidator {
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+
+public class RasterValidator implements IResourceValidator {
 
 }

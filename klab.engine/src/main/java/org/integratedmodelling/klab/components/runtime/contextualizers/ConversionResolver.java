@@ -13,40 +13,46 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class ConversionResolver implements IResolver<IState>, IExpression {
 
-	static final public String FUNCTION_ID = "klab.runtime.convert";
+  static final public String FUNCTION_ID = "klab.runtime.convert";
 
-	IValueMediator from;
-	IValueMediator to;
+  IValueMediator             from;
+  IValueMediator             to;
 
-	// don't remove - only used as expression
-	public ConversionResolver() {
-	}
+  // don't remove - only used as expression
+  public ConversionResolver() {}
 
-	public ConversionResolver(IValueMediator from, IValueMediator to) {
-		this.from = from;
-		this.to = to;
-	}
+  public ConversionResolver(IValueMediator from, IValueMediator to) {
+    this.from = from;
+    this.to = to;
+  }
 
-	public static IServiceCall getServiceCall(Pair<IValueMediator, IValueMediator> literal) {
-		return KimServiceCall.create(FUNCTION_ID, "original", literal.getFirst(), "target", literal.getSecond());
-	}
+  public static IServiceCall getServiceCall(Pair<IValueMediator, IValueMediator> literal) throws KlabValidationException {
+    if (!literal.getSecond().isCompatible(literal.getFirst())) {
+      throw new KlabValidationException("mediator '" + literal.getFirst()
+          + "' cannot be converted to '" + literal.getSecond() + "'");
+    }
+    return KimServiceCall.create(FUNCTION_ID, "original", literal.getFirst(), "target",
+        literal.getSecond());
+  }
 
-	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
-		return new ConversionResolver((IValueMediator) parameters.get("original"), (IValueMediator) parameters.get("target"));
-	}
+  @Override
+  public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+    return new ConversionResolver((IValueMediator) parameters.get("original"),
+        (IValueMediator) parameters.get("target"));
+  }
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+  @Override
+  public IGeometry getGeometry() {
+    return Geometry.scalar();
+  }
 
-	@Override
-	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		return new MediatingState(ret, from, to);
-	}
+  @Override
+  public IState resolve(IState ret, IComputationContext context) throws KlabException {
+    return new MediatingState(ret, from, to);
+  }
 
 }

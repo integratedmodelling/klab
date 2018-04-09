@@ -92,7 +92,7 @@ public class Version implements Comparable<Version>, Serializable {
      * @param str version identifier as string
      * @return version identifier object
      */
-    public static Version parse(final String str) {
+    public static Version create(final String str) {
         Version result = new Version();
         result.parseString(str);
         return result;
@@ -425,7 +425,7 @@ public class Version implements Comparable<Version>, Serializable {
 
     public static Version getCurrent() {
         if (currentVersion == null) {
-            currentVersion = parse(CURRENT);
+            currentVersion = create(CURRENT);
         }
         return currentVersion;
     }

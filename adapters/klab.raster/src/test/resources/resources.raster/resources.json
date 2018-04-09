@@ -1,0 +1,12 @@
+{
+	"local:file:classpath:data.raster/map1.tif": {
+		"urn": "local:file:classpath:resources/map1.tif",
+		"geometry": "S2",
+		"type": "raster",
+		"version": "0.0.1",
+		"metadata": {
+			"owner": "Piero Pippa",
+			"nodata": "999"
+		}
+	}
+}

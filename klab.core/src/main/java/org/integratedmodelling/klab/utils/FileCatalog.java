@@ -1,9 +1,13 @@
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,11 +29,32 @@ public class FileCatalog<T> extends HashMap<String, T> {
   long                      timestamp;
   boolean                   error;
 
-  public FileCatalog(File file, Class<? extends T> cls) {
+  public static <T> FileCatalog<T> create(URL url, Class<T> type, Class<? extends T> cls) {
+    return new FileCatalog<T>(url, type, cls);
+  }
+
+  public static <T> FileCatalog<T> create(File file, Class<T> type, Class<? extends T> cls) {
+    return new FileCatalog<T>(file, type, cls);
+  }
+
+  private FileCatalog(URL url, Class<T> type, Class<? extends T> cls) {
+    this.cls = cls;
+    try (InputStream input = url.openStream()) {
+      this.error = !synchronize(input);
+    } catch (Throwable e) {
+      throw new KlabRuntimeException(e);
+    }
+  }
+
+  public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
 
     this.file = file;
     this.cls = cls;
-    this.error = !synchronize();
+    try (InputStream input = new FileInputStream(file)) {
+      this.error = !synchronize(input);
+    } catch (Throwable e) {
+      throw new KlabRuntimeException(e);
+    }
   }
 
   public boolean hasErrors() {
@@ -42,24 +67,24 @@ public class FileCatalog<T> extends HashMap<String, T> {
    * @return true if no errors. Non-existing file is not an error.
    * @throws ClassCastException if the data read are not of the type configured
    */
-  public boolean synchronize() {
+  public boolean synchronize(InputStream stream) {
 
     boolean ret = true;
 
-    if (this.file.exists() && this.timestamp < this.file.lastModified()) {
+    if (this.file == null || (this.file.exists() && this.timestamp < this.file.lastModified())) {
 
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-      
+
       try {
         JavaType type =
             objectMapper.getTypeFactory().constructMapLikeType(Map.class, String.class, cls);
-        Map<Object, T> data = objectMapper.readerFor(type).readValue(this.file);
+        Map<Object, T> data = objectMapper.readerFor(type).readValue(stream);
         clear();
         for (Object key : data.keySet()) {
           put(key.toString(), (T) data.get(key));
         }
-        this.timestamp = this.file.lastModified();
+        this.timestamp = this.file == null ? System.currentTimeMillis() : this.file.lastModified();
       } catch (IOException e) {
         ret = false;
       }

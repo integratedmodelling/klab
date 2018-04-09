@@ -45,7 +45,7 @@ public class Component implements IComponent {
             Class<?> implementation) {
 
         this.name = annotation.id();
-        this.version = Version.parse(annotation.version());
+        this.version = Version.create(annotation.version());
         this.implementingClass = implementation;
 
         try {

@@ -2,15 +2,12 @@ package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
-import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -71,17 +68,7 @@ public interface IResource extends Serializable {
    * @return the adapter. Should only be null when no adapter is used: resources that
    *    depend on an adapter should never be created if the adapter isn't found.
    */
-  Optional<IResourceAdapter> getAdapter();
-
-  /**
-   * Fetch (if necessary) and return the root raw object represented by this resource. Use the
-   * monitor for any reporting and to manage asynchronous requests.
-   * 
-   * @param scale
-   * @param monitor
-   * @return the result of decoding the resource.
-   */
-  IObjectArtifact get(IScale scale, IMonitor monitor);
+  String getAdapterType();
 
   /**
    * Resources come with both system-defined and user-defined metadata. User metadata will be
@@ -104,5 +91,5 @@ public interface IResource extends Serializable {
    * 
    * @return parameter map, possibly empty, never null.
    */
-  Map<String, Object> getParameters();
+  IParameters getParameters();
 }

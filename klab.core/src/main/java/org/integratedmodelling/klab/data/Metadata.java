@@ -22,6 +22,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.data;
 
+import java.util.Map;
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -30,6 +31,10 @@ public class Metadata extends Parameters implements IMetadata {
 
   public Metadata(IKimMetadata metadata) {
     putAll(metadata.getData());
+  }
+  
+  public Metadata(Map<String, Object> data) {
+    super(data);
   }
   
   public Metadata() {}

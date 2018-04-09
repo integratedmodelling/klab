@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.api.services.IAnnotationService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.kim.Prototype;
-import org.integratedmodelling.klab.utils.StringUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -97,9 +96,6 @@ public enum Annotations implements IAnnotationService {
                     throw new KlabInternalErrorException(e);
                 }
             }
-
-            System.out.println(StringUtils.repeat('-', 80));
-            System.out.println(prototype.getSynopsis());
         }
     }
     
