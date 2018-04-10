@@ -116,7 +116,7 @@ public enum Resources implements IResourceService {
     }
 
     /**
-     * 3. else, spawn resource processing thread for publishing and return temporary resource record
+     * 3. else, spawn resource processing thread for local publishing and return temporary resource record
      */
     new Thread() {
 
@@ -135,7 +135,7 @@ public enum Resources implements IResourceService {
             IResourceAdapter adapter = adapters.get(0);
             Builder builder =
                 adapter.getValidator().validate(file.toURI().toURL(), new Parameters());
-            resource = builder.build();
+            resource = builder.build(urn);
 
           } else {
             errors

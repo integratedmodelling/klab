@@ -24,7 +24,7 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.utils;
+package org.integratedmodelling.kim.utils;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;

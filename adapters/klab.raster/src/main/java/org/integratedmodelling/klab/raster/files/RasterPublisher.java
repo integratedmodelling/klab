@@ -16,9 +16,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public class RasterPublisher implements IResourcePublisher {
 
   @Override
-  public IResource publish(URL url, IParameters userData, Builder builder) throws KlabException {
+  public IResource publish(IResource localResource) throws KlabException {
     // TODO Auto-generated method stub
     return null;
   }
+
 
 }

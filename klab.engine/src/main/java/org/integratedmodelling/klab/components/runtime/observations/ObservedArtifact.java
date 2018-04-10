@@ -1,13 +1,13 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.provenance.Artifact;
-import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * Simple abstract observation data class for storage components. Just implements the basic iterator

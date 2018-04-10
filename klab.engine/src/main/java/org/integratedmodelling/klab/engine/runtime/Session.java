@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.runtime;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import org.integratedmodelling.kim.utils.CollectionUtils;
+import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
@@ -15,7 +16,6 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Observer;
-import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class Session implements ISession {
 

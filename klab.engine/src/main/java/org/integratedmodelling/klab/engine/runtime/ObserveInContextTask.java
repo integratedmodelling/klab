@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
@@ -19,7 +20,6 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * A ITask that creates one or more Observations within a context subject.

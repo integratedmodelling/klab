@@ -4,10 +4,14 @@
 package org.integratedmodelling.klab.raster.test;
 
 import java.util.regex.Pattern;
+import org.integratedmodelling.kim.model.Urns;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.raster.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.junit.After;
 import org.junit.Before;
@@ -29,7 +33,8 @@ import org.reflections.scanners.ResourcesScanner;
 public class RasterValidationTests {
 
   Engine engine;
-
+  RasterAdapter adapter = new RasterAdapter();
+  
   @Before
   public void setUp() throws Exception {
     
@@ -50,10 +55,14 @@ public class RasterValidationTests {
   public void runTests() throws Exception {
 
     /*
-     * run every file in the kim/ package, under tests/resources
+     * validate all data
+     * TODO create a test per dataset, some with expected failures
      */
     for (String datafile : new Reflections("data.raster", new ResourcesScanner())
-        .getResources(Pattern.compile(".*\\.*"))) {
+        .getResources(Pattern.compile(".*\\.tif"))) {
+      Builder builder = adapter.getValidator().validate(getClass().getClassLoader().getResource(datafile), new Parameters());
+      IResource resource = builder.build(Urns.INSTANCE.getDisposableUrn());
+      Resources.INSTANCE.getResourceCatalog().put(resource.getUrn(), resource);
     }
   }
 }

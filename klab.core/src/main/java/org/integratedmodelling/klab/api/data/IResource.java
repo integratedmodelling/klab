@@ -94,9 +94,9 @@ public interface IResource extends Serializable {
   IParameters getParameters();
 
   /**
-   * A builder can be obtained through {@link IResourceService#createResourceBuilder()} and is used to set
-   * all the properties of a {@link IResource} that will be built at publication. The builder is
-   * returned by {@link IResourceValidator#validate}.
+   * A builder can be obtained through {@link IResourceService#createResourceBuilder()} and is used
+   * to set all the properties of a {@link IResource} that will be built at publication. The builder
+   * is returned by {@link IResourceValidator#validate}.
    * 
    * @author ferdinando.villa
    *
@@ -104,11 +104,63 @@ public interface IResource extends Serializable {
   interface Builder {
 
     /**
-     * Build the resource. If there are errors, build a resource with errors; never return null.
      * 
+     * @param key
+     * @param value
+     */
+    void setMetadata(String key, Object value);
+
+    /**
+     * 
+     * @param key
+     * @param value
+     */
+    void setParameter(String key, Object value);
+
+    /**
+     * 
+     * @param o
+     */
+    void addError(Object... o);
+
+    /**
+     * 
+     * @param o
+     */
+    void addWarning(Object... o);
+
+    /**
+     * 
+     * @param o
+     */
+    void addInfo(Object... o);
+
+    /**
+     * 
+     * @param v
+     */
+    void setVersion(Version v);
+
+    /**
+     * 
+     * @param timestamp
+     */
+    void setTimestamp(long timestamp);
+
+    /**
+     * 
+     * @param notification
+     */
+    void addHistory(INotification notification);
+
+    /**
+     * Build the resource with the passed URN. If there are errors, build a resource with errors;
+     * never return null.
+     * 
+     * @param urn the resource URN to use
      * @return
      */
-    IResource build();
+    IResource build(String urn);
 
   }
 
@@ -118,10 +170,10 @@ public interface IResource extends Serializable {
    * @return
    */
   long getResourceTimestamp();
-  
+
   /**
-   * True if there is any error notification for this resource. Should
-   * always be checked after URN retrieval.
+   * True if there is any error notification for this resource. Should always be checked after URN
+   * retrieval.
    * 
    * @return
    */
