@@ -22,6 +22,15 @@ public class Parameters implements Map<String, Object>, IParameters {
   public Parameters(Map<String, Object> delegate) {
     this.delegate = delegate;
   }
+  
+  /**
+   * Only used when the object must be serialized through reflection.
+   * 
+   * @return
+   */
+  public Map<String,Object> getData() {
+    return delegate;
+  }
 
   @Override
   public <T> T get(String name, T defaultValue) {

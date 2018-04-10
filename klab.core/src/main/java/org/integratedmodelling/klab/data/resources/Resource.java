@@ -42,7 +42,7 @@ public class Resource implements IResource {
   Version                   version;
   IMetadata                 metadata;
   String                    urn;
-  String                    type;
+  String                    adapterType;
   IGeometry                 geometry;
   Parameters                parameters;
   long                      resourceTimestamp;
@@ -53,7 +53,7 @@ public class Resource implements IResource {
   Resource() {}
 
   /**
-   * Create a resource with the passed URN and a list of errors. 
+   * Create a resource with the passed URN and a list of errors.
    * 
    * @param urn
    * @param errors
@@ -67,7 +67,7 @@ public class Resource implements IResource {
     }
     return ret;
   }
-  
+
   @Override
   public Version getVersion() {
     return version;
@@ -100,7 +100,7 @@ public class Resource implements IResource {
 
   @Override
   public String getAdapterType() {
-    return type;
+    return adapterType;
   }
 
   public long getResourceTimestamp() {

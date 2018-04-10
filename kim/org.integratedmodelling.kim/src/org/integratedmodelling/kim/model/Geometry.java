@@ -1,6 +1,7 @@
 package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,22 @@ public class Geometry implements IGeometry {
     return scalarGeometry;
   }
 
+  /**
+   * Encode into a string representation. Keys in parameter maps are sorted so the results
+   * can be compared for equality.
+   * 
+   * @return
+   */
   public String encode() {
+    
+    if (isEmpty()) {
+      return "X";
+    }
+    
+    if (isScalar()) {
+      return "*";
+    }
+    
     String ret = granularity == Granularity.MULTIPLE ? "#" : "";
     for (Dimension dim : dimensions) {
       ret += dim.getType() == Type.SPACE ? (dim.isRegular() ? "S" : "s")
@@ -60,7 +76,9 @@ public class Geometry implements IGeometry {
       if (!dim.getParameters().isEmpty()) {
         ret += "{";
         boolean first = true;
-        for (String key : dim.getParameters().keySet()) {
+        List<String> keys = new ArrayList<>(dim.getParameters().keySet());
+        Collections.sort(keys);
+        for (String key : keys) {
           ret += (first ? "" : ",") + key + "=" + encodeVal(dim.getParameters().get(key));
           first = false;
         }
@@ -334,9 +352,12 @@ public class Geometry implements IGeometry {
 
     Geometry ret = new Geometry();
 
+    if (geometry.equals("X")) {
+      return empty();
+    }
+    
     if (geometry.equals("*")) {
-      ret.scalar = true;
-      return ret;
+      return scalar();
     }
 
     for (int idx = i; idx < geometry.length(); idx++) {
