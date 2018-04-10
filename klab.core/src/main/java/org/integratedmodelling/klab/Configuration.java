@@ -24,17 +24,8 @@ public enum Configuration implements IConfigurationService {
 
     private OS                 os;
 
-
-    // /**
-    // * If true, instructs some calls to spoof the _dev URLs of development network nodes to look like the
-    // * official one (without the suffix returned by {@link #getDeveloperNetworkURLPostfix()}). Used when
-    // * external services are configured with the official node URL and the modified URL gets in the way.
-    // */
-    // public static final String KLAB_SPOOF_DEV_URL = "klab.engine.spoofdevurl";
-
     private Properties         properties;
     private File               dataPath;
-    private Level              notificationLevel;
 
     public String              KLAB_RELATIVE_WORK_PATH            = ".klab";
 
@@ -43,7 +34,6 @@ public enum Configuration implements IConfigurationService {
         if (System.getProperty(KLAB_DATA_DIRECTORY) != null) {
 
             this.dataPath = new File(System.getProperty(KLAB_DATA_DIRECTORY));
-            // this.scratchPath = new File(this.dataPath + File.separator + ".scratch");
 
         } else {
             String home = System.getProperty("user.home");
@@ -51,7 +41,6 @@ public enum Configuration implements IConfigurationService {
                 KLAB_RELATIVE_WORK_PATH = System.getProperty(KLAB_WORK_DIRECTORY);
             }
             this.dataPath = new File(home + File.separator + KLAB_RELATIVE_WORK_PATH);
-            // this.scratchPath = new File(this.dataPath + File.separator + ".scratch");
 
             /*
              * make sure it's  available for substitution in property files etc.
@@ -60,11 +49,8 @@ public enum Configuration implements IConfigurationService {
         }
 
         this.dataPath.mkdirs();
-        // this.scratchPath.mkdirs();
 
         // KLAB.info("k.LAB data directory set to " + dataPath);
-
-        notificationLevel = Level.INFO;
 
         this.properties = new Properties();
         File pFile = new File(dataPath + File.separator + "klab.properties");
@@ -79,12 +65,6 @@ public enum Configuration implements IConfigurationService {
             this.properties.load(input);
         } catch (Exception e) {
             throw new KlabRuntimeException("cannot read configuration properties");
-        }
-
-        if (this.properties.containsKey(KLAB_DEBUG)) {
-            if (this.properties.getProperty(KLAB_DEBUG, "off").equals("on")) {
-                notificationLevel = Level.FINEST;
-            }
         }
     }
 
