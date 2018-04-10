@@ -44,6 +44,74 @@ public class Geometry implements IGeometry {
     return scalarGeometry;
   }
 
+  public String encode() {
+    String ret = granularity == Granularity.MULTIPLE ? "#" : "";
+    for (Dimension dim : dimensions) {
+      ret += dim.getType() == Type.SPACE ? (dim.isRegular() ? "S" : "s")
+          : (dim.getType() == Type.TIME ? (dim.isRegular() ? "T" : "t") : /* TODO others */ "");
+      ret += dim.getDimensionality();
+      if (dim.shape() != null && !isUndefined(dim.shape())) {
+        ret += "(";
+        for (int i = 0; i < dim.shape().length; i++) {
+          ret += (i == 0 ? "" : ",") + dim.shape()[i];
+        }
+        ret += ")";
+      }
+      if (!dim.getParameters().isEmpty()) {
+        ret += "{";
+        boolean first = true;
+        for (String key : dim.getParameters().keySet()) {
+          ret += (first ? "" : ",") + key + "=" + encodeVal(dim.getParameters().get(key));
+          first = false;
+        }
+        ret += "}";
+      }
+    }
+    if (child != null) {
+      ret += "," + child.encode();
+    }
+    return ret;
+  }
+
+
+  private boolean isUndefined(long[] shape) {
+    for (long l : shape) {
+      if (l < 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private String encodeVal(Object val) {
+    String ret = "";
+    if (val.getClass().isArray()) {
+      ret = "[";
+      if (double[].class.isAssignableFrom(val.getClass())) {
+        for (double d : (double[])val) {
+          ret += (ret.length() == 1 ? "" : " ") + d;
+        }
+      } else if (int[].class.isAssignableFrom(val.getClass())) {
+        for (int d : (int[])val) {
+          ret += (ret.length() == 1 ? "" : " ") + d;
+        }
+      } else {
+        for (Object d : (Object[])val) {
+          ret += (ret.length() == 1 ? "" : " ") + d;
+        }
+      }
+      ret += "]";
+    } else {
+      ret = val.toString();
+    }
+    return ret;
+  }
+
+  @Override
+  public String toString() {
+    return encode();
+  }
+
   /*
    * dictionary for the IDs of any dimension types that are not space or time.
    */
@@ -171,7 +239,7 @@ public class Geometry implements IGeometry {
     space.getParameters().put(PARAMETER_SPACE_SHAPE, shapeSpecs);
     return this;
   }
-  
+
   /**
    * 
    * @param gridResolution
@@ -185,7 +253,7 @@ public class Geometry implements IGeometry {
     space.getParameters().put(PARAMETER_SPACE_GRIDRESOLUTION, gridResolution);
     return this;
   }
-  
+
   /**
    * 
    * @param shape
@@ -196,10 +264,10 @@ public class Geometry implements IGeometry {
     if (space == null) {
       throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
     }
-    ((DimensionImpl)space).shape = shape;
+    ((DimensionImpl) space).shape = shape;
     return this;
   }
-  
+
   /**
    * 
    * @param timeResolution
@@ -224,7 +292,7 @@ public class Geometry implements IGeometry {
     if (time == null) {
       throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
     }
-    ((DimensionImpl)time).shape = new long[] {n};
+    ((DimensionImpl) time).shape = new long[] {n};
     return this;
   }
 
@@ -239,7 +307,7 @@ public class Geometry implements IGeometry {
       throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
     }
     space.getParameters().put(PARAMETER_SPACE_PROJECTION, projection);
-    return this;  
+    return this;
   }
 
   /**
@@ -372,6 +440,7 @@ public class Geometry implements IGeometry {
     Geometry g3 = create("S2(200,100)");
     Geometry g4 = create("T1(23)S2(200,100)");
     Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
+    System.out.println("hla");
   }
 
   @Override

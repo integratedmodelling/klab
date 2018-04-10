@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @author Ferd
  *
  */
+@JsonSerialize(using = ResourceSerializer.class)
 @JsonDeserialize(using = ResourceDeserializer.class)
 public class Resource implements IResource {
 

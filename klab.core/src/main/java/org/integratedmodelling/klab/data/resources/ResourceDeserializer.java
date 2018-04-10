@@ -17,13 +17,9 @@ public class ResourceDeserializer extends StdDeserializer<Resource> {
   private static final long serialVersionUID = -1395932709465412782L;
 
   public ResourceDeserializer() {
-    this(null);
+    super(Resource.class);
   }
-
-  public ResourceDeserializer(Class<?> vc) {
-    super(vc);
-  }
-
+  
   @Override
   public Resource deserialize(JsonParser jp, DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
