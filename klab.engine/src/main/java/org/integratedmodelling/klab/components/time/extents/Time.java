@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -210,6 +211,12 @@ public class Time extends Extent implements ITime {
 
     @Override
     public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public IParameters getParameters() {
       // TODO Auto-generated method stub
       return null;
     }

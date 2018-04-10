@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.api.data;
 
 import java.io.Serializable;
 import java.util.List;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 
@@ -137,15 +138,15 @@ public interface IGeometry extends Serializable, ILocator {
     int getDimensionality();
 
     /**
-     * Return a long if this maps directly to the original dimension, or -1 if
-     * mediation is necessary.
+     * Return a long if this maps directly to the original dimension, or -1 if mediation is
+     * necessary.
      * 
      * @param index
      * @return a valid offset for this locator, or -1 if mediation is needed.
      * @throws IllegalArgumentException if the locator type is not suitable for the receiver.
      */
     public abstract long getOffset(ILocator index);
-    
+
     /**
      * Return the size of this dimension. In a geometry that has been declared but not defined (such
      * as the result of parsing a dimension string) this will return {@link IGeometry#UNDEFINED},
@@ -171,6 +172,20 @@ public interface IGeometry extends Serializable, ILocator {
      * @throws IllegalArgumentException if the locator does not have the requested dimension.
      */
     long[] shape();
+
+    /**
+     * Additional parameters may be given to further specify a dimension. These are intended to be
+     * linked to small POD data or arrays, and to enable transferring fully specified geometries
+     * across services. These are given after each dimension specification within braces and are
+     * named with field names and text values, e.g.:
+     * <p>
+     * <code>S2[10,10]{srid=EPSG:3040,bounds=[23.3,221.0,25.2,444.4]}<code>
+     * <p>
+     * Geometry implementations should expose an API to specify and read these parameters in
+     * idiomatic ways and not rely on users providing identifiers.
+     * <p>
+     */
+    IParameters getParameters();
 
   }
 
@@ -229,7 +244,7 @@ public interface IGeometry extends Serializable, ILocator {
    * @return the size of the geometry
    */
   long size();
-  
+
 
   /**
    * Iterate over a dimension. This will produce in turn all the locators pointing to each state in
@@ -251,10 +266,9 @@ public interface IGeometry extends Serializable, ILocator {
    * @return a locator pointing to the passed offsets in the passed dimension relative to this.
    */
   ILocator at(Dimension.Type dimension, long... offsets);
-  
+
   /**
-   * Return a long if this maps directly to the original geometry, or -1 if
-   * mediation is necessary.
+   * Return a long if this maps directly to the original geometry, or -1 if mediation is necessary.
    * 
    * @param index
    * @return a valid offset for this locator, or -1 if mediation is needed.
@@ -263,7 +277,7 @@ public interface IGeometry extends Serializable, ILocator {
   public abstract long getOffset(ILocator index);
 
   /**
-   * Get the shape of the requested dimension. 
+   * Get the shape of the requested dimension.
    * 
    * @param space
    * @throws IllegalArgumentException if the dimension is not part of the geometry.

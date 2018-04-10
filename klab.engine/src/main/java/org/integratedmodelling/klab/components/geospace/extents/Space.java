@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.api.data.ILocator;
@@ -478,6 +479,12 @@ public class Space extends Extent implements ISpace {
       throw new KlabRuntimeException(e);
     }
     throw new IllegalArgumentException("cannot merge a spatial extent with " + other);
+  }
+
+  @Override
+  public IParameters getParameters() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

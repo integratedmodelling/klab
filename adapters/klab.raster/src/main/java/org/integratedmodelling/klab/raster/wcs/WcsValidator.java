@@ -4,11 +4,12 @@ import java.net.URL;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class WcsValidator implements IResourceValidator {
 
   @Override
-  public Builder validate(URL url, IParameters userData) {
+  public Builder validate(URL url, IParameters userData, IMonitor monitor) {
     // TODO Auto-generated method stub
     return null;
   }

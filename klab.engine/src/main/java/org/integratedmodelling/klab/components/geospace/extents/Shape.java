@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -477,6 +478,12 @@ public class Shape extends AbstractExtent implements IShape {
       }
     }
     throw new IllegalArgumentException("cannot merge a shape with " + other);
+  }
+
+  @Override
+  public IParameters getParameters() {
+    // TODO Auto-generated method stub
+    return null;
   }
   
   

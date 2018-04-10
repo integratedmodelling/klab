@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 public interface INotification {
     
-    // NAAAH replace with action (see provenance) and separate from type
+    // FIXME replace with action (see provenance) and separate from type
     public enum Type {
         created,
         deletedFile,

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IResourcePublisher {
@@ -11,11 +12,12 @@ public interface IResourcePublisher {
    * catalog.
    * 
    * @param localResource
+   * @param monitor for notifications and identity retrieval
    * @return a new resource. If errors happen, throw an exception; if the function returns, the
    *         resource must be valid.
    * @throws KlabException if the passed resource is not local, has errors, or anything happens
    *         during publication.
    */
-  public IResource publish(IResource localResource) throws KlabException;
+  public IResource publish(IResource localResource, IMonitor monitor) throws KlabException;
 
 }

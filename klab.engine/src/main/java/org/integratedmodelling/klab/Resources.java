@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
@@ -99,7 +100,7 @@ public enum Resources implements IResourceService {
   }
 
   @Override
-  public IResource getLocalFileResource(File file) {
+  public IResource getLocalFileResource(File file, IMonitor monitor) {
 
     // get URN from k.IM service, unique per file
     String urn = Urns.INSTANCE.getFileUrn(file);
@@ -134,7 +135,7 @@ public enum Resources implements IResourceService {
              */
             IResourceAdapter adapter = adapters.get(0);
             Builder builder =
-                adapter.getValidator().validate(file.toURI().toURL(), new Parameters());
+                adapter.getValidator().validate(file.toURI().toURL(), new Parameters(), monitor);
             resource = builder.build(urn);
 
           } else {

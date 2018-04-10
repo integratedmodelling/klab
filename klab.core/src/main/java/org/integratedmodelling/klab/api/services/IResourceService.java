@@ -4,6 +4,7 @@ import java.io.File;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
@@ -22,9 +23,10 @@ public interface IResourceService {
   /**
    * 
    * @param file
+   * @param monitor
    * @return
    */
-  IResource getLocalFileResource(File file);
+  IResource getLocalFileResource(File file, IMonitor monitor);
 
   /**
    * Retrieve a model object identified through a URN - either an observer or a model, local or

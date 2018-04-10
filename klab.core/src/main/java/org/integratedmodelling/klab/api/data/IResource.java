@@ -108,51 +108,65 @@ public interface IResource extends Serializable {
      * @param key
      * @param value
      */
-    void setMetadata(String key, Object value);
+    Builder setMetadata(String key, Object value);
 
     /**
      * 
      * @param key
      * @param value
      */
-    void setParameter(String key, Object value);
+    Builder setParameter(String key, Object value);
+    
+    /**
+     * 
+     * @param s
+     * @return
+     */
+    Builder setGeometry(IGeometry geometry);
 
     /**
      * 
      * @param o
      */
-    void addError(Object... o);
+    Builder addError(Object... o);
 
     /**
      * 
      * @param o
      */
-    void addWarning(Object... o);
+    Builder addWarning(Object... o);
 
     /**
      * 
      * @param o
      */
-    void addInfo(Object... o);
+    Builder addInfo(Object... o);
 
     /**
      * 
      * @param v
      */
-    void setVersion(Version v);
+    Builder setResourceVersion(Version v);
 
     /**
      * 
      * @param timestamp
      */
-    void setTimestamp(long timestamp);
+    Builder setResourceTimestamp(long timestamp);
 
     /**
      * 
      * @param notification
      */
-    void addHistory(INotification notification);
+    Builder addHistory(INotification notification);
 
+    /**
+     * True if error() was ever called.
+     * 
+     * @return
+     */
+    boolean hasErrors();
+    
     /**
      * Build the resource with the passed URN. If there are errors, build a resource with errors;
      * never return null.

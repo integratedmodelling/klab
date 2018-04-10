@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -475,6 +476,12 @@ public class Grid extends Area implements IGrid {
     @Override
     public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
       return getShape().merge(other, how);
+    }
+
+    @Override
+    public IParameters getParameters() {
+      // TODO Auto-generated method stub
+      return null;
     }
   }
 

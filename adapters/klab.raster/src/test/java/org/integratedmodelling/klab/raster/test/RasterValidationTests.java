@@ -6,6 +6,7 @@ package org.integratedmodelling.klab.raster.test;
 import java.util.regex.Pattern;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
@@ -27,23 +28,24 @@ import org.reflections.scanners.ResourcesScanner;
  * <p>
  * TODO fix run logics according to Luke's comments.
  * <p>
+ * 
  * @author ferdinando.villa
  *
  */
 public class RasterValidationTests {
 
-  Engine engine;
+  Engine        engine;
   RasterAdapter adapter = new RasterAdapter();
-  
+
   @Before
   public void setUp() throws Exception {
-    
+
     engine = Engine.start();
-    
+
     // load test resource set
-    Resources.INSTANCE.setResourceCatalog(
-         FileCatalog.create(getClass().getClassLoader().getResource("resources.raster/resources.json"),
-            IResource.class, Resource.class));
+    Resources.INSTANCE.setResourceCatalog(FileCatalog.create(
+        getClass().getClassLoader().getResource("resources.raster/resources.json"), IResource.class,
+        Resource.class));
   }
 
   @After
@@ -55,12 +57,13 @@ public class RasterValidationTests {
   public void runTests() throws Exception {
 
     /*
-     * validate all data
-     * TODO create a test per dataset, some with expected failures
+     * validate all data TODO create a test per dataset, some with expected failures
      */
     for (String datafile : new Reflections("data.raster", new ResourcesScanner())
         .getResources(Pattern.compile(".*\\.tif"))) {
-      Builder builder = adapter.getValidator().validate(getClass().getClassLoader().getResource(datafile), new Parameters());
+      Builder builder =
+          adapter.getValidator().validate(getClass().getClassLoader().getResource(datafile),
+              new Parameters(), Klab.INSTANCE.getRootMonitor());
       IResource resource = builder.build(Urns.INSTANCE.getDisposableUrn());
       Resources.INSTANCE.getResourceCatalog().put(resource.getUrn(), resource);
     }

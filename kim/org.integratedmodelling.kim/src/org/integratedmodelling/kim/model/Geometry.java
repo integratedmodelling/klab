@@ -1,16 +1,28 @@
 package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.utils.MultidimensionalCursor;
+import org.integratedmodelling.kim.utils.NumberUtils;
+import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.utils.Utils;
 
 public class Geometry implements IGeometry {
 
-  private static final long serialVersionUID = 8430057200107796568L;
+  private static final long  serialVersionUID               = 8430057200107796568L;
+
+  public static final String PARAMETER_SPACE_BOUNDINGBOX    = "bbox";
+  public static final String PARAMETER_SPACE_PROJECTION     = "proj";
+  public static final String PARAMETER_SPACE_GRIDRESOLUTION = "sgrid";
+  public static final String PARAMETER_SPACE_SHAPE          = "shape";
+  public static final String PARAMETER_TIME_PERIOD          = "period";
+  public static final String PARAMETER_TIME_GRIDRESOLUTION  = "tgrid";
 
   public static Geometry create(String geometry) {
     return makeGeometry(geometry, 0);
@@ -39,10 +51,11 @@ public class Geometry implements IGeometry {
 
   static class DimensionImpl implements Dimension {
 
-    private Type    type;
-    private boolean regular;
-    private int     dimensionality;
-    private long[]  shape;
+    private Type       type;
+    private boolean    regular;
+    private int        dimensionality;
+    private long[]     shape;
+    private Parameters parameters = new Parameters();
 
     @Override
     public Type getType() {
@@ -76,7 +89,7 @@ public class Geometry implements IGeometry {
     public long[] shape() {
       return shape == null ? Utils.newArray(UNDEFINED, dimensionality) : shape;
     }
-    
+
     public long computeOffsets(long... offsets) {
       // TODO
       return 0;
@@ -84,19 +97,25 @@ public class Geometry implements IGeometry {
 
     @Override
     public long getOffset(ILocator index) {
-      throw new IllegalArgumentException("getOffset() is not implemented on basic geometry dimensions");
+      throw new IllegalArgumentException(
+          "getOffset() is not implemented on basic geometry dimensions");
+    }
+
+    @Override
+    public IParameters getParameters() {
+      return parameters;
     }
 
   }
 
-  private List<DimensionImpl> dimensions  = new ArrayList<>();
-  private Granularity         granularity = Granularity.SINGLE;
-  private Geometry            child;
-  private boolean             scalar;
-  
+  private List<DimensionImpl>              dimensions  = new ArrayList<>();
+  private Granularity                      granularity = Granularity.SINGLE;
+  private Geometry                         child;
+  private boolean                          scalar;
+
   // only used to compute offsets if requested
-  transient private MultidimensionalCursor cursor = null;
-  
+  transient private MultidimensionalCursor cursor      = null;
+
   @Override
   public IGeometry getChild() {
     return child;
@@ -120,6 +139,122 @@ public class Geometry implements IGeometry {
   @Override
   public boolean isScalar() {
     return scalar;
+  }
+
+  /**
+   * 
+   * @param minX
+   * @param maxX
+   * @param minY
+   * @param maxY
+   * @return
+   */
+  public Geometry withBoundingBox(double minX, double maxX, double minY, double maxY) {
+    Dimension space = getDimension(Type.SPACE);
+    if (space == null) {
+      throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+    }
+    space.getParameters().put(PARAMETER_SPACE_BOUNDINGBOX, new double[] {minX, maxX, minY, maxY});
+    return this;
+  }
+
+  /**
+   * 
+   * @param shapeSpecs
+   * @return
+   */
+  public Geometry withShape(String shapeSpecs) {
+    Dimension space = getDimension(Type.SPACE);
+    if (space == null) {
+      throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+    }
+    space.getParameters().put(PARAMETER_SPACE_SHAPE, shapeSpecs);
+    return this;
+  }
+  
+  /**
+   * 
+   * @param gridResolution
+   * @return
+   */
+  public Geometry withGridResolution(String gridResolution) {
+    Dimension space = getDimension(Type.SPACE);
+    if (space == null) {
+      throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+    }
+    space.getParameters().put(PARAMETER_SPACE_GRIDRESOLUTION, gridResolution);
+    return this;
+  }
+  
+  /**
+   * 
+   * @param shape
+   * @return
+   */
+  public Geometry withSpatialShape(long... shape) {
+    Dimension space = getDimension(Type.SPACE);
+    if (space == null) {
+      throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+    }
+    ((DimensionImpl)space).shape = shape;
+    return this;
+  }
+  
+  /**
+   * 
+   * @param timeResolution
+   * @return
+   */
+  public Geometry withTemporalResolution(String timeResolution) {
+    Dimension time = getDimension(Type.TIME);
+    if (time == null) {
+      throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+    }
+    time.getParameters().put(PARAMETER_TIME_GRIDRESOLUTION, timeResolution);
+    return this;
+  }
+
+  /**
+   * 
+   * @param n
+   * @return
+   */
+  public Geometry withTemporalShape(long n) {
+    Dimension time = getDimension(Type.TIME);
+    if (time == null) {
+      throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+    }
+    ((DimensionImpl)time).shape = new long[] {n};
+    return this;
+  }
+
+  /**
+   * 
+   * @param projection
+   * @return
+   */
+  public Geometry withProjection(String projection) {
+    Dimension space = getDimension(Type.SPACE);
+    if (space == null) {
+      throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+    }
+    space.getParameters().put(PARAMETER_SPACE_PROJECTION, projection);
+    return this;  
+  }
+
+  /**
+   * 
+   * @param start
+   * @param end
+   * @return
+   */
+  public Geometry withTemporalBoundaries(long start, long end) {
+    Dimension time = getDimension(Type.TIME);
+    if (time == null) {
+      throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+    }
+    time.getParameters().put(PARAMETER_TIME_PERIOD, new long[] {start, end});
+    return this;
   }
 
   protected Geometry() {}
@@ -148,13 +283,13 @@ public class Geometry implements IGeometry {
           dimensionality.type = Type.TIME;
         } else {
           throw new IllegalArgumentException("unrecognized geometry dimension identifier " + c);
-//          if (dimDictionary.containsKey(Character.toLowerCase(c))) {
-//            dimensionality.type = dimDictionary.get(Character.toLowerCase(c));
-//          } else {
-//            int n = dimDictionary.size() + 2;
-//            dimDictionary.put(Character.toLowerCase(c), n);
-//            dimensionality.type = n;
-//          }
+          // if (dimDictionary.containsKey(Character.toLowerCase(c))) {
+          // dimensionality.type = dimDictionary.get(Character.toLowerCase(c));
+          // } else {
+          // int n = dimDictionary.size() + 2;
+          // dimDictionary.put(Character.toLowerCase(c), n);
+          // dimensionality.type = n;
+          // }
         }
 
         dimensionality.regular = Character.isUpperCase(c);
@@ -165,8 +300,8 @@ public class Geometry implements IGeometry {
         } else {
           dimensionality.dimensionality = Integer.parseInt("" + geometry.charAt(idx));
         }
-        
-        if (geometry.length() > (idx+1) && geometry.charAt(idx+1) == '(') {
+
+        if (geometry.length() > (idx + 1) && geometry.charAt(idx + 1) == '(') {
           idx += 2;
           String shape = "";
           while (geometry.charAt(idx) != ')') {
@@ -181,6 +316,15 @@ public class Geometry implements IGeometry {
           dimensionality.dimensionality = sdimss.length;
           dimensionality.shape = sdimss;
         }
+        if (geometry.length() > (idx + 1) && geometry.charAt(idx + 1) == '{') {
+          idx += 2;
+          String shape = "";
+          while (geometry.charAt(idx) != '}') {
+            shape += geometry.charAt(idx);
+            idx++;
+          }
+          dimensionality.parameters.putAll(readParameters(shape));
+        }
 
         ret.dimensions.add(dimensionality);
 
@@ -188,6 +332,32 @@ public class Geometry implements IGeometry {
         ret.child = makeGeometry(geometry, idx + 1);
         break;
       }
+    }
+    return ret;
+  }
+
+  private static Map<String, Object> readParameters(String kvs) {
+    Map<String, Object> ret = new HashMap<>();
+    for (String kvp : kvs.trim().split(",")) {
+      String[] kk = kvp.trim().split("=");
+      if (kk.length != 2) {
+        throw new IllegalArgumentException("wrong key/value pair in geometry definition: " + kvp);
+      }
+      String key = kk[0].trim();
+      String val = kk[1].trim();
+      Object v = null;
+      if (val.startsWith("[") && val.endsWith("]")) {
+        v = NumberUtils.podArrayFromString(val, "\\s+");
+      } else if (NumberUtils.encodesDouble(((String) val))) {
+        v = Double.parseDouble(val);
+      } else if (NumberUtils.encodesInteger(val)) {
+        v = Integer.parseInt(val);
+      } else {
+        v = val;
+      }
+
+      ret.put(key, v);
+
     }
     return ret;
   }
@@ -200,7 +370,8 @@ public class Geometry implements IGeometry {
     Geometry g1 = create("S2");
     Geometry g2 = create("#S2T1,#T1");
     Geometry g3 = create("S2(200,100)");
-    System.out.println("ha");
+    Geometry g4 = create("T1(23)S2(200,100)");
+    Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
   }
 
   @Override
@@ -244,9 +415,10 @@ public class Geometry implements IGeometry {
   @Override
   public ILocator at(ILocator locator) {
     if (locator instanceof OffsetLocator) {
-      
+
     }
-    throw new IllegalArgumentException("geometry cannot use locator of type " + locator.getClass().getCanonicalName());
+    throw new IllegalArgumentException(
+        "geometry cannot use locator of type " + locator.getClass().getCanonicalName());
   }
 
   @Override
@@ -260,11 +432,11 @@ public class Geometry implements IGeometry {
     // TODO Auto-generated method stub
     return null;
   }
-  
+
   public class OffsetLocator implements ILocator {
 
     long offset;
-    
+
     public OffsetLocator(long[] offsets) {
       this.offset = computeOffset(offsets);
     }
@@ -272,7 +444,7 @@ public class Geometry implements IGeometry {
     public long getOffset() {
       return offset;
     }
-    
+
     @Override
     public ILocator at(ILocator locator) {
       throw new IllegalArgumentException("offset locator cannot be further located");
@@ -280,13 +452,13 @@ public class Geometry implements IGeometry {
   }
 
   public long computeOffset(long[] offsets) {
-    
+
     // trivial case
     if (offsets.length == 1 && dimensions.size() == 1 && dimensions.get(0).shape.length == 1) {
       return offsets[0];
     }
     if (this.cursor == null) {
-      
+
     }
     return UNDEFINED;
   }
@@ -294,7 +466,7 @@ public class Geometry implements IGeometry {
   @Override
   public long getOffset(ILocator index) {
     if (index instanceof OffsetLocator) {
-      return ((OffsetLocator)index).getOffset();
+      return ((OffsetLocator) index).getOffset();
     }
     throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
   }
