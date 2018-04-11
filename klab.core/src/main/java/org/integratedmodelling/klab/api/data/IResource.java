@@ -2,200 +2,215 @@ package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
+
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
- * A IResource represents any information content that is identified by a URN and can be inspected
- * and processed semantically through a worldview. k.LAB provides methods to resolve a URN into a
- * IResource and to retrieve the data content, in a separate operation to optimize speed. The
- * services available on a k.LAB node allow to upload resources in the form of files, literals, or
- * URLs for services, and make their content available under a URN that becomes a secure endpoint
- * for their use in semantic engines.
- * 
- * Data services implemented in a k.LAB node allow bridging to multiple types of resources,
- * providing plug-ins that expose a validator ({@link IResourceValidator}), a publisher/unpublisher
- * ({@link IResourcePublisher}) and an encoder to IResource ({@link IResourceEncoder}) for each new
- * resource type supported. IResources have a {@link IGeometry} that can be turned into a semantic
- * {@link IScale} through a {@link IWorldview}. This way, engines do not need to know the details of
- * any specific data protocol as the contents are returned from the engine in encoded form upon a
- * request for a URN's contents in a compatible scale.
- * 
- * Resolution of a URN (operated by the configured {@link IResourceService} returns a IResource,
- * whose {@link #get(IScale, IMonitor)} method will yield an immutable, non-empty list of
- * IRawObjects for a semantic {@link IModel} to process into IObservations.
+ * A IResource represents non-semantic information content that is identified by
+ * a URN and can be processed semantically through a worldview. k.LAB provides
+ * methods to resolve a URN into a IResource and to retrieve the data content,
+ * in a separate operation to optimize speed. The services available on a k.LAB
+ * node allow to upload resources in the form of files, literals, or URLs for
+ * services, and make their content available under a URN that becomes a secure
+ * endpoint for their use in semantic engines.
+ * <p>
+ * Data services implemented in a k.LAB node allow bridging to multiple types of
+ * resources, linking {@link IResourceAdapter} plug-ins to a resource type
+ * expressed as a string. Each plug-in exposes a ({@link IResourceValidator}
+ * validator), a ({@link IResourcePublisher} publisher/unpublisher) and an
+ * ({@link IResourceEncoder} encoder) for each new resource type supported.
+ * IResources have a {@link IGeometry} that can be turned into a semantic
+ * {@link IScale} through a {@link IWorldview}. This way, engines do not need to
+ * know the details of any specific data protocol as the contents are returned
+ * from the engine in encoded form upon a request for a URN's contents in a
+ * compatible scale.
+ * <p>
+ * Resolution of a URN (operated by the configured {@link IResourceService}
+ * returns a IResource, whose {@link #get(IScale, IMonitor)} method will yield
+ * an immutable {@link IObservationData} artifact that a semantic {@link IModel}
+ * can process into an {@link IObservation}.
+ * <p>
  * 
  * @author Ferd
  *
  */
 public interface IResource extends Serializable {
 
-  /**
-   * The URN that identifies this resource.
-   * 
-   * @return the resource's URN.
-   */
-  String getUrn();
+	/**
+	 * The URN that identifies this resource.
+	 * 
+	 * @return the resource's URN.
+	 */
+	String getUrn();
 
-  /**
-   * Get the geometry associated with the resource, without fetching the entire data content.
-   * 
-   * @return the resource's geometry
-   */
-  IGeometry getGeometry();
+	/**
+	 * Get the geometry associated with the resource, without fetching the entire
+	 * data content.
+	 * 
+	 * @return the resource's geometry
+	 */
+	IGeometry getGeometry();
 
-  /**
-   * Get the version associated with the resource.
-   * 
-   * @return the resource's version.
-   */
-  Version getVersion();
+	/**
+	 * Get the version associated with the resource.
+	 * 
+	 * @return the resource's version.
+	 */
+	Version getVersion();
 
-  /**
-   * The data adapter that published this resource and will be used to encode it.
-   * 
-   * @return the adapter. Should only be null when no adapter is used: resources that depend on an
-   *         adapter should never be created if the adapter isn't found.
-   */
-  String getAdapterType();
+	/**
+	 * The data adapter that published this resource and will be used to encode it.
+	 * 
+	 * @return the adapter. Should only be null when no adapter is used: resources
+	 *         that depend on an adapter should never be created if the adapter
+	 *         isn't found.
+	 */
+	String getAdapterType();
 
-  /**
-   * Resources come with both system-defined and user-defined metadata. User metadata will be
-   * indexed by Dublin Core properties. Other metadata fields will depend on the adapter used (for
-   * example, no-data values or metadata attributes such as name).
-   * 
-   * @return any metadata associated with the resource. Never null.
-   */
-  IMetadata getMetadata();
+	/**
+	 * Resources come with both system-defined and user-defined metadata. User
+	 * metadata will be indexed by Dublin Core properties. Other metadata fields
+	 * will depend on the adapter used (for example, no-data values or metadata
+	 * attributes such as name).
+	 * 
+	 * @return any metadata associated with the resource. Never null.
+	 */
+	IMetadata getMetadata();
 
-  /**
-   * Get the history of changes affecting this resources.
-   * 
-   * @return the list of changes in order of time (oldest first).
-   */
-  List<INotification> getHistory();
+	/**
+	 * Get the history of changes affecting this resources.
+	 * 
+	 * @return the list of changes in order of time (oldest first).
+	 */
+	List<INotification> getHistory();
 
-  /**
-   * URNs coming with parameters will list them here.
-   * 
-   * @return parameter map, possibly empty, never null.
-   */
-  IParameters getParameters();
+	/**
+	 * URNs coming with parameters will list them here.
+	 * 
+	 * @return parameter map, possibly empty, never null.
+	 */
+	IParameters getParameters();
 
-  /**
-   * A builder can be obtained through {@link IResourceService#createResourceBuilder()} and is used
-   * to set all the properties of a {@link IResource} that will be built at publication. The builder
-   * is returned by {@link IResourceValidator#validate}.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  interface Builder {
+	/**
+	 * A builder can be obtained through
+	 * {@link IResourceService#createResourceBuilder()} and is used to set all the
+	 * properties of a {@link IResource} that will be built at publication. The
+	 * builder is returned by {@link IResourceValidator#validate}.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	interface Builder {
 
-    /**
-     * 
-     * @param key
-     * @param value
-     */
-    Builder setMetadata(String key, Object value);
+		/**
+		 * 
+		 * @param key
+		 * @param value
+		 */
+		Builder setMetadata(String key, Object value);
 
-    /**
-     * 
-     * @param key
-     * @param value
-     */
-    Builder setParameter(String key, Object value);
-    
-    /**
-     * 
-     * @param s
-     * @return
-     */
-    Builder setGeometry(IGeometry geometry);
+		/**
+		 * 
+		 * @param key
+		 * @param value
+		 */
+		Builder setParameter(String key, Object value);
 
-    /**
-     * 
-     * @param o
-     */
-    Builder addError(Object... o);
+		/**
+		 * 
+		 * @param s
+		 * @return
+		 */
+		Builder setGeometry(IGeometry geometry);
 
-    /**
-     * 
-     * @param o
-     */
-    Builder addWarning(Object... o);
+		/**
+		 * 
+		 * @param o
+		 */
+		Builder addError(Object... o);
 
-    /**
-     * 
-     * @param o
-     */
-    Builder addInfo(Object... o);
+		/**
+		 * 
+		 * @param o
+		 */
+		Builder addWarning(Object... o);
 
-    /**
-     * 
-     * @param v
-     */
-    Builder setResourceVersion(Version v);
+		/**
+		 * 
+		 * @param o
+		 */
+		Builder addInfo(Object... o);
 
-    /**
-     * 
-     * @param timestamp
-     */
-    Builder setResourceTimestamp(long timestamp);
+		/**
+		 * 
+		 * @param v
+		 */
+		Builder setResourceVersion(Version v);
 
-    /**
-     * 
-     * @param notification
-     */
-    Builder addHistory(INotification notification);
+		/**
+		 * 
+		 * @param timestamp
+		 */
+		Builder setResourceTimestamp(long timestamp);
 
-    /**
-     * True if error() was ever called.
-     * 
-     * @return
-     */
-    boolean hasErrors();
-    
-    /**
-     * Build the resource with the passed URN. If there are errors, build a resource with errors;
-     * never return null.
-     * 
-     * @param urn the resource URN to use
-     * @return
-     */
-    IResource build(String urn);
+		/**
+		 * 
+		 * @param notification
+		 */
+		Builder addHistory(INotification notification);
 
-    /**
-     * 
-     * @param string
-     */
-    void setAdapterType(String string);
+		/**
+		 * True if error() was ever called.
+		 * 
+		 * @return
+		 */
+		boolean hasErrors();
 
-  }
+		/**
+		 * Build the resource with the passed URN. If there are errors, build a resource
+		 * with errors; never return null.
+		 * 
+		 * @param urn
+		 *            the resource URN to use
+		 * @return
+		 */
+		IResource build(String urn);
 
-  /**
-   * Return a timestamp that matches the time of last modification of the resource described.
-   * 
-   * @return
-   */
-  long getResourceTimestamp();
+		/**
+		 * 
+		 * @param string
+		 */
+		void setAdapterType(String string);
 
-  /**
-   * True if there is any error notification for this resource. Should always be checked after URN
-   * retrieval.
-   * 
-   * @return
-   */
-  boolean hasErrors();
+	}
+
+	/**
+	 * Return a timestamp that matches the time of last modification of the resource
+	 * described.
+	 * 
+	 * @return
+	 */
+	long getResourceTimestamp();
+
+	/**
+	 * True if there is any error notification for this resource. Should always be
+	 * checked after URN retrieval.
+	 * 
+	 * @return
+	 */
+	boolean hasErrors();
 }
