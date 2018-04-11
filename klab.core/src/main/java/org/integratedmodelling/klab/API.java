@@ -31,7 +31,7 @@ public interface API {
   /**
    * Parameter: the URN being resolved in any endpoints that access resources
    */
-  public static final String P_URN = "{urn}";
+  public static final String P_URN        = "{urn}";
 
 
   /**
@@ -39,7 +39,7 @@ public interface API {
    * 
    */
   public static final String CAPABILITIES = "/capabilities";
-  
+
   /**
    * Authority endpoints are public.
    * 
@@ -57,16 +57,16 @@ public interface API {
      */
     public static final String QUERY   = "/engine/authority/query";
   }
-  
+
   /*
-   * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
-   * namespaces, workspace management, lock/unlock. PUT endpoints for configuration. To be tied to
-   * future configuration dashboard. Probably should have additional authentication.
+   * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit,
+   * update/delete namespaces, workspace management, lock/unlock. PUT endpoints for configuration.
+   * To be tied to future configuration dashboard. Probably should have additional authentication.
    */
   public interface ADMIN {
 
     public static final String SHUTDOWN = "/engine/admin/shutdown";
-    
+
   }
 
   /**
@@ -133,12 +133,33 @@ public interface API {
   }
 
   /**
-   * Non-semantic asset retrieval - data and remote computations.
+   * Handle non-semantic assets - data, data services and remote computations.
    * 
    * @author ferdinando.villa
    *
    */
   public interface RESOURCE {
+
+    /**
+     * Add a resource to the local catalog passing a local file URL and/or resource properties.
+     * Return URN after validation.
+     */
+    public static final String ADD         = "/resource/add";
+
+    /**
+     * Publish a local resource to the public catalog of this or another server.
+     */
+    public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
+
+    /**
+     * Modify resource data. Triggers revalidation.
+     */
+    public static final String UPDATE_URN  = "/resource/update/" + P_URN;
+
+    /**
+     * Delete resource data.
+     */
+    public static final String DELETE_URN  = "/resource/delete/" + P_URN;
 
     /**
      * Retrieve raw observation data for passed URN in passed scale. If resource has time geometry,
@@ -193,7 +214,8 @@ public interface API {
       public static final String P_CONTEXT           = "{context}";
 
       /**
-       * Create new context from the URN of its definition or remote computation. Return task descriptor.
+       * Create new context from the URN of its definition or remote computation. Return task
+       * descriptor.
        */
       public static final String CREATE_URN          = "/engine/session/context/create/" + P_URN;
 

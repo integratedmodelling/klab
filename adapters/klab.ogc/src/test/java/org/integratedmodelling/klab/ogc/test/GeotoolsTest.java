@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.raster.test;
+package org.integratedmodelling.klab.ogc.test;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,8 +11,8 @@ import org.xml.sax.SAXException;
 import net.opengis.wcs11.GetCapabilitiesType;
 
 /*
- * TEMPORARY not a test case, just a sandbox for undocumented Geotools WCS. Delete when everything
- * is figured out.
+ * TEMPORARY - not a test case, just a sandbox for requests with poorly undocumented Geotools WCS
+ * schemata. Delete when everything is figured out.
  */
 public class GeotoolsTest {
   public static void main(String[] args)

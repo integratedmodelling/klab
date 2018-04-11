@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.integratedmodelling.klab.raster.test;
+package org.integratedmodelling.klab.ogc.test;
 
 import java.util.regex.Pattern;
 import org.integratedmodelling.kim.model.Urns;
