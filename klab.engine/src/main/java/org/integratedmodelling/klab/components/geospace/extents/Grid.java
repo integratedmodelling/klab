@@ -483,6 +483,11 @@ public class Grid extends Area implements IGrid {
       // TODO Auto-generated method stub
       return null;
     }
+
+    @Override
+    public String encode() {
+      return "S2(1,1){shape="+((Shape)getShape()).getWKB() + ",proj=" + getProjection().getCode() + "}";
+    }
   }
 
   Shape shape;

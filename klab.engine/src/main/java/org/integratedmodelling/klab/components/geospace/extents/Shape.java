@@ -33,15 +33,18 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
 
 public class Shape extends AbstractExtent implements IShape {
+
+  private static WKBWriter wkbWriter      = new WKBWriter();
 
   Geometry                 geometry;
   // the geometry in WGS84, only cached if asked for and originally not in it.
   Geometry                 standardizedGeometry;
   Envelope                 envelope;
-  IShape.Type                     type           = null;
+  IShape.Type              type           = null;
   Projection               projection;
 
   // these are used to speed up repeated point-in-polygon operations like
@@ -63,7 +66,7 @@ public class Shape extends AbstractExtent implements IShape {
   public String toString() {
     return projection.getCode() + " " + geometry;
   }
-  
+
   public static Shape create(String wkt) throws KlabValidationException {
     Shape ret = new Shape();
     ret.parseWkt(wkt);
@@ -84,7 +87,7 @@ public class Shape extends AbstractExtent implements IShape {
   public static Shape create(Geometry geometry, IProjection projection) {
     Shape ret = new Shape();
     ret.geometry = geometry;
-    ret.projection = (Projection)projection;
+    ret.projection = (Projection) projection;
     ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
     return ret;
   }
@@ -152,7 +155,7 @@ public class Shape extends AbstractExtent implements IShape {
   public boolean isEmpty() {
     return geometry == null || geometry.isEmpty();
   }
-  
+
   public Geometry getJTSGeometry() {
     return geometry;
   }
@@ -364,7 +367,7 @@ public class Shape extends AbstractExtent implements IShape {
 
   @Override
   public Iterator<IExtent> iterator() {
-    return Collections.singleton((IExtent)this).iterator();
+    return Collections.singleton((IExtent) this).iterator();
   }
 
   @Override
@@ -460,19 +463,21 @@ public class Shape extends AbstractExtent implements IShape {
 
   @Override
   public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
-    Shape shape = other instanceof Shape ? (Shape)other : null;
+    Shape shape = other instanceof Shape ? (Shape) other : null;
     if (shape == null && other instanceof ISpace) {
-      shape = (Shape)((ISpace)other).getShape();
+      shape = (Shape) ((ISpace) other).getShape();
     }
     if (how == LogicalConnector.UNION) {
       try {
-        return create(geometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
+        return create(geometry.union(shape.transform(this.projection).getJTSGeometry()),
+            this.projection);
       } catch (KlabValidationException e) {
         throw new KlabRuntimeException(e);
       }
     } else if (how == LogicalConnector.INTERSECTION) {
       try {
-        return create(geometry.intersection(shape.transform(this.projection).getJTSGeometry()), this.projection);
+        return create(geometry.intersection(shape.transform(this.projection).getJTSGeometry()),
+            this.projection);
       } catch (KlabValidationException e) {
         throw new KlabRuntimeException(e);
       }
@@ -485,7 +490,21 @@ public class Shape extends AbstractExtent implements IShape {
     // TODO Auto-generated method stub
     return null;
   }
-  
-  
-  
+
+  /**
+   * WKB code without projection
+   * 
+   * @return
+   */
+  public String getWKB() {
+    return WKBWriter.toHex(wkbWriter.write(geometry));
+  }
+
+  @Override
+  public String encode() {
+    return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + ",proj=" + getProjection().getCode()
+        + "}";
+  }
+
+
 }

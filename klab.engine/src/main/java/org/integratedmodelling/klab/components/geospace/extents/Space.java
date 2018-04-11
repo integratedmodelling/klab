@@ -260,7 +260,7 @@ public class Space extends Extent implements ISpace {
 
     Shape common = this.shape.intersection(other);
 
-    // TODO adapt grid, features 
+    // TODO adapt grid, features
 
     return new Space(common);
   }
@@ -286,8 +286,8 @@ public class Space extends Extent implements ISpace {
 
     Shape common = this.shape.union(other);
 
-    // TODO adapt grid, features 
-    
+    // TODO adapt grid, features
+
     return new Space(common);
   }
 
@@ -485,6 +485,19 @@ public class Space extends Extent implements ISpace {
   public IParameters getParameters() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public String encode() {
+    if (grid != null) {
+      return "S2(" + grid.getXCells() + "," + grid.getYCells() + "){bounds=["
+          + grid.getEnvelope().getMinX() + " " + grid.getEnvelope().getMaxX() + " "
+          + grid.getEnvelope().getMinX() + " " + grid.getEnvelope().getMaxY() + "],shape="
+          + getShape().getWKB() + "}";
+    } else if (features != null) {
+      return "s1(" + features.size() + ")";
+    }
+    return getShape().encode();
   }
 
 }

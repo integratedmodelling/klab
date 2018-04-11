@@ -7,9 +7,9 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * A {@code IExtent} is a semantically aware {@link Dimension} that represents an observation of the
- * topology it describes. {@code IExtent}s make up the dimensions of the semantically aware
- * {@link IGeometry} represented by {@link IScale}.
+ * A {@code IExtent} is a semantically aware {@link Dimension geometry dimension} that represents an
+ * observation of the topology it describes. {@code IExtent}s make up the dimensions of the
+ * semantically aware {@link IGeometry} represented by {@link IScale}.
  * 
  * In a {@code IExtent}, the {{@link #size()} will never return {IGeometry#UNDEFINED} and the shape
  * returned by {{@link #shape()} will never contain undefined values.
@@ -45,8 +45,8 @@ public interface IExtent
 
   /**
    * Return an extent of the same domainConcept that represents the merge of the two. The meaning of
-   * merging depends on the extent. It should accommodate partially specified extents, such as adding
-   * a grid resolution to a shape.
+   * merging depends on the extent. It should accommodate partially specified extents, such as
+   * adding a grid resolution to a shape.
    * 
    * TODO add LogicalConnector parameter and eliminate union/intersection.
    * 

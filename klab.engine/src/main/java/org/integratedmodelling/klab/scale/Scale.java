@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.model.Geometry.OffsetLocator;
 import org.integratedmodelling.kim.utils.MultidimensionalCursor;
 import org.integratedmodelling.kim.utils.MultidimensionalCursor.StorageOrdering;
@@ -32,13 +33,18 @@ import org.integratedmodelling.klab.utils.InstanceIdentifier;
 
 public class Scale implements IScale {
 
-  private static AtomicLong counter = new AtomicLong(0);
-  transient long scaleId = counter.incrementAndGet();
+  private static AtomicLong counter          = new AtomicLong(0);
+  transient long            scaleId          = counter.incrementAndGet();
 
   /**
    * 
    */
   private static final long serialVersionUID = -7855922162677333636L;
+
+  /*
+   * the underlying geometry, only built when required
+   */
+  private Geometry          geometry         = null;
 
   /**
    * Mediators are created by extents and are used to implement views of a state that mediate values
@@ -149,33 +155,33 @@ public class Scale implements IScale {
   //
   // }
 
-  protected List<IExtent> extents = new ArrayList<>();
-  protected long multiplicity = 0;
-  protected int sIndex = -1;
-  protected int tIndex = -1;
-  protected ITime time = null;
-  protected ISpace space = null;
+  protected List<IExtent>          extents             = new ArrayList<>();
+  protected long                   multiplicity        = 0;
+  protected int                    sIndex              = -1;
+  protected int                    tIndex              = -1;
+  protected ITime                  time                = null;
+  protected ISpace                 space               = null;
   protected MultidimensionalCursor cursor;
 
   // this is copied to transitions so that we can quickly assess if two transitions
   // come from the same scale.
-  protected InstanceIdentifier identifier = new InstanceIdentifier();
+  protected InstanceIdentifier     identifier          = new InstanceIdentifier();
 
   /*
    * Next four are to support subscales built as views of another
    */
   // originalCursor != null means we derive from a previous scale and are representing
   // one slice of it...
-  private MultidimensionalCursor originalCursor = null;
+  private MultidimensionalCursor   originalCursor      = null;
   // ... identified by this offset...
-  private long sliceOffset = -1;
+  private long                     sliceOffset         = -1;
   // ... along this dimension
-  private int sliceDimension = -1;
+  private int                      sliceDimension      = -1;
   // the ID of the originating scale. If size() == 1, we can locate directly in it using the offset
   // below.
-  private long originalScaleId = -1;
+  private long                     originalScaleId     = -1;
   // the offset in the original scale (only applies if originalScaleId > 0);
-  long originalScaleOffset = -1;
+  long                             originalScaleOffset = -1;
 
 
   protected Scale() {}
@@ -1234,4 +1240,24 @@ public class Scale implements IScale {
     throw new IllegalArgumentException("this scale does not contain the dimension " + dimension);
   }
 
+  @Override
+  public String encode() {
+    String ret = "";
+    for (IExtent extent : extents) {
+      ret += ((AbstractExtent) extent).encode();
+    }
+    return ret;
+  }
+
+  /**
+   * Return the scale as the underlying non-semantic Geometry
+   * 
+   * @return
+   */
+  public Geometry asGeometry() {
+    if (this.geometry == null) {
+      this.geometry = Geometry.create(encode());
+    }
+    return this.geometry;
+  }
 }

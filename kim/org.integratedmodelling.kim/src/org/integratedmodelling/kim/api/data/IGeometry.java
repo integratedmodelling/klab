@@ -194,6 +194,15 @@ public interface IGeometry extends Serializable, ILocator {
   }
 
   /**
+   * Encode the geometry to a string literal from which it can be reconstructed and analyzed. The
+   * literal should be normalized so that an equality contract holds between both two geometries and
+   * their encoded forms.
+   * 
+   * @return
+   */
+  String encode();
+
+  /**
    * A geometry may imply another for component objects. E.g. spatial data may have geometry and
    * define objects within it, with different geometry constrained by this.
    * 

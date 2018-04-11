@@ -22,10 +22,17 @@ public abstract class AbstractExtent implements IExtent {
   void setScaleId(long id) {
     this.scaleId = id;
   }
-  
+
   boolean isOwnExtent(Scale scale) {
     return scale.scaleId == scaleId;
   }
+
+  /**
+   * Return the string rep for the {@link Dimension} this represents.
+   * 
+   * @return
+   */
+  public abstract String encode();
 
   /**
    * Translate a linear offset into the offsets for each dimension. If the dimension is 1, return
@@ -38,11 +45,12 @@ public abstract class AbstractExtent implements IExtent {
 
   /**
    * Check and return the offset corresponding to the passed dimensions.
+   * 
    * @param dimOffsets
    * @return
    */
   public abstract long getOffset(long[] dimOffsets);
-  
+
   /**
    * Return the single-valued topological value that represents the total extent covered, ignoring
    * the subdivisions.

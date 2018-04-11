@@ -185,12 +185,6 @@ public class Time extends Extent implements ITime {
       return null;
     }
 
-//    @Override
-//    public long getOffset(ILocator index) {
-//      // TODO Auto-generated method stub
-//      return 0;
-//    }
-
     @Override
     public long getOffset(long[] dimOffsets) {
       // TODO Auto-generated method stub
@@ -217,6 +211,12 @@ public class Time extends Extent implements ITime {
 
     @Override
     public IParameters getParameters() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public String encode() {
       // TODO Auto-generated method stub
       return null;
     }
