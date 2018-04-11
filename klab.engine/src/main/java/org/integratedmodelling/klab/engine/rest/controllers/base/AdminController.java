@@ -5,7 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The controller implementing the {@link API.ENGINE.ADMIN engine admin API}. All endpoints are
+ * The controller implementing the {@link API.ADMIN administration API}. All endpoints are
  * preauthorized when accessed from the local IP.
  * 
  * @author ferdinando.villa
@@ -13,6 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @PreAuthorize("hasIpAddress('127.0.0.1')")
-public class EngineAdminController {
+public class AdminController {
 
 }

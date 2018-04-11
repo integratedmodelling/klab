@@ -57,6 +57,17 @@ public interface API {
      */
     public static final String QUERY   = "/engine/authority/query";
   }
+  
+  /*
+   * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
+   * namespaces, workspace management, lock/unlock. PUT endpoints for configuration. To be tied to
+   * future configuration dashboard. Probably should have additional authentication.
+   */
+  public interface ADMIN {
+
+    public static final String SHUTDOWN = "/engine/admin/shutdown";
+    
+  }
 
   /**
    * Network session endpoints.
@@ -157,17 +168,6 @@ public interface API {
      * without a need to going through authentication.
      */
     public static final String AUTHENTICATE = "/engine/authenticate";
-
-    /*
-     * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
-     * namespaces, workspace management, lock/unlock. PUT endpoints for configuration. To be tied to
-     * future configuration dashboard. Probably should have additional authentication.
-     */
-    public interface ADMIN {
-
-      public static final String SHUTDOWN = "/engine/admin/shutdown";
-      
-    }
 
     public interface SESSION {
 

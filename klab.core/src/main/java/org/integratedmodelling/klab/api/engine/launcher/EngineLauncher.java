@@ -461,7 +461,7 @@ public abstract class EngineLauncher {
 
             long timeout = 0;
             try (InputStream is = new URL("http://127.0.0.1:" + networkPort + context
-                    + API.ENGINE.ADMIN.SHUTDOWN).openStream()) {
+                    + API.ADMIN.SHUTDOWN).openStream()) {
                 //
             } catch (Exception e) {
                 error("exception calling shutdown: " + e.getMessage());
