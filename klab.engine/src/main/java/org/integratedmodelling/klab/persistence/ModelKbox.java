@@ -28,8 +28,8 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.data.rest.resources.Model;
-import org.integratedmodelling.klab.data.rest.resources.Model.Mediation;
+import org.integratedmodelling.klab.data.rest.resources.ModelReference;
+import org.integratedmodelling.klab.data.rest.resources.ModelReference.Mediation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.persistence.h2.SQL;
@@ -66,7 +66,7 @@ public class ModelKbox extends ObservableKbox {
 
       initialized = true;
 
-      setSchema(Model.class, new Schema() {
+      setSchema(ModelReference.class, new Schema() {
 
         @Override
         public String getTableName() {
@@ -93,14 +93,14 @@ public class ModelKbox extends ObservableKbox {
         }
       });
 
-      setSerializer(Model.class, new Serializer<Model>() {
+      setSerializer(ModelReference.class, new Serializer<ModelReference>() {
 
         private String cn(Object o) {
           return o == null ? "" : o.toString();
         }
 
         @Override
-        public String serialize(Model model, long primaryKey, long foreignKey) {
+        public String serialize(ModelReference model, long primaryKey, long foreignKey) {
 
           long tid = requireConceptId(model.getObservableConcept(), monitor);
 
@@ -150,15 +150,15 @@ public class ModelKbox extends ObservableKbox {
 
     initialize(context.getMonitor());
 
-    IPrioritizer<Model> prioritizer = Resolver.INSTANCE.getPrioritizer(context);
+    IPrioritizer<ModelReference> prioritizer = Resolver.INSTANCE.getPrioritizer(context);
     ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
-    Set<Model> local = new HashSet<>();
+    Set<ModelReference> local = new HashSet<>();
 
     /*
      * only query locally if we've seen a model before.
      */
     if (database.hasTable("model")) {
-      for (Model md : queryModels(observable, context)) {
+      for (ModelReference md : queryModels(observable, context)) {
         local.add(md);
         ret.addModel(md);
       }
@@ -192,10 +192,10 @@ public class ModelKbox extends ObservableKbox {
    * @return all unranked model descriptors matching the query
    * @throws KlabException
    */
-  public List<Model> queryModels(IObservable observable, ResolutionScope context)
+  public List<ModelReference> queryModels(IObservable observable, ResolutionScope context)
       throws KlabException {
 
-    List<Model> ret = new ArrayList<>();
+    List<ModelReference> ret = new ArrayList<>();
 
     if (!database.hasTable("model")) {
       return ret;
@@ -227,7 +227,7 @@ public class ModelKbox extends ObservableKbox {
     final List<Long> oids = database.queryIds(query);
 
     for (long l : oids) {
-      Model model = retrieveModel(l, context.getMonitor());
+      ModelReference model = retrieveModel(l, context.getMonitor());
       if (model != null) {
         ret.add(model);
       } else {
@@ -339,11 +339,11 @@ public class ModelKbox extends ObservableKbox {
     return ret;
   }
 
-  public List<Model> retrieveAll(IMonitor monitor) throws KlabException {
+  public List<ModelReference> retrieveAll(IMonitor monitor) throws KlabException {
 
     initialize(monitor);
 
-    List<Model> ret = new ArrayList<>();
+    List<ModelReference> ret = new ArrayList<>();
     if (!database.hasTable("model")) {
       return ret;
     }
@@ -353,11 +353,11 @@ public class ModelKbox extends ObservableKbox {
     return ret;
   }
 
-  public Model retrieveModel(long oid, IMonitor monitor) throws KlabException {
+  public ModelReference retrieveModel(long oid, IMonitor monitor) throws KlabException {
 
     initialize(monitor);
 
-    final Model ret = new Model();
+    final ModelReference ret = new ModelReference();
 
     database.query("SELECT * FROM model WHERE oid = " + oid, new SQL.SimpleResultHandler() {
       @Override
@@ -466,7 +466,7 @@ public class ModelKbox extends ObservableKbox {
 
       Klab.INSTANCE.info("storing model " + ((IModel) o).getName());
 
-      for (Model data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor)) {
+      for (ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor)) {
         toStore.add(data);
       }
 
@@ -495,11 +495,11 @@ public class ModelKbox extends ObservableKbox {
    * @param monitor
    * @return
    */
-  public static Collection<Model> inferModels(org.integratedmodelling.klab.model.Model model,
+  public static Collection<ModelReference> inferModels(org.integratedmodelling.klab.model.Model model,
       IMonitor monitor) {
-    List<Model> ret = new ArrayList<>();
+    List<ModelReference> ret = new ArrayList<>();
 
-    for (Model m : getModelDescriptors(model, monitor)) {
+    for (ModelReference m : getModelDescriptors(model, monitor)) {
       ret.add(m);
     }
     if (ret.size() > 0) {
@@ -507,7 +507,7 @@ public class ModelKbox extends ObservableKbox {
        * the observer come out of getAttributeObservers() with their inherent type already set
        */
       for (IObservable attr : model.getAttributeObservables().values()) {
-        Model m = ret.get(0).copy();
+        ModelReference m = ret.get(0).copy();
         m.setObservable(attr.getType().getDefinition());
         m.setObservableConcept(attr.getType());
         m.setObservationType(attr.getObservationType().name());
@@ -546,10 +546,10 @@ public class ModelKbox extends ObservableKbox {
     return ret;
   }
 
-  private static Collection<Model> getModelDescriptors(
+  private static Collection<ModelReference> getModelDescriptors(
       org.integratedmodelling.klab.model.Model model, IMonitor monitor) {
 
-    List<Model> ret = new ArrayList<>();
+    List<ModelReference> ret = new ArrayList<>();
     Scale scale = null;
 
     try {
@@ -597,7 +597,7 @@ public class ModelKbox extends ObservableKbox {
     boolean first = true;
     for (IObservable obs : model.getObservables()) {
 
-      Model m = new Model();
+      ModelReference m = new ModelReference();
 
       m.setId(model.getId());
       m.setName(model.getName());

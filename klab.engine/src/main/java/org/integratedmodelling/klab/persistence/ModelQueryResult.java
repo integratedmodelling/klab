@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
-import org.integratedmodelling.klab.data.rest.resources.Model;
+import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -50,8 +50,8 @@ import org.integratedmodelling.klab.utils.collections.ImmutableList;
 public class ModelQueryResult extends ImmutableList<IRankedModel>
     /* implements INetwork.DistributedOperation<List<Model>, List<Model>> */ {
 
-  IPrioritizer<Model> comparator;
-  ArrayList<Model> modelData = new ArrayList<>();
+  IPrioritizer<ModelReference> comparator;
+  ArrayList<ModelReference> modelData = new ArrayList<>();
   boolean sorted = false;
   IMonitor monitor;
 //  ModelQuery query;
@@ -59,7 +59,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
   public class It implements Iterator<IRankedModel> {
 
-    Iterator<Model> _it;
+    Iterator<ModelReference> _it;
 
     It() {
       if (!sorted) {
@@ -70,7 +70,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
           if (modelData.size() > 0) {
             monitor.debug("---- SCORES ------");
             int n = 1;
-            for (Model md : modelData) {
+            for (ModelReference md : modelData) {
               monitor.debug(describeRanks(md, 2, n++));
             }
             monitor.debug("------------------");
@@ -106,7 +106,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
    * 
    * @return the ranked model metadata, best match first.
    */
-  public List<Model> getModelData() {
+  public List<ModelReference> getModelData() {
     if (!sorted) {
       Collections.sort(modelData, comparator);
       sorted = true;
@@ -114,7 +114,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
     return modelData;
   }
 
-  private IRankedModel getModel(Model md) {
+  private IRankedModel getModel(ModelReference md) {
 
     IKimObject ret = null;
 
@@ -173,7 +173,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 //     */
   }
 
-  public String describeRanks(Model md, int indent, int n) {
+  public String describeRanks(ModelReference md, int indent, int n) {
 
     String ret = "";
     String filler = StringUtils.spaces(indent);
@@ -188,7 +188,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
     return ret;
   }
 
-  public ModelQueryResult(IPrioritizer<Model> prioritizer, IMonitor monitor) {
+  public ModelQueryResult(IPrioritizer<ModelReference> prioritizer, IMonitor monitor) {
     comparator = prioritizer;
     this.monitor = monitor;
   }
@@ -255,7 +255,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 //    return modelData;
 //  }
 
-  public void addModel(Model md) {
+  public void addModel(ModelReference md) {
     modelData.add(md);
     sorted = false;
   }

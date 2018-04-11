@@ -24,17 +24,17 @@ import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.data.rest.resources.Model;
+import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.utils.Pair;
 import com.vividsolutions.jts.geom.Geometry;
 
-public class Prioritizer implements IPrioritizer<Model> {
+public class Prioritizer implements IPrioritizer<ModelReference> {
 
     ResolutionScope                     scope;
     ComparatorChain                     comparator         = null;
-    HashMap<Model, Map<String, Object>> ranks              = new HashMap<>();
-    HashMap<Model, double[]>            idxss              = new HashMap<>();
+    HashMap<ModelReference, Map<String, Object>> ranks              = new HashMap<>();
+    HashMap<ModelReference, double[]>            idxss              = new HashMap<>();
 
     List<String>                        orderedCriteria      = new ArrayList<>();
     List<String>                        subjectiveCriteria = new ArrayList<>();
@@ -89,14 +89,14 @@ public class Prioritizer implements IPrioritizer<Model> {
     }
 
     @Override
-    public int compare(Model o1, Model o2) {
+    public int compare(ModelReference o1, ModelReference o2) {
         return comparator.compare(getRanks(o1), getRanks(o2));
     }
 
-    public Map<String, Object> getRanks(Model md) {
+    public Map<String, Object> getRanks(ModelReference md) {
 
         if (ranks.get(md) == null) {
-            ranks.put((Model) md, computeCriteria(md, scope));
+            ranks.put((ModelReference) md, computeCriteria(md, scope));
         }
         return ranks.get(md);
     }
@@ -189,7 +189,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * @param context
      * @return criterion value
      */
-    public double computeStandardCriterion(String cr, Model model, ResolutionScope context) {
+    public double computeStandardCriterion(String cr, ModelReference model, ResolutionScope context) {
 
         if (cr.equals(NS.EVIDENCE)) {
             return computeEvidence(model, context);
@@ -217,25 +217,25 @@ public class Prioritizer implements IPrioritizer<Model> {
     }
 
     @Override
-    public Map<String, Object> computeCriteria(Model model, IResolutionScope context) {
+    public Map<String, Object> computeCriteria(ModelReference model, IResolutionScope context) {
 
         Map<String, Object> ret = new HashMap<>();
 
         for (String cr : orderedCriteria) {
 
             if (cr.contains(",")) {
-                ret.put(cr, computeCustomAggregation(cr, (Model) model, context));
+                ret.put(cr, computeCustomAggregation(cr, (ModelReference) model, context));
             } else {
-                ret.put(cr, computeStandardCriterion(cr, (Model) model, (ResolutionScope)context));
+                ret.put(cr, computeStandardCriterion(cr, (ModelReference) model, (ResolutionScope)context));
             }
         }
 
-        ret.put(IPrioritizer.OBJECT_NAME, ((Model) model).getName());
-        ret.put(IPrioritizer.PROJECT_NAME, ((Model) model).getProjectUrn());
-        ret.put(IPrioritizer.NAMESPACE_ID, ((Model) model).getNamespaceId());
-        ret.put(IPrioritizer.SERVER_ID, ((Model) model).getServerId());
+        ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
+        ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
+        ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
+        ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
 
-        ranks.put((Model) model, ret);
+        ranks.put((ModelReference) model, ret);
 
         return ret;
     }
@@ -245,7 +245,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * equally weighted. These criteria have been given the same order in the strategy
      * specifications.
      */
-    private double computeCustomAggregation(String def, Model model, IResolutionScope context) {
+    private double computeCustomAggregation(String def, ModelReference model, IResolutionScope context) {
         String[] ddef = def.split(",");
         ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
         Map<String, Object> dt = getRanks(model);
@@ -261,7 +261,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * namespace as context 50-26 closer to same namespace as context 25 = in same project
      * as context 0 = non-private in other visible namespace
      */
-    public double computeLexicalScope(Model model, ResolutionScope context) {
+    public double computeLexicalScope(ModelReference model, ResolutionScope context) {
 
         // Scenarios always win.
         // second check should not really be necessary, as the query should only have
@@ -311,7 +311,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * semantic distance. This makes sure that e.g. a matching abstract model is chosen
      * only after a concrete one is rejected.
      */
-    public double computeSemanticDistance(Model model, ResolutionScope context) {
+    public double computeSemanticDistance(ModelReference model, ResolutionScope context) {
 
         /*
          * list of traits in common. Don't check the trait value - assumed the same
@@ -347,7 +347,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * 
      * FIXME does nothing at the moment.
      */
-    public double computeTraitConcordance(Model model, IResolutionScope context) {
+    public double computeTraitConcordance(ModelReference model, IResolutionScope context) {
 
         /*
          * list of traits in common. Don't check the trait value - assumed the same
@@ -386,14 +386,14 @@ public class Prioritizer implements IPrioritizer<Model> {
      * scale specificity -> total coverage of object wrt context (minimum of all extents?)
      * <n> = scale / (object coverage) * 100
      */
-    public double computeScaleSpecificity(Model model, ResolutionScope context) {
+    public double computeScaleSpecificity(ModelReference model, ResolutionScope context) {
         return computeScaleCriteria(model, context)[1];
     }
 
     /*
      * return the (possibly cached) array of coverage, specificity and resolution.
      */
-    private double[] computeScaleCriteria(Model model, ResolutionScope context) {
+    private double[] computeScaleCriteria(ModelReference model, ResolutionScope context) {
 
         double specificityS = -1;
         double coverageS = -1;
@@ -452,7 +452,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * network remoteness -> whether coming from remote KBox (added by kbox
      * implementation) 100 -> local 0 -> remote
      */
-    public static double computeNetworkRemoteness(Model model, IResolutionScope context) {
+    public static double computeNetworkRemoteness(ModelReference model, IResolutionScope context) {
         return model.getServerId() == null ? 100 : 0;
     }
 
@@ -466,7 +466,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * type.
      * 
      */
-    public double computeInherency(Model model, IResolutionScope context) {
+    public double computeInherency(ModelReference model, IResolutionScope context) {
         return 0.0;
     }
 
@@ -475,7 +475,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * domains shared (based on the isSpatial/isTemporal fields) normalize to 100
      * TODO reimplement this with the geometry
      */
-    public double computeScaleCoherency(Model model, IResolutionScope context) {
+    public double computeScaleCoherency(ModelReference model, IResolutionScope context) {
         // TODO Auto-generated method stub
         return 0.0;
     }
@@ -485,7 +485,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * 0 = not scale-specific (outside scale will not be returned) (1, 100] = (scale ^
      * object context) / scale
      */
-    public double computeScaleCoverage(Model model, ResolutionScope context) {
+    public double computeScaleCoverage(ModelReference model, ResolutionScope context) {
         return computeScaleCriteria(model, context)[0];
     }
 
@@ -495,7 +495,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * 
      * @returns chosen concordance metric normalized to 100
      */
-    public double computeSubjectiveConcordance(Model model, IResolutionScope context, List<String> subjectiveCriteria) {
+    public double computeSubjectiveConcordance(ModelReference model, IResolutionScope context, List<String> subjectiveCriteria) {
         ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
         IMetadata nm = context.getResolutionNamespace().getResolutionCriteria();
 
@@ -518,7 +518,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * evidence -> resolved/unresolved 100 = resolved from data or object source 75 =
      * resolved but requires dereification 50 = computed, no dependencies 0 = unresolved
      */
-    public double computeEvidence(Model model, IResolutionScope context) {
+    public double computeEvidence(ModelReference model, IResolutionScope context) {
 
         if ((model.isHasDirectData() || model.isHasDirectObjects())
                 && model.getDereifyingAttribute() == null) {
@@ -618,7 +618,7 @@ public class Prioritizer implements IPrioritizer<Model> {
      * call to register ranks that were computed outside this object. Used for model data
      * coming from the remote search service.
      */
-    public void registerRanks(Model md) {
+    public void registerRanks(ModelReference md) {
         ranks.put(md, md.getRanks());
     }
 }

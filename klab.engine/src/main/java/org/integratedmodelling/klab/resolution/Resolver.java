@@ -272,7 +272,7 @@ public enum Resolver {
    * @param context
    * @return
    */
-  public IPrioritizer<org.integratedmodelling.klab.data.rest.resources.Model> getPrioritizer(
+  public IPrioritizer<org.integratedmodelling.klab.data.rest.resources.ModelReference> getPrioritizer(
       ResolutionScope context) {
     return new Prioritizer(context);
   }
