@@ -3,8 +3,10 @@ package org.integratedmodelling.klab;
 /**
  * An attempt to systematize the API - tentative and possibly overkill. This is only the API
  * required to run models through a certificate: probably the API for interacting with a remote node
- * (using regular authentication) and retrieve a certificate could be separate, as it shares no
- * functional connection with k.LAB.
+ * (using regular authentication), manage profiles and retrieve certificates could be separate, as
+ * it shares no functional connection with k.LAB. This API is common to nodes and engines, although
+ * nodes currently can be expected to get less requests on ENGINE endpoints and be the only one in
+ * charge of answering RESOURCE requests.
  * <p>
  * Endpoints are organized in groups implemented in sub-interfaces. Any path with parameters has the
  * name of each parameter in its constant name, separated by an underscore. For each parameter
@@ -29,9 +31,9 @@ public interface API {
   /**
    * Parameter: the URN being resolved in resource endpoints
    */
-  public static final String P_URN       = "{urn}";
+  public static final String P_URN        = "{urn}";
 
-  
+
   /**
    * Return the capabilities. Anything that has an API has capabilities.
    * 
@@ -46,6 +48,11 @@ public interface API {
    */
   public interface NETWORK {
 
+    /**
+     * Returns network status with all nodes (including offline if applicable) with refresh rate and
+     * unique network access token. Should be the only authentication call necessary in this API.
+     * 
+     */
     public static final String AUTHORIZE  = "/network/authorize";
 
     public static final String DISCONNECT = "/network/disconnect";
@@ -70,11 +77,19 @@ public interface API {
 
     }
 
+    /**
+     * Retrieve resources.
+     * 
+     * @author ferdinando.villa
+     *
+     */
     public interface RETRIEVE {
 
       public static final String MODEL       = "/network/retrieve/model";
 
       public static final String OBSERVATION = "/network/retrieve/model";
+
+      public static final String COMPONENT   = "/network/retrieve/component";
 
     }
 
@@ -83,12 +98,14 @@ public interface API {
   public interface RESOURCE {
 
     /**
-     * 
+     * Retrieve raw observation data for passed URN in passed scale. If resource has time geometry,
+     * the response at initialization contains an individual token for repeated requests at
+     * transitions.
      */
     public static final String GET_URN     = "/resource/get/" + P_URN;
 
     /**
-     * 
+     * Get URN data for passed URN. Includes expiration to control cacheing.
      */
     public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
   }
@@ -111,7 +128,8 @@ public interface API {
 
     /*
      * TODO shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
-     * namespaces, workspace management, lock/unlock.
+     * namespaces, workspace management, lock/unlock. PUT endpoints for configure. To be tied to
+     * future configuration dashboard.
      */
     public interface ADMIN {
 
@@ -141,17 +159,17 @@ public interface API {
       /**
        * Authorize a context established from a URN.
        */
-      public static final String AUTHORIZE = "/engine/session/context/authorize/" + P_URN;
+      public static final String AUTHORIZE_URN = "/engine/session/context/authorize/" + P_URN;
 
       /**
-       * Observe URN in context. Return task token.
+       * Observe URN in pre-authorized context. Return task token.
        */
-      public static final String OBSERVE = "/engine/session/context/observe/" + P_URN;
+      public static final String OBSERVE_URN   = "/engine/session/context/observe/" + P_URN;
 
       /**
-       * Run temporal transitions according to scale, return task token.
+       * Run temporal transitions in pre-authorized context. Return task token.
        */
-      public static final String RUN = "/engine/session/context/run";
+      public static final String RUN           = "/engine/session/context/run";
 
 
       /**
