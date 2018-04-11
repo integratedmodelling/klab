@@ -95,7 +95,7 @@ public interface API {
     }
 
     /**
-     * Retrieve resources.
+     * Retrieve semantic assets - models, observations and components/projects.
      * 
      * @author ferdinando.villa
      *
@@ -121,6 +121,12 @@ public interface API {
 
   }
 
+  /**
+   * Non-semantic asset retrieval - data and remote computations.
+   * 
+   * @author ferdinando.villa
+   *
+   */
   public interface RESOURCE {
 
     /**
