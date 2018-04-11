@@ -20,8 +20,10 @@ public class GeotoolsTest {
     // String baseurl =
     // "https://www.wcs.nrw.de/geobasis/wcs_nw_dgm?service=wcs&request=getcapabilities";
     String baseurl = "http://www.integratedmodelling.org/geoserver/wcs?request=getcapabilities";
+    String sdeurl =
+        "https://www.mrlc.gov/arcgis/services/LandCover/USGS_EROS_LandCover_NLCD/MapServer/WCSServer?request=GetCapabilities&version=2.0&service=WCS";
     GeotoolsTest me = new GeotoolsTest();
-    me.getCapabilitiesType(baseurl);
+    me.getCapabilitiesType(sdeurl);
   }
 
   GetCapabilitiesType getCapabilitiesType(String capRequestPath)
