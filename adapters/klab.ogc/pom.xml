@@ -7,8 +7,8 @@
 		<artifactId>adapters</artifactId>
 		<version>0.10.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>klab.raster</artifactId>
-	<name>Raster GIS adapter for k.LAB (file and WCS) </name>
+	<artifactId>klab.ogc</artifactId>
+	<name>OGC and GIS data adapters for k.LAB (files, WCS and WFS) </name>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.geotools.xsd/gt-xsd-wcs -->
 		<dependency>

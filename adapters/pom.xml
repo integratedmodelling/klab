@@ -8,7 +8,6 @@
   <artifactId>adapters</artifactId>
   <packaging>pom</packaging>
   <modules>
-  	<module>klab.raster</module>
-  	<module>klab.vector</module>
+  	<module>klab.ogc</module>
   </modules>
 </project>
