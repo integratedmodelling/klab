@@ -165,6 +165,8 @@ public interface API {
      */
     public interface ADMIN {
 
+      public static final String SHUTDOWN = "/engine/admin/shutdown";
+      
     }
 
     public interface SESSION {

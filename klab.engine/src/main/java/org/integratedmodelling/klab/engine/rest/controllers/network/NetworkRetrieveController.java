@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.rest.controllers;
+package org.integratedmodelling.klab.engine.rest.controllers.network;
 
 import org.integratedmodelling.klab.API;
 import org.springframework.web.bind.annotation.RestController;

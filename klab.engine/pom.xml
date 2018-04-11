@@ -44,6 +44,13 @@
 	</build>
 	<dependencies>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.core</artifactId>

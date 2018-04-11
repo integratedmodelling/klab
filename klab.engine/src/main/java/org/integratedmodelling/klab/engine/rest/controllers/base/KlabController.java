@@ -1,15 +1,15 @@
-package org.integratedmodelling.klab.engine.rest.controllers;
+package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import org.integratedmodelling.klab.API;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The controller implementing the {@link API.ENGINE engine API}.
+ * The root controller for the {@link API base API}.
  * 
  * @author ferdinando.villa
  *
  */
 @RestController
-public class EngineController {
+public class KlabController {
 
 }
