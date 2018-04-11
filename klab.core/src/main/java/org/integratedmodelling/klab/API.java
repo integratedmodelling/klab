@@ -12,7 +12,12 @@ package org.integratedmodelling.klab;
  * constant, and the endpoint string must be built using it. Otherwise, constant names and endpoint
  * strings are identical and paths reflect the interface structure.
  * <p>
- * TODO to be restructured
+ * Each sub-interface should correspond to a controller with methods that match the endpoint names,
+ * using the same authentication.
+ * <p>
+ * TODO define and enforce conventions to add the allowed protocols, authentication type and "see
+ * also" links to the beans that handle requests and responses.
+ * <p>
  * 
  * @author ferdinando.villa
  *
@@ -84,7 +89,20 @@ public interface API {
    */
   public interface ENGINE {
 
+    /**
+     * Authorize an engine user. This may use the standard IM authentication (filtering privileges
+     * through the engine owner's) or the engine may have its own user directory. Local connections
+     * to a running engine are automatically authorized with the user that owns it.
+     */
     public static final String AUTHORIZE = "/engine/authorize";
+
+    /*
+     * TODO shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
+     * namespaces, workspace management, lock/unlock
+     */
+    public interface ADMIN {
+      
+    }
 
     public interface SESSION {
       public static final String OPEN  = "/engine/session/open";
@@ -98,6 +116,19 @@ public interface API {
      *
      */
     public interface CONTEXT {
+
+      public static final String RUN = "/engine/session/context/run";
+      
+      
+      /**
+       * Endpoints to retrieve data and visualizations from observations in context.
+       * 
+       * @author ferdinando.villa
+       *
+       */
+      public interface VIEW {
+        
+      }
     }
 
     /**
@@ -112,7 +143,8 @@ public interface API {
   }
 
   public interface AUTHORITY {
-
+    public static final String RESOLVE = "/engine/authority/resolve";
+    public static final String QUERY   = "/engine/authority/query";
   }
 
 }
