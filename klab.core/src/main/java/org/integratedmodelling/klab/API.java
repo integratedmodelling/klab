@@ -15,30 +15,48 @@ package org.integratedmodelling.klab;
  * strings are identical and paths reflect the interface structure.
  * <p>
  * Each sub-interface should correspond to a controller with methods that match the endpoint names,
- * using the same authentication. If a group has an AUTHORIZE endpoint, that will be implemented in
- * the controller corresponding to the containing interface, and return the token needed to
- * authorize the subgroups.
+ * using the same authentication. If a group has an AUTHENTICATE endpoint, that will be implemented
+ * in the controller corresponding to the containing interface, and return the token needed to
+ * authorize the subgroups so that the same authorization can be applied to the controller.
  * <p>
- * TODO define and enforce conventions to add the allowed protocols, authentication type and "see
- * also" links to the beans that handle requests and responses.
+ * TODO define and enforce conventions to add the allowed protocols, encodings, authentication type
+ * and "see also" links to the beans that handle requests and responses.
  * <p>
  * 
  * @author ferdinando.villa
- *
+ * @author J. Luke Scott
  */
 public interface API {
 
   /**
-   * Parameter: the URN being resolved in resource endpoints
+   * Parameter: the URN being resolved in any endpoints that access resources
    */
-  public static final String P_URN        = "{urn}";
+  public static final String P_URN = "{urn}";
 
 
   /**
-   * Return the capabilities. Anything that has an API has capabilities.
+   * Public capabilities endpoint. Anything that has an API has capabilities.
    * 
    */
   public static final String CAPABILITIES = "/capabilities";
+  
+  /**
+   * Authority endpoints are public.
+   * 
+   * @author ferdinando.villa
+   *
+   */
+  public interface AUTHORITY {
+    /**
+     * 
+     */
+    public static final String RESOLVE = "/engine/authority/resolve";
+
+    /**
+     * 
+     */
+    public static final String QUERY   = "/engine/authority/query";
+  }
 
   /**
    * Network session endpoints.
@@ -51,11 +69,10 @@ public interface API {
     /**
      * Returns network status with all nodes (including offline if applicable) with refresh rate and
      * unique network access token. Should be the only authentication call necessary in this API.
-     * 
      */
-    public static final String AUTHORIZE  = "/network/authorize";
+    public static final String AUTHENTICATE = "/network/authenticate";
 
-    public static final String DISCONNECT = "/network/disconnect";
+    public static final String DISCONNECT   = "/network/disconnect";
 
     /**
      * Query endpoints, using network session authentication.
@@ -85,11 +102,20 @@ public interface API {
      */
     public interface RETRIEVE {
 
-      public static final String MODEL       = "/network/retrieve/model";
+      /**
+       * 
+       */
+      public static final String MODEL_URN       = "/network/retrieve/model/" + P_URN;
 
-      public static final String OBSERVATION = "/network/retrieve/model";
+      /**
+       * 
+       */
+      public static final String OBSERVATION_URN = "/network/retrieve/observation/" + P_URN;
 
-      public static final String COMPONENT   = "/network/retrieve/component";
+      /**
+       * 
+       */
+      public static final String COMPONENT_URN   = "/network/retrieve/component/" + P_URN;
 
     }
 
@@ -124,12 +150,12 @@ public interface API {
      * connections to a running engine are automatically authorized with the user that owns it,
      * without a need to going through authentication.
      */
-    public static final String AUTHORIZE = "/engine/authorize";
+    public static final String AUTHENTICATE = "/engine/authenticate";
 
     /*
-     * TODO shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
-     * namespaces, workspace management, lock/unlock. PUT endpoints for configure. To be tied to
-     * future configuration dashboard.
+     * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
+     * namespaces, workspace management, lock/unlock. PUT endpoints for configuration. To be tied to
+     * future configuration dashboard. Probably should have additional authentication.
      */
     public interface ADMIN {
 
@@ -156,24 +182,37 @@ public interface API {
      */
     public interface CONTEXT {
 
+      public static final String P_CONTEXT           = "{context}";
+
       /**
-       * Authorize a context established from a URN.
+       * Create new context from the URN of its definition or remote computation. Return task descriptor.
        */
-      public static final String AUTHORIZE_URN = "/engine/session/context/authorize/" + P_URN;
+      public static final String CREATE_URN          = "/engine/session/context/create/" + P_URN;
 
       /**
-       * Observe URN in pre-authorized context. Return task token.
+       * Observe URN in pre-authorized context. Return task ID.
        */
-      public static final String OBSERVE_URN   = "/engine/session/context/observe/" + P_URN;
+      public static final String OBSERVE_CONTEXT_URN =
+          "/engine/session/context/observe/" + P_CONTEXT + "/" + P_URN;
 
       /**
-       * Run temporal transitions in pre-authorized context. Return task token.
+       * Run temporal transitions in pre-authorized context. Return task descriptor.
        */
-      public static final String RUN           = "/engine/session/context/run";
+      public static final String RUN_CONTEXT         = "/engine/session/context/run/" + P_CONTEXT;
 
 
       /**
-       * Endpoints to retrieve data and visualizations from observations in context.
+       * Endpoints to access tasks.
+       * 
+       * @author ferdinando.villa
+       *
+       */
+      public interface TASK {
+        public static final String P_TASK = "{task}";
+      }
+
+      /**
+       * Endpoints to retrieve data and visualizations from "live" observations in context.
        * 
        * @author ferdinando.villa
        *
@@ -183,20 +222,8 @@ public interface API {
       }
     }
 
-    /**
-     * Endpoints to access tasks, using task tokens for authentication.
-     * 
-     * @author ferdinando.villa
-     *
-     */
-    public interface TASK {
-    }
 
   }
 
-  public interface AUTHORITY {
-    public static final String RESOLVE = "/engine/authority/resolve";
-    public static final String QUERY   = "/engine/authority/query";
-  }
 
 }
