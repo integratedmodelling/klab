@@ -34,11 +34,10 @@ public class RasterModelTests {
   public void setUp() throws Exception {
     
     engine = Engine.start();
-    
-    // load test resource set
-    Resources.INSTANCE.setResourceCatalog(
-         FileCatalog.create(getClass().getClassLoader().getResource("resources.raster/resources.json"),
-            IResource.class, Resource.class));
+//    // load test resource set
+//    Resources.INSTANCE.setResourceCatalog(
+//         FileCatalog.create(getClass().getClassLoader().getResource("resources.raster/resources.json"),
+//            IResource.class, Resource.class));
   }
 
   @After

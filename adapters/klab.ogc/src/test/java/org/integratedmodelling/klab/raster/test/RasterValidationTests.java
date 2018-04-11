@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.raster.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileCatalog;
+import org.integratedmodelling.klab.utils.collections.Collections;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,10 +43,10 @@ public class RasterValidationTests {
 
     engine = Engine.start();
 
-    // load test resource set
-    Resources.INSTANCE.setResourceCatalog(FileCatalog.create(
-        getClass().getClassLoader().getResource("resources.raster/resources.json"), IResource.class,
-        Resource.class));
+//    // load test resource set
+//    Resources.INSTANCE.setResourceCatalog(FileCatalog.create(
+//        getClass().getClassLoader().getResource("resources.raster/resources.json"), IResource.class,
+//        Resource.class));
   }
 
   @After
@@ -64,7 +65,10 @@ public class RasterValidationTests {
       Builder builder =
           adapter.getValidator().validate(getClass().getClassLoader().getResource(datafile),
               new Parameters(), Klab.INSTANCE.getRootMonitor());
-      IResource resource = builder.build(Urns.INSTANCE.getDisposableUrn());
+      IResource resource = builder.build(Urns.INSTANCE.createDisposableUrn());
+
+      System.out.println(Collections.printAsJson(resource));
+      
       Resources.INSTANCE.getResourceCatalog().put(resource.getUrn(), resource);
     }
   }

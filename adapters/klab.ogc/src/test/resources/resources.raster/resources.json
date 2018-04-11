@@ -3,6 +3,7 @@
 		"urn": "local:file:classpath:resources/map1.tif",
 		"geometry": "S2",
 		"type": "raster",
+		"resourceTimestamp": 9993948239,
 		"version": "0.0.1",
 		"metadata": {
 			"owner": "Piero Pippa",

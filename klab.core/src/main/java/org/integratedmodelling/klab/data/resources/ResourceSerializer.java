@@ -22,11 +22,20 @@ public class ResourceSerializer extends StdSerializer<Resource> {
 
     gen.writeStartObject();
 
-    gen.writeStringField("urn", resource.urn);
     gen.writeNumberField("resourceTimestamp", resource.resourceTimestamp);
-    gen.writeStringField("geometry", resource.geometry.toString());
-    gen.writeStringField("version", resource.version.toString());
-    gen.writeStringField("adapterType", resource.adapterType);
+    if (resource.urn != null) {
+      gen.writeStringField("urn", resource.urn);
+    }
+    if (resource.geometry != null) {
+      gen.writeStringField("geometry", resource.geometry.toString());
+    }
+    if (resource.version != null) {
+      gen.writeStringField("version", resource.version.toString());
+    }
+    if (resource.adapterType != null) {
+      gen.writeStringField("adapterType", resource.adapterType);
+    }
+
     gen.writeObjectField("parameters", ((Parameters) resource.parameters).getData());;
     gen.writeObjectField("metadata", ((Metadata) resource.metadata).getData());;
 

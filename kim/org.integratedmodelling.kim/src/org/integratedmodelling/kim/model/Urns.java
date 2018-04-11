@@ -25,7 +25,7 @@ public enum Urns {
    * 
    * @return
    */
-  public String getDisposableUrn() {
+  public String createDisposableUrn() {
     return VOID_URN_PREFIX + NameGenerator.shortUUID();
   }
 

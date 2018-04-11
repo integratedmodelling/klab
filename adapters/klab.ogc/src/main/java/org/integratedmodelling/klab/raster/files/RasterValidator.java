@@ -29,6 +29,10 @@ public class RasterValidator implements IResourceValidator {
     try {
 
       File file = URLUtils.getFileForURL(url);
+      
+      ret.setParameter("fileUrl", url);
+      ret.setAdapterType("raster");
+      
       AbstractGridFormat format = GridFormatFinder.findFormat(file);
       AbstractGridCoverage2DReader reader = format.getReader(file);
       GridCoverage2D coverage = reader.read(null);

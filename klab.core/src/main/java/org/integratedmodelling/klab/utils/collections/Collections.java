@@ -34,7 +34,7 @@ public class Collections {
 	 * @param map
 	 * @return
 	 */
-	public static String printAsJson(Map<?, ?> map) {
+	public static String printAsJson(Object object) {
 
 		ObjectMapper om = new ObjectMapper();
 		om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
@@ -47,9 +47,9 @@ public class Collections {
 //		String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
 
 		try {
-			return om.writeValueAsString(map);
+			return om.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
-			throw new IllegalArgumentException("serialization failed");
+			throw new IllegalArgumentException("serialization failed: " + e.getMessage());
 		}
 	}
 }

@@ -22,7 +22,8 @@ public class ResourceBuilder implements IResource.Builder {
   private List<INotification> notifications     = new ArrayList<>();
   private long                resourceTimestamp = System.currentTimeMillis();
   private Version             resourceVersion;
-  private boolean             error = false;
+  private boolean             error             = false;
+  private String              adapterType;
 
   @Override
   public IResource build(String urn) {
@@ -35,8 +36,8 @@ public class ResourceBuilder implements IResource.Builder {
     ret.notifications.addAll(this.notifications);
     ret.history.addAll(this.history);
     ret.resourceTimestamp = this.resourceTimestamp;
-    ret.version = resourceVersion;
-
+    ret.version = this.resourceVersion;
+    ret.adapterType = this.adapterType;
     return ret;
   }
 
@@ -98,6 +99,11 @@ public class ResourceBuilder implements IResource.Builder {
   @Override
   public boolean hasErrors() {
     return error;
+  }
+
+  @Override
+  public void setAdapterType(String string) {
+    this.adapterType = string;
   }
 
 }

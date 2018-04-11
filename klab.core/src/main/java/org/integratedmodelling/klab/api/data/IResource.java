@@ -176,6 +176,12 @@ public interface IResource extends Serializable {
      */
     IResource build(String urn);
 
+    /**
+     * 
+     * @param string
+     */
+    void setAdapterType(String string);
+
   }
 
   /**
