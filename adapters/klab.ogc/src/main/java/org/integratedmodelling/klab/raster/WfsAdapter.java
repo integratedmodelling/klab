@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsPublisher;
 import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 
-@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = {"serverId"},
+@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = {"serviceUrl", "wfsVersion"},
     optional = {"namespace"})
 public class WfsAdapter implements IResourceAdapter {
 
