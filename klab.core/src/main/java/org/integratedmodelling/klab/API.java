@@ -13,7 +13,9 @@ package org.integratedmodelling.klab;
  * strings are identical and paths reflect the interface structure.
  * <p>
  * Each sub-interface should correspond to a controller with methods that match the endpoint names,
- * using the same authentication.
+ * using the same authentication. If a group has an AUTHORIZE endpoint, that will be implemented in
+ * the controller corresponding to the containing interface, and return the token needed to
+ * authorize the subgroups.
  * <p>
  * TODO define and enforce conventions to add the allowed protocols, authentication type and "see
  * also" links to the beans that handle requests and responses.
@@ -24,6 +26,12 @@ package org.integratedmodelling.klab;
  */
 public interface API {
 
+  /**
+   * Parameter: the URN being resolved in resource endpoints
+   */
+  public static final String P_URN       = "{urn}";
+
+  
   /**
    * Return the capabilities. Anything that has an API has capabilities.
    * 
@@ -38,7 +46,7 @@ public interface API {
    */
   public interface NETWORK {
 
-    public static final String CONNECT    = "/network/connect";
+    public static final String AUTHORIZE  = "/network/authorize";
 
     public static final String DISCONNECT = "/network/disconnect";
 
@@ -61,14 +69,18 @@ public interface API {
       public static final String OBSERVATIONS = "/network/query/observations";
 
     }
+
+    public interface RETRIEVE {
+
+      public static final String MODEL       = "/network/retrieve/model";
+
+      public static final String OBSERVATION = "/network/retrieve/model";
+
+    }
+
   }
 
   public interface RESOURCE {
-
-    /**
-     * Parameter: the URN being resolved in resource endpoints
-     */
-    public static final String P_URN       = "{urn}";
 
     /**
      * 
@@ -91,22 +103,31 @@ public interface API {
 
     /**
      * Authorize an engine user. This may use the standard IM authentication (filtering privileges
-     * through the engine owner's) or the engine may have its own user directory. Local connections
-     * to a running engine are automatically authorized with the user that owns it.
+     * through the engine owner's) or the engine may have its own user directory. Localhost
+     * connections to a running engine are automatically authorized with the user that owns it,
+     * without a need to going through authentication.
      */
     public static final String AUTHORIZE = "/engine/authorize";
 
     /*
      * TODO shutdown, reset/init, deploy/setup components, undeploy, import, submit, update/delete
-     * namespaces, workspace management, lock/unlock
+     * namespaces, workspace management, lock/unlock.
      */
     public interface ADMIN {
-      
+
     }
 
     public interface SESSION {
-      public static final String OPEN  = "/engine/session/open";
-      public static final String CLOSE = "/engine/session/close";
+
+      /**
+       * 
+       */
+      public static final String AUTHORIZE = "/engine/session/authorize";
+
+      /**
+       * 
+       */
+      public static final String CLOSE     = "/engine/session/close";
     }
 
     /**
@@ -117,9 +138,22 @@ public interface API {
      */
     public interface CONTEXT {
 
+      /**
+       * Authorize a context established from a URN.
+       */
+      public static final String AUTHORIZE = "/engine/session/context/authorize/" + P_URN;
+
+      /**
+       * Observe URN in context. Return task token.
+       */
+      public static final String OBSERVE = "/engine/session/context/observe/" + P_URN;
+
+      /**
+       * Run temporal transitions according to scale, return task token.
+       */
       public static final String RUN = "/engine/session/context/run";
-      
-      
+
+
       /**
        * Endpoints to retrieve data and visualizations from observations in context.
        * 
@@ -127,7 +161,7 @@ public interface API {
        *
        */
       public interface VIEW {
-        
+
       }
     }
 
