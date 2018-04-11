@@ -8,13 +8,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.api.IKimWorkspace;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
+import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -26,6 +34,9 @@ import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
+import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -55,10 +66,163 @@ public enum Resources implements IResourceService {
    * By default a persistent JSON database is used; tests may reset the resource catalog to a simple
    * in-memory map using {@link #setResourceCatalog} before any request is made.
    */
-  Map<String, IResource>        resourceCatalog;
+  IResourceCatalog              localResourceCatalog;
+  IResourceCatalog              publicResourceCatalog;
+
+  Map<String, Project>          projects         = new HashMap<>();
+
+  Map<String, IWorkspace>       workspaces       = new HashMap<>();
+
+  /**
+   * The core workspace, only containing the OWL knowledge distributed with the software, and no
+   * projects.
+   */
+  private CoreOntology          coreKnowledge;
+
+  /**
+   * The worldview, synchronized at startup from Git repositories specified in or through the k.LAB
+   * certificate.
+   */
+  private IWorldview            worldview;
+
+  /**
+   * The workspace containing components from the network (or local components if so configured),
+   * loaded on demand.
+   */
+  private IWorkspace            components;
+
+  /**
+   * Workspace containing the k.LAB assets installed on the running instance. The files in this
+   * workspace are monitored and reloaded incrementally at each change.
+   */
+  private IWorkspace            local;
+
+  /**
+   * Temporary, ephemeral workspace only meant to host the common project for on-demand namespaces.
+   * 
+   */
+  private IWorkspace            common;
+
+  @Override
+  public IWorkspace getLocalWorkspace() {
+    return local;
+  }
+
+  @Override
+  public CoreOntology getUpperOntology() {
+    return coreKnowledge;
+  }
+
+  @Override
+  public IWorldview getWorldview() {
+    return worldview;
+  }
+
+  @Override
+  public IWorkspace getComponentsWorkspace() {
+    return components;
+  }
+
+  /*
+   * Extract and load the OWL core knowledge workspace.
+   */
+  public boolean loadCoreKnowledge(IMonitor monitor) {
+    try {
+      coreKnowledge = new CoreOntology(Configuration.INSTANCE.getDataPath("knowledge"));
+      coreKnowledge.load(false, monitor);
+      workspaces.put(coreKnowledge.getName(), coreKnowledge);
+      return true;
+    } catch (Throwable e) {
+      Klab.INSTANCE.error(e.getLocalizedMessage());
+    }
+    return false;
+  }
+
+  /*
+   * Create and load the components workspace. TODO needs the network to obtain components, then
+   * add/override any local ones.
+   */
+  public boolean loadComponents(File[] localComponentPaths, IMonitor monitor) {
+    try {
+      components = new MonitorableFileWorkspace(Configuration.INSTANCE.getDataPath("components"),
+          localComponentPaths);
+      components.load(false, monitor);
+      workspaces.put(components.getName(), components);
+      return true;
+    } catch (Throwable e) {
+      Klab.INSTANCE.error(e.getLocalizedMessage());
+    }
+    return false;
+  }
+
+  /*
+   * Create and load the worldview specified by the Git repositories pointed to by the certificate.
+   */
+  public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
+    try {
+      worldview = certificate.getWorldview();
+      worldview.load(false, monitor);
+      workspaces.put(worldview.getName(), worldview);
+
+      return true;
+    } catch (Throwable e) {
+      Klab.INSTANCE.error(e.getLocalizedMessage());
+    }
+    return false;
+  }
+
+  public IWorkspace getCommonWorkspace() {
+    if (common == null) {
+      IKimWorkspace cw = Kim.INSTANCE.getCommonWorkspace();
+      common = new MonitorableFileWorkspace(cw.getRoot());
+    }
+    return common;
+  }
+
+  /*
+   * Initialize (index but do not load) the local workspace from the passed path.
+   */
+  public void initializeLocalWorkspace(File workspaceRoot, IMonitor monitor) {
+    if (local == null) {
+      local = new MonitorableFileWorkspace(workspaceRoot);
+    }
+  }
+
+  /*
+   * Create and load the local workspace.
+   */
+  public boolean loadLocalWorkspace(IMonitor monitor) {
+    try {
+      getLocalWorkspace().load(false, monitor);
+      return true;
+    } catch (Throwable e) {
+      Klab.INSTANCE.error(e.getLocalizedMessage());
+    }
+    return false;
+  }
+
+  public IWorkspace getWorkspace(String name) {
+    return workspaces.get(name);
+  }
+
+  @Override
+  public Project getProject(String projectId) {
+    return projects.get(projectId);
+  }
+
+  public IProject retrieveOrCreate(IKimProject project) {
+    if (projects.containsKey(project.getName())) {
+      return projects.get(project.getName());
+    }
+
+    Project ret = new Project(project);
+    projects.put(ret.getName(), ret);
+    return ret;
+  }
+
 
   public static String getConceptPrefix() {
-    return Urns.KLAB_URN_PREFIX + "knowledge:" + Workspaces.INSTANCE.getWorldview().getName() + ":";
+    return Urns.KLAB_URN_PREFIX + "knowledge:" + INSTANCE.getWorldview().getName() + ":";
   }
 
   // @Override
@@ -83,7 +247,7 @@ public enum Resources implements IResourceService {
   public IResource resolveResource(final String urn)
       throws KlabUnknownUrnException, KlabUnauthorizedUrnException {
 
-    IResource ret = resourceCatalog.get(urn);
+    IResource ret = getLocalResourceCatalog().get(urn);
 
     if (ret != null && !Urns.INSTANCE.isLocal(urn)) {
       /*
@@ -92,9 +256,9 @@ public enum Resources implements IResourceService {
     }
 
     // TODO use network services; ensure any checks are done
-    
+
     // TODO cache data with appropriate expiration time
-    
+
     return null;
 
   }
@@ -110,14 +274,15 @@ public enum Resources implements IResourceService {
     /**
      * 2. see if it was processed before and timestamps match; if so, return existing resource
      */
-    ret = getResourceCatalog().get(urn);
+    ret = getLocalResourceCatalog().get(urn);
 
     if (ret != null && ret.getResourceTimestamp() >= file.lastModified()) {
       return ret;
     }
 
     /**
-     * 3. else, spawn resource processing thread for local publishing and return temporary resource record
+     * 3. else, spawn resource processing thread for local publishing and return temporary resource
+     * record
      */
     new Thread() {
 
@@ -151,7 +316,7 @@ public enum Resources implements IResourceService {
           resource = Resource.error(urn, errors);
         }
 
-        resourceCatalog.put(urn, resource);
+        localResourceCatalog.put(urn, resource);
       }
 
     }.start();
@@ -272,19 +437,24 @@ public enum Resources implements IResourceService {
    * 
    * @param catalog
    */
-  public void setResourceCatalog(Map<String, IResource> catalog) {
-    this.resourceCatalog = Collections.synchronizedMap(catalog);
+  public void setLocalResourceCatalog(IResourceCatalog catalog) {
+    this.localResourceCatalog = catalog;
   }
 
-  /**
-   * 
-   * @return
-   */
-  public Map<String, IResource> getResourceCatalog() {
-    if (resourceCatalog == null) {
-      resourceCatalog = Collections.synchronizedMap(new ResourceCatalog());
+  @Override
+  public IResourceCatalog getLocalResourceCatalog() {
+    if (localResourceCatalog == null) {
+      localResourceCatalog = new ResourceCatalog();
     }
-    return resourceCatalog;
+    return localResourceCatalog;
+  }
+
+  @Override
+  public IResourceCatalog getPublicResourceCatalog() {
+    if (publicResourceCatalog == null) {
+      publicResourceCatalog = new ResourceCatalog();
+    }
+    return publicResourceCatalog;
   }
 
   @Override

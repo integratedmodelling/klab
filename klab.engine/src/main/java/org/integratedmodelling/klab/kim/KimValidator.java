@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
-import org.integratedmodelling.klab.Workspaces;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -78,7 +78,7 @@ public class KimValidator implements Kim.Validator {
 
     for (Pair<String, String> imp : namespace.getOwlImports()) {
       String prefix =
-          Workspaces.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
+          Resources.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
       if (prefix == null) {
         monitor.error("cannot resolve import " + imp.getFirst(), namespace);
       } else {

@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.data.storage;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 
 /**
  * The Nitrite database storing resource data locally.
@@ -11,7 +13,7 @@ import org.integratedmodelling.klab.api.data.IResource;
  * @author ferdinando.villa
  *
  */
-public class ResourceCatalog implements Map<String, IResource> {
+public class ResourceCatalog implements IResourceCatalog {
 
   public ResourceCatalog() {
     // TODO Auto-generated constructor stub

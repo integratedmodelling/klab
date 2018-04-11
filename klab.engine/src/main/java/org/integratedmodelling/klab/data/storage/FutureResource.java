@@ -42,14 +42,14 @@ public class FutureResource implements IResource {
 
   private IResource getDelegate(long timeout) {
     if (delegate == null) {
-      while (!Resources.INSTANCE.getResourceCatalog().containsKey(urn)) {
+      while (!Resources.INSTANCE.getLocalResourceCatalog().containsKey(urn)) {
         try {
           Thread.sleep(timeout);
         } catch (InterruptedException e) {
           // boh
         }
       }
-      this.delegate = Resources.INSTANCE.getResourceCatalog().get(urn);
+      this.delegate = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
     }
     return delegate;
   }

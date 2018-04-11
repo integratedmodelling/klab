@@ -2,13 +2,45 @@ package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
+import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
 import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
+/**
+ * The <code>IResourceService</code> service handles all semantic and non-semantic assets.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public interface IResourceService {
+
+  /**
+   * The local resource catalog is for resources created from local files or specifications. These
+   * resources are created by the {@link IResourceValidator validator} of an {@link IResourceAdapter
+   * adapter}, and must be published before they can be shared. A project containing local URNs
+   * cannot be published on a k.LAB node.
+   * 
+   * @return the local resource catalog
+   */
+  IResourceCatalog getLocalResourceCatalog();
+
+  /**
+   * The public resource catalog contains resources after they have been published by the
+   * {@link IResourcePublisher publisher} of the adapter that created the resource. These resources
+   * can be shared with others and projects using their URNs can be shared on k.LAB nodes.
+   * 
+   * @return the public resource catalog
+   */
+  IResourceCatalog getPublicResourceCatalog();
 
   /**
    * Resolve the passed URN to a resource.
@@ -18,7 +50,8 @@ public interface IResourceService {
    * @throws KlabUnknownUrnException
    * @throws KlabUnauthorizedUrnException
    */
-  IResource resolveResource(String urn) throws KlabUnknownUrnException, KlabUnauthorizedUrnException;
+  IResource resolveResource(String urn)
+      throws KlabUnknownUrnException, KlabUnauthorizedUrnException;
 
   /**
    * 
@@ -27,6 +60,46 @@ public interface IResourceService {
    * @return
    */
   IResource getLocalFileResource(File file, IMonitor monitor);
+
+  /**
+   * The workspace with all local projects. The only workspace that is not read only and is
+   * monitored for changes, with automatic reload of any updated knowledge. Never null, possibly
+   * empty.
+   * 
+   * @return
+   */
+  IWorkspace getLocalWorkspace();
+
+  /**
+   * The upper ontology workspace, automatically synchronized and read only.
+   * 
+   * @return
+   */
+  IWorkspace getUpperOntology();
+
+  /**
+   * All the projects composing the worldview, automatically synchronized and read only, but
+   * overridden by any of the same projects in the local workspace.
+   * 
+   * @return
+   */
+  IWorldview getWorldview();
+
+  /**
+   * The components workspace, including projects (with or without binary assets) that are managed
+   * by the engine as new components are requested during resolution. Read only. In development
+   * configuration also contains any locally available components.
+   * 
+   * @return
+   */
+  IWorkspace getComponentsWorkspace();
+
+  /**
+   * 
+   * @param projectId
+   * @return
+   */
+  IProject getProject(String projectId);
 
   /**
    * Retrieve a model object identified through a URN - either an observer or a model, local or
@@ -48,11 +121,11 @@ public interface IResourceService {
   IResolvable getResolvableResource(String urn);
 
   /**
-   * Create a builder to describe a future valid resource or the errors that will prevent it
-   * from being published.
+   * Create a builder to describe a future valid resource or the errors that will prevent it from
+   * being published.
    * 
    * @return
    */
   IResource.Builder createResourceBuilder();
-  
+
 }

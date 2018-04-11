@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
-import org.integratedmodelling.klab.Workspaces;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -281,7 +281,7 @@ public class Engine extends Server implements IEngine {
       /*
        * read core OWL knowledge from classpath
        */
-      if (!Workspaces.INSTANCE.loadCoreKnowledge(this.monitor)) {
+      if (!Resources.INSTANCE.loadCoreKnowledge(this.monitor)) {
         return false;
       }
 
@@ -294,7 +294,7 @@ public class Engine extends Server implements IEngine {
        * initialize but do not load the local workspace, so that we can later override the worldview
        * if we have some worldview projects in the workspace.
        */
-      Workspaces.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
+      Resources.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
 
       /*
        * prime and check integrity of kboxes; init listeners for Kim reading
@@ -303,7 +303,7 @@ public class Engine extends Server implements IEngine {
       /*
        * get worldview from certificate and sync it
        */
-      if (!Workspaces.INSTANCE.loadWorldview(certificate, this.monitor)) {
+      if (!Resources.INSTANCE.loadWorldview(certificate, this.monitor)) {
         return false;
       }
 
@@ -328,7 +328,7 @@ public class Engine extends Server implements IEngine {
       /*
        * now we can finally load the workspace
        */
-      if (!Workspaces.INSTANCE.loadLocalWorkspace(this.monitor)) {
+      if (!Resources.INSTANCE.loadLocalWorkspace(this.monitor)) {
         return false;
       }
 

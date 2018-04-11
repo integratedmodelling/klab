@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.Ontologies;
-import org.integratedmodelling.klab.Projects;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -53,7 +53,7 @@ public class Namespace extends KimObject implements INamespace {
     this.inactive = namespace.isInactive();
     this.scenario = namespace.isScenario();
     this.ontology = Ontologies.INSTANCE.require(name);
-    this.project = Projects.INSTANCE.retrieveOrCreate(namespace.getProject());
+    this.project = Resources.INSTANCE.retrieveOrCreate(namespace.getProject());
     this.timestamp = namespace.getTimestamp();
     if (this.timestamp == 0) {
         this.timestamp = System.currentTimeMillis();

@@ -16,9 +16,9 @@ import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
-import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -77,7 +77,7 @@ public class ObservableBuilder implements Builder {
     public ObservableBuilder(String main, Set<Type> parent, Ontology ontology) {
         this.mainId = main;
         this.ontology = ontology;
-        this.parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(parent);
+        this.parent = Resources.INSTANCE.getUpperOntology().getCoreType(parent);
         this.type = parent;
     }
 
@@ -1231,8 +1231,8 @@ public class ObservableBuilder implements Builder {
 
     private static boolean rolesAreFundamental(Collection<IConcept> roles) {
         for (IConcept c : roles) {
-            if (Workspaces.INSTANCE.getWorldview() != null
-                    && !c.getNamespace().equals(Workspaces.INSTANCE.getWorldview().getName())) {
+            if (Resources.INSTANCE.getWorldview() != null
+                    && !c.getNamespace().equals(Resources.INSTANCE.getWorldview().getName())) {
                 return false;
             }
         }

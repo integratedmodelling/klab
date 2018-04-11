@@ -69,7 +69,7 @@ public class RasterValidationTests {
 
       System.out.println(Collections.printAsJson(resource));
       
-      Resources.INSTANCE.getResourceCatalog().put(resource.getUrn(), resource);
+      Resources.INSTANCE.getLocalResourceCatalog().put(resource.getUrn(), resource);
     }
   }
 }

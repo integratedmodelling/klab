@@ -17,9 +17,9 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Reasoner;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.Workspaces;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -65,7 +65,7 @@ public enum KimKnowledgeProcessor {
 						monitor.error("Core concept " + concept.getUpperConceptDefined() + " unknown", concept);
 					}
 				} else {
-					parent = Workspaces.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+					parent = Resources.INSTANCE.getUpperOntology().getCoreType(concept.getType());
 				}
 
 				if (parent != null) {

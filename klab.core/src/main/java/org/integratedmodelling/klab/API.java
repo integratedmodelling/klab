@@ -48,12 +48,12 @@ public interface API {
    */
   public interface AUTHORITY {
     /**
-     * 
+     * @GET
      */
     public static final String RESOLVE = "/engine/authority/resolve";
 
     /**
-     * 
+     * @POST
      */
     public static final String QUERY   = "/engine/authority/query";
   }
@@ -65,6 +65,11 @@ public interface API {
    */
   public interface ADMIN {
 
+    /**
+     * Shutdown the server. 
+     * 
+     * @GET
+     */
     public static final String SHUTDOWN = "/engine/admin/shutdown";
 
   }
@@ -114,17 +119,17 @@ public interface API {
     public interface RETRIEVE {
 
       /**
-       * 
+       * @GET
        */
       public static final String MODEL_URN       = "/network/retrieve/model/" + P_URN;
 
       /**
-       * 
+       * @GET
        */
       public static final String OBSERVATION_URN = "/network/retrieve/observation/" + P_URN;
 
       /**
-       * 
+       * @GET
        */
       public static final String COMPONENT_URN   = "/network/retrieve/component/" + P_URN;
 
@@ -143,21 +148,29 @@ public interface API {
     /**
      * Add a resource to the local catalog passing a local file URL and/or resource properties.
      * Return URN after validation.
+     * 
+     * @PUT
      */
     public static final String ADD         = "/resource/add";
 
     /**
      * Publish a local resource to the public catalog of this or another server.
+     * 
+     * @POST
      */
     public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
 
     /**
      * Modify resource data. Triggers revalidation.
+     * 
+     * @PATCH
      */
     public static final String UPDATE_URN  = "/resource/update/" + P_URN;
 
     /**
      * Delete resource data.
+     * 
+     * @DELETE
      */
     public static final String DELETE_URN  = "/resource/delete/" + P_URN;
 
@@ -165,11 +178,15 @@ public interface API {
      * Retrieve raw observation data for passed URN in passed scale. If resource has time geometry,
      * the response at initialization contains an individual token for repeated requests at
      * transitions.
+     * 
+     * @GET
      */
     public static final String GET_URN     = "/resource/get/" + P_URN;
 
     /**
      * Get URN data for passed URN. Includes expiration to control cacheing.
+     * 
+     * @GET
      */
     public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
   }
@@ -193,12 +210,12 @@ public interface API {
     public interface SESSION {
 
       /**
-       * 
+       * @POST
        */
       public static final String AUTHORIZE = "/engine/session/authorize";
 
       /**
-       * 
+       * @DELETE
        */
       public static final String CLOSE     = "/engine/session/close";
     }
@@ -238,7 +255,9 @@ public interface API {
        *
        */
       public interface TASK {
+        
         public static final String P_TASK = "{task}";
+        
       }
 
       /**
