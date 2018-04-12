@@ -189,7 +189,7 @@ public enum Types implements ITypeService {
    * clause. Any error throw an exception.
    * 
    * @param original
-   * @return
+   * @return the classification type
    * @throws KlabValidationException
    */
   public IConcept getClassificationType(IConcept original) throws KlabValidationException {
@@ -227,12 +227,11 @@ public enum Types implements ITypeService {
 
   /**
    * Return the type we should use in a classifier that classifies the first one (returned
-   * {@link #getClassificationType(IConcept, IConcept)} into the stated classified concept. If the
+   * {@link #getClassificationType(IConcept)} into the stated classified concept. If the
    * type is not adequate for that throw a validation exception explaining why.
    * 
    * @param classifier
-   * @param classified
-   * @return
+   * @return the classified type
    * @throws KlabValidationException
    */
   public IConcept getClassifiedType(IConcept classifier, IConcept classified)
@@ -291,9 +290,7 @@ public enum Types implements ITypeService {
    * universals. Concept must exist but it may not be a type yet.
    * 
    * @param type
-   * 
    * @param exposedTraits
-   * @return
    */
   public void setExposedTraits(IConcept type, Collection<IConcept> exposedTraits) {
     OWL.INSTANCE.restrictSome(type, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), LogicalConnector.UNION,
@@ -306,7 +303,7 @@ public enum Types implements ITypeService {
    * 
    * @param trait
    * @param exposedTrait
-   * @return
+   * @return true if the trait is exposed as asked
    */
   public boolean isExposedAs(IKnowledge trait, IConcept exposedTrait) {
     if (trait.is(exposedTrait)) {

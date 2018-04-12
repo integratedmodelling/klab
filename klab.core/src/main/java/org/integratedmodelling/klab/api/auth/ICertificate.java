@@ -26,30 +26,32 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  * When a certificate begins its lifetime, it should be already authenticated and its validity
  * should be {@link #isValid() checked} immediately.
  * <p>
+ *
  * @author ferdinando villa
+ * @version $Id: $Id
  */
 public interface ICertificate {
 
   /**
    * Create the worldview workspace for this identity and return it (unloaded and not initialized).
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview} object.
    */
   IWorldview getWorldview();
 
   /**
    * A certificate defines a 'root' identity: a IPartnerIdentity, INodeIdentity or IUserIdentity.
    * Servers and engines start by reading a certificate.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
    */
   IIdentity getIdentity();
 
   /**
    * Validity may depend on expiration date and possibly upstream conditions after authentication,
    * such as having had a certificate invalidated by an administrator.
-   * 
-   * @return
+   *
+   * @return a boolean.
    */
   boolean isValid();
 }

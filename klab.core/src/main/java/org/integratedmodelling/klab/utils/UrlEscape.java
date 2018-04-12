@@ -143,6 +143,7 @@ public class UrlEscape {
      * Escape a url.
      * Replaces 'invalid characters' with their Escaped code, i.e.
      * the questionmark (?) is escaped with %3F.
+     *
      * @param str the urls to escape
      * @return the escaped url.
      */
@@ -182,6 +183,7 @@ public class UrlEscape {
      * Unescape a url.
      * Replaces escapesequenced with the actual character.
      * i.e %3F is replaced with the the questionmark (?).
+     *
      * @param str the urls to unescape
      * @return the unescaped url.
      */

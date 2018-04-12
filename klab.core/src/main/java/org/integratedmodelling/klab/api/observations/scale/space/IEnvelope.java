@@ -17,54 +17,61 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 
 /**
  * Opaque interface for a referenced envelope.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IEnvelope extends IReferenced {
 
     /**
-     * 
-     * @return
+     * <p>getMinX.</p>
+     *
+     * @return a double.
      */
     double getMinX();
 
     /**
-     * 
-     * @return
+     * <p>getMaxX.</p>
+     *
+     * @return a double.
      */
     double getMaxX();
 
     /**
-     * 
-     * @return
+     * <p>getMinY.</p>
+     *
+     * @return a double.
      */
     double getMinY();
 
     /**
-     * 
-     * @return
+     * <p>getMaxY.</p>
+     *
+     * @return a double.
      */
     double getMaxY();
 
     /**
-     * 
-     * @return
+     * <p>asShape.</p>
+     *
+     * @return a {@link org.integratedmodelling.klab.api.observations.scale.space.IShape} object.
      */
     IShape asShape();
 
     
     /**
-     * 
-     * @param projection
-     * @param b
-     * @return
+     * <p>transform.</p>
+     *
+     * @param projection a {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection} object.
+     * @param b a boolean.
+     * @return a {@link org.integratedmodelling.klab.api.observations.scale.space.IEnvelope} object.
      */
     IEnvelope transform(IProjection projection, boolean b);
 
     /**
-     * 
-     * @return
+     * <p>getCenterCoordinates.</p>
+     *
+     * @return an array of {@link double} objects.
      */
     double[] getCenterCoordinates();
 }

@@ -25,15 +25,22 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * The Class ResourceSerializer.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class ResourceSerializer extends StdSerializer<Resource> {
 
   private static final long serialVersionUID = 7503848628165833367L;
 
+  /**
+   * <p>Constructor for ResourceSerializer.</p>
+   */
   protected ResourceSerializer() {
     super(Resource.class);
   }
 
+  /** {@inheritDoc} */
   @Override
   public void serialize(final Resource resource, JsonGenerator gen, SerializerProvider provider)
       throws IOException {

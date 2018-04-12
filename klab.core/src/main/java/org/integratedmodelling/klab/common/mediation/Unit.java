@@ -26,6 +26,9 @@ import org.integratedmodelling.klab.utils.Pair;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Unit.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Unit implements IUnit {
 
@@ -76,16 +79,19 @@ public class Unit implements IUnit {
   }
 
 
+  /** {@inheritDoc} */
   @Override
   public boolean isCompatible(IValueMediator other) {
     return other instanceof Unit && ((Unit) other)._unit.isCompatible(_unit);
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object o) {
     return o instanceof Unit && toString().equals(((Unit) o).toString());
   }
 
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return toString().hashCode();
@@ -122,6 +128,7 @@ public class Unit implements IUnit {
     System.out.println(convert(120, "m", "mm"));
   }
 
+  /** {@inheritDoc} */
   @Override
   public Number convert(Number value, IValueMediator unit) {
 
@@ -142,21 +149,25 @@ public class Unit implements IUnit {
     return _unit;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return statement;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IUnit multiply(IUnit unit) {
     return new Unit(_unit.times(((Unit) unit)._unit));
   }
 
+  /** {@inheritDoc} */
   @Override
   public IUnit divide(IUnit unit) {
     return new Unit(_unit.divide(((Unit) unit)._unit));
   }
 
+  /** {@inheritDoc} */
   @Override
   public IUnit scale(double scale) {
     return new Unit(_unit.times(scale));

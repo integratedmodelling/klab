@@ -36,6 +36,7 @@ import java.util.Map;
  * TODO API to review; actions and tests to be shifted to handler.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class DirectoryWatcher {
 
@@ -306,7 +307,7 @@ public class DirectoryWatcher {
      * Register the given directory with the WatchService.
      *
      * @param dir the dir
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws java.io.IOException Signals that an I/O exception has occurred.
      */
     public void watch(Path dir) throws IOException {
 
@@ -320,7 +321,7 @@ public class DirectoryWatcher {
      * Unwatch.
      *
      * @param dir the dir
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws java.io.IOException Signals that an I/O exception has occurred.
      */
     public void unwatch(Path dir) throws IOException {
 

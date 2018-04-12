@@ -17,7 +17,7 @@ public enum ObservationBuilder {
      * @param observer
      * @param namespace 
      * @param monitor 
-     * @return
+     * @return a new observer
      */
     public Observer build(IKimObserver observer, Namespace namespace, Monitor monitor) {
         return new Observer(observer, namespace, monitor);

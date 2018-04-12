@@ -299,7 +299,7 @@ public enum Kim {
          * Return a descriptor for the passed URN. Never return null - if a URN is unknown, just say so.
          * 
          * @param urn
-         * @return
+         * @return a URN descriptor
          */
         UrnDescriptor classifyUrn(String urn);
 
@@ -308,7 +308,8 @@ public enum Kim {
          * unknown or it's not declarable, return 0.
          * 
          * @param string
-         * @return
+         * @param statedType 
+         * @return the type
          */
         EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType);
 
@@ -477,8 +478,10 @@ public enum Kim {
 
     /**
      * Get the workspace containing the worldview and any library.
+     * @param libname 
+     * @param overridingProjects 
      * 
-     * @return
+     * @return the workspace
      */
     public KimWorkspace getLibrary(String libname, File... overridingProjects) {
 
@@ -812,7 +815,7 @@ public enum Kim {
      * empty, the call is valid. If null is returned, the function is unknown to the runtime.
      * 
      * @param call
-     * @param expectedReturnType
+     * @param target
      * @return a list of notifications, possibly empty, or null if the function is unknown.
      */
     public List<KimNotification> validateAnnotation(IKimAnnotation call, IKimStatement target) {
@@ -832,7 +835,7 @@ public enum Kim {
      * True if the function name is known to the runtime
      * 
      * @param name
-     * @return
+     * @return true if known
      */
     public boolean isFunctionKnown(String name) {
         return validatorCallback != null && validatorCallback.isFunctionKnown(name);
@@ -842,7 +845,7 @@ public enum Kim {
      * True if the function name is known to the runtime
      * 
      * @param name
-     * @return
+     * @return true if known
      */
     public boolean isAnnotationKnown(String name) {
         return validatorCallback != null && validatorCallback.isAnnotationKnown(name);
@@ -854,7 +857,7 @@ public enum Kim {
      * 
      * @param string
      * @param type
-     * @return
+     * @return the final type
      */
     public EnumSet<Type> checkCoreConcept(String string, EnumSet<Type> type) {
 

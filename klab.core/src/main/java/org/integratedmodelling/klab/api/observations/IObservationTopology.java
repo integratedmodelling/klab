@@ -26,8 +26,9 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  * and ITransition; the latter has multiplicity 1 in time from the point of view of an observer,
  * while the former may have higher order. A IScale can be therefore seen as a sequence of
  * ITransitions. A single ITransition may map to a IScale for a different observer.
- * 
+ *
  * @author Ferd
+ * @version $Id: $Id
  */
 public abstract interface IObservationTopology extends Iterable<IExtent> {
 
@@ -57,16 +58,16 @@ public abstract interface IObservationTopology extends Iterable<IExtent> {
    * Get the n-th extent. Index reflects the scale's inherent sorting and must be stable across
    * instances, i.e. if two scales have the same extents, they must be in the same order, and this
    * also applies to scales that are subsets.
-   * 
-   * @param index
+   *
+   * @param index a int.
    * @return the extent in position {@code index}
    */
   IExtent getExtent(int index);
 
   /**
    * Get the extent that observes the passed domain concept, or null if it does not exist.
-   * 
-   * @param domainConcept
+   *
+   * @param domainConcept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
    * @return the extent that observes the passed concept
    */
   IExtent getExtent(IConcept domainConcept);

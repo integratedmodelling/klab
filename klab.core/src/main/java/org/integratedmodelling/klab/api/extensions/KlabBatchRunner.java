@@ -25,8 +25,9 @@ import java.lang.annotation.Target;
 /**
  * Tags a class that will be used to run batch tasks by a kmodeler without Spring interface,
  * parameterized through command line parameters. Works like @Prototype.
- * 
+ *
  * @author Ferd
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

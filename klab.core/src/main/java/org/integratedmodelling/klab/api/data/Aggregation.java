@@ -22,9 +22,9 @@ package org.integratedmodelling.klab.api.data;
  * final observer with im:Maximum). MAJORITY will be the default for qualitative
  * and semi-qualitative observers; at some point we may want to add fuzzy
  * membership and other more sophisticated strategies for probabilistic observers.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public enum Aggregation {
     NONE,

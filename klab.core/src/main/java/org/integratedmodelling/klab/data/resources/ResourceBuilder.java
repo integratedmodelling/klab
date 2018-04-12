@@ -30,6 +30,9 @@ import org.integratedmodelling.klab.utils.NotificationUtils;
 
 /**
  * The Class ResourceBuilder.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class ResourceBuilder implements IResource.Builder {
 
@@ -43,6 +46,7 @@ public class ResourceBuilder implements IResource.Builder {
   private boolean             error             = false;
   private String              adapterType;
 
+  /** {@inheritDoc} */
   @Override
   public IResource build(String urn) {
 
@@ -59,18 +63,21 @@ public class ResourceBuilder implements IResource.Builder {
     return ret;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder setMetadata(String key, Object value) {
     metadata.put(key, value);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder setParameter(String key, Object value) {
     parameters.put(key, value);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder addError(Object... o) {
     notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.SEVERE));
@@ -78,47 +85,55 @@ public class ResourceBuilder implements IResource.Builder {
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder addWarning(Object... o) {
     notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.WARNING));
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder addInfo(Object... o) {
     notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.INFO));
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder setResourceVersion(Version v) {
     this.resourceVersion = v;
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder setResourceTimestamp(long timestamp) {
     this.resourceTimestamp = timestamp;
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder addHistory(INotification notification) {
     this.history.add(notification);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public ResourceBuilder setGeometry(IGeometry s) {
     this.geometry = s;
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean hasErrors() {
     return error;
   }
 
+  /** {@inheritDoc} */
   @Override
   public void setAdapterType(String string) {
     this.adapterType = string;

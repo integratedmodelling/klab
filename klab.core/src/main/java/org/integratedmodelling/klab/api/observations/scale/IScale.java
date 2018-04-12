@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  * The Interface IScale.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology<IScale> {
 
@@ -47,7 +48,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   /**
    * True if we have time and the time topology determines more than a single state. It's also in
    * IObservation, but it's convenient to duplicate it here too.
-   * 
+   *
    * @return true if distributed in time
    */
   boolean isTemporallyDistributed();
@@ -55,7 +56,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   /**
    * True if we have space and the space topology determines more than a single state. It's also in
    * IObservation, but it's convenient to duplicate it here too.
-   * 
+   *
    * @return true if distributed in space
    */
   boolean isSpatiallyDistributed();
@@ -72,7 +73,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   /**
    * Return the list of extents, ordered by contextualization priority (time, if present, will
    * always be first).
-   * 
+   *
    * @return the extents
    */
   List<IExtent> getExtents();
@@ -86,20 +87,19 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   boolean isEmpty();
 
   /**
+   * {@inheritDoc}
+   *
    * Return a new scale merging all extents from the passed parameter. Extents in common are merged
    * according to how the merge is implemented, any others are added as they are.
    * <p>
    * Must not modify the original scales.
-   * 
-   * @param coverage can pass a scale or an extent.
-   * @param how
-   *
-   * @return a new merged scale
    */
   @Override
   IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
 
   /**
+   * {@inheritDoc}
+   *
    * The scale implementation of {@link ILocator#at(ILocator)} always return a scale and can use an
    * extent, other scale, or ITime.INITIALIZATION as locator.
    */
@@ -109,10 +109,10 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   /**
    * Mimics {@link org.integratedmodelling.kim.api.data.IGeometry.Dimension#shape()} passing the
    * type of the desired dimension.
-   * 
+   *
    * @param dimension the dimension we need the shape of
    * @return the shape of the passed dimension
-   * @throws IllegalArgumentException if the dimension is not known in this scale
+   * @throws java.lang.IllegalArgumentException if the dimension is not known in this scale
    */
   public long[] shape(Type dimension);
 

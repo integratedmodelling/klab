@@ -17,14 +17,15 @@ package org.integratedmodelling.klab.api.errormanagement;
 
 /**
  * Tags an info-level notification.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface ICompileInfo extends ICompileNotification {
     
     /**
      * Info may have categories for bookkeeping and styling.
+     *
      * @return the category, or null.
      */
     String getCategory();

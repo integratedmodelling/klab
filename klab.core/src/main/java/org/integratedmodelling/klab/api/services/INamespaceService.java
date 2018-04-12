@@ -19,9 +19,18 @@ import org.integratedmodelling.klab.api.model.INamespace;
 
 /**
  * The Interface INamespaceService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface INamespaceService {
 
+    /**
+     * <p>getNamespace.</p>
+     *
+     * @param namespaceId a {@link java.lang.String} object.
+     * @return a {@link org.integratedmodelling.klab.api.model.INamespace} object.
+     */
     INamespace getNamespace(String namespaceId);
     
 }

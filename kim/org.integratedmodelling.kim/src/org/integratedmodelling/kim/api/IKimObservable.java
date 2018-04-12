@@ -6,55 +6,55 @@ public interface IKimObservable extends IKimStatement {
 
     /**
      * 
-     * @return
+     * @return the main concept
      */
     IKimConcept getMain();
 
     /**
      * 
-     * @return
+     * @return the 'down to' concept
      */
     IKimConcept getDownTo();
 
     /**
      * 
-     * @return
+     * @return the 'by' concept
      */
     IKimConcept getBy();
 
     /**
      * 
-     * @return
+     * @return the range
      */
     Range getRange();
 
     /**
      * 
-     * @return
+     * @return the unit
      */
     String getUnit();
 
     /**
      * 
-     * @return
+     * @return the currency
      */
     String getCurrency();
 
     /**
      * 
-     * @return
+     * @return the 'named' name
      */
     String getFormalName();
 
     /**
      * 
-     * @return
+     * @return the literal value
      */
     Object getValue();
 
     /**
      * 
-     * @return
+     * @return true if abstract
      */
     boolean isAbstractObservable();
 
@@ -65,14 +65,14 @@ public interface IKimObservable extends IKimStatement {
      * refer to a value previously defined in a 'define' statement, or to an attribute to be looked up in a
      * referenced resource.
      * 
-     * @return
+     * @return true if identified by an attribute to be resolved
      */
     boolean hasAttributeIdentifier();
 
     /**
      * True if the 'optional' clause has been passed.
      * 
-     * @return
+     * @return true if optional
      */
     boolean isOptional();
 

@@ -20,16 +20,16 @@ package org.integratedmodelling.klab.api.auth;
  * hierarchy through exposing their parent token, which is only null in top-level identities, i.e.
  * IServer. Identity objects are passed to the API in lieu of their raw tokens, to give quick access
  * to the identity's metadata and their lineage.
- * 
+ *
  * Identities also correspond to roles for Spring security in the kmodeler and klab-community
  * projects.
- * 
+ *
  * Identities for now have the following parent/child relationships:
- * 
+ *
  * <pre>
  * 	IIdentity (abstract)
  * 		IPartner [top-level: each server is owned by a partner]
- * 			INode [physically a server on the k.LAB network; access point for IUser] 
+ * 			INode [physically a server on the k.LAB network; access point for IUser]
  * 				IUser (authenticated by IServer, directly or indirectly)
  * 					INetworkSession
  *              		IEngine (has a IUser (automatically promoted to IEngineUser) but can authenticate others as IEngineUser)
@@ -39,9 +39,9 @@ package org.integratedmodelling.klab.api.auth;
  * 									    ITask
  *                                  IScript
  * </pre>
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public abstract interface IIdentity {
 
@@ -99,42 +99,51 @@ public abstract interface IIdentity {
     SCRIPT
   }
 
+  /** Constant <code>TYPE</code> */
   Type TYPE = null;
 
   /**
    * Authorization token retrieved upon authentication. Assumed to expire at some sensible point in
    * time, if stored it should be validated before use and refreshed if necessary.
-   * 
+   *
    * @return a token to use as authentication when dealing with the engine.
    */
   String getToken();
 
   /**
    * Return the parent identity. Null only in IM_PARTNER identities.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
    */
   IIdentity getParentIdentity();
 
   /**
    * True if the identity is of the passed type.
-   * 
-   * @param type
-   * @return
+   *
+   * @param type a {@link org.integratedmodelling.klab.api.auth.IIdentity.Type} object.
+   * @return a boolean.
    */
   boolean is(Type type);
 
   /**
    * Get the parent identity of the passed type.
-   * 
-   * @param type
-   * 
+   *
+   * @param type a {@link java.lang.Class} object.
    * @return the desired identity or null.
+   * @param <T> a T object.
    */
   <T extends IIdentity> T getParentIdentity(Class<T> type);
 
   /*
    *  Provided to simplify implementing the getParentIdentity method.
+   */
+  /**
+   * <p>findParent.</p>
+   *
+   * @param child a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
+   * @param type a {@link java.lang.Class} object.
+   * @param <T> a T object.
+   * @return a T object.
    */
   @SuppressWarnings("unchecked")
   static <T extends IIdentity> T findParent(IIdentity child, Class<T> type) {

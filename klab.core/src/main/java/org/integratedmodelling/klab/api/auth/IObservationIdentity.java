@@ -17,11 +17,16 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface IObservationIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IObservationIdentity extends IRuntimeIdentity {
 
+    /** Constant <code>type</code> */
     Type type = Type.OBSERVATION;
     
+    /** {@inheritDoc} */
     @Override
     IEngineSessionIdentity getParentIdentity();
 }

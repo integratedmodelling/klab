@@ -17,14 +17,37 @@ package org.integratedmodelling.klab.api.services;
 
 /**
  * The Interface ILoggingService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ILoggingService {
   
+  /**
+   * <p>info.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void info(Object... o);
 
+  /**
+   * <p>warn.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void warn(Object... o);
 
+  /**
+   * <p>error.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void error(Object... o);
 
+  /**
+   * <p>debug.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void debug(Object... o);
 }

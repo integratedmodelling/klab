@@ -288,7 +288,7 @@ public class Range implements IValueMediator {
 	 * Record the passed value as a part of the range, adjusting boundaries as
 	 * needed.
 	 * 
-	 * @param conceptIndex
+	 * @param value
 	 */
 	public void adapt(double value) {
 
@@ -307,7 +307,7 @@ public class Range implements IValueMediator {
 	 * Normalize the passed value to this range, which must include it.
 	 * 
 	 * @param value
-	 * @return
+	 * @return the normalized value
 	 */
 	public double normalize(double value) {
 

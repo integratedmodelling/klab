@@ -10,7 +10,7 @@ public interface IKimScope extends Serializable {
     /**
      * Return a parseable string that describes the location of this code scope.
      * 
-     * @return
+     * @return the location
      */
     String getLocationDescriptor();
 

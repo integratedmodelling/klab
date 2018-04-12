@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
 // TODO: Auto-generated Javadoc
 /**
  * The Class StringUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class StringUtils extends org.apache.commons.lang.StringUtils {
 
@@ -95,7 +98,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      *
      * @param string the string
      * @param pattern the pattern
-     * @return true, if successful
+     * @return a boolean.
      */
     public static boolean matchWildcards(String string, String pattern) {
     	return new WildcardMatcher().match(string, pattern);
@@ -234,11 +237,11 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Repeat.
      *
-     * @param c the c
-     * @param n the n
-     * @return the string
+     * Repeat.
+     * @param c 
+     * @param n 
+     * @return the repeated string
      */
     public static String repeat(char c, int n) {
         String ret = "";
@@ -464,7 +467,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      *
      * @param nspc the nspc
      * @param flags the flags
-     * @return true, if successful
+     * @return a boolean.
      */
     public static boolean containsAny(String nspc, int flags) {
 

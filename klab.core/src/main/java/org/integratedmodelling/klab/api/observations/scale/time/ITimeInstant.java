@@ -17,9 +17,17 @@ package org.integratedmodelling.klab.api.observations.scale.time;
 
 /**
  * The Interface ITimeInstant.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ITimeInstant extends Comparable<ITimeInstant> {
 
+    /**
+     * <p>getMillis.</p>
+     *
+     * @return a long.
+     */
     long getMillis();
 
 }

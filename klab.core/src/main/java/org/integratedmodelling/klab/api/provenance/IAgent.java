@@ -22,14 +22,20 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
  * An agent in k.LAB is anything that can make observations. All such agents have a k.LAB
- * {@link IIdentity}. The agent corresponding to a {@link IEngineIdentity} tags choices made by the
+ * {@link org.integratedmodelling.klab.api.auth.IIdentity}. The agent corresponding to a {@link org.integratedmodelling.klab.api.auth.IEngineIdentity} tags choices made by the
  * AI in the system. Observations asserted and made by users using the API will have agents tagged
- * with {@link IUserIdentity}.
- * 
+ * with {@link org.integratedmodelling.klab.api.auth.IUserIdentity}.
+ *
  * @author Ferd
+ * @version $Id: $Id
  */
 public interface IAgent extends Node {
 
+  /**
+   * <p>getIdentity.</p>
+   *
+   * @return a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
+   */
   IIdentity getIdentity();
 
 }

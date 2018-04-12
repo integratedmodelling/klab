@@ -17,8 +17,12 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface IPartnerIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IPartnerIdentity extends IIdentity {
     
+    /** Constant <code>TYPE</code> */
     Type TYPE = Type.IM_PARTNER;
 }

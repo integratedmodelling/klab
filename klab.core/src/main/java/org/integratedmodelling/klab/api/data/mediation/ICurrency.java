@@ -19,10 +19,15 @@ import org.integratedmodelling.kim.api.IValueMediator;
 
 /**
  * The Interface ICurrency.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ICurrency extends IValueMediator {
     
     /**
+     * <p>isMonetary.</p>
+     *
      * @return true if monetary
      */
     boolean isMonetary();

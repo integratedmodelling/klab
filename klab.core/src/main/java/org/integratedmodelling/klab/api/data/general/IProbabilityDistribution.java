@@ -17,15 +17,38 @@ package org.integratedmodelling.klab.api.data.general;
 
 /**
  * The Interface IProbabilityDistribution.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IProbabilityDistribution {
 
+    /**
+     * <p>getData.</p>
+     *
+     * @return an array of {@link double} objects.
+     */
     double[] getData();
 
+    /**
+     * <p>getRanges.</p>
+     *
+     * @return an array of {@link double} objects.
+     */
     double[] getRanges();
 
+    /**
+     * <p>getMean.</p>
+     *
+     * @return a double.
+     */
     double getMean();
 
+    /**
+     * <p>getUncertainty.</p>
+     *
+     * @return a double.
+     */
     double getUncertainty();
 
 }

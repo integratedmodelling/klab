@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * @author ferdinando.villa
  * @param <T> the generic type
+ * @version $Id: $Id
  */
 public class FileCatalog<T> extends HashMap<String, T> {
 
@@ -100,7 +101,7 @@ public class FileCatalog<T> extends HashMap<String, T> {
   /**
    * Checks for errors.
    *
-   * @return true, if successful
+   * @return a boolean.
    */
   public boolean hasErrors() {
     return this.error;
@@ -111,7 +112,7 @@ public class FileCatalog<T> extends HashMap<String, T> {
    *
    * @param stream the stream
    * @return true if no errors. Non-existing file is not an error.
-   * @throws ClassCastException if the data read are not of the type configured
+   * @throws java.lang.ClassCastException if the data read are not of the type configured
    */
   public boolean synchronize(InputStream stream) {
 

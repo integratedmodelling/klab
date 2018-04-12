@@ -20,6 +20,9 @@ import org.integratedmodelling.klab.api.auth.IScriptIdentity;
 
 /**
  * The Interface IScript.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IScript extends IScriptIdentity, Future<Object> {
 

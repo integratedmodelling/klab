@@ -21,9 +21,9 @@ package org.integratedmodelling.klab.api.knowledge;
  * axioms than it is to explicity create and restrict concepts and properties. Axioms must
  * be comparable and hashable (so they can be put in sets with no duplications) and
  * ontologies must be able to define themselves completely from and as a set of axioms.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface IAxiom extends Iterable<Object> {
 

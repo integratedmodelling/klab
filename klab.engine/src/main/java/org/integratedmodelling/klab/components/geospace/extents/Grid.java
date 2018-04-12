@@ -952,7 +952,7 @@ public class Grid extends Area implements IGrid {
    * handles the non-mediation case.
    * 
    * @param index
-   * @return
+   * @return the offset of the cell
    */
   public long getOffset(Cell index) {
     if (index instanceof CellImpl && ((CellImpl) index).getGrid().equals(this)) {

@@ -28,15 +28,15 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 /**
  * <p>
  * Any observation made in k.LAB must be done within a valid user session. Sessions are obtained
- * from a running {@link IEngine} using {@link IEngine#createSession()} or
- * {@link IEngine#createSession(IEngineUserIdentity)}.
+ * from a running {@link org.integratedmodelling.klab.api.engine.IEngine} using {@link org.integratedmodelling.klab.api.engine.IEngine#createSession()} or
+ * {@link org.integratedmodelling.klab.api.engine.IEngine#createSession(IEngineUserIdentity)}.
  * </p>
- * 
+ *
  * <p>
- * Sessions must be properly closed when not needed anymore. A ISession is a {@link Closeable}, so a
+ * Sessions must be properly closed when not needed anymore. A ISession is a {@link java.io.Closeable}, so a
  * typical usage is
  * </p>
- * 
+ *
  * <pre>
  * try (ISession session = engine.createSession()) {
  *   // do things
@@ -44,25 +44,25 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  *   // complain
  * }
  * </pre>
- * 
+ *
  * <p>
- * A session is also an {@link IIdentity}, and its token must authenticate those engine API calls
+ * A session is also an {@link org.integratedmodelling.klab.api.auth.IIdentity}, and its token must authenticate those engine API calls
  * that are session-aware.
  * </p>
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ISession extends IEngineSessionIdentity, Closeable {
 
   /**
    * The observation action called on ISession always creates a new root subject. The URN must
-   * specify a {@link IObserver}.
-   * 
+   * specify a {@link org.integratedmodelling.klab.api.model.IObserver}.
+   *
    * @param urn specifying a (local or remote) observer
    * @param scenarios names of any scenario namespaces to use in resolution
    * @return a Future that is observing the URN.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
 

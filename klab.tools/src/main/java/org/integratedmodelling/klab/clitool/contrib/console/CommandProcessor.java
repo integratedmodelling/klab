@@ -77,7 +77,6 @@ public class CommandProcessor {
      * This method should just send the string to print if no valid command is
      * entered.
      * @param input The String that might possibly contain a command.
-     * @param pack the current command package (null = main)
      */
     public void processCommand(String input) {
         output(input + "\n");

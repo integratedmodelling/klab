@@ -23,17 +23,45 @@ import org.integratedmodelling.klab.api.model.INamespace;
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IProject.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IProject {
 
+    /**
+     * <p>getName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getName();
 
+    /**
+     * <p>getRoot.</p>
+     *
+     * @return a {@link java.io.File} object.
+     */
     File getRoot();
 
+    /**
+     * <p>getNamespaces.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     List<INamespace> getNamespaces();
 
+    /**
+     * <p>getPrerequisites.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     List<IProject> getPrerequisites();
 
+    /**
+     * <p>getVersion.</p>
+     *
+     * @return a {@link org.integratedmodelling.klab.Version} object.
+     */
     Version getVersion();
 
     /**
@@ -41,29 +69,30 @@ public interface IProject {
      * "user knowledge" namespace is permitted to have only aliases (defined using "is" which is interpreted
      * differently) and resides in META_INF/knowledge.kim. Non-worldview projects should only define concepts
      * this way; having a namespace define concepts makes the namespace "dirty" and the project non-shareable.
-     * 
+     *
      * @return the user knowledge namespace. Only null in worldviews.
      */
     INamespace getUserKnowledge();
 
     /**
      * True if the project has no namespaces that define non-worldview knowledge (see
-     * {@link INamespace#isCanonical()}).
-     * 
+     * {@link org.integratedmodelling.klab.api.model.INamespace#isCanonical()}).
+     *
      * @return true if project is canonital
      */
     public boolean isCanonical();
 
     /**
      * True if this project originates from a remote node and not from a local workspace.
-     * 
-     * @return
+     *
+     * @return a boolean.
      */
     boolean isRemote();
 
     /**
      * Name of originating node. Not null implies {@link #isRemote()} == true.
-     * @return
+     *
+     * @return a {@link java.lang.String} object.
      */
     String getOriginatingNodeId();
 }

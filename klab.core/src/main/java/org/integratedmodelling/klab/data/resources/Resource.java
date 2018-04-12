@@ -37,17 +37,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 // TODO: Auto-generated Javadoc
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
- * call) to a IResource; the IResource can then be contextualized to a {@link IGeometry} (using the
- * <code>get</code> API call) to produce the corresponding {@link IKlabData} that will be used to
+ * call) to a IResource; the IResource can then be contextualized to a {@link org.integratedmodelling.kim.api.data.IGeometry} (using the
+ * <code>get</code> API call) to produce the corresponding {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} that will be used to
  * build {@link IArtifact artifacts}.
- * 
- * When a URN is referenced in k.IM, it is turned into a {@link IComputableResource} which is passed
- * to the {@link IRuntimeProvider runtime} and turned into a KDL function call or literal, which
- * encodes their computation or resolution. Executing the KDL call as part of a {@link IDataflow}
- * builds the {@link IArtifact}.
- * 
- * @author Ferd
  *
+ * When a URN is referenced in k.IM, it is turned into a {@link org.integratedmodelling.kim.api.IComputableResource} which is passed
+ * to the {@link IRuntimeProvider runtime} and turned into a KDL function call or literal, which
+ * encodes their computation or resolution. Executing the KDL call as part of a {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow}
+ * builds the {@link org.integratedmodelling.klab.api.provenance.IArtifact}.
+ *
+ * @author Ferd
+ * @version $Id: $Id
  */
 @JsonSerialize(using = ResourceSerializer.class)
 @JsonDeserialize(using = ResourceDeserializer.class)
@@ -84,45 +84,58 @@ public class Resource implements IResource {
     return ret;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Version getVersion() {
     return version;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IMetadata getMetadata() {
     return metadata;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String getUrn() {
     return urn;
   }
 
+  /** {@inheritDoc} */
   @Override
   public List<INotification> getHistory() {
     return history;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IGeometry getGeometry() {
     return geometry;
   }
 
+  /** {@inheritDoc} */
   @Override
   public IParameters getParameters() {
     return parameters;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String getAdapterType() {
     return adapterType;
   }
 
+  /**
+   * <p>Getter for the field <code>resourceTimestamp</code>.</p>
+   *
+   * @return a long.
+   */
   public long getResourceTimestamp() {
     return resourceTimestamp;
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean hasErrors() {
     if (notifications != null) {

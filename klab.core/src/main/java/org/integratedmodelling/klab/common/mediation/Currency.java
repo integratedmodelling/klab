@@ -26,6 +26,9 @@ import org.joda.time.DateTime;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Currency.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Currency implements ICurrency {
 
@@ -71,7 +74,7 @@ public class Currency implements ICurrency {
     /**
      * Checks if is ok.
      *
-     * @return true, if is ok
+     * @return a boolean.
      */
     public boolean isOK() {
         return ok;
@@ -111,11 +114,13 @@ public class Currency implements ICurrency {
         this.concept = concept;
     }  
 
+    /** {@inheritDoc} */
     @Override
     public boolean isMonetary() {
         return currency != null && date != null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Number convert(Number d, IValueMediator scale) {
         if (!(scale instanceof ICurrency)) {
@@ -128,6 +133,7 @@ public class Currency implements ICurrency {
         return d;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         if (code != null) {
@@ -143,6 +149,7 @@ public class Currency implements ICurrency {
         return ret;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isCompatible(IValueMediator other) {
         return other instanceof Currency && ((Currency) other).canMediate(this);
@@ -167,6 +174,7 @@ public class Currency implements ICurrency {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -175,6 +183,7 @@ public class Currency implements ICurrency {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

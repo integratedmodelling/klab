@@ -19,6 +19,9 @@ import java.util.Map;
 
 /**
  * The Interface IResourceCatalog.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IResourceCatalog extends Map<String, IResource> {
 

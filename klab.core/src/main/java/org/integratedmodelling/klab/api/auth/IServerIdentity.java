@@ -19,10 +19,23 @@ import java.util.Date;
 
 /**
  * The Interface IServerIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface IServerIdentity extends IRuntimeIdentity {
     
+    /**
+     * <p>getName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getName();
     
+    /**
+     * <p>getBootTime.</p>
+     *
+     * @return a {@link java.util.Date} object.
+     */
     Date getBootTime();
 }

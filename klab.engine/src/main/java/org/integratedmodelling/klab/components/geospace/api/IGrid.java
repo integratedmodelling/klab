@@ -150,7 +150,7 @@ public interface IGrid extends Iterable<Cell> {
 	 * 
 	 * @param xCoordinate
 	 * @param direction
-	 * @return
+	 * @return the new X coordinate
 	 */
 	double snapX(double xCoordinate, Direction direction);
 	
@@ -158,7 +158,7 @@ public interface IGrid extends Iterable<Cell> {
 	 * 
 	 * @param yCoordinate
 	 * @param direction
-	 * @return
+	 * @return the new Y coordinate
 	 */
 	double snapY(double yCoordinate, Direction direction);
 	
@@ -187,7 +187,7 @@ public interface IGrid extends Iterable<Cell> {
      * 
      * @param unit 
      *
-     * @return
+     * @return the cell area
      */
     double getCellArea(IUnit unit);
 

@@ -21,15 +21,19 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * The Interface IResourceEncoder.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IResourceEncoder {
   
   /**
-   * 
-   * @param resource
-   * @param geometry
+   * <p>getEncodedData.</p>
+   *
+   * @param resource a {@link org.integratedmodelling.klab.api.data.IResource} object.
+   * @param geometry a {@link org.integratedmodelling.kim.api.data.IGeometry} object.
    * @param monitor for notifications and identity retrieval
-   * @return
+   * @return a {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} object.
    */
   IKlabData getEncodedData(IResource resource, IGeometry geometry, IMonitor monitor);
 }

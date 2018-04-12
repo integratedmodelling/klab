@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.data;
 // TODO: Auto-generated Javadoc
 /**
  * The Enum Aggregators.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public enum Aggregators {
 

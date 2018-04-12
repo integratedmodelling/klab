@@ -494,7 +494,7 @@ public class Shape extends AbstractExtent implements IShape {
   /**
    * WKB code without projection
    * 
-   * @return
+   * @return the WKB code
    */
   public String getWKB() {
     return WKBWriter.toHex(wkbWriter.write(geometry));

@@ -29,50 +29,50 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Services related to dataflows and the KDL language.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IDataflowService {
 
   /**
    * Read and return the dataflow specifications corresponding to the passed
    * input, which is expected to contain valid KDL.
-   * 
-   * @param input
+   *
+   * @param input a {@link java.io.InputStream} object.
    * @return the parsed dataflow.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   IKdlDataflow declare(InputStream input) throws KlabException;
 
   /**
    * Read and return the dataflow specifications corresponding to the passed
    * input file, which is expected to contain valid KDL.
-   * 
-   * @param file
+   *
+   * @param file a {@link java.io.File} object.
    * @return the parsed dataflow.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   IKdlDataflow declare(File file) throws KlabException;
 
   /**
    * Read and return the dataflow specifications corresponding to the passed
    * input URL, which is expected to contain valid KDL.
-   * 
-   * @param url
+   *
+   * @param url a {@link java.net.URL} object.
    * @return the parsed dataflow.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   IKdlDataflow declare(URL url) throws KlabException;
 
   /**
    * Compile a resolution scope into a dataflow computing the passed artifact type.
-   * 
-   * @param name
-   * @param scope
-   * @param cls
+   *
+   * @param name a {@link java.lang.String} object.
+   * @param scope a {@link org.integratedmodelling.klab.api.resolution.IResolutionScope} object.
    * @return a dataflow that will compute an artifact of the requested type when run.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
+   * @param <T> a T object.
    */
   <T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope)
       throws KlabException;
@@ -82,8 +82,8 @@ public interface IDataflowService {
    * is returned, any actions corresponding to the first will be applied before, and the second
    * after, the transition event: e.g. definition vs. resolution or (last) transition vs.
    * termination.
-   * 
-   * @param transition
+   *
+   * @param transition a {@link org.integratedmodelling.kim.api.data.ILocator} object.
    * @return all pertaining triggers. Possibly empty, never null.
    */
   List<Trigger> getActionTriggersFor(ILocator transition);

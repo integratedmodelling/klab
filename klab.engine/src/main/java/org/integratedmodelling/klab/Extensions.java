@@ -187,7 +187,7 @@ public enum Extensions implements IExtensionService {
   /**
    * TODO! These are the Groovy/expr extension packages.
    * 
-   * @return
+   * @return all the Kim imports
    */
   public Collection<Class<?>> getKimImports() {
     List<Class<?>> ret = new ArrayList<>();

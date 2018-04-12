@@ -23,29 +23,29 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 /**
  * This service holds the catalog of the k.IM annotations recognized by the system and acts as a gateway for
  * their processing. It also provides the point of extension for supporting annotations other than the system ones.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IAnnotationService {
 
     /**
      * If an annotation is recognized, return the corresponding
      * prototype. Otherwise return null.
-     * 
-     * @param annotation
-     * @return 
+     *
+     * @param annotation a {@link java.lang.String} object.
+     * @return a {@link org.integratedmodelling.kim.api.IPrototype} object.
      */
     IPrototype getPrototype(String annotation);
     
     
     /**
      * Process the passed annotation on the passed object.
-     * 
-     * @param annotation
-     * @param object
-     * @param monitor 
-     * @return
+     *
+     * @param annotation a {@link org.integratedmodelling.kim.api.IKimAnnotation} object.
+     * @param object a {@link org.integratedmodelling.klab.api.model.IKimObject} object.
+     * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+     * @return a {@link java.lang.Object} object.
      */
     Object process(IKimAnnotation annotation, IKimObject object, IMonitor monitor);
     

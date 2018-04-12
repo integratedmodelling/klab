@@ -65,8 +65,6 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
  * @author Ioannis N. Athanasiadis
  * 
  * @see IKimConceptStatement
- * @see IProperty
- * @see IKnowledgeManager
  */
 public final class SemanticType implements Serializable {
 

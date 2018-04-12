@@ -23,6 +23,9 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Metadata.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Metadata extends Parameters implements IMetadata {
 

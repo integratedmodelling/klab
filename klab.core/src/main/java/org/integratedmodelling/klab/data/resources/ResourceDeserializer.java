@@ -33,6 +33,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 // TODO: Auto-generated Javadoc
 /**
  * The Class ResourceDeserializer.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class ResourceDeserializer extends StdDeserializer<Resource> {
 
@@ -45,6 +48,7 @@ public class ResourceDeserializer extends StdDeserializer<Resource> {
     super(Resource.class);
   }
 
+  /** {@inheritDoc} */
   @Override
   public Resource deserialize(JsonParser jp, DeserializationContext ctxt)
       throws IOException, JsonProcessingException {

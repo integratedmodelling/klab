@@ -159,7 +159,7 @@ public class GroovyExpressionPreprocessor {
 	/**
 	 * Return the known identifiers that were used in a scalar context
 	 * 
-	 * @return
+	 * @return all scalar identifiers
 	 */
 	public Set<String> getScalarIdentifiers() {
 		return scalarIds;
@@ -168,7 +168,7 @@ public class GroovyExpressionPreprocessor {
 	/**
 	 * Return the known identifiers that were used as objects
 	 * 
-	 * @return
+	 * @return all object identifiers
 	 */
 	public Set<String> getObjectIdentifiers() {
 		return objectIds;

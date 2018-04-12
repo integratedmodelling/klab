@@ -104,7 +104,7 @@ public interface IPrototype {
 
     /**
      * 
-     * @return
+     * @return the argument name
      */
     String getName();
 
@@ -113,13 +113,13 @@ public interface IPrototype {
      * Short name for options. May be computed automatically if not given (KDL has no semantic
      * support for this).
      *
-     * @return
+     * @return the argument short name
      */
     String getShortName();
 
     /**
      * 
-     * @return
+     * @return the description
      */
     String getDescription();
 
@@ -127,13 +127,13 @@ public interface IPrototype {
      * The distinction option/argument is only relevant in CLI usage. Options are always also
      * optional.
      * 
-     * @return
+     * @return true if option
      */
     boolean isOption();
 
     /**
      * 
-     * @return
+     * @return true if optional
      */
     boolean isOptional();
 
@@ -154,7 +154,7 @@ public interface IPrototype {
 
     /**
      * 
-     * @return
+     * @return the type
      */
     Type getType();
   }

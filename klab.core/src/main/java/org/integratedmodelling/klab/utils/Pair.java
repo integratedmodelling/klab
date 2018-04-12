@@ -23,6 +23,8 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
  *
  * @param <T1> the generic type
  * @param <T2> the generic type
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Pair<T1, T2> implements IPair<T1, T2> {
 
@@ -79,19 +81,31 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
         this.second = newValue;
     }
 
+    /**
+     * <p>Getter for the field <code>first</code>.</p>
+     *
+     * @return a T1 object.
+     */
     public T1 getFirst() {
         return first;
     }
 
+    /**
+     * <p>Getter for the field <code>second</code>.</p>
+     *
+     * @return a T2 object.
+     */
     public T2 getSecond() {
         return second;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "{" + getFirst() + "," + getSecond() + "}";
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
 
@@ -101,6 +115,7 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
         return cmpObj(first, ((Pair<?, ?>) obj).first) && cmpObj(first, ((Pair<?, ?>) obj).second);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return (first == null ? 0 : first.hashCode()) + (second == null ? 0 : second.hashCode());

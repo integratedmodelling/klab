@@ -20,9 +20,18 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 
 /**
  * The Interface IServer.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IServer {
 
+    /**
+     * <p>authenticateUser.</p>
+     *
+     * @param credentials a {@link org.integratedmodelling.klab.api.auth.IUserCredentials} object.
+     * @return a {@link org.integratedmodelling.klab.api.auth.IUserIdentity} object.
+     */
     IUserIdentity authenticateUser(IUserCredentials credentials);
     
 }

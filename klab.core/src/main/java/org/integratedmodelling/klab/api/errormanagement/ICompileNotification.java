@@ -21,27 +21,29 @@ import org.integratedmodelling.klab.api.model.INamespace;
 /**
  * Base class for anything that needs to be notified linked to a line of k.IM code - info, error, warning.
  * The compiler produces a set of these in each namespace.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface ICompileNotification {
 
     /**
      * May be null (e.g. for code snippets read from the console). Usually isn't.
+     *
      * @return the namespace for the notification
      */
     INamespace getNamespace();
 
     /**
      * Get the most specific statement where the notification originated.
-     * 
-     * @return
+     *
+     * @return a {@link org.integratedmodelling.kim.api.IKimStatement} object.
      */
     IKimStatement getStatement();
     
     /**
-     * 
+     * <p>getMessage.</p>
+     *
      * @return the message notified
      */
     String getMessage();

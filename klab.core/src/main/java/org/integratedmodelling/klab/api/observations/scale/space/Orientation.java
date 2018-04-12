@@ -16,11 +16,11 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 /**
- * Geographic orientations for a Moore neighborhood 2D model, constants 
+ * Geographic orientations for a Moore neighborhood 2D model, constants
  * chosen to represent the actual geographic heading.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public enum Orientation {
 

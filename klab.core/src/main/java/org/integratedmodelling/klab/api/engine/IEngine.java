@@ -25,29 +25,31 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * The Interface IEngine.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IEngine extends IEngineIdentity, IServer {
 
     /**
      * Return the data structure that describes the engine's capabilities.
-     * 
+     *
      * @return the engine's capabilities
      */
     ICapabilities getCapabilities();
 
     /**
-     * Create a new session for the user who owns the engine. 
-     * 
-     * @param user
-     * @return a new session 
+     * Create a new session for the user who owns the engine.
+     *
+     * @return a new session
      */
     ISession createSession();
 
     /**
-     * Create a new session for the named user. 
-     * 
-     * @param user
-     * @return a new session 
+     * Create a new session for the named user.
+     *
+     * @param user a {@link org.integratedmodelling.klab.api.auth.IEngineUserIdentity} object.
+     * @return a new session
      */
     ISession createSession(IEngineUserIdentity user);
 
@@ -55,21 +57,21 @@ public interface IEngine extends IEngineIdentity, IServer {
      * Engines have the ability to run a single-file, self-contained 'script' that can either be a test
      * namespace (containing a single observation with local resolvers and annotated with test annotations) or
      * a Groovy script with batch commands for the engine. The result is always the last context computed.
-     * 
+     *
      * KDL dataflows should also be runnable through this one, although they need a context to be set before
      * (API to be finalized later).
-     * 
+     *
      * A specialized test engine will be provided that will automatically compare the context with constraints
      * set through annotations.
-     * 
+     *
      * FIXME this should (also?) return the IScriptIdentity, which is a Future<IContext> so the user does what
      * they want with it, passing it to an executor. We may want both calls, to allow the simplest usage and
      * the flexible one.
-     * 
+     *
      * @param script
      *            a URL pointing to a self-contained script. Must have no imports.
-     * @return the running script (a {@link Future}).
-     * @throws KlabException
+     * @return the running script (a {@link java.util.concurrent.Future}).
+     * @throws org.integratedmodelling.klab.exceptions.KlabException
      */
     IScript run(URL script) throws KlabException;
 

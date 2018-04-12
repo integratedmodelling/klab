@@ -26,6 +26,7 @@ import java.util.List;
  * @author Ferd
  * @param <T1> the generic type
  * @param <T2> the generic type
+ * @version $Id: $Id
  */
 public class MatchedSorter<T1, T2> {
 

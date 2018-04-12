@@ -17,9 +17,17 @@ package org.integratedmodelling.klab.api.knowledge;
 
 /**
  * The Interface ISemantic.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ISemantic {
     
+    /**
+     * <p>getType.</p>
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+     */
     IConcept getType();
     
 }

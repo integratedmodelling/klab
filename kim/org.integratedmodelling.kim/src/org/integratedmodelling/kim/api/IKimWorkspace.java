@@ -21,7 +21,7 @@ public interface IKimWorkspace {
     /**
      * Names of all projects managed under this workspace.
      * 
-     * @return
+     * @return all project names
      */
     Collection<String> getProjectNames();
 

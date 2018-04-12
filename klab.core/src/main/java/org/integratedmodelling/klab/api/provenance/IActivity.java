@@ -24,26 +24,37 @@ import java.util.Optional;
  * in a causal graph that is independent from the primary graph. Actions that are not caused by
  * another action are called "primary" and can be obtained in chronological order from the
  * provenance graph.
- * 
+ *
  * @author Ferd
+ * @version $Id: $Id
  */
 public interface IActivity {
 
+  /**
+   * <p>getStart.</p>
+   *
+   * @return a long.
+   */
   long getStart();
 
+  /**
+   * <p>getEnd.</p>
+   *
+   * @return a long.
+   */
   long getEnd();
 
   /**
    * If the action was caused by another action, return the action that caused it.
-   * 
-   * @return
+   *
+   * @return a {@link java.util.Optional} object.
    */
   Optional<IActivity> getCause();
 
   /**
    * Actions are made by agents. We keep them with the actions and out of the graph.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
    */
   IAgent getAgent();
 

@@ -20,31 +20,56 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
 /**
- * The k.LAB runtime. 
- * 
- * @author ferdinando.villa
+ * The k.LAB runtime.
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IRuntimeService {
 
+  /**
+   * <p>info.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void info(Object... o);
 
+  /**
+   * <p>warn.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void warn(Object... o);
 
+  /**
+   * <p>error.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void error(Object... o);
 
+  /**
+   * <p>debug.</p>
+   *
+   * @param o a {@link java.lang.Object} object.
+   */
   void debug(Object... o);
 
   /**
    * Storage for states is provided by a component found in the classpath. If more storage
    * components are available, configuration must have been defined to choose it. This allows
-   * 
+   *
    * @return the storage provider.
    * @throws KlabRuntimeException if no storage provider is installed or there is more than one
    *         without appropriate configuration.
    */
   IStorageProvider getStorageProvider();
 
+  /**
+   * <p>getRuntimeProvider.</p>
+   *
+   * @return a {@link org.integratedmodelling.klab.api.runtime.IRuntimeProvider} object.
+   */
   IRuntimeProvider getRuntimeProvider();
 
 }

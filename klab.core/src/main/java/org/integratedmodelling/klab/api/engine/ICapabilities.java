@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.api.engine;
 
 /**
  * The Interface ICapabilities.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ICapabilities {
 

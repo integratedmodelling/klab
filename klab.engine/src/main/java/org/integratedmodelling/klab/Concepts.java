@@ -185,7 +185,7 @@ public enum Concepts implements IConceptService {
    * 
    * 
    * @param tr
-   * @return
+   * @return true if the concept was declared in a root-level k.IM statement.
    */
   public boolean isBaseDeclaration(IConcept tr) {
     return tr.getMetadata().get(NS.BASE_DECLARATION) != null;

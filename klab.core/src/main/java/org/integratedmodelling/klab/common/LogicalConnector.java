@@ -19,15 +19,16 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 // TODO: Auto-generated Javadoc
 /**
- * <p>A logical connector, representing one of the possible four connectors (union (or), intersection (and), 
+ * <p>A logical connector, representing one of the possible four connectors (union (or), intersection (and),
  *    exclusion (not), disjunction (xor)).</p>
-
+ *
  * <p>A bit complicated as a wrapper for an int, but it solves several problems related to string conversions and
  * equality. Private constructors force use of parseLogicalConnector to obtain one of the four possible static
  * instances. Because only the static members are used, == can be used to check for equality, although equals()
  * can be also used with both integers, LogicalConnectors and Strings. toString() will work properly.</p>
- * 
+ *
  * @author Ferdinando Villa
+ * @version $Id: $Id
  */
 public class LogicalConnector {
 
@@ -63,6 +64,7 @@ public class LogicalConnector {
 
     /**
      * Checks if string is a valid representation of a logical connector.
+     *
      * @param s a string
      * @return true if string represents a connector.
      */
@@ -79,10 +81,11 @@ public class LogicalConnector {
 
     /**
      * Parses string into connector and returns result. Will never allocate new connectors, but only
-     * return the static instance corresponding to the string. 
+     * return the static instance corresponding to the string.
+     *
      * @param s A string representing a logical connector.
      * @return a LogicalConnector
-     * @throws KlabValidationException if string is silly.
+     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if string is silly.
      */
     public static LogicalConnector parseLogicalConnector(String s) throws KlabValidationException {
 
@@ -123,7 +126,7 @@ public class LogicalConnector {
      * Equals.
      *
      * @param c the c
-     * @return true, if successful
+     * @return a boolean.
      */
     public boolean equals(int c) {
         return value == c;
@@ -133,13 +136,14 @@ public class LogicalConnector {
      * Equals.
      *
      * @param s the s
-     * @return true, if successful
-     * @throws KlabValidationException the klab validation exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException the klab validation exception
+     * @return a boolean.
      */
     public boolean equals(String s) throws KlabValidationException {
         return value == parseLogicalConnector(s).value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
 

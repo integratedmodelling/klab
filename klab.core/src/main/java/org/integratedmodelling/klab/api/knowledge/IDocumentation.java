@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.api.knowledge;
 
 /**
  * The Interface IDocumentation.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IDocumentation extends IMetadata {
 

@@ -13,7 +13,7 @@ public interface IKimMetadata extends IKimStatement {
 	 * The value of this map becomes a List if multiple values
 	 * are added.
 	 * 
-	 * @return
+	 * @return the data
 	 */
 	public IParameters getData();
 	

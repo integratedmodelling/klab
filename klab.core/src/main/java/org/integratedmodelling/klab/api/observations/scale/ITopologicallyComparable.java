@@ -23,33 +23,44 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  *
  * @author Ferdinando Villa
  * @param <T> the generic type
+ * @version $Id: $Id
  */
 public interface ITopologicallyComparable<T> {
 
   /**
-   * 
-   * @param o
+   * <p>contains.</p>
+   *
+   * @param o a T object.
    * @return true if o is contained in this
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   boolean contains(T o) throws KlabException;
 
   /**
-   * 
-   * @param o
+   * <p>overlaps.</p>
+   *
+   * @param o a T object.
    * @return true if o overlaps this
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   boolean overlaps(T o) throws KlabException;
 
   /**
-   * 
-   * @param o
+   * <p>intersects.</p>
+   *
+   * @param o a T object.
    * @return true if o intersects this
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   boolean intersects(T o) throws KlabException;
 
+  /**
+   * <p>merge.</p>
+   *
+   * @param other a {@link org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable} object.
+   * @param how a {@link org.integratedmodelling.klab.common.LogicalConnector} object.
+   * @return a {@link org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable} object.
+   */
   ITopologicallyComparable<? extends T> merge(ITopologicallyComparable<?> other,
       LogicalConnector how);
 

@@ -20,10 +20,15 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**
  * The Interface ITime.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ITime extends IExtent {
 
+  /** Constant <code>MIN_SCALE_RANK=0</code> */
   int      MIN_SCALE_RANK = 0;
+  /** Constant <code>MAX_SCALE_RANK=19</code> */
   int      MAX_SCALE_RANK = 19;
 
   /**
@@ -38,6 +43,8 @@ public interface ITime extends IExtent {
                           };
 
   /**
+   * {@inheritDoc}
+   *
    * Overriding to require that the collapsed type is ITimePeriod. This allows simpler coding
    * against the API, and is the most logical way to enforce that getValueCount() == 1.
    */
@@ -46,29 +53,31 @@ public interface ITime extends IExtent {
 
   /**
    * May be null in partially specified extents.
-   * 
+   *
    * @return start time
    */
   ITimeInstant getStart();
 
   /**
    * May be null in partially specified extents.
-   * 
+   *
    * @return end time
    */
   ITimeInstant getEnd();
 
   /**
    * If multiplicity is 1, return the whole temporal extent.
-   * 
+   *
    * FIXME this should only be defined if time is a grid - as done in ISpatialExtent (use a Grid
    * object).
-   * 
+   *
    * @return step if any
    */
   ITimeDuration getStep();
 
   /**
+   * {@inheritDoc}
+   *
    * The time implementation of {@link ILocator#at(ILocator)} always return a time and can only use
    * another time as locator.
    */

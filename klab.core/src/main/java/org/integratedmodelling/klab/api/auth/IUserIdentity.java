@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface IUserIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface IUserIdentity extends IIdentity {
 

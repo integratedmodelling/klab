@@ -19,9 +19,9 @@ package org.integratedmodelling.klab.utils;
 /**
  * Use one of these as a member to compare with when same-object equality needs to be assessed in an
  * object that has redefined equals() differently.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public class InstanceIdentifier {
 
@@ -34,10 +34,16 @@ public class InstanceIdentifier {
 
   protected Long __id = nextId();
 
+  /**
+   * <p>hashCode.</p>
+   *
+   * @return a int.
+   */
   public int hashCode() {
     return __id.hashCode();
   }
 
+  /** {@inheritDoc} */
   public boolean equals(Object o) {
     return o instanceof InstanceIdentifier && __id == ((InstanceIdentifier) o).__id;
   }

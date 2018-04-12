@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.exceptions;
 // TODO: Auto-generated Javadoc
 /**
  * The Class KlabContextualizationException.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class KlabContextualizationException extends KlabException {
 

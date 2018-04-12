@@ -24,21 +24,20 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 /**
  * Instantiators are contextualizers that can be provided for any direct observation and are called
  * to produce observations in a context.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IInstantiator extends IContextualizer {
 
   /**
    * Instantiate and return the target observations in the passed context. Those observations will
    * be independently resolved afterwards by the dataflow.
-   * 
+   *
    * @param semantics the direct observable we must incarnate in the context.
    * @param context the context observation.
-   *
    * @return a list of observations, possibly empty but never null.
-   * @throws KlabException 
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException;
 

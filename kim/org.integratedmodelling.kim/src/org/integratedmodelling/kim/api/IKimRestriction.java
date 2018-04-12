@@ -22,14 +22,14 @@ public interface IKimRestriction extends IKimStatement {
     /**
      * The type of restriction. May be further specified through inference starting at {@link #getTargetSubject()}.
      * 
-     * @return
+     * @return the type
      */
     Type getType();
 
     /**
      * Type of cardinality.
      * 
-     * @return
+     * @return the cardinality type
      */
     Cardinality getCardinality();
 
@@ -37,14 +37,14 @@ public interface IKimRestriction extends IKimStatement {
      * Argument to cardinality if necessary. Guaranteed correct also if redundant
      * with it.
      * 
-     * @return
+     * @return the numerosity
      */
     int getNumerosity();
 
     /**
      * The main concept mentioned in the restriction.
      * 
-     * @return
+     * @return the main concept
      */
     IKimConcept getFiller();
 
@@ -59,21 +59,21 @@ public interface IKimRestriction extends IKimStatement {
     /**
      * The data type, not null only in data restrictions.
      * 
-     * @return
+     * @return the data type
      */
     DataType getDataType();
 
     /**
      * Data value if data type is not null.
      * 
-     * @return
+     * @return the value
      */
     Object getValue();
 
     /**
      * Top of range in case data type isn't null and user specified a range.
      * 
-     * @return
+     * @return the range
      */
     Number getRange();
 }

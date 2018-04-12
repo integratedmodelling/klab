@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
  * Tags methods that are executed during the explicitly invoked setup
  * phase for the component. The method should return a boolean and may
  * throw exceptions.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

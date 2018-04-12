@@ -24,20 +24,20 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  * Interface for a component. If exactly one component implementing this is available, the system
  * will use that. Otherwise the configuration must be able to establish which storage component to
  * use.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IStorageProvider {
 
   /**
    * Create appropriate storage for the passed observable and scale. The storage must be able to
    * promote itself to probabilistic if a distribution is ever passed.
-   * 
-   * @param observable
-   * @param scale
-   * @param context 
-   * @return
+   *
+   * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
+   * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
+   * @param context a {@link org.integratedmodelling.klab.api.runtime.IComputationContext} object.
+   * @return a {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} object.
    */
   IDataArtifact createStorage(IObservable observable, IScale scale, IComputationContext context);
 

@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.utils;
 // TODO: Auto-generated Javadoc
 /**
  * The Class NumberUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class NumberUtils extends org.integratedmodelling.kim.utils.NumberUtils {
 

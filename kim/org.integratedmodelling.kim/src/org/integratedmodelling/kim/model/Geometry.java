@@ -33,34 +33,39 @@ public class Geometry implements IGeometry {
   private static Geometry scalarGeometry = makeGeometry("*", 0);
 
   /**
-   * Create and return an empty geometry.
+   * The empty geometry.
    * 
-   * @return
+   * @return the empty geometry
    */
   public static Geometry empty() {
     return emptyGeometry;
   }
 
+  /**
+   * The scalar geometry.
+   * 
+   * @return the scalar geometry
+   */
   public static Geometry scalar() {
     return scalarGeometry;
   }
 
   /**
-   * Encode into a string representation. Keys in parameter maps are sorted so the results
-   * can be compared for equality.
+   * Encode into a string representation. Keys in parameter maps are sorted so the results can be
+   * compared for equality.
    * 
-   * @return
+   * @return the string representation for the geometry
    */
   public String encode() {
-    
+
     if (isEmpty()) {
       return "X";
     }
-    
+
     if (isScalar()) {
       return "*";
     }
-    
+
     String ret = granularity == Granularity.MULTIPLE ? "#" : "";
     for (Dimension dim : dimensions) {
       ret += dim.getType() == Type.SPACE ? (dim.isRegular() ? "S" : "s")
@@ -106,15 +111,15 @@ public class Geometry implements IGeometry {
     if (val.getClass().isArray()) {
       ret = "[";
       if (double[].class.isAssignableFrom(val.getClass())) {
-        for (double d : (double[])val) {
+        for (double d : (double[]) val) {
           ret += (ret.length() == 1 ? "" : " ") + d;
         }
       } else if (int[].class.isAssignableFrom(val.getClass())) {
-        for (int d : (int[])val) {
+        for (int d : (int[]) val) {
           ret += (ret.length() == 1 ? "" : " ") + d;
         }
       } else {
-        for (Object d : (Object[])val) {
+        for (Object d : (Object[]) val) {
           ret += (ret.length() == 1 ? "" : " ") + d;
         }
       }
@@ -233,7 +238,7 @@ public class Geometry implements IGeometry {
    * @param maxX
    * @param minY
    * @param maxY
-   * @return
+   * @return this
    */
   public Geometry withBoundingBox(double minX, double maxX, double minY, double maxY) {
     Dimension space = getDimension(Type.SPACE);
@@ -247,7 +252,7 @@ public class Geometry implements IGeometry {
   /**
    * 
    * @param shapeSpecs
-   * @return
+   * @return this
    */
   public Geometry withShape(String shapeSpecs) {
     Dimension space = getDimension(Type.SPACE);
@@ -261,7 +266,7 @@ public class Geometry implements IGeometry {
   /**
    * 
    * @param gridResolution
-   * @return
+   * @return this
    */
   public Geometry withGridResolution(String gridResolution) {
     Dimension space = getDimension(Type.SPACE);
@@ -275,7 +280,7 @@ public class Geometry implements IGeometry {
   /**
    * 
    * @param shape
-   * @return
+   * @return this
    */
   public Geometry withSpatialShape(long... shape) {
     Dimension space = getDimension(Type.SPACE);
@@ -289,7 +294,7 @@ public class Geometry implements IGeometry {
   /**
    * 
    * @param timeResolution
-   * @return
+   * @return this
    */
   public Geometry withTemporalResolution(String timeResolution) {
     Dimension time = getDimension(Type.TIME);
@@ -303,7 +308,7 @@ public class Geometry implements IGeometry {
   /**
    * 
    * @param n
-   * @return
+   * @return this
    */
   public Geometry withTemporalShape(long n) {
     Dimension time = getDimension(Type.TIME);
@@ -317,7 +322,7 @@ public class Geometry implements IGeometry {
   /**
    * 
    * @param projection
-   * @return
+   * @return this
    */
   public Geometry withProjection(String projection) {
     Dimension space = getDimension(Type.SPACE);
@@ -332,7 +337,7 @@ public class Geometry implements IGeometry {
    * 
    * @param start
    * @param end
-   * @return
+   * @return this
    */
   public Geometry withTemporalBoundaries(long start, long end) {
     Dimension time = getDimension(Type.TIME);
@@ -355,7 +360,7 @@ public class Geometry implements IGeometry {
     if (geometry.equals("X")) {
       return empty();
     }
-    
+
     if (geometry.equals("*")) {
       return scalar();
     }
@@ -494,9 +499,8 @@ public class Geometry implements IGeometry {
   /**
    * The simplest locator possible in a non-semantic geometry: offsets along a dimension.
    * 
-   * @param dimensionType
    * @param offsets
-   * @return
+   * @return a new offset locator
    */
   public ILocator locate(long... offsets) {
     return new OffsetLocator(offsets);

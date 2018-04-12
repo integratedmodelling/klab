@@ -31,7 +31,7 @@ public interface ISpatialIndex {
      * the index.
      * 
      * @param obs
-     * @return
+     * @return the nearest object and the distance
      */
     IPair<IDirectObservation, Double> getNearestObject(IDirectObservation obs);
 
@@ -47,7 +47,7 @@ public interface ISpatialIndex {
      * the passed one. 
      * 
      * @param obs
-     * @return
+     * @return all objects in order of increasing distance
      */
     List<IPair<IDirectObservation, Double>> getNear(IDirectObservation obs);
 

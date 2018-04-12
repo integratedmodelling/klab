@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -23,6 +22,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
@@ -48,7 +48,7 @@ public enum Resolver {
    * @param urn
    * @param session
    * @param scenarios
-   * @return
+   * @return a dataflow to compute the artifact identified by the urn.
    * @throws KlabException
    */
   public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
@@ -68,16 +68,17 @@ public enum Resolver {
   }
 
   /**
-   * Implements the {@link IObservationService#resolve(String, IDirectObservation, String[])}
-   * method, exposed by {@link Observations}.
+   * Implements the {@link IObservationService#resolve(String, ISubject, String[])} method, exposed
+   * by {@link Observations}.
    * 
    * @param urn
    * @param context
    * @param scenarios
    * @return a dataflow, possibly empty.
-   * @throws KlabException 
+   * @throws KlabException
    */
-  public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
+  public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
+      throws KlabException {
 
     IMonitor monitor = context.getMonitor();
     IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
@@ -89,7 +90,8 @@ public enum Resolver {
     /*
      * resolve and run
      */
-    ResolutionScope scope = resolve(resolvable, ResolutionScope.create((Subject)context, monitor, Arrays.asList(scenarios)));
+    ResolutionScope scope = resolve(resolvable,
+        ResolutionScope.create((Subject) context, monitor, Arrays.asList(scenarios)));
     if (scope.getCoverage().isRelevant()) {
       return Dataflows.INSTANCE.compile(taskId, scope);
     }
@@ -270,9 +272,9 @@ public enum Resolver {
    * Retrieve an appropriately configured model prioritizer for the passed scope.
    * 
    * @param context
-   * @return
+   * @return a prioritizer for this model
    */
-  public IPrioritizer<org.integratedmodelling.klab.data.rest.resources.ModelReference> getPrioritizer(
+  public IPrioritizer<ModelReference> getPrioritizer(
       ResolutionScope context) {
     return new Prioritizer(context);
   }

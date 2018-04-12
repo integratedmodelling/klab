@@ -20,6 +20,9 @@ import org.integratedmodelling.kim.api.IKimScope;
 // TODO: Auto-generated Javadoc
 /**
  * The Class NotificationUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class NotificationUtils {
     

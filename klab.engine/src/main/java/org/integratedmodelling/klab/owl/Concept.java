@@ -618,7 +618,7 @@ public class Concept extends Knowledge implements IConcept {
      * Return the asserted definition in parentheses if the concept is composed, or the simple definition
      * otherwise. Used when composing definitions to avoid lots of branching.
      * 
-     * @return
+     * @return the asserted definition
      */
     public String getAssertedDefinition() {
         String def = getMetadata().get(NS.CONCEPT_DEFINITION_PROPERTY, String.class);

@@ -23,7 +23,7 @@ public enum Urns {
   /**
    * Create a unique URN that won't be accepted in any production resource catalog. For testing.
    * 
-   * @return
+   * @return a new unprivileged, unique URN
    */
   public String createDisposableUrn() {
     return VOID_URN_PREFIX + NameGenerator.shortUUID();

@@ -26,89 +26,107 @@ import java.util.ListIterator;
  *
  * @author Ferd
  * @param <T> the generic type
+ * @version $Id: $Id
  */
 public abstract class ImmutableList<T> implements List<T> {
 
+    /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean add(T arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean addAll(Collection<? extends T> arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void clear() {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean containsAll(Collection<?> arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean remove(Object arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean removeAll(Collection<?> arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean retainAll(Collection<?> arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void add(int arg0, T arg1) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean addAll(int arg0, Collection<? extends T> arg1) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public int indexOf(Object arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public int lastIndexOf(Object arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public ListIterator<T> listIterator() {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public ListIterator<T> listIterator(int arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public T remove(int arg0) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public T set(int arg0, T arg1) {
         throw new UnsupportedOperationException("cannot modify read-only list");
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<T> subList(int arg0, int arg1) {
         throw new UnsupportedOperationException("cannot modify read-only list");

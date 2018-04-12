@@ -20,27 +20,30 @@ import java.util.Collection;
 /**
  * For those resources that contain more than one table, like Excel spreadsheets and Access dbs. Simply
  * a named collection of named tables.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface ITableSet {
 
     /**
-     * 
+     * <p>getName.</p>
+     *
      * @return the tableset name
      */
     String getName();
 
     /**
-     * 
+     * <p>getTables.</p>
+     *
      * @return all tables in the tableset
      */
     Collection<ITable> getTables();
 
     /**
-     * 
-     * @param tableName
+     * <p>getTable.</p>
+     *
+     * @param tableName a {@link java.lang.String} object.
      * @return a specific table in the tableset, or null.
      */
     ITable getTable(String tableName);

@@ -54,9 +54,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * proxy for storage in a model kbox and the bean for network transfer in remote resolutions. Each
  * possible incarnation of the same model (for example to resolve an inherent quality through
  * dereification) is stored and handled separately to simplify kbox query.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public class ModelReference {
 
@@ -135,7 +135,7 @@ public class ModelReference {
    */
   /*
    * Lombock should really have something with less side-effects than
-   * 
+   *
    * @builder for this.
    */
   public ModelReference copy() {
@@ -177,6 +177,7 @@ public class ModelReference {
     return ret;
   }
 
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object o) {
     if (o instanceof ModelReference) {
@@ -186,6 +187,7 @@ public class ModelReference {
     return false;
   }
 
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return name == null ? 0 : name.hashCode();
@@ -284,7 +286,7 @@ public class ModelReference {
   /**
    * Checks if is private model.
    *
-   * @return true, if is private model
+   * @return a boolean.
    */
   public boolean isPrivateModel() {
     return privateModel;
@@ -320,7 +322,7 @@ public class ModelReference {
   /**
    * Checks if is in scenario.
    *
-   * @return true, if is in scenario
+   * @return a boolean.
    */
   public boolean isInScenario() {
     return inScenario;
@@ -338,7 +340,7 @@ public class ModelReference {
   /**
    * Checks if is reification.
    *
-   * @return true, if is reification
+   * @return a boolean.
    */
   public boolean isReification() {
     return reification;
@@ -356,7 +358,7 @@ public class ModelReference {
   /**
    * Checks if is checks for direct data.
    *
-   * @return true, if is checks for direct data
+   * @return a boolean.
    */
   public boolean isHasDirectData() {
     return hasDirectData;
@@ -374,7 +376,7 @@ public class ModelReference {
   /**
    * Checks if is checks for direct objects.
    *
-   * @return true, if is checks for direct objects
+   * @return a boolean.
    */
   public boolean isHasDirectObjects() {
     return hasDirectObjects;
@@ -392,7 +394,7 @@ public class ModelReference {
   /**
    * Checks if is spatial.
    *
-   * @return true, if is spatial
+   * @return a boolean.
    */
   public boolean isSpatial() {
     return spatial;
@@ -410,7 +412,7 @@ public class ModelReference {
   /**
    * Checks if is temporal.
    *
-   * @return true, if is temporal
+   * @return a boolean.
    */
   public boolean isTemporal() {
     return temporal;
@@ -428,7 +430,7 @@ public class ModelReference {
   /**
    * Checks if is resolved.
    *
-   * @return true, if is resolved
+   * @return a boolean.
    */
   public boolean isResolved() {
     return resolved;
@@ -446,7 +448,7 @@ public class ModelReference {
   /**
    * Checks if is primary observable.
    *
-   * @return true, if is primary observable
+   * @return a boolean.
    */
   public boolean isPrimaryObservable() {
     return primaryObservable;
@@ -680,7 +682,7 @@ public class ModelReference {
   /**
    * Checks if is abstract observable.
    *
-   * @return true, if is abstract observable
+   * @return a boolean.
    */
   public boolean isAbstractObservable() {
     return abstractObservable;

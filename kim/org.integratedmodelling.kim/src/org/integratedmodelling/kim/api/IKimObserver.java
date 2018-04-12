@@ -14,14 +14,14 @@ public interface IKimObserver extends IKimActiveStatement {
     /**
      * Mandatory name for the resulting observation.
      * 
-     * @return
+     * @return the name
      */
     String getName();
     
     /**
      * The type of the stated observation.
      * 
-     * @return
+     * @return the observable
      */
     IKimObservable getObservable();
 
@@ -29,7 +29,7 @@ public interface IKimObserver extends IKimActiveStatement {
      * Any states declared for the object. These observables are only
      * legal if they are pre-resolved to values.
      * 
-     * @return
+     * @return the states
      */
     List<IKimObservable> getStates();
 

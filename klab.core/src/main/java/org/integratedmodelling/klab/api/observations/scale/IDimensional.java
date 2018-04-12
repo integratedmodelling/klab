@@ -17,13 +17,18 @@ package org.integratedmodelling.klab.api.observations.scale;
 
 /**
  * Adopted by dimensional extents, specifies the count of dimensions in each.
- * 
- * FIXME this info now comes from the worldview, so it should be defined in a "soft" way.
- * 
- * @author ferdinando.villa
  *
+ * FIXME this info now comes from the worldview, so it should be defined in a "soft" way.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface IDimensional {
+    /**
+     * <p>getDimensionCount.</p>
+     *
+     * @return a int.
+     */
     static int getDimensionCount() {
         return 0;
     }

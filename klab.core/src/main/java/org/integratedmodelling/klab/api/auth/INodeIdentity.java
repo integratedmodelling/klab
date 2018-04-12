@@ -17,11 +17,16 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface INodeIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface INodeIdentity extends IServerIdentity {
 
+    /** Constant <code>type</code> */
     Type type = Type.NODE;
     
+    /** {@inheritDoc} */
     @Override
     IPartnerIdentity getParentIdentity();
 }

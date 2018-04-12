@@ -23,35 +23,125 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**
  * The Interface IUnitService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IUnitService {
 
+	/**
+	 * <p>getUnit.</p>
+	 *
+	 * @param unitDef a {@link java.lang.String} object.
+	 * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+	 */
 	IUnit getUnit(String unitDef);
 
+    /**
+     * <p>addExtents.</p>
+     *
+     * @param refUnit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @param extentDimensions a {@link java.util.Collection} object.
+     * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     */
     IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions);
 
+    /**
+     * <p>isDensity.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @param extent a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+     * @return a boolean.
+     */
     boolean isDensity(IUnit unit, IConcept extent);
 
+    /**
+     * <p>isSpatialDensity.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @param space a {@link org.integratedmodelling.klab.api.observations.scale.IExtent} object.
+     * @return a boolean.
+     */
     boolean isSpatialDensity(IUnit unit, IExtent space);
 
+    /**
+     * <p>isUnitless.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a boolean.
+     */
     boolean isUnitless(IUnit unit);
 
+    /**
+     * <p>getVolumeExtentUnit.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     */
     IUnit getVolumeExtentUnit(IUnit unit);
 
+    /**
+     * <p>isVolumeDensity.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a boolean.
+     */
     boolean isVolumeDensity(IUnit unit);
 
+    /**
+     * <p>getArealExtentUnit.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     */
     IUnit getArealExtentUnit(IUnit unit);
 
+    /**
+     * <p>isArealDensity.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a boolean.
+     */
     boolean isArealDensity(IUnit unit);
 
+    /**
+     * <p>getLengthExtentUnit.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     */
     IUnit getLengthExtentUnit(IUnit unit);
 
+    /**
+     * <p>isLengthDensity.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a boolean.
+     */
     boolean isLengthDensity(IUnit unit);
 
+    /**
+     * <p>getTimeExtentUnit.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     */
     IUnit getTimeExtentUnit(IUnit unit);
 
+    /**
+     * <p>isRate.</p>
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     * @return a boolean.
+     */
     boolean isRate(IUnit unit);
 
+    /**
+     * <p>getDefaultUnitFor.</p>
+     *
+     * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+     * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+     */
     IUnit getDefaultUnitFor(IConcept concept);
 
 }

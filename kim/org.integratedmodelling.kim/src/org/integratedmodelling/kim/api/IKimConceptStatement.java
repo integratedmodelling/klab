@@ -34,7 +34,7 @@ public interface IKimConceptStatement extends IKimStatement {
      * Authority, not null when this concept adopts a term from it as a trait. When this is not null,
      * {@link #getAuthorityTerm} also returns a non-null authority.
      * 
-     * @return
+     * @return the authority ID
      */
     String getAuthority();
 
@@ -42,7 +42,7 @@ public interface IKimConceptStatement extends IKimStatement {
      * Authority term adopted as a trait. When this is not null, {@link #getAuthority} also returns a non-null
      * authority.
      * 
-     * @return
+     * @return the authority term
      */
     String getAuthorityTerm();
 
@@ -106,7 +106,7 @@ public interface IKimConceptStatement extends IKimStatement {
     /**
      * Whatever concept this configuration 'consists of'.
      * 
-     * @return
+     * @return consists of
      */
     List<KimConcept> getConfigurationParticipants();
 

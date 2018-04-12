@@ -9,7 +9,7 @@ public interface ICommand {
    * 
    * @param call
    * @param session
-   * @return
+   * @return the result of executing the command
    * @throws Exception 
    */
   public Object execute(IServiceCall call, ISession session) throws Exception;

@@ -19,9 +19,18 @@ import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 
 /**
  * The Interface ICurrencyService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ICurrencyService {
 
+  /**
+   * <p>getCurrency.</p>
+   *
+   * @param string a {@link java.lang.String} object.
+   * @return a {@link org.integratedmodelling.klab.api.data.mediation.ICurrency} object.
+   */
   ICurrency getCurrency(String string);
 
 }

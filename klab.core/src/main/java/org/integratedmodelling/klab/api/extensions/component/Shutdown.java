@@ -22,12 +22,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Tags a method that is run when the component is shut down (unloaded at 
+ * Tags a method that is run when the component is shut down (unloaded at
  * regular system shutdown). The method should not throw exception and its
  * return value will be ignored.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

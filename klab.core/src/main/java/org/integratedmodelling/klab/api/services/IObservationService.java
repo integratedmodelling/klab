@@ -34,9 +34,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * This service also manages observations stored locally (as IObserver specifications) and provides
  * an API to query and retrieve those stored on the k.LAB network.
  * <p>
- * 
+ *
  * @author ferdinando.villa
  * @since 0.10.0
+ * @version $Id: $Id
  */
 public interface IObservationService {
 
@@ -45,20 +46,20 @@ public interface IObservationService {
    * corresponding observation when run. Unsuccessful resolution is indicated by a dataflow with
    * empty coverage, which will produce an empty observation when run.
    * <p>
-   * The {@link ISession#observe(String, String...)} method calls this function and runs the
-   * dataflow in a {@link ITask}.
+   * The {@link org.integratedmodelling.klab.api.runtime.ISession#observe(String, String...)} method calls this function and runs the
+   * dataflow in a {@link org.integratedmodelling.klab.api.runtime.ITask}.
    * <p>
-   * The dataflow can be run right away to produce a {@link IObservation} artifact or serialized
-   * using {@link IDataflow#getKdlCode()} to be loaded and run another time. It will include a
+   * The dataflow can be run right away to produce a {@link org.integratedmodelling.klab.api.observations.IObservation} artifact or serialized
+   * using {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow#getKdlCode()} to be loaded and run another time. It will include a
    * specification of its total context of applicability if any exists.
    * <p>
-   * 
+   *
    * @param urn the identifier for a top-level observation (describing a IObserver or a remote
    *        context).
    * @param session a valid engine session
    * @param scenarios zero or more scenario IDs to affect the resolution
    * @return the computation to observe the URN. Never null, possibly empty.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
       throws KlabException;
@@ -68,40 +69,40 @@ public interface IObservationService {
    * the context of the passed {@link ISubject subject}. Unsuccessful resolution is indicated by a
    * dataflow with empty coverage, which will produce an empty observation when run.
    * <p>
-   * The resolution is done in the {@link ISession} that owns the passed observation.
+   * The resolution is done in the {@link org.integratedmodelling.klab.api.runtime.ISession} that owns the passed observation.
    * <p>
-   * The {@link ISubject#observe(String, String...)} method calls this function and runs the
-   * dataflow in a {@link ITask}.
+   * The {@link org.integratedmodelling.klab.api.observations.ISubject#observe(String, String...)} method calls this function and runs the
+   * dataflow in a {@link org.integratedmodelling.klab.api.runtime.ITask}.
    * <p>
-   * The dataflow can be run right away to produce a {@link IObservation} artifact or serialized
-   * using {@link IDataflow#getKdlCode()} to be loaded and run another time. It will include a
+   * The dataflow can be run right away to produce a {@link org.integratedmodelling.klab.api.observations.IObservation} artifact or serialized
+   * using {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow#getKdlCode()} to be loaded and run another time. It will include a
    * specification of its total context of applicability if any exists.
    * <p>
-   * 
-   * @param urn
-   * @param context
+   *
+   * @param urn a {@link java.lang.String} object.
+   * @param context a {@link org.integratedmodelling.klab.api.observations.ISubject} object.
    * @param scenarios zero or more scenario IDs to affect the resolution
    * @return the computation to observe the URN in the passed context. Never null, possibly empty.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
       throws KlabException;
 
   /**
    * Release all information pertaining to named namespace, both in live and persistent storage.
-   * 
-   * @param namespace
-   * @param monitor
-   * @throws KlabException
+   *
+   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
   /**
    * Index passed observation definition for retrieval.
-   * 
-   * @param observer
-   * @param monitor
-   * @throws KlabException
+   *
+   * @param observer a {@link org.integratedmodelling.klab.api.model.IObserver} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   void index(IObserver observer, IMonitor monitor) throws KlabException;
 

@@ -22,6 +22,8 @@ import java.util.Iterator;
  * The Class IterableAdapter.
  *
  * @param <T> the generic type
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class IterableAdapter<T> implements Iterable<T> {
   
@@ -36,6 +38,7 @@ public class IterableAdapter<T> implements Iterable<T> {
     this.iterable = iterable;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Iterator<T> iterator() {
     return new IteratorAdapter<T>(iterable.iterator());

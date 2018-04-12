@@ -17,15 +17,16 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 
 /**
  * Anything that has coordinates is referenced.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface IReferenced {
 
     /**
-     * 
-     * @return
+     * <p>getProjection.</p>
+     *
+     * @return a {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection} object.
      */
     IProjection getProjection();
 }

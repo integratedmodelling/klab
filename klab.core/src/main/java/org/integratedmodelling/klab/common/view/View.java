@@ -26,11 +26,11 @@ import javax.annotation.Nullable;
  * including the observation tree and the current position and visualized element in it. A view object
  * describes each view in a viewer, and it is enough (along with the context itself when applicable) to
  * reconstruct its interactive representation completely.
- * 
- * The correspondent JSON should be the data for each view in the engine viewer.
- * 
- * @author ferdinando.villa
  *
+ * The correspondent JSON should be the data for each view in the engine viewer.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class View implements Serializable {
 

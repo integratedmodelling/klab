@@ -26,6 +26,9 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class FileUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class FileUtils extends org.apache.commons.io.FileUtils {
 
@@ -34,7 +37,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      *
      * @param directory the directory
      * @param fileName the file name
-     * @throws KlabException the klab exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
      */
     public static void createMD5Digest(File directory, String fileName) throws KlabException {
 
@@ -87,7 +90,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * The main method.
      *
      * @param args the arguments
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public static void main(String[] args) throws Exception {
         createMD5Digest(new File("C:/Users/ferdinando.villa/.tl/server"), "zioporco.txt");

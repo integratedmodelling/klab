@@ -20,9 +20,10 @@ import java.util.List;
 /**
  * Temp for an ASCII tree visualizer
  * from https://stackoverflow.com/questions/4965335/how-to-print-binary-tree-diagram
+ *
  * @author Vasya Novikov
  * @author Ferd
- *
+ * @version $Id: $Id
  */
 public class TreeNode {
 

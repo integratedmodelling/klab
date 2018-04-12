@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.scale;
 
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**
@@ -30,7 +31,7 @@ public abstract class AbstractExtent implements IExtent {
   /**
    * Return the string rep for the {@link Dimension} this represents.
    * 
-   * @return
+   * @return the encoded representation
    */
   public abstract String encode();
 
@@ -47,7 +48,7 @@ public abstract class AbstractExtent implements IExtent {
    * Check and return the offset corresponding to the passed dimensions.
    * 
    * @param dimOffsets
-   * @return
+   * @return the linear offset
    */
   public abstract long getOffset(long[] dimOffsets);
 

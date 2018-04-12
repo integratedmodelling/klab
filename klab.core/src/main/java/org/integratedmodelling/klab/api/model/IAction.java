@@ -20,22 +20,24 @@ import org.integratedmodelling.kim.api.IKimAction.Type;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 
 /**
- * Action execution is deferred to dataflow through their {@link IComputable} identity.
- * 
- * @author ferdinando.villa
+ * Action execution is deferred to dataflow through their {@link org.integratedmodelling.klab.api.resolution.IComputable} identity.
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IAction extends IComputable {
 
   /**
-   * 
-   * @return
+   * <p>getTrigger.</p>
+   *
+   * @return a {@link org.integratedmodelling.kim.api.IKimAction.Trigger} object.
    */
   Trigger getTrigger();
 
   /**
-   * 
-   * @return
+   * <p>getType.</p>
+   *
+   * @return a {@link org.integratedmodelling.kim.api.IKimAction.Type} object.
    */
   Type getType();
   

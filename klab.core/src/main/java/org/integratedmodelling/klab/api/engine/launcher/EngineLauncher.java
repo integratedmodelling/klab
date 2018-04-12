@@ -50,9 +50,9 @@ import org.integratedmodelling.klab.utils.URLUtils;
  * A launcher for an engine, handling both local Maven installs for developers and official distributions
  * synchronized from the network. The launcher also handles cleaning and restarting a crashed engine if
  * necessary.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public abstract class EngineLauncher {
 
@@ -64,7 +64,6 @@ public abstract class EngineLauncher {
      * is registered with a component using the component's <code>addLaunchListener<code> method.
      * When the launch event occurs, that object's appropriate method is invoked.
      *
-     * @see LaunchEvent
      */
     public static interface LaunchListener {
 
@@ -162,6 +161,11 @@ public abstract class EngineLauncher {
 
     LaunchListener      listener;
 
+    /**
+     * <p>error.</p>
+     *
+     * @param error a {@link java.lang.String} object.
+     */
     protected abstract void error(String error);
 
     /*
@@ -222,7 +226,7 @@ public abstract class EngineLauncher {
      * they are available, downloading if necessary. In case of error it just logs and returns
      * false.
      *
-     * @return true, if successful
+     * @return a boolean.
      */
     public boolean downloadExtBinaryArtifacts() {
 
@@ -268,7 +272,7 @@ public abstract class EngineLauncher {
 
     /**
      * Check for available upgrades.
-     * 
+     *
      * @return true if the currently selected distribution can be upgraded.
      */
     public boolean canUpgrade() {
@@ -401,7 +405,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is launch automatically.
      *
-     * @return true, if is launch automatically
+     * @return a boolean.
      */
     public boolean isLaunchAutomatically() {
         return launchAutomatically;
@@ -419,7 +423,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is upgrade automatically.
      *
-     * @return true, if is upgrade automatically
+     * @return a boolean.
      */
     public boolean isUpgradeAutomatically() {
         return upgradeAutomatically;
@@ -437,7 +441,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is stop on exit.
      *
-     * @return true, if is stop on exit
+     * @return a boolean.
      */
     public boolean isStopOnExit() {
         return stopOnExit;
@@ -455,7 +459,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is use local.
      *
-     * @return true, if is use local
+     * @return a boolean.
      */
     public boolean isUseLocal() {
         return useLocal;
@@ -473,7 +477,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is use developer.
      *
-     * @return true, if is use developer
+     * @return a boolean.
      */
     public boolean isUseDeveloper() {
         return useDeveloper;
@@ -495,7 +499,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is use debug.
      *
-     * @return true, if is use debug
+     * @return a boolean.
      */
     public boolean isUseDebug() {
         return useDebug;
@@ -504,7 +508,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is klab debug.
      *
-     * @return true, if is klab debug
+     * @return a boolean.
      */
     public boolean isKlabDebug() {
         return this.klabDebug;
@@ -599,7 +603,7 @@ public abstract class EngineLauncher {
 
     /**
      * True if engine has already been launched.
-     * 
+     *
      * @return true if engine is online
      */
     public boolean isOnline() {
@@ -678,7 +682,7 @@ public abstract class EngineLauncher {
      * Launch.
      *
      * @param waitForEngine the wait for engine
-     * @return true, if successful
+     * @return a boolean.
      */
     public boolean launch(boolean waitForEngine) {
         return launch(waitForEngine, null);
@@ -689,7 +693,7 @@ public abstract class EngineLauncher {
      *
      * @param waitForEngine the wait for engine
      * @param listener the listener
-     * @return true, if successful
+     * @return a boolean.
      */
     public boolean launch(boolean waitForEngine, LaunchListener listener) {
 
@@ -1185,6 +1189,11 @@ public abstract class EngineLauncher {
     /*
      * can't believe this is necessary.
      */
+    /**
+     * <p>getClasspathSeparator.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     protected static String getClasspathSeparator() {
         switch (Configuration.INSTANCE.getOS()) {
         case MACOS:
@@ -1198,7 +1207,7 @@ public abstract class EngineLauncher {
 
     /**
      * Return the build number from the network distribution, or null if the network cannot be accessed.
-     * 
+     *
      * @return the build number for the set (remote) engine. Ignores local distribution setting.
      */
     public Integer getBuildNumber() {
@@ -1228,7 +1237,7 @@ public abstract class EngineLauncher {
 
     /**
      * Return whether the settings correspond to defined properties so that an engine can be launched.
-     * 
+     *
      * @return true if we can be launched with the current settings.
      */
     public boolean canLaunch() {
@@ -1322,7 +1331,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is restart requested.
      *
-     * @return true, if is restart requested
+     * @return a boolean.
      */
     public boolean isRestartRequested() {
         return runObsClean || runDataClean || runModelClean || runClean;
@@ -1340,7 +1349,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is remember settings.
      *
-     * @return true, if is remember settings
+     * @return a boolean.
      */
     public boolean isRememberSettings() {
         return rememberSettings;
@@ -1358,7 +1367,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is stop engine now.
      *
-     * @return true, if is stop engine now
+     * @return a boolean.
      */
     public boolean isStopEngineNow() {
         return this.stopEngine;
@@ -1394,7 +1403,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is use reasoning.
      *
-     * @return true, if is use reasoning
+     * @return a boolean.
      */
     public boolean isUseReasoning() {
         return useReasoning;
@@ -1403,7 +1412,7 @@ public abstract class EngineLauncher {
     /**
      * Checks if is develop.
      *
-     * @return true, if is develop
+     * @return a boolean.
      */
     public boolean isDevelop() {
         return useDeveloper;

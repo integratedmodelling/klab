@@ -7,7 +7,7 @@ public interface IKimClassification extends IKimStatement, Iterable<Pair<IKimCon
     /**
      * True if this was declared and validated as a discretization.
      * 
-     * @return
+     * @return true if discretization
      */
     boolean isDiscretization();
 }

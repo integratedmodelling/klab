@@ -27,35 +27,36 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  * will modify the fraction of the original extents that is covered.
  * <p>
  * A {@code ICoverage} redefines the
- * {@link IScale#merge(ITopologicallyComparable, LogicalConnector)} method to only perform a union
+ * {@link org.integratedmodelling.klab.api.observations.scale.IScale#merge(ITopologicallyComparable, LogicalConnector)} method to only perform a union
  * when the resulting coverage adds enough coverage. The {@link #getGain()} can be called on the
  * result to check if the merge produced any significant increment or decrement in coverage.
  * <p>
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface ICoverage extends IScale {
 
   /**
    * Return the proportion of total coverage as a double 0-1. It is the product of the coverages for
    * all the extents.
-   * 
+   *
    * @return the proportional coverage
    */
   double getCoverage();
 
   /**
    * Return the proportion of total coverage for one extent as a double 0-1.
-   * 
-   * @param dimension
-   * 
+   *
+   * @param dimension a Dimension.Type object.
    * @return the proportional coverage covered in the passed extent.
    */
   double getCoverage(Dimension.Type dimension);
 
 
   /**
+   * {@inheritDoc}
+   *
    * Reimplements {@link IScale#merge(ITopologicallyComparable, LogicalConnector)} to return a
    * coverage and implement {@code ICoverage}-specific behavior. Note that this breaks the
    * {@link IScale} contract by returning a coverage where the underlying scale is
@@ -67,18 +68,13 @@ public interface ICoverage extends IScale {
    * checked after this is called using {@link #getGain()} to see if anything has changed.
    * <p>
    * Must not modify the original scales.
-   * 
-   * @param coverage
-   * @param how
-   *
-   * @return a new merged coverage
    */
   @Override
   ICoverage merge(ITopologicallyComparable<?> coverage, LogicalConnector how);
 
   /**
    * True if the coverage is less than the global setting defining a usable coverage (default 1%).
-   * 
+   *
    * @return true if coverage is below accepted defaults.
    */
   boolean isEmpty();
@@ -87,7 +83,7 @@ public interface ICoverage extends IScale {
    * True if the coverage is at least as much as the minimum required coverage of a context (95% by
    * default). Note that setting this to 1.0 may trigger lots of resolutions to resolve minute
    * portions of the context.
-   * 
+   *
    * @return true if coverage is enough to declare an observation consistent.
    */
   boolean isComplete();
@@ -95,7 +91,7 @@ public interface ICoverage extends IScale {
   /**
    * true if the coverage is relevant enough for a model to be accepted by the resolver (default
    * smallest extent intersection covers 25% of scale).
-   * 
+   *
    * @return true if coverage is enough to keep
    */
   boolean isRelevant();
@@ -103,7 +99,7 @@ public interface ICoverage extends IScale {
   /**
    * Proportion of coverage gained or lost during the merge operation that generated this coverage,
    * if any.
-   * 
+   *
    * @return The coverage gained or lost (negative if lost). Always [-1, 1]. If zero, the coverage
    *         was not created by a merge.
    */

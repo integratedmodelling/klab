@@ -22,17 +22,17 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 /**
  * Intended to be specialized for specific worldviews, to replace the cumbersome
  * 'export' mechanism.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface IWorldview extends IWorkspace {
 
     /**
-     * Translate the geometry from a {@link IResource} to the corresponding
+     * Translate the geometry from a {@link org.integratedmodelling.klab.api.data.IResource} to the corresponding
      * IScale for the worldview.
-     * 
-     * @param geometry
+     *
+     * @param geometry a {@link org.integratedmodelling.kim.api.data.IGeometry} object.
      * @return the translated geometry
      */
     IScale getScale(IGeometry geometry);

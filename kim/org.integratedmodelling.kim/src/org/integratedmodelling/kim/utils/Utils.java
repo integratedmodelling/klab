@@ -66,7 +66,7 @@ public class Utils {
    * 
    * @param ret
    * @param cls
-   * @return
+   * @return the object as a cls or null
    */
   @SuppressWarnings("unchecked")
   public static <T> T asType(Object ret, Class<?> cls) {

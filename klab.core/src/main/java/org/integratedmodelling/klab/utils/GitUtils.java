@@ -31,6 +31,9 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class GitUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class GitUtils {
 
@@ -41,7 +44,7 @@ public class GitUtils {
      * @param directory the directory
      * @param removeIfExisting the remove if existing
      * @return the string
-     * @throws KlabException the klab exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
      */
     public static String clone(String gitUrl, File directory, boolean removeIfExisting) throws KlabException {
 
@@ -93,7 +96,7 @@ public class GitUtils {
      * Pull local repository in passed directory.
      *
      * @param localRepository main directory (containing .git/)
-     * @throws KlabException the klab exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
      */
     public static void pull(File localRepository) throws KlabException {
 
@@ -116,14 +119,14 @@ public class GitUtils {
     /**
      * If a Git repository with the repository name corresponding to the URL exists in gitDirectory,
      * pull it from origin; otherwise clone it from the passed Git URL.
-     * 
+     *
      * TODO: Assumes branch is already set correctly if repo is pulled. Should check branch and
      * checkout if necessary.
      *
      * @param gitUrl the git url
      * @param gitDirectory the git directory
      * @return the string
-     * @throws KlabException the klab exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
      */
     public static String requireUpdatedRepository(String gitUrl, File gitDirectory) throws KlabException {
 
@@ -148,7 +151,7 @@ public class GitUtils {
      * Checks if is remote git URL.
      *
      * @param string the string
-     * @return true, if is remote git URL
+     * @return a boolean.
      */
     public static boolean isRemoteGitURL(String string) {
         return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
@@ -159,7 +162,7 @@ public class GitUtils {
      * The main method.
      *
      * @param args the arguments
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public static void main(String[] args) throws Exception {
         String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo", new File(System.getProperty("user.home")));

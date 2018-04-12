@@ -19,9 +19,9 @@ package org.integratedmodelling.klab.common.monitoring;
 /**
  * Typed message with potential payload to be transferred across a multicast connection. Used for
  * fast, duplex engine/client communication.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Message {
 

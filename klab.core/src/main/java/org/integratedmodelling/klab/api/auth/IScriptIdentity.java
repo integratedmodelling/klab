@@ -17,11 +17,16 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface IScriptIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IScriptIdentity extends IRuntimeIdentity {
 
+    /** Constant <code>type</code> */
     Type type = Type.SCRIPT;
     
+    /** {@inheritDoc} */
     @Override
     IEngineSessionIdentity getParentIdentity();
 }

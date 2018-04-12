@@ -14,7 +14,6 @@ import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
  * its substituted form.
  * 
  * @author ferdinando.villa
- * @see {@link Kim#declareConcept(ConceptDeclaration, IKimMacro)}
  */
 public interface IKimMacro extends IKimConceptStatement {
 
@@ -46,14 +45,14 @@ public interface IKimMacro extends IKimConceptStatement {
 	
 	/**
 	 * Macro can be empty
-	 * @return
+	 * @return true if empty
 	 */
 	boolean isEmpty();
 	
 	/**
 	 * All the fields mentioned in the macro for substitution.
 	 * 
-	 * @return
+	 * @return all fields
 	 */
 	Collection<Field> getFields();
 
@@ -62,7 +61,7 @@ public interface IKimMacro extends IKimConceptStatement {
 	 * constrained. The concept descriptor may be null, and the type may be empty.
 	 * 
 	 * @param field
-	 * @return
+	 * @return the field type
 	 */
 	FieldType getType(Field field);
 	
@@ -71,7 +70,7 @@ public interface IKimMacro extends IKimConceptStatement {
 	 * by {@link #getFields()}.
 	 * 
 	 * @param field
-	 * @return
+	 * @return the parsed declaration
 	 */
 	ConceptDeclaration getDeclaration(Field field);
 }

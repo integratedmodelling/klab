@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.api.runtime;
 
 /**
  * The Interface IConfigurationDetector.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IConfigurationDetector {
 

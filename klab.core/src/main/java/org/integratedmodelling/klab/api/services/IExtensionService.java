@@ -27,30 +27,30 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
  * This service manages extensions, i.e. components and services that can be added to the system
  * through plug-ins. It also provides the global dictionary for service prototypes and manages their
  * execution from service calls (corresponding to functions in k.IM).
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IExtensionService {
 
   /**
    * All components registered with the runtime, active or not.
-   * 
+   *
    * @return all components
    */
   Collection<IComponent> getComponents();
 
   /**
    * Return a specific component. If active, it will have already been initialized.
-   * 
-   * @param componentId
+   *
+   * @param componentId a {@link java.lang.String} object.
    * @return the component, or null if unknown.
    */
   IComponent getComponent(String componentId);
 
   /**
    * Return the prototype for the named service or function.
-   * 
+   *
    * @param service id
    * @return a prototype, or null if the service is unknown.
    */
@@ -58,12 +58,12 @@ public interface IExtensionService {
 
   /**
    * Any k.IM function call stated in k.IM and contained in a k.IM object is executed here.
-   * 
-   * @param functionCall
-   * @param monitor
+   *
+   * @param functionCall a {@link org.integratedmodelling.kim.api.IServiceCall} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
    * @return the return value of the function
    * @throws KlabResourceNotFoundException if the function is unknown
-   * @throws KlabException if any exception was thrown during evaluation
+   * @throws org.integratedmodelling.klab.exceptions.KlabException if any exception was thrown during evaluation
    */
   Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
 

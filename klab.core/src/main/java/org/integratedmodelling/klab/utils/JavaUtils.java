@@ -26,9 +26,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 // TODO: Auto-generated Javadoc
 /**
  * Utilities to find the path to the JRE.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public class JavaUtils {
 
@@ -65,7 +65,7 @@ public class JavaUtils {
      * @param wait the wait
      * @param args the args
      * @return the int
-     * @throws KlabException the klab exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
      */
     public static int exec(Class<?> klass, boolean wait, String ...args) throws KlabException {
 
@@ -99,7 +99,7 @@ public class JavaUtils {
 
     /**
      * Use JAVA_HOME if defined, at worst get the currently running JRE.
-     * 
+     *
      * @return JAVA_HOME value
      */
     public static String getJavaHome() {
@@ -122,11 +122,11 @@ public class JavaUtils {
 
     /**
      * Get all the VM arguments for the passed options.
+     *
      * @param minMemM minimum RAM (-Xms) in megabytes
      * @param maxMemM maximum RAM (-Xmx) in megabytes
      * @param isServer if true, add -server
      * @param permSize if > 0, add -XX:MaxPermSize=<N>m
-     * 
      * @return java option string
      */
     public static String[] getOptions(int minMemM, int maxMemM, boolean isServer, int permSize) {
@@ -146,7 +146,7 @@ public class JavaUtils {
 
     /**
      * Path to the java executable using the java home above.
-     * 
+     *
      * @return java executable
      */
     public static String getJavaExecutable() {

@@ -11,61 +11,61 @@ public interface IKimStatement extends IKimScope {
 
     /**
      * 
-     * @return
+     * @return the first line number
      */
     int getFirstLine();
 
     /**
      * 
-     * @return
+     * @return the last line number
      */
     int getLastLine();
 
     /**
      * 
-     * @return
+     * @return the start offset in the first line
      */
     int getFirstCharOffset();
 
     /**
      * 
-     * @return
+     * @return the last offset in the last line
      */
     int getLastCharOffset();
 
     /**
      * 
-     * @return
+     * @return the annotations
      */
     List<IKimAnnotation> getAnnotations();
 
     /**
      * 
-     * @return
+     * @return the metadata
      */
     IKimMetadata getMetadata();
 
     /**
      * 
-     * @return
+     * @return the documentation
      */
     IKimMetadata getDocumentationMetadata();
 
     /**
      * 
-     * @return
+     * @return true if deprecated
      */
     boolean isDeprecated();
 
     /**
      * 
-     * @return
+     * @return the reason for deprecation
      */
     String getDeprecation();
 
     /**
      * 
-     * @return
+     * @return the source code
      */
     String getSourceCode();
 

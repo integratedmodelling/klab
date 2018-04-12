@@ -22,11 +22,22 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
  * The Interface IDirectObservation.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface IDirectObservation extends IObservation, IObjectArtifact {
 
+  /**
+   * <p>getName.</p>
+   *
+   * @return a {@link java.lang.String} object.
+   */
   String getName();
 
+  /**
+   * <p>getStates.</p>
+   *
+   * @return a {@link java.util.Collection} object.
+   */
   Collection<IState> getStates();
 
 }

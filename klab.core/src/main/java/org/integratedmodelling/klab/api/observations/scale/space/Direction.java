@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 // TODO: Auto-generated Javadoc
 /**
  * The Enum Direction.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public enum Direction {
     LEFT(1),

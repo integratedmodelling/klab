@@ -54,7 +54,7 @@ public class Model extends KimObject implements IModel {
    * @param model
    * @param namespace
    * @param monitor
-   * @return
+   * @return a new model
    */
   public static Model create(IKimModel model, INamespace namespace, IMonitor monitor) {
     return new Model(model, namespace, monitor);
@@ -269,7 +269,7 @@ public class Model extends KimObject implements IModel {
    * Get the output that can satisfy this observable, possibly with mediation.
    * 
    * @param observable
-   * @return
+   * @return an existing output observable or null
    */
   public Observable getCompatibleOutput(Observable observable) {
     for (IObservable output : observables) {
@@ -285,7 +285,7 @@ public class Model extends KimObject implements IModel {
    * Get the input that can satisfy this observable, possibly with mediation.
    * 
    * @param observable
-   * @return
+   * @return an existing output observable or null
    */
   public Observable getCompatibleInput(Observable observable) {
     for (IObservable input : dependencies) {

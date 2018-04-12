@@ -39,16 +39,8 @@ public interface IKimModel extends IKimActiveStatement {
 
     String getName();
 
-    /**
-     * 
-     * @return
-     */
     Optional<Object> getInlineValue();
 
-    /**
-     * 
-     * @return
-     */
     Optional<IServiceCall> getResourceFunction();
     
     /**

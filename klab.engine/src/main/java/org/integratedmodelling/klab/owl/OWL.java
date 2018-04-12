@@ -120,7 +120,7 @@ public enum OWL {
      * 
      * @param owl
      * @param complainIfNotFound 
-     * @return
+     * @return the concept for the class
      */
     public Concept getConceptFor(OWLClass owl, boolean complainIfNotFound) {
         Concept ret = null;
@@ -168,7 +168,7 @@ public enum OWL {
      * found.
      * 
      * @param owl
-     * @return
+     * @return the property for the class
      */
     public IProperty getPropertyFor(OWLProperty<?, ?> owl) {
 
@@ -811,20 +811,20 @@ public enum OWL {
      * restriction, return false.
      * 
      * @param type
-     * @param observableRole
-     * @return
+     * @param concept
+     * @return true if restriction exists and is optional
      */
     public boolean isRestrictionOptional(IConcept type, IConcept concept) {
         return new ConceptRestrictionVisitor(type, concept).isOptional();
     }
 
     /**
-     * Return whether the restriction on type involving concept is optional. If there is no such
+     * Return whether the restriction on type involving concept is a negation. If there is no such
      * restriction, return false.
      * 
      * @param type
-     * @param observableRole
-     * @return
+     * @param concept
+     * @return true if restriction exists and is a negation
      */
     public boolean isRestrictionDenied(IConcept type, IConcept concept) {
         return new ConceptRestrictionVisitor(type, concept).isDenied();

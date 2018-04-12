@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.exceptions;
 // TODO: Auto-generated Javadoc
 /**
  * The Class KlabUnknownUrnException.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class KlabUnknownUrnException extends KlabException {
 

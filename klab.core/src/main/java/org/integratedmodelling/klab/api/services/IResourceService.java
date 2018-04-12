@@ -32,9 +32,9 @@ import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
 
 /**
  * The <code>IResourceService</code> service handles all semantic and non-semantic assets.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IResourceService {
 
@@ -43,7 +43,7 @@ public interface IResourceService {
    * resources are created by the {@link IResourceValidator validator} of an {@link IResourceAdapter
    * adapter}, and must be published before they can be shared. A project containing local URNs
    * cannot be published on a k.LAB node.
-   * 
+   *
    * @return the local resource catalog
    */
   IResourceCatalog getLocalResourceCatalog();
@@ -52,27 +52,28 @@ public interface IResourceService {
    * The public resource catalog contains resources after they have been published by the
    * {@link IResourcePublisher publisher} of the adapter that created the resource. These resources
    * can be shared with others and projects using their URNs can be shared on k.LAB nodes.
-   * 
+   *
    * @return the public resource catalog
    */
   IResourceCatalog getPublicResourceCatalog();
 
   /**
    * Resolve the passed URN to a resource.
-   * 
+   *
    * @param urn the
    * @return a resource
-   * @throws KlabUnknownUrnException
-   * @throws KlabUnauthorizedUrnException
+   * @throws org.integratedmodelling.klab.exceptions.KlabUnknownUrnException
+   * @throws org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException
    */
   IResource resolveResource(String urn)
       throws KlabUnknownUrnException, KlabUnauthorizedUrnException;
 
   /**
-   * 
-   * @param file
-   * @param monitor
-   * @return
+   * <p>getLocalFileResource.</p>
+   *
+   * @param file a {@link java.io.File} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+   * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
    */
   IResource getLocalFileResource(File file, IMonitor monitor);
 
@@ -80,23 +81,23 @@ public interface IResourceService {
    * The workspace with all local projects. The only workspace that is not read only and is
    * monitored for changes, with automatic reload of any updated knowledge. Never null, possibly
    * empty.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace} object.
    */
   IWorkspace getLocalWorkspace();
 
   /**
    * The upper ontology workspace, automatically synchronized and read only.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace} object.
    */
   IWorkspace getUpperOntology();
 
   /**
    * All the projects composing the worldview, automatically synchronized and read only, but
    * overridden by any of the same projects in the local workspace.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview} object.
    */
   IWorldview getWorldview();
 
@@ -104,23 +105,24 @@ public interface IResourceService {
    * The components workspace, including projects (with or without binary assets) that are managed
    * by the engine as new components are requested during resolution. Read only. In development
    * configuration also contains any locally available components.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace} object.
    */
   IWorkspace getComponentsWorkspace();
 
   /**
-   * 
-   * @param projectId
-   * @return
+   * <p>getProject.</p>
+   *
+   * @param projectId a {@link java.lang.String} object.
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IProject} object.
    */
   IProject getProject(String projectId);
 
   /**
    * Retrieve a model object identified through a URN - either an observer or a model, local or
    * remote, in the latter case triggering any necessary synchronization with the network.
-   * 
-   * @param urn
+   *
+   * @param urn a {@link java.lang.String} object.
    * @return the model object corresponding to the urn, or null if not found.
    */
   IKimObject getModelObject(String urn);
@@ -128,7 +130,7 @@ public interface IResourceService {
   /**
    * Retrieve a resolvable object identified by a URN, promoting any resource that is not directly
    * resolvable to the correspondent resolvable when possible.
-   * 
+   *
    * @param urn either a formal URN or one of the abbreviated forms recognized in k.IM (such as a
    *        concept identifier)
    * @return a resolvable resource, or null if nothing can be found.
@@ -138,8 +140,8 @@ public interface IResourceService {
   /**
    * Create a builder to describe a future valid resource or the errors that will prevent it from
    * being published.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.data.IResource.Builder} object.
    */
   IResource.Builder createResourceBuilder();
 

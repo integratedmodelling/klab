@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.api.services;
 
 /**
  * The Interface ITypeService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ITypeService {
 

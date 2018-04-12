@@ -21,28 +21,31 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IClassification.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IClassification extends Iterable<IClassifier> {
 
     /**
      * Return the main concept that subsumes all those expressed by the classifiers. In some situations this may be
      * null. In normal situations this will be an abstract concept and subsume all others.
-     * 
-     * @return
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
      */
     IConcept getConcept();
 
     /**
      * True if this has been declared and validated as a discretization. Subsumes {@link #isContiguousAndFinite()} == true.
-     * 
-     * @return
+     *
+     * @return a boolean.
      */
     boolean isDiscretization();
 
     /**
      * Return true if all the intervals are contiguous and the extreme intervals have
-     * finite boundaries. 
-     * 
+     * finite boundaries.
+     *
      * @return true if we express the discretization of a finite domain
      */
     public boolean isContiguousAndFinite();
@@ -50,10 +53,10 @@ public interface IClassification extends Iterable<IClassifier> {
     /**
      * Return the concept that the passed object classifies to, or null if no
      * classifiers match.
-     * 
-     * @param object
-     * @param monitor 
-     * @return
+     *
+     * @param object a {@link java.lang.Object} object.
+     * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
      */
     IConcept classify(Object object, IMonitor monitor);
 

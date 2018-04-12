@@ -68,7 +68,7 @@ public class Coverage extends Scale implements ICoverage {
    * Create a coverage with full coverage, which can be increased by successive OR merges.
    * 
    * @param original
-   * @return
+   * @return a new empty coverage of this scale
    */
   public static Coverage empty(IScale original) {
     return new Coverage((Scale)original, 0.0);

@@ -73,7 +73,7 @@ public interface IKimAction extends IKimStatement {
     /**
      * The trigger for the action.
      * 
-     * @return
+     * @return the trigger
      */
     Trigger getTrigger();
 
@@ -87,14 +87,14 @@ public interface IKimAction extends IKimStatement {
     /**
      * The types of events that trigger the action, or an empty collection if trigger
      * is not Trigger.EVENT.
-     * @return
+     * @return any triggering event concept
      */
     List<IKimConcept> getTriggeringEvents();
 
     /**
      * The actual computables for this action.
      * 
-     * @return
+     * @return the computables
      */
     List<IComputableResource> getComputation();
     

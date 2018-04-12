@@ -25,16 +25,16 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * processes</strong>, where the result of contextualizing knowledge is a model instead of a
  * finished observation.
  * <p>
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IModelArtifact extends IArtifact {
 
   /**
    * The model specification produced by the activity. This can be serialized to k.IM or turned into
-   * a {@link IModel} for distribution or execution.
-   * 
+   * a {@link org.integratedmodelling.klab.api.model.IModel} for distribution or execution.
+   *
    * @return the model specifications
    */
   IKimModel getModel();

@@ -14,8 +14,6 @@ public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implem
   
   /**
    * TODO this should also take the agent and activity that created the initial subject.
-   * 
-   * @param root
    */
   public Provenance() {
     super(Activity.class);

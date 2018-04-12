@@ -23,20 +23,23 @@ import java.text.StringCharacterIterator;
 
 // TODO: Auto-generated Javadoc
 /**
-* Convenience methods for escaping special characters related to HTML, XML, 
-* and regular expressions.
-* </ul> 
-*/
+ * Convenience methods for escaping special characters related to HTML, XML,
+ * and regular expressions.
+ * </ul>
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
+ */
 public final class Escape {
 
     /**
      * Escape characters for text appearing in HTML markup.
-     * 
+     *
      * <P>
      * This method exists as a defence against Cross Site Scripting (XSS) hacks. This method escapes
      * all characters recommended by the Open Web App Security Project -
      * <a href='http://www.owasp.org/index.php/Cross_Site_Scripting'>link</a>.
-     * 
+     *
      * <P>
      * The following characters are replaced with corresponding HTML character entities :
      * <table border='1' cellpadding='3' cellspacing='0'>
@@ -93,7 +96,7 @@ public final class Escape {
      * <td>&#045;</td>
      * </tr>
      * </table>
-     * 
+     *
      * <P>
      * Note that JSTL's {@code <c:out>} escapes <em>only the first five</em> of the above
      * characters.
@@ -142,11 +145,11 @@ public final class Escape {
 
     /**
      * Synonym for <tt>URLEncoder.encode(String, "UTF-8")</tt>.
-     * 
+     *
      * <P>
      * Used to ensure that HTTP query strings are in proper form, by escaping special characters
      * such as spaces.
-     * 
+     *
      * <P>
      * It is important to note that if a query string appears in an <tt>HREF</tt> attribute, then
      * there are two issues - ensuring the query string is valid HTTP (it is URL-encoded), and
@@ -167,11 +170,11 @@ public final class Escape {
 
     /**
      * Synonym for <tt>URLEncoder.encode(String, "UTF-8")</tt>.
-     * 
+     *
      * <P>
      * Used to ensure that HTTP query strings are in proper form, by escaping special characters
      * such as spaces.
-     * 
+     *
      * <P>
      * It is important to note that if a query string appears in an <tt>HREF</tt> attribute, then
      * there are two issues - ensuring the query string is valid HTTP (it is URL-encoded), and
@@ -192,7 +195,7 @@ public final class Escape {
 
     /**
      * Escape characters for text appearing as XML data, between tags.
-     * 
+     *
      * <P>
      * The following characters are replaced with corresponding character entities :
      * <table border='1' cellpadding='3' cellspacing='0'>
@@ -221,7 +224,7 @@ public final class Escape {
      * <td>&#039;</td>
      * </tr>
      * </table>
-     * 
+     *
      * <P>
      * Note that JSTL's {@code <c:out>} escapes the exact same set of characters as this method.
      * <span class='highlight'>That is, {@code <c:out>} is good for escaping to produce valid XML,
@@ -284,7 +287,7 @@ public final class Escape {
     /**
      * Replace characters having special meaning in regular expressions with their escaped
      * equivalents, preceded by a '\' character.
-     * 
+     *
      * <P>
      * The escaped characters include :
      * <ul>

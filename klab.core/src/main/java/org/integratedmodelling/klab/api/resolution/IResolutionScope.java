@@ -27,13 +27,13 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * contextualized. During resolution, any new condition spawns a child scope that is merged with the
  * parent upon successful resolution of the state. The resolution contexts compute the total
  * coverage, build the provenance graph and harmonize the merged scale as new models are accepted.
- * 
+ *
  * Created and passed around during resolution, notably to the model query so that it can be used to
  * rank the outputs. Model query on network nodes gets passed enough information to build a
  * mock-scope at the query endpoint.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IResolutionScope {
 
@@ -57,7 +57,7 @@ public interface IResolutionScope {
   /**
    * IDs of any scenarios we're resolving into. These are set in the root scope and inherited by all
    * child scopes.
-   * 
+   *
    * @return the scenarios of resolution
    */
   Collection<String> getScenarios();
@@ -67,14 +67,14 @@ public interface IResolutionScope {
    * a model's dependency, it should be the model's namespace, otherwise it should be that of the
    * subject or concept we're resolving. The namespace provides semantic distance, ranking criteria,
    * white/blacklist for resolution, etc.
-   * 
+   *
    * @return the resolution namespace
    */
   INamespace getResolutionNamespace();
 
   /**
    * Return the mode of resolution - whether we're looking for an instantiator or a resolver.
-   * 
+   *
    * @return the mode of resolution
    */
   Mode getMode();
@@ -83,14 +83,14 @@ public interface IResolutionScope {
    * If true, we're resolving interactively, which implies giving the user a choice over values of
    * editable parameters and optional outputs. Whenever these are available, the resolver will stop
    * and ask the user for input through the engine notification bus.
-   * 
+   *
    * @return whether the resolution is interactive
    */
   boolean isInteractive();
 
   /**
    * Resolution is controlled by a task or script monitor.
-   * 
+   *
    * @return the monitor
    */
   IMonitor getMonitor();
@@ -98,14 +98,14 @@ public interface IResolutionScope {
   /**
    * Return the context in which this resolution is happening. Null for scopes that resolve a root
    * context.
-   * 
+   *
    * @return the context, or null
    */
   IDirectObservation getContext();
 
   /**
    * The scale of the resolution, including how much the resolution process managed to cover it.
-   * 
+   *
    * @return the coverage
    */
   ICoverage getCoverage();

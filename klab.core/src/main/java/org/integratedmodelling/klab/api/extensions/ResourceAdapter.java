@@ -27,9 +27,9 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
  * Used on a {@link IResourceAdapter resource adapter class} to declare a new resource type. The
  * information in this annotation is used to validate resources using this adapter before they are
  * processed by the adapter itself.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -53,10 +53,10 @@ public @interface ResourceAdapter {
 
   /**
    * Any required type-specific parameters names can be added here. If the fields listed here are
-   * not present in the {@link IResource#getParameters() parameters) of a {@link IResource resource}
+   * not present in the {@link IResource#getParameters() parameters} of a {@link IResource resource}
    * with this type, the resource is invalid and cannot be used.
    * 
-   * @return
+   * @return the required parameter names
    */
   String[] requires() default {};
 
@@ -65,7 +65,7 @@ public @interface ResourceAdapter {
    * does not cause invalidation when not present. All parameters in a resource must be declared in
    * the annotation.
    * 
-   * @return
+   * @return the optional parameter names
    */
   String[] optional() default {};
 

@@ -22,11 +22,11 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
- * A processor for a supported expression language to be used in k.IM expressions. The 
- * k.LAB implementation must provide a default, accessible through 
- * 
- * @author Ferd
+ * A processor for a supported expression language to be used in k.IM expressions. The
+ * k.LAB implementation must provide a default, accessible through
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface ILanguageProcessor {
 
@@ -81,29 +81,29 @@ public interface ILanguageProcessor {
   
   /**
    * Compile the expression in the passed context, which may be null.
-   * 
-   * @param expression
-   * @param context
+   *
+   * @param expression a {@link java.lang.String} object.
+   * @param context a {@link org.integratedmodelling.klab.api.runtime.IComputationContext} object.
    * @return the compiled expression
-   * @throws KlabValidationException if compilation produces any errors
+   * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if compilation produces any errors
    */
   IExpression compile(String expression, @Nullable IComputationContext context) throws KlabValidationException;
 
   /**
    * Preprocess an expression and return the descriptor. The context may be null.
-   * 
-   * @param expression
-   * @param context 
+   *
+   * @param expression a {@link java.lang.String} object.
+   * @param context a {@link org.integratedmodelling.klab.api.runtime.IComputationContext} object.
    * @return a preprocessed descriptor, which must be enough to produce an IExpression on request.
-   * @throws KlabValidationException if the expression contains syntax of logical errors
+   * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if the expression contains syntax of logical errors
    */
   Descriptor describe(String expression, @Nullable IComputationContext context) throws KlabValidationException;
 
   /**
    * Assume that the passed expression evaluates to a boolean and produce the language equivalent of its
    * negation.
-   * 
-   * @param expression
+   *
+   * @param expression a {@link java.lang.String} object.
    * @return another expression producing the opposite truth value as the original
    */
   String negate(String expression);

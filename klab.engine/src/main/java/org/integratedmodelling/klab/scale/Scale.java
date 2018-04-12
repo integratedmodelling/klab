@@ -277,7 +277,7 @@ public class Scale implements IScale {
    * 
    * @param scale
    * @param extents
-   * @return
+   * @return a new scale
    */
   public static Scale createLike(IScale scale, IExtent... extents) {
     List<IExtent> exts = Arrays.asList(extents);
@@ -301,7 +301,7 @@ public class Scale implements IScale {
    * 
    * @param scale
    * @param extents
-   * @return
+   * @return a new scale
    */
   public static Scale createLike(IScale scale, Collection<IExtent> extents) {
     return createLike(scale, extents.toArray(new Extent[extents.size()]));
@@ -313,7 +313,7 @@ public class Scale implements IScale {
    * TODO this should be able to create a ICoverage when extents are partially specified.
    * 
    * @param extents
-   * @return
+   * @return a new scale
    */
   public static Scale create(IExtent... extents) {
     Scale ret = new Scale();
@@ -330,7 +330,7 @@ public class Scale implements IScale {
    * Create a scale from a collection of extents.
    * 
    * @param extents
-   * @return
+   * @return a new scale
    */
   public static Scale create(Collection<IExtent> extents) {
     return create(extents.toArray(new IExtent[extents.size()]));
@@ -672,7 +672,6 @@ public class Scale implements IScale {
    * passed one. Do not confuse this with the ones from ITopology.
    * 
    * @param extent
-   * @param force
    */
   public void mergeExtent(IExtent extent) {
 
@@ -1085,8 +1084,8 @@ public class Scale implements IScale {
   /**
    * Return a new scale with the passed domains collapsed into a 1-multiplicity extent.
    * 
-   * @param domain
-   * @return
+   * @param domains
+   * @return a new scale
    * @throws KlabException
    */
   public IScale collapse(Dimension.Type... domains) throws KlabException {
@@ -1252,7 +1251,7 @@ public class Scale implements IScale {
   /**
    * Return the scale as the underlying non-semantic Geometry
    * 
-   * @return
+   * @return the fully specified geometry underlying this scale
    */
   public Geometry asGeometry() {
     if (this.geometry == null) {

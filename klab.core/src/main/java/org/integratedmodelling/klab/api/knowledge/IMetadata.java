@@ -20,6 +20,9 @@ import org.integratedmodelling.kim.api.IParameters;
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IMetadata.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IMetadata extends IParameters {
 

@@ -60,6 +60,9 @@ package org.integratedmodelling.klab.utils;
  *  For additional documentation,
  *  see <a href="http://algs4.cs.princeton.edu/53substring">Section 5.3</a> of
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class KMP {
     private final int R;       // the radix
@@ -155,7 +158,7 @@ public class KMP {
 
 
     /**
-     * 
+     *
      * Takes a pattern string and an input string as command-line arguments; searches for the
      * pattern string in the text string; and prints the first occurrence of the pattern string in
      * the text string.

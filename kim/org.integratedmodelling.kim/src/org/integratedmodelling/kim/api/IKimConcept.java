@@ -18,7 +18,6 @@ public interface IKimConcept extends IKimStatement {
   /**
    * Visitor allows traversing all concept declarations and references.
    * 
-   * @see {@link IKimConcept#visit(Visitor)}
    */
   public static interface Visitor {
 
@@ -390,7 +389,7 @@ public interface IKimConcept extends IKimStatement {
    * inconsistent concept. The k.IM validator ensures that any non-empty types are internally
    * consistent.
    * 
-   * @return
+   * @return the set of types
    */
   EnumSet<Type> getType();
 
@@ -398,7 +397,7 @@ public interface IKimConcept extends IKimStatement {
    * The main observable, which must be unique. This is null in a leaf declaration, where
    * {@link #getName()} returns a non-null value.
    * 
-   * @return
+   * @return the main observable
    */
   IKimConcept getObservable();
 
@@ -448,7 +447,7 @@ public interface IKimConcept extends IKimStatement {
    * If {@link #getExpressionType()} returns anything other than {@link Expression#SINGLETON}, the
    * operands are other declarations this is part of a union or intersection with.
    * 
-   * @return
+   * @return the operands
    */
   List<IKimConcept> getOperands();
 
@@ -456,7 +455,7 @@ public interface IKimConcept extends IKimStatement {
    * Type of expression. If anything other than {@link Expression#SINGLETON}, {@link #getOperands()}
    * will return a non-empty list.
    * 
-   * @return
+   * @return the expression type
    */
   Expression getExpressionType();
 

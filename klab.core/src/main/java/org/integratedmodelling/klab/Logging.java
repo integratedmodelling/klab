@@ -23,6 +23,9 @@ import ch.qos.logback.classic.Logger;
 
 /**
  * The Enum Logging.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public enum Logging implements ILoggingService {
 
@@ -43,6 +46,7 @@ public enum Logging implements ILoggingService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void info(Object... o) {
 		if (logger != null) {
@@ -52,6 +56,7 @@ public enum Logging implements ILoggingService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void warn(Object... o) {
 		if (logger != null) {
@@ -61,6 +66,7 @@ public enum Logging implements ILoggingService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void error(Object... o) {
 		if (logger != null) {
@@ -70,6 +76,7 @@ public enum Logging implements ILoggingService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void debug(Object... o) {
 		if (logger != null) {

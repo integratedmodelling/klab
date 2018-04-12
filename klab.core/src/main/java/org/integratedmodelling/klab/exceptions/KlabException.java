@@ -22,6 +22,9 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 // TODO: Auto-generated Javadoc
 /**
  * The Class KlabException.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 @SuppressWarnings("javadoc")
 public class KlabException extends Exception {

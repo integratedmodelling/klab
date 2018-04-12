@@ -17,11 +17,16 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface INetworkSessionIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface INetworkSessionIdentity extends IIdentity {
 
+    /** Constant <code>type</code> */
     Type type = Type.NETWORK_SESSION;
     
+    /** {@inheritDoc} */
     @Override
     INodeUserIdentity getParentIdentity();
 }

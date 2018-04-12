@@ -28,20 +28,22 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
  * using direct actions (in the "active voice") and can be accessed backwards to build the OPM
  * graph, which is a "passive voice" model. This makes it much easier to build through observations
  * and resolutions. The data models is more compact than the W3's provenance model: it's a graph
- * where the vertices are {@link Node}s and the edges are {@link IActivity}s. Actions may be linked
+ * where the vertices are {@link org.integratedmodelling.klab.api.provenance.IProvenance.Node}s and the edges are {@link org.integratedmodelling.klab.api.provenance.IActivity}s. Actions may be linked
  * to each other in a causal graph that is independent from the primary graph. Actions that are not
  * caused by another action are called "primary" and can be obtained in chronological order. All
  * nodes and actions are timestamped with their time of creation and hold arbitrary metadata using
- * the standard Dublin Core tags from {@link IMetadata}.
+ * the standard Dublin Core tags from {@link org.integratedmodelling.klab.api.knowledge.IMetadata}.
  * <p>
  * Because k.LAB is an intelligent system, we always have at least two agents: a User (personified
- * by a {@link IUserIdentity} and the k.LAB engine, personifying the AI in the system through a
- * {@link IEngineIdentity}. Primary actions are typically caused by users (through
+ * by a {@link org.integratedmodelling.klab.api.auth.IUserIdentity} and the k.LAB engine, personifying the AI in the system through a
+ * {@link org.integratedmodelling.klab.api.auth.IEngineIdentity}. Primary actions are typically caused by users (through
  * <strong>acknowledgement</strong> observations), secondary by the AI in k.LAB (through
  * <strong>computation</strong> or <strong>detection</strong> observations). Provenance is used to
  * document the model resolution strategy and to build the IReport that documents the model results.
  * <p>
+ *
  * @author Ferd
+ * @version $Id: $Id
  */
 public interface IProvenance {
 
@@ -71,7 +73,7 @@ public interface IProvenance {
 
   /**
    * True if there's nothing to see.
-   * 
+   *
    * @return true if empty
    */
   boolean isEmpty();
@@ -87,22 +89,22 @@ public interface IProvenance {
 
   /**
    * Return all the primary actions in chronological order.
-   * 
-   * @return
+   *
+   * @return a {@link java.util.List} object.
    */
   List<IActivity> getPrimaryActions();
 
   /**
    * There is always a root observation/artifact, with consumer = the user.
-   * 
-   * @return
+   *
+   * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact} object.
    */
   IArtifact getRootArtifact();
 
   /**
    * Return all artifacts.
-   * 
-   * @return
+   *
+   * @return a {@link java.util.Collection} object.
    */
   Collection<IArtifact> getArtifacts();
 

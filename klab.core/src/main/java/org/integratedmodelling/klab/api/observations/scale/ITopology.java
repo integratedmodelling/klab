@@ -20,6 +20,8 @@ package org.integratedmodelling.klab.api.observations.scale;
  * The Interface ITopology.
  *
  * @param <T> the generic type
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ITopology<T> extends ITopologicallyComparable<T> {
 
@@ -32,7 +34,7 @@ public interface ITopology<T> extends ITopologicallyComparable<T> {
     /**
      * Return the total number of distinct subdivisions in this topology. {@link #INFINITE} is
      * an option when applicable.
-     * 
+     *
      * @return number of subdivisions
      */
     public long size();

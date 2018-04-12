@@ -22,22 +22,22 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 /**
  * Simple execution interface for expressions. A new expression is generated per each call to the
  * corresponding language statement, so each object can store local data about its call context.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IExpression {
 
   /**
    * Execute the expression
-   * 
+   *
    * @param parameters from context or defined in a language call
    * @param context possibly empty, may be added to determine the result of the evaluation according
    *        to the calling context. The {@link IComputationContext#getMonitor() monitor in the
    *        context} will never be null and can be used to send messages or interrupt the
    *        computation.
    * @return the result of evaluating the expression
-   * @throws KlabException TODO
+   * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
    */
   Object eval(IParameters parameters, IComputationContext context) throws KlabException;
 

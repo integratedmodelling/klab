@@ -31,7 +31,7 @@ public interface IKimBehavior extends Iterable<IKimAction> {
      * may have partial or no parameters, to be harmonized with the overall
      * context's scale.
      * 
-     * @return
+     * @return the extent functions
      */
     Collection<IServiceCall> getExtentFunctions();
     

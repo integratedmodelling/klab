@@ -106,7 +106,7 @@ public class NumberUtils {
    * 
    * @param array
    * @param splitRegex
-   * @return
+   * @return the int array
    */
   public static int[] intArrayFromString(String array, String splitRegex) {
 

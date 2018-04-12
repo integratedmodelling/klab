@@ -54,10 +54,9 @@ import org.integratedmodelling.klab.utils.Escape;
  * assigns an integer ID to it. The table is read on startup so that all concepts are known to the
  * reasoner, and any that are not will not be retrievable.
  * <p>
- * * The main table is CONCEPTS, containing simply the ID of the type and its definition. The method
- * {@link #getCompatibleTypeIds(IConcept)} returns all the compatible type IDs for an observable
- * concept that have ever been stored in the database. A query for any instance stored by derived
- * kboxes with its ID in the set will return compatible observables.
+ * * The main table is CONCEPTS, containing simply the ID of the type and its definition. A query
+ * for any instance stored by derived kboxes with its ID in the set will return compatible
+ * observables.
  * </p>
  * For convenience, the kbox also maintains a METADATA table for POD objects and exposes simple
  * methods to store/retrieve/delete metadata beans.
@@ -217,7 +216,7 @@ public abstract class ObservableKbox extends H2Kbox {
    * database so it's very fast.
    * 
    * @param c
-   * @return
+   * @return the ID for the concept, or -1 if not seen before
    */
   public long getConceptId(IConcept c) {
     Long ret = conceptHash.get(c.getDefinition());
@@ -230,7 +229,7 @@ public abstract class ObservableKbox extends H2Kbox {
    * 
    * @param observable
    * @param monitor
-   * @return
+   * @return the ID for the observable, creating as necessary
    */
   public long requireConceptId(IConcept observable, IMonitor monitor) {
 

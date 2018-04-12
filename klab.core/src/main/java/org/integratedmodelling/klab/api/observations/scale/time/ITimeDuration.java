@@ -19,6 +19,9 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
 
 /**
  * The Interface ITimeDuration.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface ITimeDuration extends Comparable<ITimeDuration> {
 

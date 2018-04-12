@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.utils;
 
 /**
  * The Enum OS.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public enum OS {
 

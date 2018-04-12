@@ -52,7 +52,7 @@ public interface IRuntimeContext extends IComputationContext {
   /**
    * Each context that handles a temporal scale must expose a configuration detector.
    * 
-   * @return
+   * @return the configuration detector for the context
    */
   IConfigurationDetector getConfigurationDetector();
 

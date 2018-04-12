@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.data.rest.resources.ModelReference.Mediation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -43,13 +44,13 @@ import com.vividsolutions.jts.geom.Geometry;
 public class ModelKbox extends ObservableKbox {
 
   private boolean workRemotely = !Configuration.INSTANCE.isOffline();
-  private boolean initialized = false;
+  private boolean initialized  = false;
 
   /**
    * Create a kbox with the passed name. If the kbox exists, open it and return it.
    * 
    * @param name
-   * @return
+   * @return a new kbox
    */
   public static ModelKbox create(String name) {
     return new ModelKbox(name);
@@ -121,8 +122,9 @@ public class ModelKbox extends ObservableKbox {
                   + "'" + cn(model.getDereifyingAttribute()) + "', "
                   + model.getMinSpatialScaleFactor() + ", " + model.getMaxSpatialScaleFactor()
                   + ", " + model.getMinTimeScaleFactor() + ", " + model.getMaxTimeScaleFactor()
-                  + ", " + "'" + (model.getShape() == null ? "GEOMETRYCOLLECTION EMPTY"
-                      : ((Shape)model.getShape()).getStandardizedGeometry().toString())
+                  + ", " + "'"
+                  + (model.getShape() == null ? "GEOMETRYCOLLECTION EMPTY"
+                      : ((Shape) model.getShape()).getStandardizedGeometry().toString())
                   + "'" + ");";
 
           if (model.getMetadata() != null && model.getMetadata().size() > 0) {
@@ -146,7 +148,8 @@ public class ModelKbox extends ObservableKbox {
    * @return models resulting from query, best first.
    * @throws KlabException
    */
-  public List<IRankedModel> query(IObservable observable, ResolutionScope context) throws KlabException {
+  public List<IRankedModel> query(IObservable observable, ResolutionScope context)
+      throws KlabException {
 
     initialize(context.getMonitor());
 
@@ -169,16 +172,16 @@ public class ModelKbox extends ObservableKbox {
      * simply by using the result list as a distributed operation.
      */
     if (Configuration.INSTANCE.isRemoteResolutionEnabled()) {
-    // if (KLAB.ENGINE instanceof IModelingEngine && workRemotely) {
-    //
-    // ModelQuery mquery = new ModelQuery();
-    // mquery.setObservable(KLAB.MFACTORY
-    // .adapt(observable, org.integratedmodelling.common.beans.Observable.class));
-    // mquery.setScope(KLAB.MFACTORY.adapt(context,
-    // org.integratedmodelling.common.beans.Scope.class));
-    // ret.setQuery(mquery);
-    //
-    // KLAB.ENGINE.getNetwork().broadcast(ret, ((ResolutionScope) context).getMonitor());
+      // if (KLAB.ENGINE instanceof IModelingEngine && workRemotely) {
+      //
+      // ModelQuery mquery = new ModelQuery();
+      // mquery.setObservable(KLAB.MFACTORY
+      // .adapt(observable, org.integratedmodelling.common.beans.Observable.class));
+      // mquery.setScope(KLAB.MFACTORY.adapt(context,
+      // org.integratedmodelling.common.beans.Scope.class));
+      // ret.setQuery(mquery);
+      //
+      // KLAB.ENGINE.getNetwork().broadcast(ret, ((ResolutionScope) context).getMonitor());
     }
 
     return ret;
@@ -300,14 +303,14 @@ public class ModelKbox extends ObservableKbox {
    */
   private String spaceQuery(ISpace space) {
 
-    if (((ISpace)((AbstractExtent)space).getExtent()).getShape().isEmpty()) {
+    if (((ISpace) ((AbstractExtent) space).getExtent()).getShape().isEmpty()) {
       return "";
     }
 
     String scalequery =
         space.getScaleRank() + " BETWEEN model.minspatialscale AND model.maxspatialscale";
 
-    String spacequery = "model.space && '" + ((Shape)space.getShape()).getStandardizedGeometry()
+    String spacequery = "model.space && '" + ((Shape) space.getShape()).getStandardizedGeometry()
         + "' OR ST_IsEmpty(model.space)";
 
     return "(" + scalequery + ") AND (" + spacequery + ")";
@@ -466,7 +469,8 @@ public class ModelKbox extends ObservableKbox {
 
       Klab.INSTANCE.info("storing model " + ((IModel) o).getName());
 
-      for (ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor)) {
+      for (ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o,
+          monitor)) {
         toStore.add(data);
       }
 
@@ -493,10 +497,9 @@ public class ModelKbox extends ObservableKbox {
    * 
    * @param model
    * @param monitor
-   * @return
+   * @return the models implied by the statement
    */
-  public static Collection<ModelReference> inferModels(org.integratedmodelling.klab.model.Model model,
-      IMonitor monitor) {
+  public static Collection<ModelReference> inferModels(Model model, IMonitor monitor) {
     List<ModelReference> ret = new ArrayList<>();
 
     for (ModelReference m : getModelDescriptors(model, monitor)) {
@@ -572,7 +575,7 @@ public class ModelKbox extends ObservableKbox {
 
       scaleMultiplicity = scale.size();
       if (scale.getSpace() != null) {
-        spaceExtent = (Shape)scale.getSpace().getShape();
+        spaceExtent = (Shape) scale.getSpace().getShape();
         // may be null when we just say 'over space'.
         if (spaceExtent != null) {
           spaceMultiplicity = scale.getSpace().size();
@@ -580,7 +583,7 @@ public class ModelKbox extends ObservableKbox {
         isSpatial = true;
       }
       if (scale.getTime() != null) {
-        timeExtent = (ITime) ((AbstractExtent)scale.getTime()).getExtent();
+        timeExtent = (ITime) ((AbstractExtent) scale.getTime()).getExtent();
         if (timeExtent != null) {
           if (timeExtent.getStart() != null) {
             timeStart = timeExtent.getStart().getMillis();

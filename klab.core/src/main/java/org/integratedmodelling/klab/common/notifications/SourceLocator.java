@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.common.notifications;
 
 /**
  * The Class SourceLocator.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class SourceLocator {
     private int offset;

@@ -20,27 +20,33 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 /**
  * The Interface IReasonerService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IReasonerService {
 
     /**
-     * 
-     * @param main
-     * @return
+     * <p>getSemanticClosure.</p>
+     *
+     * @param main a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+     * @return a {@link java.util.Set} object.
      */
     Set<IConcept> getSemanticClosure(IConcept main);
 
     /**
-     * 
-     * @param main
-     * @return
+     * <p>getParentClosure.</p>
+     *
+     * @param main a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+     * @return a {@link java.util.Set} object.
      */
     Set<IConcept> getParentClosure(IConcept main);
 
     /**
-     * 
-     * @param concept
-     * @return
+     * <p>isSatisfiable.</p>
+     *
+     * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+     * @return a boolean.
      */
     boolean isSatisfiable(IConcept concept);
 

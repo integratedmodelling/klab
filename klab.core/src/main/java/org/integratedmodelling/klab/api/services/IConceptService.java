@@ -21,27 +21,67 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 
 /**
  * The Interface IConceptService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IConceptService {
 
+  /**
+   * <p>getProperty.</p>
+   *
+   * @param propertyId a {@link java.lang.String} object.
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IProperty} object.
+   */
   IProperty getProperty(String propertyId);
 
+  /**
+   * <p>getConcept.</p>
+   *
+   * @param conceptId a {@link java.lang.String} object.
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   */
   IConcept getConcept(String conceptId);
 
+  /**
+   * <p>getLeastGeneral.</p>
+   *
+   * @param cc a {@link java.util.Collection} object.
+   * @return a {@link java.util.Collection} object.
+   */
   Collection<IConcept> getLeastGeneral(Collection<IConcept> cc);
 
+  /**
+   * <p>getLeastGeneralCommonConcept.</p>
+   *
+   * @param cc a {@link java.util.Collection} object.
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   */
   IConcept getLeastGeneralCommonConcept(Collection<IConcept> cc);
 
+  /**
+   * <p>getLeastGeneralCommonConcept.</p>
+   *
+   * @param concept1 a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   * @param c a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   */
   IConcept getLeastGeneralCommonConcept(IConcept concept1, IConcept c);
 
+  /**
+   * <p>getLeastGeneralConcept.</p>
+   *
+   * @param cc a {@link java.util.Collection} object.
+   * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   */
   IConcept getLeastGeneralConcept(Collection<IConcept> cc);
 
   /**
-   * Finds a metadata field in the inheritance chain of a concept. {@link IConcept#getMetadata()}
+   * Finds a metadata field in the inheritance chain of a concept. {@link org.integratedmodelling.klab.api.knowledge.IConcept#getMetadata()}
    * only retrieves metadata for the concept it's called on.
-   * 
-   * @param concept
-   * @param field
+   *
+   * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   * @param field a {@link java.lang.String} object.
    * @return the metadata field or null
    */
   Object getMetadata(IConcept concept, String field);
@@ -49,19 +89,19 @@ public interface IConceptService {
   /**
    * Return the number of parent "generations" between from and to, or -1 if the concepts have no
    * common lineage.
-   * 
-   * @param from
-   * @param to
+   *
+   * @param from a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   * @param to a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
    * @return 0 or a positive number if the concepts have common lineage, -1 otherwise.
    */
   int getAssertedDistance(IConcept from, IConcept to);
 
   /**
    * Find a common denominator and return n > 0 if c1 is more specific than c2, 0 if same, n < 0
-   * otherwise. Return {@link Integer#MIN_VALUE} if the concepts have nothing in common.
-   * 
-   * @param c1
-   * @param c2
+   * otherwise. Return {@link java.lang.Integer#MIN_VALUE} if the concepts have nothing in common.
+   *
+   * @param c1 a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+   * @param c2 a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
    * @param useBaseTrait if true, compare against the base trait of both concepts instead of the
    *        least general common ancestor. Integer.MIN_VALUE is returned if the base trait does not
    *        exist or is not the same.

@@ -18,14 +18,17 @@ package org.integratedmodelling.klab.utils;
 import java.util.Vector;
 
 // TODO: Auto-generated Javadoc
-/**This class is a utility for finding
+/**
+ *This class is a utility for finding
  * the String based upon the wild card
  * pattern. For example if the actual
  * String "John" and your wild card pattern
  * is "J*", it will return true.
+ *
  * @author Debadatta Mishra(PIKU)
  *
  * TODO make it static and stateless - do away with the silly object semantics.
+ * @version $Id: $Id
  */
 public class WildcardMatcher {
     /**
@@ -72,14 +75,16 @@ public class WildcardMatcher {
      *
      * @param string the string
      * @param pattern the pattern
-     * @return true, if successful
+     * @return a boolean.
      */
     public static boolean matches(String string, String pattern) {
     	return new WildcardMatcher().match(string, pattern);
     }
     
-    /**This is the public method which will be called to match a String
+    /**
+     *This is the public method which will be called to match a String
      * with the wild card pattern.
+     *
      * @param actualString of type String indicating the String to be matched
      * @param wildCardString of type String indicating the wild card String
      * @return true if matches

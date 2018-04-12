@@ -18,7 +18,7 @@ import org.integratedmodelling.kim.validation.KimValidator;
  * Normalized translation of a concept declaration, with a stable ordering of concepts an full
  * parenthesization so that same meaning guarantees same text representation.
  * 
- * The descriptor returned by {@link KimConcept#description} contains all the info about the concept that are
+ * The descriptor returned by {@link KimConcept#getDescriptor()} contains all the info about the concept that are
  * available without access to the reasoner. Its description field is the normalized concept declaration.
  * 
  * @author Ferd
@@ -113,7 +113,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
      * Create a normalized KimConcept from a parsed declaration.
      * 
      * @param declaration
-     * @return
+     * @return the normalized concept
      */
     public static KimConcept normalize(ConceptDeclaration declaration) {
         return normalize(declaration, null);
@@ -125,7 +125,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
      * 
      * @param declaration
      * @param macro can be null
-     * @return
+     * @return the normalized concept
      */
     public static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro) {
 

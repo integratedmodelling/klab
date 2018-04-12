@@ -8,10 +8,10 @@ import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 
 /**
  * A IGeometry is the declaration of the topological dimensions for an observed resource or
- * computation (for example identified by a ({@link IResource#getGeometry()} URN) or by a
- * {@link IPrototype#getGeometry() service prototype} declared in KDL). When used in such a
- * declarative fashion it may have a granularity > 1, meaning that it describes a multiplicity of
- * resources, and one child geometry describing the geometry of each resource.
+ * computation (for example a resource identified by a URN) or by a {@link IPrototype#getGeometry()
+ * service prototype} declared in KDL). When used in such a declarative fashion it may have a
+ * granularity > 1, meaning that it describes a multiplicity of resources, and one child geometry
+ * describing the geometry of each resource.
  * <p>
  * Geometries do not contain any semantic information, and in k.LAB are used after conversion into a
  * worldview-aware {@code IScale scale} ({@code IWorldview#getScale(IGeometry)}) which extends the
@@ -42,8 +42,8 @@ import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
  * <code>X</code>.
  * <p>
  * If the shape is only letters with optional numbers, the topology is for a single object
- * ({@link {@link #getGranularity()} == {@link Granularity#SINGLE}). Otherwise, it can be prefixed
- * by #, which distributes the geometry across multiple objects ({@link {@link #getGranularity()} ==
+ * ({@link #getGranularity()} == {@link Granularity#SINGLE}). Otherwise, it can be prefixed by #,
+ * which distributes the geometry across multiple objects ({@link #getGranularity()} ==
  * {@link Granularity#MULTIPLE}). Objects that are children of another or others are defined after a
  * comma. So for example
  * <p>
@@ -67,9 +67,6 @@ import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
  * dimensions of a topology are either regular or irregolar.
  * 
  * @author fvilla
- * 
- * @see {@link IResource#getGeometry()}
- * @see {@link IWorldview#getScale(IGeometry)}
  * 
  */
 public interface IGeometry extends Serializable, ILocator {
@@ -118,9 +115,8 @@ public interface IGeometry extends Serializable, ILocator {
     }
 
     /**
-     * Match against constants {@link IGeometry#SPACE} and {@link IGeometry#TIME}. If none of these,
-     * any other user-defined dimension is possible - conventions must be established in worldview
-     * for those.
+     * Match against constants {@link Type#SPACE} and {@link Type#TIME}. If none of these, any other
+     * user-defined dimension is possible - conventions must be established in worldview for those.
      * 
      * @return the dimension type
      */
@@ -188,6 +184,8 @@ public interface IGeometry extends Serializable, ILocator {
      * Geometry implementations should expose an API to specify and read these parameters in
      * idiomatic ways and not rely on users providing identifiers.
      * <p>
+     * 
+     * @return the parameters
      */
     IParameters getParameters();
 
@@ -198,7 +196,7 @@ public interface IGeometry extends Serializable, ILocator {
    * literal should be normalized so that an equality contract holds between both two geometries and
    * their encoded forms.
    * 
-   * @return
+   * @return the encoded geometry
    */
   String encode();
 
@@ -224,7 +222,7 @@ public interface IGeometry extends Serializable, ILocator {
    * Return the dimension of the passed type, or null.
    * 
    * @param type
-   * @return
+   * @return the dimension or null
    */
   Dimension getDimension(Type type);
 
@@ -246,7 +244,7 @@ public interface IGeometry extends Serializable, ILocator {
   /**
    * A trivial geometry describes scalar values with no structure.
    * 
-   * @return
+   * @return true if scalar
    */
   boolean isScalar();
 
@@ -270,9 +268,8 @@ public interface IGeometry extends Serializable, ILocator {
 
   /**
    * Return another locator to point to a specific state within a shape returned by
-   * {@link #getShape(org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type)}. This can be
-   * used in contextualizers to preserve semantics when addressing dependent states and numeric
-   * offsets are required to interface to other APIs.
+   * {@link #shape(Type)}. This can be used in contextualizers to preserve semantics when addressing
+   * dependent states and numeric offsets are required to interface to other APIs.
    *
    * @param dimension the dimension to which the offsets refer
    * @param offsets (FIXME check)

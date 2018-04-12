@@ -17,9 +17,9 @@ package org.integratedmodelling.klab.api.errormanagement;
 
 /**
  * Tags a warning-level notification.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface ICompileWarning extends ICompileNotification {
 

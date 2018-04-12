@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.exceptions;
 // TODO: Auto-generated Javadoc
 /**
  * The Class KlabIOException.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class KlabIOException extends KlabException {
 

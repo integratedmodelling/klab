@@ -30,7 +30,7 @@ public interface IComputableResource {
 	/**
 	 * The target of this computation; null if the target is the main observable.
 	 * 
-	 * @return
+	 * @return the target name
 	 */
 	String getTarget();
 
@@ -38,7 +38,7 @@ public interface IComputableResource {
 	 * Each computation may use a different language. Null means the default
 	 * supported expression language.
 	 * 
-	 * @return
+	 * @return the language or null
 	 */
 	String getLanguage();
 
@@ -48,7 +48,7 @@ public interface IComputableResource {
 	 * getAccordingTo(), getLookupTable() and getExpression() will return a non-null
 	 * value.
 	 * 
-	 * @return
+	 * @return any literal
 	 */
 	Object getLiteral();
 
@@ -58,7 +58,7 @@ public interface IComputableResource {
 	 * getAccordingTo(), getLookupTable() and getExpression() will return a non-null
 	 * value.
 	 * 
-	 * @return
+	 * @return the service call
 	 */
 	IServiceCall getServiceCall();
 
@@ -68,7 +68,7 @@ public interface IComputableResource {
 	 * getAccordingTo(), getLookupTable() and getExpression() will return a non-null
 	 * value.
 	 * 
-	 * @return
+	 * @return the expression
 	 */
 	String getExpression();
 
@@ -77,7 +77,7 @@ public interface IComputableResource {
 	 * getUrn(), getClassification(), getAccordingTo(), getLookupTable() and
 	 * getExpression() will return a non-null value.
 	 * 
-	 * @return
+	 * @return the classification
 	 */
 	IKimClassification getClassification();
 
@@ -86,7 +86,7 @@ public interface IComputableResource {
 	 * getServiceCall(), getUrn(), getClassification(), getAccordingTo(),
 	 * getLookupTable() and getExpression() will return a non-null value.
 	 * 
-	 * @return
+	 * @return the lookup table
 	 */
 	IKimLookupTable getLookupTable();
 
@@ -96,7 +96,7 @@ public interface IComputableResource {
 	 * getServiceCall(), getUrn(), getClassification(), getAccordingTo(),
 	 * getLookupTable() and getExpression() will return a non-null value.
 	 * 
-	 * @return
+	 * @return the classifier property
 	 */
 	String getAccordingTo();
 
@@ -104,7 +104,7 @@ public interface IComputableResource {
 	 * A URN specifying a remote computation. Only one among getLiteral(),
 	 * getServiceCall(), getUrn() and getExpression() will return a non-null value.
 	 * 
-	 * @return
+	 * @return the urn
 	 */
 	String getUrn();
 
@@ -161,7 +161,7 @@ public interface IComputableResource {
 	 * of the artifact passed to it, to be used in its place to match a specific
 	 * observation semantics.
 	 * 
-	 * @return
+	 * @return true if mediator
 	 */
 	boolean isMediation();
 

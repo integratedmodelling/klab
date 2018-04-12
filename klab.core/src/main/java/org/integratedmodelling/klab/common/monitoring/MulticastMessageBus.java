@@ -43,6 +43,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // TODO: Auto-generated Javadoc
 /**
  * The Class MulticastMessageBus.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class MulticastMessageBus extends ReceiverAdapter implements ChannelListener {
 
@@ -271,17 +274,20 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         broadcastListener = listener;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void channelClosed(Channel arg0) {
         running = false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void channelConnected(Channel arg0) {
         running = true;
         Util.registerChannel(channel, "kmodeler");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void channelDisconnected(Channel arg0) {
         running = false;
@@ -306,6 +312,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     Map<String, Listener<?>>    subscribedChannels      = new Hashtable<>();
     Listener<?>                 broadcastListener       = null;
 
+    /** {@inheritDoc} */
     @Override
     public void viewAccepted(View v) {
 
@@ -345,7 +352,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
 
     /**
      * Send an object through a specific channel.
-     * 
+     *
      * @param object a string or a serializable object that can be turned into JSON.
      * @param channel a channel id (does not need to exist).
      */
@@ -419,10 +426,10 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     /**
      * Redefine in discovery mode to react to a ping. Does not get called at messages to
      * specific channels.
-     * 
+     *
      * @param ipAddress IP address of advertising server
      * @param port port where service is located
-     * @param time time of message reception
+     * @param status a {@link org.integratedmodelling.klab.common.monitoring.MulticastMessageBus.EngineStatus} object.
      */
     protected void onSignalAvailable(String ipAddress, int port, EngineStatus status) {
         System.out.println("Got ping from " + status);
@@ -432,7 +439,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
      * Send to all.
      *
      * @param buf the buf
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public void sendToAll(String buf) throws Exception {
         Address local_addr = channel.getAddress();
@@ -447,7 +454,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
      * Send to self.
      *
      * @param buf the buf
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public void sendToSelf(String buf) throws Exception {
         Address local_addr = channel.getAddress();
@@ -458,6 +465,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void receive(Message message) {
         if (isReceiving()) {
@@ -467,8 +475,8 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
 
     /**
      * Redefine if control of reception is needed.
-     * 
-     * @return
+     *
+     * @return a boolean.
      */
     protected boolean isReceiving() {
         return true;

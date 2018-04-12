@@ -27,6 +27,9 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class NetUtilities.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class NetUtilities {
 
@@ -34,7 +37,7 @@ public class NetUtilities {
      * Checks if is server alive.
      *
      * @param host the host
-     * @return true, if is server alive
+     * @return a boolean.
      */
     static public boolean isServerAlive(String host) {
 
@@ -52,11 +55,11 @@ public class NetUtilities {
      * Url responds.
      *
      * @param url the url
-     * @return true, if successful
+     * @return a boolean.
      */
     /*
      * FIXME can still hang for inordinate amounts of time when the URL does not respond. Should
-     * use a connection pool, set a timer etc. 
+     * use a connection pool, set a timer etc.
      */
     public static boolean urlResponds(String url) {
 
@@ -90,7 +93,7 @@ public class NetUtilities {
      * Port available.
      *
      * @param port the port
-     * @return true, if successful
+     * @return a boolean.
      */
     public static boolean portAvailable(int port) {
 

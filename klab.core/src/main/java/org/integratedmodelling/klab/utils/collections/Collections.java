@@ -27,16 +27,19 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Collections.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Collections {
 
 	/**
-     * Pass any number of lists and return one with all the elements.
-     *
-     * @param <T> the generic type
-     * @param lists the lists
-     * @return a single list with the content of all those passed
-     */
+	 * Pass any number of lists and return one with all the elements.
+	 *
+	 * @param <T> the generic type
+	 * @param lists the lists
+	 * @return a single list with the content of all those passed
+	 */
 	@SafeVarargs
 	public static <T> List<T> join(List<T>... lists) {
 		List<T> ret = new ArrayList<>();
@@ -49,11 +52,11 @@ public class Collections {
 	}
 
 	/**
-     * Pretty-print the passed map as a JSON object.
-     *
-     * @param object the object
-     * @return the string
-     */
+	 * Pretty-print the passed map as a JSON object.
+	 *
+	 * @param object the object
+	 * @return the string
+	 */
 	public static String printAsJson(Object object) {
 
 		ObjectMapper om = new ObjectMapper();

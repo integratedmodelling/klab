@@ -19,6 +19,7 @@ package org.integratedmodelling.klab.api.observations;
  * The Interface IConfiguration.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IConfiguration extends IDirectObservation {
 

@@ -25,6 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // TODO: Auto-generated Javadoc
 /**
  * The Class JsonUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class JsonUtils {
 

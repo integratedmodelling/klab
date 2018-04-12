@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
 // TODO: Auto-generated Javadoc
 /**
  * The Class IPUtils.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class IPUtils {
     private static Pattern      pattern;
@@ -54,7 +57,7 @@ public class IPUtils {
      *
      * @param pattern the pattern
      * @param address the address
-     * @return true, if successful
+     * @return a boolean.
      */
     public static boolean checkIPMatching(String pattern, String address) {
 
@@ -83,7 +86,7 @@ public class IPUtils {
      *
      * @param pattern the pattern
      * @return IP matching pattern
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public static String getLocalIpMatching(String pattern) throws Exception {
         Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
@@ -104,7 +107,7 @@ public class IPUtils {
      * Gets the local ips.
      *
      * @return the local ips
-     * @throws SocketException the socket exception
+     * @throws java.net.SocketException the socket exception
      */
     public static Set<String> getLocalIps() throws SocketException {
         Set<String> ret = new HashSet<>();
@@ -130,7 +133,7 @@ public class IPUtils {
      * 172.** based ones.
      *
      * @return IP matching pattern
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public static String getLocalIp() throws Exception {
         for (int i = 1; i < localPatterns.length; i++) {
@@ -175,7 +178,7 @@ public class IPUtils {
      * Checks if is local.
      *
      * @param ip the ip
-     * @return true, if is local
+     * @return a boolean.
      */
     public static boolean isLocal(String ip) {
 
@@ -192,7 +195,7 @@ public class IPUtils {
      * The main method.
      *
      * @param args the arguments
-     * @throws Exception the exception
+     * @throws java.lang.Exception the exception
      */
     public static void main(String[] args) throws Exception {
         if (checkIPMatching("10.*.*.*", "10.0.0.64")) {

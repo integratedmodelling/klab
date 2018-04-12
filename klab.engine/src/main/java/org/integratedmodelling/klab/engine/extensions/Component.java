@@ -339,7 +339,7 @@ public class Component implements IComponent {
      * Return the implementation of the class if an implementing class is defined, creating
      * it if necessary.
      * 
-     * @return
+     * @return the implementation
      */
     public Object getImplementation() {
         if (implementation == null && implementingClass != null) {

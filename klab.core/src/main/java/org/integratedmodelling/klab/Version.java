@@ -21,9 +21,9 @@ import java.util.StringTokenizer;
 // TODO: Auto-generated Javadoc
 /**
  * The version class for the whole system. Holds the current official release version.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public class Version implements Comparable<Version>, Serializable {
 
@@ -71,6 +71,7 @@ public class Version implements Comparable<Version>, Serializable {
     /**
      * Parses given string as version identifier. All missing parts will be initialized to
      * 0 or empty string. Parsing starts from left side of the string.
+     *
      * @param str version identifier as string
      * @return version identifier object
      */
@@ -89,7 +90,6 @@ public class Version implements Comparable<Version>, Serializable {
     /**
      * The default version parses the current version string, so it can be used for
      * comparison with others.
-     * 
      */
     public Version() {
         parseString(CURRENT);
@@ -165,7 +165,7 @@ public class Version implements Comparable<Version>, Serializable {
     /**
      * Creates version identifier object from given parts. No validation performed during
      * object instantiation, all values become parts of version identifier as they are.
-     * 
+     *
      * @param aMajor major version number
      * @param aMinor minor version number
      * @param aBuild build number
@@ -332,17 +332,13 @@ public class Version implements Comparable<Version>, Serializable {
 
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return toString().hashCode();
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -360,9 +356,10 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Returns the string representation of this version identifier. The result satisfies
      * <code>version.equals(new Version(version.toString()))</code>.
-     * @return the string representation of this version identifier
      */
     @Override
     public String toString() {
@@ -376,11 +373,7 @@ public class Version implements Comparable<Version>, Serializable {
         return asString;
     }
 
-    /**
-     * @param obj version to compare this instance with
-     * @return comparison result
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public int compareTo(final Version obj) {
         if (equals(obj)) {
@@ -400,7 +393,7 @@ public class Version implements Comparable<Version>, Serializable {
 
     /**
      * Get the versioned jar file name for a particular base name.
-     * 
+     *
      * @param file base name without version
      * @return versioned jar file name
      */

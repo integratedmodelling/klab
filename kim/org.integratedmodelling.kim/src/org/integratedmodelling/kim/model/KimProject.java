@@ -81,7 +81,7 @@ public class KimProject implements IKimProject {
    * fact that the latter are always parsed one at a time and should never provide storeable knowledge.
    * 
    * @param namespace
-   * @return
+   * @return the namespace ID
    */
   public static String getNamespaceId(Namespace namespace) {
     return namespace.getName() + (namespace.isWorldviewBound() ? "|worldview" : "");
@@ -151,7 +151,7 @@ public class KimProject implements IKimProject {
   /**
    * Get the worldview we define, if any, or null
    * 
-   * @return
+   * @return the worldview ID
    */
   @Override
   public String getDefinedWorldview() {
@@ -161,7 +161,7 @@ public class KimProject implements IKimProject {
   /**
    * Get the worldview we refer to
    * 
-   * @return
+   * @return the worldview used
    */
   @Override
   public String getWorldview() {

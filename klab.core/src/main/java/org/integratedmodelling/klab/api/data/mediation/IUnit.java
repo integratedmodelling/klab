@@ -19,33 +19,33 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.services.IUnitService;
 
 /**
- * Units of measurement. Creation and inquiry methods are provided by {@link IUnitService}.
- * 
- * @author Ferd
+ * Units of measurement. Creation and inquiry methods are provided by {@link org.integratedmodelling.klab.api.services.IUnitService}.
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface IUnit extends IValueMediator {
 
     /**
      * Return a new unit multiplied by the passed one.
-     * 
-     * @param unit
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
      * @return a new product unit
      */
     IUnit multiply(IUnit unit);
 
     /**
      * Return a new unit divided by the passed one.
-     * 
-     * @param unit
+     *
+     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
      * @return a new unit
      */
     IUnit divide(IUnit unit);
 
     /**
      * Return a new unit scaled according to the passed double.
-     * 
-     * @param scale
+     *
+     * @param scale a double.
      * @return a new unit
      */
     IUnit scale(double scale);

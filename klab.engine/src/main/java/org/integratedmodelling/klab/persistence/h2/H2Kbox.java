@@ -259,7 +259,7 @@ public abstract class H2Kbox {
      * Return the name of the primary table created by this schema, if any, or null. Used to check
      * for the need of creating the corresponding tableset.
      * 
-     * @return
+     * @return the primary table name or null
      */
     String getTableName();
 

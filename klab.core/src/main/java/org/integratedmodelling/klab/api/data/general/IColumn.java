@@ -18,9 +18,9 @@ package org.integratedmodelling.klab.api.data.general;
 // TODO: Auto-generated Javadoc
 /**
  * A table column in the unified table interface.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface IColumn {
 
@@ -30,22 +30,30 @@ public interface IColumn {
     public static final String INDEX = "__index__";
 
     /**
+     * <p>getName.</p>
+     *
      * @return column name
      */
     String getName();
 
     /**
+     * <p>getValueCount.</p>
+     *
      * @return number of rows with values in column.
      */
     int getValueCount();
 
     /**
+     * <p>getValues.</p>
+     *
      * @return all values.
      */
     Iterable<Object> getValues();
 
     /**
-     * @param index
+     * <p>getValue.</p>
+     *
+     * @param index a {@link java.lang.Object} object.
      * @return get a value corresponding to an index object.
      */
     Object getValue(Object index);

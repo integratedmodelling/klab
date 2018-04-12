@@ -22,34 +22,34 @@ import org.integratedmodelling.klab.api.extensions.component.Shutdown;
 /**
  * A {@code IResourceAdapter} is the interface for a plug-in providing a new adapter for a resource
  * type. A class implementing {@code IResourceAdapter} must be annotated with a
- * {@link ResourceAdapter} annotation in order to be discovered by the runtime.
- * 
- * The implementing class may specify initialization and finalization methods by annotating them
- * with the {@link Initialize} and {@link Shutdown} annotations also used for components.
- * 
- * @author Ferd
+ * {@link org.integratedmodelling.klab.api.extensions.ResourceAdapter} annotation in order to be discovered by the runtime.
  *
+ * The implementing class may specify initialization and finalization methods by annotating them
+ * with the {@link org.integratedmodelling.klab.api.extensions.component.Initialize} and {@link org.integratedmodelling.klab.api.extensions.component.Shutdown} annotations also used for components.
+ *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public interface IResourceAdapter {
 
   /**
-   * Produce a new instance of the {@link IResourceValidator} for this resource type.
+   * Produce a new instance of the {@link org.integratedmodelling.klab.api.data.adapters.IResourceValidator} for this resource type.
    *
-   * @return
+   * @return a {@link org.integratedmodelling.klab.api.data.adapters.IResourceValidator} object.
    */
   IResourceValidator getValidator();
 
   /**
-   * Produce a new instance of the {@link IResourcePublisher} for this resource type.
-   * 
-   * @return
+   * Produce a new instance of the {@link org.integratedmodelling.klab.api.data.adapters.IResourcePublisher} for this resource type.
+   *
+   * @return a {@link org.integratedmodelling.klab.api.data.adapters.IResourcePublisher} object.
    */
   IResourcePublisher getPublisher();
 
   /**
-   * Produce a new instance of the {@link IResourceEncoder} for this resource type.
-   * 
-   * @return
+   * Produce a new instance of the {@link org.integratedmodelling.klab.api.data.adapters.IResourceEncoder} for this resource type.
+   *
+   * @return a {@link org.integratedmodelling.klab.api.data.adapters.IResourceEncoder} object.
    */
   IResourceEncoder getEncoder();
   

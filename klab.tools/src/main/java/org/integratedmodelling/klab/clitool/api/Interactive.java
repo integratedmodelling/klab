@@ -19,7 +19,6 @@ public interface Interactive {
      * 
      * @param prompt the alternative prompt to use during grab mode
      * @param endCommand the command that will exit this mode.
-     * @return a typed line, an empty string for empty input, or null when the end command is typed.
      */
     public void grabCommandLine(String prompt, String endCommand, CommandListener listener);
 }

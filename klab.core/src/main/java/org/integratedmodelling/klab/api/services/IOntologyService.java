@@ -19,11 +19,25 @@ import org.integratedmodelling.klab.api.knowledge.IOntology;
 
 /**
  * The Interface IOntologyService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IOntologyService {
 
+    /**
+     * <p>require.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IOntology} object.
+     */
     IOntology require(String name);
 
+    /**
+     * <p>release.</p>
+     *
+     * @param ontology a {@link org.integratedmodelling.klab.api.knowledge.IOntology} object.
+     */
     void release(IOntology ontology);
 
 }

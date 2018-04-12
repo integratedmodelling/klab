@@ -22,12 +22,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use to tag a class that gets automatically imported in a Kim script. If the class exposes a 
+ * Use to tag a class that gets automatically imported in a Kim script. If the class exposes a
  * static setBinding() method, that will be called with the current binding. Only static methods
  * will be supported.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

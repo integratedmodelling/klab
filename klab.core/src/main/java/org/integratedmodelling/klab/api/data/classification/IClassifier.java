@@ -20,6 +20,9 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IClassifier.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IClassifier {
 
@@ -34,30 +37,30 @@ public interface IClassifier {
 
     /**
      * True if this classifier matches everything.
-     * 
+     *
      * @return True if this classifier matches everything
      */
     boolean isUniversal();
 
     /**
      * True if this classifier only matches null (unknown).
-     * 
+     *
      * @return True if this classifier only matches null
      */
     boolean isNil();
 
     /**
      * True if this is an interval classifier.
-     * 
+     *
      * @return True if this is an interval classifier
      */
     boolean isInterval();
 
     /**
-     * Classifiers may be used as a value; this one should return the most appropriate 
+     * Classifiers may be used as a value; this one should return the most appropriate
      * value translation of the classifier, i.e. the matched object if it's matching a
      * single one, or possibly a random object among the choices if it's in OR.
-    
+     *
      * @return the value this classifier resolves to.
      */
     public Object asValue();

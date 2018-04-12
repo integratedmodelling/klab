@@ -18,6 +18,9 @@ package org.integratedmodelling.klab.utils;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Path.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Path {
 

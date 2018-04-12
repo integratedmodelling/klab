@@ -21,6 +21,9 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Quantifier.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class Quantifier {
 
@@ -47,6 +50,7 @@ public class Quantifier {
 
     /**
      * Create the specified quantifier.
+     *
      * @return ANY
      */
     static public Quantifier ANY() {
@@ -55,6 +59,7 @@ public class Quantifier {
 
     /**
      * Create the specified quantifier.
+     *
      * @return ALL
      */
     static public Quantifier ALL() {
@@ -63,6 +68,7 @@ public class Quantifier {
 
     /**
      * Create the specified quantifier.
+     *
      * @return NONE
      */
     static public Quantifier NONE() {
@@ -145,7 +151,7 @@ public class Quantifier {
      * Instantiates a new quantifier.
      *
      * @param s the s
-     * @throws KlabValidationException the klab validation exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException the klab validation exception
      */
     public Quantifier(String s) throws KlabValidationException {
         parse(s);
@@ -154,6 +160,7 @@ public class Quantifier {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
 
@@ -170,6 +177,7 @@ public class Quantifier {
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return toString().hashCode();
@@ -190,7 +198,7 @@ public class Quantifier {
      *
      * @param s the s
      * @return the quantifier
-     * @throws KlabValidationException the klab validation exception
+     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException the klab validation exception
      */
     public static Quantifier parseQuantifier(String s) throws KlabValidationException {
 
@@ -209,7 +217,7 @@ public class Quantifier {
      * Checks if is quantifier.
      *
      * @param s the s
-     * @return true, if is quantifier
+     * @return a boolean.
      */
     public static boolean isQuantifier(String s) {
         boolean ret = false;
@@ -221,6 +229,7 @@ public class Quantifier {
         return ret;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
 
@@ -250,7 +259,7 @@ public class Quantifier {
     /**
      * Checks if is max unbound.
      *
-     * @return true, if is max unbound
+     * @return a boolean.
      */
     public boolean isMaxUnbound() {
         return max < 0;
@@ -259,7 +268,7 @@ public class Quantifier {
     /**
      * Checks if is min unbound.
      *
-     * @return true, if is min unbound
+     * @return a boolean.
      */
     public boolean isMinUnbound() {
         return min < 0;
@@ -317,7 +326,7 @@ public class Quantifier {
      * Match.
      *
      * @param matches the matches
-     * @return true, if successful
+     * @return a boolean.
      */
     public boolean match(int matches) {
 

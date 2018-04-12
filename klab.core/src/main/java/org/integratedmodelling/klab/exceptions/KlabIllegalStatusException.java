@@ -17,11 +17,11 @@ package org.integratedmodelling.klab.exceptions;
 
 // TODO: Auto-generated Javadoc
 /**
- * An unchecked exception reserved for situations that should never happen in a 
+ * An unchecked exception reserved for situations that should never happen in a
  * production environment.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class KlabIllegalStatusException extends KlabRuntimeException {
 

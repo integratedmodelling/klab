@@ -31,9 +31,9 @@ import org.integratedmodelling.klab.utils.OS;
 /**
  * TODO use a declarative approach for all properties, so that there is one place for all
  * default settings and it's possible to override any of them through global JVM settings.
- * 
- * @author Ferd
  *
+ * @author Ferd
+ * @version $Id: $Id
  */
 public enum Configuration implements IConfigurationService {
     INSTANCE;
@@ -85,6 +85,7 @@ public enum Configuration implements IConfigurationService {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Properties getProperties() {
         return this.properties;
@@ -95,7 +96,7 @@ public enum Configuration implements IConfigurationService {
      */
     /*
      * Non-API
-     * Save the properties after making changes from outside configuration. 
+     * Save the properties after making changes from outside configuration.
      * Should be used only internally, or removed in favor of a painful setting API.
      */
     public void save() {
@@ -122,18 +123,20 @@ public enum Configuration implements IConfigurationService {
     /**
      * Use reasoner.
      *
-     * @return true, if successful
+     * @return a boolean.
      */
     public boolean useReasoner() {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean useCommonOntology() {
         return !(getProperties().containsKey(KLAB_USE_COMMON_ONTOLOGY)
                 && !Boolean.parseBoolean(getProperties().getProperty(KLAB_USE_COMMON_ONTOLOGY)));
     }
 
+    /** {@inheritDoc} */
     @Override
     public OS getOS() {
 
@@ -154,6 +157,7 @@ public enum Configuration implements IConfigurationService {
         return this.os;
     }
 
+    /** {@inheritDoc} */
     @Override
     public File getDataPath(String subspace) {
 
@@ -169,39 +173,46 @@ public enum Configuration implements IConfigurationService {
         return ret;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isOffline() {
         return getProperties().getProperty(KLAB_OFFLINE, "false").equals("true");
     }
     
+    /** {@inheritDoc} */
     @Override
     public boolean isDebuggingEnabled() {
       return getProperties().getProperty(KLAB_DEBUG, "false").equals("true");
     }
 
+    /** {@inheritDoc} */
     @Override
     public File getDataPath() {
         return dataPath;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getDataflowThreadCount() {
       // TODO Auto-generated method stub
       return 10;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getTaskThreadCount() {
       // TODO Auto-generated method stub
       return 10;
     }
     
+    /** {@inheritDoc} */
     @Override
     public int getScriptThreadCount() {
       // TODO Auto-generated method stub
       return 3;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isRemoteResolutionEnabled() {
       // TODO tie to option + live setting

@@ -19,14 +19,17 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * The Interface IRuntimeIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public abstract interface IRuntimeIdentity extends IIdentity {
 
     /**
      * A runtime identity exposes a monitor to report conditions and affect
      * contextualization.
-     *  
-     * @return
+     *
+     * @return a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
      */
     IMonitor getMonitor();
     

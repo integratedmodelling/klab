@@ -54,7 +54,7 @@ public class Projection implements IProjection {
    * projection.
    * 
    * @param envelope
-   * @return
+   * @return the projection corresponding to the best UTM zone for this envelope
    */
   public static Projection getUTM(Envelope envelope) {
 

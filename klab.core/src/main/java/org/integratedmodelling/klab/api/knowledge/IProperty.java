@@ -24,8 +24,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * normally figured out by checking whether the property inherits by specific upper ontology ones.  Also, for now we
  * just ignore functionality, symmetry, transitivity etc, given that the reasoner  operates on the underlying OWL
  * model. We'll see if they're needed.
- * 
+ *
  * @author  Ferdinando Villa, Ecoinformatics Collaboratory, UVM
+ * @version $Id: $Id
  */
 public interface IProperty extends IKnowledge {
 
@@ -35,6 +36,7 @@ public interface IProperty extends IKnowledge {
      * of a generic "classification property" that is known to the KM. Instances of such properties will automatically
      * look for (and create if necessary) a special unique instance of the class. The target of the relationship will
      * appear as a class in the API.
+     *
      * @return true if relationship is a classification relationship.
      */
     boolean isClassification();
@@ -45,69 +47,86 @@ public interface IProperty extends IKnowledge {
      * configured ReifiedLiteral class in the base ontology, and they have a text property that links to the
      * literal's definition. The API will create validated Values and not instances for these instances, using the
      * validator configured for the type, and I/O to ontologies will handle them transparently.
+     *
      * @return true if literal property: either DatatypeProperty or linking to a ReifiedLiteral
      */
     boolean isLiteralProperty();
 
     /**
      * Check if this property links to an instance (object).
+     *
      * @return true if property links to objects.
      */
     boolean isObjectProperty();
 
     /**
-     * 
+     * <p>isAnnotation.</p>
+     *
      * @return true if annotation property
      */
     boolean isAnnotation();
 
     /**
      * Returns the inverse of a IProperty. Null if there is no inverse.
+     *
      * @return   the inverse IProperty
      */
     IProperty getInverseProperty();
 
     /**
-     * 
-     * @return the range 
+     * <p>getRange.</p>
+     *
+     * @return the range
      */
     Collection<IConcept> getRange();
 
     /**
      * TODO domain may not be unique. It would be wonderful to ignore that for simplicity. I don't think
      * multi-domain properties are good design.
+     *
      * @return the domain
      */
     Collection<IConcept> getPropertyDomain();
 
     /**
      * Return the (only) parent property, or throw an exception if there's more than one parent.
+     *
      * @return the parent
-     * @throws KlabException 
+     * @throws org.integratedmodelling.klab.exceptions.KlabException
      */
     IProperty getParent() throws KlabException;
 
     /**
+     * <p>getParents.</p>
+     *
      * @return all direct parents
      */
     Collection<IProperty> getParents();
 
     /**
+     * <p>getAllParents.</p>
+     *
      * @return the parent closure
      */
     Collection<IProperty> getAllParents();
 
     /**
+     * <p>getChildren.</p>
+     *
      * @return the direct children
      */
     Collection<IProperty> getChildren();
 
     /**
+     * <p>getAllChildren.</p>
+     *
      * @return the children closure
      */
     Collection<IProperty> getAllChildren();
 
     /**
+     * <p>isFunctional.</p>
+     *
      * @return true if functional
      */
     boolean isFunctional();

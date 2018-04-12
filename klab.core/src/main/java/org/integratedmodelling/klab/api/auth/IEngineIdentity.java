@@ -17,11 +17,16 @@ package org.integratedmodelling.klab.api.auth;
 
 /**
  * The Interface IEngineIdentity.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IEngineIdentity extends IServerIdentity {
 
+    /** Constant <code>type</code> */
     Type type = Type.ENGINE;
     
+    /** {@inheritDoc} */
     @Override
     INetworkSessionIdentity getParentIdentity();
 }

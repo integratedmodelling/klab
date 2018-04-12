@@ -32,6 +32,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 // TODO: Auto-generated Javadoc
 /**
  * The Interface IModelService.
+ *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IModelService {
 
@@ -72,19 +75,19 @@ public interface IModelService {
 
   /**
    * Release all models pertaining to named namespace, both in live and persistent storage.
-   * 
-   * @param namespace
-   * @param monitor
-   * @throws KlabException
+   *
+   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
   /**
    * Index the passed model in kbox.
-   * 
-   * @param model
-   * @param monitor
-   * @throws KlabException
+   *
+   * @param model a {@link org.integratedmodelling.klab.api.model.IModel} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   void index(IModel model, IMonitor monitor) throws KlabException;
 
@@ -93,43 +96,43 @@ public interface IModelService {
    * returned models should work in a lazy way, only creating and returning the actual model (which
    * may involve network downloads of multiple projects or components) when any of the models'
    * functions are actually called.
-   * 
-   * @param observable
-   * @param scope
+   *
+   * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
+   * @param scope a {@link org.integratedmodelling.klab.api.resolution.IResolutionScope} object.
    * @return the list of candidates in decreasing rank.
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException;
 
   /**
    * Load a single model file from a URL. Namespace must have no dependencies and name a worldview
    * at the top.
-   * 
-   * @param url
-   * @param monitor
+   *
+   * @param url a {@link java.net.URL} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
    * @return the namespace loaded
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   INamespace load(URL url, IMonitor monitor) throws KlabException;
 
   /**
    * Load a single model file. Namespace must have no dependencies and name a worldview at the top.
-   * 
-   * @param file
-   * @param monitor
+   *
+   * @param file a {@link java.io.File} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
    * @return the namespace loaded
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   INamespace load(File file, IMonitor monitor) throws KlabException;
 
   /**
    * Load a single model file from a stream. Namespace must have no dependencies and name a
    * worldview at the top.
-   * 
-   * @param input
-   * @param monitor
+   *
+   * @param input a {@link java.io.InputStream} object.
+   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
    * @return the namespace loaded
-   * @throws KlabException
+   * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   INamespace load(InputStream input, IMonitor monitor) throws KlabException;
 

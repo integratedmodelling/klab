@@ -22,6 +22,8 @@ import java.util.Iterator;
  * The Class IteratorAdapter.
  *
  * @param <T> the generic type
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public class IteratorAdapter<T> implements Iterator<T> {
 
@@ -36,11 +38,13 @@ public class IteratorAdapter<T> implements Iterator<T> {
     this.iterator = iterator;
   }
   
+  /** {@inheritDoc} */
   @Override
   public boolean hasNext() {
     return iterator.hasNext();
   }
 
+  /** {@inheritDoc} */
   @SuppressWarnings("unchecked")
   @Override
   public T next() {

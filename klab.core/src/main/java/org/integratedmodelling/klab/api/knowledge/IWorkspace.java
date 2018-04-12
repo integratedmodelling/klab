@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * The Interface IWorkspace.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IWorkspace {
 
@@ -38,7 +39,7 @@ public interface IWorkspace {
 
     /**
      * All workspaces in k.LAB are filesystem based for now.
-     * 
+     *
      * @return the file location of the root of the workspace on the filesystem.
      */
     File getRoot();
@@ -46,20 +47,21 @@ public interface IWorkspace {
     /**
      * Load all the knowledge in the namespace, optionally limited to anything that has
      * changed since last read.
-     * 
+     *
      * @param incremental if true, only read resources that have changed.
+     * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
      * @return the list of namespaces read, excluding those that did not need update.
      *         Workspaces that keep track of dependencies should return the namespaces
      *         in dependency order.
-     * 
-     * @throws KlabException in case of I/O or other errors. Syntax errors won't cause
+     * @throws org.integratedmodelling.klab.exceptions.KlabException in case of I/O or other errors. Syntax errors won't cause
      *         exceptions.
      */
     List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException;
     
     /**
-     * 
-     * @return
+     * <p>getProjects.</p>
+     *
+     * @return a {@link java.util.Collection} object.
      */
     Collection<IProject> getProjects();
     

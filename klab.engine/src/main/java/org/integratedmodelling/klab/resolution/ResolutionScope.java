@@ -578,7 +578,7 @@ public class ResolutionScope implements IResolutionScope {
    * @param observable
    * @param mode
    * @param allowIndirectObservation
-   * @return
+   * @return the existing scope for the passed parameters or null
    */
   public ResolutionScope getObservable(Observable observable, Mode mode,
       boolean allowIndirectObservation) {

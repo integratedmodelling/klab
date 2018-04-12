@@ -19,17 +19,20 @@ package org.integratedmodelling.klab.api.observations;
  * The Interface IRelationship.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IRelationship  extends ICountableObservation {
 
     /**
-     * 
+     * <p>getSource.</p>
+     *
      * @return the source subject
      */
     ISubject getSource();
     
     /**
-     * 
+     * <p>getTarget.</p>
+     *
      * @return the target subject
      */
     ISubject getTarget();

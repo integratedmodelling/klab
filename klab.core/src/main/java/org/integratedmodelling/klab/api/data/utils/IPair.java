@@ -22,10 +22,22 @@ import java.io.Serializable;
  *
  * @param <T1> the generic type
  * @param <T2> the generic type
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 public interface IPair<T1, T2> extends Serializable {
 
+    /**
+     * <p>getFirst.</p>
+     *
+     * @return a T1 object.
+     */
     T1 getFirst();
     
+    /**
+     * <p>getSecond.</p>
+     *
+     * @return a T2 object.
+     */
     T2 getSecond();
 }

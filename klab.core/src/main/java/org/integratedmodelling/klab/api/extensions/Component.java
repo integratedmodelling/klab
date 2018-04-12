@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
  * initializer. The class may be empty or have methods for initialization, setup
  * and shutdown. The package that class belongs on tells Thinklab where to look for
  * services, functions, and TQL files to load with the component.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -44,7 +44,7 @@ public @interface Component {
     String id();
 
     /**
-     * Version number, parseable by {@link org.integratedmodelling.Version}.
+     * Version number, parseable by {@link org.integratedmodelling.klab.Version}.
      * 
      * @return version string
      */

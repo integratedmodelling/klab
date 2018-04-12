@@ -77,7 +77,7 @@ public interface IKdlActuator extends IKdlStatement {
     /**
      * A list value
      */
-    LIST, 
+    LIST,
     /**
      * Only for CLI command prototypes
      */
@@ -104,7 +104,7 @@ public interface IKdlActuator extends IKdlStatement {
         return RANGE;
       } else if (o instanceof List) {
         return LIST;
-      } 
+      }
       return VALUE;
     }
   }
@@ -132,7 +132,7 @@ public interface IKdlActuator extends IKdlStatement {
    * Alternative to {@link IKdlActuator#getNewObservationUrn()} - if one is not null, the other will
    * be. Both can be null (e.g. in instantiating actuators).
    * 
-   * @return
+   * @return the new observation type
    */
   String getNewObservationType();
 
@@ -141,14 +141,14 @@ public interface IKdlActuator extends IKdlStatement {
    * {@link IKdlActuator#getNewObservationType()} - if one is not null, the other will be. Both can
    * be null (e.g. in instantiating actuators).
    * 
-   * @return
+   * @return the new observation urn
    */
   String getNewObservationUrn();
 
   /**
    * Optional description. If not given returns empty string.
    * 
-   * @return
+   * @return the description or ""
    */
   String getDescription();
 
@@ -156,22 +156,22 @@ public interface IKdlActuator extends IKdlStatement {
    * Computation. Contains contextualizers or transformations - only the latter are allowed in
    * contracts. If more than one computations are returned, they can execute in parallel.
    * 
-   * @return
+   * @return the computation
    */
   Collection<IKdlComputation> getComputations();
 
   /**
-   * All actuators that are imported. They may be resolved (@link {@link #getComputation()} != null)
-   * or not.
+   * All actuators that are imported. They may be resolved (@link {@link #getComputations()} !=
+   * null) or not.
    * 
-   * @return
+   * @return the input actuators
    */
   Collection<IKdlActuator> getInputs();
 
   /**
    * Get all parameters declared in the actuator.
    * 
-   * @return
+   * @return the parameters for the actuator
    */
   Collection<IKdlActuator> getParameters();
 
@@ -185,28 +185,28 @@ public interface IKdlActuator extends IKdlStatement {
   /**
    * True if this contextualizer describes an output of its parent contextualizer.
    * 
-   * @return
+   * @return true if output
    */
   boolean isExported();
 
   /**
    * True if this contextualizer describes an input of its parent contextualizer.
    * 
-   * @return
+   * @return true if input
    */
   boolean isImported();
 
   /**
    * If true, this contextualizer specifies a single value
    * 
-   * @return
+   * @return true if single valued
    */
   boolean isParameter();
 
   /**
    * If true, this contextualizer is not necessary for computation.
    * 
-   * @return
+   * @return true if optional
    */
   boolean isOptional();
 
@@ -214,14 +214,14 @@ public interface IKdlActuator extends IKdlStatement {
    * If both {@link #isParameter()} and {@link #isOptional()} return true, this should return the
    * value to use as a default.
    * 
-   * @return
+   * @return the default value
    */
   Object getDefaultValue();
 
   /**
    * The class name of a Java peer may be defined for each actuator.
    * 
-   * @return
+   * @return the java class specified
    */
   String getJavaClass();
 
@@ -235,29 +235,29 @@ public interface IKdlActuator extends IKdlStatement {
   /**
    * All actuators defined inside this one.
    * 
-   * @return
+   * @return all actuators
    */
   List<IKdlActuator> getActors();
 
   /**
    * Any workflow-local alias defined for the actuator ('as' <name>), or null.
    * 
-   * @return
+   * @return the alias
    */
   String getAlias();
 
   /**
    * The geometry of the actuator. Null means simple, arbitrary data.
    * 
-   * @return
+   * @return the geometry
    */
   String getGeometry();
 
   /**
-   * If any specific subscale has been given for the actuator, return the generating
-   * extent functions.
+   * If any specific subscale has been given for the actuator, return the generating extent
+   * functions.
    * 
-   * @return
+   * @return the coverage
    */
   List<IKdlContextualizer> getCoverage();
 

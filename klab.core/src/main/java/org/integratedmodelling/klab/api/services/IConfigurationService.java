@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.utils.OS;
  * The Interface IConfigurationService.
  *
  * @author Ferd
+ * @version $Id: $Id
  */
 public interface IConfigurationService {
 
@@ -141,14 +142,14 @@ public interface IConfigurationService {
 
     /**
      * The main properties, read and written by default to ${user.dir}/.klab/klab.properties.
-     * 
+     *
      * @return the properties. Created if absent, never null.
      */
     Properties getProperties();
 
     /**
      * The operating system where we are running. Only recognizes the three main ones.
-     * 
+     *
      * @return the OS identifier.
      */
     OS getOS();
@@ -156,17 +157,22 @@ public interface IConfigurationService {
     /**
      * Create (if necessary) and return a subdirectory within the k.LAB workspace. Slash-separated
      * subspace strings can be used to specify nested subdirectories.
-     * 
-     * @param subspace
+     *
+     * @param subspace a {@link java.lang.String} object.
      * @return the file directory created.
      */
     File getDataPath(String subspace);
 
+    /**
+     * <p>isOffline.</p>
+     *
+     * @return a boolean.
+     */
     boolean isOffline();
 
     /**
      * Return the k.LAB workspace, by default ${user.dir}/.klab.
-     * 
+     *
      * @return the k.LAB workspace directory.
      */
     File getDataPath();
@@ -174,7 +180,7 @@ public interface IConfigurationService {
     /**
      * Create derived concepts in the common ontology owned by the reasoner (true) or in the ontology
      * holding the main concept in the declaration (false). Default is true.
-     * 
+     *
      * @return the value of this setting (default true, should be false only for special purposes,
      *         such as using k.LAB only as an OWL processor)
      */
@@ -182,17 +188,37 @@ public interface IConfigurationService {
 
     /**
      * True if debugging mode has been enabled.
-     * 
+     *
      * @return debugging mode
      */
     boolean isDebuggingEnabled();
 
+    /**
+     * <p>isRemoteResolutionEnabled.</p>
+     *
+     * @return a boolean.
+     */
     boolean isRemoteResolutionEnabled();
     
+    /**
+     * <p>getDataflowThreadCount.</p>
+     *
+     * @return a int.
+     */
     int getDataflowThreadCount();
 
+    /**
+     * <p>getTaskThreadCount.</p>
+     *
+     * @return a int.
+     */
     int getTaskThreadCount();
 
+    /**
+     * <p>getScriptThreadCount.</p>
+     *
+     * @return a int.
+     */
     int getScriptThreadCount();
 
 }

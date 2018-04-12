@@ -24,7 +24,7 @@ package org.integratedmodelling.klab.api.observations.scale.time;
  * Put more plainly, one READS from the present, and WRITES to the future.
  *
  * @author luke
- *
+ * @version $Id: $Id
  */
 public interface ITimePeriod extends ITime {
 
@@ -74,7 +74,7 @@ public interface ITimePeriod extends ITime {
 
     /**
      * Return duration in milliseconds.
-     * 
+     *
      * @return duration in ms
      */
     public long getMillis();

@@ -26,7 +26,7 @@ public class Parameters implements Map<String, Object>, IParameters {
   /**
    * Only used when the object must be serialized through reflection.
    * 
-   * @return
+   * @return a map with all data
    */
   public Map<String,Object> getData() {
     return delegate;

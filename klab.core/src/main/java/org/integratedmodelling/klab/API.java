@@ -41,9 +41,10 @@ package org.integratedmodelling.klab;
  * TODO define and enforce conventions to add the allowed protocols, response types, authentication
  * type and "see also" links to the beans that handle requests and responses.
  * <p>
- * 
+ *
  * @author ferdinando.villa
  * @author J. Luke Scott
+ * @version $Id: $Id
  */
 public interface API {
 

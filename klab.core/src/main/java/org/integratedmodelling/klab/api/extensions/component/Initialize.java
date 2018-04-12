@@ -22,11 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Tags a method that is run when the component is initialized (loaded). The 
+ * Tags a method that is run when the component is initialized (loaded). The
  * method should return a boolean and may throw exceptions.
- * 
- * @author ferdinando.villa
  *
+ * @author ferdinando.villa
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
