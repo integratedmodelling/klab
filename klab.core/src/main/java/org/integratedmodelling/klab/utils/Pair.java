@@ -21,10 +21,10 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
 /**
  * Stupid generic pair class.
  *
- * @param <T1> the generic type
- * @param <T2> the generic type
  * @author ferdinando.villa
  * @version $Id: $Id
+ * @param <T1> the generic type
+ * @param <T2> the generic type
  */
 public class Pair<T1, T2> implements IPair<T1, T2> {
 

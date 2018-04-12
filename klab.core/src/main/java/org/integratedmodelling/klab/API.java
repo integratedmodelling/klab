@@ -15,12 +15,16 @@ package org.integratedmodelling.klab;
 
 // TODO: Auto-generated Javadoc
 /**
- * This interface and its members describe the REST API of k.LAB. The API enables running models
- * with certificate autentication. The API for interacting with a remote node using regular
- * authentication, manage profiles and retrieve certificates is separate, as it shares no functional
- * connection with k.LAB. This API is common to nodes and engines, although nodes currently can be
- * expected to get less requests on ENGINE endpoints and be the only one in charge of answering
- * RESOURCE requests.
+ * This interface and its members describe the REST API of k.LAB. The API enables managing semantic
+ * and non-semantic assets and building artifacts and observation dataflows, with certificate-based
+ * autentication. The API for interacting with a remote node using regular (login) authentication,
+ * manage profiles and certificates, and handle communication and cross-authentication among nodes
+ * is separate, as it shares no functional connection with the k.LAB project. The only connection
+ * point between the two APIs is the {@link NETWORK#AUTHENTICATE} endpoint, which is used by clients
+ * to obtain their network credentials using the certificate file contents.
+ * <p>
+ * This API is common to nodes and engines, although nodes currently can be expected to get less
+ * requests on ENGINE endpoints and be the only one in charge of answering RESOURCE requests.
  * <p>
  * Endpoints are organized in groups implemented in sub-interfaces. Any path with parameters has the
  * name of each parameter in its constant name, separated by an underscore. For each parameter
@@ -38,15 +42,25 @@ package org.integratedmodelling.klab;
  * ADMIN endpoints (administration dashboard). The root context path should redirect to a login page
  * if connection is from a remote host and to the admin dashboard if connected to from localhost.
  * <p>
- * TODO define and enforce conventions to add the allowed protocols, response types, authentication
- * type and "see also" links to the beans that handle requests and responses.
- * <p>
  *
  * @author ferdinando.villa
  * @author J. Luke Scott
  * @version $Id: $Id
  */
 public interface API {
+
+  // Doc template for each endpoint - uncomment, cut, paste, comment again, edit
+  // *<h4>Protocol</h4>
+  // *<ul>
+  // *<li><b>GET</b> description
+  // *</ul>
+  // *<h4>Response type</h4>
+  // *<ul>
+  // *<li><b>html</b>
+  // *</ul>
+  // *<p><b>Request</b> (link to bean)
+  // *<p><b>Response</b> (link to bean)
+  // *<p><b>Authentication</b> (description or link to identity)
 
   /** Parameter: the URN being resolved in any endpoints that access resources. */
   public static final String P_URN        = "{urn}";
@@ -61,23 +75,21 @@ public interface API {
   /**
    * Authority endpoints are public.
    *
-   * @author ferdinando.villa
-   * @HTML authority dashboard
+   * @author ferdinando.villa HTML authority dashboard
    */
   public interface AUTHORITY {
 
     /**
      * The Constant RESOLVE.
      *
-     * @GET
-     * @JSON
+     * GET JSON
      */
     public static final String RESOLVE = "/engine/authority/resolve";
 
     /**
      * The Constant QUERY.
      *
-     * @POST
+     * POST
      */
     public static final String QUERY   = "/engine/authority/query";
   }
@@ -97,7 +109,7 @@ public interface API {
     /**
      * Shutdown the server.
      * 
-     * @GET
+     * GET
      */
     public static final String SHUTDOWN = "/engine/admin/shutdown";
 
@@ -115,15 +127,14 @@ public interface API {
       /**
        * A component can be deployed as a file attachment or from a Git repository.
        * 
-       * @PUT as attachment
-       * @POST as Git URL
+       * PUT as attachment POST as Git URL
        */
       public static final String DEPLOY             = "/engine/admin/component/deploy";
 
       /**
        * The Constant UNDEPLOY_COMPONENT.
        *
-       * @DELETE
+       * DELETE
        */
       public static final String UNDEPLOY_COMPONENT =
           "/engine/admin/component/undeploy/" + P_COMPONENT;
@@ -131,7 +142,7 @@ public interface API {
       /**
        * The Constant SETUP_COMPONENT.
        *
-       * @POST
+       * POST
        */
       public static final String SETUP_COMPONENT    =
           "/engine/admin/component/setup/" + P_COMPONENT;
@@ -183,21 +194,21 @@ public interface API {
       /**
        * The Constant MODEL_URN.
        *
-       * @GET
+       * GET
        */
       public static final String MODEL_URN       = "/network/retrieve/model/" + P_URN;
 
       /**
        * The Constant OBSERVATION_URN.
        *
-       * @GET
+       * GET
        */
       public static final String OBSERVATION_URN = "/network/retrieve/observation/" + P_URN;
 
       /**
        * The Constant COMPONENT_URN.
        *
-       * @GET
+       * GET
        */
       public static final String COMPONENT_URN   = "/network/retrieve/component/" + P_URN;
 
@@ -217,28 +228,28 @@ public interface API {
      * Add a resource to the local catalog passing a local file URL and/or resource properties.
      * Return URN after validation.
      * 
-     * @PUT
+     * ProtocolsPUT
      */
     public static final String ADD         = "/resource/add";
 
     /**
      * Publish a local resource to the public catalog of this or another server.
      * 
-     * @POST
+     * POST
      */
     public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
 
     /**
      * Modify resource data. Triggers revalidation.
      * 
-     * @PATCH
+     * PATCH
      */
     public static final String UPDATE_URN  = "/resource/update/" + P_URN;
 
     /**
      * Delete resource data.
      * 
-     * @DELETE
+     * DELETE
      */
     public static final String DELETE_URN  = "/resource/delete/" + P_URN;
 
@@ -247,14 +258,14 @@ public interface API {
      * the response at initialization contains an individual token for repeated requests at
      * transitions.
      * 
-     * @GET
+     * GET
      */
     public static final String GET_URN     = "/resource/get/" + P_URN;
 
     /**
      * Get URN data for passed URN. Includes expiration to control cacheing.
      * 
-     * @GET
+     * GET
      */
     public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
   }
@@ -283,14 +294,14 @@ public interface API {
       /**
        * The Constant AUTHORIZE.
        *
-       * @POST
+       * POST
        */
       public static final String AUTHORIZE = "/engine/session/authorize";
 
       /**
        * The Constant CLOSE.
        *
-       * @DELETE
+       * DELETE
        */
       public static final String CLOSE     = "/engine/session/close";
     }

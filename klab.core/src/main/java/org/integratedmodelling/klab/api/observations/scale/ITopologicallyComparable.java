@@ -22,8 +22,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * A topological object can be compared with topological operators to another of a compatible class.
  *
  * @author Ferdinando Villa
- * @param <T> the generic type
  * @version $Id: $Id
+ * @param <T> the generic type
  */
 public interface ITopologicallyComparable<T> {
 

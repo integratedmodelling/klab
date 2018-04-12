@@ -25,8 +25,8 @@ import java.util.ListIterator;
  * UnsupportedOperationException, so that only the relevant methods need to be implemented.
  *
  * @author Ferd
- * @param <T> the generic type
  * @version $Id: $Id
+ * @param <T> the generic type
  */
 public abstract class ImmutableList<T> implements List<T> {
 

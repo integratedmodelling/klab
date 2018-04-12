@@ -20,12 +20,12 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * A Resolver is a {@link org.integratedmodelling.klab.api.model.contextualization.IContextualizer} that <i>explains</i> an existing observation by ensuring
- * that it conforms to its definition.
+ * A Resolver is a {@link org.integratedmodelling.klab.api.model.contextualization.IContextualizer}
+ * that <i>explains</i> an existing observation by ensuring that it conforms to its definition.
  *
  * @author ferdinando.villa
- * @param <T> the observation type resolved
  * @version $Id: $Id
+ * @param <T> the observation type resolved
  */
 public abstract interface IResolver<T extends IArtifact> extends IContextualizer {
 

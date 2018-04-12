@@ -22,9 +22,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 /**
  * The Interface ITemporalSeries.
  *
- * @param <T> the generic type
  * @author ferdinando.villa
  * @version $Id: $Id
+ * @param <T> the generic type
  */
 public interface ITemporalSeries<T> extends ITime {
     
@@ -81,7 +81,7 @@ public interface ITemporalSeries<T> extends ITime {
      * @param start the start
      * @param end the end
      * @param item the item
-     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
+     * @throws KlabException the klab exception
      */
     public void put(ITimeInstant start, ITimeInstant end, T item) throws KlabException;
 
@@ -98,7 +98,7 @@ public interface ITemporalSeries<T> extends ITime {
      *
      * @param spliceTime the splice time
      * @return shortened period
-     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
+     * @throws KlabException the klab exception
      */
     public ITimePeriod shorten(ITimeInstant spliceTime) throws KlabException;
 
@@ -115,7 +115,7 @@ public interface ITemporalSeries<T> extends ITime {
      * @param spliceTime the splice time
      * @param object the object
      * @return the i time period
-     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
+     * @throws KlabException the klab exception
      */
     public ITimePeriod bisect(ITimeInstant spliceTime, T object) throws KlabException;
 }

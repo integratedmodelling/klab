@@ -36,8 +36,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * <p>
  *
  * @author ferdinando.villa
- * @since 0.10.0
  * @version $Id: $Id
+ * @since 0.10.0
  */
 public interface IObservationService {
 

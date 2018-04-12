@@ -20,10 +20,10 @@ import java.io.Serializable;
 /**
  * The Interface IPair.
  *
- * @param <T1> the generic type
- * @param <T2> the generic type
  * @author ferdinando.villa
  * @version $Id: $Id
+ * @param <T1> the generic type
+ * @param <T2> the generic type
  */
 public interface IPair<T1, T2> extends Serializable {
 

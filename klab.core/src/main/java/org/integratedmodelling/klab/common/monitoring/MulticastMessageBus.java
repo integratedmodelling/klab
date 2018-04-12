@@ -439,7 +439,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
      * Send to all.
      *
      * @param buf the buf
-     * @throws java.lang.Exception the exception
+     * @throws Exception the exception
      */
     public void sendToAll(String buf) throws Exception {
         Address local_addr = channel.getAddress();
@@ -454,7 +454,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
      * Send to self.
      *
      * @param buf the buf
-     * @throws java.lang.Exception the exception
+     * @throws Exception the exception
      */
     public void sendToSelf(String buf) throws Exception {
         Address local_addr = channel.getAddress();

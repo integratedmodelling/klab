@@ -237,10 +237,10 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     *
      * Repeat.
-     * @param c 
-     * @param n 
+     *
+     * @param c the c
+     * @param n the n
      * @return the repeated string
      */
     public static String repeat(char c, int n) {

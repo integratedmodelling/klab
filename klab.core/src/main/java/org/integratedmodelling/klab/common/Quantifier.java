@@ -151,7 +151,7 @@ public class Quantifier {
      * Instantiates a new quantifier.
      *
      * @param s the s
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException the klab validation exception
+     * @throws KlabValidationException the klab validation exception
      */
     public Quantifier(String s) throws KlabValidationException {
         parse(s);
@@ -198,7 +198,7 @@ public class Quantifier {
      *
      * @param s the s
      * @return the quantifier
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException the klab validation exception
+     * @throws KlabValidationException the klab validation exception
      */
     public static Quantifier parseQuantifier(String s) throws KlabValidationException {
 

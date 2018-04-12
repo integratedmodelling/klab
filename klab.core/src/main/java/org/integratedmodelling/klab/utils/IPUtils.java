@@ -86,7 +86,7 @@ public class IPUtils {
      *
      * @param pattern the pattern
      * @return IP matching pattern
-     * @throws java.lang.Exception the exception
+     * @throws Exception the exception
      */
     public static String getLocalIpMatching(String pattern) throws Exception {
         Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
@@ -107,7 +107,7 @@ public class IPUtils {
      * Gets the local ips.
      *
      * @return the local ips
-     * @throws java.net.SocketException the socket exception
+     * @throws SocketException the socket exception
      */
     public static Set<String> getLocalIps() throws SocketException {
         Set<String> ret = new HashSet<>();
@@ -133,7 +133,7 @@ public class IPUtils {
      * 172.** based ones.
      *
      * @return IP matching pattern
-     * @throws java.lang.Exception the exception
+     * @throws Exception the exception
      */
     public static String getLocalIp() throws Exception {
         for (int i = 1; i < localPatterns.length; i++) {
@@ -195,7 +195,7 @@ public class IPUtils {
      * The main method.
      *
      * @param args the arguments
-     * @throws java.lang.Exception the exception
+     * @throws Exception the exception
      */
     public static void main(String[] args) throws Exception {
         if (checkIPMatching("10.*.*.*", "10.0.0.64")) {

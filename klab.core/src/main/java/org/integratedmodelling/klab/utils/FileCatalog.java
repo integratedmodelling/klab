@@ -33,8 +33,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * intelligently on request.
  *
  * @author ferdinando.villa
- * @param <T> the generic type
  * @version $Id: $Id
+ * @param <T> the generic type
  */
 public class FileCatalog<T> extends HashMap<String, T> {
 

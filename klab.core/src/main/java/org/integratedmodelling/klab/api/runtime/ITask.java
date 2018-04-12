@@ -24,8 +24,8 @@ import org.integratedmodelling.klab.api.observations.IObservation;
  * available.
  *
  * @author ferdinando.villa
- * @param <T> the type of observation being resolved
  * @version $Id: $Id
+ * @param <T> the type of observation being resolved
  */
 public interface ITask<T extends IObservation> extends ITaskIdentity, Future<T> {
   

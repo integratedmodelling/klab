@@ -24,9 +24,9 @@ import java.util.List;
  * for the lovely matched sort available in C# and missing in Java collections.
  *
  * @author Ferd
+ * @version $Id: $Id
  * @param <T1> the generic type
  * @param <T2> the generic type
- * @version $Id: $Id
  */
 public class MatchedSorter<T1, T2> {
 

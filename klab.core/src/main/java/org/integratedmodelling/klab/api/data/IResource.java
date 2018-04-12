@@ -22,9 +22,6 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
@@ -140,7 +137,7 @@ public interface IResource extends Serializable {
 
     /**
      * 
-     * @param s
+     * @param geometry
      * @return the builder itself
      */
     Builder setGeometry(IGeometry geometry);

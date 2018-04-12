@@ -393,22 +393,15 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Writes InputStream to a given <code>fileName<code>. And, if directory for
-	 * this file does not exists, if createDir is true, creates it, otherwice
-	 * throws OMDIOexception.
-	 *
-	 * @param fileName
-	 *            - filename save to.
-	 * @param iStream
-	 *            - InputStream with data to read from.
-	 * @param createDir
-	 *            (false by default)
-	 * @return number of bytes written
-	 * @throws java.io.IOException
-	 *             in case of any error.
-	 *
-	 * refactored 2002-05-02 by Alexander Feldman - moved from OMDBlob.
-	 */
+     * Writes InputStream to a given <code>fileName<code>. And, if directory for this file does not
+     * exists, if createDir is true, creates it, otherwice throws OMDIOexception.
+     *
+     * @param fileName - filename save to.
+     * @param iStream - InputStream with data to read from.
+     * @param createDir (false by default)
+     * @return number of bytes written
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
 	public static int writeToFile(String fileName, InputStream iStream, boolean createDir) throws IOException {
 		String me = "FileUtils.WriteToFile";
 		if (fileName == null) {
@@ -455,16 +448,16 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Read the last N lines of file into string and return it. Emulates Unix's tail command.
-	 *
-	 * Unsophisticated about EOL encodings - I'm pretty sure it will create artificial empty lines
-	 * on Win. On the other hand, all the uses I have for it are a joke on anything but unix.
-	 *
-	 * @param fileName the file name
-	 * @param n the n
-	 * @return last requested lines from file.
-	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
-	 */
+     * Read the last N lines of file into string and return it. Emulates Unix's tail command.
+     * 
+     * Unsophisticated about EOL encodings - I'm pretty sure it will create artificial empty lines
+     * on Win. On the other hand, all the uses I have for it are a joke on anything but unix.
+     *
+     * @param fileName the file name
+     * @param n the n
+     * @return last requested lines from file.
+     * @throws KlabIOException the klab IO exception
+     */
 	public static String tail(String fileName, int n) throws KlabIOException {
 		java.io.RandomAccessFile fileHandler = null;
 		try {
@@ -572,12 +565,12 @@ public class MiscUtilities {
 	// } // }}}
 
 	/**
-	 * Convert stream to string.
-	 *
-	 * @param is the is
-	 * @return string with stream contents.
-	 * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
-	 */
+     * Convert stream to string.
+     *
+     * @param is the is
+     * @return string with stream contents.
+     * @throws KlabException the klab exception
+     */
 	public static String convertStreamToString(InputStream is) throws KlabException {
 
 		/*
@@ -1073,14 +1066,14 @@ public class MiscUtilities {
 	
 	// {{{ objectsEqual() method
 	/**
-	 * Returns if two strings are equal. This correctly handles null pointers, as opposed to calling
-	 * <code>o1.equals(o2)</code>.
-	 *
-	 * @param o1 the o 1
-	 * @param o2 the o 2
-	 * @since jEdit 4.2pre1
-	 * @return a boolean.
-	 */
+     * Returns if two strings are equal. This correctly handles null pointers, as opposed to calling
+     * <code>o1.equals(o2)</code>.
+     *
+     * @param o1 the o 1
+     * @param o2 the o 2
+     * @return a boolean.
+     * @since jEdit 4.2pre1
+     */
 	public static boolean objectsEqual(Object o1, Object o2) {
 		if (o1 == null) {
 			if (o2 == null)
@@ -1353,14 +1346,14 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Resolve a passed string into an existing file name.
-	 *
-	 * @param msource a file name, URL, or string containing a plugin identifier and a resource
-	 *        separated by :: - in the latter case, we lookup the resource in the named plugin's
-	 *        classpath
-	 * @return A local file containing the resource
-	 * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
-	 */
+     * Resolve a passed string into an existing file name.
+     *
+     * @param msource a file name, URL, or string containing a plugin identifier and a resource
+     *        separated by :: - in the latter case, we lookup the resource in the named plugin's
+     *        classpath
+     * @return A local file containing the resource
+     * @throws KlabException the klab exception
+     */
 	public static File resolveUrlToFile(String msource) throws KlabException {
 
 		File ret = null;
@@ -1393,14 +1386,14 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Interprets a string as either a valid URL or a file name, and return a proper URL no matter
-	 * what, or throw an exception if nothing seems to work. No checking is done on whether the URL
-	 * actually resolves to anything.
-	 *
-	 * @param msource the msource
-	 * @return the URL
-	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
-	 */
+     * Interprets a string as either a valid URL or a file name, and return a proper URL no matter
+     * what, or throw an exception if nothing seems to work. No checking is done on whether the URL
+     * actually resolves to anything.
+     *
+     * @param msource the msource
+     * @return the URL
+     * @throws KlabIOException the klab IO exception
+     */
 	public static URL getURLForResource(String msource) throws KlabIOException {
 
 		URL murl = null;
@@ -1482,11 +1475,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * This method is used for creating a backup of an existing File.
-	 *
-	 * @param file the file
-	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
-	 */
+     * This method is used for creating a backup of an existing File.
+     *
+     * @param file the file
+     * @throws KlabIOException the klab IO exception
+     */
 	public static void backupFile(File file) throws KlabIOException {
 		File parentFolder = new File(file.getParent() + "/backup");
 
@@ -1716,14 +1709,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Create a new temporary directory. Use something like
-	 * {@link #recursiveDelete(File)} to clean this directory up since it isn't
-	 * deleted automatically
-	 *
-	 * @return the new directory
-	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException
-	 *             if there is an error creating the temporary directory
-	 */
+     * Create a new temporary directory. Use something like {@link #recursiveDelete(File)} to clean
+     * this directory up since it isn't deleted automatically
+     *
+     * @return the new directory
+     * @throws KlabIOException the klab IO exception
+     */
 	public static File createTempDir() throws KlabIOException {
 		final File sysTempDir = new File(System.getProperty("java.io.tmpdir"));
 		File newTempDir;
@@ -1816,12 +1807,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Read file into strings.
-	 *
-	 * @param filename the filename
-	 * @return the string[]
-	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
-	 */
+     * Read file into strings.
+     *
+     * @param filename the filename
+     * @return the string[]
+     * @throws KlabIOException the klab IO exception
+     */
 	public static String[] readFileIntoStrings(String filename) throws KlabIOException {
 
 		FileReader fileReader;

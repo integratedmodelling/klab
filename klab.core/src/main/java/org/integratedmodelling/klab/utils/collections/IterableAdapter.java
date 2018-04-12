@@ -21,9 +21,9 @@ import java.util.Iterator;
 /**
  * The Class IterableAdapter.
  *
- * @param <T> the generic type
  * @author ferdinando.villa
  * @version $Id: $Id
+ * @param <T> the generic type
  */
 public class IterableAdapter<T> implements Iterable<T> {
   

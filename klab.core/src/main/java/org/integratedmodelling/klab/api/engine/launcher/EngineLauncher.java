@@ -63,7 +63,6 @@ public abstract class EngineLauncher {
      * processing a launch event implements this interface, and the object created with that class
      * is registered with a component using the component's <code>addLaunchListener<code> method.
      * When the launch event occurs, that object's appropriate method is invoked.
-     *
      */
     public static interface LaunchListener {
 

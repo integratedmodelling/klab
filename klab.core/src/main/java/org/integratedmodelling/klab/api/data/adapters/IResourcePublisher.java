@@ -37,8 +37,7 @@ public interface IResourcePublisher {
    * @param monitor for notifications and identity retrieval
    * @return a new resource. If errors happen, throw an exception; if the function returns, the
    *         resource must be valid.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException if the passed resource is not local, has errors, or anything happens
-   *         during publication.
+   * @throws KlabException the klab exception
    */
   public IResource publish(IResource localResource, IMonitor monitor) throws KlabException;
 

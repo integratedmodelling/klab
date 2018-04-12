@@ -37,7 +37,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      *
      * @param directory the directory
      * @param fileName the file name
-     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
+     * @throws KlabException the klab exception
      */
     public static void createMD5Digest(File directory, String fileName) throws KlabException {
 
@@ -90,7 +90,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * The main method.
      *
      * @param args the arguments
-     * @throws java.lang.Exception the exception
+     * @throws Exception the exception
      */
     public static void main(String[] args) throws Exception {
         createMD5Digest(new File("C:/Users/ferdinando.villa/.tl/server"), "zioporco.txt");

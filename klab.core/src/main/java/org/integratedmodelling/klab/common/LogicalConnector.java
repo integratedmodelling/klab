@@ -85,7 +85,7 @@ public class LogicalConnector {
      *
      * @param s A string representing a logical connector.
      * @return a LogicalConnector
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if string is silly.
+     * @throws KlabValidationException the klab validation exception
      */
     public static LogicalConnector parseLogicalConnector(String s) throws KlabValidationException {
 
@@ -136,8 +136,8 @@ public class LogicalConnector {
      * Equals.
      *
      * @param s the s
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException the klab validation exception
      * @return a boolean.
+     * @throws KlabValidationException the klab validation exception
      */
     public boolean equals(String s) throws KlabValidationException {
         return value == parseLogicalConnector(s).value;

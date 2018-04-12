@@ -30,18 +30,21 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Dataflows in k.LAB represent "raw" computations, which create, compute and link
- * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}s in response to a request for observation of a given semantic
- * {@link org.integratedmodelling.klab.api.resolution.IResolvable}. The computation is stripped of all semantics; therefore it can be run by a
- * semantically-unaware workflow system.
+ * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}s in response to a request
+ * for observation of a given semantic
+ * {@link org.integratedmodelling.klab.api.resolution.IResolvable}. The computation is stripped of
+ * all semantics; therefore it can be run by a semantically-unaware workflow system.
  * <p>
- * Dataflows are serialized and rebuilt from KDL specifications by {@link org.integratedmodelling.klab.api.services.IDataflowService}.
- * Dataflows are also built by the engine after resolving a IResolvable, and can be serialized to
- * KDL if necessary using {@link #getKdlCode()}.
+ * Dataflows are serialized and rebuilt from KDL specifications by
+ * {@link org.integratedmodelling.klab.api.services.IDataflowService}. Dataflows are also built by
+ * the engine after resolving a IResolvable, and can be serialized to KDL if necessary using
+ * {@link #getKdlCode()}.
  * <p>
  * The end result of {@link #run(IScale, IMonitor) running a dataflow} in a given scale is a
- * {@link org.integratedmodelling.klab.api.provenance.IArtifact}. In k.LAB, this corresponds to either a {@link org.integratedmodelling.klab.api.observations.IObservation} (the usual case)
- * or a {@link org.integratedmodelling.klab.api.model.IModel} (when the computation is a learning activity, which builds an explanation of
- * a process). Dataflows built
+ * {@link org.integratedmodelling.klab.api.provenance.IArtifact}. In k.LAB, this corresponds to
+ * either a {@link org.integratedmodelling.klab.api.observations.IObservation} (the usual case) or a
+ * {@link org.integratedmodelling.klab.api.model.IModel} (when the computation is a learning
+ * activity, which builds an explanation of a process). Dataflows built
  * {@link org.integratedmodelling.klab.api.services.IObservationService#resolve(String, org.integratedmodelling.klab.api.runtime.ISession, String[])
  * within the k.LAB runtime} as a result of a semantic resolution will produce {@link IObservation
  * observations}, i.e. semantic artifacts. But if those dataflows are {@link #getKdlCode()
@@ -65,9 +68,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * <p>
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  * @param <T> the most specific type of artifact this dataflow will build when run.
  * @since 0.10.0
- * @version $Id: $Id
  */
 public interface IDataflow<T extends IArtifact> extends IActuator {
 

@@ -1,3 +1,16 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
+ */
 package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
@@ -16,6 +29,10 @@ import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Property;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum Concepts.
+ */
 public enum Concepts implements IConceptService {
 
   INSTANCE;
@@ -48,8 +65,8 @@ public enum Concepts implements IConceptService {
   /**
    * Quick static way to obtain a concept that is known to exist. Throws an unchecked exception if
    * the concept isn't found.
-   * 
-   * @param conceptId
+   *
+   * @param conceptId the concept id
    * @return the concept. Never null.
    */
   public static Concept c(String conceptId) {
@@ -69,8 +86,8 @@ public enum Concepts implements IConceptService {
   /**
    * Quick static way to obtain a property that is known to exist. Throws an unchecked exception if
    * the property isn't found.
-   * 
-   * @param propertyId
+   *
+   * @param propertyId the property id
    * @return the property. Never null.
    */
   public static Property p(String propertyId) {
@@ -89,8 +106,8 @@ public enum Concepts implements IConceptService {
 
   /**
    * Get the best display name for a concept.
-   * 
-   * @param t
+   *
+   * @param t the t
    * @return a name for display
    */
   public String getDisplayName(IConcept t) {
@@ -182,9 +199,8 @@ public enum Concepts implements IConceptService {
    * True if concept was declared in k.IM at root level. These serve as the "official" least general
    * "family" of concepts for several purposes - e.g. for traits, only these are seen as "general"
    * enough to be used in an "exposes" statement.
-   * 
-   * 
-   * @param tr
+   *
+   * @param tr the tr
    * @return true if the concept was declared in a root-level k.IM statement.
    */
   public boolean isBaseDeclaration(IConcept tr) {
@@ -212,7 +228,7 @@ public enum Concepts implements IConceptService {
           return ret + d;
         }
       }
-      ret ++;
+      ret++;
     }
     return -1;
   }

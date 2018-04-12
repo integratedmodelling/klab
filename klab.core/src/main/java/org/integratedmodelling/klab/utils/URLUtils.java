@@ -154,8 +154,7 @@ public class URLUtils {
    * @param url the URL
    * @param file the File
    * @return the number of bytes copied.
-   * @throws org.integratedmodelling.klab.exceptions.KlabIOException if URL can't be read or file
-   *         can't be written.
+   * @throws KlabIOException the klab IO exception
    */
   public static long copy(URL url, File file) throws KlabIOException {
     long count = 0;
@@ -184,7 +183,6 @@ public class URLUtils {
    * copy event implements this interface, and the object created with that class is registered with
    * a component using the component's <code>addCopyListener</code> method. When the copy event
    * occurs, that object's appropriate method is invoked.
-   *
    */
   public interface CopyListener {
     void onProgress(int percent);
@@ -198,7 +196,7 @@ public class URLUtils {
    * @param listener the listener
    * @param size pass an approx size in case the server does not pass the length
    * @return nothing
-   * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
+   * @throws KlabIOException the klab IO exception
    */
   public static long copy(URL url, File file, CopyListener listener, long size)
       throws KlabIOException {
@@ -257,7 +255,7 @@ public class URLUtils {
    *
    * @param url the url
    * @param file the file
-   * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
+   * @throws KlabIOException the klab IO exception
    */
   public static void copyChanneled(URL url, File file) throws KlabIOException {
 
@@ -291,8 +289,7 @@ public class URLUtils {
    * @param url the URL
    * @param file the File
    * @return the number of bytes copied.
-   * @throws org.integratedmodelling.klab.exceptions.KlabIOException if URL can't be read or file
-   *         can't be written.
+   * @throws KlabIOException the klab IO exception
    */
   public static long copy(File url, File file) throws KlabIOException {
     long count = 0;
@@ -321,7 +318,7 @@ public class URLUtils {
    *
    * @param src the src
    * @param dst the dst
-   * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
+   * @throws KlabIOException the klab IO exception
    */
   public static void copyBuffered(File src, File dst) throws KlabIOException {
 
@@ -348,7 +345,7 @@ public class URLUtils {
    *
    * @param url the url
    * @return the file for URL
-   * @throws org.integratedmodelling.klab.exceptions.KlabIOException the klab IO exception
+   * @throws KlabIOException the klab IO exception
    */
   public static File getFileForURL(URL url) throws KlabIOException {
     if (url.toString().startsWith("file:")) {

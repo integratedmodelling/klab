@@ -19,9 +19,9 @@ package org.integratedmodelling.klab.api.observations.scale;
 /**
  * The Interface ITopology.
  *
- * @param <T> the generic type
  * @author ferdinando.villa
  * @version $Id: $Id
+ * @param <T> the generic type
  */
 public interface ITopology<T> extends ITopologicallyComparable<T> {
 

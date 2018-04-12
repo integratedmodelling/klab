@@ -24,17 +24,17 @@ import java.util.Set;
  * Utility to reduce the ugliness of casting generic collections in Java. If you have say a
  * Collection<A> (ca) that you know is a Collection<B extends A> and you need a Collection<B>, do
  * the following:
- *
+ * 
  * Collection<B> cb = new Cast<A,B>.cast(ca);
- *
+ * 
  * and type safety be damned. This will not generate any warning and will avoid any silly copy.
  * Works for generic collections, arraylists and hashsets - add more if needed. Needs something else
  * for maps.
  *
  * @author ferdinando.villa
+ * @version $Id: $Id
  * @param <B> the generic type
  * @param <T> the generic type
- * @version $Id: $Id
  */
 public class CastUtils<B, T> {
 

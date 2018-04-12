@@ -65,7 +65,7 @@ public class JavaUtils {
      * @param wait the wait
      * @param args the args
      * @return the int
-     * @throws org.integratedmodelling.klab.exceptions.KlabException the klab exception
+     * @throws KlabException the klab exception
      */
     public static int exec(Class<?> klass, boolean wait, String ...args) throws KlabException {
 
