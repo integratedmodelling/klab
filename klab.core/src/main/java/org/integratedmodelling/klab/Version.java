@@ -1,34 +1,24 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2015:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab;
 
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
+// TODO: Auto-generated Javadoc
 /**
  * The version class for the whole system. Holds the current official release version.
  * 
@@ -59,24 +49,16 @@ public class Version implements Comparable<Version>, Serializable {
      * *****************************************************************************
      */
 
-    /**
-     * 
-     */
+    /** The Constant VERSION_BRANCH. */
     public static final String VERSION_BRANCH = "VERSION_BRANCH";
 
-    /**
-     * 
-     */
+    /** The Constant VERSION_COMMIT. */
     public static final String VERSION_COMMIT = "VERSION_COMMIT";
 
-    /**
-     * 
-     */
+    /** The Constant VERSION_BUILD. */
     public static final String VERSION_BUILD = "VERSION_BUILD";
 
-    /**
-     * 
-     */
+    /** The Constant VERSION_DATE. */
     public static final String VERSION_DATE = "VERSION_DATE";
 
     /**
@@ -115,8 +97,8 @@ public class Version implements Comparable<Version>, Serializable {
 
     /**
      * Initialize from a version string.
-     * 
-     * @param version
+     *
+     * @param version the version
      */
     public Version(String version) {
         parseString(version);
@@ -197,6 +179,8 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * Gets the builds the.
+     *
      * @return build number
      */
     public int getBuild() {
@@ -204,6 +188,8 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * Gets the major.
+     *
      * @return major version number
      */
     public int getMajor() {
@@ -211,6 +197,8 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * Gets the minor.
+     *
      * @return minor version number
      */
     public int getMinor() {
@@ -218,6 +206,8 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     /**
+     * Gets the name.
+     *
      * @return build name
      */
     public String getName() {
@@ -423,6 +413,11 @@ public class Version implements Comparable<Version>, Serializable {
         return fname;
     }
 
+    /**
+     * Gets the current.
+     *
+     * @return the current
+     */
     public static Version getCurrent() {
         if (currentVersion == null) {
             currentVersion = create(CURRENT);

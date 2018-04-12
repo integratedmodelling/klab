@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
@@ -12,13 +27,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+// TODO: Auto-generated Javadoc
 /**
  * A catalog (simply a map String -> T) read from a JSON file and capable of resynchronizing
  * intelligently on request.
- * 
- * @author ferdinando.villa
  *
- * @param <T>
+ * @author ferdinando.villa
+ * @param <T> the generic type
  */
 public class FileCatalog<T> extends HashMap<String, T> {
 
@@ -29,10 +44,28 @@ public class FileCatalog<T> extends HashMap<String, T> {
   long                      timestamp;
   boolean                   error;
 
+  /**
+   * Creates the.
+   *
+   * @param <T> the generic type
+   * @param url the url
+   * @param type the type
+   * @param cls the cls
+   * @return the file catalog
+   */
   public static <T> FileCatalog<T> create(URL url, Class<T> type, Class<? extends T> cls) {
     return new FileCatalog<T>(url, type, cls);
   }
 
+  /**
+   * Creates the.
+   *
+   * @param <T> the generic type
+   * @param file the file
+   * @param type the type
+   * @param cls the cls
+   * @return the file catalog
+   */
   public static <T> FileCatalog<T> create(File file, Class<T> type, Class<? extends T> cls) {
     return new FileCatalog<T>(file, type, cls);
   }
@@ -46,6 +79,13 @@ public class FileCatalog<T> extends HashMap<String, T> {
     }
   }
 
+  /**
+   * Instantiates a new file catalog.
+   *
+   * @param file the file
+   * @param type the type
+   * @param cls the cls
+   */
   public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
 
     this.file = file;
@@ -57,13 +97,19 @@ public class FileCatalog<T> extends HashMap<String, T> {
     }
   }
 
+  /**
+   * Checks for errors.
+   *
+   * @return true, if successful
+   */
   public boolean hasErrors() {
     return this.error;
   }
 
   /**
    * Synchronize, reading the file if necessary.
-   * 
+   *
+   * @param stream the stream
    * @return true if no errors. Non-existing file is not an error.
    * @throws ClassCastException if the data read are not of the type configured
    */

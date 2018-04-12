@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab;
 
 import java.io.File;
@@ -12,6 +27,7 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.OS;
 
+// TODO: Auto-generated Javadoc
 /**
  * TODO use a declarative approach for all properties, so that there is one place for all
  * default settings and it's possible to override any of them through global JVM settings.
@@ -27,6 +43,7 @@ public enum Configuration implements IConfigurationService {
     private Properties         properties;
     private File               dataPath;
 
+    /** The klab relative work path. */
     public String              KLAB_RELATIVE_WORK_PATH            = ".klab";
 
     private Configuration() {
@@ -73,6 +90,9 @@ public enum Configuration implements IConfigurationService {
         return this.properties;
     }
 
+    /**
+     * Save.
+     */
     /*
      * Non-API
      * Save the properties after making changes from outside configuration. 
@@ -99,6 +119,11 @@ public enum Configuration implements IConfigurationService {
 
     }
 
+    /**
+     * Use reasoner.
+     *
+     * @return true, if successful
+     */
     public boolean useReasoner() {
         return true;
     }

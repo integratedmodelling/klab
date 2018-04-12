@@ -1,42 +1,48 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2015:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.common;
 
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Quantifier.
+ */
 public class Quantifier {
 
+    /** The Constant ERROR. */
     static public final int ERROR    = -2;
+    
+    /** The Constant ANY. */
     static public final int ANY      = 0;
+    
+    /** The Constant ALL. */
     static public final int ALL      = 1;
+    
+    /** The Constant EXACT. */
     static public final int EXACT    = 2;
+    
+    /** The Constant RANGE. */
     static public final int RANGE    = 3;
+    
+    /** The Constant NONE. */
     static public final int NONE     = 4;
+    
+    /** The Constant INFINITE. */
     static public final int INFINITE = -1;
 
     /**
@@ -65,7 +71,8 @@ public class Quantifier {
 
     /**
      * Create the specified quantifier.
-     * @param n 
+     *
+     * @param n the n
      * @return EXACTLY N
      */
     static public Quantifier EXACTLY(int n) {
@@ -76,8 +83,9 @@ public class Quantifier {
 
     /**
      * Create the specified quantifier.
-     * @param min 
-     * @param max 
+     *
+     * @param min the min
+     * @param max the max
      * @return RANGE min,max
      */
     static public Quantifier RANGE(int min, int max) {
@@ -87,28 +95,58 @@ public class Quantifier {
         return q;
     }
 
+    /** The type. */
     public int type = ERROR;
 
+    /** The min. */
     // INFINITE == unbounded
     public int min = 0;
+    
+    /** The max. */
     public int max = 0;
 
+    /**
+     * Instantiates a new quantifier.
+     *
+     * @param type the type
+     */
     public Quantifier(int type) {
         this.type = type;
     }
 
+    /**
+     * Gets the exact value.
+     *
+     * @return the exact value
+     */
     public int getExactValue() {
         return min;
     }
 
+    /**
+     * Gets the min value.
+     *
+     * @return the min value
+     */
     public int getMinValue() {
         return min;
     }
 
+    /**
+     * Gets the max value.
+     *
+     * @return the max value
+     */
     public int getMaxValue() {
         return max;
     }
 
+    /**
+     * Instantiates a new quantifier.
+     *
+     * @param s the s
+     * @throws KlabValidationException the klab validation exception
+     */
     public Quantifier(String s) throws KlabValidationException {
         parse(s);
     }
@@ -139,13 +177,21 @@ public class Quantifier {
 
     /**
      * Compares the type of a quantifier but not the actual ranges if any.
-     * @param quantifierType 
+     *
+     * @param quantifierType the quantifier type
      * @return true if compatible
      */
     public boolean is(int quantifierType) {
         return type == quantifierType;
     }
 
+    /**
+     * Parses the quantifier.
+     *
+     * @param s the s
+     * @return the quantifier
+     * @throws KlabValidationException the klab validation exception
+     */
     public static Quantifier parseQuantifier(String s) throws KlabValidationException {
 
         Quantifier q = null;
@@ -159,6 +205,12 @@ public class Quantifier {
         return q;
     }
 
+    /**
+     * Checks if is quantifier.
+     *
+     * @param s the s
+     * @return true, if is quantifier
+     */
     public static boolean isQuantifier(String s) {
         boolean ret = false;
 
@@ -195,14 +247,29 @@ public class Quantifier {
         return ret;
     }
 
+    /**
+     * Checks if is max unbound.
+     *
+     * @return true, if is max unbound
+     */
     public boolean isMaxUnbound() {
         return max < 0;
     }
 
+    /**
+     * Checks if is min unbound.
+     *
+     * @return true, if is min unbound
+     */
     public boolean isMinUnbound() {
         return min < 0;
     }
 
+    /**
+     * Parses the.
+     *
+     * @param s the s
+     */
     public void parse(String s) {
 
         if (s.toLowerCase().equals("any")) {
@@ -237,10 +304,21 @@ public class Quantifier {
         }
     }
 
+    /**
+     * As text.
+     *
+     * @return the string
+     */
     public String asText() {
         return toString();
     }
 
+    /**
+     * Match.
+     *
+     * @param matches the matches
+     * @return true, if successful
+     */
     public boolean match(int matches) {
 
         if (type == EXACT) {
@@ -262,10 +340,20 @@ public class Quantifier {
         return false;
     }
 
+    /**
+     * Gets the type.
+     *
+     * @return the type
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * As text operator.
+     *
+     * @return the string
+     */
     public String asTextOperator() {
         String ret = null;
 

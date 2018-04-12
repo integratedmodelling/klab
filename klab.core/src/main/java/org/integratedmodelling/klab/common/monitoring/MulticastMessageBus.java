@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.common.monitoring;
 
 import java.util.ArrayList;
@@ -25,6 +40,10 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MulticastMessageBus.
+ */
 public class MulticastMessageBus extends ReceiverAdapter implements ChannelListener {
 
     IEngine engine;
@@ -35,21 +54,26 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     protected boolean useLoopback = true;
     
     /**
-     * @author ferdinando.villa
+     * The Class Listener.
      *
-     * @param <T>
+     * @author ferdinando.villa
+     * @param <T> the generic type
      */
     public abstract static class Listener<T> {
 
         Class<T> typeClass;
 
         /**
-         * @param payload
+         * On message.
+         *
+         * @param payload the payload
          */
         public abstract void onMessage(T payload);
 
         /**
-         * @param tclass
+         * Instantiates a new listener.
+         *
+         * @param tclass the tclass
          */
         public Listener(Class<T> tclass) {
             this.typeClass = tclass;
@@ -70,51 +94,146 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         long   freeMemory;         // 9
         int    nProcessors;       // 10
         
+        /**
+         * Gets the last engine time.
+         *
+         * @return the last engine time
+         */
         public long getLastEngineTime() {
             return lastEngineTime;
         }
+        
+        /**
+         * Sets the last engine time.
+         *
+         * @param lastEngineTime the new last engine time
+         */
         public void setLastEngineTime(long lastEngineTime) {
             this.lastEngineTime = lastEngineTime;
         }
+        
+        /**
+         * Gets the name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
+        
+        /**
+         * Sets the name.
+         *
+         * @param name the new name
+         */
         public void setName(String name) {
             this.name = name;
         }
+        
+        /**
+         * Gets the version.
+         *
+         * @return the version
+         */
         public String getVersion() {
             return version;
         }
+        
+        /**
+         * Sets the version.
+         *
+         * @param version the new version
+         */
         public void setVersion(String version) {
             this.version = version;
         }
+        
+        /**
+         * Gets the builds the.
+         *
+         * @return the builds the
+         */
         public String getBuild() {
             return build;
         }
+        
+        /**
+         * Sets the builds the.
+         *
+         * @param build the new builds the
+         */
         public void setBuild(String build) {
             this.build = build;
         }
+        
+        /**
+         * Gets the boot time.
+         *
+         * @return the boot time
+         */
         public long getBootTime() {
             return bootTime;
         }
+        
+        /**
+         * Sets the boot time.
+         *
+         * @param bootTime the new boot time
+         */
         public void setBootTime(long bootTime) {
             this.bootTime = bootTime;
         }
+        
+        /**
+         * Gets the total memory.
+         *
+         * @return the total memory
+         */
         public long getTotalMemory() {
             return totalMemory;
         }
+        
+        /**
+         * Sets the total memory.
+         *
+         * @param totalMemory the new total memory
+         */
         public void setTotalMemory(long totalMemory) {
             this.totalMemory = totalMemory;
         }
+        
+        /**
+         * Gets the free memory.
+         *
+         * @return the free memory
+         */
         public long getFreeMemory() {
             return freeMemory;
         }
+        
+        /**
+         * Sets the free memory.
+         *
+         * @param freeMemory the new free memory
+         */
         public void setFreeMemory(long freeMemory) {
             this.freeMemory = freeMemory;
         }
+        
+        /**
+         * Gets the n processors.
+         *
+         * @return the n processors
+         */
         public int getnProcessors() {
             return nProcessors;
         }
+        
+        /**
+         * Sets the n processors.
+         *
+         * @param nProcessors the new n processors
+         */
         public void setnProcessors(int nProcessors) {
             this.nProcessors = nProcessors;
         }
@@ -124,11 +243,11 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     private static final String PING_HEADER      = "@";
 
     /**
-     * After this is called, the listener will be notified of any payload message sent to
-     * the channel.
-     * 
-     * @param channel
-     * @param listener
+     * After this is called, the listener will be notified of any payload message sent to the
+     * channel.
+     *
+     * @param channel the channel
+     * @param listener the listener
      */
     public void subscribe(String channel, Listener<?> listener) {
         subscribedChannels.put(channel, listener);
@@ -136,15 +255,17 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
 
     /**
      * Stops listening to a channel.
-     * 
-     * @param channel
+     *
+     * @param channel the channel
      */
     public void unsubscribe(String channel) {
         subscribedChannels.remove(channel);
     }
 
     /**
-     * @param listener
+     * Sets the broadcast listener.
+     *
+     * @param listener the new broadcast listener
      */
     public void setBroadcastListener(Listener<?> listener) {
         broadcastListener = listener;
@@ -250,6 +371,8 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     }
 
     /**
+     * Checks if is running.
+     *
      * @return true if advertising is going on.
      */
     public boolean isRunning() {
@@ -261,6 +384,12 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         DISCOVER
     }
 
+    /**
+     * To JSON.
+     *
+     * @param bean the bean
+     * @return the string
+     */
     public String toJSON(Object bean) {
         try {
             return objectMapper.writeValueAsString(bean);
@@ -270,11 +399,12 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     }
 
     /**
-     * Just access our configured object mapper, for external access when we want to wrap
-     * an object into a notification.
-     * 
-     * @param beanJSON
-     * @param cls
+     * Just access our configured object mapper, for external access when we want to wrap an object
+     * into a notification.
+     *
+     * @param <T> the generic type
+     * @param beanJSON the bean JSON
+     * @param cls the cls
      * @return the deserialized object
      */
     @SuppressWarnings("unchecked")
@@ -298,6 +428,12 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         System.out.println("Got ping from " + status);
     }
 
+    /**
+     * Send to all.
+     *
+     * @param buf the buf
+     * @throws Exception the exception
+     */
     public void sendToAll(String buf) throws Exception {
         Address local_addr = channel.getAddress();
         for (Address mbr : members) {
@@ -307,6 +443,12 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         }
     }
 
+    /**
+     * Send to self.
+     *
+     * @param buf the buf
+     * @throws Exception the exception
+     */
     public void sendToSelf(String buf) throws Exception {
         Address local_addr = channel.getAddress();
         for (Address mbr : members) {
@@ -401,21 +543,24 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
     }
 
     /**
-     * Start in discovery mode. No advertising is done, onSignal() is called whenever an
-     * advertiser on the same identity notifies itself.
-     * 
-     * @param identity
+     * Start in discovery mode. No advertising is done, onSignal() is called whenever an advertiser
+     * on the same identity notifies itself.
+     *
+     * @param engine the engine
+     * @param nodeName the node name
+     * @param identity the identity
      */
     public MulticastMessageBus(IEngine engine, String nodeName, String identity) {
         this(engine, identity, 0);
     }
 
     /**
-     * Start in advertising mode. Local address and passed port are broadcast for this
-     * identity every SECONDS_INTERVAL seconds.
-     * 
-     * @param identity
-     * @param port
+     * Start in advertising mode. Local address and passed port are broadcast for this identity
+     * every SECONDS_INTERVAL seconds.
+     *
+     * @param engine the engine
+     * @param identity the identity
+     * @param port the port
      */
     public MulticastMessageBus(IEngine engine, String identity, int port) {
 

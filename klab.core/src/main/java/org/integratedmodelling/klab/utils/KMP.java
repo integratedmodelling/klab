@@ -1,5 +1,21 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
+// TODO: Auto-generated Javadoc
 /******************************************************************************
  *  Compilation:  javac KMP.java
  *  Execution:    java KMP pattern text
@@ -98,12 +114,11 @@ public class KMP {
     } 
 
     /**
-     * Returns the index of the first occurrrence of the pattern string
-     * in the text string.
+     * Returns the index of the first occurrrence of the pattern string in the text string.
      *
-     * @param  txt the text string
-     * @return the index of the first occurrence of the pattern string
-     *         in the text string; N if no such match
+     * @param txt the txt
+     * @return the index of the first occurrence of the pattern string in the text string; N if no
+     *         such match
      */
     public int search(String txt) {
 
@@ -119,12 +134,11 @@ public class KMP {
     }
 
     /**
-     * Returns the index of the first occurrrence of the pattern string
-     * in the text string.
+     * Returns the index of the first occurrrence of the pattern string in the text string.
      *
-     * @param  text the text string
-     * @return the index of the first occurrence of the pattern string
-     *         in the text string; N if no such match
+     * @param text the text
+     * @return the index of the first occurrence of the pattern string in the text string; N if no
+     *         such match
      */
     public int search(char[] text) {
 
@@ -140,10 +154,13 @@ public class KMP {
     }
 
 
-    /** 
-     * Takes a pattern string and an input string as command-line arguments;
-     * searches for the pattern string in the text string; and prints
-     * the first occurrence of the pattern string in the text string.
+    /**
+     * 
+     * Takes a pattern string and an input string as command-line arguments; searches for the
+     * pattern string in the text string; and prints the first occurrence of the pattern string in
+     * the text string.
+     *
+     * @param args the arguments
      */
     public static void main(String[] args) {
         String pat = args[0];

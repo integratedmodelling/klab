@@ -10,10 +10,8 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
-import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.raster.RasterAdapter;
-import org.integratedmodelling.klab.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.collections.Collections;
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +19,7 @@ import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
+// TODO: Auto-generated Javadoc
 /**
  * Runs every .kim test file in src/main/resources/kim as a k.LAB test namespace.
  * <p>
@@ -38,6 +37,11 @@ public class RasterValidationTests {
   Engine        engine;
   RasterAdapter adapter = new RasterAdapter();
 
+  /**
+   * Sets the up.
+   *
+   * @throws Exception the exception
+   */
   @Before
   public void setUp() throws Exception {
 
@@ -49,11 +53,21 @@ public class RasterValidationTests {
 //        Resource.class));
   }
 
+  /**
+   * Tear down.
+   *
+   * @throws Exception the exception
+   */
   @After
   public void tearDown() throws Exception {
     engine.stop();
   }
 
+  /**
+   * Run tests.
+   *
+   * @throws Exception the exception
+   */
   @Test
   public void runTests() throws Exception {
 

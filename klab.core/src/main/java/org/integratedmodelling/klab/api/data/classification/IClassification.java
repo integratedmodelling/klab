@@ -1,8 +1,27 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface IClassification.
+ */
 public interface IClassification extends Iterable<IClassifier> {
 
     /**
@@ -39,29 +58,29 @@ public interface IClassification extends Iterable<IClassifier> {
     IConcept classify(Object object, IMonitor monitor);
 
     /**
-   * Get the undiscretized value for the passed concept. If the concept is not in the classification
-   * or this is not a discretization, return Double.NaN.
-   * 
-   * @param object
-   * @return
-   */
+     * Get the undiscretized value for the passed concept. If the concept is not in the
+     * classification or this is not a discretization, return Double.NaN.
+     *
+     * @param object the object
+     * @return the double
+     */
     public double undiscretize(IConcept object);
 
     /**
      * Return a sensible numeric value for the passed concept. NaN should be reserved for no-data,
-     * concepts for which suitable classifiers are not defined, or unrecognized concepts; ranking 
-     * order for orderings should be respected. If the data encode a discretization, it is OK to 
+     * concepts for which suitable classifiers are not defined, or unrecognized concepts; ranking
+     * order for orderings should be respected. If the data encode a discretization, it is OK to
      * return the undiscretized values.
-     * 
-     * @param o
+     *
+     * @param o the o
      * @return the number we can use to encode the concept, which must be one of the getConcepts()
      */
     public double getNumericValue(IConcept o);
 
     /**
      * Classify to the numeric ranking of the concept instead of the concept.
-     * 
-     * @param o
+     *
+     * @param o the o
      * @return a numeric ranking - equivalent to calling getNumericCode(classify(o))
      */
     public int classifyToIndex(Object o);

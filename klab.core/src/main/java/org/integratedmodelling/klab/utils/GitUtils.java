@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
@@ -13,8 +28,21 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GitUtils.
+ */
 public class GitUtils {
 
+    /**
+     * Clone.
+     *
+     * @param gitUrl the git url
+     * @param directory the directory
+     * @param removeIfExisting the remove if existing
+     * @return the string
+     * @throws KlabException the klab exception
+     */
     public static String clone(String gitUrl, File directory, boolean removeIfExisting) throws KlabException {
 
         String dirname = MiscUtilities.getURLBaseName(gitUrl);
@@ -63,9 +91,9 @@ public class GitUtils {
 
     /**
      * Pull local repository in passed directory.
-     * 
+     *
      * @param localRepository main directory (containing .git/)
-     * @throws KlabException
+     * @throws KlabException the klab exception
      */
     public static void pull(File localRepository) throws KlabException {
 
@@ -86,16 +114,16 @@ public class GitUtils {
     }
 
     /**
-     * If a Git repository with the repository name corresponding to the URL exists in
-     * gitDirectory, pull it from origin; otherwise clone it from the passed Git URL.
+     * If a Git repository with the repository name corresponding to the URL exists in gitDirectory,
+     * pull it from origin; otherwise clone it from the passed Git URL.
      * 
-     * TODO: Assumes branch is already set correctly if repo is pulled. Should check
-     * branch and checkout if necessary.
-     * 
-     * @param gitUrl
-     * @param repositoryName
-     * @param gitDirectory
-     * @throws KlabException
+     * TODO: Assumes branch is already set correctly if repo is pulled. Should check branch and
+     * checkout if necessary.
+     *
+     * @param gitUrl the git url
+     * @param gitDirectory the git directory
+     * @return the string
+     * @throws KlabException the klab exception
      */
     public static String requireUpdatedRepository(String gitUrl, File gitDirectory) throws KlabException {
 
@@ -116,11 +144,23 @@ public class GitUtils {
         return repositoryName;
     }
 
+    /**
+     * Checks if is remote git URL.
+     *
+     * @param string the string
+     * @return true, if is remote git URL
+     */
     public static boolean isRemoteGitURL(String string) {
         return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
                 || string.startsWith("git@");
     }
     
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws Exception the exception
+     */
     public static void main(String[] args) throws Exception {
         String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo", new File(System.getProperty("user.home")));
         System.out.println("Got repo " + u);

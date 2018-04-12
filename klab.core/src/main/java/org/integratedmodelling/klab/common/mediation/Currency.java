@@ -1,29 +1,18 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2015:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 
 package org.integratedmodelling.klab.common.mediation;
 
@@ -34,6 +23,10 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.joda.time.DateTime;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Currency.
+ */
 public class Currency implements ICurrency {
 
     private String       code;
@@ -44,9 +37,18 @@ public class Currency implements ICurrency {
 
     private boolean ok = true;
 
+    /**
+     * Instantiates a new currency.
+     */
     public Currency() {
     }
 
+    /**
+     * Sets the monetary.
+     *
+     * @param currency the currency
+     * @param year the year
+     */
     public void setMonetary(String currency, int year) {
         // TODO check it's known; error if not;
         // TODO check we have data for PPP conversion; warn if not;
@@ -54,15 +56,32 @@ public class Currency implements ICurrency {
         this.date = new DateTime(year, 1, 1, 0, 0);
     }
 
+    /**
+     * Sets the concept.
+     *
+     * @param concept the concept
+     * @param from the from
+     * @param to the to
+     */
     public void setConcept(IConcept concept, double from, double to) {
         this.concept = concept;
         this.scale = new Range(from, to, false, false);
     }
 
+    /**
+     * Checks if is ok.
+     *
+     * @return true, if is ok
+     */
     public boolean isOK() {
         return ok;
     }
 
+    /**
+     * Parses the.
+     *
+     * @param code the code
+     */
     public void parse(String code) {
         this.code = code;
         if (code.contains("@")) {
@@ -74,10 +93,20 @@ public class Currency implements ICurrency {
         }*/
     }
 
+    /**
+     * Instantiates a new currency.
+     *
+     * @param code the code
+     */
     public Currency(String code) {
         parse(code);
     }
 
+    /**
+     * Instantiates a new currency.
+     *
+     * @param concept the concept
+     */
     public Currency(IConcept concept) {
         this.concept = concept;
     }  

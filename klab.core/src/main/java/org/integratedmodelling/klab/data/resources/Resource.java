@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.data.resources;
 
 import java.util.ArrayList;
@@ -19,6 +34,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+// TODO: Auto-generated Javadoc
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
  * call) to a IResource; the IResource can then be contextualized to a {@link IGeometry} (using the
@@ -54,10 +70,10 @@ public class Resource implements IResource {
 
   /**
    * Create a resource with the passed URN and a list of errors.
-   * 
-   * @param urn
-   * @param errors
-   * @return
+   *
+   * @param urn the urn
+   * @param errors the errors
+   * @return the resource
    */
   public static Resource error(String urn, List<Throwable> errors) {
     Resource ret = new Resource();

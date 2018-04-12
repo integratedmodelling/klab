@@ -1,43 +1,31 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2014:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.util.Comparator;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
- * Sorts an array according to the sort order of a matched other using a given 
- * comparator. Makes up for the lovely matched sort available in C# and missing
- * in Java collections.
- * 
- * @author Ferd
+ * Sorts an array according to the sort order of a matched other using a given comparator. Makes up
+ * for the lovely matched sort available in C# and missing in Java collections.
  *
- * @param <T1>
- * @param <T2>
+ * @author Ferd
+ * @param <T1> the generic type
+ * @param <T2> the generic type
  */
 public class MatchedSorter<T1, T2> {
 
@@ -45,6 +33,13 @@ public class MatchedSorter<T1, T2> {
     List<T2> _criteria;
     Comparator<T2> _comparator;
 
+    /**
+     * Instantiates a new matched sorter.
+     *
+     * @param a the a
+     * @param criteria the criteria
+     * @param comparator the comparator
+     */
     public MatchedSorter(List<T1> a, List<T2> criteria, Comparator<T2> comparator) {
         _a = a;
         _criteria = criteria;
@@ -53,10 +48,20 @@ public class MatchedSorter<T1, T2> {
             quicksort(0, a.size() - 1);
     }
 
+    /**
+     * Gets the sorted values.
+     *
+     * @return the sorted values
+     */
     public List<T1> getSortedValues() {
         return _a;
     }
 
+    /**
+     * Gets the sorted criteria.
+     *
+     * @return the sorted criteria
+     */
     public List<T2> getSortedCriteria() {
         return _criteria;
     }

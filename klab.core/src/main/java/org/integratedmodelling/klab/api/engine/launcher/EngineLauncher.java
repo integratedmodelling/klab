@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.api.engine.launcher;
 
 import java.io.File;
@@ -30,6 +45,7 @@ import org.integratedmodelling.klab.utils.NetUtilities;
 import org.integratedmodelling.klab.utils.OS;
 import org.integratedmodelling.klab.utils.URLUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * A launcher for an engine, handling both local Maven installs for developers and official distributions
  * synchronized from the network. The launcher also handles cleaning and restarting a crashed engine if
@@ -42,6 +58,14 @@ public abstract class EngineLauncher {
 
     private static final String LOGGING_FILE = "logging.file";
 
+    /**
+     * The listener interface for receiving launch events. The class that is interested in
+     * processing a launch event implements this interface, and the object created with that class
+     * is registered with a component using the component's <code>addLaunchListener<code> method.
+     * When the launch event occurs, that object's appropriate method is invoked.
+     *
+     * @see LaunchEvent
+     */
     public static interface LaunchListener {
 
         void shutdownStarted();
@@ -72,18 +96,30 @@ public abstract class EngineLauncher {
     }
 
     /**
-     * 
-     * @author ferdinando.villa
+     * The Class Source.
      *
+     * @author ferdinando.villa
      */
     public static class Source {
         boolean        isDevelop;
         File           jarFile;
         int            debugPort;
+        
+        /** The use debug. */
         public boolean useDebug;
+        
+        /** The is local. */
         public boolean isLocal;
+        
+        /** The maven directory. */
         public File    mavenDirectory;
 
+        /**
+         * Requires restart.
+         *
+         * @param previous the previous
+         * @return true, if successful
+         */
         public boolean requiresRestart(Source previous) {
             if (isDevelop != previous.isDevelop) {
                 // TODO!
@@ -137,14 +173,14 @@ public abstract class EngineLauncher {
     private boolean klabDebug;
 
     /**
-     * Create a launcher with the passed certificate and datadir. If a client signature is passed, it is
-     * compared with anything found in .clientsig in the datadir, and if the two are the same the engine will
-     * assume that it is running on the same filesystem as the client and avoid web transfer for project
-     * synchronization.
-     * 
-     * @param certificate
-     * @param dataDir
-     * @param clientSignature
+     * Create a launcher with the passed certificate and datadir. If a client signature is passed,
+     * it is compared with anything found in .clientsig in the datadir, and if the two are the same
+     * the engine will assume that it is running on the same filesystem as the client and avoid web
+     * transfer for project synchronization.
+     *
+     * @param certificate the certificate
+     * @param dataDir the data dir
+     * @param clientSignature the client signature
      */
     public EngineLauncher(File certificate, File dataDir, String clientSignature) {
 
@@ -172,13 +208,21 @@ public abstract class EngineLauncher {
         this.logFile = new File(this.logFile + File.separator + "klab.log");
     }
 
+    /**
+     * Gets the maven directory.
+     *
+     * @return the maven directory
+     */
     public File getMavenDirectory() {
         return mavenDirectory;
     }
 
     /**
-     * Determine the OS-dependent binary artifacts to make available to the engine and ensure that they are
-     * available, downloading if necessary. In case of error it just logs and returns false.
+     * Determine the OS-dependent binary artifacts to make available to the engine and ensure that
+     * they are available, downloading if necessary. In case of error it just logs and returns
+     * false.
+     *
+     * @return true, if successful
      */
     public boolean downloadExtBinaryArtifacts() {
 
@@ -238,50 +282,110 @@ public abstract class EngineLauncher {
         return localBuildNumber == null || localBuildNumber < rb;
     }
 
+    /**
+     * Sets the maven directory.
+     *
+     * @param mavenDirectory the new maven directory
+     */
     public void setMavenDirectory(File mavenDirectory) {
         this.mavenDirectory = mavenDirectory;
     }
 
+    /**
+     * Gets the engine jar.
+     *
+     * @return the engine jar
+     */
     public File getEngineJar() {
         return useDeveloper ? engineJarDev : engineJar;
     }
 
+    /**
+     * Sets the engine jar.
+     *
+     * @param engineJar the new engine jar
+     */
     public void setEngineJar(File engineJar) {
         this.engineJar = engineJar;
     }
 
+    /**
+     * Sets the engine jar dev.
+     *
+     * @param engineJarDev the new engine jar dev
+     */
     public void setEngineJarDev(File engineJarDev) {
         this.engineJarDev = engineJarDev;
     }
 
+    /**
+     * Gets the mem limit mb.
+     *
+     * @return the mem limit mb
+     */
     public int getMemLimitMb() {
         return memLimitMb;
     }
 
+    /**
+     * Sets the mem limit mb.
+     *
+     * @param memLimitMb the new mem limit mb
+     */
     public void setMemLimitMb(int memLimitMb) {
         this.memLimitMb = memLimitMb;
     }
 
+    /**
+     * Gets the network port.
+     *
+     * @return the network port
+     */
     public int getNetworkPort() {
         return networkPort;
     }
 
+    /**
+     * Sets the network port.
+     *
+     * @param networkPort the new network port
+     */
     public void setNetworkPort(int networkPort) {
         this.networkPort = networkPort;
     }
 
+    /**
+     * Gets the data dir.
+     *
+     * @return the data dir
+     */
     public File getDataDir() {
         return dataDir;
     }
 
+    /**
+     * Sets the data dir.
+     *
+     * @param dataDir the new data dir
+     */
     public void setDataDir(File dataDir) {
         this.dataDir = dataDir;
     }
 
+    /**
+     * Gets the certificate.
+     *
+     * @return the certificate
+     */
     public File getCertificate() {
         return certificate;
     }
 
+    /**
+     * Sets the certificate.
+     *
+     * @param certificate the new certificate
+     */
     public void setCertificate(File certificate) {
         File certFile = new File(dataDir + File.separator + "im.cert");
         if (!certificate.equals(certFile)) {
@@ -294,42 +398,92 @@ public abstract class EngineLauncher {
         this.certificate = certFile;
     }
 
+    /**
+     * Checks if is launch automatically.
+     *
+     * @return true, if is launch automatically
+     */
     public boolean isLaunchAutomatically() {
         return launchAutomatically;
     }
 
+    /**
+     * Sets the launch automatically.
+     *
+     * @param launchAutomatically the new launch automatically
+     */
     public void setLaunchAutomatically(boolean launchAutomatically) {
         this.launchAutomatically = launchAutomatically;
     }
 
+    /**
+     * Checks if is upgrade automatically.
+     *
+     * @return true, if is upgrade automatically
+     */
     public boolean isUpgradeAutomatically() {
         return upgradeAutomatically;
     }
 
+    /**
+     * Sets the upgrade automatically.
+     *
+     * @param upgradeAutomatically the new upgrade automatically
+     */
     public void setUpgradeAutomatically(boolean upgradeAutomatically) {
         this.upgradeAutomatically = upgradeAutomatically;
     }
 
+    /**
+     * Checks if is stop on exit.
+     *
+     * @return true, if is stop on exit
+     */
     public boolean isStopOnExit() {
         return stopOnExit;
     }
 
+    /**
+     * Sets the stop on exit.
+     *
+     * @param stopOnExit the new stop on exit
+     */
     public void setStopOnExit(boolean stopOnExit) {
         this.stopOnExit = stopOnExit;
     }
 
+    /**
+     * Checks if is use local.
+     *
+     * @return true, if is use local
+     */
     public boolean isUseLocal() {
         return useLocal;
     }
 
+    /**
+     * Sets the use local.
+     *
+     * @param useLocal the new use local
+     */
     public void setUseLocal(boolean useLocal) {
         this.useLocal = useLocal;
     }
 
+    /**
+     * Checks if is use developer.
+     *
+     * @return true, if is use developer
+     */
     public boolean isUseDeveloper() {
         return useDeveloper;
     }
 
+    /**
+     * Sets the use developer.
+     *
+     * @param useDeveloper the new use developer
+     */
     public void setUseDeveloper(boolean useDeveloper) {
         this.useDeveloper = useDeveloper;
         Configuration.INSTANCE.getProperties()
@@ -338,20 +492,40 @@ public abstract class EngineLauncher {
                         : "false");
     }
 
+    /**
+     * Checks if is use debug.
+     *
+     * @return true, if is use debug
+     */
     public boolean isUseDebug() {
         return useDebug;
     }
 
+    /**
+     * Checks if is klab debug.
+     *
+     * @return true, if is klab debug
+     */
     public boolean isKlabDebug() {
         return this.klabDebug;
     }
 
+    /**
+     * Sets the use debug.
+     *
+     * @param useDebug the new use debug
+     */
     public void setUseDebug(boolean useDebug) {
         this.useDebug = useDebug;
         Configuration.INSTANCE.getProperties()
                 .setProperty(Configuration.KLAB_ENGINE_USE_DEBUG, useDebug ? "true" : "false");
     }
 
+    /**
+     * Sets the klab debug.
+     *
+     * @param klabDebug the new klab debug
+     */
     public void setKlabDebug(boolean klabDebug) {
         this.klabDebug = klabDebug;
         Configuration.INSTANCE.getProperties()
@@ -433,6 +607,11 @@ public abstract class EngineLauncher {
                 + "/capabilities");
     }
 
+    /**
+     * Gets the active source.
+     *
+     * @return the active source
+     */
     public Source getActiveSource() {
 
         Source ret = new Source();
@@ -447,9 +626,11 @@ public abstract class EngineLauncher {
     }
 
     /**
-     * 
-     * @param maxSeconds
-     * @return true if engine is offline, whether as a result of the shutdown or for its own reasons.
+     * Shutdown.
+     *
+     * @param maxSeconds the max seconds
+     * @return true if engine is offline, whether as a result of the shutdown or for its own
+     *         reasons.
      */
     public boolean shutdown(int maxSeconds) {
 
@@ -493,10 +674,23 @@ public abstract class EngineLauncher {
         return false;
     }
 
+    /**
+     * Launch.
+     *
+     * @param waitForEngine the wait for engine
+     * @return true, if successful
+     */
     public boolean launch(boolean waitForEngine) {
         return launch(waitForEngine, null);
     }
 
+    /**
+     * Launch.
+     *
+     * @param waitForEngine the wait for engine
+     * @param listener the listener
+     * @return true, if successful
+     */
     public boolean launch(boolean waitForEngine, LaunchListener listener) {
 
         this.listener = listener;
@@ -512,7 +706,9 @@ public abstract class EngineLauncher {
     }
 
     /**
-     * @param waitForRunning
+     * Launch maven.
+     *
+     * @param waitForRunning the wait for running
      * @return true if successfully starting or started
      */
     public boolean launchMaven(boolean waitForRunning) {
@@ -710,15 +906,21 @@ public abstract class EngineLauncher {
      */
     private static long        TIMEOUT             = 120000;
 
+    /** The Constant BUILD_DEV_PROPERTY. */
     public static final String BUILD_DEV_PROPERTY  = "klab.build.dev";
+    
+    /** The Constant BUILD_PROPERTY. */
     public static final String BUILD_PROPERTY      = "klab.build";
+    
+    /** The Constant MAX_MEMORY_PROPERTY. */
     public static final String MAX_MEMORY_PROPERTY = "klab.max.memory";
 
     /**
-     * Launch (if necessary) the selected Jar distribution. If waitForRunning is true, return only when engine
-     * is responsive or after error. Otherwise return during startup. Check isOnline() to see what happened.
-     * 
-     * @param waitForRunning
+     * Launch (if necessary) the selected Jar distribution. If waitForRunning is true, return only
+     * when engine is responsive or after error. Otherwise return during startup. Check isOnline()
+     * to see what happened.
+     *
+     * @param waitForRunning the wait for running
      * @return true if operation went as expected
      */
     public boolean launchJar(boolean waitForRunning) {
@@ -831,7 +1033,7 @@ public abstract class EngineLauncher {
     }
 
     /**
-     * 
+     * Persist properties.
      */
     public void persistProperties() {
 
@@ -881,7 +1083,7 @@ public abstract class EngineLauncher {
     }
 
     /**
-     * Must be called after stopping the engine
+     * Must be called after stopping the engine.
      */
     public void runCleaningCycle() {
 
@@ -938,6 +1140,11 @@ public abstract class EngineLauncher {
     private boolean stopEngine              = false;
     private boolean useReasoning            = true;
 
+    /**
+     * Gets the classpath.
+     *
+     * @return the classpath
+     */
     public String getClasspath() {
 
         String CLASSPATH_SEPARATOR = getClasspathSeparator();
@@ -1067,62 +1274,137 @@ public abstract class EngineLauncher {
         getBuildNumber();
     }
 
+    /**
+     * Sets the run GC.
+     *
+     * @param selection the new run GC
+     */
     public void setRunGC(boolean selection) {
         this.runGC = selection;
     }
 
+    /**
+     * Sets the clean observation cache.
+     *
+     * @param selection the new clean observation cache
+     */
     public void setCleanObservationCache(boolean selection) {
         this.runObsClean = selection;
     }
 
+    /**
+     * Sets the clean data cache.
+     *
+     * @param selection the new clean data cache
+     */
     public void setCleanDataCache(boolean selection) {
         this.runDataClean = selection;
     }
 
+    /**
+     * Sets the clean model cache.
+     *
+     * @param selection the new clean model cache
+     */
     public void setCleanModelCache(boolean selection) {
         this.runModelClean = selection;
     }
 
+    /**
+     * Sets the clean cycle.
+     *
+     * @param selection the new clean cycle
+     */
     public void setCleanCycle(boolean selection) {
         this.runClean = selection;
     }
 
+    /**
+     * Checks if is restart requested.
+     *
+     * @return true, if is restart requested
+     */
     public boolean isRestartRequested() {
         return runObsClean || runDataClean || runModelClean || runClean;
     }
 
+    /**
+     * Sets the remember settings.
+     *
+     * @param selection the new remember settings
+     */
     public void setRememberSettings(boolean selection) {
         this.rememberSettings = selection;
     }
 
+    /**
+     * Checks if is remember settings.
+     *
+     * @return true, if is remember settings
+     */
     public boolean isRememberSettings() {
         return rememberSettings;
     }
 
+    /**
+     * Sets the stop engine now.
+     *
+     * @param selection the new stop engine now
+     */
     public void setStopEngineNow(boolean selection) {
         this.stopEngine = selection;
     }
 
+    /**
+     * Checks if is stop engine now.
+     *
+     * @return true, if is stop engine now
+     */
     public boolean isStopEngineNow() {
         return this.stopEngine;
     }
 
+    /**
+     * Sets the debug port.
+     *
+     * @param port the new debug port
+     */
     public void setDebugPort(int port) {
         debugPort = port;
     }
 
+    /**
+     * Gets the debug port.
+     *
+     * @return the debug port
+     */
     public int getDebugPort() {
         return debugPort;
     }
 
+    /**
+     * Sets the use reasoning.
+     *
+     * @param selection the new use reasoning
+     */
     public void setUseReasoning(boolean selection) {
         useReasoning = selection;
     }
 
+    /**
+     * Checks if is use reasoning.
+     *
+     * @return true, if is use reasoning
+     */
     public boolean isUseReasoning() {
         return useReasoning;
     }
 
+    /**
+     * Checks if is develop.
+     *
+     * @return true, if is develop
+     */
     public boolean isDevelop() {
         return useDeveloper;
     }

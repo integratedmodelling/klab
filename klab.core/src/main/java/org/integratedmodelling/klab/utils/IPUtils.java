@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.net.InetAddress;
@@ -9,6 +24,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class IPUtils.
+ */
 public class IPUtils {
     private static Pattern      pattern;
     private static final String IPADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
@@ -20,8 +39,8 @@ public class IPUtils {
     }
 
     /**
-     * Validate ip address with regular expression
-     * 
+     * Validate ip address with regular expression.
+     *
      * @param ip ip address for validation
      * @return true valid ip address, false invalid ip address
      */
@@ -30,6 +49,13 @@ public class IPUtils {
         return matcher.matches();
     }
 
+    /**
+     * Check IP matching.
+     *
+     * @param pattern the pattern
+     * @param address the address
+     * @return true, if successful
+     */
     public static boolean checkIPMatching(String pattern, String address) {
 
         if (pattern.equals("*.*.*.*") || pattern.equals("*"))
@@ -54,10 +80,10 @@ public class IPUtils {
 
     /**
      * Get the local IP for the interface matching the passed pattern.
-     * 
-     * @param pattern
+     *
+     * @param pattern the pattern
      * @return IP matching pattern
-     * @throws Exception
+     * @throws Exception the exception
      */
     public static String getLocalIpMatching(String pattern) throws Exception {
         Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
@@ -74,6 +100,12 @@ public class IPUtils {
         return null;
     }
 
+    /**
+     * Gets the local ips.
+     *
+     * @return the local ips
+     * @throws SocketException the socket exception
+     */
     public static Set<String> getLocalIps() throws SocketException {
         Set<String> ret = new HashSet<>();
         for (int i = 1; i < localPatterns.length; i++) {
@@ -93,13 +125,12 @@ public class IPUtils {
     }
 
     /**
-     * Get the local IP for the interface matching the first local pattern not starting
-     * with 127. Stable as the IP is always checked in the same order; will prefer
-     * 192.168.** IPs to 10.** or 172.** based ones.
-     * 
-     * @param pattern
+     * Get the local IP for the interface matching the first local pattern not starting with 127.
+     * Stable as the IP is always checked in the same order; will prefer 192.168.** IPs to 10.** or
+     * 172.** based ones.
+     *
      * @return IP matching pattern
-     * @throws Exception
+     * @throws Exception the exception
      */
     public static String getLocalIp() throws Exception {
         for (int i = 1; i < localPatterns.length; i++) {
@@ -140,6 +171,12 @@ public class IPUtils {
             "172.30.*.*",
             "172.31.*.*" };
 
+    /**
+     * Checks if is local.
+     *
+     * @param ip the ip
+     * @return true, if is local
+     */
     public static boolean isLocal(String ip) {
 
         for (String p : localPatterns) {
@@ -151,6 +188,12 @@ public class IPUtils {
         return false;
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws Exception the exception
+     */
     public static void main(String[] args) throws Exception {
         if (checkIPMatching("10.*.*.*", "10.0.0.64")) {
             System.out.println("ZORB");

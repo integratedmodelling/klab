@@ -1,29 +1,18 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2014:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.api.extensions;
 
 import java.lang.annotation.Documented;
@@ -32,6 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// TODO: Auto-generated Javadoc
 /**
  * Tags a class that will be used to run batch tasks by a kmodeler without Spring interface,
  * parameterized through command line parameters. Works like @Prototype.
@@ -45,6 +35,8 @@ public @interface KlabBatchRunner {
 
     /**
      * The name associated with the runner, used after -run on the command line.
+     *
+     * @return the string
      */
     public String id();
 }

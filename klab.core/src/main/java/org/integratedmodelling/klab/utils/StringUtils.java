@@ -1,25 +1,18 @@
-/*******************************************************************************
- * Copyright (C) 2007, 2015:
+/*
+ * This file is part of k.LAB.
  * 
- * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any
- * other authors listed in @author annotations
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * All rights reserved. This file is part of the k.LAB software suite, meant to enable
- * modular, collaborative, integrated development of interoperable data and model
- * components. For details, see http://integratedmodelling.org.
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
  * 
- * This program is free software; you can redistribute it and/or modify it under the terms
- * of the Affero General Public License Version 3 or any later version.
- *
- * This program is distributed in the hope that it will be useful, but without any
- * warranty; without even the implied warranty of merchantability or fitness for a
- * particular purpose. See the Affero General Public License for more details.
- * 
- * You should have received a copy of the Affero General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite
- * 330, Boston, MA 02111-1307, USA. The license is also available at:
- * https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
@@ -31,18 +24,27 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class StringUtils.
+ */
 public class StringUtils extends org.apache.commons.lang.StringUtils {
 
+    /** The Constant WHITESPACE. */
     public static final int WHITESPACE = 0x0001;
+    
+    /** The Constant NONLETTERS. */
     public static final int NONLETTERS = 0x0002;
+    
+    /** The Constant UPPERCASE. */
     public static final int UPPERCASE  = 0x0004;
 
     /**
      * Split into lines and indent each by the given amount.
-     * 
-     * @param s
-     * @param indent
-     * @return
+     *
+     * @param s the s
+     * @param indent the indent
+     * @return the string
      */
     public static String leftIndent(String s, int indent) {
         String pad = spaces(indent);
@@ -54,6 +56,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return buf.toString();
     }
     
+    /**
+     * Convert from UTF 8.
+     *
+     * @param s the s
+     * @return the string
+     */
     // convert from UTF-8 -> internal Java String format
     public static String convertFromUTF8(String s) {
         String out = null;
@@ -65,6 +73,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return out;
     }
  
+    /**
+     * Convert to UTF 8.
+     *
+     * @param s the s
+     * @return the string
+     */
     // convert from internal Java String format -> UTF-8
     public static String convertToUTF8(String s) {
         String out = null;
@@ -77,12 +91,11 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
     
     /**
-     * Use this for simple API. Also replicated in our StringUtils extension as
-     * matchWildcards().
-     * 
-     * @param string
-     * @param pattern
-     * @return
+     * Use this for simple API. Also replicated in our StringUtils extension as matchWildcards().
+     *
+     * @param string the string
+     * @param pattern the pattern
+     * @return true, if successful
      */
     public static boolean matchWildcards(String string, String pattern) {
     	return new WildcardMatcher().match(string, pattern);
@@ -90,10 +103,10 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Justify left to passed width with wordwrap.
-     * 
-     * @param text
-     * @param width
-     * @return
+     *
+     * @param text the text
+     * @param width the width
+     * @return the string
      */
     public static String justifyLeft(String text, int width) {
         StringBuffer buf = new StringBuffer(text);
@@ -124,12 +137,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Remove all leading and trailing whitespace; pack whitespace in between to single
-     * space; leave a blank line if there are at least two newlines in the original
-     * whitespace. Good for formatting indented and bullshitted text like what you put in
-     * XML files into something more suitable for text processing or wiki translation.
+     * Remove all leading and trailing whitespace; pack whitespace in between to single space; leave
+     * a blank line if there are at least two newlines in the original whitespace. Good for
+     * formatting indented and bullshitted text like what you put in XML files into something more
+     * suitable for text processing or wiki translation.
      *
-     * @param s
+     * @param s the s
      * @return packed string
      */
     static public String pack(String s) {
@@ -162,6 +175,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return ret.toString();
     }
     
+    /**
+     * Gets the leading whitespace.
+     *
+     * @param s the s
+     * @return the leading whitespace
+     */
     public static String getLeadingWhitespace(String s) {
         StringBuffer ret = new StringBuffer(20);
         for (int i = 0; i < s.length(); i++) {
@@ -173,6 +192,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return ret.toString();
     }
     
+    /**
+     * Gets the trailing whitespace.
+     *
+     * @param s the s
+     * @return the trailing whitespace
+     */
     public static String getTrailingWhitespace(String s) {
         StringBuffer ret = new StringBuffer(20);
         for (int i = s.length() - 1; i >= 0; i--) {
@@ -185,11 +210,11 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Pack the inside of a string but preserve leading and trailing whitespace. Written
-     * simply and expensively.
-     * 
-     * @param s
-     * @return
+     * Pack the inside of a string but preserve leading and trailing whitespace. Written simply and
+     * expensively.
+     *
+     * @param s the s
+     * @return the string
      */
     public static String packInternally(String s) {
         if (s.trim().isEmpty()) {
@@ -198,10 +223,23 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return getLeadingWhitespace(s) + pack(s) + getTrailingWhitespace(s);
     }
 
+    /**
+     * Spaces.
+     *
+     * @param n the n
+     * @return the string
+     */
     public static String spaces(int n) {
         return repeat(' ', n);
     }
 
+    /**
+     * Repeat.
+     *
+     * @param c the c
+     * @param n the n
+     * @return the string
+     */
     public static String repeat(char c, int n) {
         String ret = "";
         for (int i = 0; i < n; i++)
@@ -210,11 +248,10 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Split a string of comma-separated values into components. Handles whitespace
-     * between commas and strings and returns an empty collection if the passed string is
-     * null.
-     * 
-     * @param s
+     * Split a string of comma-separated values into components. Handles whitespace between commas
+     * and strings and returns an empty collection if the passed string is null.
+     *
+     * @param s the s
      * @return split string
      */
     static public List<String> splitOnCommas(String s) {
@@ -231,10 +268,10 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Split a string of comma-separated values into doubles. Handles whitespace between
-     * commas and strings and returns an empty collection if the passed string is null.
-     * 
-     * @param s
+     * Split a string of comma-separated values into doubles. Handles whitespace between commas and
+     * strings and returns an empty collection if the passed string is null.
+     *
+     * @param s the s
      * @return doubles
      */
     static public double[] splitToDoubles(String s) {
@@ -249,10 +286,10 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Split a string of comma-separated values into integers. Handles whitespace between
-     * commas and strings and returns an empty collection if the passed string is null.
-     * 
-     * @param s
+     * Split a string of comma-separated values into integers. Handles whitespace between commas and
+     * strings and returns an empty collection if the passed string is null.
+     *
+     * @param s the s
      * @return ints
      */
     static public int[] splitToIntegers(String s) {
@@ -269,7 +306,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     /**
      * Divide up a string into tokens, correctly handling double quotes.
      *
-     * @param s
+     * @param s the s
      * @return tokens
      */
     static public Collection<String> tokenize(String s) {
@@ -288,11 +325,11 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Join a collection of strings into one string using the given char as separator. Can
-     * pass any collection; toString() will be used.
-     * 
-     * @param strings
-     * @param separator
+     * Join a collection of strings into one string using the given char as separator. Can pass any
+     * collection; toString() will be used.
+     *
+     * @param strings the strings
+     * @param separator the separator
      * @return joined collection
      */
     static public String joinCollection(Collection<?> strings, char separator) {
@@ -305,9 +342,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Join an array of strings into one string using the given char as separator.
-     * 
-     * @param strings
-     * @param separator
+     *
+     * @param strings the strings
+     * @param separator the separator
      * @return joined array
      */
     static public String join(String[] strings, char separator) {
@@ -320,9 +357,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Join an array of strings into one string using the given char as separator.
-     * 
-     * @param objects
-     * @param separator
+     *
+     * @param objects the objects
+     * @param separator the separator
      * @return joined objects
      */
     static public String joinObjects(Object[] objects, char separator) {
@@ -333,10 +370,24 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return ret;
     }
 
+    /**
+     * Join objects.
+     *
+     * @param objects the objects
+     * @param separator the separator
+     * @return the string
+     */
     static public String joinObjects(Collection<?> objects, char separator) {
         return joinObjects(objects.toArray(), separator);
     }
 
+    /**
+     * Join objects.
+     *
+     * @param objects the objects
+     * @param separator the separator
+     * @return the string
+     */
     static public String joinObjects(Map<?, ?> objects, char separator) {
         String ret = "";
         for (Object s : objects.keySet()) {
@@ -347,10 +398,10 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Remove character at position
-     * 
-     * @param s
-     * @param pos
+     * Remove character at position.
+     *
+     * @param s the s
+     * @param pos the pos
      * @return string without pos-th character
      */
     public static String removeCharAt(String s, int pos) {
@@ -364,6 +415,14 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return buf.toString();
     }
 
+    /**
+     * Insert char at.
+     *
+     * @param s the s
+     * @param c the c
+     * @param pos the pos
+     * @return the string
+     */
     public static String insertCharAt(String s, char c, int pos) {
 
         StringBuffer buf = new StringBuffer(s);
@@ -371,6 +430,14 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return buf.toString();
     }
 
+    /**
+     * Replace at.
+     *
+     * @param str the str
+     * @param index the index
+     * @param replace the replace
+     * @return the string
+     */
     public static String replaceAt(String str, int index, char replace) {
         if (str == null) {
             return str;
@@ -382,10 +449,23 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return String.valueOf(chars);
     }
 
+    /**
+     * Percent.
+     *
+     * @param d the d
+     * @return the string
+     */
     public static String percent(double d) {
         return (int) (Math.round(d * 100.0)) + "%";
     }
 
+    /**
+     * Contains any.
+     *
+     * @param nspc the nspc
+     * @param flags the flags
+     * @return true, if successful
+     */
     public static boolean containsAny(String nspc, int flags) {
 
         for (int i = 0; i < nspc.length(); i++) {
@@ -406,10 +486,25 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return false;
     }
 
+    /**
+     * Replace whitespace.
+     *
+     * @param text the text
+     * @param replacement the replacement
+     * @return the string
+     */
     public static String replaceWhitespace(String text, String replacement) {
         return text.replaceAll("\\s+", replacement);
     }
 
+    /**
+     * Join.
+     *
+     * @param objects the objects
+     * @param separator the separator
+     * @param max the max
+     * @return the string
+     */
     public static String join(String[] objects, String separator, int max) {
         String ret = "";
         int n = 0;
@@ -425,8 +520,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Return the max line length and the number of lines in the passed paragraph.
-     * 
-     * @return
+     *
+     * @param text the text
+     * @return the paragraph size
      */
     public static int[] getParagraphSize(String text) {
         int[] ret = new int[] {0,0};
@@ -450,10 +546,13 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Return the collection of strings that contains the passed pattern within the passed
-     * collection, ordered so that the earliest matches come first (if pattern is 'aaa', 
-     * 'aaabbb' will come before 'bbbaaa').
-     * @param source
-     * @return
+     * collection, ordered so that the earliest matches come first (if pattern is 'aaa', 'aaabbb'
+     * will come before 'bbbaaa').
+     *
+     * @param pattern the pattern
+     * @param source the source
+     * @param minLenForInsideMatch the min len for inside match
+     * @return the list
      */
     public static List<String> matchIn(String pattern, Collection<String> source, int minLenForInsideMatch) {
         KMP kmp = new KMP(pattern);
@@ -480,11 +579,11 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
     
     /**
-     * Compute the initial part that does not change in the string representation of the 
-     * passed objects.
-     * 
-     * @param strings
-     * @return
+     * Compute the initial part that does not change in the string representation of the passed
+     * objects.
+     *
+     * @param strings the strings
+     * @return the string
      */
     public static String computeInvariantPrefix(Collection<?> strings) {
         

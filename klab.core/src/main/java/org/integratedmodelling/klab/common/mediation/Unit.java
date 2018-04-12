@@ -1,24 +1,18 @@
-/*******************************************************************************
- * Copyright (C) 2007, 2015:
+/*
+ * This file is part of k.LAB.
  * 
- * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any other
- * authors listed in @author annotations
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * All rights reserved. This file is part of the k.LAB software suite, meant to enable modular,
- * collaborative, integrated development of interoperable data and model components. For details,
- * see http://integratedmodelling.org.
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
  * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * Affero General Public License Version 3 or any later version.
- *
- * This program is distributed in the hope that it will be useful, but without any warranty; without
- * even the implied warranty of merchantability or fitness for a particular purpose. See the Affero
- * General Public License for more details.
- * 
- * You should have received a copy of the Affero General Public License along with this program; if
- * not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA. The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.common.mediation;
 
 import javax.measure.converter.UnitConverter;
@@ -29,6 +23,10 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Unit.
+ */
 public class Unit implements IUnit {
 
   javax.measure.unit.Unit<?> _unit;
@@ -38,9 +36,9 @@ public class Unit implements IUnit {
 
   /**
    * Create a unit from a string.
-   * 
-   * @param string
-   * @return
+   *
+   * @param string the string
+   * @return the unit
    */
   public static Unit create(String string) {
 
@@ -66,11 +64,11 @@ public class Unit implements IUnit {
 
   /**
    * Convert a quantity from a unit to another.
-   * 
-   * @param value
-   * @param unitFrom
-   * @param unitTo
-   * @return
+   *
+   * @param value the value
+   * @param unitFrom the unit from
+   * @param unitTo the unit to
+   * @return the double
    */
   public static double convert(double value, String unitFrom, String unitTo) {
     return unitFrom.equals(unitTo) ? value
@@ -93,17 +91,33 @@ public class Unit implements IUnit {
     return toString().hashCode();
   }
 
+  /**
+   * Instantiates a new unit.
+   *
+   * @param unit the unit
+   * @param statement the statement
+   */
   public Unit(javax.measure.unit.Unit<?> unit, String statement) {
     this._unit = unit;
     this.statement = statement;
   }
 
+  /**
+   * Instantiates a new unit.
+   *
+   * @param unit the unit
+   */
   public Unit(javax.measure.unit.Unit<?> unit) {
     this._unit = unit;
     this.statement = unit.toString();
   }
 
 
+  /**
+   * The main method.
+   *
+   * @param a the arguments
+   */
   static public void main(String[] a) {
     System.out.println(convert(120, "m", "mm"));
   }
@@ -119,6 +133,11 @@ public class Unit implements IUnit {
     return converter.convert(value.doubleValue());
   }
 
+  /**
+   * Gets the unit.
+   *
+   * @return the unit
+   */
   public javax.measure.unit.Unit<?> getUnit() {
     return _unit;
   }

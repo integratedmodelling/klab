@@ -1,17 +1,45 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.data;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum Aggregators.
+ */
 public enum Aggregators {
 
   INSTANCE;
 
+  /**
+   * The Interface IAggregator.
+   */
   public static interface IAggregator {
+    
     /**
-     * @param objects
+     * Aggregate.
+     *
+     * @param objects the objects
      * @return the aggregated object
      */
     public Object aggregate(Iterable<Object> objects);
   }
 
+  /**
+   * The Class Mean.
+   */
   public static class Mean implements IAggregator {
 
       @Override
@@ -29,6 +57,9 @@ public enum Aggregators {
       }
   }
 
+  /**
+   * The Class Sum.
+   */
   public static class Sum implements IAggregator {
 
       @Override
@@ -43,6 +74,9 @@ public enum Aggregators {
 
   }
 
+  /**
+   * The Class Min.
+   */
   public static class Min implements IAggregator {
 
       @Override
@@ -61,6 +95,9 @@ public enum Aggregators {
       }
   }
 
+  /**
+   * The Class Max.
+   */
   public static class Max implements IAggregator {
 
       @Override
@@ -79,6 +116,12 @@ public enum Aggregators {
       }
   }
   
+  /**
+   * To double.
+   *
+   * @param o the o
+   * @return the double
+   */
   public double toDouble(Object o) {
 
     double ret = Double.NaN;

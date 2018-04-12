@@ -1,33 +1,23 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2014:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.common;
 
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+// TODO: Auto-generated Javadoc
 /**
  * <p>A logical connector, representing one of the possible four connectors (union (or), intersection (and), 
  *    exclusion (not), disjunction (xor)).</p>
@@ -41,14 +31,28 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  */
 public class LogicalConnector {
 
+    /** The Constant _UNION. */
     static public final int _UNION          = 0;
+    
+    /** The Constant _INTERSECTION. */
     static public final int _INTERSECTION   = 1;
+    
+    /** The Constant _EXCLUSION. */
     static public final int _EXCLUSION      = 2;
+    
+    /** The Constant _DISJOINT_UNION. */
     static public final int _DISJOINT_UNION = 3;
 
+    /** The union. */
     static public LogicalConnector UNION          = new LogicalConnector(_UNION);
+    
+    /** The intersection. */
     static public LogicalConnector INTERSECTION   = new LogicalConnector(_INTERSECTION);
+    
+    /** The exclusion. */
     static public LogicalConnector EXCLUSION      = new LogicalConnector(_EXCLUSION);
+    
+    /** The disjoint union. */
     static public LogicalConnector DISJOINT_UNION = new LogicalConnector(_DISJOINT_UNION);
 
     /**
@@ -106,18 +110,32 @@ public class LogicalConnector {
     }
 
     /**
-     * 
-     * @param c
+     * Equals.
+     *
+     * @param c the c
      * @return true if same
      */
     public boolean equals(LogicalConnector c) {
         return c.value == value;
     }
 
+    /**
+     * Equals.
+     *
+     * @param c the c
+     * @return true, if successful
+     */
     public boolean equals(int c) {
         return value == c;
     }
 
+    /**
+     * Equals.
+     *
+     * @param s the s
+     * @return true, if successful
+     * @throws KlabValidationException the klab validation exception
+     */
     public boolean equals(String s) throws KlabValidationException {
         return value == parseLogicalConnector(s).value;
     }

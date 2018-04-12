@@ -108,6 +108,7 @@ public class KlabCertificate implements ICertificate {
         }
         if (properties == null) {
             try {
+              
                 properties = LicenseManager.readCertificate(file, new URL(Auth.PUBRING_URL));
 
                 /*

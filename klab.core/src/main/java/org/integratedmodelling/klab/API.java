@@ -1,12 +1,26 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
+ */
 package org.integratedmodelling.klab;
 
+// TODO: Auto-generated Javadoc
 /**
- * An attempt to systematize the API - tentative and possibly overkill. This is only the API
- * required to run models through a certificate: probably the API for interacting with a remote node
- * (using regular authentication), manage profiles and retrieve certificates could be separate, as
- * it shares no functional connection with k.LAB. This API is common to nodes and engines, although
- * nodes currently can be expected to get less requests on ENGINE endpoints and be the only one in
- * charge of answering RESOURCE requests.
+ * This interface and its members describe the REST API of k.LAB. The API enables running models
+ * with certificate autentication. The API for interacting with a remote node using regular
+ * authentication, manage profiles and retrieve certificates is separate, as it shares no functional
+ * connection with k.LAB. This API is common to nodes and engines, although nodes currently can be
+ * expected to get less requests on ENGINE endpoints and be the only one in charge of answering
+ * RESOURCE requests.
  * <p>
  * Endpoints are organized in groups implemented in sub-interfaces. Any path with parameters has the
  * name of each parameter in its constant name, separated by an underscore. For each parameter
@@ -19,8 +33,13 @@ package org.integratedmodelling.klab;
  * in the controller corresponding to the containing interface, and return the token needed to
  * authorize the subgroups so that the same authorization can be applied to the controller.
  * <p>
- * TODO define and enforce conventions to add the allowed protocols, encodings, authentication type
- * and "see also" links to the beans that handle requests and responses.
+ * The endpoint corresponding to a sub-interface should bring up an appropriate UI when accessed
+ * with HTML response type. This applies at least to the VIEW endpoints (k.EXPLORER) and to the
+ * ADMIN endpoints (administration dashboard). The root context path should redirect to a login page
+ * if connection is from a remote host and to the admin dashboard if connected to from localhost.
+ * <p>
+ * TODO define and enforce conventions to add the allowed protocols, response types, authentication
+ * type and "see also" links to the beans that handle requests and responses.
  * <p>
  * 
  * @author ferdinando.villa
@@ -28,9 +47,7 @@ package org.integratedmodelling.klab;
  */
 public interface API {
 
-  /**
-   * Parameter: the URN being resolved in any endpoints that access resources
-   */
+  /** Parameter: the URN being resolved in any endpoints that access resources. */
   public static final String P_URN        = "{urn}";
 
 
@@ -42,35 +59,82 @@ public interface API {
 
   /**
    * Authority endpoints are public.
-   * 
-   * @author ferdinando.villa
    *
+   * @author ferdinando.villa
+   * @HTML authority dashboard
    */
   public interface AUTHORITY {
+
     /**
+     * The Constant RESOLVE.
+     *
      * @GET
+     * @JSON
      */
     public static final String RESOLVE = "/engine/authority/resolve";
 
     /**
+     * The Constant QUERY.
+     *
      * @POST
      */
     public static final String QUERY   = "/engine/authority/query";
   }
 
-  /*
+  /**
    * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit,
    * update/delete namespaces, workspace management, lock/unlock. PUT endpoints for configuration.
-   * To be tied to future configuration dashboard. Probably should have additional authentication.
+   * To be tied to future configuration dashboard.
+   * <p>
+   * Authentication should be ROLE_ADMIN and be preauthorized for the local IP.
+   * <p>
+   * With HTML encoding, this should produce the administration dashboard.
+   * <p>
    */
   public interface ADMIN {
 
     /**
-     * Shutdown the server. 
+     * Shutdown the server.
      * 
      * @GET
      */
     public static final String SHUTDOWN = "/engine/admin/shutdown";
+
+    /**
+     * Endpoints to remotely deploy/undeploy projects and components.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface COMPONENT {
+
+      /** Parameter: project/component ID. */
+      public static final String P_COMPONENT        = "{component}";
+
+      /**
+       * A component can be deployed as a file attachment or from a Git repository.
+       * 
+       * @PUT as attachment
+       * @POST as Git URL
+       */
+      public static final String DEPLOY             = "/engine/admin/component/deploy";
+
+      /**
+       * The Constant UNDEPLOY_COMPONENT.
+       *
+       * @DELETE
+       */
+      public static final String UNDEPLOY_COMPONENT =
+          "/engine/admin/component/undeploy/" + P_COMPONENT;
+
+      /**
+       * The Constant SETUP_COMPONENT.
+       *
+       * @POST
+       */
+      public static final String SETUP_COMPONENT    =
+          "/engine/admin/component/setup/" + P_COMPONENT;
+    }
 
   }
 
@@ -88,6 +152,7 @@ public interface API {
      */
     public static final String AUTHENTICATE = "/network/authenticate";
 
+    /** The Constant DISCONNECT. */
     public static final String DISCONNECT   = "/network/disconnect";
 
     /**
@@ -98,14 +163,10 @@ public interface API {
      */
     public interface QUERY {
 
-      /**
-       * 
-       */
+      /** The Constant MODELS. */
       public static final String MODELS       = "/network/query/models";
 
-      /**
-       * 
-       */
+      /** The Constant OBSERVATIONS. */
       public static final String OBSERVATIONS = "/network/query/observations";
 
     }
@@ -119,16 +180,22 @@ public interface API {
     public interface RETRIEVE {
 
       /**
+       * The Constant MODEL_URN.
+       *
        * @GET
        */
       public static final String MODEL_URN       = "/network/retrieve/model/" + P_URN;
 
       /**
+       * The Constant OBSERVATION_URN.
+       *
        * @GET
        */
       public static final String OBSERVATION_URN = "/network/retrieve/observation/" + P_URN;
 
       /**
+       * The Constant COMPONENT_URN.
+       *
        * @GET
        */
       public static final String COMPONENT_URN   = "/network/retrieve/component/" + P_URN;
@@ -207,14 +274,21 @@ public interface API {
      */
     public static final String AUTHENTICATE = "/engine/authenticate";
 
+    /**
+     * The Interface SESSION.
+     */
     public interface SESSION {
 
       /**
+       * The Constant AUTHORIZE.
+       *
        * @POST
        */
       public static final String AUTHORIZE = "/engine/session/authorize";
 
       /**
+       * The Constant CLOSE.
+       *
        * @DELETE
        */
       public static final String CLOSE     = "/engine/session/close";
@@ -228,6 +302,7 @@ public interface API {
      */
     public interface CONTEXT {
 
+      /** The Constant P_CONTEXT. */
       public static final String P_CONTEXT           = "{context}";
 
       /**
@@ -255,9 +330,10 @@ public interface API {
        *
        */
       public interface TASK {
-        
+
+        /** The Constant P_TASK. */
         public static final String P_TASK = "{task}";
-        
+
       }
 
       /**

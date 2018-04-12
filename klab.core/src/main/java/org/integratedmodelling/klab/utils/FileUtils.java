@@ -1,29 +1,18 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2015:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
@@ -34,13 +23,18 @@ import java.util.List;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FileUtils.
+ */
 public class FileUtils extends org.apache.commons.io.FileUtils {
 
     /**
      * Create a md5sum file digest for a directory in a directory.
-     * @param directory
-     * @param fileName
-     * @throws KlabException 
+     *
+     * @param directory the directory
+     * @param fileName the file name
+     * @throws KlabException the klab exception
      */
     public static void createMD5Digest(File directory, String fileName) throws KlabException {
 
@@ -79,8 +73,8 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
     /**
      * Assume file contains a path and defines a file in it, and ensure that all directories up to
      * last file name exist.
-     * 
-     * @param file
+     *
+     * @param file the file
      */
     public static void makeDirsUpToFile(File file) {
         String path = MiscUtilities.getFilePath(file.toString());
@@ -89,6 +83,12 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         }
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws Exception the exception
+     */
     public static void main(String[] args) throws Exception {
         createMD5Digest(new File("C:/Users/ferdinando.villa/.tl/server"), "zioporco.txt");
     }

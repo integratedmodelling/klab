@@ -1,25 +1,18 @@
-/*******************************************************************************
- * Copyright (C) 2007, 2014:
+/*
+ * This file is part of k.LAB.
  * 
- * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any
- * other authors listed in @author annotations
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * All rights reserved. This file is part of the k.LAB software suite, meant to enable
- * modular, collaborative, integrated development of interoperable data and model
- * components. For details, see http://integratedmodelling.org.
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
  * 
- * This program is free software; you can redistribute it and/or modify it under the terms
- * of the Affero General Public License Version 3 or any later version.
- *
- * This program is distributed in the hope that it will be useful, but without any
- * warranty; without even the implied warranty of merchantability or fitness for a
- * particular purpose. See the Affero General Public License for more details.
- * 
- * You should have received a copy of the Affero General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite
- * 330, Boston, MA 02111-1307, USA. The license is also available at:
- * https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
@@ -38,6 +31,10 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class URLUtils.
+ */
 public class URLUtils {
 
 
@@ -49,8 +46,8 @@ public class URLUtils {
 
     /**
      * Check if passed URN string can be really called a URN according to RFC 2141 conventions.
-     * 
-     * @param urn
+     *
+     * @param urn the urn
      * @return true if compliant
      */
     public static boolean isCompliant(String urn) {
@@ -60,8 +57,8 @@ public class URLUtils {
 	
     /**
      * Ping the url by requesting the header and inspecting the return code.
-     * 
-     * @param url
+     *
+     * @param url the url
      * @return true if ping succeeds
      */
     public static boolean ping(String url) {
@@ -89,8 +86,8 @@ public class URLUtils {
 
     /**
      * Return true if the passed host (not URL) responds on port 80.
-     * 
-     * @param url
+     *
+     * @param url the url
      * @return true if host responds
      */
     public static boolean pingHost(String url) {
@@ -182,19 +179,27 @@ public class URLUtils {
         return count;
     }
 
+    /**
+     * The listener interface for receiving copy events. The class that is interested in processing
+     * a copy event implements this interface, and the object created with that class is registered
+     * with a component using the component's <code>addCopyListener<code> method. When the copy
+     * event occurs, that object's appropriate method is invoked.
+     *
+     * @see CopyEvent
+     */
     public interface CopyListener {
         void onProgress(int percent);
     }
 
     /**
-     * 
-     * @param url
-     * @param file
-     * @param listener
-     * @param size
-     *            pass an approx size in case the server does not pass the length
+     * Copy.
+     *
+     * @param url the url
+     * @param file the file
+     * @param listener the listener
+     * @param size pass an approx size in case the server does not pass the length
      * @return nothing
-     * @throws KlabIOException
+     * @throws KlabIOException the klab IO exception
      */
     public static long copy(URL url, File file, CopyListener listener, long size) throws KlabIOException {
 
@@ -246,6 +251,13 @@ public class URLUtils {
         return count;
     }
 
+    /**
+     * Copy channeled.
+     *
+     * @param url the url
+     * @param file the file
+     * @throws KlabIOException the klab IO exception
+     */
     public static void copyChanneled(URL url, File file) throws KlabIOException {
 
         InputStream is = null;
@@ -305,6 +317,13 @@ public class URLUtils {
         return count;
     }
 
+    /**
+     * Copy buffered.
+     *
+     * @param src the src
+     * @param dst the dst
+     * @throws KlabIOException the klab IO exception
+     */
     public static void copyBuffered(File src, File dst) throws KlabIOException {
 
         try {
@@ -325,6 +344,13 @@ public class URLUtils {
 
     }
 
+    /**
+     * Gets the file for URL.
+     *
+     * @param url the url
+     * @return the file for URL
+     * @throws KlabIOException the klab IO exception
+     */
     public static File getFileForURL(URL url) throws KlabIOException {
         if (url.toString().startsWith("file:")) {
             return new File(UrlEscape.unescapeurl(url.getFile()));

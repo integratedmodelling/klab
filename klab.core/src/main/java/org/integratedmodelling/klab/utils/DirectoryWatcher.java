@@ -1,3 +1,18 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import java.io.IOException;
@@ -16,11 +31,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: Auto-generated Javadoc
 /**
- * TODO API to review; actions and tests to be shifted to handler
- * 
- * @author ferdinando.villa
+ * TODO API to review; actions and tests to be shifted to handler.
  *
+ * @author ferdinando.villa
  */
 public class DirectoryWatcher {
 
@@ -91,11 +106,11 @@ public class DirectoryWatcher {
 
 
     /**
-     * Problem: on fast machines, resource info can be null due to asyncronicity, and
-     * namespaces do not get notified. That does not happen when debugging.
-     * 
-     * @param path
-     * @param lastEvent
+     * Problem: on fast machines, resource info can be null due to asyncronicity, and namespaces do
+     * not get notified. That does not happen when debugging.
+     *
+     * @param path the path
+     * @param lastEvent the last event
      */
     public void notifyFileEvent(Path path, Kind<?> lastEvent) {
 
@@ -245,6 +260,9 @@ public class DirectoryWatcher {
     }
 
     
+    /**
+     * Instantiates a new directory watcher.
+     */
     public DirectoryWatcher() {
         // TODO Auto-generated constructor stub
     }
@@ -285,7 +303,10 @@ public class DirectoryWatcher {
     }
 
     /**
-     * Register the given directory with the WatchService
+     * Register the given directory with the WatchService.
+     *
+     * @param dir the dir
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public void watch(Path dir) throws IOException {
 
@@ -295,6 +316,12 @@ public class DirectoryWatcher {
         keypaths.put(dir, key);
     }
 
+    /**
+     * Unwatch.
+     *
+     * @param dir the dir
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void unwatch(Path dir) throws IOException {
 
         WatchKey key = keypaths.get(dir);

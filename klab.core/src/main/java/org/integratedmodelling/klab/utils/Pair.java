@@ -1,37 +1,28 @@
-/*******************************************************************************
- *  Copyright (C) 2007, 2015:
- *  
- *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
- *    - integratedmodelling.org
- *    - any other authors listed in @author annotations
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *    All rights reserved. This file is part of the k.LAB software suite,
- *    meant to enable modular, collaborative, integrated 
- *    development of interoperable data and model components. For
- *    details, see http://integratedmodelling.org.
- *    
- *    This program is free software; you can redistribute it and/or
- *    modify it under the terms of the Affero General Public License 
- *    Version 3 or any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but without any warranty; without even the implied warranty of
- *    merchantability or fitness for a particular purpose.  See the
- *    Affero General Public License for more details.
- *  
- *     You should have received a copy of the Affero General Public License
- *     along with this program; if not, write to the Free Software
- *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *     The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.utils;
 
 import org.integratedmodelling.klab.api.data.utils.IPair;
 
+// TODO: Auto-generated Javadoc
 /**
-  * Stupid generic pair class.
- * @param <T1> 
- * @param <T2> 
+ * Stupid generic pair class.
+ *
+ * @param <T1> the generic type
+ * @param <T2> the generic type
  */
 public class Pair<T1, T2> implements IPair<T1, T2> {
 
@@ -49,20 +40,41 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
     public Pair() {
     }
 
+    /**
+     * Instantiates a new pair.
+     *
+     * @param first the first
+     * @param second the second
+     */
     public Pair(T1 first, T2 second) {
         this.first = first;
         this.second = second;
     }
 
+    /**
+     * Instantiates a new pair.
+     *
+     * @param pc the pc
+     */
     public Pair(Pair<T1, T2> pc) {
         this.first = pc.first;
         this.second = pc.second;
     }
 
+    /**
+     * Sets the first.
+     *
+     * @param newValue the new first
+     */
     public void setFirst(T1 newValue) {
         this.first = newValue;
     }
 
+    /**
+     * Sets the second.
+     *
+     * @param newValue the new second
+     */
     public void setSecond(T2 newValue) {
         this.second = newValue;
     }

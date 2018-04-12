@@ -1,21 +1,17 @@
-/**
- * Copyright 2011 The ARIES Consortium (http://www.ariesonline.org) and
- * www.integratedmodelling.org. 
-
-   This file is part of Thinklab.
-
-   Thinklab is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published
-   by the Free Software Foundation, either version 3 of the License,
-   or (at your option) any later version.
-
-   Thinklab is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with Thinklab.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
  */
 package org.integratedmodelling.klab.utils;
 
@@ -79,6 +75,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Path name manipulation, string manipulation, and more.
  * <p>
@@ -99,10 +96,11 @@ import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 public class MiscUtilities {
     
     /**
-     * Count how many bits are set in a long. Used to quickly check the observables from compositions.
-     * 
-     * @param number
-     * @return
+     * Count how many bits are set in a long. Used to quickly check the observables from
+     * compositions.
+     *
+     * @param number the number
+     * @return the int
      */
     public static int countSetBits(long number) {
         int count = 0;
@@ -114,12 +112,11 @@ public class MiscUtilities {
     }
 
 	/**
-	 * Flatten a parameter list, potentially containing collections, into a
-	 * single array.
-	 * 
-	 * @param objects
-	 * @return a flat array with all collections expanded in it.
-	 */
+     * Flatten a parameter list, potentially containing collections, into a single array.
+     *
+     * @param objects the objects
+     * @return a flat array with all collections expanded in it.
+     */
 	public static Object[] flattenParameterList(Object... objects) {
 
 		List<Object> ret = new ArrayList<>();
@@ -153,12 +150,11 @@ public class MiscUtilities {
 	
     /**
      * Compute name for sidecar file of another file.
-     * 
-     * @param modelFile
-     * @param suffixAndExtension [suffix and] extension that we want for the original filename. Include
-     * dots.
-     * 
-     * @return
+     *
+     * @param originalFile the original file
+     * @param suffixAndExtension [suffix and] extension that we want for the original filename.
+     *        Include dots.
+     * @return the sidecar file
      */
     public static File getSidecarFile(File originalFile, String suffixAndExtension) {
         String baseName = MiscUtilities.getFilePath(originalFile.toString()) + File.separator
@@ -219,12 +215,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Read a properties file into a properties object without making life
-	 * painful. Silently returns null if file isn't readable or errors happen.
-	 * 
-	 * @param pfile
-	 * @return the properties read from the file.
-	 */
+     * Read a properties file into a properties object without making life painful. Silently returns
+     * null if file isn't readable or errors happen.
+     *
+     * @param pfile the pfile
+     * @return the properties read from the file.
+     */
 	public static Properties readProperties(File pfile) {
 		if (pfile == null || !pfile.exists() || !pfile.isFile() || !pfile.canRead()) {
 			return null;
@@ -239,16 +235,16 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return all subclasses of given class in given package. Uses file
-	 * structure in classpath as seen by passed classloader. Loads ALL classes
-	 * in package in the process. Use with caution - it's sort of dirty, but
-	 * it's the only way to obtain the class structure without preloading
-	 * classes.
-	 * 
-	 * @param mainClass
-	 * @param pckgname
-	 * @return subclasses
-	 */
+     * Return all subclasses of given class in given package. Uses file structure in classpath as
+     * seen by passed classloader. Loads ALL classes in package in the process. Use with caution -
+     * it's sort of dirty, but it's the only way to obtain the class structure without preloading
+     * classes.
+     *
+     * @param mainClass the main class
+     * @param pckgname the pckgname
+     * @param cloader the cloader
+     * @return subclasses
+     */
 	public static Collection<Class<?>> findSubclasses(Class<?> mainClass, String pckgname, ClassLoader cloader) {
 		return findSubclasses(null, mainClass, pckgname, cloader);
 	}
@@ -275,11 +271,11 @@ public class MiscUtilities {
 	// }
 
 	/**
-	 * Extract the file extension from a file name.
-	 * 
-	 * @param s
-	 * @return the file extension
-	 */
+     * Extract the file extension from a file name.
+     *
+     * @param s the s
+     * @return the file extension
+     */
 	public static String getFileExtension(String s) {
 
 		String ret = "";
@@ -292,11 +288,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return file path without extension if any.
-	 * 
-	 * @param s
-	 * @return s with no .xxx at end.
-	 */
+     * Return file path without extension if any.
+     *
+     * @param s the s
+     * @return s with no .xxx at end.
+     */
 	public static String getFileBasePath(String s) {
 
 		String ret = s;
@@ -309,11 +305,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return file path without extension if any.
-	 * 
-	 * @param s
-	 * @return path for passed file name (directory it's in).
-	 */
+     * Return file path without extension if any.
+     *
+     * @param s the s
+     * @return path for passed file name (directory it's in).
+     */
 	public static String getFilePath(String s) {
 
 		String ret = s;
@@ -328,11 +324,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return file name with no path or extension
-	 * 
-	 * @param s
-	 * @return the simple name of the file without extension or path.
-	 */
+     * Return file name with no path or extension.
+     *
+     * @param s the s
+     * @return the simple name of the file without extension or path.
+     */
 	public static String getFileBaseName(String s) {
 
 		String ret = s;
@@ -348,12 +344,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return URL base name with no path or extension. Just like getFileBaseName
-	 * but uses / instead of system separator.
-	 * 
-	 * @param s
-	 * @return extracted name from URL
-	 */
+     * Return URL base name with no path or extension. Just like getFileBaseName but uses / instead
+     * of system separator.
+     *
+     * @param s the s
+     * @return extracted name from URL
+     */
 	public static String getURLBaseName(String s) {
 
 		/* just in case */
@@ -378,11 +374,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return file name with no path but with extension
-	 * 
-	 * @param s
-	 * @return name of file without path, preserving any extension.
-	 */
+     * Return file name with no path but with extension.
+     *
+     * @param s the s
+     * @return name of file without path, preserving any extension.
+     */
 	public static String getFileName(String s) {
 
 		String ret = s;
@@ -460,18 +456,16 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Read the last N lines of file into string and return it. Emulates Unix's
-	 * tail command.
-	 * 
-	 * Unsophisticated about EOL encodings - I'm pretty sure it will create
-	 * artificial empty lines on Win. On the other hand, all the uses I have for
-	 * it are a joke on anything but unix.
-	 * 
-	 * @param fileName
-	 * @param n
-	 * @return last requested lines from file.
-	 * @throws KlabIOException
-	 */
+     * Read the last N lines of file into string and return it. Emulates Unix's tail command.
+     * 
+     * Unsophisticated about EOL encodings - I'm pretty sure it will create artificial empty lines
+     * on Win. On the other hand, all the uses I have for it are a joke on anything but unix.
+     *
+     * @param fileName the file name
+     * @param n the n
+     * @return last requested lines from file.
+     * @throws KlabIOException the klab IO exception
+     */
 	public static String tail(String fileName, int n) throws KlabIOException {
 		java.io.RandomAccessFile fileHandler = null;
 		try {
@@ -550,12 +544,12 @@ public class MiscUtilities {
 
 	// {{{ getProtocolOfURL() method
 	/**
-	 * Returns the protocol specified by a URL.
-	 * 
-	 * @param url
-	 *            The URL
-	 * @since jEdit 2.6pre5
-	 */
+     * Returns the protocol specified by a URL.
+     *
+     * @param url The URL
+     * @return the protocol of URL
+     * @since jEdit 2.6pre5
+     */
 	public static String getProtocolOfURL(String url) {
 		return url.substring(0, url.indexOf(':'));
 	} // }}}
@@ -579,10 +573,12 @@ public class MiscUtilities {
 	// } // }}}
 
 	/**
-	 * @param is
-	 * @return string with stream contents.
-	 * @throws KlabException
-	 */
+     * Convert stream to string.
+     *
+     * @param is the is
+     * @return string with stream contents.
+     * @throws KlabException the klab exception
+     */
 	public static String convertStreamToString(InputStream is) throws KlabException {
 
 		/*
@@ -644,12 +640,12 @@ public class MiscUtilities {
 
 	// {{{ fileToClass() method
 	/**
-	 * Converts a file name to a class name. All slash characters are replaced
-	 * with periods and the trailing '.class' is removed.
-	 * 
-	 * @param name
-	 *            The file name
-	 */
+     * Converts a file name to a class name. All slash characters are replaced with periods and the
+     * trailing '.class' is removed.
+     *
+     * @param name The file name
+     * @return the string
+     */
 	public static String fileToClass(String name) {
 		char[] clsName = name.toCharArray();
 		for (int i = clsName.length - 6; i >= 0; i--)
@@ -658,6 +654,12 @@ public class MiscUtilities {
 		return new String(clsName, 0, clsName.length - 6);
 	} // }}}
 
+	/**
+     * Gets the name from URL.
+     *
+     * @param uu the uu
+     * @return the name from URL
+     */
 	public static String getNameFromURL(String uu) {
 		int sl = uu.lastIndexOf('/');
 		String name = sl == -1 ? uu : uu.substring(sl + 1);
@@ -667,12 +669,12 @@ public class MiscUtilities {
 
 	// {{{ classToFile() method
 	/**
-	 * Converts a class name to a file name. All periods are replaced with
-	 * slashes and the '.class' extension is added.
-	 * 
-	 * @param name
-	 *            The class name
-	 */
+     * Converts a class name to a file name. All periods are replaced with slashes and the '.class'
+     * extension is added.
+     *
+     * @param name The class name
+     * @return the string
+     */
 	public static String classToFile(String name) {
 		return name.replace('.', '/').concat(".class");
 	} // }}}
@@ -711,12 +713,11 @@ public class MiscUtilities {
 
 	// {{{ getLeadingWhiteSpace() method
 	/**
-	 * Returns the number of leading white space characters in the specified
-	 * string.
-	 * 
-	 * @param str
-	 *            The string
-	 */
+     * Returns the number of leading white space characters in the specified string.
+     *
+     * @param str The string
+     * @return the leading white space
+     */
 	public static int getLeadingWhiteSpace(String str) {
 		int whitespace = 0;
 		loop: for (; whitespace < str.length();) {
@@ -734,13 +735,12 @@ public class MiscUtilities {
 	
 	
 	/**
-	 * Returns the number of trailing whitespace characters in the specified
-	 * string.
-	 * 
-	 * @param str
-	 *            The string
-	 * @since jEdit 2.5pre5
-	 */
+     * Returns the number of trailing whitespace characters in the specified string.
+     *
+     * @param str The string
+     * @return the trailing white space
+     * @since jEdit 2.5pre5
+     */
 	public static int getTrailingWhiteSpace(String str) {
 		int whitespace = 0;
 		loop: for (int i = str.length() - 1; i >= 0; i--) {
@@ -757,13 +757,12 @@ public class MiscUtilities {
 	} 
 	
 	/**
-	 * Returns the width of the leading white space in the specified string.
-	 * 
-	 * @param str
-	 *            The string
-	 * @param tabSize
-	 *            The tab size
-	 */
+     * Returns the width of the leading white space in the specified string.
+     *
+     * @param str The string
+     * @param tabSize The tab size
+     * @return the leading white space width
+     */
 	public static int getLeadingWhiteSpaceWidth(String str, int tabSize) {
 		int whitespace = 0;
 		loop: for (int i = 0; i < str.length(); i++) {
@@ -782,46 +781,43 @@ public class MiscUtilities {
 	} 
 	
 	/**
-	 * Creates a string of white space with the specified length.
-	 * <p>
-	 *
-	 * To get a whitespace string tuned to the current buffer's settings, call
-	 * this method as follows:
-	 *
-	 * <pre>
-	 * myWhitespace = MiscUtilities.createWhiteSpace(myLength,
-	 * 		(buffer.getBooleanProperty("noTabs") ? 0 : buffer.getTabSize()));
-	 * </pre>
-	 *
-	 * @param len
-	 *            The length
-	 * @param tabSize
-	 *            The tab size, or 0 if tabs are not to be used
-	 */
+     * Creates a string of white space with the specified length.
+     * <p>
+     * 
+     * To get a whitespace string tuned to the current buffer's settings, call this method as
+     * follows:
+     * 
+     * <pre>
+     * myWhitespace = MiscUtilities.createWhiteSpace(myLength,
+     *     (buffer.getBooleanProperty("noTabs") ? 0 : buffer.getTabSize()));
+     * </pre>
+     *
+     * @param len The length
+     * @param tabSize The tab size, or 0 if tabs are not to be used
+     * @return the string
+     */
 	public static String createWhiteSpace(int len, int tabSize) {
 		return createWhiteSpace(len, tabSize, 0);
 	}
 	
 	/**
-	 * Creates a string of white space with the specified length.
-	 * <p>
-	 *
-	 * To get a whitespace string tuned to the current buffer's settings, call
-	 * this method as follows:
-	 *
-	 * <pre>
-	 * myWhitespace = MiscUtilities.createWhiteSpace(myLength,
-	 * 		(buffer.getBooleanProperty("noTabs") ? 0 : buffer.getTabSize()));
-	 * </pre>
-	 *
-	 * @param len
-	 *            The length
-	 * @param tabSize
-	 *            The tab size, or 0 if tabs are not to be used
-	 * @param start
-	 *            The start offset, for tab alignment
-	 * @since jEdit 4.2pre1
-	 */
+     * Creates a string of white space with the specified length.
+     * <p>
+     * 
+     * To get a whitespace string tuned to the current buffer's settings, call this method as
+     * follows:
+     * 
+     * <pre>
+     * myWhitespace = MiscUtilities.createWhiteSpace(myLength,
+     *     (buffer.getBooleanProperty("noTabs") ? 0 : buffer.getTabSize()));
+     * </pre>
+     *
+     * @param len The length
+     * @param tabSize The tab size, or 0 if tabs are not to be used
+     * @param start The start offset, for tab alignment
+     * @return the string
+     * @since jEdit 4.2pre1
+     */
 	public static String createWhiteSpace(int len, int tabSize, int start) {
 		StringBuffer buf = new StringBuffer();
 		if (tabSize == 0) {
@@ -844,14 +840,14 @@ public class MiscUtilities {
 
 	// {{{ globToRE() method
 	/**
-	 * Converts a Unix-style glob to a regular expression.
-	 * <p>
-	 *
-	 * ? becomes ., * becomes .*, {aa,bb} becomes (aa|bb).
-	 * 
-	 * @param glob
-	 *            The glob pattern
-	 */
+     * Converts a Unix-style glob to a regular expression.
+     * <p>
+     * 
+     * ? becomes ., * becomes .*, {aa,bb} becomes (aa|bb).
+     *
+     * @param glob The glob pattern
+     * @return the string
+     */
 	public static String globToRE(String glob) {
 		final Object NEG = new Object();
 		final Object GROUP = new Object();
@@ -923,13 +919,12 @@ public class MiscUtilities {
 	} 
 	
 	/**
-	 * Converts "\n" and "\t" escapes in the specified string to newlines and
-	 * tabs.
-	 * 
-	 * @param str
-	 *            The string
-	 * @since jEdit 2.3pre1
-	 */
+     * Converts "\n" and "\t" escapes in the specified string to newlines and tabs.
+     *
+     * @param str The string
+     * @return the string
+     * @since jEdit 2.3pre1
+     */
 	public static String escapesToChars(String str) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < str.length(); i++) {
@@ -962,25 +957,24 @@ public class MiscUtilities {
 	
 	
 	/**
-	 * Escapes newlines, tabs, backslashes, and quotes in the specified string.
-	 * 
-	 * @param str
-	 *            The string
-	 * @since jEdit 2.3pre1
-	 */
+     * Escapes newlines, tabs, backslashes, and quotes in the specified string.
+     *
+     * @param str The string
+     * @return the string
+     * @since jEdit 2.3pre1
+     */
 	public static String charsToEscapes(String str) {
 		return charsToEscapes(str, "\n\t\\\"'");
 	} 
 	
 	/**
-	 * Escapes the specified characters in the specified string.
-	 * 
-	 * @param str
-	 *            The string
-	 * @param toEscape
-	 *            Any characters that require escaping
-	 * @since jEdit 4.1pre3
-	 */
+     * Escapes the specified characters in the specified string.
+     *
+     * @param str The string
+     * @param toEscape Any characters that require escaping
+     * @return the string
+     * @since jEdit 4.1pre3
+     */
 	public static String charsToEscapes(String str, String toEscape) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < str.length(); i++) {
@@ -1080,11 +1074,14 @@ public class MiscUtilities {
 	
 	// {{{ objectsEqual() method
 	/**
-	 * Returns if two strings are equal. This correctly handles null pointers,
-	 * as opposed to calling <code>o1.equals(o2)</code>.
-	 * 
-	 * @since jEdit 4.2pre1
-	 */
+     * Returns if two strings are equal. This correctly handles null pointers, as opposed to calling
+     * <code>o1.equals(o2)</code>.
+     *
+     * @param o1 the o 1
+     * @param o2 the o 2
+     * @return true, if successful
+     * @since jEdit 4.2pre1
+     */
 	public static boolean objectsEqual(Object o1, Object o2) {
 		if (o1 == null) {
 			if (o2 == null)
@@ -1099,13 +1096,12 @@ public class MiscUtilities {
 	
 	
 	/**
-	 * Converts &lt;, &gt;, &amp; in the string to their HTML entity
-	 * equivalents.
-	 * 
-	 * @param str
-	 *            The string
-	 * @since jEdit 4.2pre1
-	 */
+     * Converts &lt;, &gt;, &amp; in the string to their HTML entity equivalents.
+     *
+     * @param str The string
+     * @return the string
+     * @since jEdit 4.2pre1
+     */
 	public static String charsToEntities(String str) {
 		StringBuffer buf = new StringBuffer(str.length());
 		for (int i = 0; i < str.length(); i++) {
@@ -1129,17 +1125,19 @@ public class MiscUtilities {
 	}
 	
 	
+	/** The Constant KB_FORMAT. */
 	public static final DecimalFormat KB_FORMAT = new DecimalFormat("#.# KB");
+	
+	/** The Constant MB_FORMAT. */
 	public static final DecimalFormat MB_FORMAT = new DecimalFormat("#.# MB");
 
 	/**
-	 * Formats the given file size into a nice string (123 bytes, 10.6 KB, 1.2
-	 * MB).
-	 * 
-	 * @param length
-	 *            The size
-	 * @since jEdit 4.2pre1
-	 */
+     * Formats the given file size into a nice string (123 bytes, 10.6 KB, 1.2 MB).
+     *
+     * @param length The size
+     * @return the string
+     * @since jEdit 4.2pre1
+     */
 	public static String formatFileSize(long length) {
 		if (length < 1024)
 			return length + " bytes";
@@ -1151,14 +1149,13 @@ public class MiscUtilities {
 	
 	
 	/**
-	 * Returns the longest common prefix in the given set of strings.
-	 * 
-	 * @param str
-	 *            The strings
-	 * @param ignoreCase
-	 *            If true, case insensitive
-	 * @since jEdit 4.2pre2
-	 */
+     * Returns the longest common prefix in the given set of strings.
+     *
+     * @param str The strings
+     * @param ignoreCase If true, case insensitive
+     * @return the longest prefix
+     * @since jEdit 4.2pre2
+     */
 	public static String getLongestPrefix(List<?> str, boolean ignoreCase) {
 		if (str.size() == 0)
 			return "";
@@ -1185,27 +1182,25 @@ public class MiscUtilities {
 	
 	
 	/**
-	 * Returns the longest common prefix in the given set of strings.
-	 * 
-	 * @param str
-	 *            The strings
-	 * @param ignoreCase
-	 *            If true, case insensitive
-	 * @since jEdit 4.2pre2
-	 */
+     * Returns the longest common prefix in the given set of strings.
+     *
+     * @param str The strings
+     * @param ignoreCase If true, case insensitive
+     * @return the longest prefix
+     * @since jEdit 4.2pre2
+     */
 	public static String getLongestPrefix(String[] str, boolean ignoreCase) {
 		return getLongestPrefix((Object[]) str, ignoreCase);
 	} 
 	
 	/**
-	 * Returns the longest common prefix in the given set of strings.
-	 * 
-	 * @param str
-	 *            The strings (calls <code>toString()</code> on each object)
-	 * @param ignoreCase
-	 *            If true, case insensitive
-	 * @since jEdit 4.2pre6
-	 */
+     * Returns the longest common prefix in the given set of strings.
+     *
+     * @param str The strings (calls <code>toString()</code> on each object)
+     * @param ignoreCase If true, case insensitive
+     * @return the longest prefix
+     * @since jEdit 4.2pre6
+     */
 	public static String getLongestPrefix(Object[] str, boolean ignoreCase) {
 		if (str.length == 0)
 			return "";
@@ -1232,11 +1227,11 @@ public class MiscUtilities {
 	} 
 	
 	/**
-	 * Converts an internal version number (build) into a `human-readable' form.
-	 * 
-	 * @param build
-	 *            The build
-	 */
+     * Converts an internal version number (build) into a `human-readable' form.
+     *
+     * @param build The build
+     * @return the string
+     */
 	public static String buildToVersion(String build) {
 		if (build.length() != 11)
 			return "<unknown version: " + build + ">";
@@ -1254,12 +1249,12 @@ public class MiscUtilities {
 	
 	
 	/**
-	 * Parse a Unix-style permission string (rwxrwxrwx).
-	 * 
-	 * @param s
-	 *            The string (must be 9 characters long).
-	 * @since jEdit 4.1pre8
-	 */
+     * Parse a Unix-style permission string (rwxrwxrwx).
+     *
+     * @param s The string (must be 9 characters long).
+     * @return the int
+     * @since jEdit 4.1pre8
+     */
 	public static int parsePermissions(String s) {
 		int permissions = 0;
 
@@ -1300,14 +1295,14 @@ public class MiscUtilities {
 	} 
 
 	/**
-	 * Analyze the passed string and determine if it specifies an existing file
-	 * resource or URL. Return the appropriate object, that must be
-	 * disambiguated using instanceof. Meant to (inelegantly) solve problems
-	 * coming from file name encodings in primitive OS (e.g. Windows) that
-	 * cannot be handled properly in file:// URLs.
-	 * 
-	 * @return a valid URL, existing file, or null. No exceptions are thrown.
-	 */
+     * Analyze the passed string and determine if it specifies an existing file resource or URL.
+     * Return the appropriate object, that must be disambiguated using instanceof. Meant to
+     * (inelegantly) solve problems coming from file name encodings in primitive OS (e.g. Windows)
+     * that cannot be handled properly in file:// URLs.
+     *
+     * @param s the s
+     * @return a valid URL, existing file, or null. No exceptions are thrown.
+     */
 	public static Object getSourceForResource(String s) {
 
 		File f = new File(s);
@@ -1328,11 +1323,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Uses getSourceForResource on the passed string and tries to open whatever
-	 * resource is passed and return the correspondent open input stream.
-	 * 
-	 * @return an open input stream or null. No exceptions are thrown.
-	 */
+     * Uses getSourceForResource on the passed string and tries to open whatever resource is passed
+     * and return the correspondent open input stream.
+     *
+     * @param s the s
+     * @return an open input stream or null. No exceptions are thrown.
+     */
 	public static InputStream getInputStreamForResource(String s) {
 
 		InputStream ret = null;
@@ -1358,15 +1354,14 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Resolve a passed string into an existing file name
-	 * 
-	 * @param msource
-	 *            a file name, URL, or string containing a plugin identifier and
-	 *            a resource separated by :: - in the latter case, we lookup the
-	 *            resource in the named plugin's classpath
-	 * @return A local file containing the resource
-	 * @throws KlabResourceNotFoundException
-	 */
+     * Resolve a passed string into an existing file name.
+     *
+     * @param msource a file name, URL, or string containing a plugin identifier and a resource
+     *        separated by :: - in the latter case, we lookup the resource in the named plugin's
+     *        classpath
+     * @return A local file containing the resource
+     * @throws KlabException the klab exception
+     */
 	public static File resolveUrlToFile(String msource) throws KlabException {
 
 		File ret = null;
@@ -1399,14 +1394,14 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Interprets a string as either a valid URL or a file name, and return a
-	 * proper URL no matter what, or throw an exception if nothing seems to
-	 * work. No checking is done on whether the URL actually resolves to
-	 * anything.
-	 * 
-	 * @param msource
-	 * @return the URL
-	 */
+     * Interprets a string as either a valid URL or a file name, and return a proper URL no matter
+     * what, or throw an exception if nothing seems to work. No checking is done on whether the URL
+     * actually resolves to anything.
+     *
+     * @param msource the msource
+     * @return the URL
+     * @throws KlabIOException the klab IO exception
+     */
 	public static URL getURLForResource(String msource) throws KlabIOException {
 
 		URL murl = null;
@@ -1443,13 +1438,15 @@ public class MiscUtilities {
 
 	// {{{ throwableToString() method
 	/**
-	 * Returns a string containing the user-visualizable version of the given throwable. Only
-	 * print the stack trace when exception has no useful message.
-	 * 
-	 * TODO add special treatment and line reporting for common exceptions.
-	 * 
-	 * @since jEdit 4.2pre6
-	 */
+     * Returns a string containing the user-visualizable version of the given throwable. Only print
+     * the stack trace when exception has no useful message.
+     * 
+     * TODO add special treatment and line reporting for common exceptions.
+     *
+     * @param t the t
+     * @return the string
+     * @since jEdit 4.2pre6
+     */
 	public static String throwableToString(Throwable t) {
 	    if (t.getMessage() != null && !t.getMessage().isEmpty()) {
 	        return t.getMessage();
@@ -1472,6 +1469,12 @@ public class MiscUtilities {
 			return ch1 == ch2;
 	}
 
+	/**
+     * Spaces.
+     *
+     * @param n the n
+     * @return the string
+     */
 	public static String spaces(int n) {
 		String ret = "";
 		for (int i = 0; i < n; i++)
@@ -1480,11 +1483,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * This method is used for creating a backup of an existing File.
-	 * 
-	 * @param file
-	 * @throws KlabIOException
-	 */
+     * This method is used for creating a backup of an existing File.
+     *
+     * @param file the file
+     * @throws KlabIOException the klab IO exception
+     */
 	public static void backupFile(File file) throws KlabIOException {
 		File parentFolder = new File(file.getParent() + "/backup");
 
@@ -1513,6 +1516,13 @@ public class MiscUtilities {
 
 	}
 
+	/**
+     * Change extension.
+     *
+     * @param string the string
+     * @param string2 the string 2
+     * @return the string
+     */
 	// TODO make sure things work correctly when it's a URL with parameters
 	public static String changeExtension(String string, String string2) {
 
@@ -1531,12 +1541,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Resource indicated by s can be a file name or a URL. Returns true if it's
-	 * an existing file or a URL that can be opened.
-	 * 
-	 * @param s
-	 * @return true if exists
-	 */
+     * Resource indicated by s can be a file name or a URL. Returns true if it's an existing file or
+     * a URL that can be opened.
+     *
+     * @param s the s
+     * @return true if exists
+     */
 	public static boolean resourceExists(String s) {
 
 		boolean ret = false;
@@ -1556,6 +1566,13 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Change protocol.
+     *
+     * @param url the url
+     * @param protocol the protocol
+     * @return the string
+     */
 	public static String changeProtocol(String url, String protocol) {
 
 		return url.indexOf(':') > 0 ? (protocol + url.substring(url.indexOf(':'))) : (protocol + ":" + url);
@@ -1563,11 +1580,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Return the path leading to file without the file itself.
-	 * 
-	 * @param lf
-	 * @return path string
-	 */
+     * Return the path leading to file without the file itself.
+     *
+     * @param lf the lf
+     * @return path string
+     */
 	public static File getPath(String lf) {
 
 		int n = lf.lastIndexOf(File.separator);
@@ -1578,6 +1595,12 @@ public class MiscUtilities {
 		return new File(s);
 	}
 
+	/**
+     * Removes the fragment.
+     *
+     * @param uri the uri
+     * @return the uri
+     */
 	public static URI removeFragment(URI uri) {
 
 		URI ret = uri;
@@ -1593,6 +1616,12 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Prints the vector.
+     *
+     * @param data the data
+     * @return the string
+     */
 	public static String printVector(int[] data) {
 		String ret = "";
 		for (int d : data) {
@@ -1601,6 +1630,12 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Prints the vector.
+     *
+     * @param data the data
+     * @return the string
+     */
 	public static String printVector(double[] data) {
 		String ret = "";
 		for (double d : data) {
@@ -1609,6 +1644,12 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Parses the int vector.
+     *
+     * @param data the data
+     * @return the int[]
+     */
 	public static int[] parseIntVector(String data) {
 
 		String[] ss = data.split("\\s+");
@@ -1620,6 +1661,13 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Parses the int vector.
+     *
+     * @param data the data
+     * @param startAt the start at
+     * @return the int[]
+     */
 	public static int[] parseIntVector(String data, int startAt) {
 
 		String[] ss = data.split("\\s+");
@@ -1632,6 +1680,12 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Parses the double vector.
+     *
+     * @param data the data
+     * @return the double[]
+     */
 	public static double[] parseDoubleVector(String data) {
 
 		String[] ss = data.split("\\s+");
@@ -1643,6 +1697,13 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Parses the double vector.
+     *
+     * @param data the data
+     * @param startAt the start at
+     * @return the double[]
+     */
 	public static double[] parseDoubleVector(String data, int startAt) {
 
 		String[] ss = data.split("\\s+");
@@ -1687,12 +1748,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Recursively delete file or directory
-	 * 
-	 * @param fileOrDir
-	 *            the file or dir to delete
-	 * @return true iff all files are successfully deleted
-	 */
+     * Recursively delete file or directory.
+     *
+     * @param fileOrDir the file or dir to delete
+     * @return true iff all files are successfully deleted
+     */
 	public static boolean recursiveDelete(File fileOrDir) {
 		if (fileOrDir.isDirectory()) {
 			// recursively delete contents
@@ -1706,6 +1766,12 @@ public class MiscUtilities {
 		return fileOrDir.delete();
 	}
 
+	/**
+     * Read integer from string.
+     *
+     * @param s the s
+     * @return the int
+     */
 	public static int readIntegerFromString(String s) {
 		s = s.trim();
 		String ss = "";
@@ -1717,6 +1783,12 @@ public class MiscUtilities {
 		return Integer.parseInt(ss);
 	}
 
+	/**
+     * Split number from string.
+     *
+     * @param s the s
+     * @return the pair
+     */
 	public static Pair<Double, String> splitNumberFromString(String s) {
 		String[] pp = s.split("\\ ");
 		if (pp.length == 2) {
@@ -1726,13 +1798,12 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Get the last modification date if the resource resolves to a file. If the
-	 * resource is a URL, we cannot be sure so we assume it's just been modified
-	 * and return the current time.
-	 * 
-	 * @param resourceId
-	 * @return last mod
-	 */
+     * Get the last modification date if the resource resolves to a file. If the resource is a URL,
+     * we cannot be sure so we assume it's just been modified and return the current time.
+     *
+     * @param resourceId the resource id
+     * @return last mod
+     */
 	public static long getLastModificationForResource(String resourceId) {
 
 		long ret = new Date().getTime();
@@ -1745,6 +1816,13 @@ public class MiscUtilities {
 		return ret;
 	}
 
+	/**
+     * Read file into strings.
+     *
+     * @param filename the filename
+     * @return the string[]
+     * @throws KlabIOException the klab IO exception
+     */
 	public static String[] readFileIntoStrings(String filename) throws KlabIOException {
 
 		FileReader fileReader;
@@ -1763,6 +1841,12 @@ public class MiscUtilities {
 		return lines.toArray(new String[lines.size()]);
 	}
 
+	/**
+     * Gets the stack trace.
+     *
+     * @param aThrowable the a throwable
+     * @return the stack trace
+     */
 	public static String getStackTrace(Throwable aThrowable) {
 		final Writer result = new StringWriter();
 		final PrintWriter printWriter = new PrintWriter(result);
@@ -1771,8 +1855,11 @@ public class MiscUtilities {
 	}
 
 	/**
-	 * Defines a custom format for the stack trace as String.
-	 */
+     * Defines a custom format for the stack trace as String.
+     *
+     * @param aThrowable the a throwable
+     * @return the exception printout
+     */
 	public static String getExceptionPrintout(Throwable aThrowable) {
 
 		// add the class name and any message passed to constructor
@@ -1789,6 +1876,12 @@ public class MiscUtilities {
 		return result.toString();
 	}
 
+	/**
+     * Extract index.
+     *
+     * @param s the s
+     * @return the int
+     */
 	/*
 	 * find a [n] pattern in the string and return n.
 	 */
@@ -1805,14 +1898,32 @@ public class MiscUtilities {
 		throw new KlabRuntimeException("cannot find an array index in " + s);
 	}
 
+    /**
+     * Gets the file extension.
+     *
+     * @param f the f
+     * @return the file extension
+     */
     public static String getFileExtension(File f) {
         return getFileExtension(f.toString());
     }
 
+    /**
+     * Gets the file base name.
+     *
+     * @param f the f
+     * @return the file base name
+     */
     public static String getFileBaseName(File f) {
         return getFileBaseName(f.toString());
     }
 
+    /**
+     * Gets the file name.
+     *
+     * @param f the f
+     * @return the file name
+     */
     public static String getFileName(File f) {
         return getFileName(f.toString());
     }

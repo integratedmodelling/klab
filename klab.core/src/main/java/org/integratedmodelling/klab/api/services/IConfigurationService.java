@@ -1,77 +1,73 @@
+/*
+ * This file is part of k.LAB.
+ * 
+ * k.LAB is free software: you can redistribute it and/or modify
+ * it under the terms of the Affero GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * A copy of the GNU Affero General Public License is distributed in the root
+ * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
+ * see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
+ * in author tags. All rights reserved.
+ */
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
 import java.util.Properties;
 import org.integratedmodelling.klab.utils.OS;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * @author Ferd
+ * The Interface IConfigurationService.
  *
+ * @author Ferd
  */
 public interface IConfigurationService {
 
+    /** The Constant KLAB_CLIENT_PROJECTS. */
     public static final String KLAB_CLIENT_PROJECTS               = "klab.client.workspace";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_OFFLINE. */
     public static final String KLAB_OFFLINE                       = "klab.offline";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_USE_CONTEXT_QUALITIES. */
     public static final String KLAB_USE_CONTEXT_QUALITIES         = "klab.use.context.qualities";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_EXPORT_PATH. */
     public static final String KLAB_EXPORT_PATH                   = "klab.export.path";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_REASONING. */
     public static final String KLAB_REASONING                     = "klab.reasoning";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_DEBUG. */
     public static final String KLAB_DEBUG                         = "klab.debug";
 
-    /**
-     * 
-     */
+    /** The Constant CERTFILE_PROPERTY. */
     public static final String CERTFILE_PROPERTY                  = "klab.certificate";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_SOURCE_DISTRIBUTION. */
     public static final String KLAB_SOURCE_DISTRIBUTION           = "thinklab.source.distribution";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_CONNECTION_TIMEOUT. */
     public static final String KLAB_CONNECTION_TIMEOUT            = "klab.connection.timeout";
 
     /*
      * these properties can be set to define what states to store during contextualization when the
      * defaults are inadequate. They're mostly unsupported at this time.
      */
-    /**
-     * 
-     */
+    /** The Constant KLAB_STORE_RAW_DATA. */
     public static final String KLAB_STORE_RAW_DATA                = "klab.store.raw";
-    /**
-     * 
-     */
+    
+    /** The Constant KLAB_STORE_INTERMEDIATE_DATA. */
     public static final String KLAB_STORE_INTERMEDIATE_DATA       = "klab.store.intermediate";
-    /**
-     * 
-     */
+    
+    /** The Constant KLAB_STORE_CONDITIONAL_DATA. */
     public static final String KLAB_STORE_CONDITIONAL_DATA        = "klab.store.conditional";
-    /**
-     * 
-     */
+    
+    /** The Constant KLAB_STORE_MEDIATED_DATA. */
     public static final String KLAB_STORE_MEDIATED_DATA           = "klab.store.mediated";
 
     /**
@@ -97,54 +93,34 @@ public interface IConfigurationService {
      */
     public static final String KLAB_LOCAL_COMPONENTS              = "klab.local.components";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_CERTIFICATE. */
     public static final String KLAB_ENGINE_CERTIFICATE            = "klab.engine.certificate";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_DATADIR. */
     public static final String KLAB_ENGINE_DATADIR                = "klab.engine.datadir";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_DEBUG_PORT. */
     public static final String KLAB_ENGINE_DEBUG_PORT             = "klab.engine.debugPort";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_USE_DEBUG. */
     public static final String KLAB_ENGINE_USE_DEBUG              = "klab.engine.useDebug";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_KLAB_DEBUG. */
     public static final String KLAB_ENGINE_KLAB_DEBUG             = "klab.engine.klabDebug";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_USE_DEVELOPER_NETWORK. */
     public static final String KLAB_ENGINE_USE_DEVELOPER_NETWORK  = "klab.engine.useDeveloperNetwork";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_USE_LOCAL_INSTALLATION. */
     public static final String KLAB_ENGINE_USE_LOCAL_INSTALLATION = "klab.engine.useLocalInstallation";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_SHUTDOWN_ON_EXIT. */
     public static final String KLAB_ENGINE_SHUTDOWN_ON_EXIT       = "klab.engine.shutdownOnExit";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_UPGRADE_AUTOMATICALLY. */
     public static final String KLAB_ENGINE_UPGRADE_AUTOMATICALLY  = "klab.engine.upgradeAutomatically";
 
-    /**
-     * 
-     */
+    /** The Constant KLAB_ENGINE_LAUNCH_AUTOMATICALLY. */
     public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY   = "klab.engine.launchAutomatically";
 
     /**
