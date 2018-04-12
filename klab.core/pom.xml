@@ -78,6 +78,13 @@
 
 	<dependencies>
 
+		<!-- JSON schema for the schema public endpoints -->
+		<dependency>
+			<groupId>com.github.reinert</groupId>
+			<artifactId>jjschema</artifactId>
+			<version>0.6</version>
+		</dependency>
+
 		<!-- Kotlin support -->
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>

@@ -1,14 +1,19 @@
 package org.integratedmodelling.klab.data.rest.resources.responses
 
+import com.github.reinert.jjschema.Attributes
 import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.klab.data.rest.resources.AuthorityReference
 import org.integratedmodelling.klab.data.rest.resources.ComponentReference
 import org.integratedmodelling.klab.data.rest.resources.IdentityReference
 
 class Capabilities {
+
+	@Attributes(required = true, description = "Unique name of the node")
 	var name: String? = null
+	
 	var version: String? = null
 	var build: String? = null
+	
 	var services: List<KimServiceCall> = ArrayList()
 	var authorities: List<AuthorityReference> = ArrayList()
 	var staticComponents: List<ComponentReference> = ArrayList()

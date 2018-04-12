@@ -126,7 +126,7 @@ public class FileCatalog<T> extends HashMap<String, T> {
       try {
         JavaType type =
             objectMapper.getTypeFactory().constructMapLikeType(Map.class, String.class, cls);
-        Map<Object, T> data = objectMapper.readerFor(type).readValue(stream);
+        Map<Object, T> data = objectMapper.reader(type).readValue(stream);
         clear();
         for (Object key : data.keySet()) {
           put(key.toString(), (T) data.get(key));

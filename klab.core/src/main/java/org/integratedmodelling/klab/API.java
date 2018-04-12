@@ -13,6 +13,10 @@
  */
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
+
 // TODO: Auto-generated Javadoc
 /**
  * This interface and its members describe the REST API of k.LAB. The API enables managing semantic
@@ -49,33 +53,44 @@ package org.integratedmodelling.klab;
  */
 public interface API {
 
-  // Doc template for each endpoint - uncomment, cut, paste, comment again, edit
-  // *<h4>Protocol</h4>
-  // *<ul>
-  // *<li><b>GET</b> description
-  // *</ul>
-  // *<h4>Response type</h4>
-  // *<ul>
-  // *<li><b>html</b>
-  // *</ul>
-  // *<p><b>Request</b> (link to bean)
-  // *<p><b>Response</b> (link to bean)
-  // *<p><b>Authentication</b> (description or link to identity)
-
   /** Parameter: the URN being resolved in any endpoints that access resources. */
   public static final String P_URN        = "{urn}";
 
-
   /**
    * Public capabilities endpoint. Anything that has an API has capabilities.
+   * 
+   *<p><b>Protocol:</b> GET
+   *<br/><b>Response type:</b> Json
+   *<br/><b>Response:</b> {@link Capabilities}
+   *<br/><b>Authentication:</b> open or {@link INetworkSessionIdentity} (response reflect access levels)
    * 
    */
   public static final String CAPABILITIES = "/capabilities";
 
   /**
+   * Retrieve the public key for this node
+   * 
+   *<p><b>Protocol:</b> GET
+   *<br/><b>Response type:</b> text
+   *<br/><b>Authentication:</b> open
+   */
+  public static final String PUBLICKEY    = "/publickey";
+
+  /**
+   * Return the JSON schema for all the resources understood by this API. Used for validating 
+   * beans in connected web applications.
+   * 
+   *<p><b>Protocol:</b> GET
+   *<br/><b>Response type:</b> Json schema
+   *<br/><b>Authentication:</b> open
+   */
+  public static final String SCHEMA       = "/schema";
+
+
+  /**
    * Authority endpoints are public.
    *
-   * @author ferdinando.villa HTML authority dashboard
+   * @author ferdinando.villa
    */
   public interface AUTHORITY {
 
