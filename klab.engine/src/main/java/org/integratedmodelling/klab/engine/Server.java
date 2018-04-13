@@ -23,38 +23,7 @@ public abstract class Server implements IServerIdentity {
         Klab.INSTANCE.registerAnnotationHandler(Component.class, new AnnotationHandler() {
             @Override
             public void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException {
-
                 Extensions.INSTANCE.registerComponent((Component) annotation, cls);
-                // do nothing but do record the class and its occurrence.
-                // if (KLAB.CMANAGER.getComponent(((Component) annotation).id())
-                // == null)
-                // {
-                // KLAB.CMANAGER.register((Component) annotation, cls);
-                //
-                // /*
-                // * in personal engines, no need to keep reallocating
-                // connections in what
-                // can
-                // * potentially be a slow operation.
-                // */
-                // if (Engine.this instanceof ModelingEngine) {
-                // ModelKbox.get().getDatabase().preallocateConnection();
-                // ObservationKbox.get().getDatabase().preallocateConnection();
-                // }
-                //
-                // KLAB.CMANAGER.link();
-                //
-                // /*
-                // * in personal engines, no need to keep reallocating
-                // connections in what
-                // can
-                // * potentially be a slow operation.
-                // */
-                // if (Engine.this instanceof ModelingEngine) {
-                // ModelKbox.get().getDatabase().deallocateConnection();
-                // ObservationKbox.get().getDatabase().deallocateConnection();
-                // }
-                // }
             }
         });
     }

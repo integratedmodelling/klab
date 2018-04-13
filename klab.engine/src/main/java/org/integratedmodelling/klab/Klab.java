@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
@@ -15,6 +16,10 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
+import org.integratedmodelling.klab.data.rest.resources.AuthorityReference;
+import org.integratedmodelling.klab.data.rest.resources.ComponentReference;
+import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
+import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -23,7 +28,6 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Runtime would be a better name for this, but it makes it awkward to code with as it conflicts
@@ -37,15 +41,20 @@ public enum Klab implements IRuntimeService {
   INSTANCE;
 
   /**
-   * The package containing all REST resource beans. 
+   * The package containing all REST resource beans.
    */
   static final public String REST_RESOURCES_PACKAGE_ID =
       "org.integratedmodelling.klab.data.rest.resources";
 
+  /**
+   * This can be set to a runnable that starts the REST services.
+   */
+  Runnable                   serviceApplication        = null;
   IComponent                 storageProvider           = null;
   IComponent                 runtimeProvider           = null;
-
   File                       workDirectory             = new File(".").getAbsoluteFile();
+  boolean                    networkServicesStarted    = false;
+  boolean                    networkServicesFailed    = false;
 
   /**
    * Handler to process classes with k.LAB annotations. Register using
@@ -68,6 +77,10 @@ public enum Klab implements IRuntimeService {
     setupExtensions();
   }
 
+  public void setNetworkServiceApplication(Runnable runnable) {
+    this.serviceApplication = runnable;
+  }
+
   /**
    * Register a class annotation and its handler for processing when {@link #scanPackage(String)} is
    * called.
@@ -79,6 +92,33 @@ public enum Klab implements IRuntimeService {
       AnnotationHandler handler) {
     annotationHandlers.put(annotationClass, handler);
   }
+
+//  @Override
+//  public boolean requireNetworkServices() {
+//
+//    /*
+//     * TODO very simple logic for one-shot attempt; think about better logic 
+//     */
+//    if (networkServicesFailed) {
+//      return false;
+//    }
+//    if (networkServicesStarted) {
+//      /*
+//       * TODO may want to check that things are still up
+//       */
+//      return true;
+//    }
+//    if (serviceApplication != null) {
+//      try {
+//        serviceApplication.run();
+//        return true;
+//      } catch (Throwable t) {
+//        Logging.INSTANCE.error(t);
+//        networkServicesFailed = true;
+//      }
+//    }
+//    return false;
+//  }
 
   /**
    * Single scanning loop for all registered annotations in a package. Done on the main codebase and
@@ -363,8 +403,28 @@ public enum Klab implements IRuntimeService {
 
   @Override
   public String getResourceSchema() {
-    Map<Class<?>, JsonNode> schema =
-        SchemaExtractor.extractResourceSchema(REST_RESOURCES_PACKAGE_ID);
-    return null;
+    return SchemaExtractor.getSchemata(REST_RESOURCES_PACKAGE_ID);
   }
+
+  /**
+   * The runtime capabilities. 
+   * TODO flesh out.
+   * 
+   * @return the capabilities bean.
+   */
+  public Capabilities getCapabilities() {
+    
+    String name = "whatever";
+    String version = Version.CURRENT;
+    String build = Version.VERSION_BUILD;
+    List<KimServiceCall> services = new ArrayList<>();
+    List<AuthorityReference> authorities = new ArrayList<>();
+    List<ComponentReference> staticComponents = new ArrayList<>();
+    List<ComponentReference> dynamicComponents = new ArrayList<>();
+    long refreshFrequencyMillis = 0;
+    int loadFactor = 0;
+    IdentityReference owner = new IdentityReference("whoever");
+
+    return new Capabilities(name, version, build, services, authorities, staticComponents,
+        dynamicComponents, refreshFrequencyMillis, loadFactor, owner);  }
 }

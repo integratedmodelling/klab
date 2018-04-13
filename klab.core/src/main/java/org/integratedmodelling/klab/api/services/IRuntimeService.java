@@ -45,12 +45,22 @@ public interface IRuntimeService {
   IRuntimeProvider getRuntimeProvider();
 
   /**
-   * Return the JSON source code of a map containing all the JSON level 4 schemata for REST beans 
-   * indexed by Java class name. These should be harvested and built at runtime from the package 
+   * Return the JSON source code of a map containing all the JSON level 4 schemata for REST beans
+   * indexed by Java class name. These should be harvested and built at runtime from the package
    * containing all resource beans. Called by JS code to validate resources before use.
    * 
    * @return the JSON schema source code
    */
   String getResourceSchema();
+
+//  /**
+//   * Call this whenever REST services must be started - i.e. to visualize data through the
+//   * k.Explorer or to let clients connect. The details of how services are implemented are left to
+//   * the implementation. Should be callable multiple times and have no overhead if the services have
+//   * been started before. Spawns services as a new thread.
+//   * 
+//   * @return true if the services are started or were started before.
+//   */
+//  boolean requireNetworkServices();
 
 }

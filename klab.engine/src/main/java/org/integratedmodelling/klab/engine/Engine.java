@@ -181,7 +181,9 @@ public class Engine extends Server implements IEngine {
   }
 
   public static Engine start(IEngineStartupOptions options) {
-    Engine ret = new Engine(new KlabCertificate(options.getCertificateFile()));
+    File certFile = options.getCertificateFile();
+    Engine ret = new Engine(certFile.exists() ? KlabCertificate.createFromFile(certFile)
+        : KlabCertificate.createDefault());
     if (!ret.boot(options)) {
       throw new KlabRuntimeException("engine failed to start");
     }
@@ -219,8 +221,8 @@ public class Engine extends Server implements IEngine {
   }
 
   /**
-   * Perform the engine boot sequence. Can only be called after a valid certificate was read. The
-   * boot sequence consists of:
+   * Perform the engine boot sequence. Can only be called after a valid certificate was read or
+   * anonymous status was granted. The boot sequence consists of:
    * 
    * <ul>
    * <li></li>
@@ -309,7 +311,7 @@ public class Engine extends Server implements IEngine {
       }
 
       /*
-       * hop on the network
+       * TODO hop on the network
        */
 
       /*

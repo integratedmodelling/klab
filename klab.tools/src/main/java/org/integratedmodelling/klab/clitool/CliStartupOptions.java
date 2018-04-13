@@ -19,7 +19,7 @@ public class CliStartupOptions extends EngineStartupOptions {
       return outputFile;
     }
    
-    public List<String> getArguments() {
-      return args;
+    public String[] getArguments() {
+      return args.toArray(new String[args.size()]);
     }
 }

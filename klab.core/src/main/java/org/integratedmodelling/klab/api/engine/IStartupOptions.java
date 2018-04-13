@@ -59,5 +59,12 @@ public interface IStartupOptions {
      * @return a boolean.
      */
     boolean isHelp();
+
+    /**
+     * Return all arguments that weren't parsed as predefined options.
+     * 
+     * @return any remaining arguments to pass to main()
+     */
+    String[] getArguments();
     
 }

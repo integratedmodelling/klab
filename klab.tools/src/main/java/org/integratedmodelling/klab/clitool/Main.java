@@ -17,7 +17,7 @@ public class Main {
       System.exit(0);
     }
 
-    if (options.getArguments().size() == 0) {
+    if (options.getArguments().length== 0) {
       TermConsole console = new TermConsole();
       console.start(options);
     } else {

@@ -307,8 +307,7 @@ public class Component implements IComponent {
 
     @Override
     public Version getVersion() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.version;
     }
 
     @Override

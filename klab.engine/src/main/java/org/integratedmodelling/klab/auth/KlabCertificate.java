@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -49,10 +50,53 @@ public class KlabCertificate implements ICertificate {
    */
   public static final String  PRIMARY_NODE_KEY               = "primary.server";
 
-  private static final String DEFAULT_WORLDVIEW              = "im";
+  static final String DEFAULT_WORLDVIEW              = "im";
 
-  private static final String DEFAULT_WORLDVIEW_REPOSITORIES =
+  static final String DEFAULT_WORLDVIEW_REPOSITORIES =
       "https://bitbucket.org/ariesteam/im.git#feature/noobservers";
+
+  /**
+   * Create a new certificate from a file. Check isValid() on the resulting certificate.
+   * 
+   * @param file the certificate file
+   * @return a certificate read from the passed file
+   */
+  public static ICertificate createFromFile(File file) {
+    if (file == null) {
+      return createDefault();
+    }
+    return new KlabCertificate(file);
+  }
+
+  /**
+   * Create a new certificate from the content of a certfile. Check isValid() on the resulting
+   * certificate.
+   * 
+   * @param cert the string contents of a certificate file
+   * @return a certificate read from the passed file
+   */
+  public static ICertificate createFromCertificateContents(String cert) {
+    return new KlabCertificate(cert);
+  }
+
+  /**
+   * Get the file from its configured locations and open it. If there is no certificate and the
+   * configuration allows anonymous users, return an anonymous certificate. Check {@link #isValid()}
+   * after construction.
+   * 
+   * @return the default certificate
+   */
+  public static ICertificate createDefault() {
+    File certfile = getCertificateFile();
+    if (certfile.exists()) {
+      return new KlabCertificate(certfile);
+    }
+    if (Configuration.INSTANCE.allowAnonymousUsage()) {
+      return new AnonymousCertificate();
+    }
+    throw new KlabIllegalStatusException(
+        "certificate file not found and anonymous usage not allowed");
+  }
 
   /**
    * Get the file for the certificate according to configuration. Does not check that the file
@@ -67,15 +111,7 @@ public class KlabCertificate implements ICertificate {
     return new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
   }
 
-  /**
-   * Get the file from its configured locations and open it. Check {@link #isValid()} after
-   * construction.
-   */
-  public KlabCertificate() {
-    this(getCertificateFile());
-  }
-
-  public KlabCertificate(String s) {
+  private KlabCertificate(String s) {
     try {
       this.file = File.createTempFile("imcert", "cert");
       FileUtils.writeStringToFile(this.file, s);
@@ -90,7 +126,7 @@ public class KlabCertificate implements ICertificate {
    * 
    * @param file
    */
-  public KlabCertificate(File file) {
+  private KlabCertificate(File file) {
     this.file = file;
   }
 
@@ -234,6 +270,7 @@ public class KlabCertificate implements ICertificate {
   @Override
   public IIdentity getIdentity() {
     // TODO Auto-generated method stub
+    // TODO the authority that released the certificate should be set as the partner above the user.
     return null;
   }
 }

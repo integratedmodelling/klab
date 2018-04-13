@@ -211,4 +211,9 @@ public enum Configuration implements IConfigurationService {
     // TODO tie to option + live setting
     return true;
   }
+
+  @Override
+  public boolean allowAnonymousUsage() {
+    return true;
+  }
 }

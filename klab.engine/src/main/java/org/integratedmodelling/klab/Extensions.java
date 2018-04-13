@@ -71,11 +71,7 @@ public enum Extensions implements IExtensionService {
     org.integratedmodelling.klab.engine.extensions.Component ret =
         new org.integratedmodelling.klab.engine.extensions.Component(annotation, cls);
 
-    System.out.println(StringUtils.repeat('-', 80));
-    System.out.println("* COMPONENT " + ret.getName());
-    System.out.println(StringUtils.repeat('-', 80) + "\n");
-    System.out.println("* Services");
-    System.out.println(StringUtils.repeat('-', 80));
+    Logging.INSTANCE.info("Loaded component " + ret.getName() + " version " + ret.getVersion());
 
     /*
      * TODO store knowledge for later processing

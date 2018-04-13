@@ -20,11 +20,11 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  * Servers and engines start by reading a certificate from a file in a standard location.
  * <p>
  * If no certificate file is found, implementations can create a default certificate with anonymous
- * identity, linked to a preferred worldview and enabling basic, local operations. The same
- * certificate may be used for testing.
+ * identity, linked to a preferred worldview and enabling basic, local operations with no access to
+ * the network. The same certificate may be used for testing.
  * <p>
  * When a certificate begins its lifetime, it should be already authenticated and its validity
- * should be {@link #isValid() checked} immediately.
+ * should have been checked with {@link #isValid()} immediately after creation.
  * <p>
  *
  * @author ferdinando villa
