@@ -1,41 +1,17 @@
 /*
  * This file is part of k.LAB.
  * 
- * k.LAB is free software: you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * A copy of the GNU Affero General Public License is distributed in the root
- * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
- * see <http://www.gnu.org/licenses/>.
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
- * in author tags. All rights reserved.
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
  */
 package org.integratedmodelling.klab.data.rest.resources;
-
-/*******************************************************************************
- * Copyright (C) 2007, 2016:
- * 
- * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any other
- * authors listed in @author annotations
- *
- * All rights reserved. This file is part of the k.LAB software suite, meant to enable modular,
- * collaborative, integrated development of interoperable data and model components. For details,
- * see http://integratedmodelling.org.
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the
- * Affero General Public License Version 3 or any later version.
- *
- * This program is distributed in the hope that it will be useful, but without any warranty; without
- * even the implied warranty of merchantability or fitness for a particular purpose. See the Affero
- * General Public License for more details.
- * 
- * You should have received a copy of the Affero General Public License along with this program; if
- * not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA. The license is also available at: https://www.gnu.org/licenses/agpl.html
- *******************************************************************************/
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +21,8 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.data.Metadata;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.reinert.jjschema.SchemaIgnore;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -111,7 +87,7 @@ public class ModelReference {
   private String              dereifyingAttribute;
   private String              observable;
   private String              observationType;
-  private Metadata            metadata;
+  private Map<String, Object> metadata;
   private Mediation           mediation             = Mediation.NONE;
   private long                timeStart             = -1;
   private long                timeEnd               = -1;
@@ -124,8 +100,11 @@ public class ModelReference {
   private int                 maxTimeScaleFactor    = ITime.MAX_SCALE_RANK;
 
   @JsonIgnore
+  @SchemaIgnore
   transient private IConcept  observableConcept;
+
   @JsonIgnore
+  @SchemaIgnore
   transient IShape            shape;
 
   /**
@@ -161,7 +140,7 @@ public class ModelReference {
     ret.dereifyingAttribute = dereifyingAttribute;
     ret.observable = observable;
     ret.observationType = observationType;
-    ret.metadata = metadata == null ? null : metadata.copy();
+    ret.metadata = metadata == null ? null : new HashMap<>(metadata);
     ret.mediation = mediation;
     ret.timeStart = timeStart;
     ret.timeEnd = timeEnd;
@@ -576,7 +555,7 @@ public class ModelReference {
    *
    * @return the metadata
    */
-  public Metadata getMetadata() {
+  public Map<String, Object> getMetadata() {
     return metadata;
   }
 
@@ -585,7 +564,7 @@ public class ModelReference {
    *
    * @param metadata the new metadata
    */
-  public void setMetadata(Metadata metadata) {
+  public void setMetadata(Map<String, Object> metadata) {
     this.metadata = metadata;
   }
 

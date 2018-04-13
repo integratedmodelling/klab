@@ -13,7 +13,7 @@ import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.lang.ObjectUtils;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -274,7 +274,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         INamespace ns = Namespaces.INSTANCE.getNamespace(model.getNamespaceId());
 
         if (ns == null) {
-            Klab.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
+          Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
             return 0;
         }
 

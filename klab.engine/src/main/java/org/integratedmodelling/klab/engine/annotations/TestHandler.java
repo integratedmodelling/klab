@@ -8,7 +8,7 @@ import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
@@ -44,11 +44,11 @@ public class TestHandler implements Annotations.Handler {
       for (int i = 0; i < repetitions; i++) {
 
         try {
-          Klab.INSTANCE
+          Logging.INSTANCE
               .info("----------------------------------------------------------------------");
-          Klab.INSTANCE.info("Running test " + id + " on " + new Date()
+          Logging.INSTANCE.info("Running test " + id + " on " + new Date()
               + (repetitions == 1 ? "" : (" [#" + i + "]")));
-          Klab.INSTANCE
+          Logging.INSTANCE
               .info("----------------------------------------------------------------------");
 
           // safe cast as the annotation is limited to observers
@@ -128,11 +128,11 @@ public class TestHandler implements Annotations.Handler {
         }
       }
 
-      Klab.INSTANCE.info("Finished test " + id + " on " + new Date() + " with "
+      Logging.INSTANCE.info("Finished test " + id + " on " + new Date() + " with "
           + ((monitor.hasErrors() || exceptions.size() > 0) ? "errors" : "no errors"));
 
       for (Throwable t : exceptions) {
-        Klab.INSTANCE.info("   EXCEPTION: " + t.getMessage());
+        Logging.INSTANCE.info("   EXCEPTION: " + t.getMessage());
       }
 
     }

@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.clitool;
 
 import java.io.IOException;
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.IConsole;
@@ -44,7 +44,7 @@ public enum CliRuntime {
       try {
         this.session.close();
       } catch (IOException e) {
-        Klab.INSTANCE.error(e);
+        Logging.INSTANCE.error(e);
       }
       this.engine.stop();
     }

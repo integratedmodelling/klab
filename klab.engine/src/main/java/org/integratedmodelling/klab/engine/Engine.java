@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
@@ -253,7 +254,7 @@ public class Engine extends Server implements IEngine {
       try {
         Annotations.INSTANCE.declareServices(getClass().getClassLoader().getResource(kdl));
       } catch (KlabException e) {
-        Klab.INSTANCE.error(e);
+        Logging.INSTANCE.error(e);
         return false;
       }
     }
@@ -263,7 +264,7 @@ public class Engine extends Server implements IEngine {
      * should be unique among all engines on the same network.
      */
     if (options.getMulticastChannel() != null) {
-      Klab.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
+      Logging.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
           + " communicating on port " + options.getPort());
       this.multicastBus =
           new MulticastMessageBus(this, options.getMulticastChannel(), options.getPort());
@@ -433,7 +434,7 @@ public class Engine extends Server implements IEngine {
     if (resource.toString().endsWith(".kim")) {
 
       // TODO this must create a task and a script in it.
-      Klab.INSTANCE.info("running namespace " + resource);
+      Logging.INSTANCE.info("running namespace " + resource);
       return new Script(this, resource);
     }
 

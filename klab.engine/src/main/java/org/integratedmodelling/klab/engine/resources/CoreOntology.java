@@ -11,6 +11,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -416,7 +417,7 @@ public class CoreOntology extends AbstractWorkspace {
           "core knowledge: can't find known concepts, ontologies are probably corrupted");
     }
 
-    Klab.INSTANCE.info(ret.size() + " ontologies read from classpath");
+    Logging.INSTANCE.info(ret.size() + " ontologies read from classpath");
 
     return ret;
   }

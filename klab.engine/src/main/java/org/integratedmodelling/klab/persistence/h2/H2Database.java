@@ -41,7 +41,7 @@ import org.h2.tools.Recover;
 import org.h2gis.h2spatial.CreateSpatialExtension;
 import org.h2gis.utilities.SFSUtilities;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -212,7 +212,7 @@ public class H2Database {
       try {
         connection.close();
       } catch (SQLException e) {
-        Klab.INSTANCE.warn(e);
+        Logging.INSTANCE.warn(e);
       } finally {
         connection = null;
       }
@@ -221,7 +221,7 @@ public class H2Database {
 
   private void sanityCheck() {
 
-    Klab.INSTANCE.info("sanity check started on kbox " + url);
+    Logging.INSTANCE.info("sanity check started on kbox " + url);
 
     /*
      * TODO 2. Run sanity checks: 1. check that installed schemata are in sync with API 2. compute

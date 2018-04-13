@@ -416,7 +416,7 @@ public abstract class ObservableKbox extends H2Kbox {
     database.execute("DELETE FROM metadata WHERE fid = " + oid);
   }
 
-  protected void storeMetadataFor(long oid, Metadata metadata) {
+  protected void storeMetadataFor(long oid, Map<String, Object> metadata) {
 
     for (String s : metadata.keySet()) {
 

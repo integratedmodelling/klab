@@ -133,7 +133,7 @@ public enum Resources implements IResourceService {
       workspaces.put(coreKnowledge.getName(), coreKnowledge);
       return true;
     } catch (Throwable e) {
-      Klab.INSTANCE.error(e.getLocalizedMessage());
+      Logging.INSTANCE.error(e.getLocalizedMessage());
     }
     return false;
   }
@@ -150,7 +150,7 @@ public enum Resources implements IResourceService {
       workspaces.put(components.getName(), components);
       return true;
     } catch (Throwable e) {
-      Klab.INSTANCE.error(e.getLocalizedMessage());
+      Logging.INSTANCE.error(e.getLocalizedMessage());
     }
     return false;
   }
@@ -166,7 +166,7 @@ public enum Resources implements IResourceService {
 
       return true;
     } catch (Throwable e) {
-      Klab.INSTANCE.error(e.getLocalizedMessage());
+      Logging.INSTANCE.error(e.getLocalizedMessage());
     }
     return false;
   }
@@ -196,7 +196,7 @@ public enum Resources implements IResourceService {
       getLocalWorkspace().load(false, monitor);
       return true;
     } catch (Throwable e) {
-      Klab.INSTANCE.error(e.getLocalizedMessage());
+      Logging.INSTANCE.error(e.getLocalizedMessage());
     }
     return false;
   }

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.integratedmodelling.kim.api.IPrototype;
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
@@ -63,7 +63,7 @@ public class Component implements IComponent {
         } catch (Exception e) {
             // don't break for now, just deactivate, log the error and move
             // on.
-            Klab.INSTANCE.error(e);
+          Logging.INSTANCE.error(e);
             this.active = false;
         }
     }
@@ -109,7 +109,7 @@ public class Component implements IComponent {
             // PaletteManager.get().readPalettes(toolkitPath);
         }
 
-        Klab.INSTANCE.info("initializing component " + name);
+        Logging.INSTANCE.info("initializing component " + name);
 
         Object executor = null;
         try {
@@ -142,7 +142,7 @@ public class Component implements IComponent {
 
         initialized = true;
 
-        Klab.INSTANCE.info("component " + name + " initialized successfully and ready for operation");
+        Logging.INSTANCE.info("component " + name + " initialized successfully and ready for operation");
     }
 
     public void setup() throws KlabException {
@@ -253,7 +253,7 @@ public class Component implements IComponent {
             // active = false;
             // }
 
-            Klab.INSTANCE
+            Logging.INSTANCE
                     .info("component " + name + " loaded  (" + this.services.size() + " services provided)");
         }
     }

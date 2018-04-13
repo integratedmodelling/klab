@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.clitool.console;
 
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 
 public class SysConsole implements IConsole {
@@ -11,17 +11,17 @@ public class SysConsole implements IConsole {
 
   @Override
   public void error(Object e) {
-    Klab.INSTANCE.error(e);
+    Logging.INSTANCE.error(e);
   }
 
   @Override
   public void warning(Object e) {
-    Klab.INSTANCE.warn(e);
+    Logging.INSTANCE.warn(e);
   }
 
   @Override
   public void info(Object e, String infoClass) {
-    Klab.INSTANCE.info(e);
+    Logging.INSTANCE.info(e);
   }
 
   @Override

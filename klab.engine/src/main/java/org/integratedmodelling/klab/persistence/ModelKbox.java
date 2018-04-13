@@ -11,7 +11,7 @@ import java.util.Set;
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -234,11 +234,11 @@ public class ModelKbox extends ObservableKbox {
       if (model != null) {
         ret.add(model);
       } else {
-        Klab.INSTANCE.warn("kbox is out of sync with knowledge base");
+        Logging.INSTANCE.warn("kbox is out of sync with knowledge base");
       }
     }
 
-    Klab.INSTANCE.info("model query for "
+    Logging.INSTANCE.info("model query for "
         + (context.getMode() == Mode.INSTANTIATION ? "instantiation of " : "explanation of ")
         + observable + " found "
         + (ret.size() == 1 ? ret.get(0).getName() : (ret.size() + " models")));
@@ -467,7 +467,7 @@ public class ModelKbox extends ObservableKbox {
 
     if (o instanceof org.integratedmodelling.klab.model.Model) {
 
-      Klab.INSTANCE.info("storing model " + ((IModel) o).getName());
+      Logging.INSTANCE.info("storing model " + ((IModel) o).getName());
 
       for (ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o,
           monitor)) {

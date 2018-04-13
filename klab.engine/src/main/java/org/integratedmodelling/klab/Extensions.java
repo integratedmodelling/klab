@@ -180,7 +180,7 @@ public enum Extensions implements IExtensionService {
           mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
       mapper.writerFor(type).writeValue(file, this.prototypes);
     } catch (IOException e) {
-      Klab.INSTANCE.error(e);
+      Logging.INSTANCE.error(e);
     }
   }
 

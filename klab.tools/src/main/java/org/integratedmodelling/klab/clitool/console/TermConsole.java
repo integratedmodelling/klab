@@ -24,6 +24,7 @@ package org.integratedmodelling.klab.clitool.console;
 import java.util.Iterator;
 import java.util.Map;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -265,7 +266,7 @@ public class TermConsole implements IConsole {
   public void info(Object e, String infoClass) {
 
     if (e == null || terminal == null || terminal.console == null) {
-      Klab.INSTANCE.info(e);
+      Logging.INSTANCE.info(e);
       return;
     }
 
