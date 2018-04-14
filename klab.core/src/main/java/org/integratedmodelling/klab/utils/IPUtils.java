@@ -184,7 +184,6 @@ public class IPUtils {
 
         for (String p : localPatterns) {
             if (checkIPMatching(p, ip)) {
-                System.out.println(ip + "is local");
                 return true;
             }
         }

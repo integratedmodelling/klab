@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('ROLE_ANONYMOUS') OR hasRole('ROLE_USER')")
 public class KlabController {
 
   @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")

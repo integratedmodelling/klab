@@ -28,6 +28,12 @@ public enum Auth implements IAuthenticationService {
      * ID for an anonymous user. Unsurprising.
      */
     public static final String ANONYMOUS_USER_ID    = "anonymous";
+    
+    /**
+     * Id for anonymous user who is connecting from the local host. Will have
+     * admin privileges.
+     */
+    public static final String LOCAL_USER_ID    = "local";
 
     /*
      * Keys for user properties in certificates or for set operations.

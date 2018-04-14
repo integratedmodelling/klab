@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import org.integratedmodelling.klab.API;
-import org.integratedmodelling.klab.Klab;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
-// NOPE - the one below won't work (only for WEB expressions not for method expressions)
-//@PreAuthorize("hasIpAddress('127.0.0.1') OR hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
   @RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)

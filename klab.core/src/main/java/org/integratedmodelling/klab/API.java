@@ -14,7 +14,6 @@
 package org.integratedmodelling.klab;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 
 // TODO: Auto-generated Javadoc

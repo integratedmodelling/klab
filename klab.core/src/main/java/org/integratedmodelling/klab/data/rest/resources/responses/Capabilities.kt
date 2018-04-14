@@ -1,25 +1,20 @@
 package org.integratedmodelling.klab.data.rest.resources.responses
 
-import com.github.reinert.jjschema.Attributes
 import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.klab.data.rest.resources.AuthorityReference
 import org.integratedmodelling.klab.data.rest.resources.ComponentReference
 import org.integratedmodelling.klab.data.rest.resources.IdentityReference
 
 data class Capabilities (
-
-	@Attributes(required = true, description = "Unique name of the node")
-	var name: String,
-	
-	var version: String,
-	var build: String,
-	
-	var services: List<KimServiceCall>,
-	var authorities: List<AuthorityReference>,
-	var staticComponents: List<ComponentReference>,
-	var dynamicComponents: List<ComponentReference>,
-	var refreshFrequencyMillis: Long,
-	var loadFactor: Int,
-	var owner: IdentityReference
+	var name: String? = null,
+	var version: String? = null,
+	var build: String? = null,
+	var services: List<KimServiceCall> = ArrayList(),
+	var authorities: List<AuthorityReference> = ArrayList(),
+	var staticComponents: List<ComponentReference> = ArrayList(),
+	var dynamicComponents: List<ComponentReference> = ArrayList(),
+	var refreshFrequencyMillis: Long = 0,
+	var loadFactor: Int = 0,
+	var owner: IdentityReference? = null
 	// ... distributed computation etc...
 )
