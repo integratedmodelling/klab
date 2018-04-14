@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import org.integratedmodelling.kim.model.KimServiceCall;
+
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
@@ -16,8 +16,6 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
-import org.integratedmodelling.klab.data.rest.resources.AuthorityReference;
-import org.integratedmodelling.klab.data.rest.resources.ComponentReference;
 import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.extensions.Component;

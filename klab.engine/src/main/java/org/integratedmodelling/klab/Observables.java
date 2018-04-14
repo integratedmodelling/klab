@@ -219,7 +219,7 @@ public enum Observables implements IObservableService {
 
 		boolean mustBeSameCoreType = (flags & REQUIRE_SAME_CORE_TYPE) != 0;
 		boolean useRoleParentClosure = (flags & USE_ROLE_PARENT_CLOSURE) != 0;
-		boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
+//		boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
 
 		// TODO unsupported
 		boolean useTraitParentClosure = (flags & USE_TRAIT_PARENT_CLOSURE) != 0;

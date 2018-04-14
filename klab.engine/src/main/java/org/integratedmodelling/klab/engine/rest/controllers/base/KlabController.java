@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The root controller for the {@link API base API}. All endpoints public but
- * responses depend on logged in user.
+ * The root controller for the {@link API base API}. All endpoints are public
+ * but the response depends on the privileges of the logged in user, remapped to
+ * anonymous (or local anonymous) if accessed without authentication.
  * 
  * @author ferdinando.villa
  *
