@@ -25,8 +25,4 @@ public interface IEngineIdentity extends IServerIdentity {
 
     /** Constant <code>type</code> */
     Type type = Type.ENGINE;
-    
-    /** {@inheritDoc} */
-    @Override
-    INetworkSessionIdentity getParentIdentity();
 }
