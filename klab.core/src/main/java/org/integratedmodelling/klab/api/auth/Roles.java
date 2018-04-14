@@ -22,7 +22,7 @@ public interface Roles {
 
 	/**
 	 * The owner of the certificate that the engine reads at startup. Logged in
-	 * users have {@link #ENGINE_USER} but not {@code #OWNER}.
+	 * users have {@link #ENGINE_USER} role but not {@code OWNER} role.
 	 */
 	public static final String OWNER = "ROLE_OWNER";
 

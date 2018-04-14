@@ -16,6 +16,8 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
+
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -71,11 +73,12 @@ public interface IResourceService {
   /**
    * <p>getLocalFileResource.</p>
    *
-   * @param file a {@link java.io.File} object.
+   * @param file a {@link java.io.File} object. May be null (if userData contain all relevant info)
+   * @param userData user data. May be empty (if all that's needed is the file).
    * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
    * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
    */
-  IResource getLocalFileResource(File file, IMonitor monitor);
+  IResource getLocalResource(File file, IParameters userData, String adapterType, IMonitor monitor);
 
   /**
    * The workspace with all local projects. The only workspace that is not read only and is

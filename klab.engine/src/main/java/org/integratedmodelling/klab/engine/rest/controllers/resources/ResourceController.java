@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.engine.rest.controllers.resources;
 
+import org.integratedmodelling.klab.api.auth.Roles;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
+@Secured(Roles.ENGINE_USER)
 public class ResourceController {
 
 }

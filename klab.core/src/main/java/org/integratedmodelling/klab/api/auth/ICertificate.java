@@ -16,15 +16,17 @@ package org.integratedmodelling.klab.api.auth;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 
 /**
- * A certificate defines a 'root' identity: a IPartnerIdentity, INodeIdentity or IUserIdentity.
- * Servers and engines start by reading a certificate from a file in a standard location.
+ * A certificate defines a 'root' identity: a {@link IPartnerIdentity},
+ * {@link INodeIdentity} or {@link IUserIdentity}.
  * <p>
- * If no certificate file is found, implementations can create a default certificate with anonymous
- * identity, linked to a preferred worldview and enabling basic, local operations with no access to
- * the network. The same certificate may be used for testing.
+ * If no certificate file is found, implementations can create a default
+ * certificate with anonymous identity, linked to a preferred worldview and
+ * enabling basic, local operations with no access to the network. The same
+ * certificate may be used for testing.
  * <p>
- * When a certificate begins its lifetime, it should be already authenticated and its validity
- * should have been checked with {@link #isValid()} immediately after creation.
+ * When a certificate begins its lifetime, it should be already authenticated
+ * and its validity should have been checked with {@link #isValid()} immediately
+ * after creation.
  * <p>
  *
  * @author ferdinando villa
@@ -32,26 +34,28 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  */
 public interface ICertificate {
 
-  /**
-   * Create the worldview workspace for this identity and return it (unloaded and not initialized).
-   *
-   * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview} object.
-   */
-  IWorldview getWorldview();
+	/**
+	 * Create the worldview workspace for this identity and return it (unloaded and
+	 * not initialized).
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
+	 *         object.
+	 */
+	IWorldview getWorldview();
 
-  /**
-   * A certificate defines a 'root' identity: a IPartnerIdentity, INodeIdentity or IUserIdentity.
-   * Servers and engines start by reading a certificate.
-   *
-   * @return a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
-   */
-  IIdentity getIdentity();
+	/**
+	 *
+	 * 
+	 * @return a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
+	 */
+	IIdentity getIdentity();
 
-  /**
-   * Validity may depend on expiration date and possibly upstream conditions after authentication,
-   * such as having had a certificate invalidated by an administrator.
-   *
-   * @return a boolean.
-   */
-  boolean isValid();
+	/**
+	 * Validity may depend on expiration date and possibly upstream conditions after
+	 * authentication, such as having had a certificate invalidated by an
+	 * administrator.
+	 *
+	 * @return a boolean.
+	 */
+	boolean isValid();
 }

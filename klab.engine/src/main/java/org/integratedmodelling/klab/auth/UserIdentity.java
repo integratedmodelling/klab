@@ -83,12 +83,6 @@ public abstract class UserIdentity implements IEngineUserIdentity, UserDetails {
   }
 
   @Override
-  public Set<String> getRoles() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public Set<String> getGroups() {
     // TODO Auto-generated method stub
     return null;

@@ -1,47 +1,61 @@
 package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import org.integratedmodelling.klab.API;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.integratedmodelling.klab.api.auth.Roles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ExitCodeGenerator;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The controller implementing the {@link org.integratedmodelling.klab.API.ADMIN administration
- * API}. Secured to the ADMIN role but all endpoints are preauthorized when accessed from the local
- * IP.
+ * The controller implementing the {@link org.integratedmodelling.klab.API.ADMIN
+ * administration API}. Secured to the ADMIN role but all endpoints are
+ * preauthorized when accessed from the local IP.
  * 
  * @author ferdinando.villa
  *
  */
 @RestController
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@Secured(Roles.ADMIN)
 public class AdminController {
 
-  @RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)
-  public int shutdown() {
+	@Autowired
+	ApplicationContext applicationContext;
 
-    int seconds = 2;
+	public void shutDown(ExitCodeGenerator exitCodeGenerator) {
+		SpringApplication.exit(applicationContext, exitCodeGenerator);
+	}
 
-    new Thread() {
+	@RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)
+	public int shutdown() {
 
-      @Override
-      public void run() {
+		int seconds = 2;
+		new Thread() {
 
-        int status = 0;
-        if (seconds > 0) {
-          try {
-            sleep(seconds * 1000);
-          } catch (InterruptedException e) {
-            status = 255;
-          }
-        }
+			int status = 0;
 
-        System.exit(status);
+			@Override
+			public void run() {
 
-      }
-    }.start();
-    
-    return 0;
-  }
+				if (seconds > 0) {
+					try {
+						sleep(seconds * 1000);
+					} catch (InterruptedException e) {
+						status = -1;
+					}
+				}
+				shutDown(new ExitCodeGenerator() {
+					@Override
+					public int getExitCode() {
+						return status;
+					}});
+			}
+		}.start();
+
+		return 0;
+	}
 }
