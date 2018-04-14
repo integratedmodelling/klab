@@ -21,12 +21,18 @@ package org.integratedmodelling.klab.api.auth;
  */
 public interface IEngineUserIdentity extends IUserIdentity {
 
-  /** Constant <code>type</code> */
-  Type type = Type.ENGINE_USER;
+	/** Constant <code>type</code> */
+	Type type = Type.ENGINE_USER;
 
-  /** {@inheritDoc} */
-  @Override
-  IEngineIdentity getParentIdentity();
+	/** {@inheritDoc} */
+	@Override
+	IEngineIdentity getParentIdentity();
 
-
+	/**
+	 * True if this engine user is also the one who owns the engine. Shortcut for
+	 * <code>getParentIdentity(INodeUserIdentity.class).getId().equals(this.getId())</code>.
+	 * 
+	 * @return
+	 */
+	boolean isEngineOwner();
 }

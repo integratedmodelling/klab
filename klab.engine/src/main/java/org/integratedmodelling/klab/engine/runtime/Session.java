@@ -29,7 +29,7 @@ public class Session implements ISession {
   }
 
   @Override
-  public String getToken() {
+  public String getId() {
     return token;
   }
 
@@ -70,7 +70,7 @@ public class Session implements ISession {
 
   public String toString() { 
     // TODO add user
-    return "<session " + getToken() + ">";
+    return "<session " + getId() + ">";
   }
   
 }

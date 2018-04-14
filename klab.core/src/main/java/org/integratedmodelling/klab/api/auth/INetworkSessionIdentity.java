@@ -15,18 +15,29 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import java.util.Collection;
+
 /**
- * The Interface INetworkSessionIdentity.
+ * The Interface INetworkSessionIdentity. Represents the view of the k.LAB
+ * network available to the current identity. If there is no
+ * {@code INetworkIdentity} in the lineage of the current identity, it is not
+ * connected to the k.LAB network.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface INetworkSessionIdentity extends IIdentity {
 
-    /** Constant <code>type</code> */
-    Type type = Type.NETWORK_SESSION;
-    
-    /** {@inheritDoc} */
-    @Override
-    INodeUserIdentity getParentIdentity();
+	/** Constant <code>type</code> */
+	Type type = Type.NETWORK_SESSION;
+
+	/** {@inheritDoc} */
+	@Override
+	INodeUserIdentity getParentIdentity();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Collection<INodeIdentity> getNodes();
 }

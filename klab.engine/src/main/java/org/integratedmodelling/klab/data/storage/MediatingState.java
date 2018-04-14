@@ -116,8 +116,8 @@ public class MediatingState implements IState {
 		return delegate.getConsumer();
 	}
 
-	public String getToken() {
-		return delegate.getToken();
+	public String getId() {
+		return delegate.getId();
 	}
 
 	public IAgent getOwner() {

@@ -31,7 +31,7 @@ public class Observation extends ObservedArtifact implements IObservation {
   private Subject           observer;
 
   public String getUrn() {
-    return "local:observation:" + getParentIdentity(Session.class).getToken() + ":" + getToken();
+    return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
   }
 
   protected Observation(Observable observable, Scale scale, RuntimeContext context) {
@@ -90,7 +90,7 @@ public class Observation extends ObservedArtifact implements IObservation {
   }
 
   @Override
-  public String getToken() {
+  public String getId() {
     return super.getId();
   }
 
@@ -133,7 +133,7 @@ public class Observation extends ObservedArtifact implements IObservation {
   }
 
   public String toString() {
-    return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getToken() + ": "
+    return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": "
         + getObservable() + "}";
   }
 

@@ -59,7 +59,7 @@ public enum Resolver {
       throw new IllegalArgumentException("URN " + urn + " does not specify an observation");
     }
     IMonitor monitor = session.getMonitor();
-    String taskId = "local:task:" + session.getToken() + ":" + object.getId();
+    String taskId = "local:task:" + session.getId() + ":" + object.getId();
     ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
     if (scope.getCoverage().isRelevant()) {
       return Dataflows.INSTANCE.compile(taskId, scope);
@@ -82,7 +82,7 @@ public enum Resolver {
 
     IMonitor monitor = context.getMonitor();
     IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
-    String taskId = "local:task:" + context.getToken() + ":" + ""; // TODO encode resolvable in URN
+    String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
     if (resolvable == null) {
       return Dataflow.empty(monitor);
     }

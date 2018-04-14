@@ -59,7 +59,7 @@ public abstract class UserIdentity implements IEngineUserIdentity, UserDetails {
   }
 
   @Override
-  public String getToken() {
+  public String getId() {
     // TODO Auto-generated method stub
     return null;
   }

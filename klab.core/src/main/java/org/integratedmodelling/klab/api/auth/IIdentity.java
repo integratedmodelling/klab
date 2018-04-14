@@ -124,13 +124,13 @@ public abstract interface IIdentity {
 	Type TYPE = null;
 
 	/**
-	 * Authorization token retrieved upon authentication. Assumed to expire at some
-	 * sensible point in time, if stored it should be validated before use and
-	 * refreshed if necessary.
+	 * Unique ID. When appropriate it corresponds to the authorization token
+	 * retrieved upon authentication. Assumed to expire at some sensible point in
+	 * time, if stored it should be validated before use and refreshed if necessary.
 	 *
 	 * @return a token to use as authentication when dealing with the engine.
 	 */
-	String getToken();
+	String getId();
 
 	/**
 	 * Return the parent identity. Null only in IM_PARTNER identities.

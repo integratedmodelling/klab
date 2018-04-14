@@ -47,7 +47,7 @@ public class Script implements IScript {
   }
 
   @Override
-  public String getToken() {
+  public String getId() {
     return token;
   }
 

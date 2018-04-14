@@ -136,7 +136,7 @@ public class Engine extends Server implements IEngine {
   }
 
   @Override
-  public String getToken() {
+  public String getId() {
     // TODO Auto-generated method stub
     return null;
   }
