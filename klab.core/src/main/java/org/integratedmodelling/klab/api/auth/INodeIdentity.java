@@ -15,18 +15,46 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import java.util.Set;
+
 /**
- * The Interface INodeIdentity.
+ * The "view" of each k.LAB network node that gets to the engine after network
+ * connection. Contains permissions for the connecting engine.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface INodeIdentity extends IServerIdentity {
 
-    /** Constant <code>type</code> */
-    Type type = Type.NODE;
-    
-    /** {@inheritDoc} */
-    @Override
-    IPartnerIdentity getParentIdentity();
+	/**
+	 * Permissions available to the current identity.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static enum Permission {
+		PUBLISH,
+		QUERY
+	}
+
+	/** Constant <code>type</code> */
+	Type type = Type.NODE;
+
+	/** {@inheritDoc} */
+	@Override
+	IPartnerIdentity getParentIdentity();
+	
+	/**
+	 * Nodes should be periodically checked for online status.
+	 * 
+	 * @return true if online at the time of calling (or the most recent check).
+	 */
+	boolean isOnline();
+	
+	/**
+	 * All the permissions available.
+	 * 
+	 * @return
+	 */
+	Set<Permission> getPermissions();
 }
