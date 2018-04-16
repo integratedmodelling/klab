@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.applications;
+package org.integratedmodelling.klab.engines.modeler.base;
 
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;

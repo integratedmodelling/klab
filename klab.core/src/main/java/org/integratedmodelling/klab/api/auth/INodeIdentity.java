@@ -43,7 +43,7 @@ public interface INodeIdentity extends IServerIdentity {
 	/** {@inheritDoc} */
 	@Override
 	IPartnerIdentity getParentIdentity();
-	
+
 	/**
 	 * Nodes should be periodically checked for online status.
 	 * 

@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.Klab.AnnotationHandler;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -36,6 +37,7 @@ import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.engine.runtime.Script;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -125,13 +127,12 @@ public class Engine extends Server implements IEngine {
       ((errorCount > 0 || error) ? System.err : System.out).println(identity
           + ((errorCount > 0 || error) ? " finished with errors" : " finished with no errors"));
     }
-
   }
 
   public Engine(ICertificate certificate) {
     this.certificate = certificate;
     this.owner = Network.INSTANCE.authenticate(certificate);
-    // TODO CREATE DEFAULT ENGINE USER
+    Klab.INSTANCE.setRootIdentity(this.certificate.getIdentity());
   }
 
   @Override
@@ -243,6 +244,8 @@ public class Engine extends Server implements IEngine {
    */
   private boolean boot(IEngineStartupOptions options) {
 
+    runJvmChecks();
+    
     if (options.isHelp()) {
       System.out.println(options.usage());
       System.exit(0);
@@ -328,11 +331,12 @@ public class Engine extends Server implements IEngine {
        * all binary content is now available: scan the classpath for recognized extensions
        */
       scanClasspath();
-
+      
       /*
-       * load component knowledge after their binary content is registered.
+       * load component knowledge after all binary content is registered.
        */
-
+      Resources.INSTANCE.getComponentsWorkspace().load(false, getMonitor());
+      
       /*
        * now we can finally load the workspace
        */
@@ -361,17 +365,39 @@ public class Engine extends Server implements IEngine {
       }
 
       /*
+       * After the engine has successfully booted, it becomes the root identity
+       */
+      Klab.INSTANCE.setRootIdentity(this);
+
+      /*
        * if exit after scripts is requested, exit
        */
       if (options.isExitAfterStartup()) {
         System.exit(0);
       }
+      
 
     } catch (Exception e) {
       ret = false;
     }
 
     return ret;
+  }
+
+  private void runJvmChecks() {
+    // verify we're 64 bit and run on 1.8+; throw an exception if not
+    String bitness = System.getProperty("sun.arch.data.model");
+    String version = System.getProperty("java.version");
+    if (bitness == null || version == null) {
+      // we're on a non-Sun JDK; don't die but show some unhappiness
+      Logging.INSTANCE.warn("Cannot establish Java version and bit model: JRE is non-standard, proceed at your own risk");
+    } else {
+      int bits = Integer.parseInt(bitness);
+      Version vers = Version.create(version);
+      if (bits < 64 || !vers.isGreaterOrEqualTo(Version.create("1.8.0"))) {
+        throw new KlabConfigurationException("JVM is incompatible with k.LAB: must be 64 bit and 1.8 or later");
+      }
+    }
   }
 
   /**

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.auth;
 
 import java.io.File;
 import java.util.Collection;
+import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -32,8 +33,8 @@ public class AnonymousCertificate implements ICertificate {
 
   @Override
   public IIdentity getIdentity() {
-    // TODO Auto-generated method stub
-    return null;
+    // no partner, no node, no nothing
+    return new KlabUserIdentity(Auth.ANONYMOUS_USER_ID, null);
   }
 
   @Override

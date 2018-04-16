@@ -2,20 +2,25 @@ package org.integratedmodelling.klab.auth;
 
 import java.util.Collection;
 import java.util.Set;
-import org.integratedmodelling.klab.api.auth.IEngineIdentity;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public abstract class UserIdentity implements IEngineUserIdentity, UserDetails {
+public abstract class UserIdentity implements IUserIdentity, UserDetails {
 
   private static final long serialVersionUID = -5670348187596399293L;
 
-  String username;
-  
+  protected String username;
+
   public UserIdentity(String username) {
     this.username = username;
+  }
+
+  @Override
+  public boolean isAnonymous() {
+    return username.equals(Auth.ANONYMOUS_USER_ID);
   }
 
   @Override
@@ -65,21 +70,8 @@ public abstract class UserIdentity implements IEngineUserIdentity, UserDetails {
   }
 
   @Override
-  public boolean is(Type type) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
   public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IEngineIdentity getParentIdentity() {
-    // TODO Auto-generated method stub
-    return null;
+    return IIdentity.findParent(this, type);
   }
 
   @Override

@@ -21,13 +21,9 @@ package org.integratedmodelling.klab.api.auth;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface INodeUserIdentity extends IUserIdentity {
+public interface IKlabUserIdentity extends IUserIdentity {
 
     /** Constant <code>type</code> */
     Type type = Type.IM_USER;
     
-    /** {@inheritDoc} */
-    @Override
-    INodeIdentity getParentIdentity();
-
 }

@@ -21,7 +21,7 @@ package org.integratedmodelling.klab.api.auth;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IObservationIdentity extends IRuntimeIdentity {
+public interface IArtifactIdentity extends IRuntimeIdentity {
 
     /** Constant <code>type</code> */
     Type type = Type.OBSERVATION;

@@ -122,7 +122,23 @@
 			<version>1.4.9</version>
 		</dependency>
 
+		<!-- default storage based on ND4J, API only; engine packages provide their 
+			own dependency for physical storage -->
+		<dependency>
+			<groupId>org.nd4j</groupId>
+			<artifactId>nd4j-api</artifactId>
+			<version>${nd4j.version}</version>
+		</dependency>
+		<!-- native ND4J in test scope only: production engines choose their implementation -->
+		<dependency>
+			<groupId>org.nd4j</groupId>
+			<artifactId>nd4j-native-platform</artifactId>
+			<version>${nd4j.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- larray: memory-mapped arrays that support the default storage provider -->
+		<!-- TODO remove when nd4j support is verified -->
 		<dependency>
 			<groupId>org.xerial.larray</groupId>
 			<artifactId>larray_2.12</artifactId>
@@ -250,5 +266,6 @@
 			<artifactId>jgrapht-ext</artifactId>
 			<version>1.1.0</version>
 		</dependency>
+
 	</dependencies>
 </project>

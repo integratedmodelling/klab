@@ -32,7 +32,9 @@ public class ModelTests {
 
   @After
   public void tearDown() throws Exception {
-    engine.stop();
+    if (engine != null) {
+      engine.stop();
+    }
   }
 
   @Test

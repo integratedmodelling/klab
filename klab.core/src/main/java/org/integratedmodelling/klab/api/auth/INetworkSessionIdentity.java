@@ -30,11 +30,7 @@ public interface INetworkSessionIdentity extends IIdentity {
 
 	/** Constant <code>type</code> */
 	Type type = Type.NETWORK_SESSION;
-
-	/** {@inheritDoc} */
-	@Override
-	INodeUserIdentity getParentIdentity();
-
+	
 	/**
 	 * 
 	 * @return all known nodes

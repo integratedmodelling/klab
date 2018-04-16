@@ -31,27 +31,27 @@ import org.joda.time.format.DateTimeFormat;
  */
 public class KlabCertificate implements ICertificate {
 
-  private File                file                           = null;
-  private Properties          properties                     = null;
-  private String              cause                          = null;
-  private Set<String>         groups                         = null;
-  private DateTime            expiry;
-  private String              worldview                      = DEFAULT_WORLDVIEW;
-  private Collection<String>  worldview_repositories         =
+  private File               file                           = null;
+  private Properties         properties                     = null;
+  private String             cause                          = null;
+  private Set<String>        groups                         = null;
+  private DateTime           expiry;
+  private String             worldview                      = DEFAULT_WORLDVIEW;
+  private Collection<String> worldview_repositories         =
       StringUtils.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
 
   /**
    * Property key for username
    */
-  public static final String  USER_KEY                       = "user";
+  public static final String USER_KEY                       = "user";
   /**
    * Property key for primary node.
    */
-  public static final String  PRIMARY_NODE_KEY               = "primary.server";
+  public static final String PRIMARY_NODE_KEY               = "primary.server";
 
-  static final String DEFAULT_WORLDVIEW              = "im";
+  static final String        DEFAULT_WORLDVIEW              = "im";
 
-  static final String DEFAULT_WORLDVIEW_REPOSITORIES =
+  static final String        DEFAULT_WORLDVIEW_REPOSITORIES =
       "https://bitbucket.org/ariesteam/im.git#feature/noobservers";
 
   /**
@@ -86,7 +86,7 @@ public class KlabCertificate implements ICertificate {
    * @return the default certificate
    */
   public static ICertificate createDefault() {
-    
+
     File certfile = getCertificateFile();
     if (certfile.exists()) {
       return new KlabCertificate(certfile);
@@ -139,6 +139,7 @@ public class KlabCertificate implements ICertificate {
    * @return true if everything is OK.
    */
   public boolean isValid() {
+
     if (cause != null) {
       return false;
     }
@@ -146,10 +147,12 @@ public class KlabCertificate implements ICertificate {
       cause = "certificate file cannot be read";
       return false;
     }
+
     if (properties == null) {
       try {
 
-        properties = LicenseManager.readCertificate(file, new URL(Auth.PUBRING_URL));
+        properties = LicenseManager.readCertificate(file,
+            this.getClass().getClassLoader().getResource(Auth.PUBRING_RESOURCE));
 
         /*
          * check expiration
@@ -269,8 +272,9 @@ public class KlabCertificate implements ICertificate {
 
   @Override
   public IIdentity getIdentity() {
-    // TODO Auto-generated method stub
-    // TODO the authority that released the certificate should be set as the partner above the user.
-    return null;
+    PartnerIdentity partner = null; // TODO
+    NodeIdentity node = new NodeIdentity(null, partner); // TODO
+    UserIdentity ret = new KlabUserIdentity(properties.getProperty(Auth.USER), node);
+    return ret;
   }
 }

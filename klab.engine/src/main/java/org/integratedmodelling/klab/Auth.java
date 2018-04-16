@@ -62,7 +62,7 @@ public enum Auth implements IAuthenticationService {
     public static final String GROUP_IM             = "IM";
 
     // URL of pubring resource in classpath
-    public static final String PUBRING_URL          = "classpath:ssh/pubring.gpg";
+    public static final String PUBRING_RESOURCE          = "ssh/pubring.gpg";
 
     public String getKey() {
         // TODO Auto-generated method stub

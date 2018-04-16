@@ -39,13 +39,17 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * Identities at certain levels (currently node, user, network session, engine, engine user and
  * session) implement the security principals for the REST API.
  * <p>
- * Identities are arranged as follows:
+ * Identities are arranged as follows. The chain of inheritance will depend on authentication:
+ * anonymous IKlabUser users won't have a partner or node, offline users will have a partner but not
+ * a node, engines that did not authenticate to the network won't have a network session, etc. All
+ * these conditions can be checked by calling {@link #getParentIdentity(Class)} for the desired
+ * interface on the current identity and checking the result for null.
  *
  * <pre>
  * 	IIdentity (abstract)
  * 		IPartner [top-level: each node is owned by a partner]
  * 			INode [physically a server on the k.LAB network; access point for IUser]
- * 				IUser (authenticated by INode, directly or indirectly)
+ * 				IKlabUser (authenticated by INode, directly or indirectly)
  * 					INetworkSession
  *              		IEngine (has a IUser (automatically promoted to IEngineUser) but can authenticate others as IEngineUser)
  *              			IEngineUser

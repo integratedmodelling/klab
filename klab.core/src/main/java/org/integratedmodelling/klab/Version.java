@@ -236,7 +236,7 @@ public class Version implements Comparable<Version>, Serializable {
         if ((major == other.major) && (minor > other.minor)) {
             return true;
         }
-        if ((major == other.major) && (minor == other.minor) && (build > other.build)) {
+        if ((major == other.major) && (minor == other.minor) && (build >= other.build)) {
             return true;
         }
         if ((major == other.major) && (minor == other.minor) && (build == other.build)

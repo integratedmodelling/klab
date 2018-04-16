@@ -14,11 +14,13 @@
 		<module>klab.engine</module>
 		<module>klab.tools</module>
 		<module>adapters</module>
+		<module>engines</module>
 	</modules>
 
 	<properties>
 
 		<klab.version>0.10.0-SNAPSHOT</klab.version>
+		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -31,6 +33,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
+		<nd4j.version>1.0.0-alpha</nd4j.version>
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.12.0</xtextVersion>
 		<kotlin.version>1.2.31</kotlin.version>
