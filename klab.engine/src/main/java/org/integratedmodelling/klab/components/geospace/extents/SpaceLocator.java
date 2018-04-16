@@ -29,7 +29,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
  * Simple serializable object to use in requests for partial states. Can specify a given
@@ -60,7 +60,7 @@ public class SpaceLocator /* extends AbstractLocator */ {
 
     public SpaceLocator(String s) {
         if (!s.startsWith("S")) {
-            throw new KlabRuntimeException("error parsing space locator: " + s);
+            throw new KlabValidationException("error parsing space locator: " + s);
         }
         String[] ss = s.substring(2).split(",");
         if (s.charAt(1) == 'l') {

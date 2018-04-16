@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
 /**
@@ -85,7 +85,7 @@ public class CommandHistory extends ImmutableList<String> {
                 commands.add(h);
             }
         } catch (IOException e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabIOException(e);
         }
     }
 
@@ -93,7 +93,7 @@ public class CommandHistory extends ImmutableList<String> {
         try {
             FileUtils.writeLines(historyFile, history);
         } catch (IOException e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabIOException(e);
         }
     }
 

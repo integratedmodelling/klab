@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
@@ -29,8 +28,8 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
-import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 /**
  * The <code>IResourceService</code> service handles all semantic and non-semantic assets.
@@ -64,11 +63,11 @@ public interface IResourceService {
    *
    * @param urn the
    * @return a resource
-   * @throws org.integratedmodelling.klab.exceptions.KlabUnknownUrnException
-   * @throws org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException
+   * @throws org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException
+   * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
    */
   IResource resolveResource(String urn)
-      throws KlabUnknownUrnException, KlabUnauthorizedUrnException;
+      throws KlabResourceNotFoundException, KlabAuthorizationException;
 
   /**
    * <p>getLocalFileResource.</p>

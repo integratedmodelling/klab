@@ -26,7 +26,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,7 +55,7 @@ public class GitUtils {
                 try {
                     FileUtils.deleteDirectory(pdir);
                 } catch (Throwable e) {
-                    throw new KlabRuntimeException(e);
+                    throw new KlabIOException(e);
                 }
             } else {
                 throw new KlabIOException("git clone: directory " + pdir + " already exists");
@@ -86,7 +85,7 @@ public class GitUtils {
             }
 
         } catch (Throwable e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabIOException(e);
         }
 
         return dirname;

@@ -37,7 +37,7 @@ public interface INetworkSessionIdentity extends IIdentity {
 
 	/**
 	 * 
-	 * @return
+	 * @return all known nodes
 	 */
 	Collection<INodeIdentity> getNodes();
 }

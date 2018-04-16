@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.components.runtime.observations.DirectObserv
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
@@ -115,7 +114,7 @@ public class DataflowBuilder {
        */
       if (observableCatalog.containsKey(actuator.getName())) {
         for (IComputableResource mediator : Observables.INSTANCE
-            .computeMediators(observableCatalog.get(actuator.getName()), (Observable)root)) {
+            .computeMediators(observableCatalog.get(actuator.getName()), (Observable) root)) {
           actuator.addComputation(mediator);
         }
       }
@@ -390,11 +389,7 @@ public class DataflowBuilder {
     Node ret = new Node(resolvable);
 
     if (scale == null && resolvable instanceof Observer) {
-      try {
-        scale = (Scale.create(((Observer) resolvable).getBehavior().getExtents(monitor)));
-      } catch (KlabException e) {
-        throw new KlabRuntimeException(e);
-      }
+      scale = (Scale.create(((Observer) resolvable).getBehavior().getExtents(monitor)));
       ret.definesScale = true;
     }
 

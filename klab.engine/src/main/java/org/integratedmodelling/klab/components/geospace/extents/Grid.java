@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
 /**
@@ -890,7 +890,7 @@ public class Grid extends Area implements IGrid {
             envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(), true));
       } catch (Exception e) {
         // shouldn't happen
-        throw new KlabRuntimeException(e);
+        throw new KlabValidationException(e);
       }
       this.projection = Projection.getDefault();
 

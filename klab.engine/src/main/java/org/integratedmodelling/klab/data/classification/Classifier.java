@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class Classifier implements IClassifier {
 
@@ -67,7 +67,7 @@ public class Classifier implements IClassifier {
     } else if (o == null) {
       nullMatch = true;
     } else {
-      throw new KlabRuntimeException(
+      throw new KlabValidationException(
           "cannot create classifier to match unsupported object type: " + o);
     }
   }
@@ -143,7 +143,7 @@ public class Classifier implements IClassifier {
             : (Boolean) expressionMatch.eval(parms, /* TODO pass a context */ Expression.emptyContext(monitor));
 
       } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabValidationException(e);
       }
     } else if (conceptMatches != null) {
 

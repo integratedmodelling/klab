@@ -40,7 +40,6 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.owl.OntologyUtilities.RestrictionVisitor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -400,7 +399,7 @@ public class Concept extends Knowledge implements IConcept {
   public synchronized IConcept getParent() {
     Collection<IConcept> pp = getParents();
     if (pp.size() > 1) {
-      throw new KlabRuntimeException(
+      throw new IllegalArgumentException(
           "Concept " + this + " has more than one parent: cannot call getParent() on it.");
     }
     return pp.iterator().next();

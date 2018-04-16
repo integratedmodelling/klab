@@ -25,7 +25,9 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.engine.IEngine;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.jgroups.Address;
 import org.jgroups.Channel;
@@ -344,7 +346,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
             try {
                 channel.close();
             } catch (Exception e) {
-                throw new KlabRuntimeException(e);
+                throw new KlabIOException(e);
             }
         }
         running = false;
@@ -362,7 +364,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         try {
             message = object instanceof String ? (String) object : objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabIOException(e);
         }
 
         if (channel != null) {
@@ -401,7 +403,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         try {
             return objectMapper.writeValueAsString(bean);
         } catch (JsonProcessingException e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabValidationException(e);
         }
     }
 
@@ -419,7 +421,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
         try {
             return (T) objectMapper.readValue(beanJSON, cls);
         } catch (Exception e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabValidationException(e);
         }
     }
 
@@ -518,7 +520,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
                         try {
                             payload = objectMapper.readValue(msg.substring(channel.length()), cls.typeClass);
                         } catch (Exception e) {
-                            throw new KlabRuntimeException(e);
+                            throw new KlabValidationException(e);
                         }
                         if (payload != null) {
                             cls.onMessage(payload);
@@ -534,7 +536,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
                     try {
                         payload = objectMapper.readValue(msg, cls.typeClass);
                     } catch (Exception e) {
-                        throw new KlabRuntimeException(e);
+                        throw new KlabValidationException(e);
                     }
                     if (payload != null) {
                         cls.onMessage(payload);
@@ -592,7 +594,7 @@ public class MulticastMessageBus extends ReceiverAdapter implements ChannelListe
             channel.connect(identity);
             
         } catch (Exception e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabInternalErrorException(e);
         }
 
         this.running = true;

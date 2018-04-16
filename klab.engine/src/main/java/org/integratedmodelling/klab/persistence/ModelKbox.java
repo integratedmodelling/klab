@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.data.rest.resources.ModelReference.Mediation;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -408,7 +408,7 @@ public class ModelKbox extends ObservableKbox {
             ret.setShape(Shape.create(geometry, Projection.getLatLon())); // +
           }
         } catch (SQLException e) {
-          throw new KlabRuntimeException(e);
+          throw new KlabStorageException(e);
         }
       }
 

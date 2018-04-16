@@ -70,7 +70,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.visualization.Viewport;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -133,7 +133,7 @@ public class SpatialDisplay {
               + ":srid=" + (shape.getSRID() == 0 ? 4326 : shape.getSRID()) + ",number:Integer");
           featureBuilder = new SimpleFeatureBuilder(fType);
         } catch (SchemaException e) {
-          throw new KlabRuntimeException(e);
+          throw new KlabValidationException(e);
         }
       }
 
@@ -152,7 +152,7 @@ public class SpatialDisplay {
                   + shape.getProjection().getSRID() + ",number:Integer");
           featureBuilder = new SimpleFeatureBuilder(fType);
         } catch (SchemaException e) {
-          throw new KlabRuntimeException(e);
+          throw new KlabValidationException(e);
         }
       }
 

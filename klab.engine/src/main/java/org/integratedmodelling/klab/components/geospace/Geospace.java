@@ -19,7 +19,6 @@ public class Geospace {
     System.setProperty("org.geotools.referencing.forceXY", "true");
   }
 
-
   public Geospace() {
     // TODO Auto-generated constructor stub
   }
@@ -28,6 +27,7 @@ public class Geospace {
   public void initialize() {
     // TODO create the desired geometry factory
     // TODO set up defaults for projections etc.
+    System.out.println("DIOCAN BEIBE");
   }
 
   // void registerAdditionalCRS() throws KlabException {

@@ -73,7 +73,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1601,7 +1601,7 @@ public class MiscUtilities {
 			try {
 				ret = new URI(ut);
 			} catch (URISyntaxException e) {
-				throw new KlabRuntimeException(e);
+				throw new KlabValidationException(e);
 			}
 		}
 
@@ -1885,7 +1885,7 @@ public class MiscUtilities {
 			return Integer.parseInt(n);
 		}
 
-		throw new KlabRuntimeException("cannot find an array index in " + s);
+		throw new KlabValidationException("cannot find an array index in " + s);
 	}
 
     /**

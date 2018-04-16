@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
@@ -39,11 +40,11 @@ public class EngineStartupOptions implements IEngineStartupOptions {
 
     @Option(name = "-exit", usage = "exit after completing startup and running any scripts from command line")
     boolean exit;
-
     
+    @Option(name = "-components", usage = "paths to any custom component")
+    List<File> components = new ArrayList<>();
+
     private List<String> arguments = new ArrayList<>();
-
-    
     
     /**
      * All defaults
@@ -126,6 +127,11 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Override
     public boolean isExitAfterStartup() {
         return exit;
+    }
+
+    @Override
+    public Collection<File> getComponentPaths() {
+      return components;
     }
 
 }

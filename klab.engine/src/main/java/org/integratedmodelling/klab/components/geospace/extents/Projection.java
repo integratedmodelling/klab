@@ -4,7 +4,7 @@ import org.geotools.referencing.CRS;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.components.geospace.utils.UTM;
 import org.integratedmodelling.klab.components.geospace.utils.WGS84;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -82,7 +82,7 @@ public class Projection implements IProjection {
     try {
       this.crs = CRS.decode(this.code, true);
     } catch (FactoryException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabValidationException(e);
     }
   }
 
@@ -130,7 +130,7 @@ public class Projection implements IProjection {
       String code = CRS.lookupIdentifier(coordinateReferenceSystem, true);
       return new Projection(code, coordinateReferenceSystem);
     } catch (FactoryException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabValidationException(e);
     }
   }
 

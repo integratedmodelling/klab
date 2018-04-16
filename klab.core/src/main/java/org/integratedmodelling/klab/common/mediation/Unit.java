@@ -19,7 +19,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.unit.UnitFormat;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -56,7 +56,7 @@ public class Unit implements IUnit {
     try {
       unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
     } catch (Exception e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabValidationException(e);
     }
     if (factor != 1.0) {
       unit = unit.times(factor);
@@ -133,7 +133,7 @@ public class Unit implements IUnit {
   public Number convert(Number value, IValueMediator unit) {
 
     if (!(unit instanceof Unit)) {
-      throw new KlabRuntimeException("illegal conversion " + this + " to " + unit);
+      throw new IllegalArgumentException("illegal conversion " + this + " to " + unit);
     }
 
     UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);

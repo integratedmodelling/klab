@@ -45,8 +45,8 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Schema;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Serializer;
 import org.integratedmodelling.klab.utils.Pair;
@@ -103,7 +103,7 @@ public class H2Database {
           // connection.close();
         }
       } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabStorageException(e);
       }
     }
 
@@ -136,7 +136,7 @@ public class H2Database {
        */
       // this.url = "jdbc:h2:mem:" + kboxName /* + ";AUTO_SERVER=TRUE" */;
     } catch (MalformedURLException e1) {
-      throw new KlabRuntimeException(e1);
+      throw new KlabValidationException(e1);
     }
     // this.url = "jdbc:h2:file:" + directory.toString().replaceAll("\\\\", "/") + "/"
     // + kboxName
@@ -158,7 +158,7 @@ public class H2Database {
     try {
       pooledConnection = dds.getPooledConnection();
     } catch (SQLException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabStorageException(e);
     }
 
     if (isNew) {
@@ -169,7 +169,7 @@ public class H2Database {
         execute(
             "CREATE TABLE knowledge_structure (knowledge VARCHAR(256) PRIMARY KEY, structure VARCHAR(4096))");
       } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabStorageException(e);
       }
     } else {
       try {
@@ -178,7 +178,7 @@ public class H2Database {
          * TODO fill derivedConcept cache
          */
       } catch (KlabException e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabStorageException(e);
       }
     }
     datastores.put(kboxName, this);
@@ -242,7 +242,7 @@ public class H2Database {
     try {
       execute("UPDATE hids SET id = " + (ret + 1));
     } catch (KlabException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabStorageException(e);
     }
     return ret;
   }
@@ -262,7 +262,7 @@ public class H2Database {
           try {
             tables.add(rs.getString(1));
           } catch (SQLException e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabStorageException(e);
           }
         }
 
@@ -319,7 +319,7 @@ public class H2Database {
           // connection.close();
         }
       } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabStorageException(e);
       }
     }
   }
@@ -360,7 +360,7 @@ public class H2Database {
           // connection.close();
         }
       } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabStorageException(e);
       }
     }
   }

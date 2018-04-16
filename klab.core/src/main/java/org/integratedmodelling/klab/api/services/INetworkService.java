@@ -21,7 +21,7 @@ public interface INetworkService {
 	 * partner).
 	 * 
 	 * @param certificate
-	 * @return
+	 * @return user identity
 	 */
 	IUserIdentity authenticate(ICertificate certificate);
 

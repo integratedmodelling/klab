@@ -22,7 +22,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.URL;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -147,7 +147,7 @@ public class NetUtilities {
             ret = sb.toString();
 
         } catch (Exception e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabIOException(e);
         }
 
         return ret;

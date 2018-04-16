@@ -44,7 +44,8 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.semanticweb.owlapi.io.OWLXMLOntologyFormat;
@@ -723,10 +724,10 @@ public class Ontology implements IOntology {
       ret = ((Property) cc)._owl;
 
       if (isData && ret instanceof OWLObjectProperty) {
-        throw new KlabRuntimeException(cc + " is an object property: data expected");
+        throw new KlabValidationException(cc + " is an object property: data expected");
       }
       if (!isData && ret instanceof OWLDataProperty) {
-        throw new KlabRuntimeException(cc + " is a data property: object expected");
+        throw new KlabValidationException(cc + " is a data property: object expected");
       }
 
     } else {
@@ -872,7 +873,7 @@ public class Ontology implements IOntology {
       this.ontology.getOWLOntologyManager()
           .loadOntology(IRI.create(this.ontology.getOntologyID().getOntologyIRI().toString()));
     } catch (OWLOntologyCreationException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabInternalErrorException(e);
     }
 
   }

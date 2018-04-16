@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Property;
@@ -77,7 +77,7 @@ public enum Concepts implements IConceptService {
 
     Concept ret = OWL.INSTANCE.getConcept(conceptId);
     if (ret == null) {
-      throw new KlabRuntimeException("cannot find concept " + conceptId);
+      throw new KlabResourceNotFoundException("cannot find concept " + conceptId);
     }
     return ret;
 
@@ -98,7 +98,7 @@ public enum Concepts implements IConceptService {
 
     Property ret = OWL.INSTANCE.getProperty(propertyId);
     if (ret == null) {
-      throw new KlabRuntimeException("cannot find property " + propertyId);
+      throw new KlabResourceNotFoundException("cannot find property " + propertyId);
     }
     return ret;
 

@@ -27,7 +27,6 @@ import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class ObservableBuilder implements Builder {
@@ -173,7 +172,7 @@ public class ObservableBuilder implements Builder {
         if (participants != null) {
             this.comparison = participants[0];
             if (participants.length > 1) {
-                throw new KlabRuntimeException("cannot handle more than one participant concept in semantic operator");
+                throw new KlabValidationException("cannot handle more than one participant concept in semantic operator");
             }
         }
 
@@ -382,7 +381,7 @@ public class ObservableBuilder implements Builder {
     public static Concept makeDistance(IConcept concept, boolean addDefinition) {
 
         if (!concept.is(Type.COUNTABLE)) {
-            throw new KlabRuntimeException("cannot compute the distance to a non-countable observable");
+            throw new KlabValidationException("cannot compute the distance to a non-countable observable");
         }
 
         String cName = "DistanceTo" + getCleanId(concept);
@@ -424,7 +423,7 @@ public class ObservableBuilder implements Builder {
 
         if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
                 || concept.is(Type.ROLE)) {
-            throw new KlabRuntimeException("presence can be observed only for subjects, events, processes and relationships");
+            throw new KlabValidationException("presence can be observed only for subjects, events, processes and relationships");
         }
 
         String cName = getCleanId(concept) + "Presence";
@@ -471,7 +470,7 @@ public class ObservableBuilder implements Builder {
     public static Concept makeOccurrence(IConcept concept, boolean addDefinition) {
 
         if (!concept.is(Type.DIRECT_OBSERVABLE)) {
-            throw new KlabRuntimeException("occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
+            throw new KlabValidationException("occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
         }
 
         String cName = getCleanId(concept) + "Occurrence";
@@ -518,7 +517,7 @@ public class ObservableBuilder implements Builder {
     public static Concept makeObservability(IConcept concept, boolean addDefinition) {
 
         if (!concept.is(Type.OBSERVABLE)) {
-            throw new KlabRuntimeException("observabilities can only be defined for observables");
+            throw new KlabValidationException("observabilities can only be defined for observables");
         }
 
         String cName = getCleanId(concept) + "Observability";
@@ -559,7 +558,7 @@ public class ObservableBuilder implements Builder {
     public static Concept makeProbability(IConcept concept, boolean addDefinition) {
 
         if (!concept.is(Type.EVENT)) {
-            throw new KlabRuntimeException("probabilities can only be observed only for events");
+            throw new KlabValidationException("probabilities can only be observed only for events");
         }
 
         String cName = getCleanId(concept) + "Probability";
@@ -636,7 +635,7 @@ public class ObservableBuilder implements Builder {
 
         if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT))
                 && (comparison != null && !comparison.is(Type.QUALITY))) {
-            throw new KlabRuntimeException("proportion must be of qualities or traits to qualities");
+            throw new KlabValidationException("proportion must be of qualities or traits to qualities");
         }
 
         String cName = getCleanId(concept) + "ProportionIn"
@@ -677,7 +676,7 @@ public class ObservableBuilder implements Builder {
          * accept only two qualities of the same physical nature (TODO)
          */
         if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT)) || !comparison.is(Type.QUALITY)) {
-            throw new KlabRuntimeException("ratios must be between qualities of the same nature or traits to qualities");
+            throw new KlabValidationException("ratios must be between qualities of the same nature or traits to qualities");
         }
 
         String cName = getCleanId(concept) + "To" + getCleanId(comparison)
@@ -762,7 +761,7 @@ public class ObservableBuilder implements Builder {
     public static Concept makeType(IConcept trait, boolean addDefinition) {
 
         if (!trait.is(Type.TRAIT)) {
-            throw new KlabRuntimeException("types can only be declared for traits");
+            throw new KlabValidationException("types can only be declared for traits");
         }
 
         String traitID = getCleanId(trait) + "Type";

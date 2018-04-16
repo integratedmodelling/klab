@@ -20,7 +20,6 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.joda.time.DateTime;
 
 // TODO: Auto-generated Javadoc
@@ -124,7 +123,7 @@ public class Currency implements ICurrency {
     @Override
     public Number convert(Number d, IValueMediator scale) {
         if (!(scale instanceof ICurrency)) {
-            throw new KlabRuntimeException("invalid conversion: " + scale + " to " + this);
+            throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
         }
         if (((Currency)scale).scale != null && scale != null) {
             return this.scale.convert(d, ((Currency)scale).scale);

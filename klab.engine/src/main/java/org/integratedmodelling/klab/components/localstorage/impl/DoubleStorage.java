@@ -4,7 +4,7 @@ import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.utils.Utils;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import xerial.larray.LFloatArray;
 import xerial.larray.japi.LArrayJ;
 
@@ -34,7 +34,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
     long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
-      throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
+      throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
     float ret = data.apply(offset);
     return Float.isNaN(ret) ? null : (double)ret;
@@ -45,7 +45,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
     long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
-      throw new KlabRuntimeException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
+      throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
     data.update(offset, value instanceof Number ? ((Number) value).floatValue() : convert(value));
     return offset;

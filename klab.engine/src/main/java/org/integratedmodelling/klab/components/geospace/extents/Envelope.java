@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -92,7 +92,7 @@ public class Envelope implements IEnvelope {
     try {
       ret.envelope = this.envelope.transform(((Projection)projection).crs, true);
     } catch (TransformException | FactoryException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabValidationException(e);
     }
     ret.projection = projection;
     return ret;

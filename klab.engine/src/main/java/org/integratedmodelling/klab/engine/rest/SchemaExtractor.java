@@ -6,12 +6,11 @@ import java.util.List;
 import java.util.Map;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.reinert.jjschema.v1.JsonSchemaFactory;
 import com.github.reinert.jjschema.v1.JsonSchemaV4Factory;
 import com.google.common.reflect.ClassPath;
@@ -64,7 +63,7 @@ public class SchemaExtractor {
     try {
       System.out.println(mapper.writeValueAsString(schema));
     } catch (JsonProcessingException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabValidationException(e);
     }
   }
 

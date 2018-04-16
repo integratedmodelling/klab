@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,7 +76,7 @@ public class FileCatalog<T> extends HashMap<String, T> {
     try (InputStream input = url.openStream()) {
       this.error = !synchronize(input);
     } catch (Throwable e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabIOException(e);
     }
   }
 
@@ -94,7 +94,7 @@ public class FileCatalog<T> extends HashMap<String, T> {
     try (InputStream input = new FileInputStream(file)) {
       this.error = !synchronize(input);
     } catch (Throwable e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabIOException(e);
     }
   }
 

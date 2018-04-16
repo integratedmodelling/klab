@@ -47,7 +47,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
@@ -108,7 +108,7 @@ public enum OWL {
             ontologies.put(id, ret);
             iri2ns.put(((Ontology) ret).getPrefix(), id);
         } catch (OWLOntologyCreationException e) {
-            throw new KlabRuntimeException(e);
+            throw new KlabInternalErrorException(e);
         }
 
         return ret;
@@ -137,7 +137,7 @@ public enum OWL {
         }
 
         if (ret == null && complainIfNotFound) {
-            throw new KlabRuntimeException("internal: OWL entity " + owl
+            throw new KlabInternalErrorException("internal: OWL entity " + owl
                     + " not corresponding to a known ontology");
         }
 
@@ -156,7 +156,7 @@ public enum OWL {
         }
 
         if (ret == null) {
-            throw new KlabRuntimeException("internal: OWL IRI " + iri
+            throw new KlabInternalErrorException("internal: OWL IRI " + iri
                     + " not corresponding to a known ontology");
         }
 
@@ -186,7 +186,7 @@ public enum OWL {
         }
 
         if (ret == null) {
-            throw new KlabRuntimeException("internal: OWL entity " + owl
+            throw new KlabInternalErrorException("internal: OWL entity " + owl
                     + " does not correspond to a known ontology");
         }
 
@@ -205,7 +205,7 @@ public enum OWL {
         }
 
         if (ret == null) {
-            throw new KlabRuntimeException("internal: OWL IRI " + iri
+            throw new KlabInternalErrorException("internal: OWL IRI " + iri
                     + " not corresponding to a known ontology");
         }
 
@@ -677,7 +677,7 @@ public enum OWL {
         }
 
         if (!(how.equals(LogicalConnector.INTERSECTION) || how.equals(LogicalConnector.UNION))) {
-            throw new KlabRuntimeException("connectors can only be union or intersection");
+            throw new IllegalArgumentException("connectors can only be union or intersection");
         }
 
         Set<OWLClassExpression> classes = new HashSet<>();
@@ -701,7 +701,7 @@ public enum OWL {
         }
 
         if (!(how.equals(LogicalConnector.INTERSECTION) || how.equals(LogicalConnector.UNION))) {
-            throw new KlabRuntimeException("connectors can only be union or intersection");
+            throw new IllegalArgumentException("connectors can only be union or intersection");
         }
 
         Set<OWLClassExpression> classes = new HashSet<>();
@@ -730,7 +730,7 @@ public enum OWL {
         }
 
         if (!(how.equals(LogicalConnector.INTERSECTION) || how.equals(LogicalConnector.UNION))) {
-            throw new KlabRuntimeException("connectors can only be union or intersection");
+            throw new IllegalArgumentException("connectors can only be union or intersection");
         }
 
         Set<OWLClassExpression> classes = new HashSet<>();
@@ -758,7 +758,7 @@ public enum OWL {
             return;
         }
         if (!(how.equals(LogicalConnector.INTERSECTION) || how.equals(LogicalConnector.UNION))) {
-            throw new KlabRuntimeException("connectors can only be union or intersection");
+            throw new IllegalArgumentException("connectors can only be union or intersection");
         }
         Set<OWLClassExpression> classes = new HashSet<>();
         for (IConcept c : fillers) {
@@ -785,7 +785,7 @@ public enum OWL {
             return;
         }
         if (!(how.equals(LogicalConnector.INTERSECTION) || how.equals(LogicalConnector.UNION))) {
-            throw new KlabRuntimeException("connectors can only be union or intersection");
+            throw new IllegalArgumentException("connectors can only be union or intersection");
         }
         Set<OWLClassExpression> classes = new HashSet<>();
         for (IConcept c : fillers) {
@@ -846,7 +846,7 @@ public enum OWL {
         IConcept ret = null;
         IOntology ontology = ontologies.get(namespace);
         if (ontology == null) {
-            throw new KlabRuntimeException("getExistingOrCreate: ontology not found: " + namespace);
+            throw new IllegalArgumentException("getExistingOrCreate: ontology not found: " + namespace);
         }
 
         ret = ontology.getConcept(conceptId);

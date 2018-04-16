@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -284,12 +283,8 @@ public class Shape extends AbstractExtent implements IShape {
     if (this.isEmpty() || this.projection.equals(Projection.getLatLon())) {
       return this.geometry;
     }
-    try {
-      Shape shape = this.transform(Projection.getLatLon());
-      this.standardizedGeometry = shape.geometry;
-    } catch (KlabValidationException e) {
-      throw new KlabRuntimeException(e);
-    }
+    Shape shape = this.transform(Projection.getLatLon());
+    this.standardizedGeometry = shape.geometry;
     return this.standardizedGeometry;
   }
 
@@ -468,19 +463,11 @@ public class Shape extends AbstractExtent implements IShape {
       shape = (Shape) ((ISpace) other).getShape();
     }
     if (how == LogicalConnector.UNION) {
-      try {
-        return create(geometry.union(shape.transform(this.projection).getJTSGeometry()),
-            this.projection);
-      } catch (KlabValidationException e) {
-        throw new KlabRuntimeException(e);
-      }
+      return create(geometry.union(shape.transform(this.projection).getJTSGeometry()),
+          this.projection);
     } else if (how == LogicalConnector.INTERSECTION) {
-      try {
-        return create(geometry.intersection(shape.transform(this.projection).getJTSGeometry()),
-            this.projection);
-      } catch (KlabValidationException e) {
-        throw new KlabRuntimeException(e);
-      }
+      return create(geometry.intersection(shape.transform(this.projection).getJTSGeometry()),
+          this.projection);
     }
     throw new IllegalArgumentException("cannot merge a shape with " + other);
   }

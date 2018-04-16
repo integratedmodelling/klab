@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataRange;
@@ -121,7 +121,7 @@ public class Property extends Knowledge implements IProperty {
                 Set<OWLObjectPropertyExpression> dio = _owl.asOWLObjectProperty().getInverses(ontology());
 
                 if (dio.size() > 1)
-                    throw new KlabRuntimeException("taking the inverse of property " + this
+                    throw new KlabValidationException("taking the inverse of property " + this
                             + ", which has multiple inverses");
 
                 if (dio.size() > 0) {
@@ -192,7 +192,7 @@ public class Property extends Knowledge implements IProperty {
         Collection<IProperty> pars = getParents();
 
         if (pars.size() > 1)
-            throw new KlabRuntimeException("asking for single parent of multiple-inherited property "
+            throw new KlabValidationException("asking for single parent of multiple-inherited property "
                     + this);
 
         return pars.size() == 0 ? null : pars.iterator().next();

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.OS;
 
@@ -72,13 +72,13 @@ public enum Configuration implements IConfigurationService {
       try {
         FileUtils.touch(pFile);
       } catch (IOException e) {
-        throw new KlabRuntimeException("cannot write to configuration directory");
+        throw new KlabIOException("cannot write to configuration directory");
       }
     }
     try (InputStream input = new FileInputStream(pFile)) {
       this.properties.load(input);
     } catch (Exception e) {
-      throw new KlabRuntimeException("cannot read configuration properties");
+      throw new KlabIOException("cannot read configuration properties");
     }
   }
 
@@ -108,7 +108,7 @@ public enum Configuration implements IConfigurationService {
     try {
       p.store(new FileOutputStream(td), null);
     } catch (Exception e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabIOException(e);
     }
 
   }

@@ -54,7 +54,7 @@ public interface INodeIdentity extends IServerIdentity {
 	/**
 	 * All the permissions available.
 	 * 
-	 * @return
+	 * @return all permissions for the current identity
 	 */
 	Set<Permission> getPermissions();
 }

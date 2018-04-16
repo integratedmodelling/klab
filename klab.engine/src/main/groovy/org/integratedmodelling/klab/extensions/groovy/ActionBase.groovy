@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
 import org.integratedmodelling.klab.common.mediation.Unit
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException
+import org.integratedmodelling.klab.exceptions.KlabException
 import org.integratedmodelling.klab.utils.Pair
 import org.jscience.physics.amount.Amount
 
@@ -235,7 +235,7 @@ abstract class ActionBase extends Script {
         if (o instanceof IMonitor) {
             ((IMonitor)o).error(text);
         }
-        throw new KlabRuntimeException(text);
+        throw new KlabException(text);
     }
 
     /*

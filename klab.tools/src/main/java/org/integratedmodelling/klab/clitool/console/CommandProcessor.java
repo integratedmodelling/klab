@@ -46,7 +46,6 @@ import org.integratedmodelling.klab.clitool.Main;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.reflections.Reflections;
@@ -83,7 +82,7 @@ public class CommandProcessor
           commands.put(prototype.getName(), prototype);
         }
       } catch (Exception e) {
-        throw new KlabRuntimeException("cannot parse command specifications: " + e.getMessage());
+        throw new KlabValidationException("cannot parse command specifications: " + e.getMessage());
       }
     }
   }

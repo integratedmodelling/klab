@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.integratedmodelling.klab.Auth;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import com.verhas.licensor.License;
 
@@ -135,8 +135,8 @@ public class LicenseManager {
         String lic = license.getLicenseString();
         ret.load(new StringReader(lic));
       }
-    } catch (Exception e) {
-      throw new KlabRuntimeException(e);
+    } catch (Throwable e) {
+      throw new KlabIOException(e);
     }
 
     if (ret.getProperty("primary.server") != null
@@ -167,7 +167,7 @@ public class LicenseManager {
     try {
       return readCertificate(FileUtils.readFileToString(certificate), publicKey, keys);
     } catch (IOException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabIOException(e);
     }
   }
 
@@ -196,7 +196,7 @@ public class LicenseManager {
         ret.load(new StringReader(license.getLicenseString()));
       }
     } catch (Exception e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabIOException(e);
     }
 
     /*

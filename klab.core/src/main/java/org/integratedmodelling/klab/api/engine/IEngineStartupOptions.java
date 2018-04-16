@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.engine;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * The Interface IEngineStartupOptions.
@@ -55,4 +56,12 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * @return usage string
      */
     String usage();
+
+    /**
+     * Return the paths to the components, one by one (not a workspace). The default here is 
+     * normally ok, used only by custom or dev applications to control component loading.
+     * 
+     * @return the paths to all components we want to load
+     */
+    Collection<File> getComponentPaths();
 }

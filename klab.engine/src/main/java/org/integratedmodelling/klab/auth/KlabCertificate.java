@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.joda.time.DateTime;
@@ -87,6 +86,7 @@ public class KlabCertificate implements ICertificate {
    * @return the default certificate
    */
   public static ICertificate createDefault() {
+    
     File certfile = getCertificateFile();
     if (certfile.exists()) {
       return new KlabCertificate(certfile);
@@ -116,7 +116,7 @@ public class KlabCertificate implements ICertificate {
       this.file = File.createTempFile("imcert", "cert");
       FileUtils.writeStringToFile(this.file, s);
     } catch (IOException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabIOException(e);
     }
   }
 

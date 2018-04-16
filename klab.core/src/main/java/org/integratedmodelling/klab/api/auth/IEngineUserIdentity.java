@@ -32,7 +32,7 @@ public interface IEngineUserIdentity extends IUserIdentity {
 	 * True if this engine user is also the one who owns the engine. Shortcut for
 	 * <code>getParentIdentity(INodeUserIdentity.class).getId().equals(this.getId())</code>.
 	 * 
-	 * @return
+	 * @return true if owner
 	 */
 	boolean isEngineOwner();
 }

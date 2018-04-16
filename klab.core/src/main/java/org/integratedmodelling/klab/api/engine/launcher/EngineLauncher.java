@@ -37,7 +37,7 @@ import org.apache.maven.shared.invoker.SystemOutLogger;
 import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JavaUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -202,7 +202,7 @@ public abstract class EngineLauncher {
                 FileUtils.copyFile(certificate, certFile);
                 this.certificate = certFile;
             } catch (IOException e) {
-                throw new KlabRuntimeException(e);
+                throw new KlabIOException(e);
             }
         }
         define(Configuration.INSTANCE.getProperties());
@@ -395,7 +395,7 @@ public abstract class EngineLauncher {
             try {
                 FileUtils.copyFile(certificate, certFile);
             } catch (IOException e) {
-                throw new KlabRuntimeException(e);
+                throw new KlabIOException(e);
             }
         }
         this.certificate = certFile;

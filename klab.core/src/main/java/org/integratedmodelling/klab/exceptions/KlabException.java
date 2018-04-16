@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * @version $Id: $Id
  */
 @SuppressWarnings("javadoc")
-public class KlabException extends Exception {
+public class KlabException extends RuntimeException {
 
     private static final long serialVersionUID = 5999457326224959271L;
     private IArtifact scope;

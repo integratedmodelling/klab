@@ -19,7 +19,6 @@ import org.integratedmodelling.kim.utils.MultidimensionalCursor;
 import org.integratedmodelling.kim.utils.MultidimensionalCursor.StorageOrdering;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.utils.IPair;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -28,7 +27,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
 
 public class Scale implements IScale {
@@ -463,7 +462,7 @@ public class Scale implements IScale {
       n++;
     }
     if (!found) {
-      throw new KlabRuntimeException("cannot locate extent " + extent.getType() + " in scale");
+      throw new IllegalArgumentException("cannot locate extent " + extent.getType() + " in scale");
     }
     return Scale.this.cursor.getElementIndexes(overallOffset)[n];
   }
@@ -528,7 +527,7 @@ public class Scale implements IScale {
     // better safe than sorry. Only time can be infinite so this should be pretty safe
     // as long as the comparator above works.
     if (multiplicity == INFINITE && extents.get(0).size() != INFINITE) {
-      throw new KlabRuntimeException(
+      throw new KlabInternalErrorException(
           "internal error: infinite dimension is not the first in scale");
     }
 
@@ -680,11 +679,7 @@ public class Scale implements IScale {
     int i = 0;
     for (IExtent e : extents) {
       if (e.getType().equals(extent.getType())) {
-        try {
-          merged = e.merge(extent);
-        } catch (KlabException e1) {
-          throw new KlabRuntimeException(e1);
-        }
+        merged = e.merge(extent);
         break;
       }
       i++;
@@ -1029,7 +1024,7 @@ public class Scale implements IScale {
    * @param offset
    * @return the subscale
    */
-  public IScale getSubscale(IConcept extent, long offset) {
+  public IScale getSubscale(Dimension.Type extent, long offset) {
 
     int oridx = -1;
     ArrayList<IExtent> exts = new ArrayList<>();
@@ -1045,12 +1040,7 @@ public class Scale implements IScale {
       return this;
     }
 
-    try {
-      return new Scale(exts.toArray(new IExtent[exts.size()]), cursor, oridx, offset);
-    } catch (KlabException e1) {
-      // should never happen since we build it with previously accepted extents.
-      throw new KlabRuntimeException(e1);
-    }
+    return new Scale(exts.toArray(new IExtent[exts.size()]), cursor, oridx, offset);
   }
 
   public long getOriginalOffset(long subscaleOffset) {

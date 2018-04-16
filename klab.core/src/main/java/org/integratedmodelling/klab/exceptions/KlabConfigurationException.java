@@ -17,40 +17,39 @@ package org.integratedmodelling.klab.exceptions;
 
 // TODO: Auto-generated Javadoc
 /**
- * An unchecked exception reserved for situations that should never happen in a
- * production environment.
+ * The Class KlabValidationException.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class KlabIllegalStatusException extends KlabException {
+public class KlabConfigurationException extends KlabException {
 
     private static final long serialVersionUID = 461213337593957416L;
 
     /**
-     * Instantiates a new klab illegal status exception.
+     * Instantiates a new klab validation exception.
      */
-    public KlabIllegalStatusException() {
+    public KlabConfigurationException() {
         super();
         // TODO Auto-generated constructor stub
     }
 
     /**
-     * Instantiates a new klab illegal status exception.
+     * Instantiates a new klab validation exception.
      *
      * @param arg0 the arg 0
      */
-    public KlabIllegalStatusException(String arg0) {
+    public KlabConfigurationException(String arg0) {
         super(arg0);
         // TODO Auto-generated constructor stub
     }
 
     /**
-     * Instantiates a new klab illegal status exception.
+     * Instantiates a new klab validation exception.
      *
      * @param e the e
      */
-    public KlabIllegalStatusException(Throwable e) {
+    public KlabConfigurationException(Throwable e) {
         super(e);
     }
 

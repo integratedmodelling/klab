@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
@@ -74,11 +73,7 @@ public class Space extends Extent implements ISpace {
     this.projection = shape.getProjection();
     this.shape = shape;
     if (grid != null) {
-      try {
-        this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
-      } catch (KlabException e) {
-        throw new KlabRuntimeException(e);
-      }
+      this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
       if (grid instanceof Grid) {
         this.grid.offsetInSupergrid = ((Grid) grid).offsetInSupergrid;
         this.grid.superGridId = ((Grid) grid).superGridId;
@@ -469,14 +464,10 @@ public class Space extends Extent implements ISpace {
 
   @Override
   public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
-    try {
-      if (how == LogicalConnector.UNION) {
-        return union(other);
-      } else if (how == LogicalConnector.INTERSECTION) {
-        return intersection(other);
-      }
-    } catch (KlabException e) {
-      throw new KlabRuntimeException(e);
+    if (how == LogicalConnector.UNION) {
+      return union(other);
+    } else if (how == LogicalConnector.INTERSECTION) {
+      return intersection(other);
     }
     throw new IllegalArgumentException("cannot merge a spatial extent with " + other);
   }

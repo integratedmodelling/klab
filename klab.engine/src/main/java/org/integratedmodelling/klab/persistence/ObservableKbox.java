@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox;
 import org.integratedmodelling.klab.persistence.h2.SQL;
@@ -161,7 +161,7 @@ public abstract class ObservableKbox extends H2Kbox {
       List<Long> ret = database.queryIds("SELECT COUNT(*) from " + getMainTableId() + ";");
       return ret.size() > 0 ? ret.get(0) : 0l;
     } catch (KlabException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabStorageException(e);
     }
   }
 
@@ -251,7 +251,7 @@ public abstract class ObservableKbox extends H2Kbox {
       typeHash.put(ret, definition);
 
     } catch (KlabException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabStorageException(e);
     }
 
     return ret;
@@ -343,7 +343,7 @@ public abstract class ObservableKbox extends H2Kbox {
     try {
       loadConcepts();
     } catch (KlabException e) {
-      throw new KlabRuntimeException(e);
+      throw new KlabStorageException(e);
     }
   }
 
@@ -365,7 +365,7 @@ public abstract class ObservableKbox extends H2Kbox {
           // obsoleteConcepts.add(rs.getString(2));
           // }
         } catch (SQLException e) {
-          throw new KlabRuntimeException(e);
+          throw new KlabStorageException(e);
         }
       }
     });
@@ -401,7 +401,7 @@ public abstract class ObservableKbox extends H2Kbox {
           }
 
         } catch (SQLException e) {
-          throw new KlabRuntimeException(e);
+          throw new KlabStorageException(e);
         }
       }
     }
@@ -436,7 +436,7 @@ public abstract class ObservableKbox extends H2Kbox {
         prsql.setObject(1, metadata.get(s), Types.JAVA_OBJECT);
         prsql.executeUpdate();
       } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabStorageException(e);
       }
     }
   }

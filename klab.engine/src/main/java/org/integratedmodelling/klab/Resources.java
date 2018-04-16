@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
@@ -39,8 +39,8 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
-import org.integratedmodelling.klab.exceptions.KlabUnauthorizedUrnException;
-import org.integratedmodelling.klab.exceptions.KlabUnknownUrnException;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -146,10 +146,10 @@ public enum Resources implements IResourceService {
 	 * Create and load the components workspace. TODO needs the network to obtain
 	 * components, then add/override any local ones.
 	 */
-	public boolean loadComponents(File[] localComponentPaths, IMonitor monitor) {
+	public boolean loadComponents(Collection<File> localComponentPaths, IMonitor monitor) {
 		try {
 			components = new MonitorableFileWorkspace(Configuration.INSTANCE.getDataPath("components"),
-					localComponentPaths);
+					localComponentPaths.toArray(new File[localComponentPaths.size()]));
 			components.load(false, monitor);
 			workspaces.put(components.getName(), components);
 			return true;
@@ -247,7 +247,7 @@ public enum Resources implements IResourceService {
 	public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
 	@Override
-	public IResource resolveResource(final String urn) throws KlabUnknownUrnException, KlabUnauthorizedUrnException {
+	public IResource resolveResource(final String urn) throws KlabResourceNotFoundException, KlabAuthorizationException {
 
 		IResource ret = getLocalResourceCatalog().get(urn);
 

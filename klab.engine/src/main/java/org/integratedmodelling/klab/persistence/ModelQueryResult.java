@@ -32,7 +32,7 @@ import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.data.rest.resources.ModelReference;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
@@ -94,7 +94,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
     @Override
     public void remove() {
-      throw new KlabRuntimeException("remove() in ObservationQueryResult iterator is unsupported");
+      throw new KlabUnsupportedFeatureException("remove() in ObservationQueryResult iterator is unsupported");
     }
   }
 
@@ -195,7 +195,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
   @Override
   public boolean contains(Object arg0) {
-    throw new KlabRuntimeException("contains() in ObservationQueryResult is unsupported");
+    throw new KlabUnsupportedFeatureException("contains() in ObservationQueryResult is unsupported");
   }
 
   @Override
@@ -215,12 +215,12 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
   @Override
   public Object[] toArray() {
-    throw new KlabRuntimeException("toArray() in ObservationQueryResult is unsupported");
+    throw new KlabUnsupportedFeatureException("toArray() in ObservationQueryResult is unsupported");
   }
 
   @Override
   public <T> T[] toArray(T[] arg0) {
-    throw new KlabRuntimeException("toArray() in ObservationQueryResult is unsupported");
+    throw new KlabUnsupportedFeatureException("toArray() in ObservationQueryResult is unsupported");
   }
 
 //  @Override

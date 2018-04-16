@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.springframework.util.StringUtils;
 import groovyjarjarantlr.Token;
 import groovyjarjarantlr.TokenStreamException;
@@ -278,7 +278,7 @@ public class GroovyExpressionPreprocessor {
 			}
 
 		} catch (Exception e) {
-			throw new KlabRuntimeException(e);
+			throw new KlabInternalErrorException(e);
 		}
 
 		int line = -1;

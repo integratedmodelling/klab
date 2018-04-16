@@ -34,13 +34,13 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	  http
 	  .addFilterBefore(certFilter(), RequestHeaderAuthenticationFilter.class)
-	  .authorizeRequests().anyRequest().hasAnyRole("ADMIN")
-      .and()
+//	  .authorizeRequests().anyRequest().hasAnyRole("ADMIN")
+//      .and()
       .authorizeRequests().antMatchers("/login**").permitAll()
       .and()
-      .formLogin().permitAll() // Allow access to any URL associate to formLogin()
+      .formLogin().permitAll()
       .and()
-      .logout().permitAll() // Allow access to any URL associate to logout()
+      .logout().permitAll() 
       .and()
       .csrf().disable();
   }

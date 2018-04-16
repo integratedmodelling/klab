@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class Component implements IComponent {
@@ -345,7 +344,7 @@ public class Component implements IComponent {
             try {
                 implementation = implementingClass.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new KlabRuntimeException(e);
+                throw new KlabInternalErrorException(e);
             }
         }
         return implementation;

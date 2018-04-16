@@ -17,51 +17,52 @@ package org.integratedmodelling.klab.exceptions;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class KlabUnknownUrnException.
+ * The Class KlabUnauthorizedUrnException.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class KlabUnknownUrnException extends KlabException {
+public class KlabAuthorizationException extends KlabException {
 
-    private static final long serialVersionUID = 6428117594044534205L;
+    private static final long serialVersionUID = -1424768805770339108L;
 
     /**
-     * Instantiates a new klab unknown urn exception.
+     * Instantiates a new klab unauthorized urn exception.
      */
-    public KlabUnknownUrnException() {
+    public KlabAuthorizationException() {
         // TODO Auto-generated constructor stub
     }
 
     /**
-     * Instantiates a new klab unknown urn exception.
+     * Instantiates a new klab unauthorized urn exception.
      *
      * @param message the message
      */
-    public KlabUnknownUrnException(String message) {
+    public KlabAuthorizationException(String message) {
         super(message);
         // TODO Auto-generated constructor stub
     }
 
     /**
-     * Instantiates a new klab unknown urn exception.
+     * Instantiates a new klab unauthorized urn exception.
      *
      * @param cause the cause
      */
-    public KlabUnknownUrnException(Throwable cause) {
+    public KlabAuthorizationException(Throwable cause) {
         super(cause);
         // TODO Auto-generated constructor stub
     }
 
     /**
-     * Instantiates a new klab unknown urn exception.
+     * Instantiates a new klab unauthorized urn exception.
      *
      * @param message the message
      * @param cause the cause
      */
-    public KlabUnknownUrnException(String message, Throwable cause) {
+    public KlabAuthorizationException(String message, Throwable cause) {
         super(message, cause);
         // TODO Auto-generated constructor stub
     }
+
 
 }

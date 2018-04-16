@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -31,12 +30,10 @@ import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyProcessor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
-
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -72,7 +69,7 @@ public enum Extensions implements IExtensionService {
     org.integratedmodelling.klab.engine.extensions.Component ret =
         new org.integratedmodelling.klab.engine.extensions.Component(annotation, cls);
 
-    Logging.INSTANCE.info("Loaded component " + ret.getName() + " version " + ret.getVersion());
+    Logging.INSTANCE.info("Registering component " + ret.getName() + " version " + ret.getVersion());
 
     /*
      * TODO store knowledge for later processing
@@ -85,8 +82,8 @@ public enum Extensions implements IExtensionService {
         .getResources(Pattern.compile(".*\\.kdl"))) {
       try (InputStream input = cls.getClassLoader().getResourceAsStream(kdl)) {
         declareServices(ret, Dataflows.INSTANCE.declare(input));
-      } catch (Exception e) {
-        throw new KlabRuntimeException(e);
+      } catch (Throwable e) {
+        throw new KlabValidationException(e);
       }
     }
 

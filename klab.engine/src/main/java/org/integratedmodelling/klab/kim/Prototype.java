@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.kim;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.model.Geometry;
-import org.integratedmodelling.klab.exceptions.KlabRuntimeException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
@@ -47,7 +47,7 @@ public class Prototype extends org.integratedmodelling.kim.model.Prototype {
         implementation =
             Class.forName(actuator.getJavaClass(), true, actuator.getClass().getClassLoader());
       } catch (ClassNotFoundException e) {
-        throw new KlabRuntimeException(e);
+        throw new KlabInternalErrorException(e);
       }
     }
 
