@@ -14,9 +14,7 @@
 package org.integratedmodelling.klab;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
-import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 
-// TODO: Auto-generated Javadoc
 /**
  * This interface and its members describe the REST API of k.LAB. The API enables managing semantic
  * and non-semantic assets and building artifacts and observation dataflows, with certificate-based
@@ -60,7 +58,7 @@ public interface API {
    * 
    *<p><b>Protocol:</b> GET
    *<br/><b>Response type:</b> Json
-   *<br/><b>Response:</b> {@link Capabilities}
+   *<br/><b>Response:</b> {@code org.integratedmodelling.klab.data.rest.resources.responses.Capabilities}
    *<br/><b>Authentication:</b> open or {@link INetworkSessionIdentity} (response reflect access levels)
    * 
    */
