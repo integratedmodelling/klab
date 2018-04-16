@@ -65,6 +65,9 @@ public abstract class LargeArray<T> {
             return getObject(data.get(0).getSecond().data, index);
         }
 
+        long ofs[] = cursor.getElementIndexes(index);
+        long tfs = ofs[timeOffset];
+        
         // TODO find time offset. If slice isn't there check that time was used before in a set operation.
         // TODO get/reconstruct with non-temporal offset
 
@@ -89,14 +92,31 @@ public abstract class LargeArray<T> {
      * @param data
      * @param offset
      */
-    protected abstract void setObject(T value, INDArray[] data, long offset);
+    protected abstract void setObject(Object value, INDArray[] data, long offset);
 
-    public long set(long index, Object value) {
+    public boolean set(long index, Object value) {
+        
+        if (timeOffset < 0) {
+            setObject(value, data.get(0).getSecond().data, index);
+        }
+
+        if (get(index).equals(value)) {
+            return false;
+        }
+        
+        long ofs[] = cursor.getElementIndexes(index);
+        long tfs = ofs[timeOffset];
+
         // TODO find time offset
         // TODO set needSlice <- time is > current && most current value exists or differs
         // TODO if slice didn't exist or needSlice, create slice
         // TODO set value with non-temporal offset
-        return 0;
+
+        if (this.maxTimeOffsetReferenced < tfs) {
+            this.maxTimeOffsetReferenced = tfs;
+        }
+        
+        return true;
     }
 
 }
