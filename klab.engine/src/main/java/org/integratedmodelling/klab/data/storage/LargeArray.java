@@ -2,7 +2,11 @@ package org.integratedmodelling.klab.data.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.kim.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -25,34 +29,74 @@ import org.nd4j.linalg.api.ndarray.INDArray;
  *
  * @param <T>
  */
-public class LargeArray<T> {
+public abstract class LargeArray<T> {
 
-  class Slice {
-    INDArray[] data;
-  }
+    class Slice {
 
-  private IGeometry geometry;
-  private Class<T> representation;
-  private List<Pair<Long, Slice>> data = new ArrayList<>();
-  
-  public LargeArray(IGeometry geometry, Class<T> cls) {
-    this.geometry = geometry;
-    this.representation = cls;
-  }
-  
-  public T get(long index) {
-    // TODO find slice
-    // TODO get/reconstruct with non-temporal offset
-    return null;
-  }
+        INDArray[] data;
+    }
 
-  public long set(long index, Object value) {
-    // TODO find time
-    // TODO set needSlice <- time is > current && most current value exists or differs
-    // TODO if slice didn't exist or needSlice, create slice
-    // TODO set value with non-temporal offset
-    return 0;
-  }
-  
+    // this may be higher than the time offset for the passed slice as we only store slices for
+    // values that are different.
+    private long maxTimeOffsetReferenced = -1;
+    int timeOffset = -1;
+    private IGeometry geometry;
+    private Class<T> representation;
+    private MultidimensionalCursor cursor;
+    private List<Pair<Long, Slice>> data = new ArrayList<>();
+
+    public LargeArray(IGeometry geometry, Class<T> cls) {
+        this.geometry = geometry;
+        int i = 0;
+        for (Dimension dim : geometry.getDimensions()) {
+            if (dim.getType() == Type.TIME) {
+                this.timeOffset = i;
+                break;
+            }
+            i++;
+        }
+        this.representation = cls;
+        this.cursor = new MultidimensionalCursor(geometry);
+    }
+
+    public T get(long index) {
+
+        if (timeOffset < 0) {
+            return getObject(data.get(0).getSecond().data, index);
+        }
+
+        // TODO find time offset. If slice isn't there check that time was used before in a set operation.
+        // TODO get/reconstruct with non-temporal offset
+
+        return null;
+    }
+
+    /**
+     * Reconstruct (if necessary) and return the object at the passed offset in the passed array set.
+     * Array of data will contain one array unless an unpackageable non-POD is or was passed in this slice.
+     * 
+     * @param data
+     * @return
+     */
+    protected abstract T getObject(INDArray[] data, long offset);
+
+    /**
+     * Put the passed object in the passed array set at the passed offset.
+     * Array of data will contain one array unless an unpackageable non-POD is or was passed in this
+     * slice.
+     * 
+     * @param value
+     * @param data
+     * @param offset
+     */
+    protected abstract void setObject(T value, INDArray[] data, long offset);
+
+    public long set(long index, Object value) {
+        // TODO find time offset
+        // TODO set needSlice <- time is > current && most current value exists or differs
+        // TODO if slice didn't exist or needSlice, create slice
+        // TODO set value with non-temporal offset
+        return 0;
+    }
 
 }

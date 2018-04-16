@@ -532,7 +532,7 @@ public class Scale implements IScale {
     }
 
     // recompute strided offsets for quick extent access
-    cursor = new MultidimensionalCursor(StorageOrdering.ROW_FIRST);
+    cursor = new MultidimensionalCursor();
     long[] dims = new long[multiplicity == INFINITE ? extents.size() - 1 : extents.size()];
     int n = 0;
     for (int i = multiplicity == INFINITE ? 1 : 0; i < extents.size(); i++) {

@@ -24,8 +24,11 @@ package org.integratedmodelling.kim.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.xtext.util.Triple;
 import org.eclipse.xtext.util.Tuples;
+import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 
 public class MultidimensionalCursor {
 
@@ -128,6 +131,19 @@ public class MultidimensionalCursor {
         storageOrderType = order;
     }
 
+    public MultidimensionalCursor(IGeometry geometry) {
+        multiplicity = 0;
+        dimensions = 0;
+        storageOrderType = StorageOrdering.ROW_FIRST;
+        long[] dims = new long[geometry.getDimensions().size()];
+        int i = 0;
+        for (Dimension dimension : geometry.getDimensions()) {
+            dims[i++] = dimension.size();
+        }
+        defineDimensions(dims);
+        initializeStrides();
+    }
+    
     public MultidimensionalCursor() {
         this(StorageOrdering.ROW_FIRST);
     }
@@ -244,10 +260,10 @@ public class MultidimensionalCursor {
 
         dimensions = extents == null ? 0 : extents.length;
 
-        if (extents != null)
+        if (extents != null) {
             for (long ii : extents)
                 this.extents.add(ii);
-
+        }
         return initializeStrides();
     }
 
