@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.engine.ICapabilities;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
@@ -152,12 +151,6 @@ public class Engine extends Server implements IEngine {
 
   @Override
   public IEngineUserIdentity authenticateUser(IUserCredentials credentials) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ICapabilities getCapabilities() {
     // TODO Auto-generated method stub
     return null;
   }

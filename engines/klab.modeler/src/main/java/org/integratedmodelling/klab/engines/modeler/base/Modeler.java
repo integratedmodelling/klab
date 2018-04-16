@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 /**
- * This will start an engine at / with the default security config.
+ * This will start an engine at http://localhost:8283/modeler with the default security config.
  * 
  * @author ferdinando.villa
  * 
@@ -20,8 +20,7 @@ import org.springframework.stereotype.Component;
     "org.integratedmodelling.klab.engine.rest.controllers.base",
     "org.integratedmodelling.klab.engine.rest.controllers.engine",
     "org.integratedmodelling.klab.engine.rest.controllers.network",
-    "org.integratedmodelling.klab.engine.rest.controllers.resources"  
-})
+    "org.integratedmodelling.klab.engine.rest.controllers.resources"})
 public class Modeler {
 
   public void run(String[] args) {
@@ -31,8 +30,9 @@ public class Modeler {
     SpringApplication.run(Modeler.class, options.getArguments());
     engine.stop();
   }
-  
+
   public static void main(String args[]) {
+
     new Modeler().run(args);
   }
 

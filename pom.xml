@@ -7,6 +7,44 @@
 	<version>0.10.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License (AGPL) version 3.0</name>
+			<url>http://www.gnu.org/licenses/agpl-3.0.en.html</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Ferdinando Villa</name>
+			<email>ferdinando.villa@bc3research.org</email>
+			<organization>Basque Centre for Climate Change (BC3); IKERBASQUE, Basque foundation for science</organization>
+			<organizationUrl>http://www.bc3research.org</organizationUrl>
+		</developer>
+		<developer>
+			<name>Enrico Girotto</name>
+			<email>enrico.girotto@gmail.com</email>
+		</developer>
+		<developer>
+			<name>J.Luke Scott</name>
+			<email>luke@cron.works</email>
+			<organization>CronWorks Software, LLC</organization>
+			<organizationUrl>http://cronworks.net</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<!-- TODO switch to public rep -->
+		<connection>scm:git:http://bitbuckoet.org/fvilla/klab</connection>
+		<developerConnection>scm:git:https://bitbucket.org/fvilla/klab</developerConnection>
+		<url>https://bitbucket.org/fvilla/klab.git</url>
+	</scm>
+
+	<organization>
+		<name>integratedmodelling.org</name>
+		<url>http://www.integratedmodelling.org</url>
+	</organization>
+
 	<modules>
 		<module>kdl</module>
 		<module>kim</module>
