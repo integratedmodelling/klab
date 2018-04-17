@@ -137,7 +137,7 @@ public class KlabCertificate implements ICertificate {
 
         if (properties == null) {
 
-            if (!file.exists() || !file.isFile() || !file.canRead()) {
+            if (file != null && (!file.exists() || !file.isFile() || !file.canRead())) {
                 cause = "certificate file cannot be read";
                 return false;
             }

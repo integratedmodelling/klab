@@ -28,6 +28,9 @@ import org.springframework.stereotype.Component;
                 "org.integratedmodelling.klab.engine.rest.controllers.resources" })
 public class TestNode {
 
+    /*
+     * TODO read these from the server certificate
+     */
     // node name: a true node will read a certificate
     public static final String NODE_NAME = "testnode";
     // node base URL

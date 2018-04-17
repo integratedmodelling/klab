@@ -31,13 +31,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * Mock authentication controller, will only authenticate the exact certificate in the classpath by comparing 
  * strings instead of decrypting a certificate.
- * 
+ * <p>
+ * Relies on the certificate string in testnode.cert being identical to that passed in the authentication request (it 
+ * will be if the certificate of the authenticating party is read from testengine.cert). Everything else is accepted as is.
+ * <p>
  * @author ferdinando.villa
  *
  */
 @Controller
 @Secured(Roles.PUBLIC)
-@PropertySource("classpath:test.cert")
+@PropertySource("classpath:testnode.cert")
 public class AuthController {
 
     @Value("${klab.certificate}")
@@ -69,8 +72,7 @@ public class AuthController {
                     NameGenerator.newName());
 
             Set<INodeIdentity.Permission> permissions = new HashSet<>();
-            NodeReference thisnode = new NodeReference(
-                    TestNode.NODE_NAME, permissions, TestNode.PARTNER_IDENTITY,
+            NodeReference thisnode = new NodeReference(TestNode.NODE_NAME, permissions, TestNode.PARTNER_IDENTITY,
                     Collections.singletonList(TestNode.NODE_URL), true, 20, 0, new ArrayList<>(), new ArrayList<>());
 
             return new ResponseEntity<AuthenticationResponse>(
