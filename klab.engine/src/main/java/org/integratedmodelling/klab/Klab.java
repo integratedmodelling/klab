@@ -435,7 +435,7 @@ public enum Klab implements IRuntimeService {
     // List<ComponentReference> dynamicComponents = new ArrayList<>();
     // long refreshFrequencyMillis = 0;
     // int loadFactor = 0;
-    ret.setOwner(new IdentityReference("whoever"));
+    ret.setOwner(new IdentityReference("whoever", null, null));
 
     return ret;
   }

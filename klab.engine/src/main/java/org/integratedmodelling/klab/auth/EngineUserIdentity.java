@@ -98,4 +98,10 @@ public class EngineUserIdentity extends UserIdentity implements IEngineUserIdent
     return type == IEngineUserIdentity.TYPE;
   }
 
+@Override
+public boolean isOnline() {
+    // TODO Auto-generated method stub
+    return false;
+}
+
 }

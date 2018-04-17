@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
  * autentication. The API for interacting with a remote node using regular (login) authentication,
  * manage profiles and certificates, and handle communication and cross-authentication among nodes
  * is separate, as it shares no functional connection with the k.LAB project. The only connection
- * point between the two APIs is the {@link NETWORK#AUTHENTICATE} endpoint, which is used by clients
+ * point between the two APIs is the {@link #AUTHENTICATE} endpoint, which is used by clients
  * to obtain their network credentials using the certificate file contents.
  * <p>
  * This API is common to nodes and engines, although nodes currently can be expected to get less
@@ -50,329 +50,329 @@ import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
  */
 public interface API {
 
-  /** Parameter: the URN being resolved in any endpoints that access resources. */
-  public static final String P_URN        = "{urn}";
-
-  /**
-   * Public capabilities endpoint. Anything that has an API has capabilities.
-   * 
-   *<p><b>Protocol:</b> GET
-   *<br/><b>Response type:</b> Json
-   *<br/><b>Response:</b> {@code org.integratedmodelling.klab.data.rest.resources.responses.Capabilities}
-   *<br/><b>Authentication:</b> open or {@link INetworkSessionIdentity} (response reflect access levels)
-   * 
-   */
-  public static final String CAPABILITIES = "/capabilities";
-
-  /**
-   * Retrieve the public key for this node
-   * 
-   *<p><b>Protocol:</b> GET
-   *<br/><b>Response type:</b> text
-   *<br/><b>Authentication:</b> open
-   */
-  public static final String PUBLICKEY    = "/publickey";
-
-  /**
-   * Return the JSON schema for all the resources understood by this API. Used for validating 
-   * beans in connected web applications.
-   * 
-   *<p><b>Protocol:</b> GET
-   *<br/><b>Response type:</b> Json schema
-   *<br/><b>Authentication:</b> open
-   */
-  public static final String SCHEMA       = "/schema";
-
-
-  /**
-   * Authority endpoints are public.
-   *
-   * @author ferdinando.villa
-   */
-  public interface AUTHORITY {
+    /** Parameter: the URN being resolved in any endpoints that access resources. */
+    public static final String P_URN = "{urn}";
 
     /**
-     * The Constant RESOLVE.
-     *
-     * GET JSON
-     */
-    public static final String RESOLVE = "/engine/authority/resolve";
-
-    /**
-     * The Constant QUERY.
-     *
-     * POST
-     */
-    public static final String QUERY   = "/engine/authority/query";
-  }
-
-  /**
-   * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit,
-   * update/delete namespaces, workspace management, lock/unlock. PUT endpoints for configuration.
-   * To be tied to future configuration dashboard.
-   * <p>
-   * Authentication should be ROLE_ADMIN and be preauthorized for the local IP.
-   * <p>
-   * With HTML encoding, this should produce the administration dashboard.
-   * <p>
-   */
-  public interface ADMIN {
-
-    /**
-     * Shutdown the server.
+     * Public capabilities endpoint. Anything that has an API has capabilities.
      * 
-     * GET
-     */
-    public static final String SHUTDOWN = "/engine/admin/shutdown";
-
-    /**
-     * Endpoints to remotely deploy/undeploy projects and components.
+     *<p><b>Protocol:</b> GET
+     *<br/><b>Response type:</b> Json
+     *<br/><b>Response:</b> {@code org.integratedmodelling.klab.data.rest.resources.responses.Capabilities}
+     *<br/><b>Authentication:</b> open or {@link INetworkSessionIdentity} (response reflect access levels)
      * 
-     * @author ferdinando.villa
-     *
      */
-    public interface COMPONENT {
-
-      /** Parameter: project/component ID. */
-      public static final String P_COMPONENT        = "{component}";
-
-      /**
-       * A component can be deployed as a file attachment or from a Git repository.
-       * 
-       * PUT as attachment POST as Git URL
-       */
-      public static final String DEPLOY             = "/engine/admin/component/deploy";
-
-      /**
-       * The Constant UNDEPLOY_COMPONENT.
-       *
-       * DELETE
-       */
-      public static final String UNDEPLOY_COMPONENT =
-          "/engine/admin/component/undeploy/" + P_COMPONENT;
-
-      /**
-       * The Constant SETUP_COMPONENT.
-       *
-       * POST
-       */
-      public static final String SETUP_COMPONENT    =
-          "/engine/admin/component/setup/" + P_COMPONENT;
-    }
-
-  }
-
-  /**
-   * Network session endpoints.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  public interface NETWORK {
+    public static final String CAPABILITIES = "/capabilities";
 
     /**
-     * Returns network status with all nodes (including offline if applicable) with refresh rate and
+     * Returns authenticated user details and network status with all nodes (including offline if applicable) with refresh rate and
      * unique network access token. Should be the only authentication call necessary in this API.
+     * 
+     *<p><b>Protocol:</b> POST
+     *<br/><b>Response type:</b> Json
+     *<br/><b>Request:</b> {@code org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest}
+     *<br/><b>Response:</b> {@code org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse}
+     *<br/><b>Authentication:</b> open
      */
-    public static final String AUTHENTICATE = "/network/authenticate";
-
-    /** The Constant DISCONNECT. */
-    public static final String DISCONNECT   = "/network/disconnect";
+    public static final String AUTHENTICATE = "/authenticate";
 
     /**
-     * Query endpoints, using network session authentication.
+     * Retrieve the public key for this node
+     * 
+     *<p><b>Protocol:</b> GET
+     *<br/><b>Response type:</b> text
+     *<br/><b>Authentication:</b> open
+     */
+    public static final String PUBLICKEY = "/publickey";
+
+    /**
+     * Return the JSON schema for all the resources understood by this API. Used for validating 
+     * beans in connected web applications.
+     * 
+     *<p><b>Protocol:</b> GET
+     *<br/><b>Response type:</b> Json schema
+     *<br/><b>Authentication:</b> open
+     */
+    public static final String SCHEMA = "/schema";
+
+    /**
+     * Authority endpoints are public.
+     *
+     * @author ferdinando.villa
+     */
+    public interface AUTHORITY {
+
+        /**
+         * The Constant RESOLVE.
+         *
+         * GET JSON
+         */
+        public static final String RESOLVE = "/engine/authority/resolve";
+
+        /**
+         * The Constant QUERY.
+         *
+         * POST
+         */
+        public static final String QUERY = "/engine/authority/query";
+    }
+
+    /**
+     * TODO flesh out - shutdown, reset/init, deploy/setup components, undeploy, import, submit,
+     * update/delete namespaces, workspace management, lock/unlock. PUT endpoints for configuration.
+     * To be tied to future configuration dashboard.
+     * <p>
+     * Authentication should be ROLE_ADMIN and be preauthorized for the local IP.
+     * <p>
+     * With HTML encoding, this should produce the administration dashboard.
+     * <p>
+     */
+    public interface ADMIN {
+
+        /**
+         * Shutdown the server.
+         * 
+         * GET
+         */
+        public static final String SHUTDOWN = "/engine/admin/shutdown";
+
+        /**
+         * Endpoints to remotely deploy/undeploy projects and components.
+         * 
+         * @author ferdinando.villa
+         *
+         */
+        public interface COMPONENT {
+
+            /** Parameter: project/component ID. */
+            public static final String P_COMPONENT = "{component}";
+
+            /**
+             * A component can be deployed as a file attachment or from a Git repository.
+             * 
+             * PUT as attachment POST as Git URL
+             */
+            public static final String DEPLOY = "/engine/admin/component/deploy";
+
+            /**
+             * The Constant UNDEPLOY_COMPONENT.
+             *
+             * DELETE
+             */
+            public static final String UNDEPLOY_COMPONENT = "/engine/admin/component/undeploy/" + P_COMPONENT;
+
+            /**
+             * The Constant SETUP_COMPONENT.
+             *
+             * POST
+             */
+            public static final String SETUP_COMPONENT = "/engine/admin/component/setup/" + P_COMPONENT;
+        }
+
+    }
+
+    /**
+     * Network session endpoints.
      * 
      * @author ferdinando.villa
      *
      */
-    public interface QUERY {
+    public interface NETWORK {
 
-      /** The Constant MODELS. */
-      public static final String MODELS       = "/network/query/models";
+        /** The Constant DISCONNECT. */
+        public static final String DISCONNECT = "/network/disconnect";
 
-      /** The Constant OBSERVATIONS. */
-      public static final String OBSERVATIONS = "/network/query/observations";
+        /**
+         * Query endpoints, using network session authentication.
+         * 
+         * @author ferdinando.villa
+         *
+         */
+        public interface QUERY {
+
+            /** The Constant MODELS. */
+            public static final String MODELS = "/network/query/models";
+
+            /** The Constant OBSERVATIONS. */
+            public static final String OBSERVATIONS = "/network/query/observations";
+
+        }
+
+        /**
+         * Retrieve semantic assets - models, observations and components/projects.
+         * 
+         * @author ferdinando.villa
+         *
+         */
+        public interface RETRIEVE {
+
+            /**
+             * The Constant MODEL_URN.
+             *
+             * GET
+             */
+            public static final String MODEL_URN = "/network/retrieve/model/" + P_URN;
+
+            /**
+             * The Constant OBSERVATION_URN.
+             *
+             * GET
+             */
+            public static final String OBSERVATION_URN = "/network/retrieve/observation/" + P_URN;
+
+            /**
+             * The Constant COMPONENT_URN.
+             *
+             * GET
+             */
+            public static final String COMPONENT_URN = "/network/retrieve/component/" + P_URN;
+
+        }
 
     }
 
     /**
-     * Retrieve semantic assets - models, observations and components/projects.
+     * Handle non-semantic assets - data, data services and remote computations.
      * 
      * @author ferdinando.villa
      *
      */
-    public interface RETRIEVE {
+    public interface RESOURCE {
 
-      /**
-       * The Constant MODEL_URN.
-       *
-       * GET
-       */
-      public static final String MODEL_URN       = "/network/retrieve/model/" + P_URN;
+        /**
+         * Add a resource to the local catalog passing a local file URL and/or resource properties.
+         * Return URN after validation.
+         * 
+         * ProtocolsPUT
+         */
+        public static final String ADD = "/resource/add";
 
-      /**
-       * The Constant OBSERVATION_URN.
-       *
-       * GET
-       */
-      public static final String OBSERVATION_URN = "/network/retrieve/observation/" + P_URN;
+        /**
+         * Publish a local resource to the public catalog of this or another server.
+         * 
+         * POST
+         */
+        public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
 
-      /**
-       * The Constant COMPONENT_URN.
-       *
-       * GET
-       */
-      public static final String COMPONENT_URN   = "/network/retrieve/component/" + P_URN;
+        /**
+         * Modify resource data. Triggers revalidation.
+         * 
+         * PATCH
+         */
+        public static final String UPDATE_URN = "/resource/update/" + P_URN;
 
-    }
+        /**
+         * Delete resource data.
+         * 
+         * DELETE
+         */
+        public static final String DELETE_URN = "/resource/delete/" + P_URN;
 
-  }
+        /**
+         * Retrieve raw observation data for passed URN in passed scale. If resource has time geometry,
+         * the response at initialization contains an individual token for repeated requests at
+         * transitions.
+         * 
+         * GET
+         */
+        public static final String GET_URN = "/resource/get/" + P_URN;
 
-  /**
-   * Handle non-semantic assets - data, data services and remote computations.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  public interface RESOURCE {
-
-    /**
-     * Add a resource to the local catalog passing a local file URL and/or resource properties.
-     * Return URN after validation.
-     * 
-     * ProtocolsPUT
-     */
-    public static final String ADD         = "/resource/add";
-
-    /**
-     * Publish a local resource to the public catalog of this or another server.
-     * 
-     * POST
-     */
-    public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
-
-    /**
-     * Modify resource data. Triggers revalidation.
-     * 
-     * PATCH
-     */
-    public static final String UPDATE_URN  = "/resource/update/" + P_URN;
-
-    /**
-     * Delete resource data.
-     * 
-     * DELETE
-     */
-    public static final String DELETE_URN  = "/resource/delete/" + P_URN;
-
-    /**
-     * Retrieve raw observation data for passed URN in passed scale. If resource has time geometry,
-     * the response at initialization contains an individual token for repeated requests at
-     * transitions.
-     * 
-     * GET
-     */
-    public static final String GET_URN     = "/resource/get/" + P_URN;
-
-    /**
-     * Get URN data for passed URN. Includes expiration to control cacheing.
-     * 
-     * GET
-     */
-    public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
-  }
-
-  /**
-   * Endpoints to open sessions and control observation tasks in them.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  public interface ENGINE {
-
-    /**
-     * Authorize an engine user. This may use the standard IM authentication (filtering privileges
-     * through the engine owner's) or the engine may have its own user directory. Localhost
-     * connections to a running engine are automatically authorized with the user that owns it,
-     * without a need to going through authentication.
-     */
-    public static final String AUTHENTICATE = "/engine/authenticate";
-
-    /**
-     * The Interface SESSION.
-     */
-    public interface SESSION {
-
-      /**
-       * The Constant AUTHORIZE.
-       *
-       * POST
-       */
-      public static final String AUTHORIZE = "/engine/session/authorize";
-
-      /**
-       * The Constant CLOSE.
-       *
-       * DELETE
-       */
-      public static final String CLOSE     = "/engine/session/close";
+        /**
+         * Get URN data for passed URN. Includes expiration to control cacheing.
+         * 
+         * GET
+         */
+        public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
     }
 
     /**
-     * Endpoints to access contexts, using context tokens for authentication.
+     * Endpoints to open sessions and control observation tasks in them.
      * 
      * @author ferdinando.villa
      *
      */
-    public interface CONTEXT {
+    public interface ENGINE {
 
-      /** The Constant P_CONTEXT. */
-      public static final String P_CONTEXT           = "{context}";
+        /**
+         * Authorize an engine user. This may use the standard IM authentication (filtering privileges
+         * through the engine owner's) or the engine may have its own user directory. Localhost
+         * connections to a running engine are automatically authorized with the user that owns it,
+         * without a need to going through authentication.
+         */
+        public static final String AUTHENTICATE = "/engine/authenticate";
 
-      /**
-       * Create new context from the URN of its definition or remote computation. Return task
-       * descriptor.
-       */
-      public static final String CREATE_URN          = "/engine/session/context/create/" + P_URN;
+        /**
+         * The Interface SESSION.
+         */
+        public interface SESSION {
 
-      /**
-       * Observe URN in pre-authorized context. Return task ID.
-       */
-      public static final String OBSERVE_CONTEXT_URN =
-          "/engine/session/context/observe/" + P_CONTEXT + "/" + P_URN;
+            /**
+             * The Constant AUTHORIZE.
+             *
+             * POST
+             */
+            public static final String AUTHORIZE = "/engine/session/authorize";
 
-      /**
-       * Run temporal transitions in pre-authorized context. Return task descriptor.
-       */
-      public static final String RUN_CONTEXT         = "/engine/session/context/run/" + P_CONTEXT;
+            /**
+             * The Constant CLOSE.
+             *
+             * DELETE
+             */
+            public static final String CLOSE = "/engine/session/close";
+        }
 
+        /**
+         * Endpoints to access contexts, using context tokens for authentication.
+         * 
+         * @author ferdinando.villa
+         *
+         */
+        public interface CONTEXT {
 
-      /**
-       * Endpoints to access tasks.
-       * 
-       * @author ferdinando.villa
-       *
-       */
-      public interface TASK {
+            /** The Constant P_CONTEXT. */
+            public static final String P_CONTEXT = "{context}";
 
-        /** The Constant P_TASK. */
-        public static final String P_TASK = "{task}";
+            /**
+             * Create new context from the URN of its definition or remote computation. Return task
+             * descriptor.
+             */
+            public static final String CREATE_URN = "/engine/session/context/create/" + P_URN;
 
-      }
+            /**
+             * Observe URN in pre-authorized context. Return task ID.
+             */
+            public static final String OBSERVE_CONTEXT_URN = "/engine/session/context/observe/" + P_CONTEXT + "/"
+                    + P_URN;
 
-      /**
-       * Endpoints to retrieve data and visualizations from "live" observations in context.
-       * 
-       * @author ferdinando.villa
-       *
-       */
-      public interface VIEW {
+            /**
+             * Run temporal transitions in pre-authorized context. Return task descriptor.
+             */
+            public static final String RUN_CONTEXT = "/engine/session/context/run/" + P_CONTEXT;
 
-      }
+            /**
+             * Endpoints to access tasks.
+             * 
+             * @author ferdinando.villa
+             *
+             */
+            public interface TASK {
+
+                /** The Constant P_TASK. */
+                public static final String P_TASK = "{task}";
+
+            }
+
+            /**
+             * Endpoints to retrieve data and visualizations from "live" observations in context.
+             * 
+             * @author ferdinando.villa
+             *
+             */
+            public interface VIEW {
+
+            }
+        }
+
     }
-
-
-  }
-
 
 }

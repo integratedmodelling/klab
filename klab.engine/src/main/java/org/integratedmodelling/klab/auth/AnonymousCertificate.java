@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.auth;
 
 import java.io.File;
 import java.util.Collection;
+
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
@@ -14,32 +15,36 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class AnonymousCertificate implements ICertificate {
 
-  private String             worldview              = KlabCertificate.DEFAULT_WORLDVIEW;
-  private Collection<String> worldview_repositories =
-      StringUtils.splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES);
+    private String worldview = KlabCertificate.DEFAULT_WORLDVIEW;
+    private Collection<String> worldview_repositories = StringUtils
+            .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES);
 
-  public AnonymousCertificate() {
-    // TODO Auto-generated constructor stub
-  }
+    public AnonymousCertificate() {
+        // TODO Auto-generated constructor stub
+    }
 
-  @Override
-  public IWorldview getWorldview() {
-    return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"),
-        worldview_repositories,
-        ((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace()).getProjectLocations()
-            .toArray(new File[((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace())
-                .getProjectLocations().size()]));
-  }
+    @Override
+    public IWorldview getWorldview() {
+        return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories,
+                ((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace()).getProjectLocations()
+                        .toArray(new File[((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace())
+                                .getProjectLocations().size()]));
+    }
 
-  @Override
-  public IIdentity getIdentity() {
-    // no partner, no node, no nothing
-    return new KlabUserIdentity(Auth.ANONYMOUS_USER_ID, null);
-  }
+    @Override
+    public IIdentity getIdentity() {
+        // no partner, no node, no nothing
+        return new KlabUserIdentity(Auth.ANONYMOUS_USER_ID, null);
+    }
 
-  @Override
-  public boolean isValid() {
-    return true;
-  }
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public String getInvalidityCause() {
+        return null;
+    }
 
 }

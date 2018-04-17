@@ -34,28 +34,55 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  */
 public interface ICertificate {
 
-	/**
-	 * Create the worldview workspace for this identity and return it (unloaded and
-	 * not initialized).
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
-	 *         object.
-	 */
-	IWorldview getWorldview();
+    public static final String DEFAULT_CERTIFICATE_FILENAME = "klab.cert";
 
-	/**
-	 *
-	 * 
-	 * @return a {@link org.integratedmodelling.klab.api.auth.IIdentity} object.
-	 */
-	IIdentity getIdentity();
+    /*
+     * possible values for the certificate type, determining the type of
+     * authentication.
+     */
+    public static final String CERTIFICATE_TYPE_NODE = "NODE";
+    public static final String CERTIFICATE_TYPE_USER = "USER";
+    public static final String CERTIFICATE_TYPE_PARTNER = "PARTNER";
 
-	/**
-	 * Validity may depend on expiration date and possibly upstream conditions after
-	 * authentication, such as having had a certificate invalidated by an
-	 * administrator.
-	 *
-	 * @return a boolean.
-	 */
-	boolean isValid();
+    /**
+     * Create the worldview workspace for this identity and return it (unloaded and
+     * not initialized).
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
+     *         object.
+     */
+    IWorldview getWorldview();
+
+    /**
+     * A certificate represents an identity - a partner, a partner node or a k.LAB user. The
+     * identity returned will reflect the results of authentication: it may have no network
+     * parent if the user is offline, for example. It should normally descend from a partner,
+     * node, and network session; the anonymous certificate will return a lonely anonymous
+     * user.
+     * 
+     * @return the {@link org.integratedmodelling.klab.api.auth.IIdentity} that owns this 
+     * certificate. Never null.
+     */
+    IIdentity getIdentity();
+
+    /**
+     * Validity may depend on expiration date and possibly upstream conditions after
+     * authentication, such as having had a certificate invalidated by an
+     * administrator.
+     *
+     * If this returns true, the certificate exists, is readable and properly encrypted, and is
+     * current.
+     * 
+     * If this returns false, {@link #getInvalidityCause} will contain the reason why.
+     * 
+     * @return true if everything is OK.
+     */
+    boolean isValid();
+
+    /**
+     * Returns why {@link #isValid()} returned false. Undefined otherwise.
+     * 
+     * @return a description of the cause for invalidity
+     */
+    String getInvalidityCause();
 }

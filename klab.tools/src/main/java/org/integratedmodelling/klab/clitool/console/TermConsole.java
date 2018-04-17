@@ -132,7 +132,7 @@ public class TermConsole implements IConsole {
     //
     // String certfile = System.getProperty(IConfiguration.CERTFILE_PROPERTY);
     // if (certfile == null) {
-    // certfile = KLAB.CONFIG.getDataPath() + File.separator + "im.cert";
+    // certfile = KLAB.CONFIG.getDataPath() + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME;
     // }
     //
     // File cert = new File(certfile);

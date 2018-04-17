@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -15,46 +16,55 @@ import org.kohsuke.args4j.ParserProperties;
 public class EngineStartupOptions implements IEngineStartupOptions {
 
     @Option(name = "-dataDir", usage = "data directory (default: ~/.klab)", metaVar = "<DIRECTORY_PATH>")
-    File    dataDir           = null;
+    File dataDir = null;
 
-    @Option(name = "-cert", usage = "certificate file (default: <dataDir>/im.cert)", metaVar = "<FILE_PATH>")
-    File    certificateFile   = null;
+    @Option(
+            name = "-cert",
+            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_CERTIFICATE_FILENAME + ")",
+            metaVar = "<FILE_PATH>")
+    File certificateFile = null;
+    
+    @Option(
+            name = "-certResource",
+            usage = "certificate classpath resource (default null)",
+            metaVar = "<CLASSPATH_RESOURCE>")
+    String certificateResource = null;
 
     @Option(
             name = "-workspace",
             usage = "monitored workspace directory (default: ~/.klab/workspace, not monitored)",
             metaVar = "<DIRECTORY_PATH>")
-    File    workspaceLocation = null;
+    File workspaceLocation = null;
 
     @Option(
             name = "-mcast",
             usage = "multicast channel (default: multicasting off; must be unique within the local network)",
             metaVar = "<STRING>")
-    String  multicastChannel;
+    String multicastChannel;
 
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
-    int     port              = 8183;
+    int port = 8183;
 
     @Option(name = "-help", usage = "print command line options and exit")
     boolean help;
 
     @Option(name = "-exit", usage = "exit after completing startup and running any scripts from command line")
     boolean exit;
-    
+
     @Option(name = "-components", usage = "paths to any custom component")
     List<File> components = new ArrayList<>();
 
     private List<String> arguments = new ArrayList<>();
-    
+
     /**
      * All defaults
      */
     public EngineStartupOptions() {
     }
-    
+
     @Override
     public String[] getArguments() {
-      return this.arguments.toArray(new String[this.arguments.size()]);
+        return this.arguments.toArray(new String[this.arguments.size()]);
     }
 
     /**
@@ -92,7 +102,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }
@@ -131,7 +141,62 @@ public class EngineStartupOptions implements IEngineStartupOptions {
 
     @Override
     public Collection<File> getComponentPaths() {
-      return components;
+        return components;
+    }
+
+    @Override
+    public String getCertificateResource() {
+        return certificateResource;
+    }
+
+    
+    public void setDataDir(File dataDir) {
+        this.dataDir = dataDir;
+    }
+
+    
+    public void setCertificateFile(File certificateFile) {
+        this.certificateFile = certificateFile;
+    }
+
+    
+    public void setCertificateResource(String certificateResource) {
+        this.certificateResource = certificateResource;
+    }
+
+    
+    public void setWorkspaceLocation(File workspaceLocation) {
+        this.workspaceLocation = workspaceLocation;
+    }
+
+    
+    public void setMulticastChannel(String multicastChannel) {
+        this.multicastChannel = multicastChannel;
+    }
+
+    
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    
+    public void setHelp(boolean help) {
+        this.help = help;
+    }
+
+    
+    public void setExit(boolean exit) {
+        this.exit = exit;
+    }
+
+    
+    public void setComponents(List<File> components) {
+        this.components = components;
+    }
+
+    
+    public void setArguments(List<String> arguments) {
+        this.arguments = arguments;
     }
 
 }

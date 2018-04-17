@@ -1,4 +1,9 @@
-# Sample certificate >= 0.10.0
+# Sample certificate >= 0.10.0. Some properties are under
+# user control and can be changed using the k.LAB configuration
+# page.
+# -----------------------------------------------------------------
+# username, certificate type and user signature must match those in the
+# encrypted certificate and are sent to the node for cross-validation
 # -----------------------------------------------------------------
 # k.LAB user certificate released to ferdinando.villa on XXXX
 # No commercial use allowed
@@ -6,11 +11,13 @@
 klab.certificate.type = USER
 # partner and node certs have more info
 # node certs can also work as application properties
-klab.user = ferdinando.villa
+klab.username = test.user
 # worldview must exist and be supported by partner node, for now 
 # nodes are worldview-committed so not really an option
 klab.worldview = im
-klab.user.email = ferdinando.villa@gmail.com
+# email can be modified by the user and override the one in user
+# profile
+klab.user.email = test.user@gmail.com
 # user-controlled level of expertise, to enable dedicated,
 # non-privileged client features (e.g. USER, EXPERT, DEVELOPER)
 klab.user.level = DEVELOPER
@@ -18,18 +25,18 @@ klab.user.level = DEVELOPER
 # certificate integrity after decryption
 klab.user.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d
 # the node(s) that can authenticate us (hold the key to decrypt the certificate;
-# data in encrypted cert must match the above 
-klab.partner.node = https://integratedmodelling.org/klab
+# data in encrypted cert must match the above.
+klab.partner.node = http://127.0.0.1:8281/klab
 # may add additional node lines for mirrors
 klab.certificate = -----BEGIN PGP MESSAGE-----\n\
 Version: BCPG v1.50\n\
 \n\
-owJ4nJvAy8zAxbj75dw1/xT+RDCePmifJJ6TmZyaV5zqlpmT6peYm6rrmZ6XX5Sa\n\
-ErEhQ0RZV1cBKq2QBpTnUnYrylRwS01SMDJRMLSwMjCzMrJQcHYNUTAyMDTnSkwD\n\
+owJ4nJvAy8zAxbj75dw1/xT+RDCePqieJJ6TmZyaV5zqlpmT6peYm6rrmZ6XX5Sa\n\
+EnY2m11ZV1cBKq2QBpTnUg5PTVFwS01SMDJRMLC0MjaxMjRVcHYNUTAyMDTjSkwD\n\
 KspMLMnMz7PlSi/KLy0otnV08fX00wGTnsEhQY4h/kHBOo6BoY7OQf7BQFaQpyuU\n\
-DHF19NVxDA52DQnWcXYMcfTzdNRxcQ1z9fEPcAXqcffxd3L0iff1d3GFmuLp7Ank\n\
-6Xj66ngGh+r4uoYE+ceHOfo5+4eGuQbpBIa6Ork66wS5ugPtdQ1ydeFKrSjILKq0\n\
-BTrVQtfASNfIJMTQIgbohxigJ/QsDU21DQyBXAOuxIICoKfB3ii25SotTi2yTUst\n\
+DHF19NVxDA52DQnWcXENc/XxD3AFqnX38Xdy9In39Xdxher2dPYE8nQ8fXU8g0N1\n\
+AkNdnVyddYJc3YHmuwa5unClVhRkFlXaAp1krmtgpGtkHGJgGQN0awzQsXqGppba\n\
+BoYxVgYGXIkFBUDPgZ1bbMtVWpxaZJuWWpSSmZeYl5KvV5aZk5PIVVCUmZtYVKkH\n\
 SsnMS8xLydcry8zJSeQqKMrMTSyq1ANKlgHlM0pKCmKs9PUNTQ30jEwM9QyNDfVM\n\
 9EtyDLiK8nNSi22D/H1c41ECQQcs5AL0Z7yvo5+juytUJDTYNYgrNTcxMwfDUoek\n\
 ZOOi1OLUxKLkDL38onSuotTEnDxglNm6wVUqhIGdl51aaWtiYGCcZpZiomuWaJ6q\n\

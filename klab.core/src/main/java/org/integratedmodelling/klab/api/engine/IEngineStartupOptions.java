@@ -35,6 +35,14 @@ public interface IEngineStartupOptions extends IStartupOptions {
     File getWorkspaceLocation();
 
     /**
+     * Tied to -certResource, allows the certificate to be read from the classpath rather than from a file. This should be checked before 
+     * {@link #getCertificateFile()} is called. For self-contained embedded servers.
+     * 
+     * @return the classpath resource with a certificate or null
+     */
+    String getCertificateResource();
+
+    /**
      * Tied to <pre>-mcast</pre> option, opens a multicast channel with the specified ID so that a client can communicate
      * quickly with the engine.
      *

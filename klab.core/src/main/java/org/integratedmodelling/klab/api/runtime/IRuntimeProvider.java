@@ -104,15 +104,15 @@ public interface IRuntimeProvider {
    */
   IObservation createEmptyObservation(IObservable observable, IScale scale);
 
-  /**
-   * Return the computable that will merge the artifacts produced by the passed models, each
-   * indicated by the model ID it is paired with. Normally a service call implemented in the runtime
-   * provider.
-   *
-   * @param observable the observable corresponding to the artifact produced and passed
-   * @param modelIds the IDs that will identify the artifacts when the function is called.
-   * @return a computable that will merge artifacts over their different coverages.
-   */
-  IComputableResource getMergeArtifactServiceCall(IObservable observable, List<String> modelIds);
+//  /**
+//   * Return the computable that will merge the artifacts produced by the passed models, each
+//   * indicated by the model ID it is paired with. Normally a service call implemented in the runtime
+//   * provider.
+//   *
+//   * @param observable the observable corresponding to the artifact produced and passed
+//   * @param modelIds the IDs that will identify the artifacts when the function is called.
+//   * @return a computable that will merge artifacts over their different coverages.
+//   */
+//  IComputableResource getMergeArtifactServiceCall(IObservable observable, List<String> modelIds);
 
 }

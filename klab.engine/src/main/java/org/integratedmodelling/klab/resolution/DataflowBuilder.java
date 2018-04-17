@@ -60,7 +60,7 @@ public class DataflowBuilder {
     ResolutionEdge() {}
 
     public String toString() {
-      return "resolves" + (coverage == null ? "" : " partially");
+      return "resolves" + (coverage.isEmpty() ? "" : " partially");
     }
   }
 
@@ -273,12 +273,12 @@ public class DataflowBuilder {
           ret.getActuators().add(partial);
         }
 
-        /*
-         * compile in a function to merge the resulting artifacts. FIXME this is not the right way:
-         * must be automatically merged in computation, shifting extents as needed
-         */
-        ret.addComputation(
-            Klab.INSTANCE.getRuntimeProvider().getMergeArtifactServiceCall(observable, modelIds));
+//        /*
+//         * compile in a function to merge the resulting artifacts. FIXME this is not the right way:
+//         * must be automatically merged in computation, shifting extents as needed
+//         */
+//        ret.addComputation(
+//            Klab.INSTANCE.getRuntimeProvider().getMergeArtifactServiceCall(observable, modelIds));
       }
 
       return ret;

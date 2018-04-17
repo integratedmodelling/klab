@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -37,6 +38,7 @@ import org.apache.maven.shared.invoker.SystemOutLogger;
 import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JavaUtils;
@@ -45,7 +47,6 @@ import org.integratedmodelling.klab.utils.NetUtilities;
 import org.integratedmodelling.klab.utils.OS;
 import org.integratedmodelling.klab.utils.URLUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * A launcher for an engine, handling both local Maven installs for developers and official distributions
  * synchronized from the network. The launcher also handles cleaning and restarting a crashed engine if
@@ -192,11 +193,10 @@ public abstract class EngineLauncher {
          * these do not correspond to our port, change message to notify that engine ops
          * will be allowed when the configured engine is the active one.
          */
-
         this.dataDir = dataDir;
         this.clientSignature = clientSignature;
 
-        File certFile = new File(dataDir + File.separator + "im.cert");
+        File certFile = new File(dataDir + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME);
         if (!certificate.equals(certFile)) {
             try {
                 FileUtils.copyFile(certificate, certFile);
