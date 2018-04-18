@@ -3,30 +3,29 @@ package org.integratedmodelling.klab.auth;
 import java.util.Date;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class PartnerIdentity extends UserIdentity implements IPartnerIdentity, UserDetails {
+public class Partner extends UserIdentity implements IPartnerIdentity, UserDetails {
 
     private static final long serialVersionUID = -129699145554376751L;
 
-    public PartnerIdentity(String partnerName) {
+    public Partner(String partnerName) {
         super(partnerName);
+    }
+
+    public Partner(IdentityReference owningPartner) {
+        super(owningPartner);
     }
 
     @Override
     public IIdentity getParentIdentity() {
-        // only legitimate null.
+        // the only legitimate null.
         return null;
     }
 
     @Override
     public String getServerURL() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getEmailAddress() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -76,6 +75,11 @@ public class PartnerIdentity extends UserIdentity implements IPartnerIdentity, U
     public boolean isOnline() {
         // partners are an offline entity.
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return getUsername();
     }
 
 }

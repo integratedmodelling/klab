@@ -25,4 +25,8 @@ public interface IPartnerIdentity extends IIdentity {
     
     /** Constant <code>TYPE</code> */
     Type TYPE = Type.IM_PARTNER;
+    
+    String getName();
+    
+    String getEmailAddress();
 }

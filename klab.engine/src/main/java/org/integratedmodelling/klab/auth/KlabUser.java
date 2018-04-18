@@ -1,28 +1,30 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.Date;
+
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.data.rest.resources.AuthenticatedIdentity;
 
-public class KlabUserIdentity extends UserIdentity implements IKlabUserIdentity {
+public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
     private static final long serialVersionUID = -5902039133869228876L;
-    private INodeIdentity parent;
+    private IIdentity parent;
     protected boolean online;
 
-    public KlabUserIdentity(String username, INodeIdentity node) {
+    public KlabUser(String username, INodeIdentity node) {
         super(username);
         this.parent = node;
     }
 
-    @Override
-    public String getServerURL() {
-        // TODO Auto-generated method stub
-        return null;
+    public KlabUser(AuthenticatedIdentity userData, NetworkSession networkSession) {
+        super(userData.getIdentity());
+        this.parent = networkSession;
     }
 
     @Override
-    public String getEmailAddress() {
+    public String getServerURL() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -64,7 +66,7 @@ public class KlabUserIdentity extends UserIdentity implements IKlabUserIdentity 
     }
 
     @Override
-    public INodeIdentity getParentIdentity() {
+    public IIdentity getParentIdentity() {
         return this.parent;
     }
 

@@ -28,6 +28,6 @@ public interface IEngineSessionIdentity extends IRuntimeIdentity {
     
     /** {@inheritDoc} */
     @Override
-    IEngineIdentity getParentIdentity();
+    IEngineUserIdentity getParentIdentity();
 
 }

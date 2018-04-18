@@ -2,10 +2,10 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
+
 import org.integratedmodelling.kim.utils.CollectionUtils;
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -21,10 +21,10 @@ public class Session implements ISession {
 
   Monitor monitor;
   String  token = "s" + NameGenerator.shortUUID();
-  Engine  engine;
+  IEngineUserIdentity user;
 
   public Session(Engine engine, IEngineUserIdentity user) {
-    this.engine = engine;
+    this.user = user;
     this.monitor = ((Monitor) engine.getMonitor()).get(this);
   }
 
@@ -44,8 +44,8 @@ public class Session implements ISession {
   }
 
   @Override
-  public IEngineIdentity getParentIdentity() {
-    return engine;
+  public IEngineUserIdentity getParentIdentity() {
+    return user;
   }
 
   @Override

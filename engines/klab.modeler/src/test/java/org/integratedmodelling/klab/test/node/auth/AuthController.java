@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.API;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.data.rest.resources.AuthenticatedIdentity;
 import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.integratedmodelling.klab.data.rest.resources.NodeReference;
 import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
 import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
-import org.integratedmodelling.klab.test.node.TestNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -40,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Secured(Roles.PUBLIC)
-@PropertySource("classpath:testnode.cert")
+@PropertySource("classpath:testengine.cert")
 public class AuthController {
 
     @Value("${klab.certificate}")
@@ -71,12 +70,17 @@ public class AuthController {
             AuthenticatedIdentity identity = new AuthenticatedIdentity(userIdentity, new ArrayList<>(), tomorrow,
                     NameGenerator.newName());
 
-            Set<INodeIdentity.Permission> permissions = new HashSet<>();
-            NodeReference thisnode = new NodeReference(TestNode.NODE_NAME, permissions, TestNode.PARTNER_IDENTITY,
-                    Collections.singletonList(TestNode.NODE_URL), true, 20, 0, new ArrayList<>(), new ArrayList<>());
+            INodeIdentity node = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(INodeIdentity.class);
+            IPartnerIdentity partner = Klab.INSTANCE.getRootMonitor().getIdentity()
+                    .getParentIdentity(IPartnerIdentity.class);
+            IdentityReference partnerIdentity = new IdentityReference(partner.getName(), partner.getEmailAddress(), new Date());
+
+            NodeReference thisnode = new NodeReference(node.getName(), new HashSet<>(node.getPermissions()),
+                    partnerIdentity, new ArrayList<>(node.getUrls()), true, 20, 0, new ArrayList<>(),
+                    new ArrayList<>());
 
             return new ResponseEntity<AuthenticationResponse>(
-                    new AuthenticationResponse(identity, Collections.singletonList(thisnode), TestNode.NODE_NAME),
+                    new AuthenticationResponse(identity, Collections.singletonList(thisnode), node.getName()),
                     HttpStatus.OK);
         }
         return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);

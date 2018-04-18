@@ -34,7 +34,7 @@ public class AnonymousCertificate implements ICertificate {
     @Override
     public IIdentity getIdentity() {
         // no partner, no node, no nothing
-        return new KlabUserIdentity(Auth.ANONYMOUS_USER_ID, null);
+        return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
     }
 
     @Override

@@ -1,109 +1,150 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.data.rest.resources.AuthenticatedIdentity;
+import org.integratedmodelling.klab.data.rest.resources.Group;
+import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public abstract class UserIdentity implements IUserIdentity, UserDetails {
 
-  private static final long serialVersionUID = -5670348187596399293L;
+    private static final long serialVersionUID = -5670348187596399293L;
 
-  protected String username;
+    protected String username;
+    protected String emailAddress;
+    protected String token;
+    protected Date lastLogin;
+    protected Date expiryDate;
+    protected Set<String> groups = new HashSet<>();
+    protected Set<GrantedAuthority> authorities = new HashSet<>();
 
-  public UserIdentity(String username) {
-    this.username = username;
-  }
+    public UserIdentity(String username) {
+        this.username = username;
+    }
 
-  @Override
-  public boolean isAnonymous() {
-    return username.equals(Auth.ANONYMOUS_USER_ID);
-  }
+    public UserIdentity(UserIdentity user) {
+        this.username = user.username;
+        this.emailAddress = user.emailAddress;
+        this.token = user.token;
+        this.groups.addAll(user.groups);
+        this.authorities.addAll(user.authorities);
+    }
+    
+    public UserIdentity(AuthenticatedIdentity identity) {
+        this(identity.getIdentity());
+        this.token = identity.getToken();
+        for (Group group : identity.getGroups()) {
+            this.groups.add(group.getId());
+        }
+        this.expiryDate = identity.getExpiry();
+    }
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    public UserIdentity(IdentityReference identity) {
+        this.username = identity.getId();
+        this.emailAddress = identity.getEmail();
+        this.lastLogin = identity.getLastLogin();
+    }
 
-  @Override
-  public String getPassword() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public boolean isAnonymous() {
+        return username.equals(Auth.ANONYMOUS_USER_ID);
+    }
 
-  @Override
-  public String getUsername() {
-    return username;
-  }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+    @Override
+    public String getPassword() {
+        return getId();
+    }
 
-  @Override
-  public boolean isAccountNonLocked() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+    @Override
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+    
+    @Override
+    public boolean isAccountNonExpired() {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-  @Override
-  public boolean isEnabled() {
-    return true;
-  }
+    @Override
+    public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-  @Override
-  public String getId() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-  @Override
-  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-    return IIdentity.findParent(this, type);
-  }
+    @Override
+    public boolean isEnabled() {
+        // TODO
+        return true;
+    }
 
-  @Override
-  public Set<String> getGroups() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public String getId() {
+        return token;
+    }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((username == null) ? 0 : username.hashCode());
-    return result;
-  }
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    UserIdentity other = (UserIdentity) obj;
-    if (username == null) {
-      if (other.username != null)
-        return false;
-    } else if (!username.equals(other.username))
-      return false;
-    return true;
-  }
-  
+    @Override
+    public Set<String> getGroups() {
+        return groups;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UserIdentity other = (UserIdentity) obj;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        return true;
+    }
+
+    
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
 }

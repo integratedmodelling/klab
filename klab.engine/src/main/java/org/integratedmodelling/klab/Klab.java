@@ -35,408 +35,405 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  */
 public enum Klab implements IRuntimeService {
 
-  INSTANCE;
+    INSTANCE;
 
-  /**
-   * The package containing all REST resource beans.
-   */
-  static final public String REST_RESOURCES_PACKAGE_ID =
-      "org.integratedmodelling.klab.data.rest.resources";
+    /**
+     * The package containing all REST resource beans.
+     */
+    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.data.rest.resources";
 
-  /**
-   * This can be set to a runnable that starts the REST services.
-   */
-  Runnable                   serviceApplication        = null;
-  IComponent                 storageProvider           = null;
-  IComponent                 runtimeProvider           = null;
-  File                       workDirectory             = new File(".").getAbsoluteFile();
-  boolean                    networkServicesStarted    = false;
-  boolean                    networkServicesFailed     = false;
-  IIdentity                  rootIdentity              = null;
+    /**
+     * This can be set to a runnable that starts the REST services.
+     */
+    Runnable serviceApplication = null;
+    IComponent storageProvider = null;
+    IComponent runtimeProvider = null;
+    File workDirectory = new File(".").getAbsoluteFile();
+    boolean networkServicesStarted = false;
+    boolean networkServicesFailed = false;
+    IIdentity rootIdentity = null;
 
-  /**
-   * Handler to process classes with k.LAB annotations. Register using
-   * {@link #registerAnnotationHandler(Class, AnnotationHandler)}; the handlers will be called for
-   * each matching class when {@link #scanPackage(String)} is called.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  public interface AnnotationHandler {
-    void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException;
-  }
+    /**
+     * Handler to process classes with k.LAB annotations. Register using
+     * {@link #registerAnnotationHandler(Class, AnnotationHandler)}; the handlers will be called for
+     * each matching class when {@link #scanPackage(String)} is called.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface AnnotationHandler {
 
-  private Map<Class<? extends Annotation>, AnnotationHandler> annotationHandlers = new HashMap<>();
-  private IMonitor                                            rootMonitor        =
-      new RootMonitor();
-
-  private Klab() {
-    rootMonitor = new RootMonitor();
-    setupExtensions();
-  }
-
-  public void setNetworkServiceApplication(Runnable runnable) {
-    this.serviceApplication = runnable;
-  }
-
-  /**
-   * Set the root identity (owning the root monitor). Set to the owning user first, then to the
-   * engine if it is started correctly.
-   * 
-   * @param identity
-   */
-  public void setRootIdentity(IIdentity identity) {
-    this.rootIdentity = identity;
-  }
-
-  /**
-   * Register a class annotation and its handler for processing when {@link #scanPackage(String)} is
-   * called.
-   * 
-   * @param annotationClass
-   * @param handler
-   */
-  public void registerAnnotationHandler(Class<? extends Annotation> annotationClass,
-      AnnotationHandler handler) {
-    annotationHandlers.put(annotationClass, handler);
-  }
-
-  // @Override
-  // public boolean requireNetworkServices() {
-  //
-  // /*
-  // * TODO very simple logic for one-shot attempt; think about better logic
-  // */
-  // if (networkServicesFailed) {
-  // return false;
-  // }
-  // if (networkServicesStarted) {
-  // /*
-  // * TODO may want to check that things are still up
-  // */
-  // return true;
-  // }
-  // if (serviceApplication != null) {
-  // try {
-  // serviceApplication.run();
-  // return true;
-  // } catch (Throwable t) {
-  // Logging.INSTANCE.error(t);
-  // networkServicesFailed = true;
-  // }
-  // }
-  // return false;
-  // }
-
-  /**
-   * Single scanning loop for all registered annotations in a package. Done on the main codebase and
-   * in each component based on the declared packages.
-   * 
-   * @param packageId
-   * @return all annotations found with the corresponding class
-   * @throws KlabException
-   */
-  public List<Pair<Annotation, Class<?>>> scanPackage(String packageId) throws KlabException {
-
-    List<Pair<Annotation, Class<?>>> ret = new ArrayList<>();
-
-    ClassPathScanningCandidateComponentProvider provider =
-        new ClassPathScanningCandidateComponentProvider(false);
-    for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
-      provider.addIncludeFilter(new AnnotationTypeFilter(ah));
+        void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException;
     }
 
-    Set<BeanDefinition> beans = provider.findCandidateComponents(packageId);
-    for (BeanDefinition bd : beans) {
+    private Map<Class<? extends Annotation>, AnnotationHandler> annotationHandlers = new HashMap<>();
+    private IMonitor rootMonitor = new RootMonitor();
 
-      for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
-        try {
-          Class<?> cls = Class.forName(bd.getBeanClassName());
-          Annotation annotation = cls.getAnnotation(ah);
-          if (annotation != null) {
-            annotationHandlers.get(ah).processAnnotatedClass(annotation, cls);
-            ret.add(new Pair<>(annotation, cls));
-          }
-        } catch (ClassNotFoundException e) {
-          Logging.INSTANCE.error(e);
-          continue;
-        }
-      }
+    private Klab() {
+        rootMonitor = new RootMonitor();
+        setupExtensions();
     }
 
-    return ret;
-  }
-
-  // functions
-
-  // URNs
-
-  /*
-   * Get extensions (ImageIO, Geotools) optimally configured. Most copied from Geoserver's
-   * GeoserverInitStartupListener
-   */
-  private static void setupExtensions() {
-
-    // if an external admin did not set it up otherwise, force X/Y axis
-    // ordering. Must be initialized before any other opeation can trigger the initialization of the CRS
-    // subsystem.
-    
-    // TODO move this in the setup() method of the spatial component. 
-    // We need to initialize this
-    // property
-    // 
-    if (System.getProperty("org.geotools.referencing.forceXY") == null) {
-      System.setProperty("org.geotools.referencing.forceXY", "true");
+    public void setNetworkServiceApplication(Runnable runnable) {
+        this.serviceApplication = runnable;
     }
-    // if (Boolean.TRUE
-    // .equals(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER))) {
-    // Hints.putSystemDefault(Hints.FORCE_AXIS_ORDER_HONORING, "http");
+
+    /**
+     * Set the root identity (owning the root monitor). Set to the owning user first, then to the
+     * engine if it is started correctly.
+     * 
+     * @param identity
+     */
+    public void setRootIdentity(IIdentity identity) {
+        this.rootIdentity = identity;
+    }
+
+    /**
+     * Register a class annotation and its handler for processing when {@link #scanPackage(String)} is
+     * called.
+     * 
+     * @param annotationClass
+     * @param handler
+     */
+    public void registerAnnotationHandler(Class<? extends Annotation> annotationClass, AnnotationHandler handler) {
+        annotationHandlers.put(annotationClass, handler);
+    }
+
+    // @Override
+    // public boolean requireNetworkServices() {
+    //
+    // /*
+    // * TODO very simple logic for one-shot attempt; think about better logic
+    // */
+    // if (networkServicesFailed) {
+    // return false;
     // }
-    // Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, true);
-    //
-    // // setup the referencing tolerance to make it more tolerant to tiny
-    // // differences
-    // // between projections (increases the chance of matching a random prj
-    // // file content
-    // // to an actual EPSG code
-    // double comparisonTolerance = DEFAULT_COMPARISON_TOLERANCE;
-    //
-    // // Register logging, and bridge to JAI logging
-    // GeoTools.init((Hints) null);
-    //
+    // if (networkServicesStarted) {
     // /*
-    // * TODO make this a property and implement if it ever becomes necessary
+    // * TODO may want to check that things are still up
     // */
-    // // if (comparisonToleranceProperty != null) {
-    // // try {
-    // // comparisonTolerance =
-    // // Double.parseDouble(comparisonToleranceProperty);
-    // // } catch (NumberFormatException nfe) {
-    // // KLAB.warn("Unable to parse the specified COMPARISON_TOLERANCE "
-    // // + "system property: " + comparisonToleranceProperty +
-    // // " which should be a number. Using Default: " +
-    // // DEFAULT_COMPARISON_TOLERANCE);
-    // // }
-    // // }
-    // Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, comparisonTolerance);
-    //
-    // /*
-    // * avoid expiration of EPSG data. FIXME: does not seem to avoid anything.
-    // */
-    // System.setProperty("org.geotools.epsg.factory.timeout", "-1");
-    //
-    // /*
-    // * Prevents leak ()
-    // */
-    // ImageIO.scanForPlugins();
-    //
-    // // in any case, the native png reader is worse than the pure java ones,
-    // // so
-    // // let's disable it (the native png writer is on the other side
-    // // faster)...
-    // ImageIOExt.allowNativeCodec("png", ImageReaderSpi.class, false);
-    // ImageIOExt.allowNativeCodec("png", ImageWriterSpi.class, true);
-    //
-    // // initialize GeoTools factories so that we don't make a SPI lookup
-    // // every time a
-    // // factory is needed
-    // Hints.putSystemDefault(Hints.FILTER_FACTORY, CommonFactoryFinder
-    // .getFilterFactory2(null));
-    // Hints.putSystemDefault(Hints.STYLE_FACTORY, CommonFactoryFinder
-    // .getStyleFactory(null));
-    // Hints.putSystemDefault(Hints.FEATURE_FACTORY, CommonFactoryFinder
-    // .getFeatureFactory(null));
-    //
-    // final Hints defHints = GeoTools.getDefaultHints();
-    //
-    // // Initialize GridCoverageFactory so that we don't make a lookup every
-    // // time a
-    // // factory is needed
-    // Hints.putSystemDefault(Hints.GRID_COVERAGE_FACTORY, CoverageFactoryFinder
-    // .getGridCoverageFactory(defHints));
-  }
+    // return true;
+    // }
+    // if (serviceApplication != null) {
+    // try {
+    // serviceApplication.run();
+    // return true;
+    // } catch (Throwable t) {
+    // Logging.INSTANCE.error(t);
+    // networkServicesFailed = true;
+    // }
+    // }
+    // return false;
+    // }
 
-  /**
-   * Register a class as a k.IM toolkit, providing extensions usable from Groovy or other expression
-   * language.
-   * 
-   * @param cls
-   */
-  public void registerKimToolkit(Class<?> cls) {
-    // TODO Auto-generated method stub
+    /**
+     * Single scanning loop for all registered annotations in a package. Done on the main codebase and
+     * in each component based on the declared packages.
+     * 
+     * @param packageId
+     * @return all annotations found with the corresponding class
+     * @throws KlabException
+     */
+    public List<Pair<Annotation, Class<?>>> scanPackage(String packageId) throws KlabException {
 
-  }
+        List<Pair<Annotation, Class<?>>> ret = new ArrayList<>();
 
-  class RootMonitor implements IMonitor {
-
-    @Override
-    public void info(Object... info) {
-      Logging.INSTANCE.info(info);
-    }
-
-    @Override
-    public void warn(Object... o) {
-      Logging.INSTANCE.warn(o);
-    }
-
-    @Override
-    public void error(Object... o) {
-      Logging.INSTANCE.error(o);
-    }
-
-    @Override
-    public void debug(Object... o) {
-      Logging.INSTANCE.debug(o);
-    }
-
-    @Override
-    public void send(Object o) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public IIdentity getIdentity() {
-      return rootIdentity;
-    }
-
-    @Override
-    public boolean hasErrors() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-  }
-
-  @Override
-  public IStorageProvider getStorageProvider() {
-
-    String providerComponent = Configuration.INSTANCE.getProperties()
-        .getProperty(IConfigurationService.STORAGE_PROVIDER_COMPONENT);
-    int nproviders = 0;
-
-    if (storageProvider == null) {
-      for (IComponent component : Extensions.INSTANCE.getComponents()) {
-        Optional<Class<?>> cclass = ((Component) component).getImplementingClass();
-        if (cclass.isPresent() && IStorageProvider.class.isAssignableFrom(cclass.get())) {
-          if (providerComponent != null) {
-            if (component.getName().equals(providerComponent)) {
-              storageProvider = component;
-              break;
-            }
-          } else if (providerComponent == null) {
-            storageProvider = component;
-          }
-          nproviders++;
+        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+        for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
+            provider.addIncludeFilter(new AnnotationTypeFilter(ah));
         }
-      }
-      if (nproviders > 1 && providerComponent == null) {
-        throw new KlabConfigurationException(
-            "multiple storage providers found: please configure the class of the desired provider");
-      }
-    }
 
-    if (storageProvider == null) {
-      throw new KlabConfigurationException("no storage provider found: please install a storage plug-in");
-    }
+        Set<BeanDefinition> beans = provider.findCandidateComponents(packageId);
+        for (BeanDefinition bd : beans) {
 
-    return (IStorageProvider) ((Component) storageProvider).getImplementation();
-  }
-
-  @Override
-  public IRuntimeProvider getRuntimeProvider() {
-
-    String providerComponent = Configuration.INSTANCE.getProperties()
-        .getProperty(IConfigurationService.RUNTIME_PROVIDER_COMPONENT);
-    int nproviders = 0;
-
-    if (runtimeProvider == null) {
-      for (IComponent component : Extensions.INSTANCE.getComponents()) {
-        Optional<Class<?>> cclass = ((Component) component).getImplementingClass();
-        if (cclass.isPresent() && IRuntimeProvider.class.isAssignableFrom(cclass.get())) {
-          if (providerComponent != null) {
-            if (component.getName().equals(providerComponent)) {
-              runtimeProvider = component;
-              break;
+            for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
+                try {
+                    Class<?> cls = Class.forName(bd.getBeanClassName());
+                    Annotation annotation = cls.getAnnotation(ah);
+                    if (annotation != null) {
+                        annotationHandlers.get(ah).processAnnotatedClass(annotation, cls);
+                        ret.add(new Pair<>(annotation, cls));
+                    }
+                } catch (ClassNotFoundException e) {
+                    Logging.INSTANCE.error(e);
+                    continue;
+                }
             }
-          } else if (providerComponent == null) {
-            runtimeProvider = component;
-          }
-          nproviders++;
         }
-      }
-      if (nproviders > 1 && providerComponent == null) {
-        throw new KlabConfigurationException(
-            "multiple dataflow runtime components found: please configure the class of the desired provider");
-      }
+
+        return ret;
     }
 
-    if (runtimeProvider == null) {
-      throw new KlabConfigurationException(
-          "no dataflow runtime component found: please install a runtime plug-in");
+    // functions
+
+    // URNs
+
+    /*
+     * Get extensions (ImageIO, Geotools) optimally configured. Most copied from Geoserver's
+     * GeoserverInitStartupListener
+     */
+    private static void setupExtensions() {
+
+        // if an external admin did not set it up otherwise, force X/Y axis
+        // ordering. Must be initialized before any other opeation can trigger the initialization of the CRS
+        // subsystem.
+
+        // TODO move this in the setup() method of the spatial component. 
+        // We need to initialize this
+        // property
+        // 
+        if (System.getProperty("org.geotools.referencing.forceXY") == null) {
+            System.setProperty("org.geotools.referencing.forceXY", "true");
+        }
+        // if (Boolean.TRUE
+        // .equals(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER))) {
+        // Hints.putSystemDefault(Hints.FORCE_AXIS_ORDER_HONORING, "http");
+        // }
+        // Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, true);
+        //
+        // // setup the referencing tolerance to make it more tolerant to tiny
+        // // differences
+        // // between projections (increases the chance of matching a random prj
+        // // file content
+        // // to an actual EPSG code
+        // double comparisonTolerance = DEFAULT_COMPARISON_TOLERANCE;
+        //
+        // // Register logging, and bridge to JAI logging
+        // GeoTools.init((Hints) null);
+        //
+        // /*
+        // * TODO make this a property and implement if it ever becomes necessary
+        // */
+        // // if (comparisonToleranceProperty != null) {
+        // // try {
+        // // comparisonTolerance =
+        // // Double.parseDouble(comparisonToleranceProperty);
+        // // } catch (NumberFormatException nfe) {
+        // // KLAB.warn("Unable to parse the specified COMPARISON_TOLERANCE "
+        // // + "system property: " + comparisonToleranceProperty +
+        // // " which should be a number. Using Default: " +
+        // // DEFAULT_COMPARISON_TOLERANCE);
+        // // }
+        // // }
+        // Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, comparisonTolerance);
+        //
+        // /*
+        // * avoid expiration of EPSG data. FIXME: does not seem to avoid anything.
+        // */
+        // System.setProperty("org.geotools.epsg.factory.timeout", "-1");
+        //
+        // /*
+        // * Prevents leak ()
+        // */
+        // ImageIO.scanForPlugins();
+        //
+        // // in any case, the native png reader is worse than the pure java ones,
+        // // so
+        // // let's disable it (the native png writer is on the other side
+        // // faster)...
+        // ImageIOExt.allowNativeCodec("png", ImageReaderSpi.class, false);
+        // ImageIOExt.allowNativeCodec("png", ImageWriterSpi.class, true);
+        //
+        // // initialize GeoTools factories so that we don't make a SPI lookup
+        // // every time a
+        // // factory is needed
+        // Hints.putSystemDefault(Hints.FILTER_FACTORY, CommonFactoryFinder
+        // .getFilterFactory2(null));
+        // Hints.putSystemDefault(Hints.STYLE_FACTORY, CommonFactoryFinder
+        // .getStyleFactory(null));
+        // Hints.putSystemDefault(Hints.FEATURE_FACTORY, CommonFactoryFinder
+        // .getFeatureFactory(null));
+        //
+        // final Hints defHints = GeoTools.getDefaultHints();
+        //
+        // // Initialize GridCoverageFactory so that we don't make a lookup every
+        // // time a
+        // // factory is needed
+        // Hints.putSystemDefault(Hints.GRID_COVERAGE_FACTORY, CoverageFactoryFinder
+        // .getGridCoverageFactory(defHints));
     }
 
-    return (IRuntimeProvider) ((Component) runtimeProvider).getImplementation();
-  }
+    /**
+     * Register a class as a k.IM toolkit, providing extensions usable from Groovy or other expression
+     * language.
+     * 
+     * @param cls
+     */
+    public void registerKimToolkit(Class<?> cls) {
+        // TODO Auto-generated method stub
 
-  public IMonitor getRootMonitor() {
-    return rootMonitor;
-  }
-
-  /**
-   * Resolve a file name to a file using the work directory if the path is not found as is.
-   * 
-   * @param filename
-   * @return an existing file, or null.
-   */
-  public File resolveFile(String filename) {
-    File ret = new File(filename);
-    if (ret.exists()) {
-      return ret;
     }
-    ret = new File(workDirectory + File.separator + filename);
-    return ret.exists() ? ret : null;
-  }
 
-  /**
-   * Work directory (defaults at '.') is only for interactive applications (script running, imports,
-   * certificate generation and the like).
-   * 
-   * @return the current work directory
-   */
-  public File getWorkDirectory() {
-    return workDirectory;
-  }
+    class RootMonitor implements IMonitor {
 
-  public void setWorkDirectory(File file) {
-    this.workDirectory = file;
-  }
+        @Override
+        public void info(Object... info) {
+            Logging.INSTANCE.info(info);
+        }
 
-  @Override
-  public String getResourceSchema() {
-    return SchemaExtractor.getSchemata(REST_RESOURCES_PACKAGE_ID);
-  }
+        @Override
+        public void warn(Object... o) {
+            Logging.INSTANCE.warn(o);
+        }
 
-  /**
-   * The runtime capabilities. TODO flesh out.
-   * 
-   * @return the capabilities bean.
-   */
-  public Capabilities getCapabilities() {
+        @Override
+        public void error(Object... o) {
+            Logging.INSTANCE.error(o);
+        }
 
-    Capabilities ret = new Capabilities();
+        @Override
+        public void debug(Object... o) {
+            Logging.INSTANCE.debug(o);
+        }
 
-    ret.setName("whatever");
-    ret.setVersion(Version.CURRENT);
-    ret.setBuild(Version.VERSION_BUILD);
-    // TODO
-    // List<KimServiceCall> services = new ArrayList<>();
-    // List<AuthorityReference> authorities = new ArrayList<>();
-    // List<ComponentReference> staticComponents = new ArrayList<>();
-    // List<ComponentReference> dynamicComponents = new ArrayList<>();
-    // long refreshFrequencyMillis = 0;
-    // int loadFactor = 0;
-    ret.setOwner(new IdentityReference("whoever", null, null));
+        @Override
+        public void send(Object o) {
+            // TODO Auto-generated method stub
 
-    return ret;
-  }
+        }
+
+        @Override
+        public IIdentity getIdentity() {
+            return rootIdentity;
+        }
+
+        @Override
+        public boolean hasErrors() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+    }
+
+    @Override
+    public IStorageProvider getStorageProvider() {
+
+        String providerComponent = Configuration.INSTANCE.getProperties()
+                .getProperty(IConfigurationService.STORAGE_PROVIDER_COMPONENT);
+        int nproviders = 0;
+
+        if (storageProvider == null) {
+            for (IComponent component : Extensions.INSTANCE.getComponents()) {
+                Optional<Class<?>> cclass = ((Component) component).getImplementingClass();
+                if (cclass.isPresent() && IStorageProvider.class.isAssignableFrom(cclass.get())) {
+                    if (providerComponent != null) {
+                        if (component.getName().equals(providerComponent)) {
+                            storageProvider = component;
+                            break;
+                        }
+                    } else if (providerComponent == null) {
+                        storageProvider = component;
+                    }
+                    nproviders++;
+                }
+            }
+            if (nproviders > 1 && providerComponent == null) {
+                throw new KlabConfigurationException(
+                        "multiple storage providers found: please configure the class of the desired provider");
+            }
+        }
+
+        if (storageProvider == null) {
+            throw new KlabConfigurationException("no storage provider found: please install a storage plug-in");
+        }
+
+        return (IStorageProvider) ((Component) storageProvider).getImplementation();
+    }
+
+    @Override
+    public IRuntimeProvider getRuntimeProvider() {
+
+        String providerComponent = Configuration.INSTANCE.getProperties()
+                .getProperty(IConfigurationService.RUNTIME_PROVIDER_COMPONENT);
+        int nproviders = 0;
+
+        if (runtimeProvider == null) {
+            for (IComponent component : Extensions.INSTANCE.getComponents()) {
+                Optional<Class<?>> cclass = ((Component) component).getImplementingClass();
+                if (cclass.isPresent() && IRuntimeProvider.class.isAssignableFrom(cclass.get())) {
+                    if (providerComponent != null) {
+                        if (component.getName().equals(providerComponent)) {
+                            runtimeProvider = component;
+                            break;
+                        }
+                    } else if (providerComponent == null) {
+                        runtimeProvider = component;
+                    }
+                    nproviders++;
+                }
+            }
+            if (nproviders > 1 && providerComponent == null) {
+                throw new KlabConfigurationException(
+                        "multiple dataflow runtime components found: please configure the class of the desired provider");
+            }
+        }
+
+        if (runtimeProvider == null) {
+            throw new KlabConfigurationException(
+                    "no dataflow runtime component found: please install a runtime plug-in");
+        }
+
+        return (IRuntimeProvider) ((Component) runtimeProvider).getImplementation();
+    }
+
+    public IMonitor getRootMonitor() {
+        return rootMonitor;
+    }
+
+    /**
+     * Resolve a file name to a file using the work directory if the path is not found as is.
+     * 
+     * @param filename
+     * @return an existing file, or null.
+     */
+    public File resolveFile(String filename) {
+        File ret = new File(filename);
+        if (ret.exists()) {
+            return ret;
+        }
+        ret = new File(workDirectory + File.separator + filename);
+        return ret.exists() ? ret : null;
+    }
+
+    /**
+     * Work directory (defaults at '.') is only for interactive applications (script running, imports,
+     * certificate generation and the like).
+     * 
+     * @return the current work directory
+     */
+    public File getWorkDirectory() {
+        return workDirectory;
+    }
+
+    public void setWorkDirectory(File file) {
+        this.workDirectory = file;
+    }
+
+    @Override
+    public String getResourceSchema() {
+        return SchemaExtractor.getSchemata(REST_RESOURCES_PACKAGE_ID);
+    }
+
+    /**
+     * The runtime capabilities. TODO flesh out.
+     * 
+     * @return the capabilities bean.
+     */
+    public Capabilities getCapabilities() {
+
+        Capabilities ret = new Capabilities();
+
+        ret.setName("whatever");
+        ret.setVersion(Version.CURRENT);
+        ret.setBuild(Version.VERSION_BUILD);
+        // TODO
+        // List<KimServiceCall> services = new ArrayList<>();
+        // List<AuthorityReference> authorities = new ArrayList<>();
+        // List<ComponentReference> staticComponents = new ArrayList<>();
+        // List<ComponentReference> dynamicComponents = new ArrayList<>();
+        // long refreshFrequencyMillis = 0;
+        // int loadFactor = 0;
+        ret.setOwner(new IdentityReference("whoever", null, null));
+
+        return ret;
+    }
 }

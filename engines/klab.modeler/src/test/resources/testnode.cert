@@ -11,20 +11,21 @@
 klab.certificate.type = NODE
 # partner and node certs have more info
 # node certs can also work as application properties
-klab.username = testnode
+klab.nodename = testnode
 # worldview must exist and be supported by partner node, for now 
 # nodes are worldview-committed so not really an option
 klab.worldview = im
+# partner ID
+klab.partner.name = Semantic Web of BS, Inc.
 # email can be modified by the user and override the one in user
 # profile
-klab.user.email = semweb@fake.com
-# user-controlled level of expertise, to enable dedicated,
-# non-privileged client features (e.g. USER, EXPERT, DEVELOPER)
+klab.partner.email = bs@semanticweb.org
+# Official URL of node
 klab.url = http://127.0.0.1:8281/klab
-# user signature is sent along with certificate and cross-validates 
+# signature is sent along with certificate and cross-validates 
 # certificate integrity after decryption
-klab.user.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d
-# may add additional node lines for mirrors
+klab.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d
+# the encrypted, encoded certificate
 klab.certificate = -----BEGIN PGP MESSAGE-----\n\
 Version: BCPG v1.50\n\
 \n\

@@ -23,10 +23,11 @@ klab.user.email = test.user@gmail.com
 klab.user.level = DEVELOPER
 # user signature is sent along with certificate and cross-validates 
 # certificate integrity after decryption
-klab.user.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d
-# the node(s) that can authenticate us (hold the key to decrypt the certificate;
-# data in encrypted cert must match the above.
+klab.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d
+# the node(s) that can authenticate us (holds the key to decrypt the certificate;
+# data in encrypted cert must match the above. The name of the node is also checked.
 klab.partner.node = http://127.0.0.1:8281/klab
+klab.nodename = testnode
 # may add additional node lines for mirrors
 klab.certificate = -----BEGIN PGP MESSAGE-----\n\
 Version: BCPG v1.50\n\

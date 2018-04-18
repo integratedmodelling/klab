@@ -23,11 +23,5 @@ package org.integratedmodelling.klab.api.services;
  */
 public interface IAuthenticationService {
 
-    /**
-     * Return the public key for certificates.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getKeyring();
 
 }

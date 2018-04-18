@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Annotations;
@@ -22,16 +23,18 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.engine.runtime.Script;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -50,7 +53,8 @@ public class Engine extends Server implements IEngine {
     private Date bootTime;
     private MulticastMessageBus multicastBus;
     private Monitor monitor;
-    private IUserIdentity owner = null;
+    // owner identity may be a IKlabUserIdentity (engines) or INodeIdentity (nodes)
+    private IIdentity owner = null;
     private IEngineUserIdentity defaultEngineUser = null;
     private ExecutorService scriptExecutor;
     private ExecutorService taskExecutor;
@@ -158,7 +162,24 @@ public class Engine extends Server implements IEngine {
     @Override
     public Session createSession() {
         // NO user must be created if missing, as a copy of owner
-        return createSession(defaultEngineUser);
+        return createSession(getDefaultEngineUser());
+    }
+
+    private IEngineUserIdentity getDefaultEngineUser() {
+        if (defaultEngineUser == null) {
+            IKlabUserIdentity owner = this.getParentIdentity(IKlabUserIdentity.class);
+            if (owner == null) {
+                /*
+                 * this only happens in a node, which should only create sessions for explicitly authorized
+                 * users.
+                 */
+                throw new KlabAuthorizationException(
+                        "Node engines cannot create modeling sessions without explicit authorization");
+            }
+            
+            defaultEngineUser = new EngineUser((UserIdentity)owner, this);
+        }
+        return defaultEngineUser;
     }
 
     @Override
@@ -364,8 +385,10 @@ public class Engine extends Server implements IEngine {
             }
 
             /*
-             * After the engine has successfully booted, it becomes the root identity
+             * After the engine has successfully booted, it becomes the root identity and is owned
+             * by the context owner.
              */
+            this.owner = Klab.INSTANCE.getRootMonitor().getIdentity();
             Klab.INSTANCE.setRootIdentity(this);
 
             /*
