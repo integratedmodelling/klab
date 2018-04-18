@@ -54,6 +54,16 @@ public interface API {
     public static final String P_URN = "{urn}";
 
     /**
+     * Ping service. Simply returns the number of milliseconds since engine boot, or 0 if engine is not running. 
+     * Accepts HEAD requests to simply check for heartbeat.
+     * 
+     *<p><b>Protocol:</b> GET, HEAD
+     *<br/><b>Response type:</b> long (if used with GET)
+     *<br/><b>Authentication:</b>
+     */
+    public static final String PING = "/ping";
+
+    /**
      * Public capabilities endpoint. Anything that has an API has capabilities.
      * 
      *<p><b>Protocol:</b> GET

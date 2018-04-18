@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.test.web;
 
+import javax.annotation.PreDestroy;
+
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.springframework.boot.SpringApplication;
@@ -23,12 +25,18 @@ import org.springframework.stereotype.Component;
                 "org.integratedmodelling.klab.engine.rest.controllers.resources" })
 public class Modeler {
 
+    Engine engine;
+    
     public void run(String[] args) {
         EngineStartupOptions options = new EngineStartupOptions();
         options.setCertificateResource("testengine.cert");
         options.initialize(args);
-        Engine engine = Engine.start(options);
+        engine = Engine.start(options);
         SpringApplication.run(Modeler.class, options.getArguments());
+    }
+    
+    @PreDestroy
+    public void shutdown() {
         engine.stop();
     }
 

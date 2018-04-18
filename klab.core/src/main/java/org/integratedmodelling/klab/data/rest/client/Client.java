@@ -117,7 +117,20 @@ public class Client extends RestTemplate {
         return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
     }
 
-
+    /**
+     * Check the engine's heartbeat.
+     * 
+     * @param url base engine/node URL
+     * @return true if alive
+     */
+    public boolean ping(String url) {
+        try {
+            ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD, new HttpEntity<Object>(null, null), Object.class);
+            return response.getStatusCodeValue() == 200;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
     private class JSONResponseErrorHandler implements ResponseErrorHandler {
 
         @Override

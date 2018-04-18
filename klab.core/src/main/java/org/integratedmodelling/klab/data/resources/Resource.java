@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.data.resources;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import org.integratedmodelling.kim.api.IComputableResource;
+
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
@@ -26,15 +26,13 @@ import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-// TODO: Auto-generated Javadoc
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
  * call) to a IResource; the IResource can then be contextualized to a {@link org.integratedmodelling.kim.api.data.IGeometry} (using the
@@ -53,99 +51,100 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonDeserialize(using = ResourceDeserializer.class)
 public class Resource implements IResource {
 
-  private static final long serialVersionUID = -923039635832182164L;
+    private static final long serialVersionUID = -923039635832182164L;
 
-  Version                   version;
-  IMetadata                 metadata;
-  String                    urn;
-  String                    adapterType;
-  IGeometry                 geometry;
-  Parameters                parameters;
-  long                      resourceTimestamp;
-  List<INotification>       history          = new ArrayList<>();
-  List<INotification>       notifications    = new ArrayList<>();
+    Version version;
+    IMetadata metadata;
+    String urn;
+    String adapterType;
+    IGeometry geometry;
+    Parameters parameters;
+    long resourceTimestamp;
+    List<INotification> history = new ArrayList<>();
+    List<INotification> notifications = new ArrayList<>();
 
-  // only meant to be built by the custom deserializer in this package
-  Resource() {}
-
-  /**
-   * Create a resource with the passed URN and a list of errors.
-   *
-   * @param urn the urn
-   * @param errors the errors
-   * @return the resource
-   */
-  public static Resource error(String urn, List<Throwable> errors) {
-    Resource ret = new Resource();
-    ret.urn = urn;
-    for (Throwable t : errors) {
-      ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
+    // only meant to be built by the custom deserializer in this package
+    Resource() {
     }
-    return ret;
-  }
 
-  /** {@inheritDoc} */
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public IMetadata getMetadata() {
-    return metadata;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public String getUrn() {
-    return urn;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public List<INotification> getHistory() {
-    return history;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public IGeometry getGeometry() {
-    return geometry;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public IParameters getParameters() {
-    return parameters;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public String getAdapterType() {
-    return adapterType;
-  }
-
-  /**
-   * <p>Getter for the field <code>resourceTimestamp</code>.</p>
-   *
-   * @return a long.
-   */
-  public long getResourceTimestamp() {
-    return resourceTimestamp;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public boolean hasErrors() {
-    if (notifications != null) {
-      for (INotification notification : notifications) {
-        if (notification.getLevel() == Level.SEVERE) {
-          return true;
+    /**
+     * Create a resource with the passed URN and a list of errors.
+     *
+     * @param urn the urn
+     * @param errors the errors
+     * @return the resource
+     */
+    public static Resource error(String urn, List<Throwable> errors) {
+        Resource ret = new Resource();
+        ret.urn = urn;
+        for (Throwable t : errors) {
+            ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
         }
-      }
+        return ret;
     }
-    return false;
-  }
+
+    /** {@inheritDoc} */
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public IMetadata getMetadata() {
+        return metadata;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getUrn() {
+        return urn;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<INotification> getHistory() {
+        return history;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public IGeometry getGeometry() {
+        return geometry;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public IParameters getParameters() {
+        return parameters;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getAdapterType() {
+        return adapterType;
+    }
+
+    /**
+     * <p>Getter for the field <code>resourceTimestamp</code>.</p>
+     *
+     * @return a long.
+     */
+    public long getResourceTimestamp() {
+        return resourceTimestamp;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasErrors() {
+        if (notifications != null) {
+            for (INotification notification : notifications) {
+                if (notification.getLevel() == Level.SEVERE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }

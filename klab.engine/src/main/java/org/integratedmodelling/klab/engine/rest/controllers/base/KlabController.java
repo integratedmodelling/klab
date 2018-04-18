@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
+import org.integratedmodelling.klab.engine.Engine;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,4 +31,13 @@ public class KlabController {
 		return Klab.INSTANCE.getCapabilities();
 	}
 
+	@RequestMapping(value = API.PING, method = {RequestMethod.GET, RequestMethod.HEAD}, produces="text/plain")
+	public String ping() {
+	    Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
+	    if (engine == null) {
+	        return "0";
+	    }
+	    return "" + (System.currentTimeMillis() - engine.getBootTime().getTime());
+	}
+	
 }

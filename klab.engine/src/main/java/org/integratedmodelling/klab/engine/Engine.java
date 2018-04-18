@@ -450,6 +450,11 @@ public class Engine extends Server implements IEngine, UserDetails {
             Auth.INSTANCE.registerIdentity(this);
             
             /*
+             * boot time is now
+             */
+            this.bootTime = new Date();
+            
+            /*
              * if exit after scripts is requested, exit
              */
             if (options.isExitAfterStartup()) {

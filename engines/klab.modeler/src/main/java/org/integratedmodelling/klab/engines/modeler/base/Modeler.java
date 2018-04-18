@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.engines.modeler.base;
 
+import javax.annotation.PreDestroy;
+
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.springframework.boot.SpringApplication;
@@ -15,25 +17,30 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @EnableAutoConfiguration
-@ComponentScan(basePackages = {
-    "org.integratedmodelling.klab.engine.rest.security",
-    "org.integratedmodelling.klab.engine.rest.controllers.base",
-    "org.integratedmodelling.klab.engine.rest.controllers.engine",
-    "org.integratedmodelling.klab.engine.rest.controllers.network",
-    "org.integratedmodelling.klab.engine.rest.controllers.resources"})
+@ComponentScan(
+        basePackages = { "org.integratedmodelling.klab.engine.rest.security",
+                "org.integratedmodelling.klab.engine.rest.controllers.base",
+                "org.integratedmodelling.klab.engine.rest.controllers.engine",
+                "org.integratedmodelling.klab.engine.rest.controllers.network",
+                "org.integratedmodelling.klab.engine.rest.controllers.resources" })
 public class Modeler {
 
-  public void run(String[] args) {
-    EngineStartupOptions options = new EngineStartupOptions();
-    options.initialize(args);
-    Engine engine = Engine.start(options);
-    SpringApplication.run(Modeler.class, options.getArguments());
-    engine.stop();
-  }
+    Engine engine;
 
-  public static void main(String args[]) {
+    public void run(String[] args) {
+        EngineStartupOptions options = new EngineStartupOptions();
+        options.initialize(args);
+        engine = Engine.start(options);
+        SpringApplication.run(Modeler.class, options.getArguments());
+    }
 
-    new Modeler().run(args);
-  }
+    @PreDestroy
+    public void shutdown() {
+        engine.stop();
+    }
+
+    public static void main(String args[]) {
+        new Modeler().run(args);
+    }
 
 }

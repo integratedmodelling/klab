@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.rest.client.Client;
 import org.integratedmodelling.klab.data.rest.resources.NodeReference;
 
 public class Node implements INodeIdentity {
@@ -21,7 +22,11 @@ public class Node implements INodeIdentity {
     Set<Permission> permissions = new HashSet<>();
     Date bootTime = new Date();
     boolean online;
-    int retryPeriod = 0;
+    int retryPeriod = 15;
+
+    private long lastCheck = System.currentTimeMillis();
+
+    static Client client = Client.create();
 
     public Node(String name, IPartnerIdentity owner) {
         this.name = name;
@@ -41,7 +46,14 @@ public class Node implements INodeIdentity {
      * @return true if online
      */
     public boolean ping() {
-        return online;
+        this.online = false;
+        for (String url : urls) {
+            if ((this.online = client.ping(url))) {
+                break;
+            }
+        }
+        this.lastCheck = System.currentTimeMillis();
+        return this.online;
     }
 
     @Override
@@ -83,8 +95,10 @@ public class Node implements INodeIdentity {
 
     @Override
     public boolean isOnline() {
-        // TODO set at beginning, remember last check, decide quarantine period and recheck intervals
-        return online;
+        if ((System.currentTimeMillis() - lastCheck) > retryPeriod * (1000 * 60)) {
+            return ping();
+        }
+        return this.online;
     }
 
     @Override
