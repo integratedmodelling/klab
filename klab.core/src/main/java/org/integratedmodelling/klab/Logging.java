@@ -34,16 +34,7 @@ public enum Logging implements ILoggingService {
 	private Logger logger;
 
 	private Logging() {
-
 		logger = (Logger) LoggerFactory.getLogger(this.getClass());
-		if (logger != null) {
-			/*
-			 * I'd rather not do this, but 100M of debug output when nobody has ever asked
-			 * for it and no logging property files are around to be changed is a bit much
-			 * to take.
-			 */
-			logger.setLevel(Level.INFO);
-		}
 	}
 
 	/** {@inheritDoc} */

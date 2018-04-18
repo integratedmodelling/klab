@@ -23,8 +23,6 @@ package org.integratedmodelling.klab.data.rest.client;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -39,6 +37,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
 import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.http.HttpEntity;
@@ -219,7 +218,13 @@ public class Client extends RestTemplate {
 
         try {
             
-            HttpEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+            
+            switch (response.getStatusCodeValue()) {
+            case 302:
+            case 403:
+                throw new KlabAuthorizationException("unauthorized request to " + url);
+            }
             
             if (response.getBody() == null) {
                 return null;
@@ -287,8 +292,14 @@ public class Client extends RestTemplate {
             headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
         }
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        HttpEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
+        ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
 
+        switch (response.getStatusCodeValue()) {
+        case 302:
+        case 403:
+            throw new KlabAuthorizationException("unauthorized request to " + url);
+        }
+        
         if (response.getBody() == null) {
             return null;
         }
