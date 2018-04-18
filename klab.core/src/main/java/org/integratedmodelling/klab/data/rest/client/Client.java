@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -114,7 +115,7 @@ public class Client extends RestTemplate {
      * @return the response. If not authenticated, throw a KlabAuthorizationException. If timeout, return null.
      */
     public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
-        return post(url, request, AuthenticationResponse.class);
+        return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
     }
 
 
@@ -217,8 +218,23 @@ public class Client extends RestTemplate {
         HttpEntity<Object> entity = new HttpEntity<>(data, headers);
 
         try {
-            return postForObject(new URI(url), entity, cls);
-        } catch (RestClientException | URISyntaxException e) {
+            
+            HttpEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+            
+            if (response.getBody() == null) {
+                return null;
+            }
+            if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
+                Object exception = response.getBody().get("exception");
+                Object path = response.getBody().get("path");
+                Object message = response.getBody().get("message");
+                Object error = response.getBody().get("error");
+                throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+            }
+
+            return objectMapper.convertValue(response.getBody(), cls);
+
+        } catch (RestClientException e) {
             throw new KlabIOException(e);
         }
     }

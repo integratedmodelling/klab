@@ -21,6 +21,7 @@ public class Node implements INodeIdentity {
     Set<Permission> permissions = new HashSet<>();
     Date bootTime = new Date();
     boolean online;
+    int retryPeriod = 0;
 
     public Node(String name, IPartnerIdentity owner) {
         this.name = name;
@@ -28,7 +29,19 @@ public class Node implements INodeIdentity {
     }
 
     public Node(NodeReference partnerNode, Partner partner) {
-        // TODO Auto-generated constructor stub
+
+    }
+
+    /**
+     * Force a check for online status, set the online flag and 
+     * return the result. Should be executed automatically every
+     * retryPeriod minutes unless the server is offline from construction (retry
+     * period will be 0 in that case).
+     * 
+     * @return true if online
+     */
+    public boolean ping() {
+        return online;
     }
 
     @Override

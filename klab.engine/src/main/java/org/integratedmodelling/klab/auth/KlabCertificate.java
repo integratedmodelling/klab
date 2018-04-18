@@ -210,25 +210,21 @@ public class KlabCertificate implements ICertificate {
             /*
              * check expiration
              */
-            String exp = properties.getProperty("expiry");
-            if (exp != null) {
-                try {
-                    this.expiry = DateTime.parse(properties.getProperty("expiry"));
-                } catch (Throwable e) {
-                }
-                if (expiry /* still */ == null) {
-                    Logging.INSTANCE.info("error parsing expiry date: setting to tomorrow");
-                    this.expiry = DateTime.now().plusDays(1);
-                }
+            try {
+                this.expiry = DateTime.parse(authentication.getUserData().getExpiry());
+            } catch (Throwable e) {
+                cause = "bad date or wrong date format in certificate. Please use latest version of software.";
+                return false;
             }
             if (expiry == null) {
                 cause = "certificate has no expiration date. Please obtain a new certificate.";
                 return false;
             } else if (expiry.isBeforeNow()) {
-                cause = "certificate expired on " + expiry;
+                cause = "certificate expired on " + expiry + ". Please obtain a new certificate.";
                 return false;
             }
         } else {
+            
             /*
              * user is offline
              */
@@ -305,8 +301,8 @@ public class KlabCertificate implements ICertificate {
                     Partner partner = Auth.INSTANCE.requirePartner(partnerNode.getOwningPartner());
                     Node node = new Node(partnerNode, partner);
                     node.setOnline(true);
-                    NetworkSession networkSession = new NetworkSession(
-                            authentication.getUserData().getToken(), authentication.getNodes(), node);
+                    NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
+                            authentication.getNodes(), node);
 
                     this.identity = new KlabUser(authentication.getUserData(), networkSession);
 
@@ -330,7 +326,7 @@ public class KlabCertificate implements ICertificate {
                  * TODO add authenticated data
                  */
                 ((Node) this.identity).getUrls().add(properties.getProperty(KEY_URL));
-                
+
             } else {
                 throw new KlabUnsupportedFeatureException("cannot create identity of type " + this.certificateType);
             }

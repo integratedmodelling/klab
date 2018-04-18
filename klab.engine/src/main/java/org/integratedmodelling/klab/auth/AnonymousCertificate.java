@@ -33,7 +33,8 @@ public class AnonymousCertificate implements ICertificate {
 
     @Override
     public IIdentity getIdentity() {
-        // no partner, no node, no nothing
+        // no partner, no node, no token, no nothing. REST calls automatically accept the
+        // anonymous user when secured as Roles.PUBLIC.
         return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
     }
 

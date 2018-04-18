@@ -27,43 +27,44 @@ import java.util.Set;
  */
 public interface INodeIdentity extends IServerIdentity {
 
-	/**
-	 * Permissions available to the current identity.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public static enum Permission {
-		PUBLISH,
-		QUERY
-	}
+    /**
+     * Permissions available to the current identity.
+     * 
+     * @author Ferd
+     *
+     */
+    public static enum Permission {
+        PUBLISH,
+        QUERY
+    }
 
-	/** Constant <code>type</code> */
-	Type type = Type.NODE;
+    /** Constant <code>type</code> */
+    Type type = Type.NODE;
 
-	/** {@inheritDoc} */
-	@Override
-	IPartnerIdentity getParentIdentity();
-	
-	/**
-	 * The node official URL. If the node represents a cluster of servers, multiple URLs may
-	 * be returned.
-	 * 
-	 * @return the URL(s) where this node can be reached.
-	 */
-	Collection<String> getUrls();
+    /** {@inheritDoc} */
+    @Override
+    IPartnerIdentity getParentIdentity();
 
-	/**
-	 * Nodes should be periodically checked for online status.
-	 * 
-	 * @return true if online at the time of calling (or the most recent check).
-	 */
-	boolean isOnline();
-	
-	/**
-	 * All the permissions available.
-	 * 
-	 * @return all permissions for the current identity
-	 */
-	Set<Permission> getPermissions();
+    /**
+     * The node official URL. If the node represents a cluster of servers, multiple URLs may
+     * be returned.
+     * 
+     * @return the URL(s) where this node can be reached.
+     */
+    Collection<String> getUrls();
+
+    /**
+     * Nodes should be periodically checked for online status.
+     * 
+     * @return true if online at the time of calling (or the most recent check).
+     */
+    boolean isOnline();
+
+    /**
+     * All the permissions available.
+     * 
+     * @return all permissions for the current identity
+     */
+    Set<Permission> getPermissions();
+
 }

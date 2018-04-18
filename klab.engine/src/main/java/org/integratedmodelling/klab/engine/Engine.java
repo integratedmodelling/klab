@@ -3,15 +3,21 @@ package org.integratedmodelling.klab.engine;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -26,6 +32,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
+import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
@@ -45,8 +52,13 @@ import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-public class Engine extends Server implements IEngine {
+public class Engine extends Server implements IEngine, UserDetails {
+
+    private static final long serialVersionUID = 5797834155173805536L;
 
     private ICertificate certificate;
     private String name;
@@ -59,7 +71,19 @@ public class Engine extends Server implements IEngine {
     private ExecutorService scriptExecutor;
     private ExecutorService taskExecutor;
     private String token = "e_" + NameGenerator.newName();
+    protected Set<GrantedAuthority> authorities = new HashSet<>();
 
+    /**
+     * A scheduler to periodically check for abandoned sessions and close them
+     */
+    private final ScheduledExecutorService scheduler =
+            Executors.newScheduledThreadPool(1);
+    /**
+     * Check interval for session expiration in minutes. TODO configure. 
+     */
+    private long sessionCheckMinutes = 15l;
+    private ScheduledFuture<?> sessionClosingTask;
+        
     public class Monitor implements IMonitor {
 
         private IIdentity identity = Engine.this;
@@ -178,6 +202,7 @@ public class Engine extends Server implements IEngine {
             }
             
             defaultEngineUser = new EngineUser((UserIdentity)owner, this);
+            ((EngineUser)defaultEngineUser).getAuthorities().add(new SimpleGrantedAuthority(Roles.OWNER));
         }
         return defaultEngineUser;
     }
@@ -223,7 +248,10 @@ public class Engine extends Server implements IEngine {
     public void stop() {
 
         // TODO shutdown all components
-
+        if (this.sessionClosingTask != null) {
+            this.sessionClosingTask.cancel(true);
+        }
+        
         // shutdown the task executor
         if (taskExecutor != null) {
             taskExecutor.shutdown();
@@ -245,6 +273,18 @@ public class Engine extends Server implements IEngine {
                 }
             } catch (InterruptedException e) {
                 scriptExecutor.shutdownNow();
+            }
+        }
+        
+        // and the session scheduler
+        if (scheduler != null) {
+            scheduler.shutdown();
+            try {
+                if (!scheduler.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                    scheduler.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                scheduler.shutdownNow();
             }
         }
     }
@@ -385,12 +425,30 @@ public class Engine extends Server implements IEngine {
             }
 
             /*
+             * Schedule the session reaper
+             */
+            this.sessionClosingTask = scheduler.scheduleAtFixedRate(new Runnable() {
+
+                @Override
+                public void run() {
+                    closeExpiredSessions();
+                }
+                
+            }, 10, sessionCheckMinutes , TimeUnit.MINUTES);
+            
+            /*
              * After the engine has successfully booted, it becomes the root identity and is owned
              * by the context owner.
              */
             this.owner = Klab.INSTANCE.getRootMonitor().getIdentity();
             Klab.INSTANCE.setRootIdentity(this);
 
+            /*
+             * establish engine authority
+             */
+            this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
+            Auth.INSTANCE.registerIdentity(this);
+            
             /*
              * if exit after scripts is requested, exit
              */
@@ -403,6 +461,11 @@ public class Engine extends Server implements IEngine {
         }
 
         return ret;
+    }
+
+    protected void closeExpiredSessions() {
+        // TODO Auto-generated method stub
+        Logging.INSTANCE.info("checking for expired sessions...");
     }
 
     private void runJvmChecks() {
@@ -538,6 +601,41 @@ public class Engine extends Server implements IEngine {
             taskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getTaskThreadCount());
         }
         return taskExecutor;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return getId();
+    }
+
+    @Override
+    public String getUsername() {
+        return getId();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
 }

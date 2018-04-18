@@ -8,5 +8,8 @@ import java.util.Date
 data class AuthenticatedIdentity (
 		val identity: IdentityReference,
 		val groups: List<Group>,
-		val expiry: Date,
-		val token: String)
+		// Parseable by Joda DateTime
+		val expiry: String,
+		val token: String) {
+	constructor() : this(IdentityReference(), ArrayList(), "", "")
+}

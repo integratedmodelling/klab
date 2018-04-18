@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -23,37 +25,42 @@ import org.springframework.stereotype.Service;
 @Service
 public class PreauthenticatedUserDetailsService implements UserDetailsService {
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		List<String> roles = new ArrayList<>();
-		roles.add(Roles.PUBLIC);
+        List<String> roles = new ArrayList<>();
+        roles.add(Roles.PUBLIC);
 
-		boolean authorize = false;
-		String token = "";
+        boolean authorize = false;
+        String token = "";
 
-		if (Auth.ANONYMOUS_USER_ID.equals(username)) {
-			authorize = true;
-		} else if (Auth.LOCAL_USER_ID.equals(username)) {
-			authorize = true;
-			roles.add(Roles.ADMIN);
-		} else {
-			
-			// TODO
-			
-		}
-		
-		if (!authorize) {
-			throw new UsernameNotFoundException("User '" + username + "' not found.");
-		}
-		
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		for (String role : roles) {
-			authorities.add(new SimpleGrantedAuthority(role));
-		}
-		
-		// TODO use k.LAB identity (user, session, anything) and set it up appropriately
-		return new User(username, token, authorities);
-	}
+        if (Auth.ANONYMOUS_USER_ID.equals(username)) {
+            authorize = true;
+        } else if (Auth.LOCAL_USER_ID.equals(username)) {
+            authorize = true;
+            roles.add(Roles.ADMIN);
+        } else {
+            IIdentity identity = Auth.INSTANCE.getIdentity(username, IIdentity.class);
+            // known k.LAB identities are UserDetails and have established roles
+            if (identity instanceof UserDetails) {
+                return (UserDetails) identity;
+            } else if (identity != null) {
+                throw new KlabInternalErrorException(
+                        "internal error: non-conformant identity in Auth catalog! " + identity);
+            }
+        }
+
+        if (!authorize) {
+            throw new UsernameNotFoundException("User '" + username + "' not found.");
+        }
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+
+        // TODO use k.LAB identity (user, session, anything) and set it up appropriately
+        return new User(username, token, authorities);
+    }
 
 }

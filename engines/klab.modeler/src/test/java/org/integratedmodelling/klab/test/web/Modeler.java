@@ -25,7 +25,7 @@ public class Modeler {
 
     public void run(String[] args) {
         EngineStartupOptions options = new EngineStartupOptions();
-        options.setCertificateResource("testnode.cert");
+        options.setCertificateResource("testengine.cert");
         options.initialize(args);
         Engine engine = Engine.start(options);
         SpringApplication.run(Modeler.class, options.getArguments());

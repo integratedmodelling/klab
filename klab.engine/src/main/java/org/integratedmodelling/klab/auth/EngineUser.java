@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.Roles;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 
@@ -13,6 +15,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     public EngineUser(String username, IEngineIdentity parent) {
         super(username);
         this.parent = parent;
+        this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE_USER));
     }
 
     public EngineUser(UserIdentity owner, IEngineIdentity parent) {

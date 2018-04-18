@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.integratedmodelling.klab.data.rest.resources.NodeReference;
 import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
 import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -63,17 +64,17 @@ public class AuthController {
 
             // good enough for me
 
-            Date now = new Date();
-            Date tomorrow = new Date(now.getTime() + (1000 * 60 * 60 * 24));
+            DateTime now = DateTime.now();
+            DateTime tomorrow = now.plusDays(1);
 
-            IdentityReference userIdentity = new IdentityReference(username, email, now);
-            AuthenticatedIdentity identity = new AuthenticatedIdentity(userIdentity, new ArrayList<>(), tomorrow,
+            IdentityReference userIdentity = new IdentityReference(username, email, now.toString());
+            AuthenticatedIdentity identity = new AuthenticatedIdentity(userIdentity, new ArrayList<>(), tomorrow.toString(),
                     NameGenerator.newName());
 
             INodeIdentity node = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(INodeIdentity.class);
             IPartnerIdentity partner = Klab.INSTANCE.getRootMonitor().getIdentity()
                     .getParentIdentity(IPartnerIdentity.class);
-            IdentityReference partnerIdentity = new IdentityReference(partner.getName(), partner.getEmailAddress(), new Date());
+            IdentityReference partnerIdentity = new IdentityReference(partner.getName(), partner.getEmailAddress(), now.toString());
 
             NodeReference thisnode = new NodeReference(node.getName(), new HashSet<>(node.getPermissions()),
                     partnerIdentity, new ArrayList<>(node.getUrls()), true, 20, 0, new ArrayList<>(),

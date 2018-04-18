@@ -15,13 +15,25 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
+
 /**
- * The Interface IAuthenticationService.
+ * The {@link IAuthenticationService} provides API access to any identities that should be identifiable through
+ * a {@link IIdentity#getId() identity identifier} linked to a request. These currently include the network session
+ * and any users.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IAuthenticationService {
-
+    
+    /**
+     * Retrieve the passed identity, validating it as the passed class.
+     * 
+     * @param id
+     * @param type
+     * @return the requested identity. Could be null if expired (e.g. a session).
+     */
+    <T extends IIdentity> T getIdentity(String id, Class<T> type);
 
 }

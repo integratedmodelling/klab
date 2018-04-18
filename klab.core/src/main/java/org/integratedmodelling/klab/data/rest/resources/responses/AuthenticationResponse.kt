@@ -9,4 +9,6 @@ import org.integratedmodelling.klab.data.rest.resources.NodeReference
 data class AuthenticationResponse (
 		val userData: AuthenticatedIdentity,
 		val nodes: List<NodeReference>,
-		val authenticatingNodeId: String)
+		val authenticatingNodeId: String) {
+	constructor() : this(AuthenticatedIdentity(), ArrayList(), "")
+}

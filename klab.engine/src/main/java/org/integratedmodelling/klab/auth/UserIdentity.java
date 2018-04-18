@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +9,7 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.data.rest.resources.AuthenticatedIdentity;
 import org.integratedmodelling.klab.data.rest.resources.Group;
 import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
+import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -21,8 +20,8 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
     protected String username;
     protected String emailAddress;
     protected String token;
-    protected Date lastLogin;
-    protected Date expiryDate;
+    protected DateTime lastLogin;
+    protected DateTime expiryDate;
     protected Set<String> groups = new HashSet<>();
     protected Set<GrantedAuthority> authorities = new HashSet<>();
 
@@ -37,20 +36,20 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
         this.groups.addAll(user.groups);
         this.authorities.addAll(user.authorities);
     }
-    
+
     public UserIdentity(AuthenticatedIdentity identity) {
         this(identity.getIdentity());
         this.token = identity.getToken();
         for (Group group : identity.getGroups()) {
             this.groups.add(group.getId());
         }
-        this.expiryDate = identity.getExpiry();
+        this.expiryDate = DateTime.parse(identity.getExpiry());
     }
 
     public UserIdentity(IdentityReference identity) {
         this.username = identity.getId();
         this.emailAddress = identity.getEmail();
-        this.lastLogin = identity.getLastLogin();
+        this.lastLogin = DateTime.parse(identity.getLastLogin());
     }
 
     @Override
@@ -59,7 +58,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
@@ -77,7 +76,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
     public String getEmailAddress() {
         return emailAddress;
     }
-    
+
     @Override
     public boolean isAccountNonExpired() {
         // TODO Auto-generated method stub
@@ -142,7 +141,6 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
         return true;
     }
 
-    
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }

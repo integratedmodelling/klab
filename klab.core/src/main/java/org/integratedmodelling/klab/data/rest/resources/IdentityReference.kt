@@ -8,4 +8,7 @@ import java.util.Date
 data class IdentityReference (
 		val id: String,
 		val email: String,
-		val lastLogin: Date)
+		// Parseable by Joda DateTime
+		val lastLogin: String) {
+	constructor() : this("", "", "")
+}

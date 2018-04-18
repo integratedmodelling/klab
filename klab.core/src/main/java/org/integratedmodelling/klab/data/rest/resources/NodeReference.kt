@@ -10,8 +10,10 @@ data class NodeReference (
 		val permissions: Set<INodeIdentity.Permission>,
 		val owningPartner: IdentityReference,
 		val urls: List<String>,
-        val isOnline: Boolean,
+        val online: Boolean,
 		val retryPeriodMinutes: Int,
 		val loadFactor: Int,
 		val incomingConnections: List<String>,
-		val outgoingConnections: List<String>)
+		val outgoingConnections: List<String>) {
+	constructor() : this("", HashSet(), IdentityReference(), ArrayList(), false, 0, 0, ArrayList(), ArrayList())
+}
