@@ -53,7 +53,6 @@ public interface ICoverage extends IScale {
    */
   double getCoverage(Dimension.Type dimension);
 
-
   /**
    * {@inheritDoc}
    *

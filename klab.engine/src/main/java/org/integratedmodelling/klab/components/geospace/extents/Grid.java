@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -487,6 +488,12 @@ public class Grid extends Area implements IGrid {
     @Override
     public String encode() {
       return "S2(1,1){shape="+((Shape)getShape()).getWKB() + ",proj=" + getProjection().getCode() + "}";
+    }
+
+    @Override
+    public IScaleMediator getMediator(IExtent extent) {
+        // TODO Auto-generated method stub
+        return null;
     }
   }
 

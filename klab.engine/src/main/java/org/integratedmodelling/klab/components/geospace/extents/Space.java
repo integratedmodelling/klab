@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -490,5 +491,11 @@ public class Space extends Extent implements ISpace {
     }
     return getShape().encode();
   }
+
+@Override
+public IScaleMediator getMediator(IExtent extent) {
+    // TODO Auto-generated method stub
+    return null;
+}
 
 }

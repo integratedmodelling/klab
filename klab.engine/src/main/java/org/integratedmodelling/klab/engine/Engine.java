@@ -115,7 +115,7 @@ public class Engine extends Server implements IEngine, UserDetails {
         }
 
         @Override
-        public void send(Object o) {
+        public void send(Object... o) {
             // TODO Auto-generated method stub
         }
 

@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -52,7 +53,8 @@ public class ConversionResolver implements IResolver<IState>, IExpression {
 
   @Override
   public IState resolve(IState ret, IComputationContext context) throws KlabException {
-    return new MediatingState(ret, from, to);
+    return new MediatingState(ret, (RuntimeContext)context, from, to);
   }
 
+  
 }

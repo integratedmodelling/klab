@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
@@ -219,6 +220,12 @@ public class Time extends Extent implements ITime {
     public String encode() {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public IScaleMediator getMediator(IExtent extent) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

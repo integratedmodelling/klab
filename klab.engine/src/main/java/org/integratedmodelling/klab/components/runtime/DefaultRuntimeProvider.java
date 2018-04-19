@@ -124,7 +124,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
          * containment is a dependency only if there is a computation or mediation; otherwise
          * children are computable in parallel - which this implementation does not support.
          */
-        if (actuator.isComputed()) {
+        if (a.isComputed()) {
           graph.addVertex(a);
           graph.addEdge(a, actuator);
         }

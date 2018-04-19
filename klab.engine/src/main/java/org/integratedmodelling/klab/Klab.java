@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
@@ -25,6 +27,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+
+import com.google.common.eventbus.EventBus;
 
 /**
  * Runtime would be a better name for this, but it makes it awkward to code with as it conflicts
@@ -52,6 +56,7 @@ public enum Klab implements IRuntimeService {
     boolean networkServicesStarted = false;
     boolean networkServicesFailed = false;
     IIdentity rootIdentity = null;
+    IMessageBus messageBus = null;
 
     /**
      * Handler to process classes with k.LAB annotations. Register using
@@ -97,6 +102,14 @@ public enum Klab implements IRuntimeService {
      */
     public void registerAnnotationHandler(Class<? extends Annotation> annotationClass, AnnotationHandler handler) {
         annotationHandlers.put(annotationClass, handler);
+    }
+
+    @Override
+    public IMessageBus getMessageBus() {
+        if (this.messageBus == null) {
+            // create default
+        }
+        return this.messageBus;
     }
 
     // @Override
@@ -287,7 +300,7 @@ public enum Klab implements IRuntimeService {
         }
 
         @Override
-        public void send(Object o) {
+        public void send(Object... o) {
             // TODO Auto-generated method stub
 
         }
@@ -375,6 +388,7 @@ public enum Klab implements IRuntimeService {
         return (IRuntimeProvider) ((Component) runtimeProvider).getImplementation();
     }
 
+    @Override
     public IMonitor getRootMonitor() {
         return rootMonitor;
     }
@@ -406,6 +420,10 @@ public enum Klab implements IRuntimeService {
 
     public void setWorkDirectory(File file) {
         this.workDirectory = file;
+    }
+    
+    public void setMessageBus(IMessageBus messageBus) {
+        this.messageBus = messageBus;
     }
 
     @Override

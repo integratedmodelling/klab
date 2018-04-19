@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -492,6 +493,12 @@ public class Shape extends AbstractExtent implements IShape {
     return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + ",proj=" + getProjection().getCode()
         + "}";
   }
+
+@Override
+public IScaleMediator getMediator(IExtent extent) {
+    // TODO Auto-generated method stub
+    return null;
+}
 
 
 }

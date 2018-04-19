@@ -63,7 +63,6 @@ public abstract class Extent extends AbstractExtent {
    */
   public abstract boolean isCovered(long stateIndex);
 
-
   /**
    * True if the extent is completely specified and usable. Extents may be partially specified to
    * constrain observation to specific representations or scales.
@@ -89,18 +88,16 @@ public abstract class Extent extends AbstractExtent {
    */
   public abstract long[] getDimensionSizes();
 
-
   /**
    * Get a state mediator to the passed extent. If extent is incompatible return null; if no
-   * mediation is needed, return an identity mediator, which all implementations should provide. Do
-   * not throw exceptions (unchecked exception only if called improperly).
+   * mediation is needed, return an identity mediator, which all implementations should provide.
    * 
    * @param extent the foreign extent to mediate to.
    * @param observable the observable - mediators will want to know it to establish the aggregation
    *        strategy.
    * @param trait a data reduction trait to interpret the mediated values (may be null).
    * @return the configured mediator or null
-   * 
+   * @throw {@link IllegalArgumentException} if called improperly
    */
   public abstract Mediator getMediator(IExtent extent, IObservable observable,  IConcept trait);
 

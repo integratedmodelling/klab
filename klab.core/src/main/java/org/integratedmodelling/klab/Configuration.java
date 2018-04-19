@@ -24,6 +24,8 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.OS;
 
+import ch.qos.logback.classic.Level;
+
 // TODO: Auto-generated Javadoc
 /**
  * TODO use a declarative approach for all properties, so that there is one place for all default
@@ -39,6 +41,8 @@ public enum Configuration implements IConfigurationService {
 
   private Properties properties;
   private File       dataPath;
+  private Level loggingLevel = Level.ERROR;
+  private Level notificationLevel = Level.INFO;
 
   /** The klab relative work path. */
   public String      KLAB_RELATIVE_WORK_PATH = ".klab";
@@ -215,5 +219,15 @@ public enum Configuration implements IConfigurationService {
   @Override
   public boolean allowAnonymousUsage() {
     return true;
+  }
+  
+  @Override
+  public Level getLoggingLevel() {
+      return loggingLevel;
+  }
+  
+  @Override
+  public Level getNotificationLevel() {
+      return notificationLevel;
   }
 }

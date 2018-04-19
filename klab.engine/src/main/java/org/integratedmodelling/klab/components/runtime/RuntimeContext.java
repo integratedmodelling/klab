@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -341,14 +342,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		return ret;
 	}
 
-	/**
-	 * Return all the children of an artifact in the structural graph that match a
-	 * certain class.
-	 * 
-	 * @param artifact
-	 * @param cls
-	 * @return the set of all children of class cls
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls) {
 		List<T> ret = new ArrayList<>();

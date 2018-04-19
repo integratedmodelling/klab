@@ -15,7 +15,8 @@
  */
 package org.integratedmodelling.klab.common.monitoring;
 
-// TODO: Auto-generated Javadoc
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessage;
+
 /**
  * Typed message with potential payload to be transferred across a multicast connection. Used for
  * fast, duplex engine/client communication.
@@ -23,68 +24,77 @@ package org.integratedmodelling.klab.common.monitoring;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class Message {
+public class Message implements IMessage {
 
-  enum Type {
+    private String text;
+    private Type type;
+    private MessageClass messageClass;
+    private String identity;
+    private Object payload;
 
-  }
+    /**
+     * Gets the text.
+     *
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
 
-  private String text;
-  private Type   type;
-  private Object payload;
-  
-  /**
-   * Gets the text.
-   *
-   * @return the text
-   */
-  public String getText() {
-    return text;
-  }
-  
-  /**
-   * Sets the text.
-   *
-   * @param text the new text
-   */
-  public void setText(String text) {
-    this.text = text;
-  }
-  
-  /**
-   * Gets the type.
-   *
-   * @return the type
-   */
-  public Type getType() {
-    return type;
-  }
-  
-  /**
-   * Sets the type.
-   *
-   * @param type the new type
-   */
-  public void setType(Type type) {
-    this.type = type;
-  }
-  
-  /**
-   * Gets the payload.
-   *
-   * @return the payload
-   */
-  public Object getPayload() {
-    return payload;
-  }
-  
-  /**
-   * Sets the payload.
-   *
-   * @param payload the new payload
-   */
-  public void setPayload(Object payload) {
-    this.payload = payload;
-  }
+    /**
+     * Sets the text.
+     *
+     * @param text the new text
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     * Gets the type.
+     *
+     * @return the type
+     */
+    @Override
+    public Type getType() {
+        return type;
+    }
+
+    @Override
+    public MessageClass getMessageClass() {
+        return messageClass;
+    }
+    
+    /**
+     * Sets the type.
+     *
+     * @param type the new type
+     */
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    /**
+     * Gets the payload.
+     *
+     * @return the payload
+     */
+    public Object getPayload() {
+        return payload;
+    }
+
+    /**
+     * Sets the payload.
+     *
+     * @param payload the new payload
+     */
+    public void setPayload(Object payload) {
+        this.payload = payload;
+    }
+
+    @Override
+    public String getIdentity() {
+        return identity;
+    }
 
 }

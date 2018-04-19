@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationR
 import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -97,13 +98,13 @@ public class Client extends RestTemplate {
         if (factory == null) {
             factory = new HttpComponentsClientHttpRequestFactory();
             if (Configuration.INSTANCE.getProperties().containsKey(KLAB_CONNECTION_TIMEOUT)) {
-                int connectTimeout = 1000 * Integer
-                        .parseInt(Configuration.INSTANCE.getProperties().getProperty(KLAB_CONNECTION_TIMEOUT));
-                ((HttpComponentsClientHttpRequestFactory)factory).setReadTimeout(connectTimeout);
-                ((HttpComponentsClientHttpRequestFactory)factory).setConnectTimeout(connectTimeout);
+                int connectTimeout = 1000
+                        * Integer.parseInt(Configuration.INSTANCE.getProperties().getProperty(KLAB_CONNECTION_TIMEOUT));
+                ((HttpComponentsClientHttpRequestFactory) factory).setReadTimeout(connectTimeout);
+                ((HttpComponentsClientHttpRequestFactory) factory).setConnectTimeout(connectTimeout);
             }
         }
-        
+
         return new Client(factory);
     }
 
@@ -125,12 +126,14 @@ public class Client extends RestTemplate {
      */
     public boolean ping(String url) {
         try {
-            ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD, new HttpEntity<Object>(null, null), Object.class);
+            ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD,
+                    new HttpEntity<Object>(null, null), Object.class);
             return response.getStatusCodeValue() == 200;
         } catch (Throwable e) {
             return false;
         }
     }
+
     private class JSONResponseErrorHandler implements ResponseErrorHandler {
 
         @Override
@@ -218,6 +221,7 @@ public class Client extends RestTemplate {
         return ret;
     }
 
+    @SuppressWarnings({ "rawtypes" })
     public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -230,23 +234,25 @@ public class Client extends RestTemplate {
         HttpEntity<Object> entity = new HttpEntity<>(data, headers);
 
         try {
-            
+
             ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
-            
+
             switch (response.getStatusCodeValue()) {
             case 302:
             case 403:
-                throw new KlabAuthorizationException("unauthorized request to " + url);
+                throw new KlabAuthorizationException("unauthorized request " + url);
+            case 404:
+                throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
             }
-            
+
             if (response.getBody() == null) {
                 return null;
             }
             if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
                 Object exception = response.getBody().get("exception");
-                Object path = response.getBody().get("path");
+//                Object path = response.getBody().get("path");
                 Object message = response.getBody().get("message");
-                Object error = response.getBody().get("error");
+//                Object error = response.getBody().get("error");
                 throw new KlabIOException("remote exception: " + (message == null ? exception : message));
             }
 
@@ -273,6 +279,14 @@ public class Client extends RestTemplate {
         // HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class);
+
+        switch (response.getStatusCodeValue()) {
+        case 302:
+        case 403:
+            throw new KlabAuthorizationException("unauthorized request " + url);
+        case 404:
+            throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+        }
 
         if (response.getBody() == null) {
             return false;
@@ -310,17 +324,19 @@ public class Client extends RestTemplate {
         switch (response.getStatusCodeValue()) {
         case 302:
         case 403:
-            throw new KlabAuthorizationException("unauthorized request to " + url);
+            throw new KlabAuthorizationException("unauthorized request " + url);
+        case 404:
+            throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
         }
-        
+
         if (response.getBody() == null) {
             return null;
         }
         if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
             Object exception = response.getBody().get("exception");
-            Object path = response.getBody().get("path");
+//            Object path = response.getBody().get("path");
             Object message = response.getBody().get("message");
-            Object error = response.getBody().get("error");
+//            Object error = response.getBody().get("error");
             throw new KlabIOException("remote exception: " + (message == null ? exception : message));
         }
 
@@ -361,6 +377,5 @@ public class Client extends RestTemplate {
         }
         return ret;
     }
-
 
 }

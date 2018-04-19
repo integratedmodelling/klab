@@ -95,7 +95,7 @@ public class TermConsole implements IConsole {
     // }
 
     @Override
-    public void send(Object o) {
+    public void send(Object... o) {
       // TODO Auto-generated method stub
 
     }

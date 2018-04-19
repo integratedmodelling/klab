@@ -89,6 +89,17 @@ public interface IExtent
    */
   double getCoverage();
 
+  /**
+   * Get a state mediator to the passed extent. If extent is incompatible return null; if no
+   * mediation is needed, return an identity mediator, which all implementations should provide.
+   * 
+   * @param extent the foreign extent to mediate to and from.
+   * @return the configured mediator or null
+   * @throw {@link IllegalArgumentException} if called improperly
+   */
+  public abstract IScaleMediator getMediator(IExtent extent);
+
+  
   /** {@inheritDoc} */
   @Override
   IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how);

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.ILocator;
@@ -20,6 +21,10 @@ import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.scale.Scale;
 
 /**
  * The state we wrap has the desired semantics but its values must be converted.
@@ -27,14 +32,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @author Ferd
  *
  */
-public class MediatingState implements IState {
+public class MediatingState extends Observation implements IState {
 
 	IState delegate;
 	IValueMediator from;
 	IValueMediator to;
 	
-	public MediatingState(IState state, IValueMediator from, IValueMediator to) {
-	  // FIXME this gets an already mediated state!
+	public MediatingState(IState state, RuntimeContext context, IValueMediator from, IValueMediator to) {
+	    super(new Observable((Observable)state.getObservable()), (Scale)state.getScale(), context);
 		this.delegate = state;
 		this.from = from;
 		this.to = to;
@@ -60,18 +65,6 @@ public class MediatingState implements IState {
 
 	// Remaining functionality is delegated to original state
 
-	public IObservable getObservable() {
-		return delegate.getObservable();
-	}
-
-	public IEngineSessionIdentity getParentIdentity() {
-		return delegate.getParentIdentity();
-	}
-
-	public IMonitor getMonitor() {
-		return delegate.getMonitor();
-	}
-
 	public boolean isConstant() {
 		return delegate.isConstant();
 	}
@@ -80,120 +73,14 @@ public class MediatingState implements IState {
 		return delegate.isDynamic();
 	}
 
-	public Optional<ISubject> getObserver() {
-		return delegate.getObserver();
-	}
+    @Override
+    public long size() {
+        return delegate.size();
+    }
 
-	public IState as(IObservable observable) {
-		return delegate.as(observable);
-	}
-
-	public IScale getScale() {
-		return delegate.getScale();
-	}
-
-	public IDirectObservation getContext() {
-		return delegate.getContext();
-	}
-
-	public IGeometry getGeometry() {
-		return delegate.getGeometry();
-	}
-
-	public IMetadata getMetadata() {
-		return delegate.getMetadata();
-	}
-
-	public String getUrn() {
-		return delegate.getUrn();
-	}
-
-	public boolean isSpatiallyDistributed() {
-		return delegate.isSpatiallyDistributed();
-	}
-
-	public IAgent getConsumer() {
-		return delegate.getConsumer();
-	}
-
-	public String getId() {
-		return delegate.getId();
-	}
-
-	public IAgent getOwner() {
-		return delegate.getOwner();
-	}
-
-	public Collection<IArtifact> getAntecedents() {
-		return delegate.getAntecedents();
-	}
-
-	public boolean isTemporallyDistributed() {
-		return delegate.isTemporallyDistributed();
-	}
-
-	public Collection<IArtifact> getConsequents() {
-		return delegate.getConsequents();
-	}
-
-	public IArtifact trace(IConcept concept) {
-		return delegate.trace(concept);
-	}
-
-	public boolean isTemporal() {
-		return delegate.isTemporal();
-	}
-
-	public boolean isSpatial() {
-		return delegate.isSpatial();
-	}
-
-	public Collection<IArtifact> collect(IConcept concept) {
-		return delegate.collect(concept);
-	}
-
-	public boolean is(Type type) {
-		return delegate.is(type);
-	}
-
-	public ISpace getSpace() {
-		return delegate.getSpace();
-	}
-
-	public long size() {
-		return delegate.size();
-	}
-
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return delegate.getParentIdentity(type);
-	}
-
-	public IArtifact trace(IConcept role, IDirectObservation roleContext) {
-		return delegate.trace(role, roleContext);
-	}
-
-	public long getTimestamp() {
-		return delegate.getTimestamp();
-	}
-
-	public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
-		return delegate.collect(role, roleContext);
-	}
-
-	public boolean isEmpty() {
-		return delegate.isEmpty();
-	}
-
-	public int groupSize() {
-		return delegate.groupSize();
-	}
-
-	public IProvenance getProvenance() {
-		return delegate.getProvenance();
-	}
-
-	public Iterator<IArtifact> iterator() {
-		return delegate.iterator();
-	}
+    @Override
+    public IState as(IObservable observable) {
+        return delegate.as(observable);
+    }
 
 }

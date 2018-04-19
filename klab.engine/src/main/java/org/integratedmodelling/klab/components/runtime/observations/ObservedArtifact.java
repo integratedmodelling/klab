@@ -5,8 +5,8 @@ import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.provenance.Artifact;
 
 /**
@@ -19,11 +19,11 @@ import org.integratedmodelling.klab.provenance.Artifact;
 public class ObservedArtifact extends Artifact implements IArtifact {
 
   private IGeometry      geometry;
-  private RuntimeContext runtimeContext;
+  private IRuntimeContext runtimeContext;
   private IMetadata              metadata = new Metadata();
   private String         token    = "o" + NameGenerator.shortUUID();
 
-  public ObservedArtifact(IGeometry geometry, RuntimeContext context) {
+  public ObservedArtifact(IGeometry geometry, IRuntimeContext context) {
     this.geometry = geometry;
     this.runtimeContext = context;
   }
@@ -42,7 +42,7 @@ public class ObservedArtifact extends Artifact implements IArtifact {
     return metadata;
   }
 
-  public RuntimeContext getRuntimeContext() {
+  public IRuntimeContext getRuntimeContext() {
     return this.runtimeContext;
   }
 

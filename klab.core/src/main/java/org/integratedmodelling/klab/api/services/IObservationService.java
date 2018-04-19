@@ -18,8 +18,11 @@ package org.integratedmodelling.klab.api.services;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -105,6 +108,18 @@ public interface IObservationService {
    * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
   void index(IObserver observer, IMonitor monitor) throws KlabException;
+
+  /**
+   * Get a state that represents a view of another state seen through a different scale. The 
+   * resulting state is read/write, i.e. any setting of values will propagate to the underlying
+   * storage according to what the scale mapping requires.
+   * 
+   * @param state
+   * @param scale
+   * @param context
+   * @return the state view
+   */
+  IState getStateView(IState state, IScale scale, IComputationContext context);
 
 
 }

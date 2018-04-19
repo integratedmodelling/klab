@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Optional;
+
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -9,9 +10,9 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -34,7 +35,7 @@ public class Observation extends ObservedArtifact implements IObservation {
     return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
   }
 
-  protected Observation(Observable observable, Scale scale, RuntimeContext context) {
+  protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
     super(scale, context);
     this.observable = observable;
   }
