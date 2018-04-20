@@ -54,8 +54,6 @@ public interface IRuntimeService {
      * indexed by Java class name. These should be harvested and built at runtime from the package
      * containing all resource beans. Called by JS code to validate resources before use.
      * <p>
-     * TODO currently not working properly due to limitations in the schema extractor used so far.
-     * <p>
      * 
      * @return the JSON schema source code
      */

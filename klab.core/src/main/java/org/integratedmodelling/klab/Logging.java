@@ -15,9 +15,15 @@
  */
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.services.ILoggingService;
+import org.integratedmodelling.klab.common.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.slf4j.LoggerFactory;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
@@ -29,52 +35,101 @@ import ch.qos.logback.classic.Logger;
  */
 public enum Logging implements ILoggingService {
 
-	INSTANCE;
+    INSTANCE;
 
-	private Logger logger;
+    private Logger logger;
+    private IMessageBus messageBus;
+    private IIdentity rootIdentity;
 
-	private Logging() {
-		logger = (Logger) LoggerFactory.getLogger(this.getClass());
-	}
+    private Logging() {
+        logger = (Logger) LoggerFactory.getLogger(this.getClass());
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public void info(Object... o) {
-		if (logger != null) {
-			logger.info(NotificationUtils.getMessage(o));
-		} else {
-			System.err.println("INFO: " + NotificationUtils.getMessage(o));
-		}
-	}
+    /** {@inheritDoc} */
+    @Override
+    public void info(Object... o) {
 
-	/** {@inheritDoc} */
-	@Override
-	public void warn(Object... o) {
-		if (logger != null) {
-			logger.warn(NotificationUtils.getMessage(o));
-		} else {
-			System.err.println("WARN: " + NotificationUtils.getMessage(o));
-		}
-	}
+        String payload = NotificationUtils.getMessage(o);
 
-	/** {@inheritDoc} */
-	@Override
-	public void error(Object... o) {
-		if (logger != null) {
-			logger.error(NotificationUtils.getMessage(o));
-		} else {
-			System.err.println("WARN: " + NotificationUtils.getMessage(o));
-		}
-	}
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.INFO)) {
+            messageBus.post(Message.create(MessageClass.LOGGING, Type.INFO, rootIdentity, payload));
+        }
 
-	/** {@inheritDoc} */
-	@Override
-	public void debug(Object... o) {
-		if (logger != null) {
-			logger.debug(NotificationUtils.getMessage(o));
-		} else {
-			System.err.println("WARN: " + NotificationUtils.getMessage(o));
-		}
-	}
+        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.INFO)) {
+            if (logger != null) {
+                logger.info(payload);
+            } else {
+                System.err.println("INFO: " + payload);
+            }
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void warn(Object... o) {
+
+        String payload = NotificationUtils.getMessage(o);
+
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.WARN)) {
+            messageBus.post(Message.create(MessageClass.LOGGING, Type.WARNING, rootIdentity, payload));
+        }
+
+        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.WARN)) {
+
+            if (logger != null) {
+                logger.warn(payload);
+            } else {
+                System.err.println("WARN: " + payload);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void error(Object... o) {
+
+        String payload = NotificationUtils.getMessage(o);
+
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.ERROR)) {
+            messageBus.post(Message.create(MessageClass.LOGGING, Type.ERROR, rootIdentity, payload));
+        }
+
+        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.ERROR)) {
+            if (logger != null) {
+                logger.error(payload);
+            } else {
+                System.err.println("ERROR: " + payload);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void debug(Object... o) {
+
+        String payload = NotificationUtils.getMessage(o);
+
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.DEBUG)) {
+            messageBus.post(Message.create(MessageClass.LOGGING, Type.DEBUG, rootIdentity, payload));
+        }
+
+        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.DEBUG)) {
+
+            if (logger != null) {
+                logger.debug(payload);
+            } else {
+                System.err.println("WARN: " + payload);
+            }
+        }
+    }
+
+    public void setMessageBus(IMessageBus mbus) {
+        this.messageBus = mbus;
+    }
+
+    public void setRootIdentity(IIdentity identity) {
+        this.rootIdentity = identity;
+    }
 
 }

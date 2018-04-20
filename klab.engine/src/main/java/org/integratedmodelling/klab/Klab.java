@@ -15,20 +15,24 @@ import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
+import org.integratedmodelling.klab.common.monitoring.Message;
 import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-import com.google.common.eventbus.EventBus;
+import ch.qos.logback.classic.Level;
 
 /**
  * Runtime would be a better name for this, but it makes it awkward to code with as it conflicts
@@ -85,12 +89,14 @@ public enum Klab implements IRuntimeService {
 
     /**
      * Set the root identity (owning the root monitor). Set to the owning user first, then to the
-     * engine if it is started correctly.
+     * engine if it is started correctly. Propagate the identity to the logging manager so we can
+     * sign logging notifications to subscribers.
      * 
      * @param identity
      */
     public void setRootIdentity(IIdentity identity) {
         this.rootIdentity = identity;
+        Logging.INSTANCE.setRootIdentity(identity);
     }
 
     /**
@@ -108,6 +114,7 @@ public enum Klab implements IRuntimeService {
     public IMessageBus getMessageBus() {
         if (this.messageBus == null) {
             // create default
+            // TODO propagate to Logging service
         }
         return this.messageBus;
     }
@@ -281,28 +288,49 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void info(Object... info) {
-            Logging.INSTANCE.info(info);
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.INFO)) {
+                messageBus.post(Message.create(MessageClass.LOGGING, Type.INFO, getIdentity(),
+                        NotificationUtils.getMessage(info)));
+            } else {
+                Logging.INSTANCE.info(info);
+            }
         }
 
         @Override
         public void warn(Object... o) {
-            Logging.INSTANCE.warn(o);
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.WARN)) {
+                messageBus.post(Message.create(MessageClass.LOGGING, Type.WARNING, getIdentity(),
+                        NotificationUtils.getMessage(o)));
+            } else {
+                Logging.INSTANCE.warn(o);
+            }
         }
 
         @Override
         public void error(Object... o) {
-            Logging.INSTANCE.error(o);
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.ERROR)) {
+                messageBus.post(Message.create(MessageClass.LOGGING, Type.ERROR, getIdentity(),
+                        NotificationUtils.getMessage(o)));
+            } else {
+                Logging.INSTANCE.error(o);
+            }
         }
 
         @Override
         public void debug(Object... o) {
-            Logging.INSTANCE.debug(o);
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.DEBUG)) {
+                messageBus.post(Message.create(MessageClass.LOGGING, Type.DEBUG, getIdentity(),
+                        NotificationUtils.getMessage(o)));
+            } else {
+                Logging.INSTANCE.debug(o);
+            }
         }
 
         @Override
         public void send(Object... o) {
-            // TODO Auto-generated method stub
-
+            if (messageBus != null) {
+                messageBus.post(Message.buildMessage(getIdentity(), o));
+            }
         }
 
         @Override
@@ -421,9 +449,10 @@ public enum Klab implements IRuntimeService {
     public void setWorkDirectory(File file) {
         this.workDirectory = file;
     }
-    
+
     public void setMessageBus(IMessageBus messageBus) {
         this.messageBus = messageBus;
+        Logging.INSTANCE.setMessageBus(messageBus);
     }
 
     @Override

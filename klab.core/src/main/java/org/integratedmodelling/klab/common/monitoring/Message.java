@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.common.monitoring;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMessage;
 
 /**
@@ -32,6 +33,44 @@ public class Message implements IMessage {
     private String identity;
     private Object payload;
 
+    /**
+     * 
+     * @param cls
+     * @param type
+     * @param payload
+     * @return a new message
+     */
+    public static Message create(MessageClass cls, Type type, Object payload) {
+        return null;
+    }
+
+    /**
+     * 
+     * @param cls
+     * @param type
+     * @param identity
+     * @param payload
+     * @return a new message
+     */
+    public static Message create(MessageClass cls, Type type, IIdentity identity, Object payload) {
+        return null;
+    }
+
+    /**
+     * Build a message by arranging all the arguments appropriately (recognize identities and 
+     * types, and ensure there is one payload by assembling >1 into a collection).
+     * 
+     * @param identity 
+     * @param o
+     * @return a new message
+     * @throws IllegalArgumentException if there are not enough arguments
+     */
+    public static IMessage buildMessage(IIdentity identity, Object[] o) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    
     /**
      * Gets the text.
      *
@@ -96,5 +135,6 @@ public class Message implements IMessage {
     public String getIdentity() {
         return identity;
     }
+
 
 }

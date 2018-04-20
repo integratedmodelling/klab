@@ -29,6 +29,13 @@ public interface IMessageBus {
     }
     
     /**
+     * Post a message.
+     * 
+     * @param message
+     */
+    void post(IMessage message);
+    
+    /**
      * Subscribe a receiver. Additional parameters may be used to filter the 
      * messages received.
      * 

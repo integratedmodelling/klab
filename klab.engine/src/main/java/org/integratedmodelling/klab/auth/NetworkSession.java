@@ -61,7 +61,6 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
         return parent;
     }
 
-
     @Override
     public Collection<INodeIdentity> getNodes() {
         return nodes;

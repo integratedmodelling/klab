@@ -25,19 +25,24 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.PUBLIC)
 public class KlabController {
 
-	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Capabilities capabilities(Principal user) {
-		return Klab.INSTANCE.getCapabilities();
-	}
+    @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public Capabilities capabilities(Principal user) {
+        return Klab.INSTANCE.getCapabilities();
+    }
 
-	@RequestMapping(value = API.PING, method = {RequestMethod.GET, RequestMethod.HEAD}, produces="text/plain")
-	public String ping() {
-	    Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
-	    if (engine == null) {
-	        return "0";
-	    }
-	    return "" + (System.currentTimeMillis() - engine.getBootTime().getTime());
-	}
-	
+    @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")
+    public String resourceSchema(Principal user) {
+        return Klab.INSTANCE.getResourceSchema();
+    }
+
+    @RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD }, produces = "text/plain")
+    public String ping() {
+        Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
+        if (engine == null) {
+            return "0";
+        }
+        return "" + (System.currentTimeMillis() - engine.getBootTime().getTime());
+    }
+
 }
