@@ -40,37 +40,32 @@ public class SchemaExtractor {
         String ret = "{\n";
         try {
             Map<Class<?>, JsonSchema> schema = extractResourceSchema(packageId);
+            int count = schema.size();
+            int n = 0;
             for (Class<?> cls : schema.keySet()) {
-                ret += "   \"" + cls.getCanonicalName() + "\" : " + mapper.writeValueAsString(schema.get(cls)) + "\n";
+                ret += "   \"" + cls.getCanonicalName() + "\" : " + mapper.writeValueAsString(schema.get(cls))
+                        + (n < (count - 1) ? "," : "") + "\n";
+                n++;
             }
         } catch (JsonMappingException e) {
             Logging.INSTANCE.error(e);
         } catch (JsonProcessingException e) {
             Logging.INSTANCE.error(e);
         }
-        return ret;
+        return ret + "\n}";
     }
 
     public static Map<Class<?>, JsonSchema> extractResourceSchema(String packageId) throws JsonMappingException {
 
         Map<Class<?>, JsonSchema> ret = new HashMap<>();
-        //        JsonSchemaFactory v4generator = new JsonSchemaV4Factory();
-        //        v4generator.setAutoPutDollarSchema(true);
-        //
         for (Class<?> cls : scanPackage(packageId)) {
-            ret.put(cls, schemaGen.generateSchema(cls));
+            if (!cls.getCanonicalName().endsWith("package-info")) {
+                ret.put(cls, schemaGen.generateSchema(cls));
+            }
         }
 
         return ret;
     }
-
-//    public static void prettyPrintSchema(JsonNode schema) {
-//        try {
-//            System.out.println(mapper.writeValueAsString(schema));
-//        } catch (JsonProcessingException e) {
-//            throw new KlabValidationException(e);
-//        }
-//    }
 
     private static List<Class<?>> scanPackage(String packageId) {
 

@@ -46,6 +46,8 @@ public class ObserveInContextTask implements ITask<IObservation> {
     this.taskDescription =
         "<task " + token + ": observation of " + urn + " within " + context + ">";
 
+    session.touch();
+    
     delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this) {
 
       @Override

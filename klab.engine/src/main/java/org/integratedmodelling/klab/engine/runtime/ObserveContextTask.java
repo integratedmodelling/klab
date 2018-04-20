@@ -27,101 +27,103 @@ import org.integratedmodelling.klab.resolution.Resolver;
  */
 public class ObserveContextTask implements ITask<ISubject> {
 
-  Monitor monitor;
-  FutureTask<ISubject> delegate;
-  String token = "t" + NameGenerator.shortUUID();
-  Session session;
-  String taskDescription = "<uninitialized observation task " + token + ">";
+    Monitor monitor;
+    FutureTask<ISubject> delegate;
+    String token = "t" + NameGenerator.shortUUID();
+    Session session;
+    String taskDescription = "<uninitialized observation task " + token + ">";
 
-  public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
+    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
 
-    Engine engine = session.getParentIdentity(Engine.class);
-    try {
+        Engine engine = session.getParentIdentity(Engine.class);
+        try {
 
-      this.monitor = (session.getMonitor()).get(this);
-      this.session = session;
-      this.taskDescription = "<task " + token + ": observation of " + observer + ">";
+            this.monitor = (session.getMonitor()).get(this);
+            this.session = session;
+            this.taskDescription = "<task " + token + ": observation of " + observer + ">";
 
-      delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
+            session.touch();
 
-        @Override
-        public ISubject run() throws Exception {
+            delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
 
-          // TODO put all this logics in the resolver, call it from within Observations and use that here.
-          ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
-          if (scope.getCoverage().isRelevant()) {
-            Dataflow dataflow =
-                Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token, scope);
+                @Override
+                public ISubject run() throws Exception {
 
-            System.out.println(dataflow.getKdlCode());
+                    // TODO put all this logics in the resolver, call it from within Observations and use that here.
+                    ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
+                    if (scope.getCoverage().isRelevant()) {
 
-            return (ISubject)dataflow.run(scope.getCoverage(), monitor);
-          }
+                        Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
+                                scope);
 
-          return null;
+                        System.out.println(dataflow.getKdlCode());
+
+                        return (ISubject) dataflow.run(scope.getCoverage(), monitor);
+                    }
+
+                    return null;
+                }
+            });
+
+            engine.getTaskExecutor().execute(delegate);
+        } catch (Throwable e) {
+            monitor.error("error initializing context task: " + e.getMessage());
         }
-      });
-
-      engine.getTaskExecutor().execute(delegate);
-    } catch (Throwable e) {
-      monitor.error("error initializing context task: " + e.getMessage());
     }
-  }
 
-  @Override
-  public String toString() {
-    return taskDescription;
-  }
+    @Override
+    public String toString() {
+        return taskDescription;
+    }
 
-  @Override
-  public String getId() {
-    return token;
-  }
+    @Override
+    public String getId() {
+        return token;
+    }
 
-  @Override
-  public boolean is(Type type) {
-    return type == Type.TASK;
-  }
+    @Override
+    public boolean is(Type type) {
+        return type == Type.TASK;
+    }
 
-  @Override
-  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-    return IIdentity.findParent(this, type);
-  }
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-  @Override
-  public IEngineSessionIdentity getParentIdentity() {
-    return session;
-  }
+    @Override
+    public IEngineSessionIdentity getParentIdentity() {
+        return session;
+    }
 
-  @Override
-  public IMonitor getMonitor() {
-    return monitor;
-  }
+    @Override
+    public IMonitor getMonitor() {
+        return monitor;
+    }
 
-  @Override
-  public boolean cancel(boolean mayInterruptIfRunning) {
-    return delegate.cancel(mayInterruptIfRunning);
-  }
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return delegate.cancel(mayInterruptIfRunning);
+    }
 
-  @Override
-  public boolean isCancelled() {
-    return delegate.isCancelled();
-  }
+    @Override
+    public boolean isCancelled() {
+        return delegate.isCancelled();
+    }
 
-  @Override
-  public boolean isDone() {
-    return delegate.isDone();
-  }
+    @Override
+    public boolean isDone() {
+        return delegate.isDone();
+    }
 
-  @Override
-  public ISubject get() throws InterruptedException, ExecutionException {
-    return delegate.get();
-  }
+    @Override
+    public ISubject get() throws InterruptedException, ExecutionException {
+        return delegate.get();
+    }
 
-  @Override
-  public ISubject get(long timeout, TimeUnit unit)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    return delegate.get(timeout, unit);
-  }
+    @Override
+    public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return delegate.get(timeout, unit);
+    }
 
 }

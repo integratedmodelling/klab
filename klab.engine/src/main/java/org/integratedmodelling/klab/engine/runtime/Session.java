@@ -42,9 +42,9 @@ public class Session implements ISession, UserDetails {
     List<Listener> listeners = new ArrayList<>();
     boolean closed = false;
     Set<GrantedAuthority> authorities = new HashSet<>();
+    long lastActivity = System.currentTimeMillis();
 
     public interface Listener {
-
         void onClose(ISession session);
     }
 
@@ -55,6 +55,10 @@ public class Session implements ISession, UserDetails {
         Auth.INSTANCE.registerSession(this);
     }
 
+    void touch() {
+        this.lastActivity = System.currentTimeMillis();
+    }
+    
     public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
@@ -94,7 +98,7 @@ public class Session implements ISession, UserDetails {
 
     @Override
     public Future<ISubject> observe(String urn, String... scenarios) throws KlabException {
-        // urn must specify observer
+        touch();
         IKimObject object = Resources.INSTANCE.getModelObject(urn);
         if (!(object instanceof Observer)) {
             throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
