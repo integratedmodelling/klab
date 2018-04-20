@@ -1,0 +1,33 @@
+#%RAML 1.0
+title: k.LAB API
+version: 0.10.0-SNAPSHOT
+baseUri: https://integratedmodelling.org/klab
+mediaType: application/json
+types:
+  TestType:
+    type: object
+    properties:
+      id: number
+      optional?: string
+      expanded:
+        type: object
+        properties:
+          count: number
+/capabilities:
+  get:
+    description: Get server capabilities. Public, response will change
+                 depending on authentication.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "message" : "Hello World"
+              }
+/ping:
+  description: Endpoint for quick heartbeat checking of server status.
+  get:
+    description: Number of milliseconds between server boot and time of call.
+  head:
+    description: Simplest HEAD call to check for response code.
