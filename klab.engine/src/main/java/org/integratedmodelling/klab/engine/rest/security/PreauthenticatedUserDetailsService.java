@@ -3,13 +3,14 @@ package org.integratedmodelling.klab.engine.rest.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,7 +33,6 @@ public class PreauthenticatedUserDetailsService implements UserDetailsService {
         roles.add(Roles.PUBLIC);
 
         boolean authorize = false;
-        String token = "";
 
         if (Auth.ANONYMOUS_USER_ID.equals(username)) {
             authorize = true;
@@ -58,9 +58,9 @@ public class PreauthenticatedUserDetailsService implements UserDetailsService {
         for (String role : roles) {
             authorities.add(new SimpleGrantedAuthority(role));
         }
-
-        // TODO use k.LAB identity (user, session, anything) and set it up appropriately
-        return new User(username, token, authorities);
+        
+        // anonymous or local user
+        return new KlabUser(username, NameGenerator.newName(), authorities);
     }
 
 }

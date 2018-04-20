@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.test.node.auth;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 
 import org.integratedmodelling.kim.utils.NameGenerator;
@@ -11,11 +10,11 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.data.rest.resources.AuthenticatedIdentity;
-import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
 import org.integratedmodelling.klab.data.rest.resources.NodeReference;
+import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticatedIdentity;
 import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
-import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
+import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationResponse;
+import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data.rest.resources
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity
+import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference
 
 /**
  Node identity, reported for the authenticating node in auth response.

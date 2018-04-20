@@ -28,11 +28,11 @@ public class KlabController {
     @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Capabilities capabilities(Principal user) {
-        return Klab.INSTANCE.getCapabilities();
+        return Klab.INSTANCE.getCapabilities(/* TODO pass logged in engine user if any */);
     }
 
     @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")
-    public String resourceSchema(Principal user) {
+    @ResponseBody public String resourceSchema() {
         return Klab.INSTANCE.getResourceSchema();
     }
 

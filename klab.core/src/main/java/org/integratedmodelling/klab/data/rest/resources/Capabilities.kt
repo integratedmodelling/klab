@@ -2,8 +2,9 @@ package org.integratedmodelling.klab.data.rest.resources.responses
 
 import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.klab.data.rest.resources.AuthorityReference
-import org.integratedmodelling.klab.data.rest.resources.ComponentReference
-import org.integratedmodelling.klab.data.rest.resources.IdentityReference
+import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference
+
+data class ComponentReference (val name: String)
 
 data class Capabilities (
 	var name: String? = null,

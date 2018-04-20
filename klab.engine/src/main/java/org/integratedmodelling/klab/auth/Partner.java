@@ -1,9 +1,10 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.Date;
+
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
-import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
+import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class Partner extends UserIdentity implements IPartnerIdentity, UserDetails {
@@ -62,8 +63,7 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 
     @Override
     public Date getLastLogin() {
-        // TODO Auto-generated method stub
-        return null;
+        return lastLogin.toDate();
     }
 
     @Override

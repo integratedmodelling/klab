@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.Date;
+import java.util.List;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.data.rest.resources.AuthenticatedIdentity;
+import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticatedIdentity;
+import org.springframework.security.core.GrantedAuthority;
 
 public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
@@ -21,6 +23,12 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
     public KlabUser(AuthenticatedIdentity userData, NetworkSession networkSession) {
         super(userData.getIdentity());
         this.parent = networkSession;
+    }
+
+    public KlabUser(String username, String token, List<GrantedAuthority> authorities) {
+        super(username);
+        this.token = token;
+        this.authorities.addAll(authorities);
     }
 
     @Override

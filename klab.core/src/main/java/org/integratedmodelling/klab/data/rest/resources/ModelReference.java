@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.reinert.jjschema.SchemaIgnore;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -100,11 +99,9 @@ public class ModelReference {
   private int                 maxTimeScaleFactor    = ITime.MAX_SCALE_RANK;
 
   @JsonIgnore
-  @SchemaIgnore
   transient private IConcept  observableConcept;
 
   @JsonIgnore
-  @SchemaIgnore
   transient IShape            shape;
 
   /**

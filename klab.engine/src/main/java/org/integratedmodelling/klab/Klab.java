@@ -10,17 +10,18 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.common.monitoring.Message;
-import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
+import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
@@ -469,7 +470,7 @@ public enum Klab implements IRuntimeService {
 
         Capabilities ret = new Capabilities();
 
-        ret.setName("whatever");
+        ret.setName(rootIdentity.getId());
         ret.setVersion(Version.CURRENT);
         ret.setBuild(Version.VERSION_BUILD);
         // TODO
@@ -479,8 +480,9 @@ public enum Klab implements IRuntimeService {
         // List<ComponentReference> dynamicComponents = new ArrayList<>();
         // long refreshFrequencyMillis = 0;
         // int loadFactor = 0;
-        ret.setOwner(new IdentityReference("whoever", null, null));
+        ret.setOwner(new IdentityReference(rootIdentity.getParentIdentity(IUserIdentity.class)));
 
         return ret;
     }
+    
 }

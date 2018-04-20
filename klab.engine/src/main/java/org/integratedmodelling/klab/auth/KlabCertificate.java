@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.data.rest.client.Client;
 import org.integratedmodelling.klab.data.rest.resources.NodeReference;
 import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
-import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
+import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationResponse;
 import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;

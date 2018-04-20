@@ -85,11 +85,19 @@
 			<artifactId>jackson-module-kotlin</artifactId>
 			<version>2.9.5</version>
 		</dependency>
-		<!-- for schema extraction -->
+		
+		<!-- JSON schema extraction -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-jsonSchema</artifactId>
 			<version>2.9.5</version>
+			<exclusions>
+				<exclusion>
+					<!-- uses 1.1.0, which messes up Spring -->
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->

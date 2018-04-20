@@ -8,8 +8,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
 import org.integratedmodelling.klab.auth.Partner;
-import org.integratedmodelling.klab.data.rest.resources.IdentityReference;
-import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 

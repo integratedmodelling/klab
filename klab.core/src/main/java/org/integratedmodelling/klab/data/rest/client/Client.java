@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
-import org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse;
+import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationResponse;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
