@@ -68,7 +68,7 @@ public interface API {
      * 
      *<p><b>Protocol:</b> GET
      *<br/><b>Response type:</b> Json
-     *<br/><b>Response:</b> {@code org.integratedmodelling.klab.data.rest.resources.responses.Capabilities}
+     *<br/><b>Response:</b> {@code org.integratedmodelling.klab.rest.resources.responses.Capabilities}
      *<br/><b>Authentication:</b> open or {@link INetworkSessionIdentity} (response reflect access levels)
      * 
      */
@@ -80,8 +80,8 @@ public interface API {
      * 
      *<p><b>Protocol:</b> POST
      *<br/><b>Response type:</b> Json
-     *<br/><b>Request:</b> {@code org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest}
-     *<br/><b>Response:</b> {@code org.integratedmodelling.klab.data.rest.resources.responses.AuthenticationResponse}
+     *<br/><b>Request:</b> {@code org.integratedmodelling.klab.rest.resources.requests.AuthenticationRequest}
+     *<br/><b>Response:</b> {@code org.integratedmodelling.klab.rest.resources.responses.AuthenticationResponse}
      *<br/><b>Authentication:</b> open
      */
     public static final String AUTHENTICATE = "/authenticate";

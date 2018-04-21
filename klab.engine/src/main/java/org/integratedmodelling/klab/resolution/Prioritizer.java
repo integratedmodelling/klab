@@ -24,8 +24,8 @@ import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.rest.resources.ModelReference;
 import org.integratedmodelling.klab.utils.Pair;
 import com.vividsolutions.jts.geom.Geometry;
 

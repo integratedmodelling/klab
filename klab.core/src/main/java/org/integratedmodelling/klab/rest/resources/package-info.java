@@ -6,4 +6,4 @@
  * @author Ferd
  *
  */
-package org.integratedmodelling.klab.data.rest.resources;
+package org.integratedmodelling.klab.rest.resources;

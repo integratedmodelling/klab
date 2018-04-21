@@ -5,4 +5,4 @@
  * @author ferdinando.villa
  *
  */
-package org.integratedmodelling.klab.data.rest;
+package org.integratedmodelling.klab.rest.client;

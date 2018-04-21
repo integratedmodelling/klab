@@ -31,9 +31,9 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
-import org.integratedmodelling.klab.data.rest.resources.ModelReference;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.resolution.RankedModel;
+import org.integratedmodelling.klab.rest.resources.ModelReference;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
