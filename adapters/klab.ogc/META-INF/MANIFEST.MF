@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: k.LAB OGC services
+Bundle-SymbolicName: klab.ogc
+Bundle-Version: 0.10.0.qualifier
+Export-Package: org.integratedmodelling.klab.ogc.test,
+ org.integratedmodelling.klab.raster,
+ org.integratedmodelling.klab.raster.files,
+ org.integratedmodelling.klab.raster.wcs

@@ -92,7 +92,15 @@ public enum Dataflows implements IDataflowService {
       return builder.build(scope.getMonitor());
     }
 
-    @Override
+    /**
+     * Given a transition, return all the action triggers that pertain to it. If more than one trigger
+     * is returned, any actions corresponding to the first will be applied before, and the second
+     * after, the transition event: e.g. definition vs. resolution or (last) transition vs.
+     * termination.
+     *
+     * @param transition a {@link org.integratedmodelling.kim.api.data.ILocator} object.
+     * @return all pertaining triggers. Possibly empty, never null.
+     */
     public List<Trigger> getActionTriggersFor(ILocator transition) {
       List<Trigger> ret = new ArrayList<>();
       // TODO!

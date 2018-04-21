@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: k.LAB Modeler
+Bundle-SymbolicName: klab.modeler
+Bundle-Version: 0.10.0.qualifier
+Export-Package: org.integratedmodelling.klab.engines.modeler.base
+Require-Bundle: org.integratedmodelling.kdl;bundle-version="0.10.0",
+ org.integratedmodelling.kim;bundle-version="0.10.0",
+ klab.core;bundle-version="0.10.0";visibility:=reexport,
+ klab.engine;bundle-version="0.10.0";visibility:=reexport,
+ klab.ogc;bundle-version="0.10.0";visibility:=reexport

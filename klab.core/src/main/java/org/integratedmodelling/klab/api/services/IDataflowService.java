@@ -18,10 +18,8 @@ package org.integratedmodelling.klab.api.services;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
+
 import org.integratedmodelling.kdl.api.IKdlDataflow;
-import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -77,15 +75,5 @@ public interface IDataflowService {
   <T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope)
       throws KlabException;
 
-  /**
-   * Given a transition, return all the action triggers that pertain to it. If more than one trigger
-   * is returned, any actions corresponding to the first will be applied before, and the second
-   * after, the transition event: e.g. definition vs. resolution or (last) transition vs.
-   * termination.
-   *
-   * @param transition a {@link org.integratedmodelling.kim.api.data.ILocator} object.
-   * @return all pertaining triggers. Possibly empty, never null.
-   */
-  List<Trigger> getActionTriggersFor(ILocator transition);
 
 }
