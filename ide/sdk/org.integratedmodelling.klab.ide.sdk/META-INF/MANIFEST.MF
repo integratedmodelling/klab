@@ -13,6 +13,12 @@ Bundle-ClassPath: lib/jackson-annotations-2.9.0.jar,
  lib/spring-core-5.0.5.RELEASE.jar,
  lib/spring-jcl-5.0.5.RELEASE.jar,
  lib/spring-web-5.0.5.RELEASE.jar,
- .
+ .,
+ lib/spring-aop-5.0.5.RELEASE.jar,
+ lib/spring-context-5.0.5.RELEASE.jar,
+ lib/spring-expression-5.0.5.RELEASE.jar,
+ lib/spring-messaging-5.0.5.RELEASE.jar,
+ lib/spring-websocket-5.0.5.RELEASE.jar
 Bundle-Vendor: http://www.integratedmodelling.org
 Export-Package: org.integratedmodelling.klab.utils
+Require-Bundle: org.integratedmodelling.kim;bundle-version="0.10.0"

@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class FileCatalog<T> extends HashMap<String, T> {
 
   private static final long serialVersionUID = 8664294752013639030L;
-
+  
   Class<? extends T>        cls;
   File                      file;
   long                      timestamp;

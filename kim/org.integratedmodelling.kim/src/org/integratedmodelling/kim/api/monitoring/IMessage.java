@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.api.runtime.monitoring;
+package org.integratedmodelling.kim.api.monitoring;
 
 /**
  * Messages 

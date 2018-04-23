@@ -13,10 +13,10 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 

@@ -15,10 +15,10 @@
  */
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.kim.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.MessageClass;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessage.Type;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.services.ILoggingService;
 import org.integratedmodelling.klab.common.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;

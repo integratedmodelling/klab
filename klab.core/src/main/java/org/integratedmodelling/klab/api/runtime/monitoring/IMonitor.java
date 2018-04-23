@@ -15,8 +15,11 @@
  */
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
+import org.integratedmodelling.kim.api.monitoring.IMessage;
+import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus.Receiver;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus.Receiver;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 
 /**
@@ -88,7 +91,7 @@ public interface IMonitor {
      * with the monitor's {@link #getIdentity() identity}.
      *
      * @param message anything that may be sent as a message: either a preconstructed {@link IMessage}
-     *      or the necessary info to build one, including a {@link IMessage.MessageClass} and {@IMessage.Type} 
+     *      or the necessary info to build one, including a {@link MessageClass} and {@IMessage.Type} 
      *      along with any payload (string or serializable object).
      */
     void send(Object... message);

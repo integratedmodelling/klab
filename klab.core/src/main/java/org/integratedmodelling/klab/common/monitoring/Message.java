@@ -15,8 +15,8 @@
  */
 package org.integratedmodelling.klab.common.monitoring;
 
+import org.integratedmodelling.kim.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessage;
 
 /**
  * Typed message with potential payload to be transferred across a multicast connection. Used for

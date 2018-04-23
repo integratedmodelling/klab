@@ -5,8 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Iterator;
 import java.util.Queue;
 
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessage;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMessageBus;
+import org.integratedmodelling.kim.api.monitoring.IMessage;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 
 import com.google.common.collect.Queues;
 

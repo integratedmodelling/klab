@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import java.util.Collection;
+
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
