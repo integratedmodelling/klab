@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Sdk
+Bundle-Name: k.LAB SDK
 Bundle-SymbolicName: org.integratedmodelling.klab.ide.sdk
 Bundle-Version: 0.10.0.qualifier
 Automatic-Module-Name: org.integratedmodelling.klab.ide.sdk
-Bundle-RequiredExecutionEnvironment: JavaSE-9
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: lib/jackson-annotations-2.9.0.jar,
  lib/jackson-core-2.9.5.jar,
  lib/jackson-databind-2.9.5.jar,

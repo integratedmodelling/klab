@@ -16,26 +16,26 @@ import org.integratedmodelling.klab.utils.FileCatalog;
  */
 public enum KimData {
 
-  INSTANCE;
+    INSTANCE;
 
-  FileCatalog<IPrototype> prototypes;
-  FileCatalog<IPrototype> annotations;
+    FileCatalog<IPrototype> prototypes;
+    FileCatalog<IPrototype> annotations;
 
-  KimData() {
-    File protoFile = new File(System.getProperty("user.home") + File.separator + ".klab"
-        + File.separator + "language" + File.separator + "prototypes.json");
-    File annotFile = new File(System.getProperty("user.home") + File.separator + ".klab"
-        + File.separator + "language" + File.separator + "annotations.json");
-    prototypes = new FileCatalog<IPrototype>(protoFile, Prototype.class, IPrototype.class);
-    annotations = new FileCatalog<IPrototype>(annotFile, Prototype.class, IPrototype.class);
-  }
+    KimData() {
+        File protoFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
+                + "language" + File.separator + "prototypes.json");
+        File annotFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
+                + "language" + File.separator + "annotations.json");
+        prototypes = new FileCatalog<IPrototype>(protoFile, IPrototype.class, Prototype.class);
+        annotations = new FileCatalog<IPrototype>(annotFile, IPrototype.class, Prototype.class);
+    }
 
-  public IPrototype getFunctionPrototype(String name) {
-    return prototypes.get(name);
-  }
+    public IPrototype getFunctionPrototype(String name) {
+        return prototypes.get(name);
+    }
 
-  public IPrototype getAnnotationPrototype(String name) {
-    return annotations.get(name);
-  }
+    public IPrototype getAnnotationPrototype(String name) {
+        return annotations.get(name);
+    }
 
 }
