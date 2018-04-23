@@ -3,6 +3,9 @@
  */
 package org.integratedmodelling.kdl.ui;
 
+import com.google.inject.Binder;
+import com.google.inject.Provider;
+import com.google.inject.name.Names;
 import org.eclipse.compare.IViewerCreator;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -73,9 +76,6 @@ import org.integratedmodelling.kdl.ui.labeling.KdlDescriptionLabelProvider;
 import org.integratedmodelling.kdl.ui.labeling.KdlLabelProvider;
 import org.integratedmodelling.kdl.ui.outline.KdlOutlineTreeProvider;
 import org.integratedmodelling.kdl.ui.quickfix.KdlQuickfixProvider;
-import com.google.inject.Binder;
-import com.google.inject.Provider;
-import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link KdlUiModule}.

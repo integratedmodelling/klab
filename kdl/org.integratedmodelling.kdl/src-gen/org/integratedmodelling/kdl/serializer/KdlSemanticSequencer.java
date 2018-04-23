@@ -3,6 +3,7 @@
  */
 package org.integratedmodelling.kdl.serializer;
 
+import com.google.inject.Inject;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -35,7 +36,6 @@ import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.kdl.Value;
 import org.integratedmodelling.kdl.services.KdlGrammarAccess;
-import com.google.inject.Inject;
 
 @SuppressWarnings("all")
 public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {

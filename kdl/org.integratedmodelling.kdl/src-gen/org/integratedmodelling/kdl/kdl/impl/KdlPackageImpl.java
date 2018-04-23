@@ -8,7 +8,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Classification;
 import org.integratedmodelling.kdl.kdl.Classifier;

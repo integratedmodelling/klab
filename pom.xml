@@ -35,7 +35,7 @@
 
 	<scm>
 		<!-- TODO switch to public rep -->
-		<connection>scm:git:http://bitbuckoet.org/fvilla/klab</connection>
+		<connection>scm:git:http://bitbucket.org/fvilla/klab</connection>
 		<developerConnection>scm:git:https://bitbucket.org/fvilla/klab</developerConnection>
 		<url>https://bitbucket.org/fvilla/klab.git</url>
 	</scm>
@@ -44,6 +44,17 @@
 		<name>integratedmodelling.org</name>
 		<url>http://www.integratedmodelling.org</url>
 	</organization>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
 
 	<modules>
 		<module>kdl</module>
@@ -58,7 +69,7 @@
 	<properties>
 
 		<klab.version>0.10.0-SNAPSHOT</klab.version>
-		
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -105,6 +116,109 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>bundle-dependencies</id>
+			<build>
+				<directory>${basedir}/bundles</directory>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>maven-bundle-plugin</artifactId>
+						<version>2.0.1</version>
+						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<id>wrap-dependencies</id>
+								<goals>
+									<goal>bundleall</goal>
+								</goals>
+								<configuration>
+									<wrapImportPackage>*</wrapImportPackage>
+									<instructions>
+										<Export-Package>org.integratedmodelling.*</Export-Package>
+										<!-- <Bundle-Activator>activator.Activator</Bundle-Activator> -->
+										<Embed-Dependency>dependencies</Embed-Dependency>
+									</instructions>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.0.0</version>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+							<!-- <excludePackageNames>com.elet.dragonconsole.*:org.integratedmodelling.common.utils.jtopas.*</excludePackageNames>  -->
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>2.8.2</version>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<repositories>
 		<repository>

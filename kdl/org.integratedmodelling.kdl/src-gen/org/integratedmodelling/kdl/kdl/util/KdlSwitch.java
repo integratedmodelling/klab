@@ -5,7 +5,9 @@ package org.integratedmodelling.kdl.kdl.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.util.Switch;
+
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Classification;
 import org.integratedmodelling.kdl.kdl.Classifier;

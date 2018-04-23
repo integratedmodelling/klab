@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kdl.ide;
 
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
 import org.eclipse.xtext.ide.DefaultIdeModule;
 import org.eclipse.xtext.ide.LexerIdeBindings;
 import org.eclipse.xtext.ide.editor.contentassist.FQNPrefixMatcher;
@@ -13,8 +15,6 @@ import org.eclipse.xtext.ide.editor.contentassist.antlr.IContentAssistParser;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 import org.integratedmodelling.kdl.ide.contentassist.antlr.KdlParser;
 import org.integratedmodelling.kdl.ide.contentassist.antlr.internal.InternalKdlLexer;
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link KdlIdeModule}.

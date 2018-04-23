@@ -3,11 +3,11 @@
  */
 package org.integratedmodelling.kdl.parser.antlr;
 
+import com.google.inject.Inject;
 import org.eclipse.xtext.parser.antlr.AbstractAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.integratedmodelling.kdl.parser.antlr.internal.InternalKdlParser;
 import org.integratedmodelling.kdl.services.KdlGrammarAccess;
-import com.google.inject.Inject;
 
 public class KdlParser extends AbstractAntlrParser {
 
