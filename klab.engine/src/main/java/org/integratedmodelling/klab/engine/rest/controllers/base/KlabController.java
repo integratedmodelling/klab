@@ -40,9 +40,7 @@ public class KlabController {
 
     @RequestMapping(
             value = API.PING,
-            method = { RequestMethod.GET, RequestMethod.HEAD },
-            consumes = MediaType.TEXT_PLAIN_VALUE,
-            produces = MediaType.TEXT_PLAIN_VALUE)
+            method = { RequestMethod.GET, RequestMethod.HEAD })
     @ResponseBody
     public String ping() {
         Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);

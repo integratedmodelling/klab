@@ -30,7 +30,7 @@ public class EngineStatusMonitor {
     
     public EngineStatusMonitor(String url, Runnable onEngineUp, Runnable onEngineDown) {
         engineUrl = url;
-        this.onEngineUp = onEngineDown;
+        this.onEngineUp = onEngineUp;
         this.onEngineDown = onEngineDown;
         new RepeatingJob().schedule();
     }
