@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import java.security.Principal;
 
-import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.Engine;

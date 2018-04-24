@@ -11,7 +11,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
  * rights reserved.
  */
-package org.integratedmodelling.klab;
+package org.integratedmodelling.klab.api;
 
 import org.integratedmodelling.kim.monitoring.Message;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;

@@ -42,7 +42,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
-import org.integratedmodelling.klab.common.monitoring.MulticastMessageBus;
 import org.integratedmodelling.klab.engine.runtime.Script;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -63,7 +62,6 @@ public class Engine extends Server implements IEngine, UserDetails {
     private ICertificate certificate;
     private String name;
     private Date bootTime;
-    private MulticastMessageBus multicastBus;
     private Monitor monitor;
     // owner identity may be a IKlabUserIdentity (engines) or INodeIdentity (nodes)
     private IIdentity owner = null;
@@ -332,21 +330,6 @@ public class Engine extends Server implements IEngine, UserDetails {
             }
         }
 
-        /*
-         * if we have been asked to open a communication channel from a client, do so. The channel
-         * should be unique among all engines on the same network.
-         */
-        if (options.getMulticastChannel() != null) {
-            Logging.INSTANCE.info("Starting multicast of IP on cluster " + options.getMulticastChannel()
-                    + " communicating on port " + options.getPort());
-            this.multicastBus = new MulticastMessageBus(this, options.getMulticastChannel(), options.getPort());
-
-            /*
-             * TODO send 'boot started' message
-             */
-
-        }
-
         boolean ret = true;
         try {
             /*
@@ -416,14 +399,7 @@ public class Engine extends Server implements IEngine, UserDetails {
              * save cache of function prototypes and resolved URNs for clients
              */
             saveClientInformation();
-
-            /*
-             * if anything is connected, send 'boot finished' message.
-             */
-            if (multicastBus != null) {
-                // TODO
-            }
-
+            
             /*
              * Schedule the session reaper
              */
@@ -577,11 +553,7 @@ public class Engine extends Server implements IEngine, UserDetails {
     public IMonitor getMonitor() {
         return monitor;
     }
-
-    public MulticastMessageBus getMessageBus() {
-        return multicastBus;
-    }
-
+    
     /**
      * Get the Executor that will run script tasks.
      * 

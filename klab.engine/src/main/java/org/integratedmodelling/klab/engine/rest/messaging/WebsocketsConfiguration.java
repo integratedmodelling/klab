@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.rest.messaging;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.API;
+import org.integratedmodelling.klab.api.API;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;

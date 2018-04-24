@@ -165,12 +165,6 @@
 			<version>${joda-time-version}</version>
 		</dependency>
 
-		<!-- fast, duplex multicast communication between clients and engines -->
-		<dependency>
-			<groupId>org.jgroups</groupId>
-			<artifactId>jgroups</artifactId>
-			<version>3.6.8.Final</version>
-		</dependency>
 		<!-- CLIENT DEPENDENCIES -->
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>

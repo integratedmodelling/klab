@@ -43,14 +43,6 @@ public interface IEngineStartupOptions extends IStartupOptions {
     String getCertificateResource();
 
     /**
-     * Tied to <pre>-mcast</pre> option, opens a multicast channel with the specified ID so that a client can communicate
-     * quickly with the engine.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getMulticastChannel();
-
-    /**
      * Tied to <pre>-exit</pre> option, exits the engine after initializing and running any scripts passed on the
      * command line. REST services are not started.
      *

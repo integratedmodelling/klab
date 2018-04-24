@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
@@ -35,12 +36,6 @@ public class EngineStartupOptions implements IEngineStartupOptions {
             usage = "monitored workspace directory (default: ~/.klab/workspace, not monitored)",
             metaVar = "<DIRECTORY_PATH>")
     File workspaceLocation = null;
-
-    @Option(
-            name = "-mcast",
-            usage = "multicast channel (default: multicasting off; must be unique within the local network)",
-            metaVar = "<STRING>")
-    String multicastChannel;
 
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int port = 8183;
@@ -112,11 +107,6 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     }
 
     @Override
-    public String getMulticastChannel() {
-        return multicastChannel;
-    }
-
-    @Override
     public File getDataDirectory() {
         if (dataDir == null) {
             dataDir = Configuration.INSTANCE.getDataPath();
@@ -168,12 +158,6 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     public void setWorkspaceLocation(File workspaceLocation) {
         this.workspaceLocation = workspaceLocation;
     }
-
-    
-    public void setMulticastChannel(String multicastChannel) {
-        this.multicastChannel = multicastChannel;
-    }
-
     
     public void setPort(int port) {
         this.port = port;

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * The controller implementing the
- * {@link org.integratedmodelling.klab.API.ENGINE engine API}. These use the
+ * {@link org.integratedmodelling.klab.api.API.ENGINE engine API}. These use the
  * engine to create sessions and are available to all users of the engine.
  * 
  * @author ferdinando.villa

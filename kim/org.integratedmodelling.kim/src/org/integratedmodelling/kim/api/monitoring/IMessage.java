@@ -8,6 +8,8 @@ package org.integratedmodelling.kim.api.monitoring;
  */
 public interface IMessage {
 
+    public static IMessage NO_RESPONSE = null;
+    
     /**
      * Message class. Ugly type name makes life easier. 
      * 

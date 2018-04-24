@@ -19,7 +19,7 @@
  * to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. The license
  * is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.rest.client;
+package org.integratedmodelling.klab.client;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,16 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationResponse;
-import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.kim.utils.Escape;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -87,6 +78,8 @@ public class Client extends RestTemplate {
 
     public static final String KLAB_VERSION_HEADER = "KlabVersion";
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
+    
+    private static final String API_PING = "/ping";
 
     ObjectMapper objectMapper;
     String authToken;
@@ -97,27 +90,22 @@ public class Client extends RestTemplate {
 
         if (factory == null) {
             factory = new HttpComponentsClientHttpRequestFactory();
-            if (Configuration.INSTANCE.getProperties().containsKey(KLAB_CONNECTION_TIMEOUT)) {
-                int connectTimeout = 1000
-                        * Integer.parseInt(Configuration.INSTANCE.getProperties().getProperty(KLAB_CONNECTION_TIMEOUT));
-                ((HttpComponentsClientHttpRequestFactory) factory).setReadTimeout(connectTimeout);
-                ((HttpComponentsClientHttpRequestFactory) factory).setConnectTimeout(connectTimeout);
-            }
         }
 
         return new Client(factory);
     }
-
-    /**
-     * Send an authentication request. 
-     * @param url
-     * @param request
-     * @return the response. If not authenticated, throw a KlabAuthorizationException. If timeout, return null.
-     */
-    public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
-        return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
-    }
-
+    
+//
+//    /**
+//     * Send an authentication request. 
+//     * @param url
+//     * @param request
+//     * @return the response. If not authenticated, throw a KlabAuthorizationException. If timeout, return null.
+//     */
+//    public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
+//        return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
+//    }
+//
     /**
      * Check the engine's heartbeat.
      * 
@@ -126,7 +114,7 @@ public class Client extends RestTemplate {
      */
     public boolean ping(String url) {
         try {
-            ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD,
+            ResponseEntity<Object> response = exchange(url + API_PING, HttpMethod.HEAD,
                     new HttpEntity<Object>(null, null), Object.class);
             return response.getStatusCodeValue() == 200;
         } catch (Throwable e) {
@@ -163,8 +151,8 @@ public class Client extends RestTemplate {
             HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
             HttpHeaders headers = requestWrapper.getHeaders();
             headers.set("Accept", "application/json");
-            headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
-            headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+//            headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
+//            headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
             if (authToken != null) {
                 headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
             }
@@ -204,10 +192,10 @@ public class Client extends RestTemplate {
     /**
      * Return a client with authorization set to the passed object.
      * 
-     * @param authorizer any identity. 
+     * @param authorization any identity. 
      * @return a new 
      */
-    public Client with(IIdentity authorizer) {
+    public Client with(String authorization) {
 
         /*
          * TODO handle the chain of authorization properly. Tokens are only issued
@@ -217,7 +205,7 @@ public class Client extends RestTemplate {
 
         Client ret = new Client();
         ret.objectMapper = this.objectMapper;
-        ret.authToken = authorizer.getId();
+        ret.authToken = authorization;
         return ret;
     }
 
@@ -226,7 +214,7 @@ public class Client extends RestTemplate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
-        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+//        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
         if (authToken != null) {
             headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
         }
@@ -240,9 +228,9 @@ public class Client extends RestTemplate {
             switch (response.getStatusCodeValue()) {
             case 302:
             case 403:
-                throw new KlabAuthorizationException("unauthorized request " + url);
+                throw new RuntimeException("unauthorized request " + url);
             case 404:
-                throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+                throw new RuntimeException("internal: request " + url + " was not accepted");
             }
 
             if (response.getBody() == null) {
@@ -253,13 +241,13 @@ public class Client extends RestTemplate {
 //                Object path = response.getBody().get("path");
                 Object message = response.getBody().get("message");
 //                Object error = response.getBody().get("error");
-                throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+                throw new RuntimeException("remote exception: " + (message == null ? exception : message));
             }
 
             return objectMapper.convertValue(response.getBody(), cls);
 
         } catch (RestClientException e) {
-            throw new KlabIOException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -270,7 +258,7 @@ public class Client extends RestTemplate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+//        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
@@ -283,9 +271,9 @@ public class Client extends RestTemplate {
         switch (response.getStatusCodeValue()) {
         case 302:
         case 403:
-            throw new KlabAuthorizationException("unauthorized request " + url);
+            throw new RuntimeException("unauthorized request " + url);
         case 404:
-            throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+            throw new RuntimeException("internal: request " + url + " was not accepted");
         }
 
         if (response.getBody() == null) {
@@ -295,7 +283,7 @@ public class Client extends RestTemplate {
             try {
                 Files.write(output.toPath(), response.getBody());
             } catch (IOException e) {
-                throw new KlabIOException(e);
+                throw new RuntimeException(e);
             }
         }
 
@@ -314,7 +302,7 @@ public class Client extends RestTemplate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
-        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+//        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
         if (authToken != null) {
             headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
         }
@@ -324,9 +312,9 @@ public class Client extends RestTemplate {
         switch (response.getStatusCodeValue()) {
         case 302:
         case 403:
-            throw new KlabAuthorizationException("unauthorized request " + url);
+            throw new RuntimeException("unauthorized request " + url);
         case 404:
-            throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+            throw new RuntimeException("internal: request " + url + " was not accepted");
         }
 
         if (response.getBody() == null) {
@@ -337,7 +325,7 @@ public class Client extends RestTemplate {
 //            Object path = response.getBody().get("path");
             Object message = response.getBody().get("message");
 //            Object error = response.getBody().get("error");
-            throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+            throw new RuntimeException("remote exception: " + (message == null ? exception : message));
         }
 
         return objectMapper.convertValue(response.getBody(), cls);

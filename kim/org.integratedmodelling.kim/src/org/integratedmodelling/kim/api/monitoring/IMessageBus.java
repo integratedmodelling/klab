@@ -32,8 +32,10 @@ public interface IMessageBus {
          * Receives any message that matches the filters for this receiver.
          * 
          * @param message
+         * @return a response, or null.
          */
-        void message(IMessage message);
+        IMessage receive(IMessage message);
+
     }
 
     /**
@@ -43,6 +45,16 @@ public interface IMessageBus {
      */
     void post(IMessage message);
 
+    /**
+     * Post a message with a specified response handler. If this one is 
+     * used, the subscriber is expected to send a response, which will
+     * be handled by the passed responder when it is sent.
+     * 
+     * @param message
+     * @param responder 
+     */
+    void post(IMessage message, Receiver responder);
+    
     /**
      * Subscribe a receiver. Additional parameters may be used to filter the 
      * messages received.

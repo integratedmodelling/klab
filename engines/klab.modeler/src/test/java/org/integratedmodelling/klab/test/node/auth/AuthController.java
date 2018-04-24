@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import org.integratedmodelling.kim.utils.NameGenerator;
-import org.integratedmodelling.klab.API;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;

@@ -5,7 +5,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The controller implementing the {@link org.integratedmodelling.klab.API.ENGINE.CONTEXT.TASK task API}.
+ * The controller implementing the {@link org.integratedmodelling.klab.api.API.ENGINE.CONTEXT.TASK task API}.
  * 
  * @author ferdinando.villa
  *

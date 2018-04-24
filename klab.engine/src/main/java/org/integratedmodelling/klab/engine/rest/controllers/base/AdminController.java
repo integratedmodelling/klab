@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.engine.rest.controllers.base;
 
-import org.integratedmodelling.klab.API;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ExitCodeGenerator;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The controller implementing the {@link org.integratedmodelling.klab.API.ADMIN
+ * The controller implementing the {@link org.integratedmodelling.klab.api.API.ADMIN
  * administration API}. Secured to the ADMIN role but all endpoints are
  * preauthorized when accessed from the local IP.
  * 

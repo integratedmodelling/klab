@@ -2,7 +2,10 @@ package org.integratedmodelling.klab.messaging;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.monitoring.IMessage;
@@ -34,6 +37,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
     StompSession session;
     String sessionId;
     SubscriberRegistry registry = new SubscriberRegistry();
+    Map<String, Receiver> responders = Collections.synchronizedMap(new HashMap<>());
     
     public StompMessageBus(String url, String sessionId) {
         this.sessionId = sessionId;
@@ -70,8 +74,19 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
         Message message = (Message) payload;
+        if (message.getInResponseTo() != null) {
+            Receiver responder = responders.remove(message.getInResponseTo());
+            if (responder != null) {
+                responder.receive(message);
+                return;
+            }
+        }
         for (Receiver receiver : registry.getSubscribers(message)) {
-            receiver.message(message);
+            IMessage response = receiver.receive(message);
+            if (response != null) {
+                ((Message) response).setInResponseTo(message.getId());
+                post(response);
+            }
         }
     }
 
@@ -93,6 +108,12 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
     public static void main(String[] args) {
         StompMessageBus bus = new StompMessageBus(URL, "abcde");
         bus.post(Message.create("abcde", "Zio carbonaro", IMessage.MessageClass.LOGGING, IMessage.Type.INFO));
+    }
+
+    @Override
+    public void post(IMessage message, Receiver responder) {
+        responders.put(((Message)message).getId(), responder);
+        post(message);
     }
 
 }

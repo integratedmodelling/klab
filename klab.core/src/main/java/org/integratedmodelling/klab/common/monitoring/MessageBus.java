@@ -48,7 +48,7 @@ public class MessageBus implements IMessageBus {
                 Event nextEvent;
                 while ((nextEvent = queueForThread.poll()) != null) {
                     while (nextEvent.subscribers.hasNext()) {
-                        nextEvent.subscribers.next().message(nextEvent.event);
+                        nextEvent.subscribers.next().receive(nextEvent.event);
                     }
                 }
             } finally {
@@ -89,6 +89,12 @@ public class MessageBus implements IMessageBus {
     @Override
     public void unsubscribe(Receiver receiver, Object... filters) {
         registry.unsubscribe(receiver, filters);
+    }
+
+    @Override
+    public void post(IMessage message, Receiver responder) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
