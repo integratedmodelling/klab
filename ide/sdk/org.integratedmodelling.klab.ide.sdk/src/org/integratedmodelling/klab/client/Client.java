@@ -112,13 +112,15 @@ public class Client extends RestTemplate {
      * @param url base engine/node URL
      * @return true if alive
      */
-    public boolean ping(String url) {
+    public long ping(String url) {
         try {
-            ResponseEntity<Object> response = exchange(url + API_PING, HttpMethod.HEAD,
-                    new HttpEntity<Object>(null, null), Object.class);
-            return response.getStatusCodeValue() == 200;
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "text/plain");
+            ResponseEntity<String> response = exchange(url + API_PING, HttpMethod.GET,
+                    new HttpEntity<String>(headers), String.class);
+            return response.getStatusCodeValue() == 200 ? Long.parseLong(response.getBody()) : -1;
         } catch (Throwable e) {
-            return false;
+            return -1;
         }
     }
 

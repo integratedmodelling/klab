@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.Engine;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,11 +33,17 @@ public class KlabController {
     }
 
     @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody public String resourceSchema() {
+    @ResponseBody
+    public String resourceSchema() {
         return Klab.INSTANCE.getResourceSchema();
     }
 
-    @RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD }, produces = "text/plain")
+    @RequestMapping(
+            value = API.PING,
+            method = { RequestMethod.GET, RequestMethod.HEAD },
+            consumes = MediaType.TEXT_PLAIN_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
     public String ping() {
         Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
         if (engine == null) {
