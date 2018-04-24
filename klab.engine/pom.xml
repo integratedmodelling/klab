@@ -72,6 +72,18 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+	
+		<!-- Websockets support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<version>5.0.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
+			<version>5.0.5.RELEASE</version>
+		</dependency>
 
 		<!-- Kotlin support -->
 		<dependency>

@@ -8,48 +8,64 @@ import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.console.CommandProcessor;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engines.modeler.base.Modeler;
 
 public enum CliRuntime {
 
-  INSTANCE;
+    INSTANCE;
 
-  Engine           engine;
-  Session          session;
-  CommandProcessor commandProcessor;
-  IConsole         console;
+    Engine engine;
+    Session session;
+    CommandProcessor commandProcessor;
+    IConsole console;
+    Modeler modeler;
 
-  public ISession getSession() {
-    return session;
-  }
-
-  public CommandProcessor getCommandProcessor() {
-    return commandProcessor;
-  }
-
-  public IConsole getConsole() {
-    return console;
-  }
-
-  public void initialize(IConsole console, IEngineStartupOptions options) {
-
-    this.engine = Engine.start(options);
-    this.session = engine.createSession();
-    this.console = console;
-    this.commandProcessor = new CommandProcessor(console, session.getMonitor());
-
-  }
-
-  public void shutdown() {
-    if (this.session != null) {
-      try {
-        this.session.close();
-      } catch (IOException e) {
-        Logging.INSTANCE.error(e);
-      }
-      this.engine.stop();
+    public ISession getSession() {
+        return session;
     }
 
-  }
+    public CommandProcessor getCommandProcessor() {
+        return commandProcessor;
+    }
 
+    public IConsole getConsole() {
+        return console;
+    }
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public void initialize(IConsole console, IEngineStartupOptions options) {
+        this.engine = Engine.start(options);
+        this.session = engine.createSession();
+        this.console = console;
+        this.commandProcessor = new CommandProcessor(console, session.getMonitor());
+    }
+
+    public void startNetwork() {
+        if (modeler == null) {
+            modeler = new Modeler(engine);
+        }
+        modeler.startNetworkServices();
+    }
+
+    public void stopNetwork() {
+        if (modeler != null) {
+            modeler.stopNetworkServices();
+        }
+    }
+
+    public void shutdown() {
+        if (this.session != null) {
+            try {
+                this.session.close();
+            } catch (IOException e) {
+                Logging.INSTANCE.error(e);
+            }
+            this.engine.stop();
+        }
+
+    }
 
 }

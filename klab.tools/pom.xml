@@ -11,7 +11,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.engine</artifactId>
+			<artifactId>klab.modeler</artifactId>
 			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
 

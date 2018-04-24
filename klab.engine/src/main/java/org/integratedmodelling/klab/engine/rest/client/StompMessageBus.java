@@ -1,7 +1,9 @@
-package org.integratedmodelling.klab.messaging;
+package org.integratedmodelling.klab.engine.rest.client;
 
-import java.awt.TrayIcon.MessageType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.monitoring.IMessage;
 import org.integratedmodelling.kim.api.monitoring.IMessageBus;
@@ -15,6 +17,9 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.Transport;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 /**
  * A websockets-driven message bus. The messages to be exchanged should be defined in the k.IM package.
@@ -33,10 +38,16 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
     
     public StompMessageBus(String url, String sessionId) {
         this.sessionId = sessionId;
-        WebSocketClient client = new StandardWebSocketClient();
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        List<Transport> transports = new ArrayList<>(1);
+        transports.add(new WebSocketTransport( new StandardWebSocketClient()) );
+        WebSocketClient transport = new SockJsClient(transports);
+        WebSocketStompClient stompClient = new WebSocketStompClient(transport);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        stompClient.connect(url, this);
+        try {
+            this.session = stompClient.connect(url, this).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -5,6 +5,12 @@ import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 
+/**
+ * A CLI-driven k.LAB modeler.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class Main {
 
   public static void main(String[] args) throws Exception {

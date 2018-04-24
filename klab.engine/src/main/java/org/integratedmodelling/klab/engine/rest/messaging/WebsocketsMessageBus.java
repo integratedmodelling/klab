@@ -1,0 +1,49 @@
+package org.integratedmodelling.klab.engine.rest.messaging;
+
+import org.integratedmodelling.kim.api.monitoring.IMessage;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.kim.monitoring.Message;
+import org.integratedmodelling.kim.monitoring.SubscriberRegistry;
+import org.integratedmodelling.klab.API;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class WebsocketsMessageBus implements IMessageBus {
+
+    private SubscriberRegistry registry = new SubscriberRegistry();
+
+    @Autowired
+    private SimpMessagingTemplate webSocket;
+
+    /**
+     * This gets messages sent to /klab/message from the javascript
+     * side of the dataviewer.
+     * 
+     * @param message
+     */
+    @MessageMapping(API.MESSAGE)
+    public void handleTask(Message message) {
+        System.out.println("COCCODIO "+ message.getPayload());
+        for (Receiver receiver : registry.getSubscribers(message)) {
+            receiver.message(message);
+        }
+    }
+
+    @Override
+    public void post(IMessage message) {
+        webSocket.convertAndSend("/message/" + message.getIdentity(), message);
+    }
+
+    @Override
+    public void subscribe(Receiver receiver, Object... filters) {
+        registry.subscribe(receiver, filters);
+    }
+
+    @Override
+    public void unsubscribe(Receiver receiver, Object... filters) {
+        registry.unsubscribe(receiver, filters);
+    }
+}

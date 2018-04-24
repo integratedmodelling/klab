@@ -13,6 +13,7 @@
  */
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.kim.monitoring.Message;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 
 /**
@@ -62,6 +63,14 @@ public interface API {
      *<br/><b>Authentication:</b>
      */
     public static final String PING = "/ping";
+    
+    
+    /**
+     * STOMP endpoint for client/server notifications. Handled through Websockets protocol.
+     * 
+     *<br/><b>Response type:</b> {@link Message}
+     */
+    public static final String MESSAGE = "/message";
 
     /**
      * Public capabilities endpoint. Anything that has an API has capabilities.

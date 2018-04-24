@@ -27,6 +27,12 @@ void cd
 	class org.integratedmodelling.klab.clitool.console.commands.Cd
 }
 
+void network
+	"Turn REST network services on and off"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.Network
+}
+
 /**
  * Batch run: use CL parameters to enable multiple batch contexts
  */

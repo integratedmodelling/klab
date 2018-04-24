@@ -18,9 +18,9 @@ package org.integratedmodelling.klab;
 import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.kim.api.monitoring.IMessage.Type;
+import org.integratedmodelling.kim.monitoring.Message;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.services.ILoggingService;
-import org.integratedmodelling.klab.common.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.INFO)) {
-            messageBus.post(Message.create(MessageClass.LOGGING, Type.INFO, rootIdentity, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.INFO, payload));
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.INFO)) {
@@ -72,7 +72,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.WARN)) {
-            messageBus.post(Message.create(MessageClass.LOGGING, Type.WARNING, rootIdentity, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.WARNING, payload));
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.WARN)) {
@@ -92,7 +92,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.ERROR)) {
-            messageBus.post(Message.create(MessageClass.LOGGING, Type.ERROR, rootIdentity, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.ERROR, payload));
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.ERROR)) {
@@ -111,7 +111,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.DEBUG)) {
-            messageBus.post(Message.create(MessageClass.LOGGING, Type.DEBUG, rootIdentity, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.DEBUG, payload));
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.DEBUG)) {

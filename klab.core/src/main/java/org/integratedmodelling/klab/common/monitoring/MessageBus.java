@@ -7,11 +7,14 @@ import java.util.Queue;
 
 import org.integratedmodelling.kim.api.monitoring.IMessage;
 import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.kim.monitoring.SubscriberRegistry;
 
 import com.google.common.collect.Queues;
 
 public class MessageBus implements IMessageBus {
 
+    private SubscriberRegistry registry = new SubscriberRegistry();
+    
     /**
      * Per-thread queue of events to dispatch.
      */
@@ -75,20 +78,17 @@ public class MessageBus implements IMessageBus {
     }
 
     private Iterator<Receiver> getSubscribers(IMessage message) {
-        // TODO Auto-generated method stub
-        return null;
+        return registry.getSubscribers(message).iterator();
     }
 
     @Override
     public void subscribe(Receiver receiver, Object... filters) {
-        // TODO Auto-generated method stub
-
+        registry.subscribe(receiver, filters);
     }
 
     @Override
     public void unsubscribe(Receiver receiver, Object... filters) {
-        // TODO Auto-generated method stub
-
+        registry.unsubscribe(receiver, filters);
     }
 
 }
