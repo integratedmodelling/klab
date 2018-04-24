@@ -4,6 +4,7 @@
 package org.integratedmodelling.klab.ogc.test;
 
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Klab;
@@ -12,7 +13,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.raster.RasterAdapter;
-import org.integratedmodelling.klab.utils.collections.Collections;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +82,7 @@ public class RasterValidationTests {
               new Parameters(), Klab.INSTANCE.getRootMonitor());
       IResource resource = builder.build(Urns.INSTANCE.createDisposableUrn());
 
-      System.out.println(Collections.printAsJson(resource));
+      System.out.println(JsonUtils.printAsJson(resource));
       
       Resources.INSTANCE.getLocalResourceCatalog().put(resource.getUrn(), resource);
     }

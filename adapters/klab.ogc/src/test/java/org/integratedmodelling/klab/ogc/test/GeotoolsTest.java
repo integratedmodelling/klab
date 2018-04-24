@@ -18,11 +18,14 @@ package org.integratedmodelling.klab.ogc.test;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotools.wcs.WCSConfiguration;
 import org.geotools.xml.Parser;
-import org.integratedmodelling.klab.utils.collections.Collections;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.xml.sax.SAXException;
+
 import net.opengis.wcs11.GetCapabilitiesType;
 
 // TODO: Auto-generated Javadoc
@@ -59,7 +62,7 @@ public class GeotoolsTest {
     Parser parser = new Parser(new WCSConfiguration());
     URL url = new URL(capRequestPath);
     Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(url.openStream());
-    System.out.println(Collections.printAsJson(capabilitiesType));
+    System.out.println(JsonUtils.printAsJson(capabilitiesType));
 
     // Wcs20Factory factory = Wcs20FactoryImpl.init();
     // net.opengis.wcs20.GetCapabilitiesType wcsGetCapabilities =

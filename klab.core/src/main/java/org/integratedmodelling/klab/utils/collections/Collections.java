@@ -17,12 +17,6 @@ package org.integratedmodelling.klab.utils.collections;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,28 +45,4 @@ public class Collections {
 		return ret;
 	}
 
-	/**
-	 * Pretty-print the passed map as a JSON object.
-	 *
-	 * @param object the object
-	 * @return the string
-	 */
-	public static String printAsJson(Object object) {
-
-		ObjectMapper om = new ObjectMapper();
-		om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
-		om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
-		om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
-
-//		DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-//		prettyPrinter.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
-//
-//		String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
-
-		try {
-			return om.writeValueAsString(object);
-		} catch (JsonProcessingException e) {
-			throw new IllegalArgumentException("serialization failed: " + e.getMessage());
-		}
-	}
 }

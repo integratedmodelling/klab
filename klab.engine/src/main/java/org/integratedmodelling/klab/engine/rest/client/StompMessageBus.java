@@ -30,7 +30,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 // see https://github.com/eugenp/tutorials/blob/master/spring-boot/src/main/java/org/baeldung/websocket/client/StompClient.java
 public class StompMessageBus extends StompSessionHandlerAdapter implements IMessageBus {
 
-    static String URL = "ws://localhost:8283/modeler/message";
+    static public String URL = "ws://localhost:8283/modeler/message";
 
     StompSession session;
     String sessionId;
