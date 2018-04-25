@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import javax.inject.Inject;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.util.Pair;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -12,10 +14,12 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.sdk.IKlabService;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -26,7 +30,8 @@ public class Activator extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "org.integratedmodelling.klab.ide";
     private static Activator plugin;
     private EngineStatusMonitor engineStatusMonitor;
-
+    private IMessageBus messageBus;
+        
     /**
      * The constructor
      */
@@ -110,14 +115,15 @@ public class Activator extends AbstractUIPlugin {
 
     }
 
-    private Object engineOff() {
-        System.out.println("Engine is fucking OFF");
-        return null;
+    private void engineOff() {
+        // TODO save session data
+        // TODO reassess UI
     }
 
-    private Object engineOn() {
-        System.out.println("Engine is fucking ON");
-        return null;
+    private void engineOn() {
+        // TODO get session (possibly rejoin previous)
+        // TODO create comms channel for session
+        // TODO reassess UI
     }
 
     public void stop(BundleContext context) throws Exception {

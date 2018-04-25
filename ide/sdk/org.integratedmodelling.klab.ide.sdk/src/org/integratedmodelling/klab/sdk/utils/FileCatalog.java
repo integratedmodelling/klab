@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.utils;
+package org.integratedmodelling.klab.sdk.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

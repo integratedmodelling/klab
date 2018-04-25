@@ -49,11 +49,15 @@ Bundle-ClassPath: .,
  lib/httpclient-4.5.5.jar,
  lib/httpcore-4.4.9.jar
 Bundle-Vendor: http://www.integratedmodelling.org
-Export-Package: org.integratedmodelling.klab.client;
+Export-Package: org.integratedmodelling.klab.sdk,
+ org.integratedmodelling.klab.sdk.client;
   uses:="org.springframework.http.client,
    org.springframework.web.client,
    org.springframework.http,
    com.fasterxml.jackson.databind",
- org.integratedmodelling.klab.messaging;uses:="org.integratedmodelling.kim.api.monitoring,org.integratedmodelling.kim.monitoring,org.springframework.messaging.simp.stomp",
- org.integratedmodelling.klab.utils
-Require-Bundle: org.integratedmodelling.kim;bundle-version="0.10.0"
+ org.integratedmodelling.klab.sdk.messaging;uses:="org.integratedmodelling.kim.api.monitoring,org.integratedmodelling.kim.monitoring,org.springframework.messaging.simp.stomp",
+ org.integratedmodelling.klab.sdk.utils
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
+ org.integratedmodelling.kim;bundle-version="0.10.0"
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.integratedmodelling.klab.sdk.Activator

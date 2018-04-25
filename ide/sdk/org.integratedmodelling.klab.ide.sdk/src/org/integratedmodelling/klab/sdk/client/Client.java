@@ -19,7 +19,7 @@
  * to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. The license
  * is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.client;
+package org.integratedmodelling.klab.sdk.client;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +50,7 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -76,6 +77,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class Client extends RestTemplate {
 
+    public static final String ENGINE_DEFAULT_URL = "http://127.0.0.1:8283/modeler";
+    
     public static final String KLAB_VERSION_HEADER = "KlabVersion";
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
     
@@ -83,16 +86,17 @@ public class Client extends RestTemplate {
 
     ObjectMapper objectMapper;
     String authToken;
+    String url;
 
     private static ClientHttpRequestFactory factory;
 
-    public static Client create() {
+    public static Client create(String url) {
 
         if (factory == null) {
             factory = new HttpComponentsClientHttpRequestFactory();
         }
 
-        return new Client(factory);
+        return new Client(factory, url);
     }
     
 //
@@ -108,11 +112,10 @@ public class Client extends RestTemplate {
 //
     /**
      * Check the engine's heartbeat.
-     * 
-     * @param url base engine/node URL
-     * @return true if alive
+
+     * @return ms since boot if alive, -1 otherwise
      */
-    public long ping(String url) {
+    public long ping() {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "text/plain");
@@ -123,7 +126,17 @@ public class Client extends RestTemplate {
             return -1;
         }
     }
-
+    
+    /**
+     * Open a session with the engine.
+     * 
+     * @param rejoinSession
+     * @return a new session ID (possibly same as passed one to rejoin, meaning the rejoin was successful)
+     */
+    public String openSession(@Nullable String rejoinSession) {
+        return null;
+    }
+    
     private class JSONResponseErrorHandler implements ResponseErrorHandler {
 
         @Override
@@ -182,13 +195,15 @@ public class Client extends RestTemplate {
         this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
     }
 
-    private Client(ClientHttpRequestFactory factory) {
+    private Client(ClientHttpRequestFactory factory, String url) {
         super(factory);
+        this.url = url;
         setup();
     }
 
     private Client() {
         super(factory);
+        this.url = ENGINE_DEFAULT_URL;
     }
 
     /**
@@ -208,6 +223,7 @@ public class Client extends RestTemplate {
         Client ret = new Client();
         ret.objectMapper = this.objectMapper;
         ret.authToken = authorization;
+        ret.url = url;
         return ret;
     }
 

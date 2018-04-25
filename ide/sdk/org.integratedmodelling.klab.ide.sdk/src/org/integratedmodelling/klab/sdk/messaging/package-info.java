@@ -5,4 +5,4 @@
  * @author ferdinando.villa
  *
  */
-package org.integratedmodelling.klab.client;
+package org.integratedmodelling.klab.sdk.messaging;

@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.integratedmodelling.klab.client.Client;
+import org.integratedmodelling.klab.sdk.client.Client;
 
 /**
  * Status monitor that checks the engine status at regular intervals, notifying of either
@@ -22,7 +22,7 @@ public class EngineStatusMonitor {
     protected long recheckSecondsWhenOnline = 60;
     protected long recheckSecondsWhenOffline = 10;
     long uptime = -1;
-    Client client = Client.create();
+    Client client;
 
     private Runnable onEngineUp;
 
@@ -32,7 +32,17 @@ public class EngineStatusMonitor {
         engineUrl = url;
         this.onEngineUp = onEngineUp;
         this.onEngineDown = onEngineDown;
+        this.client = Client.create(url);
         new RepeatingJob().schedule();
+    }
+    
+    public String getEngineUrl() {
+        return engineUrl;
+    }
+    
+    public void setEngineUrl(String url) {
+        this.engineUrl = url;
+        this.client = Client.create(url);
     }
     
     public class RepeatingJob extends Job {
@@ -46,7 +56,7 @@ public class EngineStatusMonitor {
         protected IStatus run(IProgressMonitor monitor) {
             
             long delay = recheckSecondsWhenOffline;
-            long up = client.ping(engineUrl);
+            long up = client.ping();
             if (uptime < 0 && up > 0) {
                 onEngineUp.run();
                 delay = recheckSecondsWhenOnline;

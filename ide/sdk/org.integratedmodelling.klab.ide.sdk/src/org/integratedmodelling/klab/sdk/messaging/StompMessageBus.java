@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.messaging;
+package org.integratedmodelling.klab.sdk.messaging;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
