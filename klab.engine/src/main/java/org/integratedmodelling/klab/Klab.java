@@ -9,9 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.kim.api.monitoring.IMessage;
 import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.kim.api.monitoring.IMessage.Type;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.kim.monitoring.Message;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -286,11 +287,13 @@ public enum Klab implements IRuntimeService {
     }
 
     class RootMonitor implements IMonitor {
+        
+        int errors = 0;
 
         @Override
         public void info(Object... info) {
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.INFO)) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.INFO ,
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.INFO,
                         NotificationUtils.getMessage(info)));
             } else {
                 Logging.INSTANCE.info(info);
@@ -300,7 +303,7 @@ public enum Klab implements IRuntimeService {
         @Override
         public void warn(Object... o) {
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.WARN)) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.WARNING, 
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.WARNING,
                         NotificationUtils.getMessage(o)));
             } else {
                 Logging.INSTANCE.warn(o);
@@ -309,8 +312,9 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void error(Object... o) {
+            errors ++;
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.ERROR)) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.ERROR, 
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.ERROR,
                         NotificationUtils.getMessage(o)));
             } else {
                 Logging.INSTANCE.error(o);
@@ -329,8 +333,14 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void send(Object... o) {
-            if (messageBus != null) {
-                messageBus.post(Message.create(getIdentity().getId(), o));
+            if (o != null && o.length > 0) {
+                if (messageBus != null) {
+                    if (o.length == 1 && o[0] instanceof IMessage) {
+                        messageBus.post((IMessage) o[0]);
+                    } else {
+                        messageBus.post(Message.create(rootIdentity.getId(), o));
+                    }
+                }
             }
         }
 
@@ -341,8 +351,7 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public boolean hasErrors() {
-            // TODO Auto-generated method stub
-            return false;
+            return errors > 0;
         }
     }
 
@@ -484,5 +493,5 @@ public enum Klab implements IRuntimeService {
 
         return ret;
     }
-    
+
 }

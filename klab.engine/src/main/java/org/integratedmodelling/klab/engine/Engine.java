@@ -14,7 +14,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kim.api.monitoring.IMessage;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.monitoring.Message;
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Auth;
@@ -74,14 +77,13 @@ public class Engine extends Server implements IEngine, UserDetails {
     /**
      * A scheduler to periodically check for abandoned sessions and close them
      */
-    private final ScheduledExecutorService scheduler =
-            Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     /**
      * Check interval for session expiration in minutes. TODO configure. 
      */
     private long sessionCheckMinutes = 15l;
     private ScheduledFuture<?> sessionClosingTask;
-        
+
     public class Monitor implements IMonitor {
 
         private IIdentity identity = Engine.this;
@@ -114,7 +116,16 @@ public class Engine extends Server implements IEngine, UserDetails {
 
         @Override
         public void send(Object... o) {
-            // TODO Auto-generated method stub
+            if (o != null && o.length > 0) {
+                IMessageBus bus = Klab.INSTANCE.getMessageBus();
+                if (bus != null) {
+                    if (o.length == 1 && o[0] instanceof IMessage) {
+                       bus.post((IMessage)o[0]);
+                    } else {
+                        bus.post(Message.create(this.identity.getId(), o));
+                    }
+                }
+            }
         }
 
         @Override
@@ -198,9 +209,9 @@ public class Engine extends Server implements IEngine, UserDetails {
                 throw new KlabAuthorizationException(
                         "Node engines cannot create modeling sessions without explicit authorization");
             }
-            
-            defaultEngineUser = new EngineUser((UserIdentity)owner, this);
-            ((EngineUser)defaultEngineUser).getAuthorities().add(new SimpleGrantedAuthority(Roles.OWNER));
+
+            defaultEngineUser = new EngineUser((UserIdentity) owner, this);
+            ((EngineUser) defaultEngineUser).getAuthorities().add(new SimpleGrantedAuthority(Roles.OWNER));
         }
         return defaultEngineUser;
     }
@@ -249,7 +260,7 @@ public class Engine extends Server implements IEngine, UserDetails {
         if (this.sessionClosingTask != null) {
             this.sessionClosingTask.cancel(true);
         }
-        
+
         // shutdown the task executor
         if (taskExecutor != null) {
             taskExecutor.shutdown();
@@ -273,7 +284,7 @@ public class Engine extends Server implements IEngine, UserDetails {
                 scriptExecutor.shutdownNow();
             }
         }
-        
+
         // and the session scheduler
         if (scheduler != null) {
             scheduler.shutdown();
@@ -399,7 +410,7 @@ public class Engine extends Server implements IEngine, UserDetails {
              * save cache of function prototypes and resolved URNs for clients
              */
             saveClientInformation();
-            
+
             /*
              * Schedule the session reaper
              */
@@ -409,9 +420,9 @@ public class Engine extends Server implements IEngine, UserDetails {
                 public void run() {
                     closeExpiredSessions();
                 }
-                
-            }, 10, sessionCheckMinutes , TimeUnit.MINUTES);
-            
+
+            }, 10, sessionCheckMinutes, TimeUnit.MINUTES);
+
             /*
              * After the engine has successfully booted, it becomes the root identity and is owned
              * by the context owner.
@@ -424,12 +435,12 @@ public class Engine extends Server implements IEngine, UserDetails {
              */
             this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
             Auth.INSTANCE.registerIdentity(this);
-            
+
             /*
              * boot time is now
              */
             this.bootTime = new Date();
-            
+
             /*
              * if exit after scripts is requested, exit
              */
@@ -553,7 +564,7 @@ public class Engine extends Server implements IEngine, UserDetails {
     public IMonitor getMonitor() {
         return monitor;
     }
-    
+
     /**
      * Get the Executor that will run script tasks.
      * 

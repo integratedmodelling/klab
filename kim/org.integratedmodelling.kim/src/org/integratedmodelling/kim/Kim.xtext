@@ -72,6 +72,18 @@ ClassifierRHS:
 	nodata='unknown' |
 	star?='*';
 	
+ClassifierRHSWithId returns ClassifierRHS:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	'in' set=List | 
+	string=STRING | 
+	concept=ConceptDeclaration | 
+	id = (LOWERCASE_ID | PropertyId) |
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*';	
+	
 LookupTable:
 	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
 //	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
@@ -345,7 +357,6 @@ Factor returns ConceptDeclaration:
 	ConceptDeclaration (operators+=('and'|'follows') operands+=Term)*
 ;
 
-
 /*
  * Declaration without inherency and context, used in Concept to ensure that
  * the 'within' and 'of' remain outer-level unless parenthesesized.
@@ -594,6 +605,14 @@ Metadata:
 Documentation:
 	{Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
 
+Map:
+	{Map} '{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+;
+
+MapEntry:
+	classifier=ClassifierRHSWithId ':' value=ValueWithConcept
+;
+
 DocSelector:
 	id=PropertyId |
 	'on' (
@@ -611,13 +630,21 @@ ParameterList:
 	singleValue=Value |
 	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
 
+ValueWithConcept returns Value:
+	concept=ConceptDeclaration |
+	literal=Literal |
+	expr=EXPR |
+	list=List |
+	map=Map |
+	null?='unknown';
+
 Value:
 	literal=LiteralOrIdOrComma |
 	function=Function |
 	expr=EXPR |
 	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	list=List |
-	map=Metadata |
+	map=Map |
 	null?='unknown';
 	
 Function:

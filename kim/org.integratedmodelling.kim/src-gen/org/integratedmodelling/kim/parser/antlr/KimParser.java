@@ -4,11 +4,11 @@
  */
 package org.integratedmodelling.kim.parser.antlr;
 
+import com.google.inject.Inject;
 import org.eclipse.xtext.parser.antlr.AbstractAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.integratedmodelling.kim.parser.antlr.internal.InternalKimParser;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
-import com.google.inject.Inject;
 
 public class KimParser extends AbstractAntlrParser {
 

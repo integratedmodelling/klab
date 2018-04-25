@@ -367,6 +367,24 @@ public interface KimFactory extends EFactory
   Documentation createDocumentation();
 
   /**
+   * Returns a new object of class '<em>Map</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Map</em>'.
+   * @generated
+   */
+  Map createMap();
+
+  /**
+   * Returns a new object of class '<em>Map Entry</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Map Entry</em>'.
+   * @generated
+   */
+  MapEntry createMapEntry();
+
+  /**
    * Returns a new object of class '<em>Doc Selector</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

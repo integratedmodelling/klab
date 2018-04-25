@@ -34,7 +34,7 @@
 	</developers>
 
 	<scm>
-		<!-- TODO switch to public rep -->
+		<!-- TODO switch to public rep on github -->
 		<connection>scm:git:http://bitbucket.org/fvilla/klab</connection>
 		<developerConnection>scm:git:https://bitbucket.org/fvilla/klab</developerConnection>
 		<url>https://bitbucket.org/fvilla/klab.git</url>
@@ -47,7 +47,7 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>ossrh-snapshots</id>
+			<id>ossrh</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>

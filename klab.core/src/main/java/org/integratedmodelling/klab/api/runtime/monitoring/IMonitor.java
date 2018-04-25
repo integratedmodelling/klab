@@ -85,14 +85,15 @@ public interface IMonitor {
     void debug(Object... o);
 
     /**
-     * This is to send out serializable objects or other messages. Information sent through this
-     * channel will only be received to {@link Receiver receivers} that have registered with the
+     * This is to send out serializable objects or other messages through any {@link IMessageBus}
+     * registered with the runtime. Information sent through this
+     * channel will only be received by {@link Receiver receivers} that have subscribed with the
      * {@link IMessageBus} exposed by the {@link IRuntimeService runtime}. The messages are signed
-     * with the monitor's {@link #getIdentity() identity}.
+     * with the monitor's {@link #getIdentity() identity string}.
      *
      * @param message anything that may be sent as a message: either a preconstructed {@link IMessage}
      *      or the necessary info to build one, including a {@link MessageClass} and {@IMessage.Type} 
-     *      along with any payload (string or serializable object).
+     *      along with any payload (any serializable object).
      */
     void send(Object... message);
 

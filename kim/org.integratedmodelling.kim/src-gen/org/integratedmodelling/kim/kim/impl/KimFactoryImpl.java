@@ -8,8 +8,11 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
+
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
@@ -39,6 +42,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Map;
+import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -152,6 +157,8 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.LITERAL: return createLiteral();
       case KimPackage.METADATA: return createMetadata();
       case KimPackage.DOCUMENTATION: return createDocumentation();
+      case KimPackage.MAP: return createMap();
+      case KimPackage.MAP_ENTRY: return createMapEntry();
       case KimPackage.DOC_SELECTOR: return createDocSelector();
       case KimPackage.KEY_VALUE_PAIR: return createKeyValuePair();
       case KimPackage.PARAMETER_LIST: return createParameterList();
@@ -621,6 +628,28 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     DocumentationImpl documentation = new DocumentationImpl();
     return documentation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Map createMap()
+  {
+    MapImpl map = new MapImpl();
+    return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public MapEntry createMapEntry()
+  {
+    MapEntryImpl mapEntry = new MapEntryImpl();
+    return mapEntry;
   }
 
   /**

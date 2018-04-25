@@ -5,6 +5,7 @@
 package org.integratedmodelling.kim.kim;
 
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -30,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isStar <em>Star</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isAnything <em>Anything</em>}</li>
  * </ul>
  *
@@ -392,6 +394,32 @@ public interface ClassifierRHS extends EObject
    * @generated
    */
   void setStar(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Id</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Id</em>' attribute.
+   * @see #setId(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Id()
+   * @model
+   * @generated
+   */
+  String getId();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getId <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Id</em>' attribute.
+   * @see #getId()
+   * @generated
+   */
+  void setId(String value);
 
   /**
    * Returns the value of the '<em><b>Anything</b></em>' attribute.

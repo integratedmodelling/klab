@@ -9,7 +9,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
@@ -39,6 +41,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Map;
+import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -334,6 +338,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass documentationEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass mapEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass mapEntryEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1097,9 +1115,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getClassifierRHS_Anything()
+  public EAttribute getClassifierRHS_Id()
   {
     return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getClassifierRHS_Anything()
+  {
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -3677,6 +3705,56 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getMap()
+  {
+    return mapEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMap_Entries()
+  {
+    return (EReference)mapEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getMapEntry()
+  {
+    return mapEntryEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMapEntry_Classifier()
+  {
+    return (EReference)mapEntryEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMapEntry_Value()
+  {
+    return (EReference)mapEntryEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getDocSelector()
   {
     return docSelectorEClass;
@@ -3817,7 +3895,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getValue_Literal()
+  public EReference getValue_Concept()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(0);
   }
@@ -3827,7 +3905,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getValue_Function()
+  public EReference getValue_Literal()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(1);
   }
@@ -3847,19 +3925,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getValue_Id()
-  {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getValue_List()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(4);
+    return (EReference)valueEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -3869,7 +3937,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getValue_Map()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(5);
+    return (EReference)valueEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -3879,7 +3947,27 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getValue_Null()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getValue_Function()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getValue_Id()
+  {
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -4301,6 +4389,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__EXPRESSION);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__NODATA);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__STAR);
+    createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__ID);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__ANYTHING);
 
     lookupTableEClass = createEClass(LOOKUP_TABLE);
@@ -4589,6 +4678,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     documentationEClass = createEClass(DOCUMENTATION);
 
+    mapEClass = createEClass(MAP);
+    createEReference(mapEClass, MAP__ENTRIES);
+
+    mapEntryEClass = createEClass(MAP_ENTRY);
+    createEReference(mapEntryEClass, MAP_ENTRY__CLASSIFIER);
+    createEReference(mapEntryEClass, MAP_ENTRY__VALUE);
+
     docSelectorEClass = createEClass(DOC_SELECTOR);
     createEAttribute(docSelectorEClass, DOC_SELECTOR__ID);
     createEAttribute(docSelectorEClass, DOC_SELECTOR__DEFINITION);
@@ -4606,13 +4702,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(parameterListEClass, PARAMETER_LIST__PAIRS);
 
     valueEClass = createEClass(VALUE);
+    createEReference(valueEClass, VALUE__CONCEPT);
     createEReference(valueEClass, VALUE__LITERAL);
-    createEReference(valueEClass, VALUE__FUNCTION);
     createEAttribute(valueEClass, VALUE__EXPR);
-    createEAttribute(valueEClass, VALUE__ID);
     createEReference(valueEClass, VALUE__LIST);
     createEReference(valueEClass, VALUE__MAP);
     createEAttribute(valueEClass, VALUE__NULL);
+    createEReference(valueEClass, VALUE__FUNCTION);
+    createEAttribute(valueEClass, VALUE__ID);
 
     functionEClass = createEClass(FUNCTION);
     createEAttribute(functionEClass, FUNCTION__NAME);
@@ -4756,6 +4853,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getClassifierRHS_Expression(), this.getNumber(), null, "expression", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Nodata(), ecorePackage.getEString(), "nodata", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Star(), ecorePackage.getEBoolean(), "star", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getClassifierRHS_Id(), ecorePackage.getEString(), "id", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Anything(), ecorePackage.getEBoolean(), "anything", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lookupTableEClass, LookupTable.class, "LookupTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -5044,6 +5142,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(documentationEClass, Documentation.class, "Documentation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+    initEClass(mapEClass, Map.class, "Map", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMap_Entries(), this.getMapEntry(), null, "entries", null, 0, -1, Map.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(mapEntryEClass, MapEntry.class, "MapEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMapEntry_Classifier(), this.getClassifierRHS(), null, "classifier", null, 0, 1, MapEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMapEntry_Value(), this.getValue(), null, "value", null, 0, 1, MapEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(docSelectorEClass, DocSelector.class, "DocSelector", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getDocSelector_Id(), ecorePackage.getEString(), "id", null, 0, 1, DocSelector.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDocSelector_Definition(), ecorePackage.getEBoolean(), "definition", null, 0, 1, DocSelector.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5061,13 +5166,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getParameterList_Pairs(), this.getKeyValuePair(), null, "pairs", null, 0, -1, ParameterList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getValue_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getValue_Function(), this.getFunction(), null, "function", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_List(), this.getList(), null, "list", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getValue_Map(), this.getMetadata(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Null(), ecorePackage.getEBoolean(), "null", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Function(), this.getFunction(), null, "function", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

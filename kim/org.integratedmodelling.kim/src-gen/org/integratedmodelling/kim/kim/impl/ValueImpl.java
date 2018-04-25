@@ -6,15 +6,19 @@ package org.integratedmodelling.kim.kim.impl;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Literal;
-import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.Value;
 
 /**
@@ -25,19 +29,30 @@ import org.integratedmodelling.kim.kim.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpr <em>Expr</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#isNull <em>Null</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getFunction <em>Function</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getId <em>Id</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ValueImpl extends MinimalEObjectImpl.Container implements Value
 {
+  /**
+   * The cached value of the '{@link #getConcept() <em>Concept</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConcept()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration concept;
+
   /**
    * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -47,16 +62,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Literal literal;
-
-  /**
-   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFunction()
-   * @generated
-   * @ordered
-   */
-  protected Function function;
 
   /**
    * The default value of the '{@link #getExpr() <em>Expr</em>}' attribute.
@@ -79,26 +84,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected String expr = EXPR_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getId()
-   * @generated
-   * @ordered
-   */
-  protected static final String ID_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getId()
-   * @generated
-   * @ordered
-   */
-  protected String id = ID_EDEFAULT;
-
-  /**
    * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -116,7 +101,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    * @ordered
    */
-  protected Metadata map;
+  protected Map map;
 
   /**
    * The default value of the '{@link #isNull() <em>Null</em>}' attribute.
@@ -139,6 +124,36 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected boolean null_ = NULL_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFunction()
+   * @generated
+   * @ordered
+   */
+  protected Function function;
+
+  /**
+   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getId()
+   * @generated
+   * @ordered
+   */
+  protected static final String ID_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getId()
+   * @generated
+   * @ordered
+   */
+  protected String id = ID_EDEFAULT;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -157,6 +172,54 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.VALUE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptDeclaration getConcept()
+  {
+    return concept;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetConcept(ConceptDeclaration newConcept, NotificationChain msgs)
+  {
+    ConceptDeclaration oldConcept = concept;
+    concept = newConcept;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__CONCEPT, oldConcept, newConcept);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setConcept(ConceptDeclaration newConcept)
+  {
+    if (newConcept != concept)
+    {
+      NotificationChain msgs = null;
+      if (concept != null)
+        msgs = ((InternalEObject)concept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__CONCEPT, null, msgs);
+      if (newConcept != null)
+        msgs = ((InternalEObject)newConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__CONCEPT, null, msgs);
+      msgs = basicSetConcept(newConcept, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__CONCEPT, newConcept, newConcept));
   }
 
   /**
@@ -212,54 +275,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public Function getFunction()
-  {
-    return function;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetFunction(Function newFunction, NotificationChain msgs)
-  {
-    Function oldFunction = function;
-    function = newFunction;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__FUNCTION, oldFunction, newFunction);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setFunction(Function newFunction)
-  {
-    if (newFunction != function)
-    {
-      NotificationChain msgs = null;
-      if (function != null)
-        msgs = ((InternalEObject)function).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__FUNCTION, null, msgs);
-      if (newFunction != null)
-        msgs = ((InternalEObject)newFunction).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__FUNCTION, null, msgs);
-      msgs = basicSetFunction(newFunction, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__FUNCTION, newFunction, newFunction));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public String getExpr()
   {
     return expr;
@@ -276,29 +291,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     expr = newExpr;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__EXPR, oldExpr, expr));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getId()
-  {
-    return id;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setId(String newId)
-  {
-    String oldId = id;
-    id = newId;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__ID, oldId, id));
   }
 
   /**
@@ -354,7 +346,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public Metadata getMap()
+  public Map getMap()
   {
     return map;
   }
@@ -364,9 +356,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetMap(Metadata newMap, NotificationChain msgs)
+  public NotificationChain basicSetMap(Map newMap, NotificationChain msgs)
   {
-    Metadata oldMap = map;
+    Map oldMap = map;
     map = newMap;
     if (eNotificationRequired())
     {
@@ -381,7 +373,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMap(Metadata newMap)
+  public void setMap(Map newMap)
   {
     if (newMap != map)
     {
@@ -425,19 +417,92 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
+  public Function getFunction()
+  {
+    return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetFunction(Function newFunction, NotificationChain msgs)
+  {
+    Function oldFunction = function;
+    function = newFunction;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__FUNCTION, oldFunction, newFunction);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setFunction(Function newFunction)
+  {
+    if (newFunction != function)
+    {
+      NotificationChain msgs = null;
+      if (function != null)
+        msgs = ((InternalEObject)function).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__FUNCTION, null, msgs);
+      if (newFunction != null)
+        msgs = ((InternalEObject)newFunction).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__FUNCTION, null, msgs);
+      msgs = basicSetFunction(newFunction, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__FUNCTION, newFunction, newFunction));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getId()
+  {
+    return id;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setId(String newId)
+  {
+    String oldId = id;
+    id = newId;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__ID, oldId, id));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__CONCEPT:
+        return basicSetConcept(null, msgs);
       case KimPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
-      case KimPackage.VALUE__FUNCTION:
-        return basicSetFunction(null, msgs);
       case KimPackage.VALUE__LIST:
         return basicSetList(null, msgs);
       case KimPackage.VALUE__MAP:
         return basicSetMap(null, msgs);
+      case KimPackage.VALUE__FUNCTION:
+        return basicSetFunction(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -452,20 +517,22 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__CONCEPT:
+        return getConcept();
       case KimPackage.VALUE__LITERAL:
         return getLiteral();
-      case KimPackage.VALUE__FUNCTION:
-        return getFunction();
       case KimPackage.VALUE__EXPR:
         return getExpr();
-      case KimPackage.VALUE__ID:
-        return getId();
       case KimPackage.VALUE__LIST:
         return getList();
       case KimPackage.VALUE__MAP:
         return getMap();
       case KimPackage.VALUE__NULL:
         return isNull();
+      case KimPackage.VALUE__FUNCTION:
+        return getFunction();
+      case KimPackage.VALUE__ID:
+        return getId();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -480,26 +547,29 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__CONCEPT:
+        setConcept((ConceptDeclaration)newValue);
+        return;
       case KimPackage.VALUE__LITERAL:
         setLiteral((Literal)newValue);
         return;
-      case KimPackage.VALUE__FUNCTION:
-        setFunction((Function)newValue);
-        return;
       case KimPackage.VALUE__EXPR:
         setExpr((String)newValue);
-        return;
-      case KimPackage.VALUE__ID:
-        setId((String)newValue);
         return;
       case KimPackage.VALUE__LIST:
         setList((List)newValue);
         return;
       case KimPackage.VALUE__MAP:
-        setMap((Metadata)newValue);
+        setMap((Map)newValue);
         return;
       case KimPackage.VALUE__NULL:
         setNull((Boolean)newValue);
+        return;
+      case KimPackage.VALUE__FUNCTION:
+        setFunction((Function)newValue);
+        return;
+      case KimPackage.VALUE__ID:
+        setId((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -515,26 +585,29 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__CONCEPT:
+        setConcept((ConceptDeclaration)null);
+        return;
       case KimPackage.VALUE__LITERAL:
         setLiteral((Literal)null);
         return;
-      case KimPackage.VALUE__FUNCTION:
-        setFunction((Function)null);
-        return;
       case KimPackage.VALUE__EXPR:
         setExpr(EXPR_EDEFAULT);
-        return;
-      case KimPackage.VALUE__ID:
-        setId(ID_EDEFAULT);
         return;
       case KimPackage.VALUE__LIST:
         setList((List)null);
         return;
       case KimPackage.VALUE__MAP:
-        setMap((Metadata)null);
+        setMap((Map)null);
         return;
       case KimPackage.VALUE__NULL:
         setNull(NULL_EDEFAULT);
+        return;
+      case KimPackage.VALUE__FUNCTION:
+        setFunction((Function)null);
+        return;
+      case KimPackage.VALUE__ID:
+        setId(ID_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -550,20 +623,22 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__CONCEPT:
+        return concept != null;
       case KimPackage.VALUE__LITERAL:
         return literal != null;
-      case KimPackage.VALUE__FUNCTION:
-        return function != null;
       case KimPackage.VALUE__EXPR:
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
-      case KimPackage.VALUE__ID:
-        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.VALUE__LIST:
         return list != null;
       case KimPackage.VALUE__MAP:
         return map != null;
       case KimPackage.VALUE__NULL:
         return null_ != NULL_EDEFAULT;
+      case KimPackage.VALUE__FUNCTION:
+        return function != null;
+      case KimPackage.VALUE__ID:
+        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
     }
     return super.eIsSet(featureID);
   }
@@ -581,10 +656,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (expr: ");
     result.append(expr);
-    result.append(", id: ");
-    result.append(id);
     result.append(", null: ");
     result.append(null_);
+    result.append(", id: ");
+    result.append(id);
     result.append(')');
     return result.toString();
   }

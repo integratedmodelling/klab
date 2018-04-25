@@ -387,7 +387,7 @@ public enum Kim {
             }
             return ret;
         } else if (value.getMap() != null) {
-          return parseMap(value.getMap(), namespace);
+//          return parseMap(value.getMap(), namespace);
         }
 
         return null;

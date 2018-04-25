@@ -690,13 +690,22 @@ public interface KimPackage extends EPackage
   int CLASSIFIER_RHS__STAR = 13;
 
   /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__ID = 14;
+
+  /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__ANYTHING = 14;
+  int CLASSIFIER_RHS__ANYTHING = 15;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -705,7 +714,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 15;
+  int CLASSIFIER_RHS_FEATURE_COUNT = 16;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
@@ -3311,6 +3320,71 @@ public interface KimPackage extends EPackage
   int METADATA_FEATURE_COUNT = DOCUMENTATION_FEATURE_COUNT + 3;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.MapImpl <em>Map</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.MapImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMap()
+   * @generated
+   */
+  int MAP = 38;
+
+  /**
+   * The feature id for the '<em><b>Entries</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP__ENTRIES = 0;
+
+  /**
+   * The number of structural features of the '<em>Map</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.MapEntryImpl <em>Map Entry</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.MapEntryImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMapEntry()
+   * @generated
+   */
+  int MAP_ENTRY = 39;
+
+  /**
+   * The feature id for the '<em><b>Classifier</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_ENTRY__CLASSIFIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_ENTRY__VALUE = 1;
+
+  /**
+   * The number of structural features of the '<em>Map Entry</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_ENTRY_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DocSelectorImpl <em>Doc Selector</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3318,7 +3392,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocSelector()
    * @generated
    */
-  int DOC_SELECTOR = 38;
+  int DOC_SELECTOR = 40;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3382,7 +3456,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 39;
+  int KEY_VALUE_PAIR = 41;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3428,7 +3502,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 40;
+  int PARAMETER_LIST = 42;
 
   /**
    * The feature id for the '<em><b>Single Value</b></em>' containment reference.
@@ -3465,7 +3539,16 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 41;
+  int VALUE = 43;
+
+  /**
+   * The feature id for the '<em><b>Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__CONCEPT = 0;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -3474,16 +3557,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 0;
-
-  /**
-   * The feature id for the '<em><b>Function</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__FUNCTION = 1;
+  int VALUE__LITERAL = 1;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -3495,22 +3569,13 @@ public interface KimPackage extends EPackage
   int VALUE__EXPR = 2;
 
   /**
-   * The feature id for the '<em><b>Id</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__ID = 3;
-
-  /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 4;
+  int VALUE__LIST = 3;
 
   /**
    * The feature id for the '<em><b>Map</b></em>' containment reference.
@@ -3519,7 +3584,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__MAP = 5;
+  int VALUE__MAP = 4;
 
   /**
    * The feature id for the '<em><b>Null</b></em>' attribute.
@@ -3528,7 +3593,25 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__NULL = 6;
+  int VALUE__NULL = 5;
+
+  /**
+   * The feature id for the '<em><b>Function</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__FUNCTION = 6;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__ID = 7;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -3537,7 +3620,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 7;
+  int VALUE_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.
@@ -3547,7 +3630,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 42;
+  int FUNCTION = 44;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3584,7 +3667,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 43;
+  int UNIT_ELEMENT = 45;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3630,7 +3713,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 44;
+  int REL_OPERATOR = 46;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -3703,7 +3786,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 45;
+  int UNIT = 47;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -3749,7 +3832,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 46;
+  int CURRENCY = 48;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3795,7 +3878,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 47;
+  int NUMBER = 49;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -3877,7 +3960,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 48;
+  int DATA_TYPE = 50;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -3887,7 +3970,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 49;
+  int UNIT_OP = 51;
 
 
   /**
@@ -4551,6 +4634,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getClassifierRHS_Star();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kim.kim.ClassifierRHS#getId()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EAttribute getClassifierRHS_Id();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ClassifierRHS#isAnything <em>Anything</em>}'.
@@ -7362,6 +7456,59 @@ public interface KimPackage extends EPackage
   EClass getDocumentation();
 
   /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Map <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Map</em>'.
+   * @see org.integratedmodelling.kim.kim.Map
+   * @generated
+   */
+  EClass getMap();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Map#getEntries <em>Entries</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Entries</em>'.
+   * @see org.integratedmodelling.kim.kim.Map#getEntries()
+   * @see #getMap()
+   * @generated
+   */
+  EReference getMap_Entries();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.MapEntry <em>Map Entry</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Map Entry</em>'.
+   * @see org.integratedmodelling.kim.kim.MapEntry
+   * @generated
+   */
+  EClass getMapEntry();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.MapEntry#getClassifier <em>Classifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Classifier</em>'.
+   * @see org.integratedmodelling.kim.kim.MapEntry#getClassifier()
+   * @see #getMapEntry()
+   * @generated
+   */
+  EReference getMapEntry_Classifier();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.MapEntry#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kim.kim.MapEntry#getValue()
+   * @see #getMapEntry()
+   * @generated
+   */
+  EReference getMapEntry_Value();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.DocSelector <em>Doc Selector</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7512,6 +7659,17 @@ public interface KimPackage extends EPackage
   EClass getValue();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Concept</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getConcept()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Concept();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getLiteral <em>Literal</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7523,17 +7681,6 @@ public interface KimPackage extends EPackage
   EReference getValue_Literal();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Function</em>'.
-   * @see org.integratedmodelling.kim.kim.Value#getFunction()
-   * @see #getValue()
-   * @generated
-   */
-  EReference getValue_Function();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#getExpr <em>Expr</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7543,17 +7690,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getValue_Expr();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Id</em>'.
-   * @see org.integratedmodelling.kim.kim.Value#getId()
-   * @see #getValue()
-   * @generated
-   */
-  EAttribute getValue_Id();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getList <em>List</em>}'.
@@ -7587,6 +7723,28 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getValue_Null();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Function</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getFunction()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Function();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getId()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Id();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Function <em>Function</em>}'.
@@ -8460,6 +8618,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CLASSIFIER_RHS__STAR = eINSTANCE.getClassifierRHS_Star();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CLASSIFIER_RHS__ID = eINSTANCE.getClassifierRHS_Id();
 
     /**
      * The meta object literal for the '<em><b>Anything</b></em>' attribute feature.
@@ -10584,6 +10750,50 @@ public interface KimPackage extends EPackage
     EClass DOCUMENTATION = eINSTANCE.getDocumentation();
 
     /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.MapImpl <em>Map</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.MapImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMap()
+     * @generated
+     */
+    EClass MAP = eINSTANCE.getMap();
+
+    /**
+     * The meta object literal for the '<em><b>Entries</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MAP__ENTRIES = eINSTANCE.getMap_Entries();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.MapEntryImpl <em>Map Entry</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.MapEntryImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMapEntry()
+     * @generated
+     */
+    EClass MAP_ENTRY = eINSTANCE.getMapEntry();
+
+    /**
+     * The meta object literal for the '<em><b>Classifier</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MAP_ENTRY__CLASSIFIER = eINSTANCE.getMapEntry_Classifier();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MAP_ENTRY__VALUE = eINSTANCE.getMapEntry_Value();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.DocSelectorImpl <em>Doc Selector</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -10704,6 +10914,14 @@ public interface KimPackage extends EPackage
     EClass VALUE = eINSTANCE.getValue();
 
     /**
+     * The meta object literal for the '<em><b>Concept</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__CONCEPT = eINSTANCE.getValue_Concept();
+
+    /**
      * The meta object literal for the '<em><b>Literal</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -10712,28 +10930,12 @@ public interface KimPackage extends EPackage
     EReference VALUE__LITERAL = eINSTANCE.getValue_Literal();
 
     /**
-     * The meta object literal for the '<em><b>Function</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference VALUE__FUNCTION = eINSTANCE.getValue_Function();
-
-    /**
      * The meta object literal for the '<em><b>Expr</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute VALUE__EXPR = eINSTANCE.getValue_Expr();
-
-    /**
-     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute VALUE__ID = eINSTANCE.getValue_Id();
 
     /**
      * The meta object literal for the '<em><b>List</b></em>' containment reference feature.
@@ -10758,6 +10960,22 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute VALUE__NULL = eINSTANCE.getValue_Null();
+
+    /**
+     * The meta object literal for the '<em><b>Function</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__FUNCTION = eINSTANCE.getValue_Function();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__ID = eINSTANCE.getValue_Id();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.

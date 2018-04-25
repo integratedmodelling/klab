@@ -5,15 +5,21 @@
 package org.integratedmodelling.kim.kim.impl;
 
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.KimPackage;
@@ -42,6 +48,7 @@ import org.integratedmodelling.kim.kim.REL_OPERATOR;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isStar <em>Star</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isAnything <em>Anything</em>}</li>
  * </ul>
  *
@@ -248,6 +255,26 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @ordered
    */
   protected boolean star = STAR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getId()
+   * @generated
+   * @ordered
+   */
+  protected static final String ID_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getId()
+   * @generated
+   * @ordered
+   */
+  protected String id = ID_EDEFAULT;
 
   /**
    * The default value of the '{@link #isAnything() <em>Anything</em>}' attribute.
@@ -783,6 +810,29 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getId()
+  {
+    return id;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setId(String newId)
+  {
+    String oldId = id;
+    id = newId;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CLASSIFIER_RHS__ID, oldId, id));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isAnything()
   {
     return anything;
@@ -869,6 +919,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return getNodata();
       case KimPackage.CLASSIFIER_RHS__STAR:
         return isStar();
+      case KimPackage.CLASSIFIER_RHS__ID:
+        return getId();
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         return isAnything();
     }
@@ -929,6 +981,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KimPackage.CLASSIFIER_RHS__STAR:
         setStar((Boolean)newValue);
         return;
+      case KimPackage.CLASSIFIER_RHS__ID:
+        setId((String)newValue);
+        return;
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         setAnything((Boolean)newValue);
         return;
@@ -988,6 +1043,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KimPackage.CLASSIFIER_RHS__STAR:
         setStar(STAR_EDEFAULT);
         return;
+      case KimPackage.CLASSIFIER_RHS__ID:
+        setId(ID_EDEFAULT);
+        return;
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         setAnything(ANYTHING_EDEFAULT);
         return;
@@ -1033,6 +1091,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return NODATA_EDEFAULT == null ? nodata != null : !NODATA_EDEFAULT.equals(nodata);
       case KimPackage.CLASSIFIER_RHS__STAR:
         return star != STAR_EDEFAULT;
+      case KimPackage.CLASSIFIER_RHS__ID:
+        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         return anything != ANYTHING_EDEFAULT;
     }
@@ -1062,6 +1122,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
     result.append(nodata);
     result.append(", star: ");
     result.append(star);
+    result.append(", id: ");
+    result.append(id);
     result.append(", anything: ");
     result.append(anything);
     result.append(')');

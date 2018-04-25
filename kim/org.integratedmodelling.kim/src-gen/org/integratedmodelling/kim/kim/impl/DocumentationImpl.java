@@ -5,7 +5,9 @@
 package org.integratedmodelling.kim.kim.impl;
 
 import org.eclipse.emf.ecore.EClass;
+
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.KimPackage;
 

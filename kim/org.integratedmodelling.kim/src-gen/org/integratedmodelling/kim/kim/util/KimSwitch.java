@@ -6,7 +6,9 @@ package org.integratedmodelling.kim.kim.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.util.Switch;
+
 import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
@@ -34,6 +36,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.Map;
+import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -383,6 +387,20 @@ public class KimSwitch<T> extends Switch<T>
       {
         Documentation documentation = (Documentation)theEObject;
         T result = caseDocumentation(documentation);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.MAP:
+      {
+        Map map = (Map)theEObject;
+        T result = caseMap(map);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.MAP_ENTRY:
+      {
+        MapEntry mapEntry = (MapEntry)theEObject;
+        T result = caseMapEntry(mapEntry);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1064,6 +1082,38 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseDocumentation(Documentation object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Map</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Map</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMap(Map object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Map Entry</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Map Entry</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMapEntry(MapEntry object)
   {
     return null;
   }

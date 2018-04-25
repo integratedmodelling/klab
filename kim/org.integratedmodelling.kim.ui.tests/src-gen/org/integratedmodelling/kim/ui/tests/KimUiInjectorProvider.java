@@ -4,9 +4,9 @@
  */
 package org.integratedmodelling.kim.ui.tests;
 
+import com.google.inject.Injector;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kim.ui.internal.KimActivator;
-import com.google.inject.Injector;
 
 public class KimUiInjectorProvider implements IInjectorProvider {
 

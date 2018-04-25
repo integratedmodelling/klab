@@ -24,6 +24,9 @@ package org.integratedmodelling.klab.clitool.console;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.monitoring.IMessage;
+import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.kim.monitoring.Message;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
@@ -33,6 +36,7 @@ import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsoleFrame;
+import org.integratedmodelling.klab.utils.NotificationUtils;
 
 public class TermConsole implements IConsole {
 
@@ -73,45 +77,41 @@ public class TermConsole implements IConsole {
     terminal.console.grabCommandLine(prompt, endCommand, listener);
   }
 
-  public static class Monitor implements IMonitor {
-
-    // @Override
-    // public void info(Object info, String infoClass) {
-    // _this.info(info, infoClass);
-    // }
-    //
-    // @Override
-    // public void warn(Object o) {
-    // _this.warning(o);
-    // }
-    //
-    // @Override
-    // public void error(Object o) {
-    // hasErrors = true;
-    // _this.error(o);
-    // }
-    //
-    // @Override
-    // public void debug(Object o) {
-    // }
-
+  public class Monitor implements IMonitor {
+      
     @Override
     public void send(Object... o) {
-      // TODO Auto-generated method stub
-
+        if (o != null && o.length > 0) {
+            IMessageBus bus = Klab.INSTANCE.getMessageBus();
+            if (bus != null) {
+                if (o.length == 1 && o[0] instanceof IMessage) {
+                   bus.post((IMessage)o[0]);
+                } else {
+                    bus.post(Message.create(CliRuntime.INSTANCE.getSession().getId(), o));
+                }
+            }
+        }
     }
 
     @Override
-    public void info(Object... info) {}
+    public void info(Object... info) {
+        TermConsole.this.info(NotificationUtils.getMessage(info), null);
+    }
 
     @Override
-    public void warn(Object... o) {}
+    public void warn(Object... o) {
+        TermConsole.this.warning(NotificationUtils.getMessage(o));
+    }
 
     @Override
-    public void error(Object... o) {}
+    public void error(Object... o) {
+        TermConsole.this.error(NotificationUtils.getMessage(o));
+    }
 
     @Override
-    public void debug(Object... o) {}
+    public void debug(Object... o) {
+        TermConsole.this.debug(NotificationUtils.getMessage(o));
+    }
 
     @Override
     public IIdentity getIdentity() {
@@ -236,6 +236,18 @@ public class TermConsole implements IConsole {
 
   @Override
   public void error(Object e) {
+    if (e instanceof Throwable) {
+      /*
+       * TODO log stack trace
+       */
+      e = ((Throwable) e).getMessage();
+    } else {
+      e = e.toString();
+    }
+    terminal.console.append("&R-" + e + "\n");
+  }
+  
+  public void debug(Object e) {
     if (e instanceof Throwable) {
       /*
        * TODO log stack trace

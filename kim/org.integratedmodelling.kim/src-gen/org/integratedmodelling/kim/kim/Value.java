@@ -15,13 +15,14 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getLiteral <em>Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getExpr <em>Expr</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#isNull <em>Null</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getValue()
@@ -30,6 +31,32 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Value extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Concept</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Concept</em>' containment reference.
+   * @see #setConcept(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Concept()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getConcept();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Concept</em>' containment reference.
+   * @see #getConcept()
+   * @generated
+   */
+  void setConcept(ConceptDeclaration value);
+
   /**
    * Returns the value of the '<em><b>Literal</b></em>' containment reference.
    * <!-- begin-user-doc -->
@@ -57,32 +84,6 @@ public interface Value extends EObject
   void setLiteral(Literal value);
 
   /**
-   * Returns the value of the '<em><b>Function</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Function</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Function</em>' containment reference.
-   * @see #setFunction(Function)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Function()
-   * @model containment="true"
-   * @generated
-   */
-  Function getFunction();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Function</em>' containment reference.
-   * @see #getFunction()
-   * @generated
-   */
-  void setFunction(Function value);
-
-  /**
    * Returns the value of the '<em><b>Expr</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -107,32 +108,6 @@ public interface Value extends EObject
    * @generated
    */
   void setExpr(String value);
-
-  /**
-   * Returns the value of the '<em><b>Id</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Id</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Id</em>' attribute.
-   * @see #setId(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Id()
-   * @model
-   * @generated
-   */
-  String getId();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Id</em>' attribute.
-   * @see #getId()
-   * @generated
-   */
-  void setId(String value);
 
   /**
    * Returns the value of the '<em><b>List</b></em>' containment reference.
@@ -169,12 +144,12 @@ public interface Value extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Map</em>' containment reference.
-   * @see #setMap(Metadata)
+   * @see #setMap(Map)
    * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Map()
    * @model containment="true"
    * @generated
    */
-  Metadata getMap();
+  Map getMap();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}' containment reference.
@@ -184,7 +159,7 @@ public interface Value extends EObject
    * @see #getMap()
    * @generated
    */
-  void setMap(Metadata value);
+  void setMap(Map value);
 
   /**
    * Returns the value of the '<em><b>Null</b></em>' attribute.
@@ -211,5 +186,57 @@ public interface Value extends EObject
    * @generated
    */
   void setNull(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Function</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Function</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Function</em>' containment reference.
+   * @see #setFunction(Function)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Function()
+   * @model containment="true"
+   * @generated
+   */
+  Function getFunction();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Function</em>' containment reference.
+   * @see #getFunction()
+   * @generated
+   */
+  void setFunction(Function value);
+
+  /**
+   * Returns the value of the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Id</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Id</em>' attribute.
+   * @see #setId(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Id()
+   * @model
+   * @generated
+   */
+  String getId();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Id</em>' attribute.
+   * @see #getId()
+   * @generated
+   */
+  void setId(String value);
 
 } // Value
