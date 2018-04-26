@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Prototype;
-import org.integratedmodelling.klab.sdk.utils.FileCatalog;
+import org.integratedmodelling.klab.client.utils.FileCatalog;
 
 /**
  * A singleton holding all synchronized k.IM-relevant data that come from the engine, such as

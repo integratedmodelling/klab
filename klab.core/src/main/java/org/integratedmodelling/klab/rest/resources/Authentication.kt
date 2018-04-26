@@ -31,6 +31,7 @@ data class AuthenticatedIdentity (
 		val token: String) {
 	constructor() : this(IdentityReference(), ArrayList(), "", "")
 }
+
 /**
  * Authentication request.
  */

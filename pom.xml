@@ -64,6 +64,7 @@
 		<module>klab.tools</module>
 		<module>adapters</module>
 		<module>engines</module>
+		<module>client</module>
 	</modules>
 
 	<properties>
