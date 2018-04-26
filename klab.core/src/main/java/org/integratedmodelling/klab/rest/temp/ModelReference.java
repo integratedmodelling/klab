@@ -11,7 +11,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
  * rights reserved.
  */
-package org.integratedmodelling.klab.rest.resources;
+package org.integratedmodelling.klab.rest.temp;
 
 import java.util.HashMap;
 import java.util.HashSet;

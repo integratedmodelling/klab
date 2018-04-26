@@ -34,13 +34,13 @@ public class RankedModel extends Model implements IRankedModel {
   Model delegate;
   Map<String, Object> ranks;
 
-  private org.integratedmodelling.klab.rest.resources.ModelReference modelData;
+  private org.integratedmodelling.klab.rest.temp.ModelReference modelData;
 
   public RankedModel(String urn) {
     this.modelUrn = urn;
   }
 
-  public RankedModel(org.integratedmodelling.klab.rest.resources.ModelReference model,
+  public RankedModel(org.integratedmodelling.klab.rest.temp.ModelReference model,
       Map<String, Object> ranks) {
     this.modelUrn = model.getUrn();
     this.modelData = model;

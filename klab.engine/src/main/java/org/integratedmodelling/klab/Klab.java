@@ -14,6 +14,8 @@ import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.kim.api.monitoring.IMessage.Type;
 import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.kim.monitoring.Message;
+import org.integratedmodelling.kim.rest.Capabilities;
+import org.integratedmodelling.kim.rest.IdentityReference;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
@@ -22,8 +24,6 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
-import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
-import org.integratedmodelling.klab.data.rest.resources.responses.Capabilities;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
@@ -50,7 +50,7 @@ public enum Klab implements IRuntimeService {
     /**
      * The package containing all REST resource beans.
      */
-    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.data.rest.resources";
+    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.kim.rest";
 
     /**
      * This can be set to a runnable that starts the REST services.
@@ -470,6 +470,12 @@ public enum Klab implements IRuntimeService {
         return SchemaExtractor.getSchemata(REST_RESOURCES_PACKAGE_ID);
     }
 
+    @Override
+    public String getResourceSchema(String resourceId) {
+        return SchemaExtractor.getSchema(REST_RESOURCES_PACKAGE_ID, resourceId);
+    }
+
+    
     /**
      * The runtime capabilities. TODO flesh out.
      * 
@@ -489,7 +495,8 @@ public enum Klab implements IRuntimeService {
         // List<ComponentReference> dynamicComponents = new ArrayList<>();
         // long refreshFrequencyMillis = 0;
         // int loadFactor = 0;
-        ret.setOwner(new IdentityReference(rootIdentity.getParentIdentity(IUserIdentity.class)));
+        IUserIdentity parent = rootIdentity.getParentIdentity(IUserIdentity.class);
+        ret.setOwner(new IdentityReference(parent.getId(), parent.getEmailAddress(), parent.getLastLogin().toString()));
 
         return ret;
     }

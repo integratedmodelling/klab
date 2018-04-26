@@ -7,11 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kim.rest.NodeReference;
+import org.integratedmodelling.kim.rest.NodeReference.Permission;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.rest.resources.NodeReference;
 import org.integratedmodelling.klab.rest.client.Client;
 
 public class Node implements INodeIdentity {

@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.integratedmodelling.kim.rest.AuthenticatedIdentity;
+import org.integratedmodelling.kim.rest.AuthenticationRequest;
+import org.integratedmodelling.kim.rest.AuthenticationResponse;
+import org.integratedmodelling.kim.rest.IdentityReference;
+import org.integratedmodelling.kim.rest.NodeReference;
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.data.rest.resources.NodeReference;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticatedIdentity;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationResponse;
-import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -75,9 +75,14 @@ public class AuthController {
                     .getParentIdentity(IPartnerIdentity.class);
             IdentityReference partnerIdentity = new IdentityReference(partner.getName(), partner.getEmailAddress(), now.toString());
 
-            NodeReference thisnode = new NodeReference(node.getName(), new HashSet<>(node.getPermissions()),
-                    partnerIdentity, new ArrayList<>(node.getUrls()), true, 20, 0, new ArrayList<>(),
-                    new ArrayList<>());
+            NodeReference thisnode = new NodeReference();
+
+            thisnode.setId(node.getName());
+            thisnode.setPartner(partnerIdentity);
+            thisnode.getPermissions().addAll(node.getPermissions());
+            thisnode.getUrls().addAll(node.getUrls());
+            thisnode.setOnline(true);
+            thisnode.setRetryPeriodMinutes(20);
 
             return new ResponseEntity<AuthenticationResponse>(
                     new AuthenticationResponse(identity, Collections.singletonList(thisnode), node.getName()),

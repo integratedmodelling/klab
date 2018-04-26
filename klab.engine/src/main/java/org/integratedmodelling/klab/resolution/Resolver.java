@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.rest.resources.ModelReference;
+import org.integratedmodelling.klab.rest.temp.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**

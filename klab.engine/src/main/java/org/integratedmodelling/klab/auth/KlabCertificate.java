@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.integratedmodelling.kim.rest.AuthenticationRequest;
+import org.integratedmodelling.kim.rest.AuthenticationResponse;
+import org.integratedmodelling.kim.rest.NodeReference;
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
@@ -14,9 +17,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.data.rest.resources.NodeReference;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationRequest;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticationResponse;
 import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
@@ -298,7 +298,7 @@ public class KlabCertificate implements ICertificate {
                             break;
                         }
                     }
-                    Partner partner = Auth.INSTANCE.requirePartner(partnerNode.getOwningPartner());
+                    Partner partner = Auth.INSTANCE.requirePartner(partnerNode.getPartner());
                     Node node = new Node(partnerNode, partner);
                     node.setOnline(true);
                     NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),

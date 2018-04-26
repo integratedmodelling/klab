@@ -18,6 +18,8 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.Collection;
 import java.util.Set;
 
+import org.integratedmodelling.kim.rest.NodeReference.Permission;
+
 /**
  * The "view" of each k.LAB network node that gets to the engine after network
  * connection. Contains permissions for the connecting engine.
@@ -26,18 +28,7 @@ import java.util.Set;
  * @version $Id: $Id
  */
 public interface INodeIdentity extends IServerIdentity {
-
-    /**
-     * Permissions available to the current identity.
-     * 
-     * @author Ferd
-     *
-     */
-    public static enum Permission {
-        PUBLISH,
-        QUERY
-    }
-
+    
     /** Constant <code>type</code> */
     Type type = Type.NODE;
 

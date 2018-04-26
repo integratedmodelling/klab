@@ -78,17 +78,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class Client extends RestTemplate {
 
     public static final String ENGINE_DEFAULT_URL = "http://127.0.0.1:8283/modeler";
-    
+
     public static final String KLAB_VERSION_HEADER = "KlabVersion";
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
-    
-    private static final String API_PING = "/ping";
+
+    public static final String API_PING = "/ping";
+    public static final String API_SCHEMA_GET = "/schema?get=";
 
     ObjectMapper objectMapper;
     String authToken;
     String url;
 
     private static ClientHttpRequestFactory factory;
+    
+    public class BeanDescriptor {
+        String packageName;
+        List<String> classes;
+    }
 
     public static Client create(String url) {
 
@@ -98,35 +104,53 @@ public class Client extends RestTemplate {
 
         return new Client(factory, url);
     }
-    
-//
-//    /**
-//     * Send an authentication request. 
-//     * @param url
-//     * @param request
-//     * @return the response. If not authenticated, throw a KlabAuthorizationException. If timeout, return null.
-//     */
-//    public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
-//        return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
-//    }
-//
+
+    public String getUrl() {
+        return url;
+    }
+
+    //
+    //    /**
+    //     * Send an authentication request. 
+    //     * @param url
+    //     * @param request
+    //     * @return the response. If not authenticated, throw a KlabAuthorizationException. If timeout, return null.
+    //     */
+    //    public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
+    //        return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
+    //    }
+    //
     /**
      * Check the engine's heartbeat.
-
+    
      * @return ms since boot if alive, -1 otherwise
      */
     public long ping() {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "text/plain");
-            ResponseEntity<String> response = exchange(url + API_PING, HttpMethod.GET,
-                    new HttpEntity<String>(headers), String.class);
+            ResponseEntity<String> response = exchange(url + API_PING, HttpMethod.GET, new HttpEntity<String>(headers),
+                    String.class);
             return response.getStatusCodeValue() == 200 ? Long.parseLong(response.getBody()) : -1;
         } catch (Throwable e) {
             return -1;
         }
     }
-    
+
+    public BeanDescriptor getPOJOClasses() {
+        
+        List<String> classes = new ArrayList<>();
+        Map<?, ?> map = get(url + API_SCHEMA_GET + "all", Map.class);
+        String packageName = map.get("package").toString();
+        for (Object o : (List<?>) map.get("schemata")) {
+            classes.add(o.toString());
+        }
+        BeanDescriptor ret = new BeanDescriptor();
+        ret.packageName = packageName;
+        ret.classes = classes;
+        return ret;
+    }
+
     /**
      * Open a session with the engine.
      * 
@@ -136,7 +160,7 @@ public class Client extends RestTemplate {
     public String openSession(@Nullable String rejoinSession) {
         return null;
     }
-    
+
     private class JSONResponseErrorHandler implements ResponseErrorHandler {
 
         @Override
@@ -166,8 +190,8 @@ public class Client extends RestTemplate {
             HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
             HttpHeaders headers = requestWrapper.getHeaders();
             headers.set("Accept", "application/json");
-//            headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
-//            headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+            //            headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
+            //            headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
             if (authToken != null) {
                 headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
             }
@@ -232,7 +256,7 @@ public class Client extends RestTemplate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
-//        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+        //        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
         if (authToken != null) {
             headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
         }
@@ -256,9 +280,9 @@ public class Client extends RestTemplate {
             }
             if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
                 Object exception = response.getBody().get("exception");
-//                Object path = response.getBody().get("path");
+                //                Object path = response.getBody().get("path");
                 Object message = response.getBody().get("message");
-//                Object error = response.getBody().get("error");
+                //                Object error = response.getBody().get("error");
                 throw new RuntimeException("remote exception: " + (message == null ? exception : message));
             }
 
@@ -276,7 +300,7 @@ public class Client extends RestTemplate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-//        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+        //        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
@@ -320,7 +344,7 @@ public class Client extends RestTemplate {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
-//        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+        //        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
         if (authToken != null) {
             headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
         }
@@ -340,9 +364,9 @@ public class Client extends RestTemplate {
         }
         if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
             Object exception = response.getBody().get("exception");
-//            Object path = response.getBody().get("path");
+            //            Object path = response.getBody().get("path");
             Object message = response.getBody().get("message");
-//            Object error = response.getBody().get("error");
+            //            Object error = response.getBody().get("error");
             throw new RuntimeException("remote exception: " + (message == null ? exception : message));
         }
 

@@ -50,14 +50,23 @@ public interface IRuntimeService {
     IRuntimeProvider getRuntimeProvider();
 
     /**
-     * Return the JSON source code of a map containing all the JSON level 4 schemata for REST beans
-     * indexed by Java class name. These should be harvested and built at runtime from the package
+     * Return the JSON source code of a map containing all the JSON level 3 schemata for REST beans
+     * indexed by Java class name (simple name, not path). These should be harvested and built at runtime from the package
      * containing all resource beans. Called by JS code to validate resources before use.
      * <p>
      * 
      * @return the JSON schema source code
      */
     String getResourceSchema();
+
+    /**
+     * Get the JSON resource schema for a specified resource. If the resource ID is the special name
+     * "all", return a list of all known resource IDs as the "result" field.
+     * 
+     * @param resourceId a known resource ID or the keyword "all".
+     * @return the JSON code for the requested schema or list
+     */
+    String getResourceSchema(String resourceId);
 
     /**
      * Get the root monitor that owns every computation in this runtime. This may be a node monitor

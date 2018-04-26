@@ -27,6 +27,7 @@ public class EngineMonitor {
     protected long recheckSecondsWhenOffline = 15;
     long uptime = -1;
     Client client;
+//    KlabPOJOGenerator pojoGenerator;
     StompMessageBus messageBus;
     String sessionId;
 
@@ -75,10 +76,10 @@ public class EngineMonitor {
             long delay = recheckSecondsWhenOffline;
             long up = client.ping();
             if (uptime < 0 && up > 0) {
-                onEngineUp.run();
+                engineUp();
                 delay = recheckSecondsWhenOnline;
             } else if (up < 0 && uptime > 0) {
-                onEngineDown.run();
+                engineDown();
             }
 
             uptime = up;
@@ -90,8 +91,29 @@ public class EngineMonitor {
             }
             return Status.OK_STATUS;
         }
+
     }
 
+    /**
+     * Ops performed when an engine appears online.
+     */
+    private void engineUp() {
+        
+        // build the POJO classes from their schemata
+//        this.pojoGenerator = new KlabPOJOGenerator(client);
+        
+        // TODO Auto-generated method stub
+        onEngineUp.run();
+    }
+
+    /**
+     * Ops performed when an engine goes down.
+     */
+    private void engineDown() {
+        // TODO Auto-generated method stub
+        onEngineDown.run();
+    }
+    
     public IMessageBus bus() {
 
         if (this.messageBus == null) {

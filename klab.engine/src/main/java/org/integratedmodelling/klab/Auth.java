@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.integratedmodelling.kim.rest.IdentityReference;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
 import org.integratedmodelling.klab.auth.Partner;
-import org.integratedmodelling.klab.data.rest.resources.requests.IdentityReference;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 

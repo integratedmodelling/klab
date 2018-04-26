@@ -3,10 +3,10 @@ package org.integratedmodelling.klab.auth;
 import java.util.Date;
 import java.util.List;
 
+import org.integratedmodelling.kim.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.data.rest.resources.requests.AuthenticatedIdentity;
 import org.springframework.security.core.GrantedAuthority;
 
 public class KlabUser extends UserIdentity implements IKlabUserIdentity {
