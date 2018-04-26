@@ -18,6 +18,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
     public KlabUser(String username, INodeIdentity node) {
         super(username);
         this.parent = node;
+        this.emailAddress = "";
     }
 
     public KlabUser(AuthenticatedIdentity userData, NetworkSession networkSession) {
@@ -69,8 +70,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
     @Override
     public Date getLastLogin() {
-        // TODO Auto-generated method stub
-        return null;
+        return lastLogin.toDate();
     }
 
     @Override

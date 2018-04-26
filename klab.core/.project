@@ -35,7 +35,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.jetbrains.kotlin.core.kotlinNature</nature>
-		<nature>org.eclipse.pde.PluginNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
