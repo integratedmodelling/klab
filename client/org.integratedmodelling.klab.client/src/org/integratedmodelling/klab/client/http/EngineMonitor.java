@@ -27,7 +27,7 @@ public class EngineMonitor {
     protected long recheckSecondsWhenOffline = 15;
     long uptime = -1;
     Client client;
-//    KlabPOJOGenerator pojoGenerator;
+    //    KlabPOJOGenerator pojoGenerator;
     StompMessageBus messageBus;
     String sessionId;
 
@@ -98,12 +98,20 @@ public class EngineMonitor {
      * Ops performed when an engine appears online.
      */
     private void engineUp() {
-        
-        // build the POJO classes from their schemata
-//        this.pojoGenerator = new KlabPOJOGenerator(client);
-        
-        // TODO Auto-generated method stub
-        onEngineUp.run();
+
+        this.sessionId = client.openSession(/* TODO pass previous if persisted */null);
+        if (this.sessionId != null) {
+            this.messageBus = new StompMessageBus(
+                    engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId);
+            /*
+             * call user notifier
+             */
+            onEngineUp.run();
+
+        } else {
+            stop();
+            throw new RuntimeException("engine session negotiation failed");
+        }
     }
 
     /**
@@ -113,7 +121,7 @@ public class EngineMonitor {
         // TODO Auto-generated method stub
         onEngineDown.run();
     }
-    
+
     public IMessageBus bus() {
 
         if (this.messageBus == null) {

@@ -194,7 +194,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 
     @Override
     public Session createSession() {
-        // NO user must be created if missing, as a copy of owner
         return createSession(getDefaultEngineUser());
     }
 

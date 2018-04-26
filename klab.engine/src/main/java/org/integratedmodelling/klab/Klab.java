@@ -477,11 +477,13 @@ public enum Klab implements IRuntimeService {
 
     
     /**
-     * The runtime capabilities. TODO flesh out.
+     * Retrieve runtime capabilities. TODO flesh out.
      * 
-     * @return the capabilities bean.
+     * @param user the identity requesting the capabilities. 
+     * 
+     * @return the capabilities for the identity.
      */
-    public Capabilities getCapabilities() {
+    public Capabilities getCapabilities(IIdentity user) {
 
         Capabilities ret = new Capabilities();
 

@@ -5,9 +5,11 @@ import java.security.Principal;
 import org.integratedmodelling.kim.rest.Capabilities;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.engine.Engine;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,10 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.PUBLIC)
 public class KlabController {
 
+    IIdentity getIdentity(Principal principal) {
+        if (principal instanceof PreAuthenticatedAuthenticationToken && ((PreAuthenticatedAuthenticationToken)principal).getPrincipal() instanceof IIdentity) {
+            return (IIdentity)((PreAuthenticatedAuthenticationToken)principal).getPrincipal();
+        }
+        return null;
+    }
+    
     @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Capabilities capabilities(Principal user) {
-        return Klab.INSTANCE.getCapabilities(/* TODO pass logged in engine user if any */);
+        return Klab.INSTANCE.getCapabilities(getIdentity(user));
     }
 
     @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")

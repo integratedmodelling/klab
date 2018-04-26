@@ -27,6 +27,8 @@ import com.sun.codemodel.JType;
  * Read the JSON schemata from an engine and build the corresponding Java POJO classes and
  * objects.
  * 
+ * Unfinished. Can be removed in production.
+ * 
  * @author ferdinando.villa
  *
  */

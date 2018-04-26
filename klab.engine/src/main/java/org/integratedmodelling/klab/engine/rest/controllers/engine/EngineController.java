@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@Secured(Roles.ENGINE_USER)
+@Secured({Roles.ENGINE_USER, Roles.OWNER, Roles.ADMIN})
 public class EngineController {
-
+    
 }
