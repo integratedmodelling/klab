@@ -15,7 +15,7 @@
  */
 package org.integratedmodelling.klab.raster.files;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;

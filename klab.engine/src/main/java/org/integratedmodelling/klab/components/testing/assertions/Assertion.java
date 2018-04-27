@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.testing.assertions;
 
-import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * An assertion is a simple function that takes the context subject and checks the

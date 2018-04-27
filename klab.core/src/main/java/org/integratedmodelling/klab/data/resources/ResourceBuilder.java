@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;

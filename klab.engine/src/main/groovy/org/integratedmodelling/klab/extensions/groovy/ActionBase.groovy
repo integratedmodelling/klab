@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.extensions.groovy
 
 import org.apache.commons.math3.special.Erf
 import org.codehaus.groovy.runtime.NullObject
-import org.integratedmodelling.kim.utils.NumberUtils
+import org.integratedmodelling.klab.utils.NumberUtils
 import org.integratedmodelling.klab.api.observations.IDirectObservation
 import org.integratedmodelling.klab.api.observations.IEvent
 import org.integratedmodelling.klab.api.observations.IObservation
@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
 import org.integratedmodelling.klab.common.mediation.Unit
 import org.integratedmodelling.klab.exceptions.KlabException
-import org.integratedmodelling.kim.utils.Pair
+import org.integratedmodelling.klab.utils.Pair
 import org.jscience.physics.amount.Amount
 
 /**

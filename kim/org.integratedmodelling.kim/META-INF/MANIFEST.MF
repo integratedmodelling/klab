@@ -30,6 +30,7 @@ Export-Package: org.integratedmodelling.kim,
  org.integratedmodelling.kim.scoping,
  org.integratedmodelling.kim.serializer,
  org.integratedmodelling.kim.services,
+ org.integratedmodelling.kim.utils,
  org.integratedmodelling.kim.validation
 Import-Package: org.apache.log4j
 Automatic-Module-Name: org.integratedmodelling.kim

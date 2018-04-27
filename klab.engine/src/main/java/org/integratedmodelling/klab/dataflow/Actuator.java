@@ -9,11 +9,10 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.kim.model.ComputableResource;
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -33,6 +32,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Actuator implements IActuator {
 

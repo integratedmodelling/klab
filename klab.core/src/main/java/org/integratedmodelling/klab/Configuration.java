@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.utils.OS;
+import org.integratedmodelling.klab.utils.OS;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;

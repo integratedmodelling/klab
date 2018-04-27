@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.utils.Escape;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -46,6 +45,7 @@ import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox;
 import org.integratedmodelling.klab.persistence.h2.SQL;
+import org.integratedmodelling.klab.utils.Escape;
 
 /**
  * Design principles:

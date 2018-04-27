@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;

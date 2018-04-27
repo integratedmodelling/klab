@@ -3,12 +3,13 @@ package org.integratedmodelling.klab.resolution;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.data.ILocator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;

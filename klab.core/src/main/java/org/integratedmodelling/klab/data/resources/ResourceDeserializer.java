@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.data.resources;
 import java.io.IOException;
 
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.common.Geometry;

@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.rest.AuthenticationRequest;
 import org.integratedmodelling.klab.rest.AuthenticationResponse;
-import org.integratedmodelling.kim.utils.Escape;
+import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;

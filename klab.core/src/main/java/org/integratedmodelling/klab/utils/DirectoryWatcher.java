@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 // TODO: Auto-generated Javadoc
 /**

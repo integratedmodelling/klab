@@ -29,13 +29,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 import org.codehaus.groovy.antlr.parser.GroovyLexer;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -43,6 +44,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.springframework.util.StringUtils;
+
 import groovyjarjarantlr.Token;
 import groovyjarjarantlr.TokenStreamException;
 

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 import java.util.Map;
-import org.integratedmodelling.kim.utils.CollectionUtils;
+
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 
 public class Subject extends CountableObservation implements ISubject {
 

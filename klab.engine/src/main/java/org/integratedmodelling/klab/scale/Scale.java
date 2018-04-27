@@ -11,11 +11,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.api.data.Aggregation;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -24,11 +23,12 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Geometry.OffsetLocator;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 
 public class Scale implements IScale {
 

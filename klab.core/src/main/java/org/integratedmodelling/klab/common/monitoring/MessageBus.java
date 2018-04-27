@@ -7,7 +7,6 @@ import java.util.Queue;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus.Receiver;
 import org.integratedmodelling.klab.monitoring.SubscriberRegistry;
 
 import com.google.common.collect.Queues;

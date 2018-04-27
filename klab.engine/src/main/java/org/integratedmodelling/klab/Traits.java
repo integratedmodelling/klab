@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.ITraitService;
@@ -19,6 +18,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.utils.Pair;
 
 public enum Traits implements ITraitService {
     INSTANCE;

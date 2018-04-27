@@ -3,13 +3,13 @@ package org.integratedmodelling.klab.scale;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Coverage extends Scale implements ICoverage {
 

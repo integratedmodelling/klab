@@ -2,11 +2,13 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.Collections;
 import java.util.Iterator;
+
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -367,9 +370,9 @@ public class Shape extends AbstractExtent implements IShape {
   }
 
   @Override
-  public org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type getType() {
+  public IGeometry.Dimension.Type getType() {
     // TODO Auto-generated method stub
-    return org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type.SPACE;
+    return IGeometry.Dimension.Type.SPACE;
   }
 
   @Override

@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.data;
 
 import java.util.Map;
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 
 // TODO: Auto-generated Javadoc

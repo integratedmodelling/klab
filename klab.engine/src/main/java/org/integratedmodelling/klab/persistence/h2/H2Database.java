@@ -42,7 +42,6 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Recover;
 import org.h2gis.h2spatial.CreateSpatialExtension;
 import org.h2gis.utilities.SFSUtilities;
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -52,6 +51,7 @@ import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Schema;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Serializer;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class H2Database {
 

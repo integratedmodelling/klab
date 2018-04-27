@@ -2,9 +2,8 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.Collection;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.utils.CamelCase;
-import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
@@ -18,6 +17,8 @@ import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Range;
 
 /**
  * Equality ignores differences of name, value, optional and generic status.

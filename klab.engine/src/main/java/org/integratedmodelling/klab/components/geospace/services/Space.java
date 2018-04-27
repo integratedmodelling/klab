@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -10,6 +9,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Space implements IExpression {
 

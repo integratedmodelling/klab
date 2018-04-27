@@ -2,10 +2,8 @@ package org.integratedmodelling.klab.data.storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
-import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.utils.Utils;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -15,6 +13,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * The state we wrap has the desired semantics but a different scale. We use {@link IScaleMediator mediators}

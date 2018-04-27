@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.data.storage;
 
 import java.util.Objects;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.utils.Utils;
+
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Utils;
 
 public abstract class AbstractSingletonStorage<T> extends Artifact implements IDataArtifact {
 

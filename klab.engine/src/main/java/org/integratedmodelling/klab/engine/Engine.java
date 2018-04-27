@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
@@ -51,6 +50,7 @@ import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.scale;
 
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**

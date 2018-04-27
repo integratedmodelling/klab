@@ -21,8 +21,8 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
- * call) to a IResource; the IResource can then be contextualized to a {@link org.integratedmodelling.kim.api.data.IGeometry} (using the
+ * call) to a IResource; the IResource can then be contextualized to a {@link org.integratedmodelling.klab.api.data.IGeometry} (using the
  * <code>get</code> API call) to produce the corresponding {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} that will be used to
  * build {@link IArtifact artifacts}.
  *

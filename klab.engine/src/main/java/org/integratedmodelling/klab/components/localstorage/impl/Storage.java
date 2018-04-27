@@ -2,7 +2,8 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
-import org.integratedmodelling.kim.api.data.IGeometry;
+
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;

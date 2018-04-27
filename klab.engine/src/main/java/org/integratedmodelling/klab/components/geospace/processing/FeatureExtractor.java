@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.utils.CamelCase;
-import org.integratedmodelling.kim.utils.Parameters;
-import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
@@ -29,12 +27,17 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Range;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.blob.Blob;

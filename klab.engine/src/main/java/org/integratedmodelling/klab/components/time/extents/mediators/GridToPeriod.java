@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.components.time.extents.mediators;
 
 import java.util.Collection;
 
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class GridToPeriod implements IScaleMediator {
 

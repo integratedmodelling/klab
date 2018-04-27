@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.integratedmodelling.kim.utils.MultidimensionalCursor;
+
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Mask;
 import org.integratedmodelling.klab.engine.api.ICursor;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 
 public class Cursor implements ICursor {
 

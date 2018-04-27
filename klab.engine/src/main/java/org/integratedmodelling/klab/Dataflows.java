@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
@@ -13,7 +14,7 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
@@ -25,6 +26,7 @@ import org.integratedmodelling.klab.resolution.DataflowBuilder;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -98,7 +100,7 @@ public enum Dataflows implements IDataflowService {
      * after, the transition event: e.g. definition vs. resolution or (last) transition vs.
      * termination.
      *
-     * @param transition a {@link org.integratedmodelling.kim.api.data.ILocator} object.
+     * @param transition a {@link org.integratedmodelling.klab.api.data.ILocator} object.
      * @return all pertaining triggers. Possibly empty, never null.
      */
     public List<Trigger> getActionTriggersFor(ILocator transition) {

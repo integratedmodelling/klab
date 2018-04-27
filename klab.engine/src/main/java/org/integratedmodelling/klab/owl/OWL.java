@@ -33,9 +33,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;

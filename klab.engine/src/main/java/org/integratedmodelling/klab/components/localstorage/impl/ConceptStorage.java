@@ -1,10 +1,10 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.utils.Utils;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class ConceptStorage extends Storage implements IDataArtifact {
 

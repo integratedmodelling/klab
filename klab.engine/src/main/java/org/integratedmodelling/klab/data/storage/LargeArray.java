@@ -3,11 +3,11 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.utils.MultidimensionalCursor;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
+import org.integratedmodelling.klab.utils.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**

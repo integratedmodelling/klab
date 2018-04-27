@@ -14,7 +14,6 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
-import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
@@ -31,6 +30,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.utils.CamelCase;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal

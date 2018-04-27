@@ -17,7 +17,7 @@
 package org.integratedmodelling.klab.common.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.kim.utils.Range;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.joda.time.DateTime;

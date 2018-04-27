@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.utils.Utils;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
+import org.integratedmodelling.klab.utils.Utils;
+
 import xerial.larray.LFloatArray;
 import xerial.larray.japi.LArrayJ;
 

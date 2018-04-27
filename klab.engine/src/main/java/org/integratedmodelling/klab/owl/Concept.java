@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
@@ -43,6 +42,7 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OntologyUtilities.RestrictionVisitor;
+import org.integratedmodelling.klab.utils.Pair;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;

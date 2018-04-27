@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.data.resources;
 
 import java.io.IOException;
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.data.Metadata;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

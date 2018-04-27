@@ -3,9 +3,8 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -15,6 +14,7 @@ import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ConversionResolver implements IResolver<IState>, IExpression {
 

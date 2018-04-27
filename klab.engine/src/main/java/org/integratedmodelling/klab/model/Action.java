@@ -1,11 +1,12 @@
 package org.integratedmodelling.klab.model;
 
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimAction.Type;
-import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.model.IAction;
 
 /*
