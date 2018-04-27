@@ -2,12 +2,12 @@ package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import java.security.Principal;
 
-import org.integratedmodelling.kim.rest.Capabilities;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.rest.Capabilities;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,10 +47,16 @@ public class KlabController {
         return Klab.INSTANCE.getResourceSchema();
     }
     
-    @RequestMapping(value = API.SCHEMA, params = "get", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = API.SCHEMA, params = "resource", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String resourceSchema(@RequestParam("get") String what) {
+    public String resourceSchema(@RequestParam("resource") String what) {
         return Klab.INSTANCE.getResourceSchema(what);
+    }
+    
+    @RequestMapping(value = API.SCHEMA, params = "list", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String resourceSchema() {
+        return Klab.INSTANCE.getResourceSchema("all");
     }
 
     @RequestMapping(

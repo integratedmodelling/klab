@@ -26,7 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.visualization;
 
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.kim.utils.Pair;
 
 public class Viewport  {
 

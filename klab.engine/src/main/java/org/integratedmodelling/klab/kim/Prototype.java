@@ -1,18 +1,18 @@
 package org.integratedmodelling.klab.kim;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
-import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
- * The k.LAB prototype specializes {@link org.integratedmodelling.kim.model.Prototype} in the k.IM
+ * The k.LAB prototype specializes {@link org.integratedmodelling.klab.common.Prototype} in the k.IM
  * package by adding a constructor that reads from a KDL specification.
  * 
  * @author ferdinando.villa
  *
  */
-public class Prototype extends org.integratedmodelling.kim.model.Prototype {
+public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 
   /**
    * Create a prototype from an actuator, which is expected to be a valid parameter and not checked.

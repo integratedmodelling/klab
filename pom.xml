@@ -57,6 +57,7 @@
 	</distributionManagement>
 
 	<modules>
+		<module>api</module>
 		<module>kdl</module>
 		<module>kim</module>
 		<module>klab.core</module>

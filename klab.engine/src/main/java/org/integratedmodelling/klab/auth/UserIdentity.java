@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.auth;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.integratedmodelling.kim.rest.AuthenticatedIdentity;
-import org.integratedmodelling.kim.rest.Group;
-import org.integratedmodelling.kim.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;

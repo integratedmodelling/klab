@@ -19,12 +19,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+
+import org.integratedmodelling.kim.utils.OS;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
-import org.integratedmodelling.klab.utils.OS;
 
-import ch.qos.logback.classic.Level;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -41,7 +42,7 @@ public enum Configuration implements IConfigurationService {
 
   private Properties properties;
   private File       dataPath;
-  private Level loggingLevel = Level.ERROR;
+  private Level loggingLevel = Level.SEVERE;
   private Level notificationLevel = Level.INFO;
 
   /** The klab relative work path. */

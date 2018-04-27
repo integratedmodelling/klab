@@ -3,12 +3,12 @@ package org.integratedmodelling.klab.components.geospace.services;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
-import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.processing.Terrain;
 import org.integratedmodelling.klab.exceptions.KlabException;
 

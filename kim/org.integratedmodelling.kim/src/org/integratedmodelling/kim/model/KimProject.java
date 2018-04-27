@@ -87,7 +87,7 @@ public class KimProject implements IKimProject {
     return namespace.getName() + (namespace.isWorldviewBound() ? "|worldview" : "");
   }
 
-  @Override
+//  @Override
   public String getNamespaceIdFor(EObject o) {
 
     final String PLATFORM_URI_PREFIX = "platform:/resource/";

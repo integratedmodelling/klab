@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.eclipse.xtext.util.Pair;
+
 import org.eclipse.xtext.util.Tuples;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
@@ -159,7 +160,7 @@ public class KimValidator implements Kim.Validator {
         
       }
     } else {
-      ret.add(Tuples.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
+      ret.add(Pair.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
     }
     return ret;
   }

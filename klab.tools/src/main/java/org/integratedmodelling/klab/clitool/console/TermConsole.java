@@ -24,9 +24,9 @@ package org.integratedmodelling.klab.clitool.console;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.monitoring.IMessage;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
-import org.integratedmodelling.kim.monitoring.Message;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;

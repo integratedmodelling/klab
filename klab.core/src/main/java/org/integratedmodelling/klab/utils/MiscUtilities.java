@@ -69,6 +69,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.UUID;
+
+import org.integratedmodelling.kim.utils.Escape;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;

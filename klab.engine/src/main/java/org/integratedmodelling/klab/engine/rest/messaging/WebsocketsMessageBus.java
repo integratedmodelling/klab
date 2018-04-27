@@ -6,15 +6,15 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.integratedmodelling.kim.api.monitoring.IMessage;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus.Receiver;
-import org.integratedmodelling.kim.monitoring.Message;
-import org.integratedmodelling.kim.monitoring.SubscriberRegistry;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus.Receiver;
 import org.integratedmodelling.klab.engine.rest.client.StompMessageBus;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.monitoring.SubscriberRegistry;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;

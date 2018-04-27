@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kim.utils.Pair;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class StringUtils.

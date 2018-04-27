@@ -3,7 +3,7 @@
  */
 package org.integratedmodelling.klab.test;
 
-import org.integratedmodelling.kim.model.Geometry;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.localstorage.impl.DoubleStorage;
 import org.junit.Ignore;
 import org.junit.Test;

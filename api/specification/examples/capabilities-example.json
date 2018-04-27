@@ -1,0 +1,16 @@
+{
+  "name": "e__uu_a35fda1c-f1ef-43fd-9387-714a6d04cd4e",
+  "version": "0.10.0",
+  "build": "VERSION_BUILD",
+  "owner": {
+    "id": null,
+    "email": "",
+    "lastLogin": "Fri Apr 27 09:05:00 CEST 2018"
+  },
+  "services": [],
+  "authorities": [],
+  "staticComponents": [],
+  "dynamicComponents": [],
+  "refreshFrequencyMillis": 0,
+  "loadFactor": 0
+}

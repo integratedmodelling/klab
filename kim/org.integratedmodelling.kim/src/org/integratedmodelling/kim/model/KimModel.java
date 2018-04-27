@@ -3,10 +3,12 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ModelStatement;
@@ -35,8 +37,8 @@ public class KimModel extends KimStatement implements IKimModel {
   private boolean assessmentModel = false;
   private Type type = Type.SEMANTIC;
   private boolean isPrivate = false;
-  private List<KimObservable> observables = new ArrayList<>();
-  private List<KimObservable> dependencies = new ArrayList<>();
+  private List<IKimObservable> observables = new ArrayList<>();
+  private List<IKimObservable> dependencies = new ArrayList<>();
   private IKimConcept reinterpretingRole = null;
   private IKimBehavior behavior = new KimBehavior();
 
@@ -133,20 +135,20 @@ public class KimModel extends KimStatement implements IKimModel {
   }
 
   @Override
-  public List<KimObservable> getObservables() {
+  public List<IKimObservable> getObservables() {
     return observables;
   }
 
-  public void setObservables(List<KimObservable> observables) {
+  public void setObservables(List<IKimObservable> observables) {
     this.observables = observables;
   }
 
   @Override
-  public List<KimObservable> getDependencies() {
+  public List<IKimObservable> getDependencies() {
     return dependencies;
   }
 
-  public void setDependencies(List<KimObservable> dependencies) {
+  public void setDependencies(List<IKimObservable> dependencies) {
     this.dependencies = dependencies;
   }
 

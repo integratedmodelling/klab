@@ -5,19 +5,22 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.xtext.util.Pair;
+
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConcept;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
+import org.integratedmodelling.kim.utils.Pair;
 
 public class KimMacro implements IKimMacro {
 
@@ -31,7 +34,7 @@ public class KimMacro implements IKimMacro {
             return type;
         }
 
-        @Override
+//        @Override
         public ConceptDescriptor getDescriptor() {
             return descriptor;
         }
@@ -74,7 +77,7 @@ public class KimMacro implements IKimMacro {
             Visitor visitor = new Visitor() {
 
                 @Override
-                public void onReference(String conceptName, EnumSet<Type> type, KimConcept validParent) {
+                public void onReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
                     if (conceptName.startsWith("$") || conceptName.startsWith("#")) {
                         Field field = Field.valueOf(Field.class, conceptName.substring(1).toUpperCase());
                         if (field != null) {
@@ -87,7 +90,7 @@ public class KimMacro implements IKimMacro {
                 }
 
                 @Override
-                public void onDeclaration(KimConcept declaration) {
+                public void onDeclaration(IKimConcept declaration) {
                 }
 
                 @Override
@@ -118,7 +121,7 @@ public class KimMacro implements IKimMacro {
         declarations.put(field, declaration);
     }
 
-    @Override
+//    @Override
     public ConceptDeclaration getDeclaration(Field field) {
         return declarations.get(field);
     }
@@ -174,7 +177,7 @@ public class KimMacro implements IKimMacro {
     }
 
     public List<ApplicableConcept> getAppliesTo() {
-        return delegate.getAppliesTo();
+        return ((KimConceptStatement)delegate).getAppliesTo();
     }
 
     public IKimMetadata getDocumentationMetadata() {
@@ -218,46 +221,46 @@ public class KimMacro implements IKimMacro {
     }
 
     public List<ParentConcept> getParents() {
-        return delegate.getParents();
+        return ((KimConceptStatement)delegate).getParents();
     }
 
-    public List<KimRestriction> getRestrictions() {
+    public List<IKimRestriction> getRestrictions() {
         return delegate.getRestrictions();
     }
 
-    public List<KimConcept> getExposedTraits() {
+    public List<IKimConcept> getExposedTraits() {
         return delegate.getExposedTraits();
     }
 
-    public List<KimConcept> getRequiredIdentities() {
+    public List<IKimConcept> getRequiredIdentities() {
         return delegate.getRequiredIdentities();
     }
 
-    public List<KimConcept> getRequiredAttributes() {
+    public List<IKimConcept> getRequiredAttributes() {
         return delegate.getRequiredAttributes();
     }
 
-    public List<KimConcept> getRequiredRealms() {
+    public List<IKimConcept> getRequiredRealms() {
         return delegate.getRequiredRealms();
     }
 
-    public List<KimConcept> getRequiredExtents() {
+    public List<IKimConcept> getRequiredExtents() {
         return delegate.getRequiredExtents();
     }
 
-    public List<KimConcept> getTraitsInherited() {
+    public List<IKimConcept> getTraitsInherited() {
         return delegate.getTraitsInherited();
     }
 
-    public List<KimConcept> getTraitsConferred() {
+    public List<IKimConcept> getTraitsConferred() {
         return delegate.getTraitsConferred();
     }
 
-    public List<KimConcept> getPartParticipants() {
+    public List<IKimConcept> getPartParticipants() {
         return delegate.getPartParticipants();
     }
 
-    public List<KimConcept> getConstituentParticipants() {
+    public List<IKimConcept> getConstituentParticipants() {
         return delegate.getConstituentParticipants();
     }
 
@@ -265,15 +268,15 @@ public class KimMacro implements IKimMacro {
         return delegate.toString();
     }
 
-    public List<KimConcept> getCountablesCreated() {
+    public List<IKimConcept> getCountablesCreated() {
         return delegate.getCountablesCreated();
     }
 
     public List<ApplicableConcept> getSubjectsLinked() {
-        return delegate.getSubjectsLinked();
+        return ((KimConceptStatement)delegate).getSubjectsLinked();
     }
 
-    public List<KimConcept> getQualitiesAffected() {
+    public List<IKimConcept> getQualitiesAffected() {
         return delegate.getQualitiesAffected();
     }
 
@@ -307,7 +310,7 @@ public class KimMacro implements IKimMacro {
     }
 
     @Override
-    public List<Pair<KimConcept, DescriptionType>> getObservablesDescribed() {
+    public List<Pair<IKimConcept, DescriptionType>> getObservablesDescribed() {
         return delegate.getObservablesDescribed();
     }
 
@@ -317,7 +320,7 @@ public class KimMacro implements IKimMacro {
     }
 
     @Override
-    public List<KimConcept> getConfigurationParticipants() {
+    public List<IKimConcept> getConfigurationParticipants() {
         return delegate.getConfigurationParticipants();
     }
 

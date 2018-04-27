@@ -18,9 +18,9 @@ package org.integratedmodelling.klab.data.resources;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.model.Geometry;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;

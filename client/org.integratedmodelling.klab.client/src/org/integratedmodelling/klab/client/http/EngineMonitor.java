@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 
 /**

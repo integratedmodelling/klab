@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.xtext.util.Pair;
-import org.eclipse.xtext.util.Tuples;
+
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.kim.utils.Pair;
 
 public class KimNamespace extends KimStatement implements IKimNamespace {
 
@@ -45,7 +45,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         this.inactive = namespace.isInactive();
         this.scenario = namespace.isScenario();
         for (OwlImport imp : namespace.getOwlImports()) {
-            owlImports.add(Tuples.create(imp.getName(), imp.getPrefix()));
+            owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
         }
     }
 

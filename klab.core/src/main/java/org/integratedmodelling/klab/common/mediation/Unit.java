@@ -17,11 +17,12 @@ package org.integratedmodelling.klab.common.mediation;
 
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.UnitFormat;
+
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.Pair;
 
 // TODO: Auto-generated Javadoc
 /**

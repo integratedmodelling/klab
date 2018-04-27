@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "id": "urn:jsonschema:org:integratedmodelling:kim:rest:Capabilities",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "build": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "object",
+      "id": "urn:jsonschema:org:integratedmodelling:kim:rest:IdentityReference",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "lastLogin": {
+          "type": "string"
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "id": "urn:jsonschema:org:integratedmodelling:kim:rest:ServiceCall",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "any"
+            }
+          }
+        }
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "id": "urn:jsonschema:org:integratedmodelling:kim:rest:AuthorityReference",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "staticComponents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "id": "urn:jsonschema:org:integratedmodelling:kim:rest:ComponentReference",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dynamicComponents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "urn:jsonschema:org:integratedmodelling:kim:rest:ComponentReference"
+      }
+    },
+    "refreshFrequencyMillis": {
+      "type": "integer"
+    },
+    "loadFactor": {
+      "type": "integer"
+    }
+  }
+}

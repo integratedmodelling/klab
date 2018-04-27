@@ -24,6 +24,8 @@ package org.integratedmodelling.klab.components.geospace.extents.mediators;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -39,7 +41,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.Pair;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 public class MediationOperations {

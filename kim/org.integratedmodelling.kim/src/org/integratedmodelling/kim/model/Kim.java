@@ -27,14 +27,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.kim.api.IConceptDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -50,10 +51,12 @@ import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
+import org.integratedmodelling.klab.common.SemanticType;
 
 /**
  * Parsing functions and interfaces. Holds the state of the knowledge base as new concepts are
@@ -124,7 +127,7 @@ public enum Kim {
 
     private Map<String, UriResolver> uriResolvers = new HashMap<>();
 
-    public static class ConceptDescriptor {
+    public static class ConceptDescriptor implements IConceptDescriptor {
 
         private String               name;
         private EnumSet<Type>        flags = EnumSet.noneOf(Type.class);
@@ -156,22 +159,27 @@ public enum Kim {
             this.macro = macro;
         }
 
+        @Override
         public EnumSet<Type> getFlags() {
             return flags;
         }
 
+        @Override
         public boolean is(Type type) {
             return flags.contains(type);
         }
 
+        @Override
         public IKimConceptStatement getMacro() {
             return macro;
         }
 
+        @Override
         public boolean isUndefined() {
             return flags.isEmpty();
         }
 
+        @Override
         public String getDocumentation() {
             return documentation;
         }
@@ -189,6 +197,7 @@ public enum Kim {
             return ret + ">";
         }
 
+        @Override
         public String getName() {
             return name;
         }

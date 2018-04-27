@@ -2,13 +2,12 @@ package org.integratedmodelling.klab.test.node.auth;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
-import org.integratedmodelling.kim.rest.AuthenticatedIdentity;
-import org.integratedmodelling.kim.rest.AuthenticationRequest;
-import org.integratedmodelling.kim.rest.AuthenticationResponse;
-import org.integratedmodelling.kim.rest.IdentityReference;
-import org.integratedmodelling.kim.rest.NodeReference;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.AuthenticationRequest;
+import org.integratedmodelling.klab.rest.AuthenticationResponse;
+import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;

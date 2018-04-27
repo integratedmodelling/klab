@@ -47,7 +47,7 @@ public class ObservedArtifact extends Artifact implements IArtifact {
   }
 
   public ObservedArtifact getParent() {
-    // TODO Auto-generated method stub USE THE GRAPH IN THE CONTEXT
+    // TODO Auto-generated method stub USE THE GRAPH IN THE OBSERVATION
     return null;
   }
 

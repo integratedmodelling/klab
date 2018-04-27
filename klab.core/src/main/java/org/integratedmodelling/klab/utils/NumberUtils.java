@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.utils;
 
+import org.integratedmodelling.kim.utils.Pair;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class NumberUtils.

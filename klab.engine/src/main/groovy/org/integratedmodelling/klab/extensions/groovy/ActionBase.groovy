@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
 import org.integratedmodelling.klab.common.mediation.Unit
 import org.integratedmodelling.klab.exceptions.KlabException
-import org.integratedmodelling.klab.utils.Pair
+import org.integratedmodelling.kim.utils.Pair
 import org.jscience.physics.amount.Amount
 
 /**

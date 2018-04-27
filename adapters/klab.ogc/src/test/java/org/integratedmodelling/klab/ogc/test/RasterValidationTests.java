@@ -5,12 +5,12 @@ package org.integratedmodelling.klab.ogc.test;
 
 import java.util.regex.Pattern;
 
-import org.integratedmodelling.kim.model.Urns;
 import org.integratedmodelling.kim.utils.Parameters;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.raster.RasterAdapter;
 import org.integratedmodelling.klab.utils.JsonUtils;

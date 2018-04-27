@@ -4,15 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import org.eclipse.xtext.util.Pair;
+
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.utils.Pair;
 
 /**
  * Concept definition
@@ -22,13 +24,14 @@ import org.integratedmodelling.kim.kim.ConceptStatementBody;
  */
 public class KimConceptStatement extends KimStatement implements IKimConceptStatement {
 
-    private static final long  serialVersionUID = -118216699151744808L;
+    private static final long serialVersionUID = -118216699151744808L;
 
     public static final String ROOT_DOMAIN_NAME = "Domain";
 
     // describes an 'applies to' statement, possibly to
     // restricted target relationships
     public static class ApplicableConcept {
+
         public KimConcept concept;
         public KimConcept from;
         public KimConcept to;
@@ -47,8 +50,9 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
     }
 
     public static class ParentConcept {
-        private List<KimConcept> concepts  = new ArrayList<>();
-        private BinarySemanticOperator        connector = BinarySemanticOperator.NONE;
+
+        private List<KimConcept> concepts = new ArrayList<>();
+        private BinarySemanticOperator connector = BinarySemanticOperator.NONE;
 
         public List<KimConcept> getConcepts() {
             return concepts;
@@ -77,7 +81,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 
         private static final long serialVersionUID = 24722961549070111L;
 
-        IKimConcept               within;
+        IKimConcept within;
 
         public IKimConcept getWithin() {
             return within;
@@ -108,18 +112,18 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 
     }
 
-    private EnumSet<Type>                           type                      = EnumSet.noneOf(Type.class);
+    private EnumSet<Type> type = EnumSet.noneOf(Type.class);
 
-    private String                                  namespace;
-    private String                                  name;
-    private String                                  upperConceptDefined;
-    private String                                  authorityDefined;
-    private String                                  authorityRequired;
-    private boolean                                 Abstract;
-    private boolean                                 alias;
-    private boolean                                 macro;
-    private String                                  authority;
-    private String                                  authorityTerm;
+    private String namespace;
+    private String name;
+    private String upperConceptDefined;
+    private String authorityDefined;
+    private String authorityRequired;
+    private boolean Abstract;
+    private boolean alias;
+    private boolean macro;
+    private String authority;
+    private String authorityTerm;
 
     /*
      * each parent is a list: if more than one, the parent is the union of the
@@ -127,35 +131,35 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
      * connector list. Mixed chains of +* or parenthesized expressions are not
      * allowed.
      */
-    private List<ParentConcept>                     parents                   = new ArrayList<>();
-    private List<KimRestriction>                    restrictions              = new ArrayList<>();
-    private List<KimConcept>                        exposedTraits             = new ArrayList<>();
-    private List<KimConcept>                        requiredIdentities        = new ArrayList<>();
-    private List<KimConcept>                        requiredAttributes        = new ArrayList<>();
-    private List<KimConcept>                        requiredRealms            = new ArrayList<>();
-    private List<KimConcept>                        requiredExtents           = new ArrayList<>();
-    private List<Pair<KimConcept, DescriptionType>> observablesDescribed      = new ArrayList<>();
-    private List<KimConcept>                        traitsInherited           = new ArrayList<>();
-    private List<KimConcept>                        traitsConferred           = new ArrayList<>();
-    private List<KimConcept>                        partParticipants          = new ArrayList<>();
-    private List<KimConcept>                        configurationParticipants = new ArrayList<>();
-    private List<KimConcept>                        constituentParticipants   = new ArrayList<>();
-    private List<KimConcept>                        countablesCreated         = new ArrayList<>();
-    private List<ApplicableConcept>                 appliesTo                 = new ArrayList<>();
-    private List<ApplicableConcept>                 subjectsLinked            = new ArrayList<>();
-    private List<KimConcept>                        qualitiesAffected         = new ArrayList<>();
-    private List<RoleDescriptor>                    roles                     = new ArrayList<>();
+    private List<ParentConcept> parents = new ArrayList<>();
+    private List<IKimRestriction> restrictions = new ArrayList<>();
+    private List<IKimConcept> exposedTraits = new ArrayList<>();
+    private List<IKimConcept> requiredIdentities = new ArrayList<>();
+    private List<IKimConcept> requiredAttributes = new ArrayList<>();
+    private List<IKimConcept> requiredRealms = new ArrayList<>();
+    private List<IKimConcept> requiredExtents = new ArrayList<>();
+    private List<Pair<IKimConcept, DescriptionType>> observablesDescribed = new ArrayList<>();
+    private List<IKimConcept> traitsInherited = new ArrayList<>();
+    private List<IKimConcept> traitsConferred = new ArrayList<>();
+    private List<IKimConcept> partParticipants = new ArrayList<>();
+    private List<IKimConcept> configurationParticipants = new ArrayList<>();
+    private List<IKimConcept> constituentParticipants = new ArrayList<>();
+    private List<IKimConcept> countablesCreated = new ArrayList<>();
+    private List<ApplicableConcept> appliesTo = new ArrayList<>();
+    private List<ApplicableConcept> subjectsLinked = new ArrayList<>();
+    private List<IKimConcept> qualitiesAffected = new ArrayList<>();
+    private List<RoleDescriptor> roles = new ArrayList<>();
 
     /**
      * Classes expose traits with their observable semantics
      */
-    private List<IKimObservable>                    traitsExposed             = new ArrayList<>();
+    private List<IKimObservable> traitsExposed = new ArrayList<>();
 
     /**
      * If there are exposed traits, this defines whether the class is exposing (abstract) or adopting
      * (concrete)
      */
-    private boolean                                 definingExposedTraits;
+    private boolean definingExposedTraits;
 
     @Override
     public String getNamespace() {
@@ -185,15 +189,15 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
     }
 
     @Override
-    public List<Pair<KimConcept, DescriptionType>> getObservablesDescribed() {
+    public List<Pair<IKimConcept, DescriptionType>> getObservablesDescribed() {
         return observablesDescribed;
     }
 
-    public void setObservablesDescribed(List<Pair<KimConcept, DescriptionType>> observablesDescribed) {
+    public void setObservablesDescribed(List<Pair<IKimConcept, DescriptionType>> observablesDescribed) {
         this.observablesDescribed = observablesDescribed;
     }
 
-    @Override
+//    @Override
     public List<ApplicableConcept> getAppliesTo() {
         return appliesTo;
     }
@@ -269,7 +273,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
         this.alias = isAlias;
     }
 
-    @Override
+//    @Override
     public List<ParentConcept> getParents() {
         return parents;
     }
@@ -279,110 +283,110 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
     }
 
     @Override
-    public List<KimRestriction> getRestrictions() {
+    public List<IKimRestriction> getRestrictions() {
         return restrictions;
     }
 
-    public void setRestrictions(List<KimRestriction> restrictions) {
+    public void setRestrictions(List<IKimRestriction> restrictions) {
         this.restrictions = restrictions;
     }
 
     @Override
-    public List<KimConcept> getExposedTraits() {
+    public List<IKimConcept> getExposedTraits() {
         return exposedTraits;
     }
 
-    public void setExposedTraits(List<KimConcept> exposedTraits) {
+    public void setExposedTraits(List<IKimConcept> exposedTraits) {
         this.exposedTraits = exposedTraits;
     }
 
     @Override
-    public List<KimConcept> getRequiredIdentities() {
+    public List<IKimConcept> getRequiredIdentities() {
         return requiredIdentities;
     }
 
-    public void setRequiredIdentities(List<KimConcept> requiredIdentities) {
+    public void setRequiredIdentities(List<IKimConcept> requiredIdentities) {
         this.requiredIdentities = requiredIdentities;
     }
 
     @Override
-    public List<KimConcept> getRequiredAttributes() {
+    public List<IKimConcept> getRequiredAttributes() {
         return requiredAttributes;
     }
 
-    public void setRequiredAttributes(List<KimConcept> requiredAttributes) {
+    public void setRequiredAttributes(List<IKimConcept> requiredAttributes) {
         this.requiredAttributes = requiredAttributes;
     }
 
     @Override
-    public List<KimConcept> getRequiredRealms() {
+    public List<IKimConcept> getRequiredRealms() {
         return requiredRealms;
     }
 
-    public void setRequiredRealms(List<KimConcept> requiredRealms) {
+    public void setRequiredRealms(List<IKimConcept> requiredRealms) {
         this.requiredRealms = requiredRealms;
     }
 
     @Override
-    public List<KimConcept> getRequiredExtents() {
+    public List<IKimConcept> getRequiredExtents() {
         return requiredExtents;
     }
 
-    public void setRequiredExtents(List<KimConcept> requiredExtents) {
+    public void setRequiredExtents(List<IKimConcept> requiredExtents) {
         this.requiredExtents = requiredExtents;
     }
 
     @Override
-    public List<KimConcept> getTraitsInherited() {
+    public List<IKimConcept> getTraitsInherited() {
         return traitsInherited;
     }
 
-    public void setTraitsInherited(List<KimConcept> traitsInherited) {
+    public void setTraitsInherited(List<IKimConcept> traitsInherited) {
         this.traitsInherited = traitsInherited;
     }
 
     @Override
-    public List<KimConcept> getTraitsConferred() {
+    public List<IKimConcept> getTraitsConferred() {
         return traitsConferred;
     }
 
-    public void setTraitsConferred(List<KimConcept> traitsConferred) {
+    public void setTraitsConferred(List<IKimConcept> traitsConferred) {
         this.traitsConferred = traitsConferred;
     }
 
     @Override
-    public List<KimConcept> getPartParticipants() {
+    public List<IKimConcept> getPartParticipants() {
         return partParticipants;
     }
 
     @Override
-    public List<KimConcept> getConfigurationParticipants() {
+    public List<IKimConcept> getConfigurationParticipants() {
         return configurationParticipants;
     }
 
-    public void setPartParticipants(List<KimConcept> partParticipants) {
+    public void setPartParticipants(List<IKimConcept> partParticipants) {
         this.partParticipants = partParticipants;
     }
 
     @Override
-    public List<KimConcept> getConstituentParticipants() {
+    public List<IKimConcept> getConstituentParticipants() {
         return constituentParticipants;
     }
 
-    public void setConstituentParticipants(List<KimConcept> constituentParticipants) {
+    public void setConstituentParticipants(List<IKimConcept> constituentParticipants) {
         this.constituentParticipants = constituentParticipants;
     }
 
     @Override
-    public List<KimConcept> getCountablesCreated() {
+    public List<IKimConcept> getCountablesCreated() {
         return countablesCreated;
     }
 
-    public void setCountablesCreated(List<KimConcept> countablesCreated) {
+    public void setCountablesCreated(List<IKimConcept> countablesCreated) {
         this.countablesCreated = countablesCreated;
     }
 
-    @Override
+    //    @Override
     public List<ApplicableConcept> getSubjectsLinked() {
         return subjectsLinked;
     }
@@ -392,11 +396,11 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
     }
 
     @Override
-    public List<KimConcept> getQualitiesAffected() {
+    public List<IKimConcept> getQualitiesAffected() {
         return qualitiesAffected;
     }
 
-    public void setQualitiesAffected(List<KimConcept> qualitiesAffected) {
+    public void setQualitiesAffected(List<IKimConcept> qualitiesAffected) {
         this.qualitiesAffected = qualitiesAffected;
     }
 
@@ -407,16 +411,16 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
             applicable.visit(visitor);
         }
 
-        for (KimConcept c : constituentParticipants) {
+        for (IKimConcept c : constituentParticipants) {
             c.visit(visitor);
         }
-        for (KimConcept c : countablesCreated) {
+        for (IKimConcept c : countablesCreated) {
             c.visit(visitor);
         }
-        for (KimConcept c : exposedTraits) {
+        for (IKimConcept c : exposedTraits) {
             c.visit(visitor);
         }
-        for (Pair<KimConcept, DescriptionType> c : observablesDescribed) {
+        for (Pair<IKimConcept, DescriptionType> c : observablesDescribed) {
             c.getFirst().visit(visitor);
         }
         for (ParentConcept parent : parents) {
@@ -424,34 +428,34 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
                 concept.visit(visitor);
             }
         }
-        for (KimConcept c : partParticipants) {
+        for (IKimConcept c : partParticipants) {
             c.visit(visitor);
         }
-        for (KimConcept c : qualitiesAffected) {
+        for (IKimConcept c : qualitiesAffected) {
             c.visit(visitor);
         }
-        for (KimConcept c : requiredAttributes) {
+        for (IKimConcept c : requiredAttributes) {
             c.visit(visitor);
         }
-        for (KimConcept c : requiredExtents) {
+        for (IKimConcept c : requiredExtents) {
             c.visit(visitor);
         }
-        for (KimConcept c : requiredIdentities) {
+        for (IKimConcept c : requiredIdentities) {
             c.visit(visitor);
         }
-        for (KimConcept c : requiredRealms) {
+        for (IKimConcept c : requiredRealms) {
             c.visit(visitor);
         }
-        for (KimRestriction c : restrictions) {
-            c.visit(visitor);
+        for (IKimRestriction c : restrictions) {
+            ((KimRestriction)c).visit(visitor);
         }
         for (ApplicableConcept a : subjectsLinked) {
             a.visit(visitor);
         }
-        for (KimConcept c : traitsConferred) {
+        for (IKimConcept c : traitsConferred) {
             c.visit(visitor);
         }
-        for (KimConcept c : traitsInherited) {
+        for (IKimConcept c : traitsInherited) {
             c.visit(visitor);
         }
 

@@ -7,7 +7,7 @@ import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
 import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.kim.utils.MultidimensionalCursor;
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.kim.utils.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**

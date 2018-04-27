@@ -15,13 +15,13 @@ import java.util.logging.Level;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.xtext.util.Tuples;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IConceptDescriptor;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
@@ -72,10 +72,11 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.kim.model.KimObserver;
 import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.kim.model.SemanticType;
 import org.integratedmodelling.kim.utils.CamelCase;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.common.SemanticType;
 
 /**
  * This class contains custom validation rules.
@@ -116,7 +117,7 @@ public class KimValidator extends AbstractKimValidator {
     if (_not) {
       KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
       IKimProject project = ns.getProject();
-      String expectedId = project.getNamespaceIdFor(namespace);
+      String expectedId = ((KimProject) project).getNamespaceIdFor(namespace);
       if ((expectedId == null)) {
         this.warning(
           "This namespace is in a non-standard file location: name uniqueness and cross-referencing are not guaranteed", namespace, KimPackage.Literals.NAMESPACE__NAME);
@@ -790,7 +791,7 @@ public class KimValidator extends AbstractKimValidator {
                 {
                   IKimMacro.FieldType mtype = mmacro.getType(field);
                   String description = Kim.getTypeDescription(mtype.getType());
-                  Kim.ConceptDescriptor _descriptor = mtype.getDescriptor();
+                  IConceptDescriptor _descriptor = mtype.getDescriptor();
                   boolean _tripleNotEquals = (_descriptor != null);
                   if (_tripleNotEquals) {
                     String _description = description;
@@ -1767,7 +1768,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Tuples.<KimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedQuality()), IKimConceptStatement.DescriptionType.DESCRIBES));
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedQuality()), IKimConceptStatement.DescriptionType.DESCRIBES));
       }
     }
     ConceptDeclaration _describedProportionality = concept.getDescribedProportionality();
@@ -1787,7 +1788,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Tuples.<KimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedProportionality()), 
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedProportionality()), 
             IKimConceptStatement.DescriptionType.INCREASES_WITH));
       }
     }
@@ -1808,7 +1809,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Tuples.<KimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedInverseProportionalityQuality()), 
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedInverseProportionalityQuality()), 
             IKimConceptStatement.DescriptionType.DECREASES_WITH));
       }
     }
@@ -1829,7 +1830,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Tuples.<KimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getClassifiesQuality()), IKimConceptStatement.DescriptionType.CLASSIFIES));
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getClassifiesQuality()), IKimConceptStatement.DescriptionType.CLASSIFIES));
       }
     }
     ConceptDeclaration _discretizesQuality = concept.getDiscretizesQuality();
@@ -1850,7 +1851,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Tuples.<KimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDiscretizesQuality()), 
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDiscretizesQuality()), 
             IKimConceptStatement.DescriptionType.DISCRETIZES));
       }
     }
@@ -1873,7 +1874,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Tuples.<KimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedNonzeroQuality()), 
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedNonzeroQuality()), 
             IKimConceptStatement.DescriptionType.MARKS));
       }
     }

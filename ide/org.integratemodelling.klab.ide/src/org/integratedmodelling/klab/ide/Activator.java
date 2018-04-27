@@ -6,16 +6,16 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtext.util.Pair;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
+import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.osgi.framework.BundleContext;
@@ -48,7 +48,7 @@ public class Activator extends AbstractUIPlugin {
         Kim.INSTANCE.setValidator(new Validator() {
 
             @Override
-            public List<org.eclipse.xtext.util.Pair<String, Level>> validateFunction(IServiceCall functionCall,
+            public List<Pair<String, Level>> validateFunction(IServiceCall functionCall,
                     Set<IPrototype.Type> expected) {
                 IPrototype prototype = KimData.INSTANCE.getFunctionPrototype(functionCall.getName());
                 if (prototype != null) {

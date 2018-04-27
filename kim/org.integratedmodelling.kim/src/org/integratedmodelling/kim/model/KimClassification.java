@@ -3,11 +3,12 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.xtext.util.Pair;
+
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.kim.Classification;
+import org.integratedmodelling.kim.utils.Pair;
 
 public class KimClassification extends KimStatement implements IKimClassification {
 

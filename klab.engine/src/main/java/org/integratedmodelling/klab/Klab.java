@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.monitoring.IMessage;
-import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
-import org.integratedmodelling.kim.api.monitoring.IMessage.Type;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
-import org.integratedmodelling.kim.monitoring.Message;
-import org.integratedmodelling.kim.rest.Capabilities;
-import org.integratedmodelling.kim.rest.IdentityReference;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
@@ -29,12 +31,10 @@ import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.NotificationUtils;
-import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-import ch.qos.logback.classic.Level;
 
 /**
  * Runtime would be a better name for this, but it makes it awkward to code with as it conflicts
@@ -292,7 +292,7 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void info(Object... info) {
-            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.INFO)) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.INFO,
                         NotificationUtils.getMessage(info)));
             } else {
@@ -302,7 +302,7 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void warn(Object... o) {
-            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.WARN)) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.WARNING,
                         NotificationUtils.getMessage(o)));
             } else {
@@ -313,7 +313,7 @@ public enum Klab implements IRuntimeService {
         @Override
         public void error(Object... o) {
             errors ++;
-            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.ERROR)) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.ERROR,
                         NotificationUtils.getMessage(o)));
             } else {
@@ -323,7 +323,7 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void debug(Object... o) {
-            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.DEBUG)) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.DEBUG,
                         NotificationUtils.getMessage(o)));
             } else {

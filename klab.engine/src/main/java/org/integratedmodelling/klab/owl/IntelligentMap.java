@@ -31,9 +31,10 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A map indexed by concepts, whose get() method will select the entry that best corresponds to the passed

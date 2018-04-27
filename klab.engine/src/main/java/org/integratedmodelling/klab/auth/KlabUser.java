@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.auth;
 import java.util.Date;
 import java.util.List;
 
-import org.integratedmodelling.kim.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;

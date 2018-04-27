@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.lang.ObjectUtils;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
@@ -26,7 +28,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.rest.temp.ModelReference;
-import org.integratedmodelling.klab.utils.Pair;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 public class Prioritizer implements IPrioritizer<ModelReference> {

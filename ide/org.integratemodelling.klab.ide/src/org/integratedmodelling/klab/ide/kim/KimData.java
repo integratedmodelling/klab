@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.ide.kim;
 import java.io.File;
 
 import org.integratedmodelling.kim.api.IPrototype;
-import org.integratedmodelling.kim.model.Prototype;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
+import org.integratedmodelling.klab.common.Prototype;
 
 /**
  * A singleton holding all synchronized k.IM-relevant data that come from the engine, such as

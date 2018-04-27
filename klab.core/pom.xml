@@ -134,16 +134,21 @@
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 			<version>${kotlin.version}</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.kim</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
+			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.kdl</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
+			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.verhas</groupId>

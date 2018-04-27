@@ -15,16 +15,17 @@
  */
 package org.integratedmodelling.klab;
 
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
-import org.integratedmodelling.kim.api.monitoring.IMessage.MessageClass;
-import org.integratedmodelling.kim.api.monitoring.IMessage.Type;
-import org.integratedmodelling.kim.monitoring.Message;
+import java.util.logging.Level;
+
+import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.services.ILoggingService;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 /**
@@ -51,11 +52,11 @@ public enum Logging implements ILoggingService {
 
         String payload = NotificationUtils.getMessage(o);
 
-        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.INFO)) {
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
             messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.INFO, payload));
         }
 
-        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.INFO)) {
+        if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.INFO.intValue()) {
             if (logger != null) {
                 logger.info(payload);
             } else {
@@ -71,11 +72,11 @@ public enum Logging implements ILoggingService {
 
         String payload = NotificationUtils.getMessage(o);
 
-        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.WARN)) {
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
             messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.WARNING, payload));
         }
 
-        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.WARN)) {
+        if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
 
             if (logger != null) {
                 logger.warn(payload);
@@ -91,11 +92,11 @@ public enum Logging implements ILoggingService {
 
         String payload = NotificationUtils.getMessage(o);
 
-        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.ERROR)) {
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
             messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.ERROR, payload));
         }
 
-        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.ERROR)) {
+        if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
             if (logger != null) {
                 logger.error(payload);
             } else {
@@ -110,11 +111,11 @@ public enum Logging implements ILoggingService {
 
         String payload = NotificationUtils.getMessage(o);
 
-        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().isGreaterOrEqual(Level.DEBUG)) {
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
             messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.DEBUG, payload));
         }
 
-        if (Configuration.INSTANCE.getLoggingLevel().isGreaterOrEqual(Level.DEBUG)) {
+        if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
 
             if (logger != null) {
                 logger.debug(payload);

@@ -9,7 +9,6 @@ import java.util.List
 import java.util.logging.Level
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.xtext.util.Tuples
 import org.eclipse.xtext.validation.Check
 import org.integratedmodelling.kim.api.BinarySemanticOperator
 import org.integratedmodelling.kim.api.IKimConcept
@@ -51,8 +50,9 @@ import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
-import org.integratedmodelling.kim.model.SemanticType
 import org.integratedmodelling.kim.utils.CamelCase
+import org.integratedmodelling.kim.utils.Pair
+import org.integratedmodelling.klab.common.SemanticType
 
 /**
  * This class contains custom validation rules. 
@@ -86,7 +86,7 @@ class KimValidator extends AbstractKimValidator {
 		if (!namespace.worldviewBound) {
 			var ns = Kim.INSTANCE.getNamespace(namespace, true)
 			var project = ns.project
-			var expectedId = project.getNamespaceIdFor(namespace)
+			var expectedId = (project as KimProject).getNamespaceIdFor(namespace)
 			if (expectedId === null) {
 				warning(
 					'This namespace is in a non-standard file location: name uniqueness and cross-referencing are not guaranteed',
@@ -1382,7 +1382,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret.observablesDescribed.add(
-					Tuples.create(Kim.INSTANCE.declareConcept(concept.describedQuality), DescriptionType.DESCRIBES));
+					Pair.create(Kim.INSTANCE.declareConcept(concept.describedQuality), DescriptionType.DESCRIBES));
 			}
 		}
 
@@ -1399,7 +1399,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret.observablesDescribed.add(
-					Tuples.create(Kim.INSTANCE.declareConcept(concept.describedProportionality),
+					Pair.create(Kim.INSTANCE.declareConcept(concept.describedProportionality),
 						DescriptionType.INCREASES_WITH));
 			}
 		}
@@ -1417,7 +1417,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret.observablesDescribed.add(
-					Tuples.create(Kim.INSTANCE.declareConcept(concept.describedInverseProportionalityQuality),
+					Pair.create(Kim.INSTANCE.declareConcept(concept.describedInverseProportionalityQuality),
 						DescriptionType.DECREASES_WITH));
 			}
 		}
@@ -1436,7 +1436,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret.observablesDescribed.add(
-					Tuples.create(Kim.INSTANCE.declareConcept(concept.classifiesQuality), DescriptionType.CLASSIFIES));
+					Pair.create(Kim.INSTANCE.declareConcept(concept.classifiesQuality), DescriptionType.CLASSIFIES));
 			}
 		}
 
@@ -1453,7 +1453,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret.observablesDescribed.add(
-					Tuples.create(Kim.INSTANCE.declareConcept(concept.discretizesQuality),
+					Pair.create(Kim.INSTANCE.declareConcept(concept.discretizesQuality),
 						DescriptionType.DISCRETIZES));
 				}
 			}
@@ -1472,7 +1472,7 @@ class KimValidator extends AbstractKimValidator {
 					ok = false
 				} else {
 					ret.observablesDescribed.add(
-						Tuples.create(Kim.INSTANCE.declareConcept(concept.describedNonzeroQuality),
+						Pair.create(Kim.INSTANCE.declareConcept(concept.describedNonzeroQuality),
 							DescriptionType.MARKS));
 				}
 			}

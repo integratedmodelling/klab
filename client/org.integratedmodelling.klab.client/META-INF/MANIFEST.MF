@@ -80,9 +80,9 @@ Export-Package: org.integratedmodelling.klab.client,
    org.springframework.web.client,
    org.springframework.http,
    com.fasterxml.jackson.databind",
- org.integratedmodelling.klab.client.messaging;uses:="org.integratedmodelling.kim.api.monitoring,org.integratedmodelling.kim.monitoring,org.springframework.messaging.simp.stomp",
+ org.integratedmodelling.klab.client.messaging;uses:="org.integratedmodelling.klab.api.monitoring,org.integratedmodelling.klab.monitoring,org.springframework.messaging.simp.stomp",
  org.integratedmodelling.klab.client.utils
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
- org.integratedmodelling.kim;bundle-version="0.10.0"
+ org.integratedmodelling.klab.api;bundle-version="0.10.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.integratedmodelling.klab.client.Activator

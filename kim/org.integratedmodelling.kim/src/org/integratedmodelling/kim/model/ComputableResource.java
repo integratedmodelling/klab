@@ -5,8 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.eclipse.xtext.util.Pair;
-import org.eclipse.xtext.util.Tuples;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimLookupTable;
@@ -17,6 +16,7 @@ import org.integratedmodelling.kim.kim.ComputableValue;
 import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.utils.Pair;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 
@@ -115,7 +115,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 	
 	public ComputableResource(IValueMediator from, IValueMediator to) {
-		this.conversion = Tuples.create(from, to);
+		this.conversion = new Pair<>(from, to);
 	}
 
 	public ComputableResource(ValueAssignment statement, ComputableResource condition) {

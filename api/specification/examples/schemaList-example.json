@@ -1,0 +1,16 @@
+{
+  "schemata": [
+    "IdentityReference",
+    "Group",
+    "Permission",
+    "ServiceCall",
+    "ComponentReference",
+    "AuthorityReference",
+    "AuthenticationRequest",
+    "AuthenticatedIdentity",
+    "NodeReference",
+    "Capabilities",
+    "AuthenticationResponse"
+  ],
+  "package": "org.integratedmodelling.kim.rest"
+}

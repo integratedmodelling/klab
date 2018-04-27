@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.integratedmodelling.kim.api.monitoring.IMessage;
-import org.integratedmodelling.kim.api.monitoring.IMessageBus;
-import org.integratedmodelling.kim.monitoring.Message;
-import org.integratedmodelling.kim.monitoring.SubscriberRegistry;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.monitoring.SubscriberRegistry;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;

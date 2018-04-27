@@ -3,12 +3,14 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -18,7 +20,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Resolver that evaluates an expression computing a data artifact. If the expression returns a data

@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.integratedmodelling.kim.rest.AuthenticationRequest;
-import org.integratedmodelling.kim.rest.AuthenticationResponse;
-import org.integratedmodelling.kim.rest.NodeReference;
+import org.integratedmodelling.klab.rest.AuthenticationRequest;
+import org.integratedmodelling.klab.rest.AuthenticationResponse;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;

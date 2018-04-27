@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.integratedmodelling.kim.utils.Pair;
+
 // TODO: Auto-generated Javadoc
 /**
  * TODO API to review; actions and tests to be shifted to handler.

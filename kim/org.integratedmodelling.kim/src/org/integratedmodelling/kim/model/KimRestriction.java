@@ -79,7 +79,7 @@ public class KimRestriction extends KimStatement implements IKimRestriction {
         return this.targetSubject;
     }
 
-    @Override
+//    @Override
     public DataType getDataType() {
         return this.dataType;
     }

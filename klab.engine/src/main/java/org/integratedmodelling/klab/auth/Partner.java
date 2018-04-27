@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.auth;
 
 import java.util.Date;
 
-import org.integratedmodelling.kim.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.springframework.security.core.userdetails.UserDetails;

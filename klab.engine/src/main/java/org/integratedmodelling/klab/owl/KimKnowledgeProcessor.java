@@ -3,14 +3,16 @@ package org.integratedmodelling.klab.owl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.Nullable;
+
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
-import org.integratedmodelling.kim.model.KimConcept;
+import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.kim.utils.CamelCase;
 import org.integratedmodelling.klab.Concepts;
@@ -57,7 +59,7 @@ public enum KimKnowledgeProcessor {
 		try {
 
 			Concept ret = buildInternal(concept, ns, kimObject, monitor);
-			if (concept.getParents().isEmpty()) {
+			if (((KimConceptStatement)concept).getParents().isEmpty()) {
 				IConcept parent = null;
 				if (concept.getUpperConceptDefined() != null) {
 					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
@@ -110,7 +112,7 @@ public enum KimKnowledgeProcessor {
 		namespace.define();
 		main = namespace.getOntology().getConcept(mainId);
 
-		for (ParentConcept parent : concept.getParents()) {
+		for (ParentConcept parent : ((KimConceptStatement)concept).getParents()) {
 
 			List<IConcept> concepts = new ArrayList<>();
 			for (IKimConcept pdecl : parent.getConcepts()) {
@@ -160,7 +162,7 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
-		for (KimConcept inherited : concept.getTraitsInherited()) {
+		for (IKimConcept inherited : ((KimConceptStatement)concept).getTraitsInherited()) {
 			IConcept trait = declare(inherited, monitor);
 			if (trait == null) {
 				monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);

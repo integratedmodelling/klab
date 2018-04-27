@@ -1,0 +1,82 @@
+#%RAML 1.0
+title: k.LAB Engine API
+version: 0.10.0
+protocols: [HTTP, HTTPS]
+baseUri: http://127.0.0.1:8283/modeler
+mediaType: application/json
+documentation:
+  - title: k.LAB Engine API documentation
+    content: ZIO BOLLO
+types:
+  Capabilities: !include types/capabilities-schema.json
+  AuthorizationRequest: !include types/authenticationRequest-schema.json
+/capabilities:
+  get:
+    description: Get server capabilities. This is a public endpoint, but the response will change depending on the authenticated identity, showing more or less available features.
+    responses:
+      200:
+        body:
+          application/json:
+            type: Capabilities
+            example: !include examples/capabilities-example.json
+/ping:
+  description: Check server status and time since boot.
+  get:
+    description: Number of milliseconds between server boot and time of call.
+  head:
+    description: Simplest HEAD call to check for response code. Intended for clients that need to do frequent heartbeat checking.
+/schema:
+  get:
+    description: Retrieve the JSON v3 schema for the resources transferred in the API, built on demand from the correspondent Java resources. Without parameters a map of all schemata is returned, indexed by the name of the correspondent resource.
+    queryParameters:
+      resource:
+        description: Return the schema for the desired resource name, returned by a call with ?list.
+        type: string
+        required: false
+        example: !include examples/schemaResourceCapabilities-example.json
+      list:
+        type: null
+        description: Obtain a structure containing the names of all resources and their package name for code reconstruction. The resource names are ordered by dependency, so that resources that are included in other resources are listed before them.
+        required: false
+        example: !include examples/schemaList-example.json
+/engine:
+  description: Endpoints allowing the establishment and management of modeling sessions.
+  /authenticate:
+    post:
+      description: Authorize an engine user with username and password.
+  /session:
+      /authorize:
+        get:
+          description: Create a user session or attempt to rejoin a previously opened one.
+          queryParameters:
+            join:
+              type: string
+              description: the ID of a previously opened session. If this is not available, the response will be a new one with an info message detailing the unsuccessful attempt.
+              required: false
+      /close:
+        delete:
+          description: close the session correspondent to the authentication token. Sessions close automatically after a configurable idle period.
+  /observation:
+    description: Endpoints allowing to build and manage observations. Secured with session authentication.
+  /task:
+    description: Endpoints allowing to manage running tasks. Secured with session authentication.
+  /view:
+    description: Endpoints allowing to create visualizations of observations. Secured with session authentication.
+/resource:
+  description: Endpoints allowing to access and manage URN-identified resources. Secured with session authentication.
+  /resolve:
+    description: return the resource metadata for a URN.
+  /get:
+    description: return the data for a resource in a given geometry.
+  /add:
+    put:
+      description: add a resource
+  /delete:
+    delete:
+      description: delete a resource
+  /update:
+    patch:
+      description: update a resource
+  /publish:
+    post:
+      description: publish a local resource to the k.LAB network

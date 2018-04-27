@@ -19,7 +19,9 @@ import java.io.File;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang.SystemUtils;
+import org.integratedmodelling.kim.utils.OS;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
