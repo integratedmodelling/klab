@@ -19,7 +19,6 @@ import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.utils.Pair;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -31,6 +30,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Pair;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -193,7 +193,7 @@ public interface IComputationContext extends IParameters {
 	 * to create a relationship.
 	 * <p>
 	 * While any k.LAB-aware implementation will receive a {@link org.integratedmodelling.klab.api.observations.scale.IScale} instead of
-	 * a {@link org.integratedmodelling.kim.api.data.IGeometry} and return a {@link org.integratedmodelling.klab.api.observations.ICountableObservation} rather than
+	 * a {@link org.integratedmodelling.klab.api.data.IGeometry} and return a {@link org.integratedmodelling.klab.api.observations.ICountableObservation} rather than
 	 * just {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, we keep the basic, non-semantic types in the
 	 * signature for consistency with derived APIs of remote services and other
 	 * non-semantic computations.

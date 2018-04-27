@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.util.List;
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
@@ -39,7 +38,7 @@ import org.integratedmodelling.klab.api.services.IResourceService;
  * ({@link org.integratedmodelling.klab.api.data.adapters.IResourcePublisher} publisher/unpublisher)
  * and an ({@link org.integratedmodelling.klab.api.data.adapters.IResourceEncoder} encoder) for each
  * new resource type supported. IResources have a
- * {@link org.integratedmodelling.kim.api.data.IGeometry} that can be turned into a semantic
+ * {@link org.integratedmodelling.klab.api.data.IGeometry} that can be turned into a semantic
  * {@link org.integratedmodelling.klab.api.observations.scale.IScale} through a
  * {@link org.integratedmodelling.klab.api.knowledge.IWorldview}. This way, engines do not need to
  * know the details of any specific data protocol as the contents are returned from the engine in

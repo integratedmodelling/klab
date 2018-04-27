@@ -15,7 +15,7 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
@@ -32,7 +32,7 @@ public interface IWorldview extends IWorkspace {
      * Translate the geometry from a {@link org.integratedmodelling.klab.api.data.IResource} to the corresponding
      * IScale for the worldview.
      *
-     * @param geometry a {@link org.integratedmodelling.kim.api.data.IGeometry} object.
+     * @param geometry a {@link org.integratedmodelling.klab.api.data.IGeometry} object.
      * @return the translated geometry
      */
     IScale getScale(IGeometry geometry);

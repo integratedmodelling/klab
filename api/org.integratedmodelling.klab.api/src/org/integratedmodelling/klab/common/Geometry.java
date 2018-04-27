@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.api.data.ILocator;
-import org.integratedmodelling.kim.utils.MultidimensionalCursor;
-import org.integratedmodelling.kim.utils.NumberUtils;
-import org.integratedmodelling.kim.utils.Parameters;
-import org.integratedmodelling.kim.utils.Utils;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
+import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class Geometry implements IGeometry {
 

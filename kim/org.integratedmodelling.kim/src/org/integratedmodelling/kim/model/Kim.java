@@ -51,12 +51,12 @@ import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Value;
-import org.integratedmodelling.kim.utils.Pair;
-import org.integratedmodelling.kim.utils.Parameters;
-import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.common.SemanticType;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Range;
 
 /**
  * Parsing functions and interfaces. Holds the state of the knowledge base as new concepts are

@@ -17,8 +17,8 @@ package org.integratedmodelling.klab.monitoring;
 
 import java.io.Serializable;
 
-import org.integratedmodelling.kim.utils.NameGenerator;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * Typed message with potential payload to be transferred through a message bus. Used for

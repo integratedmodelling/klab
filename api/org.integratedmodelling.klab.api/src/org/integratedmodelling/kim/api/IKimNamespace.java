@@ -3,7 +3,7 @@ package org.integratedmodelling.kim.api;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public interface IKimNamespace extends IKimStatement {
 

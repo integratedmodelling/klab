@@ -16,10 +16,11 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.List;
-import org.integratedmodelling.kim.utils.Range;
+
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.utils.Range;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -130,7 +131,7 @@ public interface IObservable extends IConcept, IResolvable {
    * If the observable was defined with an inline value (e.g. '10 as Concept'), report the POD value
    * here.
    *
-   * @return the inline value (a POD; a distribution, {@link org.integratedmodelling.kim.utils.Range} or {@link java.util.List} are also
+   * @return the inline value (a POD; a distribution, {@link org.integratedmodelling.klab.utils.Range} or {@link java.util.List} are also
    *         possible, but so far there are no situations in which this happens.)
    */
   Object getValue();

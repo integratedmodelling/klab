@@ -8,8 +8,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: javax.annotation;bundle-version="1.2.0"
 Export-Package: org.integratedmodelling.kdl.api,
  org.integratedmodelling.kim.api,
- org.integratedmodelling.kim.api.data,
- org.integratedmodelling.kim.utils,
  org.integratedmodelling.klab,
  org.integratedmodelling.klab.api,
  org.integratedmodelling.klab.api.auth,
@@ -42,4 +40,5 @@ Export-Package: org.integratedmodelling.kdl.api,
  org.integratedmodelling.klab.common,
  org.integratedmodelling.klab.exceptions,
  org.integratedmodelling.klab.monitoring,
- org.integratedmodelling.klab.rest
+ org.integratedmodelling.klab.rest,
+ org.integratedmodelling.klab.utils

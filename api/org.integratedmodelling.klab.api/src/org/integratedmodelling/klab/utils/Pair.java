@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.kim.utils;
+package org.integratedmodelling.klab.utils;
 
 import org.integratedmodelling.klab.api.data.utils.IPair;
 

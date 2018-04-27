@@ -1,4 +1,4 @@
-package org.integratedmodelling.kim.utils;
+package org.integratedmodelling.klab.utils;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;

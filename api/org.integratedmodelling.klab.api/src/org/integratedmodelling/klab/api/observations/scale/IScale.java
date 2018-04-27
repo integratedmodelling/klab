@@ -16,9 +16,10 @@
 package org.integratedmodelling.klab.api.observations.scale;
 
 import java.util.List;
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
-import org.integratedmodelling.kim.api.data.ILocator;
+
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -107,7 +108,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
   IScale at(ILocator locator);
 
   /**
-   * Mimics {@link org.integratedmodelling.kim.api.data.IGeometry.Dimension#shape()} passing the
+   * Mimics {@link org.integratedmodelling.klab.api.data.IGeometry.Dimension#shape()} passing the
    * type of the desired dimension.
    *
    * @param dimension the dimension we need the shape of

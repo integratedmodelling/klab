@@ -17,8 +17,8 @@ import java.io.File;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.utils.OS;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.utils.OS;
 
 // TODO: Auto-generated Javadoc
 /**

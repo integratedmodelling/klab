@@ -20,13 +20,13 @@
  * 330, Boston, MA 02111-1307, USA. The license is also available at:
  * https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.kim.utils;
+package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 
 public class MultidimensionalCursor {
 

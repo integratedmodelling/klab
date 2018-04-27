@@ -7,8 +7,8 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
-import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.kim.validation.KimValidator;
+import org.integratedmodelling.klab.utils.Range;
 
 public class KimObservable extends KimStatement implements IKimObservable {
 

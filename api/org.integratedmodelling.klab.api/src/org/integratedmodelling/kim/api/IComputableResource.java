@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A computable resource is a declaration that specifies a processing step for a

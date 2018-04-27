@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConcept.Visitor;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public interface IKimConceptStatement extends IKimStatement {
 

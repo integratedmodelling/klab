@@ -1,7 +1,8 @@
 package org.integratedmodelling.kim.api;
 
 import java.util.Map;
-import org.integratedmodelling.kim.utils.Parameters;
+
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * API for a read-only, nicer to use Map<String, Object> that collects named parameters of a

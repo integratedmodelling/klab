@@ -1,4 +1,4 @@
-package org.integratedmodelling.kim.utils;
+package org.integratedmodelling.klab.utils;
 
 /*****************************************************************************
  * File: DirectedGraph.java

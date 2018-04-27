@@ -1,6 +1,6 @@
 package org.integratedmodelling.kim.api;
 
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public interface IKimClassification extends IKimStatement, Iterable<Pair<IKimConcept, IKimClassifier>> {
     

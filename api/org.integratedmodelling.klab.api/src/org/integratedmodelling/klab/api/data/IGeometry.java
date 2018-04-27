@@ -1,10 +1,10 @@
-package org.integratedmodelling.kim.api.data;
+package org.integratedmodelling.klab.api.data;
 
 import java.io.Serializable;
 import java.util.List;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 
 /**
  * A IGeometry is the declaration of the topological dimensions for an observed resource or

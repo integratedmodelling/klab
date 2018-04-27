@@ -17,8 +17,8 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.util.Optional;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
 import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -56,7 +56,7 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
   /**
    * Return the scale seen by this object, merging all the extents declared for the subject in the
    * observation context. This could simply override {@link org.integratedmodelling.klab.api.provenance.IArtifact#getGeometry()} as a
-   * {@link org.integratedmodelling.klab.api.observations.scale.IScale} is a {@link org.integratedmodelling.kim.api.data.IGeometry}, and in a standard implementation should do just that,
+   * {@link org.integratedmodelling.klab.api.observations.scale.IScale} is a {@link org.integratedmodelling.klab.api.data.IGeometry}, and in a standard implementation should do just that,
    * but a {@link org.integratedmodelling.klab.api.observations.scale.IScale} is important enough to deserve its own accessor.
    *
    * @return the observation's scale

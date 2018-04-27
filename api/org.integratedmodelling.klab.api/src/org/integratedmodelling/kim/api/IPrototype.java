@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.utils.Pair;
-import org.integratedmodelling.kim.utils.Range;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 
 /**

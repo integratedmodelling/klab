@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.observations.scale;
 
 import java.util.Collection;
 
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A {@code IScaleMediator} assists the mediation of a value from an extent to another by establishing

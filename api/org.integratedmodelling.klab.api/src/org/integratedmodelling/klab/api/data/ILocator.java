@@ -1,4 +1,4 @@
-package org.integratedmodelling.kim.api.data;
+package org.integratedmodelling.klab.api.data;
 
 /**
  * Any geometry or subset of it can be used as a locator. Scales and extents are also locators and

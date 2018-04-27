@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.kim.utils.Range;
+import org.integratedmodelling.klab.utils.Range;
 
 /**
  * The actor definition parsed from a KDL file. Used as a "contract" (i.e. an interface

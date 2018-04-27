@@ -10,6 +10,9 @@ import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.utils.DirectedGraph;
+import org.integratedmodelling.klab.utils.KimCircularDependencyException;
+import org.integratedmodelling.klab.utils.TopologicalSort;
 
 /**
  * Ingests Kim Xtext resources and returns them topologically sorted based on

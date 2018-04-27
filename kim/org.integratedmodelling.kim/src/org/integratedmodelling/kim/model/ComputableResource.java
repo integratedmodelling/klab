@@ -16,7 +16,7 @@ import org.integratedmodelling.kim.kim.ComputableValue;
 import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 

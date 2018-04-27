@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
-import org.integratedmodelling.kim.utils.Utils;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class KimProject implements IKimProject {
 

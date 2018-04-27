@@ -20,7 +20,7 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConcept;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class KimMacro implements IKimMacro {
 

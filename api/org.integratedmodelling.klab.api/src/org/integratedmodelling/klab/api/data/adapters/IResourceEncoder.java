@@ -15,7 +15,7 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -31,7 +31,7 @@ public interface IResourceEncoder {
    * <p>getEncodedData.</p>
    *
    * @param resource a {@link org.integratedmodelling.klab.api.data.IResource} object.
-   * @param geometry a {@link org.integratedmodelling.kim.api.data.IGeometry} object.
+   * @param geometry a {@link org.integratedmodelling.klab.api.data.IGeometry} object.
    * @param monitor for notifications and identity retrieval
    * @return a {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} object.
    */

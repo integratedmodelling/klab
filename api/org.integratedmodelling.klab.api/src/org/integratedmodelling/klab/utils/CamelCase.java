@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License
    along with Thinklab.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.integratedmodelling.kim.utils;
+package org.integratedmodelling.klab.utils;
 
 /*
  * Copyright (c) 2007 Cornel Mihaila (http://www.mihaila.com)

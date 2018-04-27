@@ -8,10 +8,10 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KeyValuePair;
-import org.integratedmodelling.kim.utils.Escape;
-import org.integratedmodelling.kim.utils.Parameters;
-import org.integratedmodelling.kim.utils.Range;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Range;
 
 public class KimServiceCall extends KimStatement implements IServiceCall {
 

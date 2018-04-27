@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 
-import org.integratedmodelling.kim.utils.SemanticType;
+import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
  * IKnowledge defines the methods that are common to both IConcept and IProperty, i.e. all

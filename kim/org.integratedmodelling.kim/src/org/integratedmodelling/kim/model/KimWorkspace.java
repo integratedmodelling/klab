@@ -27,7 +27,8 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
 import org.integratedmodelling.kim.utils.ResourceSorter;
-import org.integratedmodelling.kim.utils.Utils;
+import org.integratedmodelling.klab.utils.Utils;
+
 import com.google.inject.Injector;
 
 public class KimWorkspace extends KimScope implements IKimWorkspace {

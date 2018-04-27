@@ -1,6 +1,6 @@
 package org.integratedmodelling.kim.api;
 
-import org.integratedmodelling.kim.utils.Parameters;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * A parsed function call. Parameters can be named by user or by default.

@@ -1,6 +1,6 @@
 package org.integratedmodelling.kim.api;
 
-import org.integratedmodelling.kim.utils.Range;
+import org.integratedmodelling.klab.utils.Range;
 
 public interface IKimObservable extends IKimStatement {
 

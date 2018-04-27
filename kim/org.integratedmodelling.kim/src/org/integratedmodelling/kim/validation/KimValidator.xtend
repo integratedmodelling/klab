@@ -50,8 +50,8 @@ import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
-import org.integratedmodelling.kim.utils.CamelCase
-import org.integratedmodelling.kim.utils.Pair
+import org.integratedmodelling.klab.utils.CamelCase
+import org.integratedmodelling.klab.utils.Pair
 import org.integratedmodelling.klab.common.SemanticType
 
 /**

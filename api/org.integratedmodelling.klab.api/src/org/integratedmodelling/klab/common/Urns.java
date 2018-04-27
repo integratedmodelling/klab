@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.common;
 import java.io.File;
 import java.io.IOException;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.utils.Escape;
-import org.integratedmodelling.kim.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * This class encodes the rules for creating URNs that describe local resources: literal values,

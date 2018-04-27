@@ -8,7 +8,7 @@ import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.kim.Classification;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class KimClassification extends KimStatement implements IKimClassification {
 

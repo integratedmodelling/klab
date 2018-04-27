@@ -15,16 +15,16 @@
  */
 package org.integratedmodelling.klab.api.observations.scale;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.IGeometry.Dimension;
-import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * A {@code IExtent} is a semantically aware {@link Dimension geometry dimension} that represents an
  * observation of the topology it describes. {@code IExtent}s make up the dimensions of the
- * semantically aware {@link org.integratedmodelling.kim.api.data.IGeometry} represented by {@link org.integratedmodelling.klab.api.observations.scale.IScale}.
+ * semantically aware {@link org.integratedmodelling.klab.api.data.IGeometry} represented by {@link org.integratedmodelling.klab.api.observations.scale.IScale}.
  *
  * In a {@code IExtent}, the {{@link #size()} will never return {IGeometry#UNDEFINED} and the shape
  * returned by {{@link #shape()} will never contain undefined values.

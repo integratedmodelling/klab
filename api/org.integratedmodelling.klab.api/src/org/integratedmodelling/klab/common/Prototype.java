@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.utils.Pair;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Prototype implements IPrototype {
 

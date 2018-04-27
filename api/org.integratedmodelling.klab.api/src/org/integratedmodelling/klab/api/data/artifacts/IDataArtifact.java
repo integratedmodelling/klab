@@ -15,18 +15,18 @@
  */
 package org.integratedmodelling.klab.api.data.artifacts;
 
-import org.integratedmodelling.kim.api.data.IGeometry;
-import org.integratedmodelling.kim.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
  * A {@code IDataArtifact} is a {@link org.integratedmodelling.klab.api.provenance.IArtifact} that is typed, owns storage and admits
- * {@link org.integratedmodelling.kim.api.data.ILocator}s as indices for getting and setting POD values in it. The storage must be
- * conformant with the {@link org.integratedmodelling.kim.api.data.IGeometry#size() size} and dimensions of the {@link #getGeometry()
+ * {@link org.integratedmodelling.klab.api.data.ILocator}s as indices for getting and setting POD values in it. The storage must be
+ * conformant with the {@link org.integratedmodelling.klab.api.data.IGeometry#size() size} and dimensions of the {@link #getGeometry()
  * linked} {@link IGeometry geometry}.
  * <p>
  * According to the context of computation, the size of a data artifact may differ from
- * {@link org.integratedmodelling.kim.api.data.IGeometry#size()}. For example, a non-dynamic state in a dynamic context (where time
+ * {@link org.integratedmodelling.klab.api.data.IGeometry#size()}. For example, a non-dynamic state in a dynamic context (where time
  * advances but the observable cannot be inferred to change in the context) may only receive updates
  * in case of event-related modifications. In such cases the state may only contain the time
  * dimensions where change has happened.
