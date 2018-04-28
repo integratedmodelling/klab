@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "id": "urn:jsonschema:org:integratedmodelling:klab:rest:AuthorizeSessionResponse",
+  "properties": {
+    "sessionId": {
+      "type": "string"
+    },
+    "info": {
+      "type": "string"
+    },
+    "sessionStart": {
+      "type": "integer"
+    },
+    "sessionAge": {
+      "type": "integer"
+    },
+    "lastActivity": {
+      "type": "integer"
+    }
+  }
+}

@@ -9,6 +9,7 @@ documentation:
     content: ZIO BOLLO
 types:
   Capabilities: !include types/capabilities-schema.json
+  Session: !include types/authorizeSessionResponse-schema.json
   AuthorizationRequest: !include types/authenticationRequest-schema.json
 /capabilities:
   get:
@@ -53,6 +54,11 @@ types:
               type: string
               description: the ID of a previously opened session. If this is not available, the response will be a new one with an info message detailing the unsuccessful attempt.
               required: false
+          responses:
+            200:
+              body:
+                application/json:
+                  type: Session
       /close:
         delete:
           description: close the session correspondent to the authentication token. Sessions close automatically after a configurable idle period.

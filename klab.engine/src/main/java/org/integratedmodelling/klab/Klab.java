@@ -50,7 +50,7 @@ public enum Klab implements IRuntimeService {
     /**
      * The package containing all REST resource beans.
      */
-    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.kim.rest";
+    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.rest";
 
     /**
      * This can be set to a runnable that starts the REST services.

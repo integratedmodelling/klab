@@ -62,10 +62,11 @@
 		<module>kim</module>
 		<module>klab.core</module>
 		<module>klab.engine</module>
-		<module>klab.tools</module>
 		<module>adapters</module>
 		<module>engines</module>
 		<module>client</module>
+		<module>klab.tools</module>
+		<module>ide</module>
 	</modules>
 
 	<properties>

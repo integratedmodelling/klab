@@ -13,7 +13,7 @@ import org.integratedmodelling.kdl.ui.AbstractKdlUiModule;
 @FinalFieldsConstructor
 @SuppressWarnings("all")
 public class KdlUiModule extends AbstractKdlUiModule {
-  public KdlUiModule(final AbstractUIPlugin plugin) {
-    super(plugin);
+  public KdlUiModule(final AbstractUIPlugin arg0) {
+    super(arg0);
   }
 }

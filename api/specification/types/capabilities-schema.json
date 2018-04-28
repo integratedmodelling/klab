@@ -1,18 +1,85 @@
 {
   "type": "object",
-  "id": "urn:jsonschema:org:integratedmodelling:kim:rest:AuthenticationRequest",
+  "id": "urn:jsonschema:org:integratedmodelling:klab:rest:Capabilities",
   "properties": {
-    "username": {
+    "name": {
       "type": "string"
     },
-    "userKey": {
+    "version": {
       "type": "string"
     },
-    "userType": {
+    "build": {
       "type": "string"
     },
-    "certificate": {
-      "type": "string"
+    "owner": {
+      "type": "object",
+      "id": "urn:jsonschema:org:integratedmodelling:klab:rest:IdentityReference",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "lastLogin": {
+          "type": "string"
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "id": "urn:jsonschema:org:integratedmodelling:klab:rest:ServiceCall",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "any"
+            }
+          }
+        }
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "id": "urn:jsonschema:org:integratedmodelling:klab:rest:AuthorityReference",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "staticComponents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "id": "urn:jsonschema:org:integratedmodelling:klab:rest:ComponentReference",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dynamicComponents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "urn:jsonschema:org:integratedmodelling:klab:rest:ComponentReference"
+      }
+    },
+    "refreshFrequencyMillis": {
+      "type": "integer"
+    },
+    "loadFactor": {
+      "type": "integer"
     }
   }
 }
