@@ -63,7 +63,7 @@
 		<module>klab.core</module>
 		<module>klab.engine</module>
 		<module>adapters</module>
-		<module>engines</module>
+		<module>klab.modeler</module>
 		<module>client</module>
 		<module>klab.tools</module>
 		<module>ide</module>
