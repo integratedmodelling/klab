@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: k.LAB Navigator
+Bundle-SymbolicName: org.integratedmodelling.klab.ide.navigator;singleton:=true
+Bundle-Version: 0.10.0.qualifier
+Require-Bundle: javax.inject,
+ org.eclipse.osgi,
+ org.eclipse.jface,
+ org.eclipse.core.resources;bundle-version="3.12.0",
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.ui.services,
+ org.eclipse.e4.core.di.annotations,
+ org.integratedmodelling.kim;bundle-version="0.10.0",
+ org.integratedmodelling.kim.ide;bundle-version="0.10.0",
+ org.integratedmodelling.kim.ui;bundle-version="0.10.0",
+ org.eclipse.xtext.ui;bundle-version="2.12.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: javax.annotation;version="1.2.0"
+Automatic-Module-Name: org.integratedmodelling.klab.ide.navigator

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.client.http.Client.BeanDescriptor;
 import org.jsonschema2pojo.DefaultGenerationConfig;
 import org.jsonschema2pojo.GenerationConfig;
@@ -24,78 +25,80 @@ import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JType;
 
 /**
- * Read the JSON schemata from an engine and build the corresponding Java POJO classes and
- * objects.
+ * Read the JSON schemata from an engine and build the corresponding Java POJO
+ * classes and objects.
  * 
- * Unfinished. Can be removed in production.
+ * TODO Unfinished and unlikely to be useful here. Can be removed in production along with
+ * the dependencies relative to org.jsonschema2pojo. Move to the tools package 
+ * for future use.
  * 
  * @author ferdinando.villa
  *
  */
 public class KlabPOJOGenerator {
 
-    private Map<String, Class<?>> pojoClasses = new HashMap<>();
+	private Map<String, Class<?>> pojoClasses = new HashMap<>();
 
-    public KlabPOJOGenerator(Client client) {
+	public KlabPOJOGenerator(Client client) {
 
-        GenerationConfig config = new DefaultGenerationConfig() {
-            @Override
-            public boolean isGenerateBuilders() {
-                return true;
-            }
-        };
-        
-        BeanDescriptor beans = client.getPOJOClasses();
-        JCodeModel codeModel = new JCodeModel();
-        List<String> classNames = new ArrayList<>();
-        SchemaMapper mapper = new SchemaMapper(
-                new RuleFactory(config, new Jackson2Annotator(config), new SchemaStore()),
-                new SchemaGenerator());
-        
-        for (String cls : beans.classes) {
-            try {
-                URL getSchema = new URL(client.getUrl() + Client.API_SCHEMA_GET + cls);
-                JType type = mapper.generate(codeModel, cls, beans.packageName, getSchema);
-                classNames.add(type.fullName());
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        }
-        
-        final Map<String, ByteArrayOutputStream> streams = new HashMap<String, ByteArrayOutputStream>();
+		GenerationConfig config = new DefaultGenerationConfig() {
+			@Override
+			public boolean isGenerateBuilders() {
+				return true;
+			}
+		};
 
-        try {
-            codeModel.build(new CodeWriter() {
-                @Override
-                public OutputStream openBinary(JPackage jPackage, String name) throws IOException {
-                    String fullyQualifiedName = jPackage.name().length() == 0 ? name : jPackage.name().replace(".", "/") + "/" + name;
-                    if(!streams.containsKey(fullyQualifiedName)) {
-                        streams.put(fullyQualifiedName, new ByteArrayOutputStream());
-                    }
-                    return streams.get(fullyQualifiedName);
-                }
+		BeanDescriptor beans = client.getPOJOClasses();
+		JCodeModel codeModel = new JCodeModel();
+		List<String> classNames = new ArrayList<>();
+		SchemaMapper mapper = new SchemaMapper(
+				new RuleFactory(config, new Jackson2Annotator(config), new SchemaStore()), new SchemaGenerator());
 
-                @Override
-                public void close() throws IOException {
-                    for (OutputStream outputStream : streams.values()) {
-                        outputStream.flush();
-                        outputStream.close();
-                    }
-                }
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        
-        for (String cls : streams.keySet()) {
-            String code = streams.get(cls).toString();
-            // TODO compile and/or generate
-        }
-        
-    }
+		for (String cls : beans.classes) {
+			try {
+				URL getSchema = new URL(client.getUrl() + API.SCHEMA + "?resource=" + cls);
+				JType type = mapper.generate(codeModel, cls, beans.packageName, getSchema);
+				classNames.add(type.fullName());
+			} catch (Throwable e) {
+				throw new RuntimeException(e);
+			}
+		}
 
-    public Object newPojo(String className) {
-        return null;
-    }
+		final Map<String, ByteArrayOutputStream> streams = new HashMap<String, ByteArrayOutputStream>();
+
+		try {
+			codeModel.build(new CodeWriter() {
+				@Override
+				public OutputStream openBinary(JPackage jPackage, String name) throws IOException {
+					String fullyQualifiedName = jPackage.name().length() == 0 ? name
+							: jPackage.name().replace(".", "/") + "/" + name;
+					if (!streams.containsKey(fullyQualifiedName)) {
+						streams.put(fullyQualifiedName, new ByteArrayOutputStream());
+					}
+					return streams.get(fullyQualifiedName);
+				}
+
+				@Override
+				public void close() throws IOException {
+					for (OutputStream outputStream : streams.values()) {
+						outputStream.flush();
+						outputStream.close();
+					}
+				}
+			});
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		for (String cls : streams.keySet()) {
+			String code = streams.get(cls).toString();
+			// TODO compile and/or generate
+		}
+
+	}
+
+	public Object newPojo(String className) {
+		return null;
+	}
 
 }

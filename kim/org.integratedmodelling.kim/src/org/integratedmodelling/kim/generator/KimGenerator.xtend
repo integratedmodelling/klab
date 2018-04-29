@@ -9,6 +9,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.integratedmodelling.kim.kim.Model
 import org.integratedmodelling.kim.model.Kim
+import org.integratedmodelling.kim.model.Kim.Notifier
 
 /**
  * Generates code from your model files on save.
@@ -25,8 +26,8 @@ class KimGenerator extends AbstractGenerator {
 				if (r instanceof Model && (r as Model).namespace !== null) {
 					var namespace = Kim.INSTANCE.getNamespace((r as Model).namespace, true)
 					if (namespace !== null) {
-						if (Kim.INSTANCE.validator !== null) {
-							Kim.INSTANCE.validator.synchronizeNamespaceWithRuntime(namespace)
+						for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+							notifier.synchronizeNamespaceWithRuntime(namespace)
 						}
 					}
 				}

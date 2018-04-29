@@ -1,12 +1,17 @@
 #%RAML 1.0
 title: k.LAB Engine API
+description: The API defined in this document drives a k.LAB modeling engine. It is the base API for any k.LAB server.
 version: 0.10.0
 protocols: [HTTP, HTTPS]
 baseUri: http://127.0.0.1:8283/modeler
 mediaType: application/json
+securitySchemes:
+  basic:
+    description: The API uses basic authentication, using tokens established upon communication with the k.LAB network. An offline anonymous mode is supported.
+    type: Basic Authentication
 documentation:
-  - title: k.LAB Engine API documentation
-    content: ZIO BOLLO
+  - title: k.LAB Engine API
+    content: The API defined in this document drives a k.LAB modeling engine. It is the base API for any k.LAB server. A k.LAB network node extends this API with CRUD operations and a publishing/curation API for resources and functionalities for engine authentication and distributed processing.
 types:
   Capabilities: !include types/capabilities-schema.json
   Session: !include types/authorizeSessionResponse-schema.json
@@ -48,7 +53,7 @@ types:
   /session:
       /authorize:
         get:
-          description: Create a user session or attempt to rejoin a previously opened one.
+          description: Create a user session or attempt to rejoin a previously opened one. Only authenticated engine users or administrators can request a session; however, if the request comes from the local host, the user that owns the engine (or the local anonymous user if no certificate is present) is automatically promoted to administrator.
           queryParameters:
             join:
               type: string

@@ -3,6 +3,7 @@
  */
 package org.integratedmodelling.kim.generator;
 
+import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -30,10 +31,9 @@ public class KimGenerator extends AbstractGenerator {
         if (((r instanceof Model) && (((Model) r).getNamespace() != null))) {
           KimNamespace namespace = Kim.INSTANCE.getNamespace(((Model) r).getNamespace(), true);
           if ((namespace != null)) {
-            Kim.Validator _validator = Kim.INSTANCE.getValidator();
-            boolean _tripleNotEquals = (_validator != null);
-            if (_tripleNotEquals) {
-              Kim.INSTANCE.getValidator().synchronizeNamespaceWithRuntime(namespace);
+            List<Kim.Notifier> _notifiers = Kim.INSTANCE.getNotifiers();
+            for (final Kim.Notifier notifier : _notifiers) {
+              notifier.synchronizeNamespaceWithRuntime(namespace);
             }
           }
         }

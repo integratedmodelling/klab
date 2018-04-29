@@ -1,20 +1,20 @@
 package org.integratedmodelling.klab.ide.navigator;
 
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.navigator.IDescriptionProvider;
+import org.integratedmodelling.kim.ui.navigator.KimLabelProvider;
 
-public class KlabLabelProvider extends LabelProvider implements ILabelProvider, IDescriptionProvider {
+public class KlabLabelProvider extends KimLabelProvider implements ILabelProvider, IDescriptionProvider {
 
   public KlabLabelProvider() {
-    // TODO Auto-generated constructor stub
+		System.out.println("HA CREATO ANCHE ME! MI HA CREATO, DIO CANE!");
   }
 
   @Override
   public String getDescription(Object anElement) {
     // TODO Auto-generated method stub
-    return null;
+    return "HOSTIA";
   }
 
   @Override

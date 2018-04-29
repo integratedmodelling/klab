@@ -8,13 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -23,197 +17,91 @@ import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Models;
-import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.Reasoner;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
-import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.model.ConceptStatement;
-import org.integratedmodelling.klab.model.Model;
-import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class KimValidator implements Kim.Validator {
 
-  Monitor              monitor;
-  Map<String, Integer> recheckObservationNS  = new HashMap<>();
+	Monitor monitor;
+	Map<String, Integer> recheckObservationNS = new HashMap<>();
 
-  /*
-   * holds the mapping between the actual ontology ID and the declared one in root domains where
-   * "import <coreUrl> as <prefix>" was used.
-   */
-  Map<String, String>  corePrefixTranslation = new HashMap<>();
+	public KimValidator(Monitor monitor) {
+		this.monitor = monitor;
+	}
 
-  public KimValidator(Monitor monitor) {
-    this.monitor = monitor;
-  }
+//	public KimValidator(KimValidator kimValidator, Monitor monitor) {
+//		this(monitor);
+//	}
+//
+//	public KimValidator with(Monitor monitor) {
+//		return new KimValidator(this, monitor);
+//	}
 
-  public KimValidator(KimValidator kimValidator, Monitor monitor) {
-    this(monitor);
-    corePrefixTranslation.putAll(kimValidator.corePrefixTranslation);
-  }
+	@Override
+	public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IPrototype.Type> expectedType) {
+		List<Pair<String, Level>> ret = new ArrayList<>();
+		IPrototype prototype = Extensions.INSTANCE.getPrototype(functionCall.getName());
+		if (prototype != null) {
+			ret.addAll(prototype.validate(functionCall));
+			if (expectedType != null) {
 
-  public KimValidator with(Monitor monitor) {
-    return new KimValidator(this, monitor);
-  }
+			}
+		} else {
+			ret.add(Pair.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
+		}
+		return ret;
+	}
 
-  @Override
-  public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
+	@Override
+	public UrnDescriptor classifyUrn(String urn) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    Namespace ns = new Namespace(namespace);
+	@Override
+	public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
 
-    try {
-      Namespaces.INSTANCE.release(ns, monitor);
-    } catch (KlabException e) {
-      monitor.error(e);
-    }
+		IConcept coreType = Concepts.INSTANCE.getConcept(string);
+		if (coreType == null) {
+			return EnumSet.noneOf(Type.class);
+		}
+		/*
+		 * TODO check type
+		 */
+		return statedType;
+	}
 
-    for (Pair<String, String> imp : namespace.getOwlImports()) {
-      String prefix =
-          Resources.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());
-      if (prefix == null) {
-        monitor.error("cannot resolve import " + imp.getFirst(), namespace);
-      } else {
-        corePrefixTranslation.put(imp.getSecond(), prefix);
-      }
-    }
+	@Override
+	public boolean isFunctionKnown(String functionName) {
+		return Extensions.INSTANCE.getPrototype(functionName) != null;
+	}
 
-    /*
-     * these should never throw exceptions; instead they should notify any errors, no matter how
-     * internal, through the monitor
-     */
-    for (IKimScope statement : namespace.getChildren()) {
+	@Override
+	public boolean isAnnotationKnown(String annotationName) {
+		return Annotations.INSTANCE.getPrototype(annotationName) != null;
+	}
 
-      IKimObject object = null;
+	@Override
+	public List<Pair<String, Level>> validateAnnotation(IServiceCall annotationCall, IKimStatement target) {
+		List<Pair<String, Level>> ret = new ArrayList<>();
+		IPrototype prototype = Annotations.INSTANCE.getPrototype(annotationCall.getName());
+		if (prototype != null) {
+			return prototype.validate(annotationCall);
+		}
+		// Annotations w/o prototype are allowed
+		return ret;
 
-      if (statement instanceof IKimConceptStatement) {
-        object = new ConceptStatement((IKimConceptStatement) statement);
-        IConcept concept = KimKnowledgeProcessor.INSTANCE.build((IKimConceptStatement) statement, ns,
-            (ConceptStatement) object, monitor);
-        if (concept == null) {
-          object = null;
-        }
-      } else if (statement instanceof IKimModel) {
-        object = Model.create((IKimModel) statement, ns, monitor);
-        if (object instanceof IModel) {
-          try {
-            Models.INSTANCE.index((IModel) object, monitor);
-          } catch (KlabException e) {
-            monitor.error(
-                "error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
-          }
-        }
-      } else if (statement instanceof IKimObserver) {
-        object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, monitor);
-        if (object instanceof IObserver) {
-          try {
-            Observations.INSTANCE.index((IObserver) object, monitor);
-          } catch (KlabException e) {
-            monitor.error(
-                "error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
-          }
-        }
-      }
+	}
 
-      if (object != null) {
-        ns.addObject(object);
-      }
-    }
+	@Override
+	public IPrototype getFunctionPrototype(String functionId) {
+		return Extensions.INSTANCE.getPrototype(functionId);
+	}
 
-    /*
-     * TODO finalize namespace, send any notification
-     */
-    Namespaces.INSTANCE.registerNamespace(ns, monitor);
-    Observations.INSTANCE.registerNamespace(ns, monitor);
-
-    Reasoner.INSTANCE.addOntology(ns.getOntology());
-
-    /*
-     * Execute any annotations recognized by the engine.
-     */
-    for (IKimObject object : ns.getObjects()) {
-      for (IKimAnnotation annotation : object.getAnnotations()) {
-        Annotations.INSTANCE.process(annotation, object, monitor);
-      }
-    }
-
-    return ns;
-  }
-
-  @Override
-  public List<Pair<String, Level>> validateFunction(IServiceCall functionCall,
-      Set<IPrototype.Type> expectedType) {
-    List<Pair<String, Level>> ret = new ArrayList<>();
-    IPrototype prototype = Extensions.INSTANCE.getPrototype(functionCall.getName());
-    if (prototype != null) {
-      ret.addAll(prototype.validate(functionCall));
-      if (expectedType != null) {
-        
-      }
-    } else {
-      ret.add(Pair.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
-    }
-    return ret;
-  }
-
-  @Override
-  public UrnDescriptor classifyUrn(String urn) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
-
-    IConcept coreType = Concepts.INSTANCE.getConcept(string);
-    if (coreType == null) {
-      return EnumSet.noneOf(Type.class);
-    }
-    /*
-     * TODO check type
-     */
-    return statedType;
-  }
-
-  @Override
-  public boolean isFunctionKnown(String functionName) {
-    return Extensions.INSTANCE.getPrototype(functionName) != null;
-  }
-
-  @Override
-  public boolean isAnnotationKnown(String annotationName) {
-    return Annotations.INSTANCE.getPrototype(annotationName) != null;
-  }
-
-  @Override
-  public List<Pair<String, Level>> validateAnnotation(IServiceCall annotationCall,
-      IKimStatement target) {
-    List<Pair<String, Level>> ret = new ArrayList<>();
-    IPrototype prototype = Annotations.INSTANCE.getPrototype(annotationCall.getName());
-    if (prototype != null) {
-      return prototype.validate(annotationCall);
-    }
-    // Annotations w/o prototype are allowed
-    return ret;
-
-  }
-
-  @Override
-  public IPrototype getFunctionPrototype(String functionId) {
-    return Extensions.INSTANCE.getPrototype(functionId);
-  }
-
-  @Override
-  public IPrototype getAnnotationPrototype(String functionId) {
-    return Annotations.INSTANCE.getPrototype(functionId);
-  }
+	@Override
+	public IPrototype getAnnotationPrototype(String functionId) {
+		return Annotations.INSTANCE.getPrototype(functionId);
+	}
 
 }

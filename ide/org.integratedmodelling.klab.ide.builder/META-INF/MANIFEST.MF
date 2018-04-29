@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: k.LAB Builder
+Bundle-SymbolicName: org.integratedmodelling.klab.ide.builder;singleton:=true
+Bundle-Version: 0.10.0.qualifier
+Require-Bundle: org.eclipse.core.resources,
+  org.eclipse.core.runtime,
+  org.eclipse.ui
+Automatic-Module-Name: org.integratedmodelling.klab.ide.builder
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -5,23 +5,30 @@ Bundle-SymbolicName: org.integratedmodelling.klab.ide;singleton:=true
 Bundle-Version: 0.10.0.qualifier
 Bundle-Activator: org.integratedmodelling.klab.ide.Activator
 Bundle-Vendor: org.integratedmodelling
-Require-Bundle: javax.annotation;bundle-version="1.2.0",
+Require-Bundle: javax.inject,
+ javax.annotation,
+ org.eclipse.osgi,
+ org.eclipse.jface,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.ui.di,
+ org.eclipse.e4.ui.services,
+ org.eclipse.e4.core.di.annotations,
  org.eclipse.ui,
+ org.eclipse.ui.ide,
  org.eclipse.core.runtime,
- org.eclipse.e4.ui.di;bundle-version="1.2.100",
- org.integratedmodelling.kim;bundle-version="0.10.0",
- org.integratedmodelling.kim.ide;bundle-version="0.10.0",
- org.integratedmodelling.kim.ui;bundle-version="0.10.0",
- org.integratedmodelling.kdl;bundle-version="0.10.0",
- org.integratedmodelling.kdl.ide;bundle-version="0.10.0",
- org.integratedmodelling.kdl.ui;bundle-version="0.10.0",
+ org.integratedmodelling.kim,
+ org.integratedmodelling.kim.ide,
+ org.integratedmodelling.kim.ui,
+ org.integratedmodelling.kdl,
+ org.integratedmodelling.kdl.ide,
+ org.integratedmodelling.kdl.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.navigator,
  org.eclipse.ui.navigator.resources,
- org.eclipse.xtext.util;bundle-version="2.12.0",
- org.eclipse.ui.ide;bundle-version="3.13.1",
- org.integratedmodelling.klab.client;bundle-version="0.10.0",
- org.integratedmodelling.klab.api;bundle-version="0.10.0"
+ org.eclipse.xtext.ui;bundle-version="2.12.0",
+ org.eclipse.xtext.util,
+ org.integratedmodelling.klab.client,
+ org.integratedmodelling.klab.api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

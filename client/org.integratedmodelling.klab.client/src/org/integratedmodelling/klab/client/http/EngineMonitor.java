@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.client.http;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Nullable;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -10,132 +12,147 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 
 /**
- * Engine monitor that checks the engine status at regular intervals, notifying of
- * down or up events and exposing a websockets-driven message bus to communicate
- * with the engine.
+ * Engine monitor that checks the engine status at regular intervals, notifying
+ * of down or up events and handling automatically the opening or rejoining of a
+ * session when the engine comes up, exposing a websockets-driven message bus to
+ * communicate with the engine.
  * 
  * @author ferdinando.villa
  *
  */
 public class EngineMonitor {
 
-    public static final String ENGINE_DEFAULT_URL = "http://127.0.0.1:8283/modeler";
+	public static final String ENGINE_DEFAULT_URL = "http://127.0.0.1:8283/modeler";
 
-    String engineUrl = ENGINE_DEFAULT_URL;
-    String engineKey;
-    protected long recheckSecondsWhenOnline = 30;
-    protected long recheckSecondsWhenOffline = 15;
-    long uptime = -1;
-    Client client;
-    //    KlabPOJOGenerator pojoGenerator;
-    StompMessageBus messageBus;
-    String sessionId;
+	String engineUrl = ENGINE_DEFAULT_URL;
+	String engineKey;
+	protected long recheckSecondsWhenOnline = 30;
+	protected long recheckSecondsWhenOffline = 15;
+	long uptime = -1;
+	Client client;
+	// KlabPOJOGenerator pojoGenerator;
+	StompMessageBus messageBus;
+	String sessionId;
 
-    AtomicBoolean stop = new AtomicBoolean(false);
+	AtomicBoolean stop = new AtomicBoolean(false);
 
-    private Runnable onEngineUp;
+	private Runnable onEngineUp;
+	private Runnable onEngineDown;
 
-    private Runnable onEngineDown;
+	public EngineMonitor(String url, Runnable onEngineUp, Runnable onEngineDown, @Nullable String initialSessionId) {
+		engineUrl = url;
+		this.onEngineUp = onEngineUp;
+		this.onEngineDown = onEngineDown;
+		this.client = Client.create(url);
+		this.sessionId = initialSessionId;
+	}
+	
+	/**
+	 * Use in a engineUp handler to store the session ID after the engine was started.
+	 * 
+	 * @return
+	 */
+	public String getSessionId() {
+		return this.sessionId;
+	}
 
-    public EngineMonitor(String url, Runnable onEngineUp, Runnable onEngineDown) {
-        engineUrl = url;
-        this.onEngineUp = onEngineUp;
-        this.onEngineDown = onEngineDown;
-        this.client = Client.create(url);
-    }
+	public void start() {
+		new RepeatingJob().schedule();
+	}
 
-    public void start() {
-        new RepeatingJob().schedule();
-    }
+	public void stop() {
+		stop.set(true);
+	}
 
-    public void stop() {
-        stop.set(true);
-    }
+	public boolean isRunning() {
+		return uptime > 0;
+	}
 
-    public boolean isRunning() {
-        return uptime > 0;
-    }
+	public String getEngineUrl() {
+		return engineUrl;
+	}
 
-    public String getEngineUrl() {
-        return engineUrl;
-    }
+	public void setEngineUrl(String url) {
+		this.engineUrl = url;
+		this.client = Client.create(url);
+	}
 
-    public void setEngineUrl(String url) {
-        this.engineUrl = url;
-        this.client = Client.create(url);
-    }
+	public class RepeatingJob extends Job {
 
-    public class RepeatingJob extends Job {
+		public RepeatingJob() {
+			super("Checking engine status...");
+		}
 
-        public RepeatingJob() {
-            super("Checking engine status...");
-        }
+		protected IStatus run(IProgressMonitor monitor) {
 
-        protected IStatus run(IProgressMonitor monitor) {
+			long delay = recheckSecondsWhenOffline;
+			long up = client.ping();
+			if (uptime < 0 && up > 0) {
+				engineUp();
+				delay = recheckSecondsWhenOnline;
+			} else if (up < 0 && uptime > 0) {
+				engineDown();
+			}
 
-            long delay = recheckSecondsWhenOffline;
-            long up = client.ping();
-            if (uptime < 0 && up > 0) {
-                engineUp();
-                delay = recheckSecondsWhenOnline;
-            } else if (up < 0 && uptime > 0) {
-                engineDown();
-            }
+			uptime = up;
 
-            uptime = up;
+			if (!stop.get()) {
+				schedule(delay * 1000);
+			} else {
+				stop.set(false);
+			}
+			return Status.OK_STATUS;
+		}
 
-            if (!stop.get()) {
-                schedule(delay * 1000);
-            } else {
-                stop.set(false);
-            }
-            return Status.OK_STATUS;
-        }
+	}
 
-    }
+	/**
+	 * Ops performed when an engine appears online. Rejoin of a previous session is automatic within
+	 * an instance, but the sessionId is saved across instances only if configured.
+	 */
+	private void engineUp() {
 
-    /**
-     * Ops performed when an engine appears online.
-     */
-    private void engineUp() {
+		/*
+		 * TODO if engine is not local, must authenticate with stored username/password
+		 */
+		
+		this.sessionId = client.openSession(this.sessionId);
+		if (this.sessionId != null) {
+			this.messageBus = new StompMessageBus(
+					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId);
+			/*
+			 * call user notifier
+			 */
+			onEngineUp.run();
 
-        this.sessionId = client.openSession(/* TODO pass previous if persisted */null);
-        if (this.sessionId != null) {
-            this.messageBus = new StompMessageBus(
-                    engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId);
-            /*
-             * call user notifier
-             */
-            onEngineUp.run();
+		} else {
+			stop();
+			throw new RuntimeException("engine session negotiation failed");
+		}
+	}
 
-        } else {
-            stop();
-            throw new RuntimeException("engine session negotiation failed");
-        }
-    }
+	/**
+	 * Ops performed when an engine goes down.
+	 */
+	private void engineDown() {
+		// TODO Auto-generated method stub
+		onEngineDown.run();
+	}
 
-    /**
-     * Ops performed when an engine goes down.
-     */
-    private void engineDown() {
-        // TODO Auto-generated method stub
-        onEngineDown.run();
-    }
+	public IMessageBus bus() {
 
-    public IMessageBus bus() {
+		if (this.messageBus == null) {
+			if (isRunning() && sessionId != null) {
+				this.messageBus = new StompMessageBus(engineUrl, sessionId);
+			}
+		}
 
-        if (this.messageBus == null) {
-            if (isRunning() && sessionId != null) {
-                this.messageBus = new StompMessageBus(engineUrl, sessionId);
-            }
-        }
+		if (this.messageBus == null) {
+			throw new IllegalAccessError(
+					"EngineMonitor: bus() called with engine not running or before a session was established");
+		}
 
-        if (this.messageBus == null) {
-            throw new IllegalAccessError(
-                    "EngineMonitor: bus() called with engine not running or before a session was established");
-        }
-
-        return this.messageBus;
-    }
+		return this.messageBus;
+	}
 
 }

@@ -24,4 +24,9 @@ package org.integratedmodelling.klab.api.auth;
  */
 public interface IUserCredentials {
 
+	String getUsername();
+	
+	String getPassword();
+	
+	// TODO other ways
 }

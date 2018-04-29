@@ -25,9 +25,13 @@ Require-Bundle: org.integratedmodelling.kim,
  org.eclipse.ui.navigator.resources;bundle-version="3.6.1"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.integratedmodelling.kim.ui.contentassist;uses:="org.eclipse.emf.ecore,org.eclipse.xtext.ui.editor.contentassist,org.eclipse.xtext",
+Export-Package: org.integratedmodelling.kim.ui,
+ org.integratedmodelling.kim.ui.contentassist;uses:="org.eclipse.emf.ecore,org.eclipse.xtext.ui.editor.contentassist,org.eclipse.xtext",
  org.integratedmodelling.kim.ui.elink,
  org.integratedmodelling.kim.ui.internal;uses:="org.osgi.framework,com.google.inject,org.eclipse.ui.plugin",
+ org.integratedmodelling.kim.ui.labeling,
+ org.integratedmodelling.kim.ui.navigator,
+ org.integratedmodelling.kim.ui.outline,
  org.integratedmodelling.kim.ui.quickfix;uses:="org.eclipse.xtext.ui.editor.quickfix"
 Bundle-Activator: org.integratedmodelling.kim.ui.KimCustomActivator
 Automatic-Module-Name: org.integratedmodelling.kim.ui
