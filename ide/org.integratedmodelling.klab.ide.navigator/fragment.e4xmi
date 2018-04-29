@@ -6,12 +6,10 @@
       <tags>categoryTag:org.integratedmodelling.klab.ide.category</tags>
       <menus xmi:id="_jo0O8ErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.menu.view" label="View">
         <tags>ViewMenu</tags>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_lvmVQErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.development" label="Development view" selected="true" type="Radio"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_lvmVQErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.development" label="Development view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" tooltip="Switch to development view (projects, namespaces and their contents)" selected="true" type="Radio"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_p19tsErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.bookmarks" label="Bookmark view" type="Radio"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_3F-LMErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.runnables" label="Script view" type="Radio"/>
-        <children xsi:type="menu:DirectMenuItem" xmi:id="_fRG9IEsOEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.directmenuitem.porcoddio" label="Porcoddio"/>
       </menus>
-      <toolbar xmi:id="_tAX-8EsNEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.toolbar.0"/>
     </elements>
   </fragments>
 </fragment:ModelFragments>

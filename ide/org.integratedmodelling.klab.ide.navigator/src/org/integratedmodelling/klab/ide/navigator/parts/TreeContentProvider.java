@@ -24,7 +24,7 @@ class TreeContentProvider implements ITreeContentProvider {
 		} else if (parent instanceof IProject) {
 			
 		}
-		return null;
+		return new Object[] {};
 	}
 
 	public Object getParent(Object element) {
