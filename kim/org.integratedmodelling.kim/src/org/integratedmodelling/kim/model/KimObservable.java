@@ -5,6 +5,7 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -14,8 +15,8 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	private static final long serialVersionUID = 9015149238349286112L;
 
-	public KimObservable(ObservableSemantics statement) {
-		super(statement);
+	public KimObservable(ObservableSemantics statement, IKimStatement parent) {
+		super(statement, parent);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -62,14 +63,14 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		this.main = main;
 	}
 
-	public static KimObservable normalize(ObservableSemantics declaration) {
+	public static KimObservable normalize(ObservableSemantics declaration, IKimStatement parent) {
 
 		KimConcept concept = Kim.INSTANCE.declareConcept(declaration.getDeclaration());
 		if (concept == null) {
 			return null;
 		}
 
-		KimObservable ret = new KimObservable(declaration);
+		KimObservable ret = new KimObservable(declaration, parent);
 
 		ret.main = concept;
 		ret.formalName = declaration.getName();
@@ -104,7 +105,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		if (declaration.getBy() != null) {
-			ret.by = KimConcept.normalize(declaration.getBy());
+			ret.by = KimConcept.normalize(declaration.getBy(), parent);
 		}
 		if (declaration.getDownTo() != null) {
 			// ret.downTo = KimConcept.normalize(declaration.getDownTo());

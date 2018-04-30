@@ -30,14 +30,6 @@ public class KimValidator implements Kim.Validator {
 		this.monitor = monitor;
 	}
 
-//	public KimValidator(KimValidator kimValidator, Monitor monitor) {
-//		this(monitor);
-//	}
-//
-//	public KimValidator with(Monitor monitor) {
-//		return new KimValidator(this, monitor);
-//	}
-
 	@Override
 	public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IPrototype.Type> expectedType) {
 		List<Pair<String, Level>> ret = new ArrayList<>();

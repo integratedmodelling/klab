@@ -28,7 +28,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     private Map<String, Object>        symbolTable      = new HashMap<>();
 
     public KimNamespace(Namespace namespace, KimProject project) {
-        super(namespace);
+        super(namespace, null);
         this.name = KimProject.getNamespaceId(namespace);
         if (namespace.eResource().getURI().isFile()) {
           File file = new File(namespace.eResource().getURI().toFileString());
@@ -49,22 +49,22 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         }
     }
 
-    /**
-     * Copy constructor. Shallow copy only as it's expected to build substitutes with full k.LAB semantics for
-     * contextualization.
-     * 
-     * KEEP UPDATED WHEN FIELDS CHANGE.
-     * 
-     * @param namespace
-     */
-    protected KimNamespace(KimNamespace namespace) {
-        super(namespace);
-        this.name = namespace.name;
-        this.project = namespace.project;
-        this.timestamp = namespace.timestamp;
-        this.imported = namespace.imported;
-        this.isPrivate = namespace.isPrivate;
-    }
+//    /**
+//     * Copy constructor. Shallow copy only as it's expected to build substitutes with full k.LAB semantics for
+//     * contextualization.
+//     * 
+//     * KEEP UPDATED WHEN FIELDS CHANGE.
+//     * 
+//     * @param namespace
+//     */
+//    protected KimNamespace(KimNamespace namespace) {
+//        super(namespace);
+//        this.name = namespace.name;
+//        this.project = namespace.project;
+//        this.timestamp = namespace.timestamp;
+//        this.imported = namespace.imported;
+//        this.isPrivate = namespace.isPrivate;
+//    }
 
     public KimNamespace(String id, File file) {
         this.name = id;

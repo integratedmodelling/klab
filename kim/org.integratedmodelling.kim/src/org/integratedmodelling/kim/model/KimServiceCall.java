@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
@@ -20,8 +21,8 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	protected String name;
 	protected Parameters parameters = new Parameters();
 
-	protected KimServiceCall(EObject object) {
-		super(object);
+	protected KimServiceCall(EObject object, IKimStatement parent) {
+		super(object, parent);
 	}
 
 	/**
@@ -36,8 +37,8 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 		return new KimServiceCall(name, parameters);
 	}
 
-	public KimServiceCall(Function statement) {
-		super(statement);
+	public KimServiceCall(Function statement, IKimStatement parent) {
+		super(statement, parent);
 		if (statement != null) {
 			KimNamespace namespace = Kim.INSTANCE.getNamespace(statement, false);
 			this.name = statement.getName();
@@ -58,14 +59,14 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 		return Kim.INSTANCE.validateFunctionCall(this, expectedType);
 	}
 
-	public KimServiceCall(EObject statement, String name, Map<String, Object> parameters) {
-		super(statement);
+	public KimServiceCall(EObject statement, String name, Map<String, Object> parameters, IKimStatement parent) {
+		super(statement, parent);
 		this.name = name;
 		this.parameters.putAll(parameters);
 	}
 
 	public KimServiceCall(String name, Object[] parameters) {
-		super((EObject) null);
+		super((EObject) null, null);
 		this.name = name;
 		for (int i = 0; i < parameters.length; i++) {
 			String key = parameters[i].toString();

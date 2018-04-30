@@ -5,8 +5,10 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimMacro;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
@@ -98,13 +100,13 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
     private static final long serialVersionUID = 4160895607335615009L;
 
-    public KimConcept(ConceptDeclaration statement) {
-        super(statement);
+    public KimConcept(ConceptDeclaration statement, IKimStatement parent) {
+        super(statement, parent);
         // TODO Auto-generated constructor stub
     }
 
-    public KimConcept(Concept statement) {
-        super(statement);
+    public KimConcept(Concept statement, IKimStatement parent) {
+        super(statement, parent);
         // TODO Auto-generated constructor stub
     }
 
@@ -115,8 +117,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
      * @param declaration
      * @return the normalized concept
      */
-    public static KimConcept normalize(ConceptDeclaration declaration) {
-        return normalize(declaration, null);
+    public static KimConcept normalize(ConceptDeclaration declaration, IKimStatement parent) {
+        return normalize(declaration, null, parent);
     }
 
     /**
@@ -125,9 +127,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
      * 
      * @param declaration
      * @param macro can be null
+     * @param parent 
      * @return the normalized concept
      */
-    public static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro) {
+    public static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent) {
 
         if (Kim.INSTANCE.hasErrors(declaration)) {
             return null;
@@ -137,14 +140,14 @@ public class KimConcept extends KimStatement implements IKimConcept {
             return null;
         }
 
-        KimConcept ret = new KimConcept(declaration);
+        KimConcept ret = new KimConcept(declaration, parent);
         KimConcept observable = null;
         List<KimConcept> unclassified = new ArrayList<>();
         KimConcept last = null;
         boolean subjective = false;
 
         for (Concept main : declaration.getMain()) {
-            last = normalize(main);
+            last = normalize(main, parent);
             if (last == null) {
                 return null;
             }
@@ -191,7 +194,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
         ret.type = observable.type;
 
         if (declaration.getInherency() != null) {
-            ret.inherent = normalize(declaration.getInherency());
+            ret.inherent = normalize(declaration.getInherency(), parent);
             if (ret.inherent == null) {
                 return null;
             }
@@ -206,7 +209,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
         }
         if (declaration.getContext() != null) {
-            ret.context = normalize(declaration.getContext());
+            ret.context = normalize(declaration.getContext(), parent);
             if (ret.context == null) {
                 return null;
             }
@@ -222,7 +225,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
         }
         if (declaration.getMotivation() != null) {
-            ret.motivation = normalize(declaration.getContext());
+            ret.motivation = normalize(declaration.getContext(), parent);
             if (ret.motivation == null) {
                 return null;
             }
@@ -238,7 +241,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
         }
         if (declaration.getCausant() != null) {
-            ret.causant = normalize(declaration.getContext());
+            ret.causant = normalize(declaration.getContext(), parent);
             if (ret.causant == null) {
                 return null;
             }
@@ -254,7 +257,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
         }
         if (declaration.getCaused() != null) {
-            ret.caused = normalize(declaration.getContext());
+            ret.caused = normalize(declaration.getContext(), parent);
             if (ret.caused == null) {
                 return null;
             }
@@ -269,7 +272,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
             }
         }
         if (declaration.getCompresent() != null) {
-            ret.compresent = normalize(declaration.getContext());
+            ret.compresent = normalize(declaration.getContext(), parent);
             if (ret.compresent == null) {
                 return null;
             }
@@ -334,10 +337,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
         return ret;
     }
 
-    static KimConcept normalize(Concept concept) {
+    static KimConcept normalize(Concept concept, IKimStatement parent) {
 
         if (concept.getDeclaration() != null) {
-            return normalize(concept.getDeclaration());
+            return normalize(concept.getDeclaration(), parent);
         }
 
         KimConcept ret = null;
@@ -345,12 +348,12 @@ public class KimConcept extends KimStatement implements IKimConcept {
         if (concept.getConcept() != null) {
 
             // reading a semantic operator
-            ret = normalize(concept.getConcept());
+            ret = normalize(concept.getConcept(), parent);
             if (ret == null) {
                 return null;
             }
             if (concept.getOther() != null) {
-                ret.otherConcept = normalize(concept.getOther());
+                ret.otherConcept = normalize(concept.getOther(), parent);
             }
 
             ret.setObservationType(concept);
@@ -358,12 +361,12 @@ public class KimConcept extends KimStatement implements IKimConcept {
         } else {
 
             // reading a basic named concept with potential negation or authority
-            ret = new KimConcept(concept);
+            ret = new KimConcept(concept, parent);
             if (concept.getName().isTemplate()) {
             	// add the declaration character, # for an optional field and $ for a mandatory one
                 ret.name = concept.getName().getTemplateType().charAt(0) + concept.getName().getName();
                 if (concept.getName().getExtends() != null) {
-                    ret.validParent = normalize(concept.getName().getExtends());
+                    ret.validParent = normalize(concept.getName().getExtends(), parent);
                     if (ret.validParent != null) {
                         ret.type.addAll(ret.validParent.type);
                     }

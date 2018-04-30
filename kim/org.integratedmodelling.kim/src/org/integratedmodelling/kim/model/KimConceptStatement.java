@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -206,8 +207,8 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
         this.appliesTo = appliesTo;
     }
 
-    public KimConceptStatement(ConceptStatementBody statement) {
-        super(statement);
+    public KimConceptStatement(ConceptStatementBody statement, IKimStatement parent) {
+        super(statement, parent);
         // TODO Auto-generated constructor stub
     }
 

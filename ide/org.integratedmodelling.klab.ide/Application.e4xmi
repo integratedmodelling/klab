@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmi:id="_h6v1MExIEeiNL9mtZkDmHg" elementId="org.integratedmodelling.klab.ide.application">
+  <addons xmi:id="_h6v1MUxIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_h6v1MkxIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_h6v1M0xIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_h6v1NExIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_h6v1NUxIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_h6v1NkxIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_h6v1N0xIEeiNL9mtZkDmHg" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_oN_78ExIEeiNL9mtZkDmHg" elementId="org.integratedmodelling.klab.ide.addon.0" contributionURI="bundleclass://org.integratedmodelling.klab.ide/org.integratedmodelling.klab.ide.compatibility.ForceMainMenuProcessor"/>
+</application:Application>

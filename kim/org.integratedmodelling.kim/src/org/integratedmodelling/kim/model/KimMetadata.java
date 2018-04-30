@@ -3,6 +3,7 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.List;
 import org.integratedmodelling.kim.api.IKimMetadata;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -17,8 +18,8 @@ public class KimMetadata extends KimStatement implements IKimMetadata {
    */
   protected Parameters data;
 
-  public KimMetadata(Metadata statement) {
-    super(statement);
+  public KimMetadata(Metadata statement, IKimStatement parent) {
+    super(statement, parent);
     this.data = Kim.INSTANCE.parseMap(statement,
         Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement), false));
   }

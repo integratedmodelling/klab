@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 
 public class KimObserver extends KimStatement implements IKimObserver {
 
@@ -19,8 +20,8 @@ public class KimObserver extends KimStatement implements IKimObserver {
     private List<IKimObservable> states           = new ArrayList<>();
     private IKimBehavior         behavior         = new KimBehavior();
 
-    public KimObserver(EObject statement, IKimObservable observable) {
-        super(statement);
+    public KimObserver(EObject statement, IKimObservable observable, IKimStatement parent) {
+        super(statement, parent);
         this.observable = observable;
         this.name = observable.getFormalName();
     }

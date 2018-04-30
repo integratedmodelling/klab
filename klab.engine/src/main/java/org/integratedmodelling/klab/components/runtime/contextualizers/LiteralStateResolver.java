@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -43,7 +44,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
     Object                     value;
 
     public LiteralFunction(Object value) {
-      super(null);
+      super((EObject)null, null);
       this.value = value;
       setName(FUNCTION_ID);
       getParameters().put("val", value);

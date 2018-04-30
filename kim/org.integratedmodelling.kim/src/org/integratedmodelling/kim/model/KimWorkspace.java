@@ -101,6 +101,10 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
         }
     }
 
+    static Collection<KimWorkspace> getWorkspaces() {
+        return workspacesByURI.values();
+    }
+    
     /**
      * Constructor for a file-based workspace. This one will be able to enumerate its projects and Kim
      * resources after construction. You can pass any number of project directories that will override the

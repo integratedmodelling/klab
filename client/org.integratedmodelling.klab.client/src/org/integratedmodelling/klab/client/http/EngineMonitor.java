@@ -50,7 +50,7 @@ public class EngineMonitor {
 	/**
 	 * Use in a engineUp handler to store the session ID after the engine was started.
 	 * 
-	 * @return
+	 * @return the session ID 
 	 */
 	public String getSessionId() {
 		return this.sessionId;

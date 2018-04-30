@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ModelStatement;
 
@@ -25,8 +26,8 @@ public class KimModel extends KimStatement implements IKimModel {
 
   public String name = "UNASSIGNED";
 
-  public KimModel(ModelStatement statement) {
-    super(statement);
+  public KimModel(ModelStatement statement, IKimStatement parent) {
+    super(statement, parent);
   }
 
   private boolean instantiator = false;

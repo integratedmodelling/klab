@@ -28,4 +28,6 @@ public interface IKimProject {
 
     Properties getProperties();
 
+    List<IKimNamespace> getNamespaces();
+
 }

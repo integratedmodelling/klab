@@ -12,8 +12,8 @@ public class KimAnnotation extends KimServiceCall implements IKimAnnotation {
 
     private static final long serialVersionUID = 5762837796346002863L;
     
-    public KimAnnotation(Annotation statement, IKimNamespace namespace) {
-        super(statement);
+    public KimAnnotation(Annotation statement, IKimNamespace namespace, IKimStatement parent) {
+        super(statement, parent);
         this.name = statement.getName().substring(1);
         if (statement.getParameters() != null) {
             if (statement.getParameters().getSingleValue() != null) {

@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.api.IKimMetadata;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConcept;
@@ -327,5 +328,10 @@ public class KimMacro implements IKimMacro {
     @Override
     public String getSourceCode() {
       return delegate.getSourceCode();
+    }
+
+    @Override
+    public IKimStatement getParent() {
+        return delegate.getParent();
     }
 }

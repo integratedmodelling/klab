@@ -143,7 +143,7 @@ public class Client extends RestTemplate {
 	/**
 	 * Retrieve the list of POJO types from the schema endpoint.
 	 * 
-	 * @return
+	 * @return the POJO descriptors
 	 */
 	public BeanDescriptor getPOJOClasses() {
 

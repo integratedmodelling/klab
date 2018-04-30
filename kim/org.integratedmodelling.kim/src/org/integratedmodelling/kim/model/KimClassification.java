@@ -7,6 +7,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -17,8 +18,8 @@ public class KimClassification extends KimStatement implements IKimClassificatio
     private boolean discretization;
     private List<Pair<IKimConcept, IKimClassifier>> classifiers = new ArrayList<>();
     
-    public KimClassification(Classification classification, boolean discretization) {
-        super(classification);
+    public KimClassification(Classification classification, boolean discretization, IKimStatement parent) {
+        super(classification, parent);
         this.discretization = discretization;
         // TODO
     }

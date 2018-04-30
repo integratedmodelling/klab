@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimActiveStatement;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.ValueAssignment;
@@ -24,8 +25,8 @@ public class KimAction extends KimStatement implements IKimAction {
   String language;
   List<IKimConcept> triggeringEvents = new ArrayList<>();
 
-  public KimAction(ActionSpecification statement) {
-    super(statement);
+  public KimAction(ActionSpecification statement, IKimStatement parent) {
+    super(statement, parent);
   }
 
   public KimAction(KimAction action) {
@@ -52,14 +53,14 @@ public class KimAction extends KimStatement implements IKimAction {
 
     ComputableResource condition = null;
     if (statement.getCondition() != null) {
-      condition = new ComputableResource(statement.getCondition());
+      condition = new ComputableResource(statement.getCondition(), getParent());
       if (statement.isConditionNegative()) {
         condition.setNegated(true);
       }
     }
 
     for (ValueAssignment vass : statement.getAssignments()) {
-      this.computation.add(new ComputableResource(vass, condition));
+      this.computation.add(new ComputableResource(vass, condition, getParent()));
     }
   }
 

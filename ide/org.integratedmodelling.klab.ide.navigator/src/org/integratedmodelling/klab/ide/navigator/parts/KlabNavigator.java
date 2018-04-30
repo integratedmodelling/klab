@@ -100,9 +100,8 @@ public class KlabNavigator {
 	 * You should change the parameter type of your array of Objects to manage your
 	 * specific selection
 	 * 
-	 * @param o
-	 *            : the current array of objects received in case of multiple
-	 *            selection
+	 * @param selectedObjects the current array of objects received in case of multiple
+	 *          selection
 	 */
 	@Inject
 	@Optional

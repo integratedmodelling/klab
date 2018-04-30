@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimLookupTable;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
@@ -82,20 +83,20 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.requiredResourceNames = requiredResourceNames;
 	}
 
-	public ComputableResource(Contextualization statement) {
+	public ComputableResource(Contextualization statement, IKimStatement parent) {
 
-		super(statement);
+		super(statement, parent);
 
 		if (statement.getValue() != null) {
 			setFrom(statement.getValue());
 		}
 		if (statement.getLookupTable() != null) {
 			setCode(statement.getLookupTable());
-			this.lookupTable = new KimLookupTable(statement.getLookupTable());
+			this.lookupTable = new KimLookupTable(statement.getLookupTable(), parent);
 			this.setPostProcessor(true);
 		} else if (statement.getClassification() != null) {
 			setCode(statement.getClassification());
-			this.classification = new KimClassification(statement.getClassification(), statement.isDiscretization());
+			this.classification = new KimClassification(statement.getClassification(), statement.isDiscretization(), parent);
 			this.setPostProcessor(true);
 		}
 		if ((this.accordingTo = statement.getClassificationProperty()) != null) {
@@ -103,10 +104,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		}
 	}
 
-	public ComputableResource(Value value) {
-		super(value);
+	public ComputableResource(Value value, IKimStatement parent) {
+		super(value, parent);
 		if (value.getFunction() != null) {
-			this.serviceCall = new KimServiceCall(value.getFunction());
+			this.serviceCall = new KimServiceCall(value.getFunction(), parent);
 		} else if (value.getExpr() != null) {
 			this.expression = value.getExpr();
 		} else if (value.getLiteral() != null) {
@@ -118,8 +119,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.conversion = new Pair<>(from, to);
 	}
 
-	public ComputableResource(ValueAssignment statement, ComputableResource condition) {
-		super(statement);
+	public ComputableResource(ValueAssignment statement, ComputableResource condition, IKimStatement parent) {
+		super(statement, parent);
 		setFrom(statement);
 		this.condition = condition;
 	}
@@ -153,7 +154,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		if (value.getUrn() != null) {
 			this.urn = value.getUrn();
 		} else if (value.getFunction() != null) {
-			this.serviceCall = new KimServiceCall(value.getFunction());
+			this.serviceCall = new KimServiceCall(value.getFunction(), getParent());
 		} else if (value.getExpr() != null) {
 			this.expression = removeDelimiters(value.getExpr());
 		} else if (value.getLiteral() != null) {

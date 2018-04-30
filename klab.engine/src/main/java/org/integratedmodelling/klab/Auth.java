@@ -112,7 +112,7 @@ public enum Auth implements IAuthenticationService {
      * Util to extract an identity from the principal of a Spring request.
      * TODO make another to return a specific type or throw an authorization exception
      * @param principal
-     * @return
+     * @return the identity or null
      */
     public IIdentity getIdentity(Principal principal) {
         if (principal instanceof PreAuthenticatedAuthenticationToken && ((PreAuthenticatedAuthenticationToken)principal).getPrincipal() instanceof IIdentity) {

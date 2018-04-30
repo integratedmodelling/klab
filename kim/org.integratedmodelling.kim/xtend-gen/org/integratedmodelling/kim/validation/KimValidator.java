@@ -72,6 +72,7 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.kim.model.KimObserver;
 import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.kim.model.KimStatement;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -360,7 +361,7 @@ public class KimValidator extends AbstractKimValidator {
             boolean _xblockexpression_2 = false;
             {
               KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
-              KimModel descriptor = new KimModel(statement);
+              KimModel descriptor = new KimModel(statement, ns);
               descriptor.getObservables().addAll(observables);
               descriptor.getDependencies().addAll(dependencies);
               descriptor.setInstantiator(model.isInstantiator());
@@ -377,7 +378,7 @@ public class KimValidator extends AbstractKimValidator {
                 boolean _tripleNotEquals_1 = (_function != null);
                 if (_tripleNotEquals_1) {
                   Function _function_1 = model.getFunction();
-                  KimServiceCall _kimServiceCall = new KimServiceCall(_function_1);
+                  KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
                   descriptor.setResourceFunction(_kimServiceCall);
                   IServiceCall _get = descriptor.getResourceFunction().get();
                   List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
@@ -437,7 +438,7 @@ public class KimValidator extends AbstractKimValidator {
               EList<Contextualization> _contextualizers_1 = model.getContextualizers();
               for (final Contextualization contextualizer_1 : _contextualizers_1) {
                 List<IComputableResource> _contextualization = descriptor.getContextualization();
-                ComputableResource _computableResource = new ComputableResource(contextualizer_1);
+                ComputableResource _computableResource = new ComputableResource(contextualizer_1, descriptor);
                 _contextualization.add(_computableResource);
               }
               String _name = model.getName();
@@ -474,7 +475,7 @@ public class KimValidator extends AbstractKimValidator {
               boolean _tripleNotEquals_6 = (_metadata != null);
               if (_tripleNotEquals_6) {
                 Metadata _metadata_1 = model.getMetadata();
-                KimMetadata _kimMetadata = new KimMetadata(_metadata_1);
+                KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
                 descriptor.setMetadata(_kimMetadata);
               }
               Documentation _documentation = model.getDocumentation();
@@ -495,7 +496,7 @@ public class KimValidator extends AbstractKimValidator {
               EList<Annotation> _annotations = statement.getAnnotations();
               for (final Annotation annotation : _annotations) {
                 {
-                  KimAnnotation ann = new KimAnnotation(annotation, ns);
+                  KimAnnotation ann = new KimAnnotation(annotation, ns, descriptor);
                   descriptor.getAnnotations().add(ann);
                   List<KimNotification> _validateUsage_1 = ann.validateUsage(descriptor);
                   for (final KimNotification notification_1 : _validateUsage_1) {
@@ -558,7 +559,7 @@ public class KimValidator extends AbstractKimValidator {
           EList<Annotation> _annotations = observation.getAnnotations();
           for (final Annotation annotation : _annotations) {
             {
-              final KimAnnotation ann = new KimAnnotation(annotation, ns);
+              final KimAnnotation ann = new KimAnnotation(annotation, ns, obs);
               obs.getAnnotations().add(ann);
               List<KimNotification> _validateUsage = ann.validateUsage(obs);
               for (final KimNotification notification : _validateUsage) {
@@ -589,7 +590,7 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.OBSERVE_STATEMENT_BODY__CONCEPT, KimValidator.BAD_OBSERVATION);
         ok = false;
       } else {
-        KimObserver _kimObserver = new KimObserver(observation, semantics);
+        KimObserver _kimObserver = new KimObserver(observation, semantics, parent);
         ret = _kimObserver;
       }
     }
@@ -1469,7 +1470,7 @@ public class KimValidator extends AbstractKimValidator {
         EList<Annotation> _annotations = statement.getAnnotations();
         for (final Annotation annotation : _annotations) {
           {
-            final KimAnnotation ann = new KimAnnotation(annotation, namespace);
+            final KimAnnotation ann = new KimAnnotation(annotation, namespace, concept);
             concept.getAnnotations().add(ann);
             List<KimNotification> _validateUsage = ann.validateUsage(ann);
             for (final KimNotification notification : _validateUsage) {
@@ -1483,7 +1484,13 @@ public class KimValidator extends AbstractKimValidator {
   }
   
   public KimConceptStatement validateConceptBody(final ConceptStatementBody concept, final KimNamespace namespace, final KimConceptStatement parent, final EnumSet<IKimConcept.Type> type) {
-    KimConceptStatement ret = new KimConceptStatement(concept);
+    KimStatement _xifexpression = null;
+    if ((parent == null)) {
+      _xifexpression = namespace;
+    } else {
+      _xifexpression = parent;
+    }
+    KimConceptStatement ret = new KimConceptStatement(concept, _xifexpression);
     boolean ok = true;
     boolean isAlias = concept.isAlias();
     List<KimConceptStatement.ParentConcept> declaredParents = CollectionLiterals.<KimConceptStatement.ParentConcept>newArrayList();
@@ -1591,26 +1598,26 @@ public class KimValidator extends AbstractKimValidator {
                         KimConceptStatement.ParentConcept group_1 = declaredParents.get(_minus);
                         group_1.getConcepts().add(declaration);
                         String statedConnector = concept.getConnectors().get((i - 1));
-                        BinarySemanticOperator _xifexpression = null;
+                        BinarySemanticOperator _xifexpression_1 = null;
                         boolean _equals = statedConnector.equals("or");
                         if (_equals) {
-                          _xifexpression = BinarySemanticOperator.UNION;
+                          _xifexpression_1 = BinarySemanticOperator.UNION;
                         } else {
-                          BinarySemanticOperator _xifexpression_1 = null;
+                          BinarySemanticOperator _xifexpression_2 = null;
                           boolean _equals_1 = statedConnector.equals("and");
                           if (_equals_1) {
-                            _xifexpression_1 = BinarySemanticOperator.INTERSECTION;
+                            _xifexpression_2 = BinarySemanticOperator.INTERSECTION;
                           } else {
-                            BinarySemanticOperator _xifexpression_2 = null;
+                            BinarySemanticOperator _xifexpression_3 = null;
                             boolean _equals_2 = statedConnector.equals("follows");
                             if (_equals_2) {
-                              _xifexpression_2 = BinarySemanticOperator.FOLLOWS;
+                              _xifexpression_3 = BinarySemanticOperator.FOLLOWS;
                             }
-                            _xifexpression_1 = _xifexpression_2;
+                            _xifexpression_2 = _xifexpression_3;
                           }
-                          _xifexpression = _xifexpression_1;
+                          _xifexpression_1 = _xifexpression_2;
                         }
-                        BinarySemanticOperator connector = _xifexpression;
+                        BinarySemanticOperator connector = _xifexpression_1;
                         if ((Objects.equal(connector, BinarySemanticOperator.FOLLOWS) && 
                           (!declaration.getType().contains(IKimConcept.Type.EVENT)))) {
                           this.error("The consequentiality (\'follows\') operator is only allowed between events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
@@ -1756,14 +1763,14 @@ public class KimValidator extends AbstractKimValidator {
       }
       EnumSet<IKimConcept.Type> ttype = this.checkDeclaration(concept.getDescribedQuality());
       if (((!(type.contains(IKimConcept.Type.REALM) && ttype.contains(IKimConcept.Type.EXTENT))) && (!ttype.contains(IKimConcept.Type.QUALITY)))) {
-        String _xifexpression = null;
+        String _xifexpression_1 = null;
         boolean _contains_1 = type.contains(IKimConcept.Type.REALM);
         if (_contains_1) {
-          _xifexpression = "Realms can describe only extents or qualities";
+          _xifexpression_1 = "Realms can describe only extents or qualities";
         } else {
-          _xifexpression = "Only qualities can be described by attributes";
+          _xifexpression_1 = "Only qualities can be described by attributes";
         }
-        this.error(_xifexpression, concept, 
+        this.error(_xifexpression_1, concept, 
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY);
         ok = false;
       } else {
@@ -2091,18 +2098,18 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_12 = (_metadata != null);
     if (_tripleNotEquals_12) {
       Metadata _metadata_1 = concept.getMetadata();
-      KimMetadata _kimMetadata = new KimMetadata(_metadata_1);
+      KimMetadata _kimMetadata = new KimMetadata(_metadata_1, ret);
       ret.setMetadata(_kimMetadata);
     }
     if (ok) {
-      String _xifexpression_1 = null;
+      String _xifexpression_2 = null;
       boolean _isRoot = concept.isRoot();
       if (_isRoot) {
-        _xifexpression_1 = KimConceptStatement.ROOT_DOMAIN_NAME;
+        _xifexpression_2 = KimConceptStatement.ROOT_DOMAIN_NAME;
       } else {
-        _xifexpression_1 = concept.getName();
+        _xifexpression_2 = concept.getName();
       }
-      ret.setName(_xifexpression_1);
+      ret.setName(_xifexpression_2);
       String _name_4 = namespace.getName();
       String _plus_5 = (_name_4 + ":");
       String _name_5 = concept.getName();
@@ -2111,14 +2118,14 @@ public class KimValidator extends AbstractKimValidator {
       String _plus_7 = (_name_6 + ":");
       String _name_7 = concept.getName();
       String _plus_8 = (_plus_7 + _name_7);
-      KimConceptStatement _xifexpression_2 = null;
+      KimConceptStatement _xifexpression_3 = null;
       if (template) {
-        _xifexpression_2 = ret;
+        _xifexpression_3 = ret;
       } else {
-        _xifexpression_2 = null;
+        _xifexpression_3 = null;
       }
       String _docstring = concept.getDocstring();
-      Kim.ConceptDescriptor _conceptDescriptor_1 = new Kim.ConceptDescriptor(_plus_8, type, _xifexpression_2, _docstring);
+      Kim.ConceptDescriptor _conceptDescriptor_1 = new Kim.ConceptDescriptor(_plus_8, type, _xifexpression_3, _docstring);
       Kim.INSTANCE.setConceptDescriptor(_plus_6, _conceptDescriptor_1);
       ret.setMacro(template);
       ret.getType().addAll(type);

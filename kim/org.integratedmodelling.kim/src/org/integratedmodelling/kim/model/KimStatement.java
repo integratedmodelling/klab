@@ -17,167 +17,174 @@ import org.integratedmodelling.kim.api.IKimStatement;
  */
 public abstract class KimStatement extends KimScope implements IKimStatement {
 
-  private static final long      serialVersionUID = -1426788695739147795L;
+    private static final long serialVersionUID = -1426788695739147795L;
 
-  // ACHTUNG if these are added to, ensure that the copy constructor is updated.
-  protected int                  firstLine;
-  protected int                  lastLine;
-  protected int                  firstCharOffset;
-  protected int                  lastCharOffset;
-  protected List<IKimAnnotation> annotations      = new ArrayList<>();
-  protected KimMetadata          metadata;
-  protected KimMetadata          documentationMetadata;
-  protected String               resource;
-  protected boolean              deprecated       = false;
-  protected String               deprecation      = null;
-  protected String               sourceCode       = null;
-  // ACHTUNG if these are added to, ensure that the copy constructor is updated.
+    // ACHTUNG if these are added to, ensure that the copy constructor is updated.
+    protected int firstLine;
+    protected int lastLine;
+    protected int firstCharOffset;
+    protected int lastCharOffset;
+    protected List<IKimAnnotation> annotations = new ArrayList<>();
+    protected KimMetadata metadata;
+    protected KimMetadata documentationMetadata;
+    protected String resource;
+    protected boolean deprecated = false;
+    protected String deprecation = null;
+    protected String sourceCode = null;
+    protected IKimStatement parent = null;
+    // ACHTUNG if these are added to, ensure that the copy constructor is updated.
 
-  public KimStatement() {}
-
-  public KimStatement(EObject statement) {
-    if (statement != null) {
-      setCode(statement);
+    public KimStatement() {
     }
-  }
 
-  protected void setCode(EObject statement) {
-    ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
-    this.firstLine = node.getStartLine();
-    this.lastLine = node.getEndLine();
-    this.firstCharOffset = node.getOffset();
-    this.lastCharOffset = node.getEndOffset();
-    this.uri = EcoreUtil.getURI(statement);
-    this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
-    sourceCode = node.getText().trim();
-  }
+    public KimStatement(EObject statement, IKimStatement parent) {
+        if (statement != null) {
+            setCode(statement);
+        }
+        this.parent = parent;
+    }
 
+    protected void setCode(EObject statement) {
+        ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
+        this.firstLine = node.getStartLine();
+        this.lastLine = node.getEndLine();
+        this.firstCharOffset = node.getOffset();
+        this.lastCharOffset = node.getEndOffset();
+        this.uri = EcoreUtil.getURI(statement);
+        this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
+        sourceCode = node.getText().trim();
+    }
+    
+    @Override
+    public IKimStatement getParent() {
+        return parent;
+    }
 
-  /**
-   * Copy constructor. Shallow copy only as it's expected to build substitutes with full k.LAB
-   * semantics for contextualization.
-   * 
-   * KEEP UPDATED WHEN FIELDS CHANGE.
-   * 
-   * @param model
-   */
-  protected KimStatement(KimStatement statement) {
-    this.firstLine = statement.firstLine;
-    this.lastLine = statement.lastLine;
-    this.firstCharOffset = statement.firstCharOffset;
-    this.lastCharOffset = statement.lastCharOffset;
-    this.annotations = statement.annotations;
-    this.metadata = statement.metadata;
-    this.documentationMetadata = statement.documentationMetadata;
-    this.deprecated = statement.deprecated;
-    this.deprecation = statement.deprecation;
-    this.resource = statement.resource;
-  }
+    //  /**
+    //   * Copy constructor. Shallow copy only as it's expected to build substitutes with full k.LAB
+    //   * semantics for contextualization.
+    //   * 
+    //   * KEEP UPDATED WHEN FIELDS CHANGE.
+    //   * 
+    //   * @param model
+    //   */
+    //  protected KimStatement(KimStatement statement) {
+    //    this.firstLine = statement.firstLine;
+    //    this.lastLine = statement.lastLine;
+    //    this.firstCharOffset = statement.firstCharOffset;
+    //    this.lastCharOffset = statement.lastCharOffset;
+    //    this.annotations = statement.annotations;
+    //    this.metadata = statement.metadata;
+    //    this.documentationMetadata = statement.documentationMetadata;
+    //    this.deprecated = statement.deprecated;
+    //    this.deprecation = statement.deprecation;
+    //    this.resource = statement.resource;
+    //  }
 
-  @Override
-  public String toString() {
-    return getLocationDescriptor();
-  }
+    @Override
+    public String toString() {
+        return getLocationDescriptor();
+    }
 
-  @Override
-  public String getLocationDescriptor() {
-    return resource + " [" + firstLine + "-" + lastLine + "]: " + sourceCode;
-  }
+    @Override
+    public String getLocationDescriptor() {
+        return resource + " [" + firstLine + "-" + lastLine + "]: " + sourceCode;
+    }
 
-  @Override
-  public int getFirstLine() {
-    return firstLine;
-  }
+    @Override
+    public int getFirstLine() {
+        return firstLine;
+    }
 
-  @Override
-  public int getLastLine() {
-    return lastLine;
-  }
+    @Override
+    public int getLastLine() {
+        return lastLine;
+    }
 
-  @Override
-  public int getFirstCharOffset() {
-    return firstCharOffset;
-  }
+    @Override
+    public int getFirstCharOffset() {
+        return firstCharOffset;
+    }
 
-  @Override
-  public int getLastCharOffset() {
-    return lastCharOffset;
-  }
+    @Override
+    public int getLastCharOffset() {
+        return lastCharOffset;
+    }
 
-  @Override
-  public String getSourceCode() {
-    return sourceCode;
-  }
+    @Override
+    public String getSourceCode() {
+        return sourceCode;
+    }
 
-  // reimplement in models to check for runtime conditions
-  public boolean isActive() {
-    return true;
-  }
+    // reimplement in models to check for runtime conditions
+    public boolean isActive() {
+        return true;
+    }
 
-  @Override
-  public List<IKimAnnotation> getAnnotations() {
-    return annotations;
-  }
+    @Override
+    public List<IKimAnnotation> getAnnotations() {
+        return annotations;
+    }
 
-  public void setAnnotations(List<IKimAnnotation> annotations) {
-    this.annotations = annotations;
-  }
+    public void setAnnotations(List<IKimAnnotation> annotations) {
+        this.annotations = annotations;
+    }
 
-  @Override
-  public KimMetadata getMetadata() {
-    return metadata;
-  }
+    @Override
+    public KimMetadata getMetadata() {
+        return metadata;
+    }
 
-  public void setMetadata(KimMetadata metadata) {
-    this.metadata = metadata;
-  }
+    public void setMetadata(KimMetadata metadata) {
+        this.metadata = metadata;
+    }
 
-  @Override
-  public KimMetadata getDocumentationMetadata() {
-    return documentationMetadata;
-  }
+    @Override
+    public KimMetadata getDocumentationMetadata() {
+        return documentationMetadata;
+    }
 
-  public void setDocumentation(KimMetadata documentation) {
-    this.documentationMetadata = documentation;
-  }
+    public void setDocumentation(KimMetadata documentation) {
+        this.documentationMetadata = documentation;
+    }
 
-  @Override
-  public boolean isDeprecated() {
-    return deprecated;
-  }
+    @Override
+    public boolean isDeprecated() {
+        return deprecated;
+    }
 
-  public void setDeprecated(boolean deprecated) {
-    this.deprecated = deprecated;
-  }
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
+    }
 
-  @Override
-  public String getDeprecation() {
-    return deprecation;
-  }
+    @Override
+    public String getDeprecation() {
+        return deprecation;
+    }
 
-  public void setDeprecation(String deprecation) {
-    this.deprecation = deprecation;
-  }
+    public void setDeprecation(String deprecation) {
+        this.deprecation = deprecation;
+    }
 
-  public void setFirstLine(int firstLine) {
-    this.firstLine = firstLine;
-  }
+    public void setFirstLine(int firstLine) {
+        this.firstLine = firstLine;
+    }
 
-  public void setLastLine(int lastLine) {
-    this.lastLine = lastLine;
-  }
+    public void setLastLine(int lastLine) {
+        this.lastLine = lastLine;
+    }
 
-  public void setFirstCharOffset(int firstCharOffset) {
-    this.firstCharOffset = firstCharOffset;
-  }
+    public void setFirstCharOffset(int firstCharOffset) {
+        this.firstCharOffset = firstCharOffset;
+    }
 
-  public void setLastCharOffset(int lastCharOffset) {
-    this.lastCharOffset = lastCharOffset;
-  }
+    public void setLastCharOffset(int lastCharOffset) {
+        this.lastCharOffset = lastCharOffset;
+    }
 
-  @Override
-  protected String getStringRepresentation(int offset) {
-    return sourceCode;
-  }
+    @Override
+    protected String getStringRepresentation(int offset) {
+        return sourceCode;
+    }
 
 }

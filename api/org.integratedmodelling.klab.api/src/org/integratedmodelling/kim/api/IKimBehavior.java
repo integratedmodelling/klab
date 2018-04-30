@@ -10,7 +10,7 @@ import java.util.Collection;
  * @author fvilla
  *
  */
-public interface IKimBehavior extends Iterable<IKimAction> {
+public interface IKimBehavior extends IKimStatement, Iterable<IKimAction> {
 
     /**
      * Quick check for no-op behaviors.

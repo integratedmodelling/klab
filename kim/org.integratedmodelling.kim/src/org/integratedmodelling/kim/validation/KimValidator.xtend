@@ -305,7 +305,7 @@ class KimValidator extends AbstractKimValidator {
 				// add to namespace
 				var ns = Kim.INSTANCE.getNamespace(namespace, true)
 
-				var descriptor = new KimModel(statement);
+				var descriptor = new KimModel(statement, ns);
 				descriptor.observables.addAll(observables)
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator
@@ -318,7 +318,7 @@ class KimValidator extends AbstractKimValidator {
 				if (model.urn !== null) {
 					descriptor.resourceUrn = model.urn.name
 				} else if (model.function !== null) {
-					descriptor.resourceFunction = new KimServiceCall(model.function)
+					descriptor.resourceFunction = new KimServiceCall(model.function, descriptor)
 					for (notification : (descriptor.resourceFunction.get() as KimServiceCall).validateUsage(null)) {
 						notify(notification, model.function, KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION)
 					}
@@ -349,7 +349,7 @@ class KimValidator extends AbstractKimValidator {
 
 				// all contextualizers
 				for (contextualizer : model.contextualizers) {
-					descriptor.contextualization.add(new ComputableResource(contextualizer))
+					descriptor.contextualization.add(new ComputableResource(contextualizer, descriptor))
 				}
 
 				if (model.name !== null) {
@@ -366,7 +366,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 				
 				if (model.metadata !== null) {
-					descriptor.metadata = new KimMetadata(model.metadata);
+					descriptor.metadata = new KimMetadata(model.metadata, descriptor);
 				}
 				if (model.documentation !== null) {
 //					descriptor.documentation = new KimMetadata(model.documentation);
@@ -387,7 +387,7 @@ class KimValidator extends AbstractKimValidator {
 
 				i = 0
 				for (annotation : statement.annotations) {
-					var ann = new KimAnnotation(annotation, ns)
+					var ann = new KimAnnotation(annotation, ns, descriptor)
 					descriptor.annotations.add(ann)
 					for (notification : ann.validateUsage(descriptor)) {
 						notify(notification, statement, KimPackage.Literals.MODEL_STATEMENT__ANNOTATIONS, i)
@@ -426,7 +426,7 @@ class KimValidator extends AbstractKimValidator {
 			var ns = Kim.INSTANCE.getNamespace(observation, true)
 			var i = 0
 			for (annotation : observation.annotations) {
-				val ann = new KimAnnotation(annotation, ns)
+				val ann = new KimAnnotation(annotation, ns, obs)
 				obs.annotations.add(ann)
 				for (notification : ann.validateUsage(obs)) {
 					notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT__ANNOTATIONS, i)
@@ -452,7 +452,7 @@ class KimValidator extends AbstractKimValidator {
 					KimPackage.Literals.OBSERVE_STATEMENT_BODY__CONCEPT, BAD_OBSERVATION)
 				ok = false
 			} else {
-				ret = new KimObserver(observation, semantics)
+				ret = new KimObserver(observation, semantics, parent)
 			}
 		}
 
@@ -1126,7 +1126,7 @@ class KimValidator extends AbstractKimValidator {
 				statement.name = namespace.name + ":" + statement.body.name;
 				var i = 0
 				for (annotation : statement.annotations) {
-					val ann = new KimAnnotation(annotation, namespace)
+					val ann = new KimAnnotation(annotation, namespace, concept)
 					concept.annotations.add(ann)
 					for (notification : ann.validateUsage(ann)) {
 						notify(notification, statement, KimPackage.Literals.CONCEPT_STATEMENT__ANNOTATIONS, i)
@@ -1149,7 +1149,7 @@ class KimValidator extends AbstractKimValidator {
 	def KimConceptStatement validateConceptBody(ConceptStatementBody concept, KimNamespace namespace,
 		KimConceptStatement parent, EnumSet<Type> type) {
 
-		var KimConceptStatement ret = new KimConceptStatement(concept)
+		var KimConceptStatement ret = new KimConceptStatement(concept, if (parent === null) namespace else parent)
 		var ok = true
 		var isAlias = concept.alias
 		var List<ParentConcept> declaredParents = newArrayList
@@ -1656,7 +1656,7 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			if (concept.metadata !== null) {
-				ret.metadata = new KimMetadata(concept.metadata)
+				ret.metadata = new KimMetadata(concept.metadata, ret)
 			}
 
 			if (ok) {
