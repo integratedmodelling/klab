@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;

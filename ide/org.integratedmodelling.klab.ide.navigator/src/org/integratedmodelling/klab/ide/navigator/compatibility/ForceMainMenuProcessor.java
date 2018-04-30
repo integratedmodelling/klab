@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.compatibility;
+package org.integratedmodelling.klab.ide.navigator.compatibility;
 
 /*******************************************************************************
  * Copyright 2015 Geoscience Australia
@@ -17,32 +17,23 @@ package org.integratedmodelling.klab.ide.compatibility;
  ******************************************************************************/
 
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
-/**
- * Compatibility Mode issue results in MainMenu (org.eclipse.ui.main.menu) being
- * null after the workbench is reloaded. This results in fragments' 'menu'
- * contributions being ignored after the initial launch. This is an issue
- * regardless if org.eclipse.ui.main.menu is defined in application's
- * legacy.e4xmi file or not.
- * 
- * @author Steven Spungin
- * @see <a href=
- *      "https://bugs.eclipse.org/bugs/show_bug.cgi?id=388808">https://bugs.eclipse.org/bugs/show_bug.cgi?id=388808</a>
- */
 public class ForceMainMenuProcessor {
-	@Execute
-	public void run(MApplication app) {
-		try {
-			MMenu menu = app.getChildren().get(0).getMainMenu();
-			if (menu == null) {
-				menu = MMenuFactory.INSTANCE.createMenu();
-				menu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
-				app.getChildren().get(0).setMainMenu(menu);
-			}
-		} catch (Exception ex) {
-		}
-	}
+
+    @Execute
+    public void execute(@Optional MApplication application, @Optional EModelService modelService) {
+        
+        MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(0);
+        if (window == null || window.getMainMenu() != null) {
+            return;
+        }
+//        final MMenu mainMenu = modelService.createModelElement(MMenu.class);
+//        mainMenu.setElementId("org.eclipse.ui.main.menu");
+//        window.setMainMenu(mainMenu);
+    }
 }

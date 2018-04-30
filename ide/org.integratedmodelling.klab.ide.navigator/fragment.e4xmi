@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="k.LAB navigator" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" tooltip="" category="org.integratedmodelling.klab.ide.category" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.parts.KlabNavigator">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="k.LAB navigator" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/k-lab-icon-16.gif" tooltip="" category="org.integratedmodelling.klab.ide.category" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.parts.KlabNavigator">
       <tags>View</tags>
       <tags>categoryTag:org.integratedmodelling.klab.ide.category</tags>
       <menus xmi:id="_jo0O8ErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.menu.view" label="View">
