@@ -28,6 +28,8 @@ public class ForceMainMenuProcessor {
     @Execute
     public void execute(@Optional MApplication application, @Optional EModelService modelService) {
         
+        // Use this shit with the "RIGHT" f'ing ID: this.modelService.find("window.main", this.application);
+
         MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(0);
         if (window == null || window.getMainMenu() != null) {
             return;

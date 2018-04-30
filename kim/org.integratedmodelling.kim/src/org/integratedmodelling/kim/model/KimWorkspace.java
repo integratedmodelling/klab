@@ -33,21 +33,21 @@ import com.google.inject.Injector;
 
 public class KimWorkspace extends KimScope implements IKimWorkspace {
 
-    private static final long                serialVersionUID = -6601950097333987803L;
+    private static final long serialVersionUID = -6601950097333987803L;
 
-    private File                             root;
-    private URL                              url;
-    private String                           name;
-    private boolean                          read;
-    private File[]                           overridingProjects;
-    private List<File>                       projectLocations = new ArrayList<>();
-    private List<String>                     projectNames     = new ArrayList<>();
+    private File root;
+    private URL url;
+    private String name;
+    private boolean read;
+    private File[] overridingProjects;
+    private List<File> projectLocations = new ArrayList<>();
+    private List<String> projectNames = new ArrayList<>();
 
     // projects are indexed by name and URI prefix
-    private Map<String, KimProject>          allProjects      = new HashMap<>();
-    private Map<String, KimProject>          projectsByURI    = new HashMap<>();
+    private Map<String, KimProject> allProjects = new HashMap<>();
+    private Map<String, KimProject> projectsByURI = new HashMap<>();
 
-    private static Map<String, KimWorkspace> workspacesByURI  = new HashMap<>();
+    private static Map<String, KimWorkspace> workspacesByURI = new HashMap<>();
 
     public String getName() {
         return name;
@@ -64,7 +64,7 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
     public Collection<String> getProjectNames() {
         return projectNames;
     }
-    
+
     public Collection<KimProject> getProjects() {
         return allProjects.values();
     }
@@ -83,12 +83,10 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
             if (root.exists()) {
                 for (File dir : root.listFiles()) {
                     if (dir.isDirectory()
-                            && new File(dir + File.separator + "META-INF" + File.separator
-                                    + "klab.properties")
-                                            .exists()) {
+                            && new File(dir + File.separator + "META-INF" + File.separator + "klab.properties")
+                                    .exists()) {
                         KimProject project = new KimProject(this, overrideIfPresent(dir, this.overridingProjects));
-                        String pname = dir.toString()
-                                .substring(dir.toString().lastIndexOf(File.separator) + 1);
+                        String pname = dir.toString().substring(dir.toString().lastIndexOf(File.separator) + 1);
 
                         allProjects.put(pname, project);
                         projectLocations.add(dir);
@@ -104,13 +102,14 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
     static Collection<KimWorkspace> getWorkspaces() {
         return workspacesByURI.values();
     }
-    
+
     /**
      * Constructor for a file-based workspace. This one will be able to enumerate its projects and Kim
      * resources after construction. You can pass any number of project directories that will override the
      * ones in the library if they specify a project of the same name.
      * 
      * @param root
+     * @param overridingProjects 
      */
     public KimWorkspace(File root, File... overridingProjects) {
         this.root = root;
@@ -149,6 +148,7 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
      * know their resources until after validation.
      * 
      * @param workspaceUrl
+     * @param root 
      */
     public KimWorkspace(URL workspaceUrl, File root) {
         this.url = normalize(workspaceUrl);
@@ -171,7 +171,7 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
 
         List<IKimNamespace> ret = new ArrayList<>();
 
-//        new StandaloneSetup().setPlatformUri(root.toString());
+        //        new StandaloneSetup().setPlatformUri(root.toString());
 
         readProjects();
 
@@ -216,7 +216,7 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
     }
 
     public KimNamespace findNamespace(String id) {
-        
+
         for (KimProject project : allProjects.values()) {
             KimNamespace ret = project.getNamespace(id);
             if (ret != null) {
@@ -225,7 +225,7 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
         }
         return null;
     }
-    
+
     public List<File> getAllKimResources() {
         List<File> ret = new ArrayList<>();
         for (KimProject project : allProjects.values()) {
@@ -235,7 +235,7 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
     }
 
     public static KimWorkspace getWorkspaceForResource(Resource resource) {
-        
+
         KimWorkspace ret = getWorkspaceForURI(resource.getURI());
 
         if (ret == null) {
@@ -245,8 +245,8 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
                 Properties properties = null;
                 URL purl = null;
                 while ((path = chopLastPathElement(path)) != null) {
-                    purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(), path
-                            + "/META-INF/klab.properties");
+                    purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+                            path + "/META-INF/klab.properties");
                     try (InputStream is = purl.openStream()) {
                         properties = new Properties();
                         properties.load(is);
@@ -269,8 +269,8 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
                             dioFile = resolver.resolveResourceUriToWorkspaceRootDirectory(resource.getURI());
                         } else {
                             throw new RuntimeException("cannot resolve workspace location for resource URI "
-                                    + resource.getURI()
-                                    + "; please install a UriResolver for scheme " + resource.getURI().scheme());
+                                    + resource.getURI() + "; please install a UriResolver for scheme "
+                                    + resource.getURI().scheme());
                         }
                     }
                     ret = new KimWorkspace(workspaceUrl, dioFile);
@@ -292,8 +292,8 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
                 Properties properties = null;
                 URL purl = null;
                 while ((path = chopLastPathElement(path)) != null) {
-                    purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(), path
-                            + "/META-INF/klab.properties");
+                    purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+                            path + "/META-INF/klab.properties");
                     try (InputStream is = purl.openStream()) {
                         properties = new Properties();
                         properties.load(is);
