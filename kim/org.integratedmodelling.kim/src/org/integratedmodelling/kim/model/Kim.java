@@ -436,6 +436,13 @@ public enum Kim {
 
         return null;
     }
+    
+    public KimWorkspace loadWorkspace(String workspaceUri, Collection<File> projectRoots) {
+    	KimWorkspace ret = KimWorkspace.getWorkspaceForResourceURI(URI.createURI(workspaceUri));
+    	// TODO add projects so that we known them when loading
+    	return ret;
+    }
+
 
     public Parameters parseMap(Metadata map, IKimNamespace namespace) {
         Map<String, Object> ret = new HashMap<>();

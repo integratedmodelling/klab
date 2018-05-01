@@ -233,14 +233,14 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
         }
         return ret;
     }
+    
+    public static KimWorkspace getWorkspaceForResourceURI(URI resourceURI) {
 
-    public static KimWorkspace getWorkspaceForResource(Resource resource) {
-
-        KimWorkspace ret = getWorkspaceForURI(resource.getURI());
+        KimWorkspace ret = getWorkspaceForURI(resourceURI.toString());
 
         if (ret == null) {
             try {
-                URL url = new URL(resource.getURI().toString());
+                URL url = new URL(resourceURI.toString());
                 String path = url.getPath();
                 Properties properties = null;
                 URL purl = null;
@@ -264,13 +264,13 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
                     if (workspaceUrl.toString().startsWith("file:")) {
                         dioFile = new File(workspaceUrl.getFile());
                     } else {
-                        UriResolver resolver = Kim.INSTANCE.getUriResolver(resource.getURI().scheme());
+                        UriResolver resolver = Kim.INSTANCE.getUriResolver(resourceURI.scheme());
                         if (resolver != null) {
-                            dioFile = resolver.resolveResourceUriToWorkspaceRootDirectory(resource.getURI());
+                            dioFile = resolver.resolveResourceUriToWorkspaceRootDirectory(resourceURI);
                         } else {
                             throw new RuntimeException("cannot resolve workspace location for resource URI "
-                                    + resource.getURI() + "; please install a UriResolver for scheme "
-                                    + resource.getURI().scheme());
+                                    + resourceURI + "; please install a UriResolver for scheme "
+                                    + resourceURI.scheme());
                         }
                     }
                     ret = new KimWorkspace(workspaceUrl, dioFile);
@@ -280,6 +280,11 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
             }
         }
         return ret;
+    }
+
+    
+    public static KimWorkspace getWorkspaceForResource(Resource resource) {
+    	return getWorkspaceForResourceURI(resource.getURI());
     }
 
     public KimProject getProjectForResource(Resource resource) {
@@ -339,9 +344,9 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
         return null;
     }
 
-    private static KimWorkspace getWorkspaceForURI(URI resUri) {
+    private static KimWorkspace getWorkspaceForURI(String resUri) {
         for (String uri : workspacesByURI.keySet()) {
-            if (resUri.toString().startsWith(uri)) {
+            if (resUri.startsWith(uri)) {
                 return workspacesByURI.get(uri);
             }
         }

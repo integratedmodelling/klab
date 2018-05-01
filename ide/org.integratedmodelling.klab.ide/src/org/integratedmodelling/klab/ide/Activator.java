@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
@@ -36,7 +37,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 
 		super.start(context);
-
+		
 		/*
 		 * TODO retrieve from preferences if so configured.
 		 */

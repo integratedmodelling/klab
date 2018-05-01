@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
     <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="k.LAB navigator" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/k-lab-icon-16.gif" tooltip="" category="org.integratedmodelling.klab.ide.category" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.parts.KlabNavigator">
       <tags>View</tags>
       <tags>categoryTag:org.integratedmodelling.klab.ide.category</tags>
+      <handlers xmi:id="_DkObcE00EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.handler.0" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.SwitchView" command="_-72FoE00EeiMqc9j7Difiw"/>
       <menus xmi:id="_jo0O8ErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.menu.view" label="View">
         <tags>ViewMenu</tags>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_lvmVQErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.development" label="Development view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" tooltip="Switch to development view (projects, namespaces and their contents)" selected="true" type="Radio"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_p19tsErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.bookmarks" label="Bookmark view" type="Radio"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_3F-LMErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.runnables" label="Script view" type="Radio"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_lvmVQErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.development" label="Development view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" tooltip="Switch to development view (projects, namespaces and their contents)" selected="true" type="Radio" command="_-72FoE00EeiMqc9j7Difiw">
+          <parameters xmi:id="_85GVUE01EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.parameter.0" name="view" value="&quot;DEV&quot;"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_p19tsErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.bookmarks" label="Bookmark view" type="Radio" command="_-72FoE00EeiMqc9j7Difiw">
+          <parameters xmi:id="_MQShwE02EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.parameter.1" name="view" value="&quot;BOOKMARK&quot;"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_3F-LMErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.runnables" label="Script view" type="Radio" command="_-72FoE00EeiMqc9j7Difiw">
+          <parameters xmi:id="_PNZMEE02EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.parameter.2" name="view" value="&quot;SCRIPT&quot;"/>
+        </children>
       </menus>
     </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_1CKDsE00EeiMqc9j7Difiw" featurename="commands" parentElementId="xpath:/">
+    <elements xsi:type="commands:Command" xmi:id="_-72FoE00EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.command.switchview" commandName="SwitchView" description="Switch view"/>
   </fragments>
 </fragment:ModelFragments>
