@@ -4,11 +4,6 @@
    <extension
          id="org.integratedmodelling.klab.ide.navigator.fragment"
          point="org.eclipse.e4.workbench.model">
-	   <processor
-          apply="always"
-          beforefragment="true"
-          class="org.integratedmodelling.klab.ide.navigator.compatibility.ForceMainMenuProcessor">
-      </processor>
       <fragment
             apply="notexists"
             uri="fragment.e4xmi">

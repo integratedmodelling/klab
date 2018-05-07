@@ -24,6 +24,9 @@ Workflow {
 				eclipsePluginTest = {
 					enabled = true
 				}
+				web = {
+					enabled = true
+				}
 				createEclipseMetaData = true
 			}
 			code = {
@@ -73,9 +76,9 @@ Workflow {
 				// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 			}
 			// fragment = refactoring.RefactorElementNameFragment {}
-			fragment = web.WebIntegrationFragment {
-				framework = "Ace"
-			}
+//			fragment = web.WebIntegrationFragment {
+//				framework = "Ace"
+//			}
 
 			//			renameRefactoring = RefactorElementNameFragment2 auto-inject {}
 			//			labelProvider = ui.labeling.LabelProviderFragment2 auto-inject {}

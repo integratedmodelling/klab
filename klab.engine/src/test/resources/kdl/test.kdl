@@ -1,7 +1,6 @@
 @version 10.3
 // these are constraints, to ensure that this strategy applies to the context
 // of resolution. Users can remove them if publishing.
-@scale space(grid=2), time(step=2)
 @worldview im
 @klab 0.10.0
 

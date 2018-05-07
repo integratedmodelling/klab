@@ -81,7 +81,9 @@ Export-Package: org.integratedmodelling.klab.client,
    org.springframework.http,
    com.fasterxml.jackson.databind",
  org.integratedmodelling.klab.client.messaging;uses:="org.integratedmodelling.klab.api.monitoring,org.integratedmodelling.klab.monitoring,org.springframework.messaging.simp.stomp",
- org.integratedmodelling.klab.client.utils
+ org.integratedmodelling.klab.client.utils,
+ org.joda.time,
+ org.joda.time.base
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
  org.integratedmodelling.klab.api;bundle-version="0.10.0"
 Bundle-ActivationPolicy: lazy

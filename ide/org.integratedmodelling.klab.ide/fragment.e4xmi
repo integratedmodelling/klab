@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_K3ppwFHqEeis_9WeOPj27Q">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Ls-IMFHqEeis_9WeOPj27Q" featurename="descriptors" parentElementId="xpath:/">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_XD35kFHrEeis_9WeOPj27Q" elementId="org.integratedmodelling.klab.ide.partdescriptor.0" label="Context"/>
+  </fragments>
+</fragment:ModelFragments>

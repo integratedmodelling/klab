@@ -5,14 +5,14 @@ import java.io.File;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 
-class TreeContentProvider implements ITreeContentProvider {
+class TreeContentProvider extends WorkbenchContentProvider {
 
     File wsRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 

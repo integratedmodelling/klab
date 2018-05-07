@@ -10,8 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 /**
- * This will start an engine at http://127.0.0.1:8281/klab with mock node authentication and
- * default config.
+ * This will start a test node at http://127.0.0.1:8281/klab with mock node authentication (will
+ * only authenticate engines that send the test certificate).
  * 
  * @author ferdinando.villa
  * 
