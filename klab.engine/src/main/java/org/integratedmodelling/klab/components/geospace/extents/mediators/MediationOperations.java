@@ -46,242 +46,275 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class MediationOperations {
 
-  public static class Subgrid implements IGrid {
+	public static class Subgrid implements IGrid {
 
-    Grid grid;
-    Grid ogrid;
-    long  xofs = 0;
-    long  yofs = 0;
+		Grid grid;
+		Grid ogrid;
+		long xofs = 0;
+		long yofs = 0;
 
-    private Subgrid(Grid grid, Grid originalGrid, long xofs, long yofs) {
-      this.grid = grid;
-      this.ogrid = originalGrid;
-      this.xofs = xofs;
-      this.yofs = yofs;
-    }
+		private Subgrid(Grid grid, Grid originalGrid, long xofs, long yofs) {
+			this.grid = grid;
+			this.ogrid = originalGrid;
+			this.xofs = xofs;
+			this.yofs = yofs;
+		}
 
-    @Override
-    public String toString() {
-      return grid.toString() + "(xofs=" + xofs + ", yofs=" + yofs + ")";
-    }
+		@Override
+		public String toString() {
+			return grid.toString() + "(xofs=" + xofs + ", yofs=" + yofs + ")";
+		}
 
-    @Override
-    public long getYCells() {
-      return grid.getYCells();
-    }
+		@Override
+		public long getYCells() {
+			return grid.getYCells();
+		}
 
-    @Override
-    public long getXCells() {
-      return grid.getXCells();
-    }
+		@Override
+		public long getXCells() {
+			return grid.getXCells();
+		}
 
-    @Override
-    public long getCellCount() {
-      return grid.getCellCount();
-    }
+		@Override
+		public long getCellCount() {
+			return grid.getCellCount();
+		}
 
-    @Override
-    public long getOffset(long x, long y) {
-      return grid.getOffset(x, y);
-    }
+		@Override
+		public long getOffset(long x, long y) {
+			return grid.getOffset(x, y);
+		}
 
-    @Override
-    public boolean isActive(long x, long y) {
-      return grid.isActive(x, y);
-    }
+		@Override
+		public boolean isActive(long x, long y) {
+			return grid.isActive(x, y);
+		}
 
-    @Override
-    public long getOffsetFromWorldCoordinates(double lon, double lat) {
-      return grid.getOffsetFromWorldCoordinates(lon, lat);
-    }
+		@Override
+		public long getOffsetFromWorldCoordinates(double lon, double lat) {
+			return grid.getOffsetFromWorldCoordinates(lon, lat);
+		}
 
-    @Override
-    public long[] getXYOffsets(long index) {
-      return grid.getXYOffsets(index);
-    }
+		@Override
+		public long[] getXYOffsets(long index) {
+			return grid.getXYOffsets(index);
+		}
 
-    @Override
-    public double[] getCoordinates(long index) {
-      return grid.getCoordinates(index);
-    }
+		@Override
+		public double[] getCoordinates(long index) {
+			return grid.getCoordinates(index);
+		}
 
-//    @Override
-//    public Locator getLocator(long x, long y) {
-//      return grid.getLocator(x, y);
-//    }
+		// @Override
+		// public Locator getLocator(long x, long y) {
+		// return grid.getLocator(x, y);
+		// }
 
-    @Override
-    public double getEast() {
-      return grid.getEast();
-    }
+		@Override
+		public double getEast() {
+			return grid.getEast();
+		}
 
-    @Override
-    public double getWest() {
-      return grid.getWest();
-    }
+		@Override
+		public double getWest() {
+			return grid.getWest();
+		}
 
-    @Override
-    public double getSouth() {
-      return grid.getSouth();
-    }
+		@Override
+		public double getSouth() {
+			return grid.getSouth();
+		}
 
-    @Override
-    public double getNorth() {
-      return grid.getNorth();
-    }
+		@Override
+		public double getNorth() {
+			return grid.getNorth();
+		}
 
-    @Override
-    public double getCellWidth() {
-      return grid.getCellWidth();
-    }
+		@Override
+		public double getCellWidth() {
+			return grid.getCellWidth();
+		}
 
-    @Override
-    public double getCellHeight() {
-      return grid.getCellHeight();
-    }
+		@Override
+		public double getCellHeight() {
+			return grid.getCellHeight();
+		}
 
-    public IShape getShape() {
-      return grid.getShape();
-    }
+		public IShape getShape() {
+			return grid.getShape();
+		}
 
-    @Override
-    public Iterator<Cell> iterator() {
-      return grid.iterator();
-    }
+		@Override
+		public Iterator<Cell> iterator() {
+			return grid.iterator();
+		}
 
-    public Cell getOriginalCell(Cell cell) {
-      return ogrid.getCell(cell.getX() + xofs,
-          ogrid.getYCells() - yofs - 1 - (getYCells() - cell.getY() - 1));
-    }
+		public Cell getOriginalCell(Cell cell) {
+			return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - cell.getY() - 1));
+		}
 
-    public double geCellArea(IUnit unit) {
-      return grid.getCellArea(unit);
-    }
+		public double geCellArea(IUnit unit) {
+			return grid.getCellArea(unit);
+		}
 
-    @Override
-    public double snapX(double xCoordinate, Direction direction) {
-      return grid.snapX(xCoordinate, direction);
-    }
+		@Override
+		public double snapX(double xCoordinate, Direction direction) {
+			return grid.snapX(xCoordinate, direction);
+		}
 
-    @Override
-    public double snapY(double yCoordinate, Direction direction) {
-      return grid.snapY(yCoordinate, direction);
-    }
+		@Override
+		public double snapY(double yCoordinate, Direction direction) {
+			return grid.snapY(yCoordinate, direction);
+		}
 
-    @Override
-    public double getCellArea(IUnit unit) {
-      return grid.getCellArea(unit);
-    }
+		@Override
+		public double getCellArea(IUnit unit) {
+			return grid.getCellArea(unit);
+		}
 
-    @Override
-    public double[] getWorldCoordinatesAt(long x, long y) {
-      return grid.getWorldCoordinatesAt(x, y);
-    }
+		@Override
+		public double[] getWorldCoordinatesAt(long x, long y) {
+			return grid.getWorldCoordinatesAt(x, y);
+		}
 
-    @Override
-    public long[] getGridCoordinatesAt(double x, double y) {
-      return grid.getGridCoordinatesAt(x, y);
-    }
+		@Override
+		public long[] getGridCoordinatesAt(double x, double y) {
+			return grid.getGridCoordinatesAt(x, y);
+		}
 
-    @Override
-    public IProjection getProjection() {
-      return grid.getProjection();
-    }
-  }
+		@Override
+		public IProjection getProjection() {
+			return grid.getProjection();
+		}
+	}
 
-  /**
-   * Get a cutout of a grid from a top-level grid and a shape that intersects it. The resulting grid is
-   * made conformant by snapping the shape to the contours of the original grid.
-   *  
-   * @param grid
-   * @param shape
-   * @return the subgrid
-   * @throws IllegalArgumentException if the shape does not cover the original grid shape.
-   */
-  public static Subgrid getSubgrid(Grid grid, Shape shape) {
+	/**
+	 * Get the percentage of area outside the requested shape that needs to be
+	 * covered in order to snap the passed grid to the passed shape so that the
+	 * resulting subgrid can be conformant. If this is small enough
+	 * 
+	 * @param grid
+	 * @param shape
+	 * @return
+	 */
+	public static double getSubsettingError(Grid grid, Shape shape) {
 
-    Envelope genv = new Envelope(grid.getEast(), grid.getWest(), grid.getSouth(), grid.getNorth());
-    Envelope senv = shape.getEnvelope().getJTSEnvelope();
+		Envelope genv = new Envelope(grid.getEast(), grid.getWest(), grid.getSouth(), grid.getNorth());
+		Envelope senv = shape.getEnvelope().getJTSEnvelope();
 
-    if (!genv.covers(senv)) {
-      throw new IllegalArgumentException("cannot create subgrid: the passed shape does not cover the original grid");
-    }
+		if (!genv.covers(senv)) {
+			throw new IllegalArgumentException(
+					"cannot create subgrid: the passed shape does not cover the original grid");
+		}
 
-    /*
-     * adjusts envelope boundaries to cover original cells exactly
-     */
-    double gxmin = grid.snapX(senv.getMinX(), Direction.LEFT);
-    double gxmax = grid.snapX(senv.getMaxX(), Direction.RIGHT);
-    double gymin = grid.snapY(senv.getMinY(), Direction.BOTTOM);
-    double gymax = grid.snapY(senv.getMaxY(), Direction.TOP);
+		double gxmin = grid.snapX(senv.getMinX(), Direction.LEFT);
+		double gxmax = grid.snapX(senv.getMaxX(), Direction.RIGHT);
+		double gymin = grid.snapY(senv.getMinY(), Direction.BOTTOM);
+		double gymax = grid.snapY(senv.getMaxY(), Direction.TOP);
 
-    double dx = gxmax - gxmin;
-    double dy = gymax - gymin;
+		double dx = Math.abs(gxmax - gxmin);
+		double dy = Math.abs(gymax - gymin);
 
-    long nx = (long) (dx / grid.getCellWidth()) + 1;
-    long ny = (long) (dy / grid.getCellHeight()) + 1;
+		return (dx * dy) / ((grid.getEast() - grid.getWest()) * (grid.getNorth() - grid.getSouth()));
+	}
 
-    long xofs = (long) ((gxmin - grid.getEast()) / grid.getCellWidth());
-    long yofs = (long) ((gymin - grid.getSouth()) / grid.getCellHeight());
+	/**
+	 * Get a cutout of a grid from a top-level grid and a shape that intersects it.
+	 * The resulting grid is made conformant by snapping the shape to the contours
+	 * of the original grid.
+	 * 
+	 * @param grid
+	 * @param shape
+	 * @return the subgrid
+	 * @throws IllegalArgumentException
+	 *             if the shape does not cover the original grid shape.
+	 */
+	public static Subgrid getSubgrid(Grid grid, Shape shape) {
 
-    return new Subgrid(Grid.create(gxmin, gymin, gxmax, gymax, nx, ny, shape.getProjection()), grid,
-        xofs, yofs);
-  }
+		Envelope genv = new Envelope(grid.getEast(), grid.getWest(), grid.getSouth(), grid.getNorth());
+		Envelope senv = shape.getEnvelope().getJTSEnvelope();
 
-  /**
-   * Return all cells from the ORIGINAL grid that cover the shape, with the corresponding coverage.
-   * 
-   * @param grid
-   * @param shape
-   * @param useSimpleIntersection if true, just check for containment and return full coverage. Much
-   *        faster. Use when no weighted aggregation is necessary.
-   * @return covered cells
-   * @throws KlabException
-   */
-  public static Iterable<Pair<Cell, Double>> getCoveredCells(Grid grid, Shape shape,
-      boolean useSimpleIntersection) throws KlabException {
+		if (!genv.covers(senv)) {
+			throw new IllegalArgumentException(
+					"cannot create subgrid: the passed shape does not cover the original grid");
+		}
 
-    Subgrid subgrid = getSubgrid(grid, shape);
-    if (subgrid == null) {
-      return null;
-    }
+		/*
+		 * adjusts envelope boundaries to cover original cells exactly
+		 */
+		double gxmin = grid.snapX(senv.getMinX(), Direction.LEFT);
+		double gxmax = grid.snapX(senv.getMaxX(), Direction.RIGHT);
+		double gymin = grid.snapY(senv.getMinY(), Direction.BOTTOM);
+		double gymax = grid.snapY(senv.getMaxY(), Direction.TOP);
 
-    // SpatialDisplay sd = new SpatialDisplay(sshape.asExtent());
-    // sd.add(subgrid, "subgrid");
-    // sd.add(grid, "main grid");
-    // sd.add(shape, "sub shape");
+		double dx = gxmax - gxmin;
+		double dy = gymax - gymin;
 
-    Collection<Pair<Cell, Double>> ret = new ArrayList<>();
-    for (IExtent cell : subgrid) {
+		long nx = (long) (dx / grid.getCellWidth()) + 1;
+		long ny = (long) (dy / grid.getCellHeight()) + 1;
 
-      double d = shape.getCoverage((Cell)cell, useSimpleIntersection);
+		long xofs = (long) ((gxmin - grid.getEast()) / grid.getCellWidth());
+		long yofs = (long) ((gymin - grid.getSouth()) / grid.getCellHeight());
 
-      if (d > 0) {
+		return new Subgrid(Grid.create(gxmin, gymin, gxmax, gymax, nx, ny, shape.getProjection()), grid, xofs, yofs);
+	}
 
-        Cell orig = subgrid.getOriginalCell((Cell)cell);
-        ret.add(new Pair<>(orig, d));
+	/**
+	 * Return all cells from the ORIGINAL grid that cover the shape, with the
+	 * corresponding coverage.
+	 * 
+	 * @param grid
+	 * @param shape
+	 * @param useSimpleIntersection
+	 *            if true, just check for containment and return full coverage. Much
+	 *            faster. Use when no weighted aggregation is necessary.
+	 * @return covered cells
+	 * @throws KlabException
+	 */
+	public static Iterable<Pair<Cell, Double>> getCoveredCells(Grid grid, Shape shape, boolean useSimpleIntersection)
+			throws KlabException {
 
-        // sd.add(cell, "transposed covering");
-        // sd.add(orig, "orig covering");
+		Subgrid subgrid = getSubgrid(grid, shape);
+		if (subgrid == null) {
+			return null;
+		}
 
-      }
-    }
+		// SpatialDisplay sd = new SpatialDisplay(sshape.asExtent());
+		// sd.add(subgrid, "subgrid");
+		// sd.add(grid, "main grid");
+		// sd.add(shape, "sub shape");
 
-    // sd.show();
+		Collection<Pair<Cell, Double>> ret = new ArrayList<>();
+		for (IExtent cell : subgrid) {
 
-    return ret;
-  }
+			double d = shape.getCoverage((Cell) cell, useSimpleIntersection);
 
-  public static Aggregation getAggregator(IObservable observable) {
+			if (d > 0) {
 
-    Aggregation ret = Aggregation.MAJORITY;
-    if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
-      ret = Aggregation.AVERAGE;
-      if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
-        ret = Aggregation.SUM;
-      }
-    }
-    return ret;
-  }
+				Cell orig = subgrid.getOriginalCell((Cell) cell);
+				ret.add(new Pair<>(orig, d));
+
+				// sd.add(cell, "transposed covering");
+				// sd.add(orig, "orig covering");
+
+			}
+		}
+
+		// sd.show();
+
+		return ret;
+	}
+
+	public static Aggregation getAggregator(IObservable observable) {
+
+		Aggregation ret = Aggregation.MAJORITY;
+		if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
+			ret = Aggregation.AVERAGE;
+			if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
+				ret = Aggregation.SUM;
+			}
+		}
+		return ret;
+	}
 
 }
