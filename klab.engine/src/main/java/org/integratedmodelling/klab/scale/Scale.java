@@ -115,50 +115,6 @@ public class Scale implements IScale {
          */
         Object reduce(Collection<IPair<Object, Double>> toReduce, IMetadata metadata);
     }
-    //
-    // /**
-    // * Adopted by any object that tracks one or more dimensions in a scale, pointing to a precise
-    // * 'granule' or to a slice for an extent along it. Used in {@link #getIndex(Locator...)} and
-    // * {@link #locate(Locator...)}, as well as in dataflow execution through {@link
-    // IContextualizer}.
-    // *
-    // * @deprecated use the scale itself or an extent
-    // */
-    // public interface Locator {
-    //
-    // /**
-    // * Should be a constant but no way to ask for that in an interface. Number of dimension offsets
-    // * to locate one extent.
-    // *
-    // * @return the number of dimension offsets required for locating a position.
-    // */
-    // public int getDimensionCount();
-    //
-    // /**
-    // * If true, this is locating a full dimension or subset, with multiple extents.
-    // *
-    // * @return true if the locator is an aggregator
-    // */
-    // public boolean isAll();
-    //
-    // /**
-    // * If the locator only covers the granule partially, return a value less than one, reflecting
-    // * the amount of active coverage. This will only return anything other than 1 when computed by a
-    // * IState.Mediator, which matches two scales and may find partial coverage when checking one
-    // * index against another. It should normally return 1 and never return 0.
-    // *
-    // * @return the proportion of the topological subdivision we're locating
-    // */
-    // public double getWeight();
-    //
-    // /**
-    // * Return the concept for the extent this is locating.
-    // *
-    // * @return the extent concept
-    // */
-    // public IConcept getExtent();
-    //
-    // }
 
     protected List<IExtent> extents = new ArrayList<>();
     protected long multiplicity = 0;
@@ -540,23 +496,7 @@ public class Scale implements IScale {
         cursor.defineDimensions(dims);
         extents = order;
     }
-
-    // public long locate(Locator... locators) {
-    //
-    // long[] loc = new long[getExtentCount()];
-    // int i = 0;
-    // for (IExtent e : extents) {
-    // for (Locator l : locators) {
-    // long idx = ((Extent) e).locate(l);
-    // if (idx >= 0) {
-    // loc[i++] = idx;
-    // break;
-    // }
-    // }
-    // }
-    // return Scale.this.cursor.getElementOffset(loc);
-    // }
-
+    
     @Override
     public int getExtentCount() {
         return extents.size();
@@ -590,11 +530,6 @@ public class Scale implements IScale {
         }
         return true;
     }
-
-    // @Override
-    // public IExtent getExtent(int index) {
-    // return extents.get(index);
-    // }
 
     @Override
     public long size() {
@@ -645,25 +580,6 @@ public class Scale implements IScale {
         }
         return true;
     }
-
-    // public IScale merge(ITopologicallyComparable<?> scale_, LogicalConnector how) {
-    //
-    // if (!(scale_ instanceof Scale)) {
-    // return null;
-    // }
-    // Scale scale = (Scale) scale_;
-    //
-    // if (!hasSameExtents(scale)) {
-    // return null;
-    // }
-    //
-    // Scale ret = new Scale();
-    // for (IExtent e : extents) {
-    // ret.mergeExtent((IExtent) e.merge(((Scale) scale).getDimension(e.getType()), how));
-    // }
-    //
-    // return ret;
-    // }
 
     /**
      * Add a missing extent or use the custom merge() function to inherit the usable info from the
@@ -787,102 +703,6 @@ public class Scale implements IScale {
         return true;
     }
 
-    // /*
-    // * get the extent with the passed domain concept
-    // */
-    // @Override
-    // public IExtent getExtent(IConcept domainConcept) {
-    // for (IExtent e : extents) {
-    // if (e.getDomainConcept().equals(domainConcept)) {
-    // return e;
-    // }
-    // }
-    // return null;
-    // }
-
-    // /**
-    // * Scan all extents and return the properties and values, if any, that describe
-    // their coverage for
-    // search
-    // * and retrieval of compatible extents.
-    // *
-    // * It works by asking each extent for its storage metadata and returning any
-    // metadata that is indexed by
-    // a
-    // * known property and points to a topologically comparable object.
-    // *
-    // * Relies on the fact that each extent has only one topologically comparable storage
-    // metadata. Throws an
-    // * unchecked exception if not so.
-    // *
-    // * @return
-    // * @throws ThinklabException
-    // */
-    // public List<Pair<IProperty, ITopologicallyComparable<?>>>
-    // getCoverageProperties(IMonitor monitor)
-    // throws ThinklabException {
-    // ArrayList<Pair<IProperty, ITopologicallyComparable<?>>> ret = new
-    // ArrayList<Pair<IProperty,
-    // ITopologicallyComparable<?>>>();
-    // for (IExtent ext : _extents) {
-    // int ncov = 0;
-    // if (ext instanceof IStorageMetadataProvider) {
-    // Metadata md = new Metadata();
-    // ((IStorageMetadataProvider) ext).addStorageMetadata(md, monitor);
-    // for (String pid : md.getKeys()) {
-    // if (Thinklab.get().getProperty(pid) != null
-    // && md.get(pid) instanceof ITopologicallyComparable<?>) {
-    //
-    // if (ncov > 0) {
-    //
-    // /*
-    // * this is an obscure one for sure, but it should not really happen unless the
-    // * implementation is screwed up and untested.
-    // */
-    // throw new ThinklabRuntimeException(
-    // "internal: extent provides more than one topologically comparable storage
-    // metadata");
-    // }
-    //
-    // ret.add(new Pair<IProperty, ITopologicallyComparable<?>>(Thinklab.p(pid),
-    // (ITopologicallyComparable<?>) md.get(pid)));
-    // ncov++;
-    // }
-    // }
-    // }
-    // }
-    // return ret;
-    // }
-
-    //
-    // /**
-    // * Return the scale without time, self if we don't see time.
-    // *
-    // * @return
-    // */
-    // @Override
-    // public IScale getNonDynamicScale() {
-    //
-    // if (getTime() == null) {
-    // return this;
-    // }
-    //
-    // int i = 0;
-    // IExtent[] exts = new IExtent[_extents.size() - 1];
-    // for (IExtent e : _extents) {
-    // if (e.getDomainConcept().equals(Time.TIME_DOMAIN)) {
-    // continue;
-    // }
-    // exts[i++] = e;
-    // }
-    // try {
-    // return new Scale(exts);
-    // } catch (ThinklabException e1) {
-    // // shouldn't happen if we get as far as this.
-    // throw new ThinklabRuntimeException(e1);
-    // }
-    // }
-
     public List<IExtent> getExtents() {
         return extents;
     }
@@ -911,28 +731,6 @@ public class Scale implements IScale {
         return 1.0;
     }
 
-    // @Override
-    // public IScale union(IScale other)
-    // throws KlabException {
-    //
-    // if (!(other instanceof Scale)) {
-    // throw new KlabValidationException(other + " intersected with a Scale");
-    // }
-    //
-    // return merge((Scale) other, LogicalConnector.UNION, true);
-    // }
-    //
-    // @Override
-    // public ITopologicallyComparable<IScale> intersection(ITopologicallyComparable<?> other)
-    // throws KlabException {
-    //
-    // if (!(other instanceof Scale)) {
-    // throw new KlabValidationException(other + " intersected with a Scale");
-    // }
-    //
-    // return merge((Scale) other, LogicalConnector.INTERSECTION, true);
-    // }
-
     @Override
     public Scale merge(ITopologicallyComparable<?> coverage, LogicalConnector how) {
 
@@ -952,13 +750,11 @@ public class Scale implements IScale {
                 }
             }
 
-            // if (adopt) {
             for (IExtent e : other.getExtents()) {
                 if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
                     ret.mergeExtent(e, how);
                 }
             }
-            // }
 
             for (IExtent e : common) {
                 IExtent oext = other.getDimension(e.getType());
@@ -969,7 +765,6 @@ public class Scale implements IScale {
             return ret;
         }
 
-        // TODO enable merging of coverages with partial extents
         throw new IllegalArgumentException("Scale merge() called with a non-scale parameter");
 
     }

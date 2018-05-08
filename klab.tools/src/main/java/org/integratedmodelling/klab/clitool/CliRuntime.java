@@ -42,6 +42,7 @@ public enum CliRuntime {
         this.session = engine.createSession();
         this.console = console;
         this.commandProcessor = new CommandProcessor(console, session.getMonitor());
+        console.info("Session ID is " + this.session.getId(), null);
     }
 
     public void startNetwork() {

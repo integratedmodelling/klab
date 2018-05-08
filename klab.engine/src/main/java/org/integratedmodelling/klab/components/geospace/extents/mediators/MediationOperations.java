@@ -189,13 +189,22 @@ public class MediationOperations {
     }
   }
 
-  public static Subgrid getSubgrid(Grid grid, Shape shape) throws KlabException {
+  /**
+   * Get a cutout of a grid from a top-level grid and a shape that intersects it. The resulting grid is
+   * made conformant by snapping the shape to the contours of the original grid.
+   *  
+   * @param grid
+   * @param shape
+   * @return the subgrid
+   * @throws IllegalArgumentException if the shape does not cover the original grid shape.
+   */
+  public static Subgrid getSubgrid(Grid grid, Shape shape) {
 
     Envelope genv = new Envelope(grid.getEast(), grid.getWest(), grid.getSouth(), grid.getNorth());
     Envelope senv = shape.getEnvelope().getJTSEnvelope();
 
     if (!genv.covers(senv)) {
-      return null;
+      throw new IllegalArgumentException("cannot create subgrid: the passed shape does not cover the original grid");
     }
 
     /*

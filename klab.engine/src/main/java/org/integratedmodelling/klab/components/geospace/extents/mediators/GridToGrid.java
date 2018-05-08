@@ -7,10 +7,11 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class GridToGrid implements IScaleMediator {
 
+    boolean conformant = false;
+    
     @Override
     public boolean isConformant() {
-        // TODO Auto-generated method stub
-        return false;
+        return conformant;
     }
 
     @Override

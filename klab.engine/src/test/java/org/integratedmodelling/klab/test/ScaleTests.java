@@ -11,10 +11,12 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +53,22 @@ public class ScaleTests {
   @After
   public void tearDown() throws Exception {
     engine.stop();
+  }
+  
+  @Test
+  public void testGeometryExtraction() {
+      
+      Scale tzScale = Scale
+              .create((IExtent) Extensions.INSTANCE.callFunction(tzcall, Klab.INSTANCE.getRootMonitor()));
+      
+      // check encoding to JSON completes w/o error
+      System.out.println(JsonUtils.printAsJson(tzScale.asGeometry()));
+      // check encoding as string
+      String gdef = tzScale.asGeometry().encode();
+      System.out.println(gdef);
+      Geometry gcopy = Geometry.create(gdef);
+      // check equality
+      assert(gcopy.equals(tzScale.asGeometry()));
   }
 
   /**

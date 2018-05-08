@@ -16,7 +16,7 @@
     <build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
+				<!-- <plugin>
 					<artifactId>kotlin-maven-plugin</artifactId>
 					<groupId>org.jetbrains.kotlin</groupId>
 					<version>${kotlin.version}</version>
@@ -46,7 +46,7 @@
 							</configuration>
 						</execution>
 					</executions>
-				</plugin>
+				</plugin>  -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -81,7 +81,7 @@
 			</plugins>
 		</pluginManagement>
         <plugins>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
@@ -101,7 +101,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>  -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -128,12 +128,12 @@
 			<version>24.1-jre</version>
 		</dependency>
 
-		<!-- Kotlin support -->
+		<!-- Kotlin support 
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 			<version>${kotlin.version}</version>
-		</dependency>
+		</dependency>-->
 		
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

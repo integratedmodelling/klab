@@ -2,13 +2,19 @@
 
 ## Engine
 
+### Validation
+
+- Filter and validate action types and URN geometry/type
+- Semantic macros and missing operators
+- Connection to upper ontologies from within worldview
+- OWL processor testing and docs
 
 ### Basic modeling
 
 - Functional adapters for classifications and k.IM syntax for map literals
 - Functional adapters for lookup tables and k.IM syntax for table literals
 - Websockets Messaging API: streamline, complete (JSON RPC inspired - no need to comply)
-
+  
 ### Resolution
 
 - Rescaling mediators; get test4 working
@@ -27,6 +33,19 @@
 - Implement and test basic adapters (WCS, WFS, Raster, Vector, Table, JDBC)
 - Design the publish/review/accept/reject model and API; explore DOI attribution
 
+### Modeling functionalities
+
+- Missing GIS stuff: rasterizer, distances, spatial indexing, routing across both features 
+  and terrains, spatial networks
+- Recover all Groovy functionalities
+- Groovy funcs for documentation generator
+
+### Provenance
+
+- Flesh out model and provide adapters for docs, display and export
+- Connect with resource metadata and history
+- Use in documentation generator
+
 ### REST interface
 
 - API: work in progress to use RAML as source of truth
@@ -35,6 +54,18 @@
     - Observe context and in context
     - Context structure
     - Get data and maps for obs
+
+### Debugger
+
+## Visualization (Engine)
+
+- Define colormap, shading, bit depth and other visualization options through overriddable 
+  annotations on models and concepts. Could/should also apply to individual input/output
+  observables and carry on to dataflows.
+- Use Geotools style features but make it simple to do in k.IM and support ColorBrewer IDs
+  as modifiable starting points.
+- Dataflow graphical representation (now very hard to do)
+- Provenance graph (?) and browser
 
 ## UI (IDE)
 

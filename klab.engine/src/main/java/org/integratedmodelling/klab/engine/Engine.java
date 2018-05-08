@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -350,10 +351,11 @@ public class Engine extends Server implements IEngine, UserDetails {
             }
 
             /*
-             * Install the k.IM validator to build concepts and model objects
+             * Install the k.IM validator and notifier to build concepts and model objects
              */
             Kim.INSTANCE.setValidator(new KimValidator(this.monitor));
-
+            Kim.INSTANCE.addNotifier(new KimNotifier(this.monitor));
+            
             /*
              * initialize but do not load the local workspace, so that we can later override the worldview
              * if we have some worldview projects in the workspace.

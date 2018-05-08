@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -25,6 +26,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -198,7 +200,9 @@ public class Actuator implements IActuator {
              * parallelization instead of hard-coding a loop here.
              */
             ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-                    (IState) ret, addParameters(ctx, resource), scale.at(ITime.INITIALIZATION));
+                    (IState) ret, addParameters(ctx, resource),
+                    /* TODO CHECK THE USE OF AT() - CALLED FROM setupContext already has this applied */ scale
+                            .at(ITime.INITIALIZATION));
 
         } else if (contextualizer instanceof IResolver) {
             ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, resource));
@@ -242,14 +246,15 @@ public class Actuator implements IActuator {
         IRuntimeContext ret = runtimeContext.copy();
         IScale scale = ret.getScale().at(locator);
 
+        /*
+         * if we're subsetting the scale, create the new scale as an intersection and reinterpret
+         * any existing state through it.
+         */
         if (this.coverage != null) {
-            /**
-             * TODO!
-             *    scale = scale.merge(this.coverage)
-             *    if (target is a state) {
-             *        target = target.conformantView(scale)
-             *    }
-             */
+            scale = scale.merge(this.coverage, LogicalConnector.INTERSECTION);
+            if (target instanceof IState) {
+                target = Observations.INSTANCE.getStateView((IState) target, scale, ret);
+            }
         }
 
         // compile mediators
@@ -265,7 +270,7 @@ public class Actuator implements IActuator {
 
         ret.setTarget(target);
         ret.setScale(scale);
-        
+
         for (IActuator input : getActuators()) {
             if (ret.getArtifact(input.getName()) != null) {
                 // no effect if not aliased
@@ -276,8 +281,13 @@ public class Actuator implements IActuator {
                 for (Pair<IContextualizer, IComputableResource> mediator : mediation) {
                     String targetArtifactId = mediator.getSecond().getTarget();
                     if (targetArtifactId.equals(input.getAlias())) {
-                        IArtifact mediated = runContextualizer(mediator.getFirst(), mediator.getSecond(),
-                                ret.getArtifact(targetArtifactId), ret, runtimeContext.getScale());
+                        IArtifact artifact = ret.getArtifact(targetArtifactId);
+                        /*
+                         * TODO (I think): if we have own coverage, must reinterpret the artifact through
+                         * the new scale.
+                         */
+                        IArtifact mediated = runContextualizer(mediator.getFirst(), mediator.getSecond(), artifact, ret,
+                                ret.getScale());
                         ret.setData(targetArtifactId, mediated);
                     }
                 }

@@ -97,7 +97,6 @@ public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer
         configurer.enableSimpleBroker("/message");
         // Prefix for messages FROM client TO server, sent to /klab/message: : 
         configurer.setApplicationDestinationPrefixes("/klab");
-        // /app wird beim client - sendName verwendet));
     }
 
 }

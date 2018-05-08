@@ -135,7 +135,7 @@ public class EngineMonitor {
 	 * Ops performed when an engine goes down.
 	 */
 	private void engineDown() {
-		// TODO Auto-generated method stub
+		// TODO other cleanup ops. Don't null the sessionId as we may be able to reconnect.
 		onEngineDown.run();
 	}
 

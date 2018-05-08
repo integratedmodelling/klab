@@ -11,7 +11,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus.Receiver;
 import org.integratedmodelling.klab.engine.rest.client.StompMessageBus;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.monitoring.SubscriberRegistry;
