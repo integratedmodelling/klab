@@ -311,13 +311,13 @@ public class DataflowBuilder {
             return ret;
         }
 
-        Scale computeCoverage(Scale current) throws KlabException {
+        Coverage computeCoverage(Coverage current) throws KlabException {
 
-            Scale myCov = null;
+            Coverage myCov = null;
             for (ModelD model : models) {
                 if (model.model.getBehavior().hasScale()) {
                     if (myCov == null) {
-                        myCov = Scale.create(model.model.getBehavior().getExtents(scope.getMonitor()));
+                        myCov = Coverage.full(Scale.create(model.model.getBehavior().getExtents(scope.getMonitor())));
                     } else {
                         myCov = myCov.merge(Scale.create(model.model.getBehavior().getExtents(scope.getMonitor())),
                                 LogicalConnector.UNION);

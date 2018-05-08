@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 
@@ -227,5 +228,11 @@ public class Time extends Extent implements ITime {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public AbstractExtent mergeCoverage(IExtent other, LogicalConnector connector) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

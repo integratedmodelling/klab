@@ -74,7 +74,8 @@ public class ObserveInContextTask implements ITask<IObservation> {
         if (scope.getCoverage().isRelevant()) {
           Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token, scope);
           System.out.println(dataflow.getKdlCode());
-          return (IObservation)dataflow.run(scope.getCoverage(), monitor);
+          // make a copy of the coverage so that we ensure it's a scale, behaving properly at merge.
+          return (IObservation)dataflow.run(scope.getCoverage().copy(), monitor);
         }
 
         return ret;

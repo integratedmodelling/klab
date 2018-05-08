@@ -5,10 +5,11 @@ package org.integratedmodelling.klab.test;
 
 import java.io.InputStream;
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.klab.Dataflows;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -25,14 +26,14 @@ public class DataflowTests {
     /**
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeClass
     public void setUp() throws Exception {
     }
 
     /**
      * @throws java.lang.Exception
      */
-    @After
+    @AfterClass
     public void tearDown() throws Exception {
     }
 

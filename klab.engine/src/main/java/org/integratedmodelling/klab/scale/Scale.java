@@ -1030,7 +1030,17 @@ public class Scale implements IScale {
         }
         return ret;
     }
-
+    
+    /**
+     * Create a full copy as an independent object. Use to convert a Coverage into a proper
+     * Scale when necessary.
+     * 
+     * @return
+     */
+    public Scale copy() {
+    	return Scale.create(extents);
+    }
+    
     /**
      * Return the scale as the underlying non-semantic Geometry
      * 

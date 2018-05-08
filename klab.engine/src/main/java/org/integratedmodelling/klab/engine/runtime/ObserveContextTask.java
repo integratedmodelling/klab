@@ -59,7 +59,8 @@ public class ObserveContextTask implements ITask<ISubject> {
 
                         System.out.println(dataflow.getKdlCode());
 
-                        return (ISubject) dataflow.run(scope.getCoverage(), monitor);
+                        // make a copy of the coverage so that we ensure it's a scale, behaving properly at merge.
+                        return (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
                     }
 
                     return null;

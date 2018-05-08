@@ -4,9 +4,10 @@
 package org.integratedmodelling.klab.test;
 
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.klab.engine.Engine;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -25,12 +26,12 @@ public class ModelTests {
 
   Engine engine;
 
-  @Before
+  @BeforeClass
   public void setUp() throws Exception {
     engine = Engine.start();
   }
 
-  @After
+  @AfterClass
   public void tearDown() throws Exception {
     if (engine != null) {
       engine.stop();

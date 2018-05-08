@@ -5,6 +5,7 @@ package org.integratedmodelling.klab.test;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
@@ -17,8 +18,8 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.JsonUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -45,12 +46,12 @@ public class ScaleTests {
   Engine        engine;
   List<Scale>   scales        = new ArrayList<>();
 
-  @Before
+  @BeforeClass
   public void setUp() throws Exception {
     engine = Engine.start();
   }
 
-  @After
+  @AfterClass
   public void tearDown() throws Exception {
     engine.stop();
   }
