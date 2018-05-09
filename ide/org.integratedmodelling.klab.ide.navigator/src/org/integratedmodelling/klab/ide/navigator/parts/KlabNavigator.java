@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.ide.navigator.parts;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -8,7 +10,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.text.TextSelection;
@@ -30,12 +36,29 @@ public class KlabNavigator {
     @Inject
     private ESelectionService selectionService;
 
+    @Inject EPartService partService;
+    
     @Inject
     private IEventBroker eventBroker;
 
     @PostConstruct
     public void createPartControl(Composite parent) {
 
+    	/*
+    	 * fuuuck
+    	 */
+    	MPart part = partService.findPart("test.partDescFragment.ASampleE4View");
+    	if (part != null) {
+    		List<MToolBarElement> toolbarItems = part.getToolbar().getChildren();
+    		if (toolbarItems.isEmpty()) {
+    			partService.hidePart(part, true);
+    		}
+    	}
+    	part = partService.showPart("test.partDescFragment.ASampleE4View", PartState.ACTIVATE);
+    	/*
+    	 * end fuuuck
+    	 */
+    	
         parent.setLayout(new FillLayout(SWT.VERTICAL));
 
         Composite composite = new Composite(parent, SWT.NONE);
@@ -140,4 +163,6 @@ public class KlabNavigator {
         // myLabelInView.setText("This is a multiple selection of " +
         // selectedObjects.length + " objects");
     }
+    
+    
 }
