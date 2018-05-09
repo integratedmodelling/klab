@@ -24,15 +24,15 @@ import org.reflections.scanners.ResourcesScanner;
  */
 public class ModelTests {
 
-  Engine engine;
+  static Engine engine;
 
   @BeforeClass
-  public void setUp() throws Exception {
+  public static void setUp() throws Exception {
     engine = Engine.start();
   }
 
   @AfterClass
-  public void tearDown() throws Exception {
+  public static void tearDown() throws Exception {
     if (engine != null) {
       engine.stop();
     }

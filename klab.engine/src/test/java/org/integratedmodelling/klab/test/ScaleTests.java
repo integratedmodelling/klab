@@ -43,16 +43,16 @@ public class ScaleTests {
   IServiceCall  tzbotcall     =
       KimServiceCall.create("space", "grid", "1 km", "shape", tzShapeBottom);
 
-  Engine        engine;
+  static Engine        engine;
   List<Scale>   scales        = new ArrayList<>();
 
   @BeforeClass
-  public void setUp() throws Exception {
+  public static void setUp() throws Exception {
     engine = Engine.start();
   }
 
   @AfterClass
-  public void tearDown() throws Exception {
+  public static void tearDown() throws Exception {
     engine.stop();
   }
   

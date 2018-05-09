@@ -27,14 +27,14 @@ public class DataflowTests {
      * @throws java.lang.Exception
      */
     @BeforeClass
-    public void setUp() throws Exception {
+    public static void setUp() throws Exception {
     }
 
     /**
      * @throws java.lang.Exception
      */
     @AfterClass
-    public void tearDown() throws Exception {
+    public static void tearDown() throws Exception {
     }
 
     @Test
