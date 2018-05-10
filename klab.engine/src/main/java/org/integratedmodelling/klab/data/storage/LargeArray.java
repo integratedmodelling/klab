@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
-import org.integratedmodelling.klab.utils.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 /**
@@ -33,7 +32,30 @@ public abstract class LargeArray<T> {
 
     class Slice {
 
-        INDArray[] data;
+		/*
+    	 * Index of the time slice that our data belong to.
+    	 */
+    	int timeIndex;
+    	/*
+    	 * Legitimate array with data for this slice, created by copying the previous data 
+    	 * when a different value needs to be set. If this is not null, use this.
+    	 */
+        INDArray data;
+        /*
+         * Pointer to previous slice, not null as long as all set operations on this slice write
+         * values that are the same as the previous. 
+         */
+        Slice previousSlice;
+
+        Slice(long sliceSize) {
+        	this.timeIndex = 0;
+        	this.data = null; // TODO new with size and proper type based on representation
+		}
+    	
+        Slice(int timeIndex, INDArray previous) {
+			this.timeIndex = timeIndex;
+			this.data = previous;
+		}
     }
 
     // this may be higher than the time offset for the passed slice as we only store slices for
@@ -43,26 +65,29 @@ public abstract class LargeArray<T> {
     private IGeometry geometry;
     private Class<T> representation;
     private MultidimensionalCursor cursor;
-    private List<Pair<Long, Slice>> data = new ArrayList<>();
+    private List<Slice> data = new ArrayList<>();
 
     public LargeArray(IGeometry geometry, Class<T> cls) {
         this.geometry = geometry;
         int i = 0;
+        long sliceSize = 1;
         for (Dimension dim : geometry.getDimensions()) {
             if (dim.getType() == Type.TIME) {
                 this.timeOffset = i;
-                break;
+            } else {
+            	sliceSize *= dim.size();
             }
             i++;
         }
         this.representation = cls;
         this.cursor = new MultidimensionalCursor(geometry);
+        this.data.add(new Slice(sliceSize));
     }
 
     public T get(long index) {
 
         if (timeOffset < 0) {
-            return getObject(data.get(0).getSecond().data, index);
+            return getObject(data.get(0).data, index);
         }
 
         long ofs[] = cursor.getElementIndexes(index);
@@ -81,7 +106,7 @@ public abstract class LargeArray<T> {
      * @param data
      * @return
      */
-    protected abstract T getObject(INDArray[] data, long offset);
+    protected abstract T getObject(INDArray data, long offset);
 
     /**
      * Put the passed object in the passed array set at the passed offset.
@@ -92,12 +117,12 @@ public abstract class LargeArray<T> {
      * @param data
      * @param offset
      */
-    protected abstract void setObject(Object value, INDArray[] data, long offset);
+    protected abstract void setObject(Object value, INDArray data, long offset);
 
     public boolean set(long index, Object value) {
         
         if (timeOffset < 0) {
-            setObject(value, data.get(0).getSecond().data, index);
+            setObject(value, data.get(0).data, index);
         }
 
         if (get(index).equals(value)) {
