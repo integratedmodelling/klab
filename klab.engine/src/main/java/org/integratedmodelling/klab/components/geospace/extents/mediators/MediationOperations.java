@@ -33,8 +33,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -46,7 +44,11 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class MediationOperations {
 
-	public static class Subgrid implements IGrid {
+	/*
+	 * The Subgrid extends Grid only to provide compatibility with the constructors in Space. All methods are
+	 * overridden.
+	 */
+	public static class Subgrid extends Grid {
 
 		Grid grid;
 		Grid ogrid;
@@ -105,11 +107,6 @@ public class MediationOperations {
 			return grid.getCoordinates(index);
 		}
 
-		// @Override
-		// public Locator getLocator(long x, long y) {
-		// return grid.getLocator(x, y);
-		// }
-
 		@Override
 		public double getEast() {
 			return grid.getEast();
@@ -140,7 +137,7 @@ public class MediationOperations {
 			return grid.getCellHeight();
 		}
 
-		public IShape getShape() {
+		public Shape getShape() {
 			return grid.getShape();
 		}
 
@@ -153,10 +150,12 @@ public class MediationOperations {
 			return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - cell.getY() - 1));
 		}
 
-		public double geCellArea(IUnit unit) {
-			return grid.getCellArea(unit);
+		public long getOriginalOffset(long offset) {
+			long[] xy = grid.getXYOffsets(offset);
+			return ogrid.getIndex(xy[0] + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - xy[1] - 1));
 		}
 
+		
 		@Override
 		public double snapX(double xCoordinate, Direction direction) {
 			return grid.snapX(xCoordinate, direction);
@@ -184,14 +183,14 @@ public class MediationOperations {
 
 		@Override
 		public IProjection getProjection() {
-			return grid.getProjection();
+			return ogrid.getProjection();
 		}
 	}
 
 	/**
 	 * Get the percentage of area outside the requested shape that needs to be
 	 * covered in order to snap the passed grid to the passed shape so that the
-	 * resulting subgrid can be conformant. If this is small enough
+	 * resulting subgrid can be conformant. 
 	 * 
 	 * @param grid
 	 * @param shape
@@ -212,10 +211,12 @@ public class MediationOperations {
 		double gymin = grid.snapY(senv.getMinY(), Direction.BOTTOM);
 		double gymax = grid.snapY(senv.getMaxY(), Direction.TOP);
 
-		double dx = Math.abs(gxmax - gxmin);
-		double dy = Math.abs(gymax - gymin);
-
-		return (dx * dy) / ((grid.getEast() - grid.getWest()) * (grid.getNorth() - grid.getSouth()));
+		// net adjustments, for now assume worst-case scenario of grid offset leaving 95% of one cell out 
+		double dx = Math.abs(gxmax - gxmin - senv.getWidth())*.95;
+		double dy = Math.abs(gymax - gymin - senv.getHeight())*.95;
+		
+		// relate areal adjustment to total area
+		return (dx*dy)/genv.getArea();
 	}
 
 	/**

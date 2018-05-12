@@ -773,12 +773,12 @@ public class Grid extends Area implements IGrid {
 
 	public String getSignature() {
 		return "grid," + getWest() + "," + getSouth() + "," + getEast() + "," + getNorth() + "," + getXCells() + ","
-				+ getYCells() + projection.getCode();
+				+ getYCells() + getProjection().getCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Grid && ((Grid) obj).getSignature().equals(getSignature());
+		return obj == this || (obj instanceof Grid && ((Grid) obj).getSignature().equals(getSignature()));
 	}
 
 	@Override

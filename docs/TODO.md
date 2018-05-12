@@ -22,12 +22,13 @@
     
 ### Resolution
 
-- Rescaling mediators; get test4 working
+- Rescaling mediators; get test5 working
 - Relationship instantiator and resolver: test cases
 - Smart resolution of sub-object qualities: use ranking system with scale constraints (i.e. 
   produce Model metadata from states, search there first, if something > x% don't use the network, configure 
   X)
 - Interactive resolution workflow (implement and test in both CLI and Eclipse)
+- Distributing observations ('by' <subject>) and aggregation by trait
 
 ### Temporal contextualization
 

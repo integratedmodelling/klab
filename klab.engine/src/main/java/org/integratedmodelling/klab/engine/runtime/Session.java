@@ -12,9 +12,11 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -43,6 +45,7 @@ public class Session implements ISession, UserDetails {
     boolean closed = false;
     Set<GrantedAuthority> authorities = new HashSet<>();
     long lastActivity = System.currentTimeMillis();
+    Geometry regionOfInterest = Geometry.empty();
 
     public interface Listener {
         void onClose(ISession session);
@@ -145,5 +148,10 @@ public class Session implements ISession, UserDetails {
     public boolean isEnabled() {
         return !closed;
     }
+
+	@Override
+	public IGeometry getRegionOfInterest() {
+		return regionOfInterest;
+	}
 
 }

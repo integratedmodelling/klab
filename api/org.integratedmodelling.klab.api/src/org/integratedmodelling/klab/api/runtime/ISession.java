@@ -20,51 +20,63 @@ import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
-import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngine;
-import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
+ * Any observation made in k.LAB must be done within a valid user session.
+ * Sessions are obtained from a running {@link IEngine} using
+ * {@link IEngine#createSession()} or
+ * {@link IEngine#createSession(IEngineUserIdentity)}.
  * <p>
- * Any observation made in k.LAB must be done within a valid user session. Sessions are obtained
- * from a running {@link org.integratedmodelling.klab.api.engine.IEngine} using {@link org.integratedmodelling.klab.api.engine.IEngine#createSession()} or
- * {@link org.integratedmodelling.klab.api.engine.IEngine#createSession(IEngineUserIdentity)}.
- * </p>
- *
- * <p>
- * Sessions must be properly closed when not needed anymore. A ISession is a {@link java.io.Closeable}, so a
- * typical usage is
- * </p>
+ * Sessions must be properly closed when not needed anymore. A ISession is a
+ * {@link java.io.Closeable}, so a typical usage is
  *
  * <pre>
  * try (ISession session = engine.createSession()) {
- *   // do things
+ * 	// do things
  * } catch (KlabException e) {
- *   // complain
+ * 	// complain
  * }
  * </pre>
  *
+ * A session is also an {@link org.integratedmodelling.klab.api.auth.IIdentity},
+ * and its token must authenticate those engine API calls that are
+ * session-aware. All sessions have a {@link IUserIdentity} as parent.
  * <p>
- * A session is also an {@link org.integratedmodelling.klab.api.auth.IIdentity}, and its token must authenticate those engine API calls
- * that are session-aware.
- * </p>
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface ISession extends IEngineSessionIdentity, Closeable {
 
-  /**
-   * The observation action called on ISession always creates a new root subject. The URN must
-   * specify a {@link org.integratedmodelling.klab.api.model.IObserver}.
-   *
-   * @param urn specifying a (local or remote) observer
-   * @param scenarios names of any scenario namespaces to use in resolution
-   * @return a Future that is observing the URN.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
+	/**
+	 * The observation action called on ISession always creates a new root subject.
+	 * The URN must specify a
+	 * {@link org.integratedmodelling.klab.api.model.IObserver} unless
+	 * {@link #getRegionOfInterest()} returns a geometry that can be used as
+	 * context.
+	 *
+	 * @param urn
+	 *            specifying a (local or remote) observer
+	 * @param scenarios
+	 *            names of any scenario namespaces to use in resolution
+	 * @return a Future that is observing the URN.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
+
+	/**
+	 * The geometry of interest depends on user actions and starts empty. As the
+	 * user interacts with the session, this may reflect actions such as zooming in
+	 * on particular spatial and/or temporal extents, which can be used when
+	 * observations are made without stating a context.
+	 * 
+	 * @return
+	 */
+	IGeometry getRegionOfInterest();
 
 }

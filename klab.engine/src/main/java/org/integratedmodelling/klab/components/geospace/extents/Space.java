@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -22,9 +23,12 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.MediationOperations;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
@@ -74,16 +78,17 @@ public class Space extends Extent implements ISpace {
 
 		this.projection = shape.getProjection();
 		this.shape = shape;
-		if (grid != null) {
-			this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
-			if (grid instanceof Grid) {
-				this.grid.offsetInSupergrid = ((Grid) grid).offsetInSupergrid;
-				this.grid.superGridId = ((Grid) grid).superGridId;
-			}
-			this.envelope = ((Grid) grid).getEnvelope();
-		} else {
+		this.grid = grid;
+//		if (grid != null) {
+//			this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
+//			if (grid instanceof Grid) {
+//				this.grid.offsetInSupergrid = ((Grid) grid).offsetInSupergrid;
+//				this.grid.superGridId = ((Grid) grid).superGridId;
+//			}
+//			this.envelope = ((Grid) grid).getEnvelope();
+//		} else {
 			this.envelope = this.shape.getEnvelope();
-		}
+//		}
 	}
 
 	public String toString() {
@@ -268,7 +273,13 @@ public class Space extends Extent implements ISpace {
 				// review grid, using conformant (snap) if possible (error threshold?)
 				// error should be in terms of the max discrepancy compared to size of
 				// common shape
-				System.out.println("adapting grid to shape");
+				double error = MediationOperations.getSubsettingError(grid, common);
+				System.out.println("adapting grid to shape: subsetting error is " + error);
+				if (error <= Configuration.INSTANCE.getAcceptedSubsettingError()) {
+					return new Space(common, MediationOperations.getSubgrid(grid, common));
+				} else {
+					throw new KlabUnsupportedFeatureException("Unsupported operation: non-conformant grid to grid (subsetting error = " + error);
+				}
 			} else if (features != null) {
 				// cut features to merged shape
 				System.out.println("adapting features to shape");
@@ -545,6 +556,25 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public IScaleMediator getMediator(IExtent extent) {
 		// TODO Auto-generated method stub
+
+		if (!(extent instanceof ISpace)) {
+			throw new IllegalArgumentException("extent " + extent + " cannot mediate to " + this);
+		}
+
+		ISpace other = (ISpace)extent;
+
+		if (grid != null && other instanceof Space && ((Space)other).grid != null) {
+			return new GridToGrid(grid, ((Space)other).grid);
+		}
+		
+		/*
+		 * if this == extent return identity;
+		 * if this.grid != null && extent.grid != null && this.grid isa subgrid && this.grid.originalgrid == extent.grid
+		 * 	return conformant offset remapper;
+		 * if this.grid != null && extent.grid != null && extent.grid isa subgrid && extent.grid.originalgrid == this.grid
+		 * 	return inverse conformant offset remapper;
+		 */
+		
 		return null;
 	}
 

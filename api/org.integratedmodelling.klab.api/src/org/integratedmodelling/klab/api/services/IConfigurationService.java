@@ -259,4 +259,13 @@ public interface IConfigurationService {
      */
     Level getNotificationLevel();
 
+    /**
+     * Return the proportion of error (0-1) allowed when subsets of grids are created during scale mediation. If 
+     * the error in a subsetting operation is higher than what is returned, a much more expensive non-conformant
+     * grid mediator will be used instead of snapping the subgrid to the original one for 1-to-1 rescaling.
+     * 
+     * @return
+     */
+	double getAcceptedSubsettingError();
+
 }

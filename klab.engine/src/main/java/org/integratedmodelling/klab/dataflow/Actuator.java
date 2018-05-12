@@ -145,7 +145,8 @@ public class Actuator implements IActuator {
 
         /*
          * this localizes the names in the context to those understood by this actuator
-         * and applies any requested mediation to the inputs
+         * and applies any requested mediation to the inputs. Target may be swapped for
+         * a mediator.
          */
         IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
 
@@ -159,16 +160,17 @@ public class Actuator implements IActuator {
         }
 
         /*
-         * Initial target will be null if the actuator is for an instantiator
+         * Initial target will be null if the actuator is for an instantiator. We take it from the context as
+         * setupContext() may have swapped it for a rescaling mediator.
          */
-        IArtifact ret = target;
+        IArtifact ret = ctx.getTargetArtifact();
 
         /*
          * run the contextualization strategy with the localized context
          */
         for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
             ret = runContextualizer(contextualizer.getFirst(), contextualizer.getSecond(), ret, ctx,
-                    runtimeContext.getScale());
+                    ctx.getScale());
         }
 
         // this should never happen as even empty instantiations produce the empty

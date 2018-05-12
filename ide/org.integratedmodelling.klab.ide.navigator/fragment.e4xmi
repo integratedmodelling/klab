@@ -5,21 +5,22 @@
       <tags>View</tags>
       <tags>categoryTag:org.integratedmodelling.klab.ide.category</tags>
       <handlers xmi:id="_DkObcE00EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.handler.0" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.SwitchView" command="_-72FoE00EeiMqc9j7Difiw"/>
-      <menus xmi:id="_jo0O8ErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.menu.view" label="View">
+      <menus xmi:id="_6mphUFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.menu.0">
         <tags>ViewMenu</tags>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_lvmVQErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.development" label="Development view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" tooltip="Switch to development view (projects, namespaces and their contents)" selected="true" type="Radio" command="_-72FoE00EeiMqc9j7Difiw">
-          <parameters xmi:id="_85GVUE01EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.parameter.0" name="view" value="&quot;DEV&quot;"/>
-        </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_p19tsErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.bookmarks" label="Bookmark view" type="Radio" command="_-72FoE00EeiMqc9j7Difiw">
-          <parameters xmi:id="_MQShwE02EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.parameter.1" name="view" value="&quot;BOOKMARK&quot;"/>
-        </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_3F-LMErnEeiZZJVNg25DFA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.runnables" label="Script view" type="Radio" command="_-72FoE00EeiMqc9j7Difiw">
-          <parameters xmi:id="_PNZMEE02EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.parameter.2" name="view" value="&quot;SCRIPT&quot;"/>
-        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_8D3GMFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.mercolon" label="Mercolon"/>
       </menus>
+      <menus xmi:id="_A7duUFXYEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.menu.view" label="View">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_CJaIIFXYEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.merdolaz" label="Merdolaz"/>
+      </menus>
+      <toolbar xmi:id="_GrZiEFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.toolbar.0">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_fsTawFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledtoolitem.developmentview" label="Development view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/k-lab-icon-16.gif" type="Radio"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_jyzWEFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledtoolitem.bookmarkview" label="Bookmark view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" type="Radio"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_mIIOsFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledtoolitem.scriptview" label="Script view"/>
+      </toolbar>
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_1CKDsE00EeiMqc9j7Difiw" featurename="commands" parentElementId="xpath:/">
     <elements xsi:type="commands:Command" xmi:id="_-72FoE00EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.command.switchview" commandName="SwitchView" description="Switch view"/>
   </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_0ZbmkFXWEeiAC5D-Rj6GEA" featurename="menus" parentElementId="xpath:/"/>
 </fragment:ModelFragments>

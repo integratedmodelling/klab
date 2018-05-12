@@ -501,7 +501,7 @@ public class Geometry implements IGeometry {
      * @param offsets
      * @return a new offset locator
      */
-    public ILocator locate(long... offsets) {
+    public OffsetLocator locate(long... offsets) {
         return new OffsetLocator(offsets);
     }
 
@@ -551,9 +551,9 @@ public class Geometry implements IGeometry {
             return offsets[0];
         }
         if (this.cursor == null) {
-
+        	this.cursor = new MultidimensionalCursor(this);
         }
-        return UNDEFINED;
+        return this.cursor.getElementOffset(offsets);
     }
 
     @Override
