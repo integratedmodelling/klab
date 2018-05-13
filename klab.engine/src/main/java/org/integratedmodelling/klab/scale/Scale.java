@@ -944,7 +944,9 @@ public class Scale implements IScale {
     @Override
     public long getOffset(ILocator index) {
 
-        if (index instanceof Scale && ((Scale) index).originalScaleId == this.scaleId) {
+    	// CHECK not matching the original scale ID any more (too restrictive) - it's an act of faith whether
+    	// the scale comes from the original or not at this point. 
+        if (index instanceof Scale && ((Scale) index).originalScaleOffset >= 0) {
             return ((Scale) index).originalScaleOffset;
         }
 

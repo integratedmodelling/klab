@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
@@ -62,12 +63,16 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
         Actuator actuator = (Actuator) act;
 
+        /*
+         * NO FIXME have the context created actuator by actuator in the runtime provider. Pass null for
+         * the root subject.
+         */
         IRuntimeContext runtimeContext = context == null
-            ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator,
-                scope, scale, monitor))
-            : ((Subject) context).getRuntimeContext().createChild(scale, actuator, scope);
-
-        IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, runtimeContext).get();
+                ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator,
+                        scope, scale, monitor))
+                    : ((Subject) context).getRuntimeContext();
+                
+        IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, runtimeContext, monitor).get();
 
         if (ret == null) {
           ret = data;

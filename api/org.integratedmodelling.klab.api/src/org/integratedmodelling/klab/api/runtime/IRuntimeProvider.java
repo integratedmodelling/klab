@@ -15,8 +15,8 @@
  */
 package org.integratedmodelling.klab.api.runtime;
 
-import java.util.List;
 import java.util.concurrent.Future;
+
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -39,80 +39,126 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IRuntimeProvider {
 
-  /**
-   * The main executor for a k.LAB dataflow. Each call returns a new Future that has been started.
-   *
-   * @param actuator a top-level actuator that has no dependencies on external ones.
-   * @param context an appropriate context for the computation (see
-   *        {@link #createRuntimeContext(IActuator, IResolutionScope, IScale, IMonitor)}) containing
-   *        the target observation.
-   * @return a future that is computing the final artifact for the actuator.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  Future<IArtifact> compute(IActuator actuator, IComputationContext context) throws KlabException;
+	/**
+	 * The main executor for a k.LAB dataflow. Each call returns a new Future that
+	 * has been started.
+	 *
+	 * @param actuator
+	 *            a top-level actuator that has no dependencies on external ones.
+	 * @param scale
+	 *            the scale in which to compute
+	 * @param scope
+	 *            the resolution scope for the computation
+	 * @param context
+	 *            the root context for the computation (see
+	 *            {@link #createRuntimeContext(IActuator, IResolutionScope, IScale, IMonitor)})
+	 *            containing the target observation.
+	 * @param monitor
+	 *            the monitor with the identity carrying out the computation
+	 * @return a future that is computing the final artifact for the actuator.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope, IComputationContext rootContext,
+			IMonitor monitor) throws KlabException;
 
-  /**
-   * Create an empty runtime context for the dataflow that will build the context subject. The
-   * context will also create the subject itself according to the runtime's expectations.
-   *
-   * @param actuator a {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator} object.
-   * @param scope a {@link org.integratedmodelling.klab.api.resolution.IResolutionScope} object.
-   * @param scale the scale for the contextualization (must be compatible with scope.getScale() but
-   *        can be different)
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @return a new runtime context.
-   */
-  IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
-      IMonitor monitor);
+	/**
+	 * Create an empty runtime context for the dataflow that will build the context
+	 * subject. The context will also create the subject itself according to the
+	 * runtime's expectations.
+	 *
+	 * @param actuator
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator}
+	 *            object.
+	 * @param scope
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.resolution.IResolutionScope}
+	 *            object.
+	 * @param scale
+	 *            the scale for the contextualization (must be compatible with
+	 *            scope.getScale() but can be different)
+	 * @param monitor
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *            object.
+	 * @return a new runtime context.
+	 */
+	IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
+			IMonitor monitor);
 
-  /**
-   * Get a service call that, once executed, will turn the passed specification for a resource into
-   * a suitable contextualizer that runs on this runtime.
-   *
-   * @param resource a {@link org.integratedmodelling.kim.api.IComputableResource} object.
-   * @return the service call encoding the resource
-   */
-  IServiceCall getServiceCall(IComputableResource resource);
+	/**
+	 * Get a service call that, once executed, will turn the passed specification
+	 * for a resource into a suitable contextualizer that runs on this runtime.
+	 *
+	 * @param resource
+	 *            a {@link org.integratedmodelling.kim.api.IComputableResource}
+	 *            object.
+	 * @return the service call encoding the resource
+	 */
+	IServiceCall getServiceCall(IComputableResource resource);
 
-  /**
-   * Distribute the computation of the passed state resolver over the passed scale.
-   *
-   * @param resolver the state contextualizer, which will be called as many times as scale.size().
-   * @param data the data being computed (receiver of results). According to the context of
-   *        computation it may or may not contain initialized values.
-   * @param context the context before distribution - i.e., all states in it will be whole states
-   *        and need to be contextualized to each extent before computation happens (the resolver
-   *        expects individual values at each call).
-   * @param scale the scale, already set to the slice needed for this computation
-   * @return the computed result - return the same object passed as data whenever possible. If a
-   *         different one is collected, the original one will be garbage collected.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context,
-      IScale scale) throws KlabException;
+	/**
+	 * Distribute the computation of the passed state resolver over the passed
+	 * scale.
+	 *
+	 * @param resolver
+	 *            the state contextualizer, which will be called as many times as
+	 *            scale.size().
+	 * @param data
+	 *            the data being computed (receiver of results). According to the
+	 *            context of computation it may or may not contain initialized
+	 *            values.
+	 * @param context
+	 *            the context before distribution - i.e., all states in it will be
+	 *            whole states and need to be contextualized to each extent before
+	 *            computation happens (the resolver expects individual values at
+	 *            each call).
+	 * @param scale
+	 *            the scale, already set to the slice needed for this computation
+	 * @return the computed result - return the same object passed as data whenever
+	 *         possible. If a different one is collected, the original one will be
+	 *         garbage collected.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context, IScale scale)
+			throws KlabException;
 
-  /**
-   * The "empty" observation must contain the observable and the scale. It is returned when an
-   * instantiator is run with no error and produces no instances, to add to the context notifying
-   * that no instances were produced but the observation was made. The observation must adhere to
-   * the contract of an empty artifact, i.e. its {@link org.integratedmodelling.klab.api.provenance.IArtifact#isEmpty()} method must return true
-   * and it must produce no artifacts when iterated.
-   *
-   * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
-   * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
-   * @return a {@link org.integratedmodelling.klab.api.observations.IObservation} object.
-   */
-  IObservation createEmptyObservation(IObservable observable, IScale scale);
+	/**
+	 * The "empty" observation must contain the observable and the scale. It is
+	 * returned when an instantiator is run with no error and produces no instances,
+	 * to add to the context notifying that no instances were produced but the
+	 * observation was made. The observation must adhere to the contract of an empty
+	 * artifact, i.e. its
+	 * {@link org.integratedmodelling.klab.api.provenance.IArtifact#isEmpty()}
+	 * method must return true and it must produce no artifacts when iterated.
+	 *
+	 * @param observable
+	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *            object.
+	 * @param scale
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
+	 *            object.
+	 * @return a {@link org.integratedmodelling.klab.api.observations.IObservation}
+	 *         object.
+	 */
+	IObservation createEmptyObservation(IObservable observable, IScale scale);
 
-//  /**
-//   * Return the computable that will merge the artifacts produced by the passed models, each
-//   * indicated by the model ID it is paired with. Normally a service call implemented in the runtime
-//   * provider.
-//   *
-//   * @param observable the observable corresponding to the artifact produced and passed
-//   * @param modelIds the IDs that will identify the artifacts when the function is called.
-//   * @return a computable that will merge artifacts over their different coverages.
-//   */
-//  IComputableResource getMergeArtifactServiceCall(IObservable observable, List<String> modelIds);
+	// /**
+	// * Return the computable that will merge the artifacts produced by the passed
+	// models, each
+	// * indicated by the model ID it is paired with. Normally a service call
+	// implemented in the runtime
+	// * provider.
+	// *
+	// * @param observable the observable corresponding to the artifact produced and
+	// passed
+	// * @param modelIds the IDs that will identify the artifacts when the function
+	// is called.
+	// * @return a computable that will merge artifacts over their different
+	// coverages.
+	// */
+	// IComputableResource getMergeArtifactServiceCall(IObservable observable,
+	// List<String> modelIds);
 
 }
