@@ -184,11 +184,13 @@ public class FeatureExtractor implements IExpression, IInstantiator {
         if (!(o instanceof Boolean)) {
           throw new KlabValidationException("feature extraction selector must return true/false");
         }
+        
       } else if (!warned) {
         context.getMonitor()
             .warn("no input for feature extractor: specify either select or select fraction");
         warned = true;
       }
+      
       imp.set((int) cell.getX(), (int) cell.getY(), ((Boolean) o) ? 0 : 255);
     }
 

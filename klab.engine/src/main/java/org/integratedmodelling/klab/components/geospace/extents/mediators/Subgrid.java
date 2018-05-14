@@ -115,28 +115,14 @@ public class Subgrid extends Grid {
 			return null;
 		}
 
-		// SpatialDisplay sd = new SpatialDisplay(sshape.asExtent());
-		// sd.add(subgrid, "subgrid");
-		// sd.add(grid, "main grid");
-		// sd.add(shape, "sub shape");
-
 		Collection<Pair<Cell, Double>> ret = new ArrayList<>();
 		for (IExtent cell : subgrid) {
-
 			double d = shape.getCoverage((Cell) cell, useSimpleIntersection);
-
 			if (d > 0) {
-
 				Cell orig = subgrid.getOriginalCell((Cell) cell);
 				ret.add(new Pair<>(orig, d));
-
-				// sd.add(cell, "transposed covering");
-				// sd.add(orig, "orig covering");
-
 			}
 		}
-
-		// sd.show();
 
 		return ret;
 	}

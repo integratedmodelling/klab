@@ -257,12 +257,8 @@ public class Space extends Extent implements ISpace {
 		if (other == null) {
 			return new Space();
 		}
-
-		Shape common = this.shape.intersection(other);
-
-		// TODO adapt grid, features
-
-		return adaptToShape(common, other);
+		
+		return adaptToShape(this.shape.intersection(other), other);
 	}
 
 	private IExtent adaptToShape(Shape common, ISpace other) {
@@ -274,7 +270,6 @@ public class Space extends Extent implements ISpace {
 				// error should be in terms of the max discrepancy compared to size of
 				// common shape
 				double error = Subgrid.getSubsettingError(grid, common);
-				System.out.println("adapting grid to shape: subsetting error is " + error);
 				if (error <= Configuration.INSTANCE.getAcceptedSubsettingError()) {
 					return new Space(common, Subgrid.create(grid, common));
 				} else {
@@ -343,18 +338,14 @@ public class Space extends Extent implements ISpace {
 			return new Space();
 		}
 
-		Shape common = this.shape.union(other);
-
-		// TODO adapt grid, features
-
-		return adaptToShape(common, other);
+		return adaptToShape(this.shape.union(other), other);
 	}
 
 	@Override
 	public boolean contains(IExtent other) throws KlabException {
 		if (!(other instanceof Space)) {
 			throw new IllegalArgumentException(
-					"cannot union a space extent with a " + other.getClass().getCanonicalName());
+					"cannot check containment of a space extent within a " + other.getClass().getCanonicalName());
 		}
 		Space e = (Space) other;
 		return shape == null || e.shape == null ? false : shape.geometry.contains(e.shape.geometry);
@@ -364,7 +355,7 @@ public class Space extends Extent implements ISpace {
 	public boolean overlaps(IExtent other) throws KlabException {
 		if (!(other instanceof Space)) {
 			throw new IllegalArgumentException(
-					"cannot overla[ a space extent with a " + other.getClass().getCanonicalName());
+					"cannot overlap a space extent with a " + other.getClass().getCanonicalName());
 		}
 		Space e = (Space) other;
 		return shape == null || e.shape == null ? false : shape.geometry.overlaps(e.shape.geometry);

@@ -222,26 +222,27 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.put(name, value);
 	}
 
-//	@Override
-//	public IArtifact getTargetArtifact(IActuator actuator) {
-//
-//		IArtifact ret = catalog.get(actuator.getName());
-//
-//		// /**
-//		// * If we don't have a target and the actuator needs storage (i.e. it's a
-//		// quality
-//		// * or anything that must be instantiated automatically), create the storage
-//		// but
-//		// * do not add it to the provenance and structure.
-//		// */
-//		// if (ret == null && !((Actuator) actuator).getObservable().is(Type.COUNTABLE))
-//		// {
-//		// ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this);
-//		// catalog.put(actuator.getName(), ret);
-//		// }
-//
-//		return ret;
-//	}
+	// @Override
+	// public IArtifact getTargetArtifact(IActuator actuator) {
+	//
+	// IArtifact ret = catalog.get(actuator.getName());
+	//
+	// // /**
+	// // * If we don't have a target and the actuator needs storage (i.e. it's a
+	// // quality
+	// // * or anything that must be instantiated automatically), create the storage
+	// // but
+	// // * do not add it to the provenance and structure.
+	// // */
+	// // if (ret == null && !((Actuator)
+	// actuator).getObservable().is(Type.COUNTABLE))
+	// // {
+	// // ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this);
+	// // catalog.put(actuator.getName(), ret);
+	// // }
+	//
+	// return ret;
+	// }
 
 	@Override
 	public IMonitor getMonitor() {
@@ -287,7 +288,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		RuntimeContext ret = new RuntimeContext(this);
 		ret.parent = this;
 		ret.namespace = ((Actuator) actuator).getNamespace();
-		ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget() : actuator.getName();
+		ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget()
+				: actuator.getName();
 		ret.resolutionScope = (ResolutionScope) scope;
 		ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
 		ret.scale = scale;
@@ -431,7 +433,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	 * Pre-fill the artifact catalog with the artifact relevant to the passed
 	 * actuator and scope. Called on the ROOT artifact before any computation takes
 	 * place, passing all the actuators - must NOT change any local state.
-	 *  
+	 * 
 	 * @param actuator
 	 * @param scope
 	 */
@@ -439,7 +441,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
 		IArtifact observation = this.catalog.get(actuator.getName());
 
-		if (observation == null && scope.getMode() == Mode.RESOLUTION && !actuator.computesRescaledState()) {
+		if (observation == null && (!actuator.getObservable().is(Type.COUNTABLE) || scope.getMode() == Mode.RESOLUTION)
+				&& !actuator.computesRescaledState()) {
 
 			observation = DefaultRuntimeProvider.createObservation(((Actuator) actuator).getObservable(), scale, this);
 			this.catalog.put(actuator.getName(), observation);

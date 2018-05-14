@@ -64,7 +64,7 @@ public class GeospaceTests {
 	}
 
 	@Test
-	public void testSubgrid() throws IOException {
+	public void testSubgrids() throws IOException {
 
 		Scale tzScale = Scale
 				.create((IExtent) Extensions.INSTANCE.callFunction(tzcall, Klab.INSTANCE.getRootMonitor()));
@@ -94,57 +94,8 @@ public class GeospaceTests {
 		assert(NumberUtils.equal(gridUp.getCellHeight(), grid.getCellHeight()));
 		assert(NumberUtils.equal(gridDown.getCellHeight(), grid.getCellHeight()));
 		assert(gridUp.getXCells() == grid.getXCells());
-		// allow one cell overlap on the Y axis
+		// allow 1-cell overlap on the Y axis
 		assert(gridUp.getYCells() + gridDown.getYCells() - grid.getYCells() <= 1);
 	}
-
-	// /**
-	// * Basic test of merge operations on coverages.
-	// *
-	// * @throws Exception
-	// */
-	// @Test
-	// public void testCoverageOperations() throws Exception {
-	//
-	// Scale tzScale = Scale
-	// .create((IExtent) Extensions.INSTANCE.callFunction(tzcall,
-	// Klab.INSTANCE.getRootMonitor()));
-	// Scale tzScaleBot = Scale
-	// .create((IExtent) Extensions.INSTANCE.callFunction(tzbotcall,
-	// Klab.INSTANCE.getRootMonitor()));
-	// Scale tzScaleTop = Scale
-	// .create((IExtent) Extensions.INSTANCE.callFunction(tztopcall,
-	// Klab.INSTANCE.getRootMonitor()));
-	//
-	// ICoverage total = Coverage.empty(tzScale);
-	// ICoverage bottom = Coverage.full(tzScaleBot);
-	// ICoverage top = Coverage.full(tzScaleTop);
-	//
-	// // uncomment to check operands visually
-	// // SpatialDisplay display = new SpatialDisplay(tzScale.getSpace());
-	// // display.add(tzScaleBot.getSpace(), "bottom");
-	// // display.add(tzScaleTop.getSpace(), "top");
-	// // display.add((ISpace)tzScaleTop.getSpace().merge(tzScaleBot.getSpace(),
-	// // LogicalConnector.UNION), "both");
-	// // display.show();
-	//
-	// // OR every piece into empty coverage
-	// assert (total.getCoverage() == 0);
-	// // add bottom piece, should become > 0.6
-	// total = total.merge(bottom, LogicalConnector.UNION);
-	// assert (total.getCoverage() > 0.6 && total.getCoverage() < 0.7);
-	// // add top piece into result, should bring coverage back to 1
-	// total = total.merge(top, LogicalConnector.UNION);
-	// assert (total.getCoverage() == 1);
-	//
-	// // take full coverage and AND it with bottom, resulting in bottom
-	// total = total.merge(bottom, LogicalConnector.INTERSECTION);
-	// assert (total.getCoverage() < 0.7 && total.getCoverage() > 0.6);
-	// // take resulting bottom and AND with top, resulting in empty
-	// total = total.merge(top, LogicalConnector.INTERSECTION);
-	// assert (total.getCoverage() == 0);
-	//
-	// // TODO test with multiple dimensions
-	// }
 
 }
