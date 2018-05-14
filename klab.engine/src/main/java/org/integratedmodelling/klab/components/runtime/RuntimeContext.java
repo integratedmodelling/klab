@@ -27,7 +27,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -72,6 +71,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	Set<String> outputs;
 	Map<String, IObservable> semantics;
 	IObservable targetSemantics;
+	String targetName;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -85,21 +85,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.monitor = monitor;
 		this.namespace = actuator.getNamespace();
 		this.scale = scale;
+		this.targetName = actuator.isPartition() ? actuator.getPartitionedTarget() : actuator.getName();
 
-		/*
-		 * root scope is always Mode.RESOLUTION so we create the observation
-		 */
-		this.target = DefaultRuntimeProvider.createObservation(actuator, this);
 		this.targetSemantics = actuator.getObservable();
-		this.catalog.put(actuator.getObservable().getLocalName(), target);
-		this.structure.addVertex(target);
 		this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable());
 
 		// store and set up for further resolutions
 		this.resolutionScope = (ResolutionScope) scope;
-		if (this.target instanceof IDirectObservation) {
-			this.resolutionScope.setContext((IDirectObservation) this.target);
-		}
 
 		this.inputs = new HashSet<>();
 		this.outputs = new HashSet<>();
@@ -121,11 +113,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			this.outputs.add(id);
 			this.semantics.put(id, ((Actuator) a).getObservable());
 		}
-
-		// TODO provenance (may need to pass the actuator)
-		if (target instanceof ISubject) {
-			this.network.addVertex((ISubject) this.target);
-		}
 	}
 
 	RuntimeContext(RuntimeContext context) {
@@ -146,6 +133,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.parent = context.parent;
 		this.resolutionScope = context.resolutionScope;
 		this.targetSemantics = context.targetSemantics;
+		this.targetName = context.targetName;
 	}
 
 	@Override
@@ -185,7 +173,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
 	@Override
 	public IArtifact getTargetArtifact() {
-		return target;
+		return target == null ? this.catalog.get(this.targetName) : target;
 	}
 
 	@Override
@@ -234,22 +222,26 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.put(name, value);
 	}
 
-	@Override
-	public IArtifact getTargetArtifact(IActuator actuator) {
-		IArtifact ret = catalog.get(actuator.getName());
-
-		/**
-		 * If we don't have a target and the actuator needs storage (i.e. it's a quality
-		 * or anything that must be instantiated automatically), create the storage but
-		 * do not add it to the provenance and structure.
-		 */
-		if (ret == null && !((Actuator) actuator).getObservable().is(Type.COUNTABLE)) {
-			ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this);
-			catalog.put(actuator.getName(), ret);
-		}
-
-		return ret;
-	}
+//	@Override
+//	public IArtifact getTargetArtifact(IActuator actuator) {
+//
+//		IArtifact ret = catalog.get(actuator.getName());
+//
+//		// /**
+//		// * If we don't have a target and the actuator needs storage (i.e. it's a
+//		// quality
+//		// * or anything that must be instantiated automatically), create the storage
+//		// but
+//		// * do not add it to the provenance and structure.
+//		// */
+//		// if (ret == null && !((Actuator) actuator).getObservable().is(Type.COUNTABLE))
+//		// {
+//		// ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this);
+//		// catalog.put(actuator.getName(), ret);
+//		// }
+//
+//		return ret;
+//	}
 
 	@Override
 	public IMonitor getMonitor() {
@@ -295,13 +287,9 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		RuntimeContext ret = new RuntimeContext(this);
 		ret.parent = this;
 		ret.namespace = ((Actuator) actuator).getNamespace();
+		ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget() : actuator.getName();
 		ret.resolutionScope = (ResolutionScope) scope;
 		ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
-		if (!(this.target instanceof DirectObservation)) {
-			throw new IllegalArgumentException(
-					"RuntimeContext: cannot add a child observation to a non-direct observation");
-		}
-
 		ret.scale = scale;
 		ret.inputs = new HashSet<>();
 		ret.outputs = new HashSet<>();
@@ -324,19 +312,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		/**
 		 * Instantiator scopes will not create their observation target
 		 */
-		if (scope.getMode() == Mode.RESOLUTION) {
+		ret.target = catalog.get(actuator.getName());
+		if (ret.target != null && this.target != null) {
 			ret.outputs.add(actuator.getName());
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-			ret.target = DefaultRuntimeProvider.createObservation(((Actuator) actuator).getObservable(), scale, ret);
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
-			ret.catalog.put(((Actuator) actuator).getObservable().getLocalName(), ret.target);
-			this.structure.addVertex(ret.target);
-			// create child->parent edge
+			// // create child->parent edge
 			this.structure.addEdge(ret.target, this.target);
-			// TODO provenance (may need to pass the actuator)
-			if (ret.target instanceof ISubject) {
-				this.network.addVertex((ISubject) ret.target);
-			}
 		}
 
 		return ret;
@@ -443,6 +425,32 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	@Override
 	public IObservable getTargetSemantics() {
 		return targetSemantics;
+	}
+
+	/**
+	 * Pre-fill the artifact catalog with the artifact relevant to the passed
+	 * actuator and scope. Called on the ROOT artifact before any computation takes
+	 * place, passing all the actuators - must NOT change any local state.
+	 *  
+	 * @param actuator
+	 * @param scope
+	 */
+	public IArtifact createTarget(Actuator actuator, IResolutionScope scope) {
+
+		IArtifact observation = this.catalog.get(actuator.getName());
+
+		if (observation == null && scope.getMode() == Mode.RESOLUTION && !actuator.computesRescaledState()) {
+
+			observation = DefaultRuntimeProvider.createObservation(((Actuator) actuator).getObservable(), scale, this);
+			this.catalog.put(actuator.getName(), observation);
+			this.structure.addVertex(observation);
+			if (observation instanceof ISubject) {
+				this.network.addVertex((ISubject) observation);
+			}
+		}
+
+		return observation;
+
 	}
 
 }

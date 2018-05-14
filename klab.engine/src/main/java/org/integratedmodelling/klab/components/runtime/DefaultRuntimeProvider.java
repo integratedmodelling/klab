@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -45,6 +46,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
@@ -82,16 +84,21 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			public IArtifact call() throws Exception {
 
 				Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
-				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph);
-
-				while (sorter.hasNext()) {
-
-					Actuator active = (Actuator) sorter.next();
-					IRuntimeContext runtimeContext = ((RuntimeContext)context).createChild(scale, active, scope);
-					active.compute(((RuntimeContext) context).getTargetArtifact(active), runtimeContext);
+				
+				// create targets in catalog as needed
+				// TODO pass the identity from the monitor for provenance
+				for (IActuator actuator : graph.vertexSet()) {
+					((RuntimeContext) context).createTarget((Actuator)actuator, scope);
 				}
 
-				return ((IRuntimeContext) context).getTargetArtifact(actuator);
+				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph);
+				while (sorter.hasNext()) {
+					Actuator active = (Actuator) sorter.next();
+					IRuntimeContext runtimeContext = ((RuntimeContext) context).createChild(scale, active, scope);
+					active.compute(runtimeContext.getTargetArtifact(), runtimeContext);
+				}
+
+				return ((IRuntimeContext) context).getTargetArtifact();
 			}
 		});
 
@@ -137,7 +144,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	@Override
 	public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
-		return new RuntimeContext((Actuator) actuator, scope, scale, monitor);
+		RuntimeContext ret = new RuntimeContext((Actuator) actuator, scope, scale, monitor);
+		IArtifact target = ret.createTarget((Actuator) actuator, scope);
+		if (target instanceof IDirectObservation) {
+			((ResolutionScope)scope).setContext((IDirectObservation) target);
+		}
+		return ret;
 	}
 
 	@Override

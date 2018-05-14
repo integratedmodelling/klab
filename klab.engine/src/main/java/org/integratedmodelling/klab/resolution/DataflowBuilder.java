@@ -250,9 +250,11 @@ public class DataflowBuilder {
                 for (ModelD modelDesc : models) {
 
                     Actuator partial = Actuator.create(monitor);
-
-                    // rename
+                    
+                    
+                    // rename and set the target name as partitioned
                     String name = modelDesc.model.getLocalNameFor(observable) + "_" + (i++);
+                    partial.setPartitionedTarget(modelDesc.model.getLocalNameFor(observable));
 
                     partial.setType(ret.getType());
                     partial.setObservable(observable);
