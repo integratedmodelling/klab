@@ -9,8 +9,8 @@ import java.util.Optional;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -23,10 +23,10 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
-import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
-import org.integratedmodelling.klab.components.geospace.extents.mediators.MediationOperations;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -273,10 +273,10 @@ public class Space extends Extent implements ISpace {
 				// review grid, using conformant (snap) if possible (error threshold?)
 				// error should be in terms of the max discrepancy compared to size of
 				// common shape
-				double error = MediationOperations.getSubsettingError(grid, common);
+				double error = Subgrid.getSubsettingError(grid, common);
 				System.out.println("adapting grid to shape: subsetting error is " + error);
 				if (error <= Configuration.INSTANCE.getAcceptedSubsettingError()) {
-					return new Space(common, MediationOperations.getSubgrid(grid, common));
+					return new Space(common, Subgrid.create(grid, common));
 				} else {
 					throw new KlabUnsupportedFeatureException("Unsupported operation: non-conformant grid to grid (subsetting error = " + error);
 				}

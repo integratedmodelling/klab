@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab;
 
+import org.integratedmodelling.klab.api.data.Aggregation;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -13,6 +16,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
@@ -21,40 +25,48 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public enum Observations implements IObservationService {
 
-  INSTANCE;
+	INSTANCE;
 
-  @Override
-  public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
-      throws KlabException {
-    return Resolver.INSTANCE.resolve(urn, session, scenarios);
-  }
+	@Override
+	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
+		return Resolver.INSTANCE.resolve(urn, session, scenarios);
+	}
 
-  @Override
-  public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
-      throws KlabException {
-    return Resolver.INSTANCE.resolve(urn, context, scenarios);
-  }
+	@Override
+	public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
+		return Resolver.INSTANCE.resolve(urn, context, scenarios);
+	}
 
-  @Override
-  public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
-    // TODO remove all artifacts from local kbox
-  }
+	@Override
+	public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
+		// TODO remove all artifacts from local kbox
+	}
 
-  @Override
-  public void index(IObserver observer, IMonitor monitor) throws KlabException {
-    // TODO
-  }
-  
-  @Override
-  public IState getStateView(IState state, IScale scale, IComputationContext context) {
-      return new RescalingState(state, (Scale)scale, (IRuntimeContext)context);
-  }
+	@Override
+	public void index(IObserver observer, IMonitor monitor) throws KlabException {
+		// TODO
+	}
 
-  /*
-   * Non-API - sync namespace. TODO check equivalent in Models.
-   */
-  public void registerNamespace(Namespace ns, Monitor monitor) {
-    // TODO Auto-generated method stub
+	@Override
+	public IState getStateView(IState state, IScale scale, IComputationContext context) {
+		return new RescalingState(state, (Scale) scale, (IRuntimeContext) context);
+	}
 
-  }
+	/*
+	 * Non-API - sync namespace. TODO check equivalent in Models.
+	 */
+	public void registerNamespace(Namespace ns, Monitor monitor) {
+		// TODO Auto-generated method stub
+	}
+
+	public static Aggregation getAggregator(IObservable observable) {
+		Aggregation ret = Aggregation.MAJORITY;
+		if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
+			ret = Aggregation.AVERAGE;
+			if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
+				ret = Aggregation.SUM;
+			}
+		}
+		return ret;
+	}
 }

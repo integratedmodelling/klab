@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 public abstract class Area {
 
   Envelope   envelope = null;
-  Projection projection;
+  protected Projection projection;
 
   public abstract Shape getShape();
 

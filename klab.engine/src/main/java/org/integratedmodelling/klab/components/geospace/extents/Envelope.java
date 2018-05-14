@@ -69,7 +69,7 @@ public class Envelope implements IEnvelope {
 
   public static Envelope create(double minx, double maxx, double miny, double maxy,
       Projection crs) {
-    return create(new ReferencedEnvelope(minx, miny, miny, maxy, crs.getCoordinateReferenceSystem()));
+    return create(new ReferencedEnvelope(minx, maxx, miny, maxy, crs.getCoordinateReferenceSystem()));
   }
 
   public double getWidth() {

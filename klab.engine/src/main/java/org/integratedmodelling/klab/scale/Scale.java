@@ -138,9 +138,8 @@ public class Scale implements IScale {
     private long sliceOffset = -1;
     // ... along this dimension
     private int sliceDimension = -1;
-    // the ID of the originating scale. If size() == 1, we can locate directly in it using the offset
-    // below.
-    private long originalScaleId = -1;
+    // the originating scale. If size() == 1, we can locate directly in it using the offset below.
+    private Scale originalScale = null;
     // the offset in the original scale (only applies if originalScaleId > 0);
     long originalScaleOffset = -1;
 
@@ -176,7 +175,7 @@ public class Scale implements IScale {
     public Scale(Scale scale, long offset) {
 
         this.originalScaleOffset = offset;
-        this.originalScaleId = scale.scaleId;
+        this.originalScale = scale;
 
         long[] pos = scale.cursor.getElementIndexes(offset);
         for (int i = 0; i < scale.extents.size(); i++) {
@@ -224,7 +223,7 @@ public class Scale implements IScale {
 
         if (simple) {
             this.originalScaleOffset = expos;
-            this.originalScaleId = scale.scaleId;
+            this.originalScale = scale;
         }
     }
 

@@ -118,6 +118,7 @@ public class Grid extends Area implements IGrid {
 		this.yOrigin = y1;
 		this.envelope = Envelope.create(x1, x2, y1, y2, projection);
 		this.shape = envelope.asShape();
+		this.projection = projection;
 		setResolution(xDivs, yDivs);
 	}
 
@@ -218,7 +219,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public String toString() {
-			return "<cell " + getEast() + "," + getWest() + " - " + getSouth() + "," + getNorth() + ">";
+			return "<cell " + getWest() + "," + getEast() + " - " + getSouth() + "," + getNorth() + ">";
 		}
 
 		/*
@@ -306,13 +307,13 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public double getEast() {
-			return Grid.this.getEast() + (x * getCellWidth());
+		public double getWest() {
+			return Grid.this.getWest() + (x * getCellWidth());
 		}
 
 		@Override
-		public double getWest() {
-			return this.getEast() + getCellWidth();
+		public double getEast() {
+			return this.getWest() + getCellWidth();
 		}
 
 		@Override
@@ -372,7 +373,7 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public Shape getShape() {
 			if (this.shape == null) {
-				this.shape = Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
+				this.shape = Shape.create(getWest(), getSouth(), getEast(), getNorth(), projection);
 			}
 			return this.shape;
 		}
@@ -638,7 +639,7 @@ public class Grid extends Area implements IGrid {
 	@Override
 	public Shape getShape() {
 		if (shape == null) {
-			shape = Shape.create(getEast(), getSouth(), getWest(), getNorth(), projection);
+			shape = Shape.create(getWest(), getSouth(), getEast(), getNorth(), projection);
 		}
 		return shape;
 	}
@@ -796,17 +797,17 @@ public class Grid extends Area implements IGrid {
 
 	@Override
 	public double snapX(double xCoordinate, Direction direction) {
-		long steps = (long) Math.floor((xCoordinate - getEast()) / getCellWidth());
-		if (direction == Direction.RIGHT && steps < getXCells() - 1) {
+		long steps = (long) Math.floor((xCoordinate - getWest()) / getCellWidth());
+		if (direction == Direction.RIGHT && steps > 0 && steps < getXCells() - 1) {
 			steps++;
 		}
-		return getEast() + (getCellWidth() * steps);
+		return getWest() + (getCellWidth() * steps);
 	}
 
 	@Override
 	public double snapY(double yCoordinate, Direction direction) {
 		long steps = (long) Math.floor((yCoordinate - getSouth()) / getCellHeight());
-		if (direction == Direction.TOP && steps < getYCells() - 1) {
+		if (direction == Direction.TOP && steps > 0 && steps < getYCells() - 1) {
 			steps++;
 		}
 		return getSouth() + (getCellHeight() * steps);

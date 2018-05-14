@@ -18,11 +18,11 @@ import xerial.larray.japi.LArrayJ;
  */
 public class DoubleStorage extends Storage implements IDataArtifact {
 
-  private LFloatArray data;
-
+//  private LFloatArray data;
+	private float[] data;
   public DoubleStorage(IGeometry scale) {
     super(scale);
-    this.data = LArrayJ.newLFloatArray(scale.size());
+    this.data = new float[(int)scale.size()]; //LArrayJ.newLFloatArray(scale.size());
   }
 
   @Override
@@ -37,7 +37,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
       // mediation needed
       throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    float ret = data.apply(offset);
+    float ret = data[(int)offset]; // data.apply(offset);
     return Float.isNaN(ret) ? null : (double)ret;
   }
 
@@ -48,7 +48,8 @@ public class DoubleStorage extends Storage implements IDataArtifact {
       // mediation needed
       throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    data.update(offset, value instanceof Number ? ((Number) value).floatValue() : convert(value));
+    data[(int)offset] = value instanceof Number ? ((Number) value).floatValue() : convert(value);
+    // data.update(offset, value instanceof Number ? ((Number) value).floatValue() : convert(value));
     return offset;
   }
 
@@ -59,7 +60,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 
   @Override
   protected void finalize() throws Throwable {
-    data.free();
+//    data.free();
     super.finalize();
   }
 

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
-import org.integratedmodelling.klab.components.geospace.extents.mediators.MediationOperations.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -37,6 +36,7 @@ public class GridToGrid implements IScaleMediator {
 
     @Override
     public long mapConformant(long offset) {
+    	
         if (identity) {
         	return offset;
         }
