@@ -1573,6 +1573,12 @@ rule__ACTOR__Alternatives
 		'void'
 		{ after(grammarAccess.getACTORAccess().getVoidKeyword_12()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getACTORAccess().getPartitionKeyword_13()); }
+		'partition'
+		{ after(grammarAccess.getACTORAccess().getPartitionKeyword_13()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

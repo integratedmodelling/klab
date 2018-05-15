@@ -106,7 +106,9 @@ ACTOR:
 	// only contracts for contextualizers returned by runtime functions
 	'contextualizer' |
 	// only for command prototypes
-	'void';
+	'void' |
+	// partial contextualizers for their parents
+	'partition';
 	
 TARGET:
 	'models' | 'concepts' | 'observers';

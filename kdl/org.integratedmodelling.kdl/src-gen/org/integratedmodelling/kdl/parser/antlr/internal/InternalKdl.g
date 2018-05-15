@@ -2939,6 +2939,12 @@ ruleACTOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getACTORAccess().getVoidKeyword_12());
 		}
+		    |
+		kw='partition'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getACTORAccess().getPartitionKeyword_13());
+		}
 	)
 ;
 

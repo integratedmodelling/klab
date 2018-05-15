@@ -1605,6 +1605,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cAnnotationKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
 		private final Keyword cContextualizerKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
 		private final Keyword cVoidKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cPartitionKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
 		
 		//ACTOR: // countable, so always a dataflow for direct object instantiation
 		// 'object' |
@@ -1620,7 +1621,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	// only contracts for contextualizers returned by runtime functions
 		// 'contextualizer' |
 		//	// only for command prototypes
-		// 'void';
+		// 'void' | // partial contextualizers for their parents
+		// 'partition';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//// countable, so always a dataflow for direct object instantiation
@@ -1636,7 +1638,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		// 'annotation' | // only contracts for contextualizers returned by runtime functions
 		//
 		//'contextualizer' | // only for command prototypes
-		// 'void'
+		// 'void' | // partial contextualizers for their parents
+		// 'partition'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//// countable, so always a dataflow for direct object instantiation
@@ -1685,6 +1688,10 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//// only for command prototypes
 		// 'void'
 		public Keyword getVoidKeyword_12() { return cVoidKeyword_12; }
+		
+		//// partial contextualizers for their parents
+		// 'partition'
+		public Keyword getPartitionKeyword_13() { return cPartitionKeyword_13; }
 	}
 	public class TARGETElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.TARGET");
@@ -3703,7 +3710,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	// only contracts for contextualizers returned by runtime functions
 	// 'contextualizer' |
 	//	// only for command prototypes
-	// 'void';
+	// 'void' | // partial contextualizers for their parents
+	// 'partition';
 	public ACTORElements getACTORAccess() {
 		return pACTOR;
 	}
