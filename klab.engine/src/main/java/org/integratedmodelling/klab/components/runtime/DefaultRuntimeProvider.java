@@ -76,29 +76,32 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope,
-			IComputationContext context, IMonitor monitor) throws KlabException {
+			IDirectObservation context, IMonitor monitor) throws KlabException {
 
 		return executor.submit(new Callable<IArtifact>() {
 
 			@Override
 			public IArtifact call() throws Exception {
+				
+				IRuntimeContext runtimeContext = context == null
+						? createRuntimeContext(actuator, scope, scale, monitor)
+						: ((Subject) context).getRuntimeContext().createChild(scale, actuator, scope, monitor);
 
 				Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
-				
-				// create targets in catalog as needed
-				// TODO pass the identity from the monitor for provenance
-				for (IActuator actuator : graph.vertexSet()) {
-					((RuntimeContext) context).createTarget((Actuator)actuator, scope);
-				}
 
 				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph);
 				while (sorter.hasNext()) {
+
 					Actuator active = (Actuator) sorter.next();
-					IRuntimeContext runtimeContext = ((RuntimeContext) context).createChild(scale, active, scope);
-					active.compute(runtimeContext.getTargetArtifact(), runtimeContext);
+					// create children for all actuators that are not the same object as the root one
+					IRuntimeContext ctx = runtimeContext;
+					if (active != actuator) {
+						ctx = runtimeContext.createChild(scale, active, scope, monitor);
+					}
+					active.compute(ctx.getTargetArtifact(), ctx);
 				}
 
-				return ((IRuntimeContext) context).getTargetArtifact();
+				return runtimeContext.getTargetArtifact();
 			}
 		});
 
@@ -142,12 +145,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IComputationContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
+	public RuntimeContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
 		RuntimeContext ret = new RuntimeContext((Actuator) actuator, scope, scale, monitor);
-		IArtifact target = ret.createTarget((Actuator) actuator, scope);
+		IArtifact target = ret.createTarget((Actuator) actuator, scale, scope);
 		if (target instanceof IDirectObservation) {
-			((ResolutionScope)scope).setContext((IDirectObservation) target);
+			((ResolutionScope) scope).setContext((IDirectObservation) target);
 		}
 		return ret;
 	}

@@ -58,21 +58,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * child and chain the results when they come.
      */
     IArtifact ret = null;
-    for (IActuator act : actuators) {
+    for (IActuator actuator : actuators) {
       try {
 
-        Actuator actuator = (Actuator) act;
-
-        /*
-         * NO FIXME have the context created actuator by actuator in the runtime provider. Pass null for
-         * the root subject.
-         */
-        IRuntimeContext runtimeContext = context == null
-                ? (IRuntimeContext) (Klab.INSTANCE.getRuntimeProvider().createRuntimeContext(actuator,
-                        scope, scale, monitor))
-                    : ((Subject) context).getRuntimeContext();
-                
-        IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, runtimeContext, monitor).get();
+        IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor).get();
 
         if (ret == null) {
           ret = data;

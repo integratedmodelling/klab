@@ -46,282 +46,275 @@ import ij.process.ImageProcessor;
 
 public class FeatureExtractor implements IExpression, IInstantiator {
 
-  Descriptor exprDescriptor = null;
-  private IGrid grid;
-  private Shape boundingBox;
-  GeometryFactory gfact = new GeometryFactory();
+	Descriptor exprDescriptor = null;
+	private IGrid grid;
+	private Shape boundingBox;
+	GeometryFactory gfact = new GeometryFactory();
 
-  // TODO
-  private boolean createPointFeatures;
-  // TODO
-  private boolean computeConvexHull;
-  // TODO
-  private boolean ignoreHoles;
+	// TODO
+	private boolean createPointFeatures;
+	// TODO
+	private boolean computeConvexHull;
+	// TODO
+	private boolean ignoreHoles;
 
+	public FeatureExtractor() {
+	}
 
-  public FeatureExtractor() {}
+	public FeatureExtractor(IParameters parameters, IComputationContext context) throws KlabValidationException {
+		if (parameters.containsKey("select")) {
+			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
+					.describe(parameters.get("select", String.class), context);
+		}
 
-  public FeatureExtractor(IParameters parameters, IComputationContext context)
-      throws KlabValidationException {
-    if (parameters.containsKey("select")) {
-      this.exprDescriptor =
-          Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-              .describe(parameters.get("select", String.class), context);
-    }
+		IScale scale = context.getScale();
+		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
+				&& scale.getDimension(Type.SPACE).isRegular())) {
+			throw new KlabValidationException(
+					"feature extraction only works on regular distributed spatial extents (grids)");
+		}
 
-    IScale scale = context.getScale();
-    if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
-        && scale.getDimension(Type.SPACE).isRegular())) {
-      throw new KlabValidationException(
-          "feature extraction only works on regular distributed spatial extents (grids)");
-    }
+		this.grid = ((Space) scale.getSpace()).getGrid().get();
+		this.boundingBox = (Shape) scale.getSpace().getShape();
 
-    this.grid = ((Space) scale.getSpace()).getGrid().get();
-    this.boundingBox = (Shape) scale.getSpace().getShape();
+		// TODO these are obviously still unfeasible dimensions for an in-memory image.
+		if (this.grid == null || this.grid.getXCells() > Integer.MAX_VALUE
+				|| this.grid.getYCells() > Integer.MAX_VALUE) {
+			throw new KlabValidationException("feature extractor: the spatial extent is too large or not a grid");
+		}
 
-    // TODO these are obviously still unfeasible dimensions for an in-memory image.
-    if (this.grid == null || this.grid.getXCells() > Integer.MAX_VALUE
-        || this.grid.getYCells() > Integer.MAX_VALUE) {
-      throw new KlabValidationException(
-          "feature extractor: the spatial extent is too large or not a grid");
-    }
+	}
 
-  }
+	@Override
+	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 
-  @Override
-  public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context)
-      throws KlabException {
+		List<IState> sourceStates = new ArrayList<>();
+		List<IObjectArtifact> ret = new ArrayList<>();
+		Map<IState, String> stateIdentifiers = new HashMap<>();
 
-    List<IState> sourceStates = new ArrayList<>();
-    List<IObjectArtifact> ret = new ArrayList<>();
-    Map<IState, String> stateIdentifiers = new HashMap<>();
+		// TODO
+		double selectFraction = Double.NaN;
+		// TODO
+		boolean topFraction = true;
 
-    // TODO
-    double selectFraction = Double.NaN;
-    // TODO
-    boolean topFraction = true;
+		IExpression expression = null;
+		if (exprDescriptor != null) {
+			// check inputs and see if the expr is worth anything in this context
+			for (String input : exprDescriptor.getIdentifiers()) {
+				if (exprDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+					IState state = context.getArtifact(input, IState.class);
+					sourceStates.add(state);
+					stateIdentifiers.put(state, input);
+				}
+			}
+			if (sourceStates.isEmpty()) {
+				throw new KlabResourceNotFoundException(
+						"feature extractor: the selection expression does not reference any known state");
+			}
+			expression = exprDescriptor.compile();
+		}
 
-    IExpression expression = null;
-    if (exprDescriptor != null) {
-      // check inputs and see if the expr is worth anything in this context
-      for (String input : exprDescriptor.getIdentifiers()) {
-        if (exprDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
-          IState state = context.getArtifact(input, IState.class);
-          sourceStates.add(state);
-          stateIdentifiers.put(state, input);
-        }
-      }
-      if (sourceStates.isEmpty()) {
-        throw new KlabResourceNotFoundException(
-            "feature extractor: the selection expression does not reference any known state");
-      }
-      expression = exprDescriptor.compile();
-    }
+		if (context.contains("source-state")) {
+			IState sourceState = context.getArtifact(context.get("source-state", String.class), IState.class);
+			if (sourceState == null) {
+				throw new KlabResourceNotFoundException("feature extractor: source state "
+						+ context.get("source-state", String.class) + " not found or not a state");
+			}
+			sourceStates.add(sourceState);
+		}
 
-    if (context.contains("source-state")) {
-      IState sourceState =
-          context.getArtifact(context.get("source-state", String.class), IState.class);
-      if (sourceState == null) {
-        throw new KlabResourceNotFoundException("feature extractor: source state "
-            + context.get("source-state", String.class) + " not found or not a state");
-      }
-      sourceStates.add(sourceState);
-    }
+		// TODO
+		IState fractionState = null;
+		Range limits = null;
+		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
+			fractionState = sourceStates.get(0);
+			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
+				throw new KlabValidationException(
+						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
+			}
+			// TODO
+			// limits = VisualizationFactory.getBoundaries(fractionState,
+			// scale.getIndex(transition),
+			// false);
+		}
 
-    // TODO
-    IState fractionState = null;
-    Range limits = null;
-    if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
-      fractionState = sourceStates.get(0);
-      if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
-        throw new KlabValidationException("feature extractor: state for fraction extraction "
-            + fractionState + " must be numeric");
-      }
-      // TODO
-      // limits = VisualizationFactory.getBoundaries(fractionState, scale.getIndex(transition),
-      // false);
-    }
+		// build mask
+		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
+		ImageProcessor imp = image.getProcessor();
+		boolean warned = false;
+		Parameters parameters = new Parameters();
 
-    // build mask
-    ImagePlus image =
-        IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
-    ImageProcessor imp = image.getProcessor();
-    boolean warned = false;
-    Parameters parameters = new Parameters();
+		// TODO
+		for (Cell cell : grid) {
 
-    // TODO
-    for (Cell cell : grid) {
+			Object o = null;
 
-      Object o = null;
+			if (fractionState != null) {
 
-      if (fractionState != null) {
+				o = Boolean.FALSE;
+				double d = fractionState.get(cell, Double.class);
+				if (!Double.isNaN(d)) {
 
-        o = Boolean.FALSE;
-        double d = fractionState.get(cell, Double.class);
-        if (!Double.isNaN(d)) {
+					double perc = 0;
+					if (topFraction) {
+						perc = (limits.getUpperBound() - d) / limits.getWidth();
+					} else {
+						perc = (d - limits.getLowerBound()) / limits.getWidth();
+					}
+					o = perc <= selectFraction;
+				}
 
-          double perc = 0;
-          if (topFraction) {
-            perc = (limits.getUpperBound() - d) / limits.getWidth();
-          } else {
-            perc = (d - limits.getLowerBound()) / limits.getWidth();
-          }
-          o = perc <= selectFraction;
-        }
+			} else if (expression != null) {
 
-      } else if (expression != null) {
+				parameters.clear();
+				for (IState state : sourceStates) {
+					o = state.get(cell, Double.class);
+					parameters.put(stateIdentifiers.get(state), o);
+				}
 
-        parameters.clear();
-        for (IState state : sourceStates) {
-          o = state.get(cell, Double.class);
-          parameters.put(stateIdentifiers.get(state), o);
-        }
+				o = expression.eval(parameters, context);
+				if (o == null) {
+					o = Boolean.FALSE;
+				}
+				if (!(o instanceof Boolean)) {
+					throw new KlabValidationException("feature extraction selector must return true/false");
+				}
 
-        o = expression.eval(parameters, context);
-        if (o == null) {
-          o = Boolean.FALSE;
-        }
-        if (!(o instanceof Boolean)) {
-          throw new KlabValidationException("feature extraction selector must return true/false");
-        }
-        
-      } else if (!warned) {
-        context.getMonitor()
-            .warn("no input for feature extractor: specify either select or select fraction");
-        warned = true;
-      }
-      
-      imp.set((int) cell.getX(), (int) cell.getY(), ((Boolean) o) ? 0 : 255);
-    }
+			} else if (!warned) {
+				context.getMonitor().warn("no input for feature extractor: specify either select or select fraction");
+				warned = true;
+			}
 
-    // build blobs
-    String baseName = CamelCase.toLowerCase(semantics.getLocalName(), '-');
-    ManyBlobs blobs = new ManyBlobs(image);
-    blobs.findConnectedComponents();
-    int created = 0;
-    int skipped = 0;
-    for (Blob blob : blobs) {
-      Shape shape = getShape(blob);
-      if (shape != null) {
-        ret.add(context.newObservation(semantics, baseName + "_" + (created + 1),
-            Scale.createLike(context.getScale(), shape))); 
-        created++;
-      } else {
-        skipped++;
-      }
-    }
+			imp.set((int) cell.getX(), (int) cell.getY(), ((Boolean) o) ? 0 : 255);
+		}
 
-    if (skipped > 0) {
-      context.getMonitor().info("skipped " + skipped + " features not meeting requirements"/*,
-          Messages.INFOCLASS_MODEL*/);
-    }
+		// build blobs
+		String baseName = CamelCase.toLowerCase(semantics.getLocalName(), '-');
+		ManyBlobs blobs = new ManyBlobs(image);
+		blobs.findConnectedComponents();
+		int created = 0;
+		int skipped = 0;
+		for (Blob blob : blobs) {
+			Shape shape = getShape(blob);
+			if (shape != null) {
+				ret.add(context.newObservation(semantics, baseName + "_" + (created + 1),
+						Scale.createLike(context.getScale(), shape)));
+				created++;
+			} else {
+				skipped++;
+			}
+		}
 
-    return ret;
-  }
+		if (skipped > 0) {
+			context.getMonitor()
+					.info("skipped " + skipped + " features not meeting requirements"/*
+																						 * , Messages.INFOCLASS_MODEL
+																						 */);
+		}
 
-  private Shape getShape(Blob blob) {
+		return ret;
+	}
 
-    /*
-     * TODO apply filters, if any, and cull unsuitable candidates.
-     */
+	private Shape getShape(Blob blob) {
 
-    Geometry polygon = null;
-    if (blob.getOuterContour().npoints < 4) {
-      if (this.createPointFeatures) {
-        polygon = getPoint(blob.getCenterOfGravity());
-      }
-    } else {
+		/*
+		 * TODO apply filters, if any, and cull unsuitable candidates.
+		 */
 
-      /*
-       * create spatial context
-       */
-      LinearRing shell = getLinearRing(blob.getOuterContour());
-      if (shell == null) {
-        return null;
-      }
+		Geometry polygon = null;
+		if (blob.getOuterContour().npoints < 4) {
+			if (this.createPointFeatures) {
+				polygon = getPoint(blob.getCenterOfGravity());
+			}
+		} else {
 
-      /*
-       * safest strategy - allows holes that overlap the perimeter
-       */
-      polygon = new Polygon(shell, null, gfact);
-      polygon = polygon.buffer(0);
-      if (this.computeConvexHull) {
-        polygon = polygon.convexHull();
-      }
+			/*
+			 * create spatial context
+			 */
+			LinearRing shell = getLinearRing(blob.getOuterContour());
+			if (shell == null) {
+				return null;
+			}
 
-      if (!this.ignoreHoles) {
-        for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
-          Geometry h = new Polygon(hole, null, gfact);
-          h = h.buffer(0);
-          polygon = polygon.difference(h);
-        }
-      }
-    }
+			/*
+			 * safest strategy - allows holes that overlap the perimeter
+			 */
+			polygon = new Polygon(shell, null, gfact);
+			polygon = polygon.buffer(0);
+			if (this.computeConvexHull) {
+				polygon = polygon.convexHull();
+			}
 
-    /*
-     * clip to context shape
-     */
-    if (polygon != null) {
-      polygon = polygon.intersection(boundingBox.getJTSGeometry());
-    }
+			if (!this.ignoreHoles) {
+				for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
+					Geometry h = new Polygon(hole, null, gfact);
+					h = h.buffer(0);
+					polygon = polygon.difference(h);
+				}
+			}
+		}
 
-    if (polygon == null || polygon.isEmpty()) {
-      return null;
-    }
+		/*
+		 * clip to context shape
+		 */
+		if (polygon != null) {
+			polygon = polygon.intersection(boundingBox.getJTSGeometry());
+		}
 
-    return Shape.create(polygon, this.grid.getProjection());
-  }
+		if (polygon == null || polygon.isEmpty()) {
+			return null;
+		}
 
-  @Override
-  public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
-    return new FeatureExtractor(parameters, context);
-  }
+		return Shape.create(polygon, this.grid.getProjection());
+	}
 
-  @Override
-  public IGeometry getGeometry() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	@Override
+	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+		return new FeatureExtractor(parameters, context);
+	}
 
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-  private LinearRing[] getLinearRings(List<java.awt.Polygon> rings) {
-    ArrayList<LinearRing> ret = new ArrayList<>();
-    for (java.awt.Polygon p : rings) {
-      LinearRing ring = getLinearRing(p);
-      if (p != null) {
-        ret.add(ring);
-      }
-    }
-    return ret.toArray(new LinearRing[ret.size()]);
-  }
+	private LinearRing[] getLinearRings(List<java.awt.Polygon> rings) {
+		ArrayList<LinearRing> ret = new ArrayList<>();
+		for (java.awt.Polygon p : rings) {
+			LinearRing ring = getLinearRing(p);
+			if (p != null) {
+				ret.add(ring);
+			}
+		}
+		return ret.toArray(new LinearRing[ret.size()]);
+	}
 
-  private Geometry getPoint(Point2D point2d) {
+	private Geometry getPoint(Point2D point2d) {
 
-    int x = (int) point2d.getX();
-    int y = (int) point2d.getY();
-    double[] xy = grid.getCoordinates(grid.getOffset(x, y));
-    return gfact.createPoint(new Coordinate(xy[0], xy[1]));
-  }
+		int x = (int) point2d.getX();
+		int y = (int) point2d.getY();
+		double[] xy = grid.getCoordinates(grid.getOffset(x, y));
+		return gfact.createPoint(new Coordinate(xy[0], xy[1]));
+	}
 
-  private LinearRing getLinearRing(java.awt.Polygon p) {
+	private LinearRing getLinearRing(java.awt.Polygon p) {
 
-    if (p.npoints < 4) {
-      return null;
-    }
+		if (p.npoints < 4) {
+			return null;
+		}
 
-    ArrayList<Coordinate> coords = new ArrayList<>();
-    for (int i = 0; i < p.npoints; i++) {
+		ArrayList<Coordinate> coords = new ArrayList<>();
+		for (int i = 0; i < p.npoints; i++) {
 
-      int x = p.xpoints[i];
-      int y = p.ypoints[i];
+			int x = p.xpoints[i];
+			int y = p.ypoints[i];
 
-      double[] xy = grid.getCoordinates(grid.getOffset(x, y));
-      coords.add(new Coordinate(xy[0], xy[1]));
-    }
+			double[] xy = grid.getCoordinates(grid.getOffset(x, y));
+			coords.add(new Coordinate(xy[0], xy[1]));
+		}
 
-    return new LinearRing(
-        new CoordinateArraySequence(coords.toArray(new Coordinate[coords.size()])), gfact);
-  }
-
+		return new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[coords.size()])), gfact);
+	}
 
 }

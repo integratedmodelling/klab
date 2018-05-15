@@ -42,7 +42,7 @@ public class Grid extends Area implements IGrid {
 	 */
 	static Orientation[] swCorner = new Orientation[] { Orientation.N, Orientation.NE, Orientation.E };
 	static Orientation[] seCorner = new Orientation[] { Orientation.W, Orientation.NW, Orientation.N };
-	static Orientation[] nwCorner = new Orientation[] { Orientation.S, Orientation.SE, Orientation.W };
+	static Orientation[] nwCorner = new Orientation[] { Orientation.S, Orientation.SE, Orientation.E };
 	static Orientation[] neCorner = new Orientation[] { Orientation.W, Orientation.SW, Orientation.S };
 
 	/**

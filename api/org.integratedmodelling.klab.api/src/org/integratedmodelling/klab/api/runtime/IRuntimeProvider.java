@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -50,15 +51,13 @@ public interface IRuntimeProvider {
 	 * @param scope
 	 *            the resolution scope for the computation
 	 * @param context
-	 *            the root context for the computation (see
-	 *            {@link #createRuntimeContext(IActuator, IResolutionScope, IScale, IMonitor)})
-	 *            containing the target observation.
+	 *            the context observation for the computation. Can be null.
 	 * @param monitor
 	 *            the monitor with the identity carrying out the computation
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope, IComputationContext rootContext,
+	Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope, IDirectObservation context,
 			IMonitor monitor) throws KlabException;
 
 	/**

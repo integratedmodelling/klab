@@ -283,7 +283,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	}
 
 	@Override
-	public IRuntimeContext createChild(IScale scale, IActuator actuator, IResolutionScope scope) {
+	public IRuntimeContext createChild(IScale scale, IActuator actuator, IResolutionScope scope, IMonitor monitor) {
 
 		RuntimeContext ret = new RuntimeContext(this);
 		ret.parent = this;
@@ -297,7 +297,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		ret.outputs = new HashSet<>();
 		ret.semantics = new HashMap<>();
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
-
+		ret.monitor = monitor;
+		
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -311,18 +312,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			ret.semantics.put(id, ((Actuator) a).getObservable());
 		}
 
-		/**
-		 * Instantiator scopes will not create their observation target
-		 */
-		ret.target = catalog.get(actuator.getName());
+		ret.target = ret.createTarget((Actuator) actuator, scale, scope);
 		if (ret.target != null && this.target != null) {
 			ret.outputs.add(actuator.getName());
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
-			// // create child->parent edge
-			this.structure.addEdge(ret.target, this.target);
 		}
-
+		
 		return ret;
 	}
 
@@ -437,7 +433,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	 * @param actuator
 	 * @param scope
 	 */
-	public IArtifact createTarget(Actuator actuator, IResolutionScope scope) {
+	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope) {
 
 		IArtifact observation = this.catalog.get(actuator.getName());
 
@@ -449,6 +445,9 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			this.structure.addVertex(observation);
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
+				if (parent != null && parent.target instanceof ISubject) {
+					this.network.addEdge((ISubject)observation, (ISubject)parent.target);
+				}
 			}
 		}
 

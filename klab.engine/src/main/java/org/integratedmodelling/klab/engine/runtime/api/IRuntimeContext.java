@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.provenance.Provenance;
 
 /**
@@ -30,10 +31,11 @@ public interface IRuntimeContext extends IComputationContext {
      * @param scale 
      * @param target
      * @param scope 
+     * @param monitor
      * 
      * @return the child context that will resolve the target
      */
-    public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope);
+    public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
 
     /**
      * Set the passed data object in the symbol table.
