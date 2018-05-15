@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.scale;
 
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -40,8 +41,8 @@ public abstract class AbstractExtent implements IExtent {
 
 	/**
 	 * Merge only the extents, without regard for the grain or internal
-	 * representation but ensuring that the covered extent calculations are correct. Used
-	 * for quick coverage calculations.
+	 * representation but ensuring that the covered extent calculations are correct.
+	 * Used for quick coverage calculations.
 	 * 
 	 * @param other
 	 * @return the merged extent
@@ -72,4 +73,19 @@ public abstract class AbstractExtent implements IExtent {
 	 * @return the full, 1-dim extent.
 	 */
 	public abstract IExtent getExtent();
+
+	/**
+	 * All extents must be able to produce a deep copy of themselves.
+	 * 
+	 * @return a new extent identical to this.
+	 */
+	public abstract AbstractExtent copy();
+
+	/**
+	 * All extents must have a two-way street between k.IM code functions and
+	 * themselves.
+	 * 
+	 * @return the k.IM function call specifying this extent.
+	 */
+	public abstract IServiceCall getKimSpecification();
 }

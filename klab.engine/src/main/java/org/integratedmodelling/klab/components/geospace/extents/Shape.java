@@ -1,12 +1,16 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -308,7 +312,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IExtent collapse() {
-		return this;
+		return copy();
 	}
 
 	@Override
@@ -501,6 +505,19 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public IExtent mergeCoverage(IExtent other, LogicalConnector connector) {
 		return merge(other, connector);
+	}
+
+	@Override
+	public AbstractExtent copy() {
+		return create(geometry, projection);
+	}
+
+	@Override
+	public IServiceCall getKimSpecification() {
+		List<Object> args = new ArrayList<>(2);
+		args.add("shape");
+		args.add(toString());
+		return new KimServiceCall("space", args.toArray());
 	}
 
 }

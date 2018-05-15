@@ -110,8 +110,7 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public IExtent collapse() {
-		// TODO Auto-generated method stub
-		return null;
+		return getShape().copy();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -501,6 +502,16 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public IExtent mergeCoverage(IExtent other, LogicalConnector connector) {
 			return getShape().merge(other, connector);
+		}
+
+		@Override
+		public AbstractExtent copy() {
+			return getShape().copy();
+		}
+
+		@Override
+		public IServiceCall getKimSpecification() {
+			return getShape().getKimSpecification();
 		}
 	}
 

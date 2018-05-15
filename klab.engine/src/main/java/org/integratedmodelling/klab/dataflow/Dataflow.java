@@ -92,7 +92,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
       if (coverage != null && coverage.getExtentCount() > 0) {
         List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
         if (!scaleSpecs.isEmpty()) {
-          ret += "@coverage ";
+          ret += "@coverage";
           for (int i = 0; i < scaleSpecs.size(); i++) {
             ret += " " + scaleSpecs.get(i).getSourceCode()
                 + ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");

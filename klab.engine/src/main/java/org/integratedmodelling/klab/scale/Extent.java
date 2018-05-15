@@ -32,20 +32,6 @@ public abstract class Extent extends AbstractExtent {
   }
 
   /**
-   * All extents must be able to produce a deep copy of themselves.
-   * 
-   * @return a new extent identical to this.
-   */
-  public abstract Extent copy();
-
-  /**
-   * All extents must have a two-way street between k.IM code functions and themselves.
-   * 
-   * @return the k.IM function call specifying this extent.
-   */
-  public abstract IServiceCall getKimSpecification();
-
-  /**
    * Return the n-th state of the ordered topology as a new extent with one state.
    * 
    * @param stateIndex

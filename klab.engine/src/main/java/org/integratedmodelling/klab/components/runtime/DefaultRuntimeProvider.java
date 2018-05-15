@@ -106,7 +106,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 					Actuator active = (Actuator) sorter.next();
 					// create children for all actuators that are not the same object as the root
-					// one
 					IRuntimeContext ctx = runtimeContext;
 					if (active != actuator) {
 						ctx = runtimeContext.createChild(scale, active, scope, monitor);
