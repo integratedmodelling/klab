@@ -253,11 +253,13 @@ public class DataflowBuilder {
 				for (ModelD modelDesc : models) {
 
 					Actuator partial = Actuator.create(monitor);
+					int index = i++;
 					if (modelDesc.model instanceof RankedModel) {
 						partial.setPriority(((RankedModel) modelDesc.model).getPriority());
+						index = ((RankedModel) modelDesc.model).getPriority();
 					}
-					// rename and set the target name as partitioned
-					String name = modelDesc.model.getLocalNameFor(observable) + "_" + (i++);
+					// rename and set the target name as partitioned. Number is the priority if known.
+					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
 					partial.setPartitionedTarget(modelDesc.model.getLocalNameFor(observable));
 
 					partial.setType(ret.getType());

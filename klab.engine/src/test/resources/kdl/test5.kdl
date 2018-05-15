@@ -1,14 +1,14 @@
 @klab 0.10.0
-@dataflow local:task:sqhswtuzkid0i:ts12s83f6xgds
-@author 'k.LAB resolver Tue May 15 11:09:04 CEST 2018'
-@context local:observation:sqhswtuzkid0i:o1iepy3ng2hkc7
-@coverage  space(shape = "EPSG:4326 POLYGON ((33.796 -8, 35.946 -8, 35.946 -9.41, 33.796 -9.41, 33.796 -8))")
+@dataflow local:task:strqvg5tpx5bm:turmdzygxtxyo
+@author 'k.LAB resolver Tue May 15 21:55:33 CEST 2018'
+@context local:observation:strqvg5tpx5bm:o1jensgac6e71y
+@coverage space(shape = "EPSG:4326 POLYGON ((35.946 -8, 35.946 -9.41, 33.796 -9.41, 33.796 -8, 33.796 -7.086, 35.946 -7.086, 35.946 -8))")
 
 number elevation {
    partition elevation_1 {
-      compute 100
+      compute gis.terrain()
    } over space(shape = "EPSG:4326 POLYGON ((33.796 -8, 35.946 -8, 35.946 -9.41, 33.796 -9.41, 33.796 -8))")
    partition elevation_2 {
-      compute gis.terrain()
+      compute 100
    } over space(shape = "EPSG:4326 POLYGON ((33.796 -7.086, 35.946 -7.086, 35.946 -8, 33.796 -8, 33.796 -7.086))")
 }

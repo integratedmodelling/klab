@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Property;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Enum Concepts.
  */
