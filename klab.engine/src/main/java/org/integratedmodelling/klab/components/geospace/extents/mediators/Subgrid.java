@@ -226,12 +226,12 @@ public class Subgrid extends Grid {
 	}
 
 	public Cell getOriginalCell(Cell cell) {
-		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - cell.getY() - 1));
+		return ogrid.getCell(cell.getX() + xofs, cell.getY() + yofs);
 	}
 
 	public long getOriginalOffset(long offset) {
 		long[] xy = grid.getXYOffsets(offset);
-		return ogrid.getIndex(xy[0] + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - xy[1] - 1));
+		return ogrid.getIndex(xy[0] + xofs, xy[1] + yofs);
 	}
 
 	@Override
