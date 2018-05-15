@@ -27,38 +27,42 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * Flexible rasterizer using an AWT image as a backend and closures to determine
- * (a) the mapping between each shape and the rasterized value, and (b) the
- * final output of that value on an arbitrary, indexable collection. The rasterization
- * type can be any number type, boolean, or anything that can be used as key in a map
- * and won't have more than {@link Integer#MAX_VALUE} different keys.
+ * Simple, flexible rasterizer using an AWT image as a backend and closures to
+ * determine (a) the mapping between each shape and the rasterized value, and
+ * (b) the final output of that value to an arbitrary x/y indexable collection.
+ * The rasterized type can be any number type, boolean, or anything that can
+ * be used as key in a map and won't have more than {@link Integer#MAX_VALUE}
+ * different keys.
  * <p>
  * The image behind the scenes encodes floats values as RGB values, so the
  * resolution of a float (or a long for categorical values) limits the precision
  * of the value retained in the final product. Changing to doubles is easy if
  * needed.
- * <p>	
+ * <p>
  * Simple example with presence/absence rasterization:
+ * 
  * <pre>
- * Rasterizer<Boolean> rasterizer = new Rasterizer<>(grid);
+ * Rasterizer&lt;Boolean&gt; rasterizer = new Rasterizer<>(grid);
  * for (IShape shape : shapes) {
- *    // use anything different from boolean and a more complex function for shapes with attributes
- * 	  rasterizer.add(shape, (shape) -> true);
+ * 	// use anything different from boolean and a more complex function for shapes
+ * 	// with attributes
+ * 	rasterizer.add(shape, (shape) -> true);
  * }
  * 
- * // paint the shapes over a boolean grid 
+ * // paint the shapes over a boolean grid
  * final boolean[][] mask = new boolean[grid.getXCells()][grid.getYCells()];
  * rasterizer.finish((b, xy) -> mask[xy[0]][xy[1]] = b);
  * </pre>
  * 
  * <p>
- * Once the first non-null value has been set, any subsequent non-null values
- * must be of the same type.
- * 
- *
+ * Different shapes can use different encoders if wished. Yet, once the first
+ * non-null value has been set, any subsequent non-null values must be of a
+ * compatible type, so for example declaring a Rasterizer&lt;Number&gt and
+ * assigning a Long for the first shape will require that all subsequent values
+ * are Long.
  * 
  * @author ferdinando.villa
- * @author steve.ansari, NOAA (original RGB-encoding and rasterization logics)
+ * @author Steve Ansari, NOAA (original RGB-encoding and rasterization logics)
  * 
  * @param <T>
  *            the type of the value rasterized
@@ -186,7 +190,7 @@ public class Rasterizer<T> {
 	// ------------------------------------------------------------------
 	// internals
 	// ------------------------------------------------------------------
-	
+
 	private T decodeFloat(float fval) {
 		T ret = null;
 		Object val = fval;

@@ -91,6 +91,12 @@ public class Grid extends Area implements IGrid {
 	private Grid(Shape shape, double resolutionInMeters) throws KlabException {
 		super(shape);
 		setAdjustedEnvelope(shape, resolutionInMeters);
+		mask = createMask(shape);
+	}
+
+	private Mask createMask(Shape shape2) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -106,7 +112,7 @@ public class Grid extends Area implements IGrid {
 	private Grid(Shape shape, long x, long y) throws KlabException {
 		super(shape);
 		this.setResolution(x, y);
-		// activationLayer = ThinklabRasterizer.createMask(shape, this);
+		mask = createMask(shape);
 	}
 
 	private Grid(double x1, // lonLowerBound
@@ -762,7 +768,8 @@ public class Grid extends Area implements IGrid {
 		if (mask == null) {
 			return true;
 		}
-		return mask.isActive(granule);
+		long[] xy = getXYOffsets(granule);
+		return mask.isActive(xy[0], xy[1]);
 	}
 
 	@Override
