@@ -71,6 +71,14 @@ public interface IModelService {
      * @return the individual ranks.
      */
     Map<String, Object> getRanks();
+    
+    /**
+     * A 0+ integer that reflects the prioritizer's assessment of the ranks in the
+     * resolution scope. Lower values mean the model has the highest priority.
+     * 
+     * @return
+     */
+    int getPriority();
 
   }
 

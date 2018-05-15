@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -89,11 +90,18 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
 
 				/*
-				 * TODO use a tie-breaking comparator (second argument to toposort constructor)
-				 * to ensure that topologically equivalent partitions are executed in order of
-				 * definition (FIXME or reverse order - see with overlapping scale test cases)
+				 * use a tie-breaking comparator to ensure that topologically equivalent
+				 * partitions are executed in reverse priority order (the highest priority last,
+				 * so that when extents overlap the highest ranking actuator has the final say).
 				 */
-				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph);
+				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph,
+						new Comparator<IActuator>() {
+							@Override
+							public int compare(IActuator o1, IActuator o2) {
+								return Integer.compare(((Actuator) o2).getPriority(), ((Actuator) o1).getPriority());
+							}
+						});
+				
 				while (sorter.hasNext()) {
 
 					Actuator active = (Actuator) sorter.next();

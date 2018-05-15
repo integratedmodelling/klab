@@ -250,8 +250,9 @@ public class DataflowBuilder {
                 for (ModelD modelDesc : models) {
 
                     Actuator partial = Actuator.create(monitor);
-                    
-                    
+                    if (modelDesc.model instanceof RankedModel) {
+                    	partial.setPriority(((RankedModel)modelDesc.model).getPriority());
+                    }
                     // rename and set the target name as partitioned
                     String name = modelDesc.model.getLocalNameFor(observable) + "_" + (i++);
                     partial.setPartitionedTarget(modelDesc.model.getLocalNameFor(observable));
@@ -266,13 +267,6 @@ public class DataflowBuilder {
 
                     ret.getActuators().add(partial);
                 }
-
-                //        /*
-                //         * compile in a function to merge the resulting artifacts. FIXME this is not the right way:
-                //         * must be automatically merged in computation, shifting extents as needed
-                //         */
-                //        ret.addComputation(
-                //            Klab.INSTANCE.getRuntimeProvider().getMergeArtifactServiceCall(observable, modelIds));
             }
 
             return ret;

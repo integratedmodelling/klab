@@ -89,6 +89,11 @@ public class Actuator implements IActuator {
 	// if this is non-null, coverage is also non-null and the actuator defines a
 	// partition of the named target artifact, covering our coverage only.
 	private String partitionedTarget;
+	/*
+	 * when this is a partition, the priority reflects the ranking so that the
+	 * highest ranked partial can be applied last
+	 */
+	private int priority = 0;
 
 	@Override
 	public String getName() {
@@ -492,5 +497,13 @@ public class Actuator implements IActuator {
 	// The same field is used in a dataflow to define the overall coverage.
 	public void setCoverage(Coverage coverage) {
 		this.coverage = coverage;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 }
