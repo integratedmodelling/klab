@@ -27,8 +27,8 @@
 package org.integratedmodelling.klab.components.geospace.api;
 
 import java.util.Collection;
+
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.utils.IPair;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
  * FIXME this is just a space extent - check how to simplify
@@ -128,21 +127,43 @@ public interface IGrid extends Iterable<Cell> {
 		void merge(Mask other, LogicalConnector connector);
 
 		/**
-		 * 
+		 * Check status of cell
 		 * @param x
 		 * @param y
-		 * @return
+		 * @return true if cell at x,y is active
 		 */
 		boolean isActive(long x, long y);
 
+		/**
+		 * Activate the cell at x, y
+		 * @param x
+		 * @param y
+		 */
 		void activate(long x, long y);
 
+		/**
+		 * Deactivate the cell at x,y
+		 * @param x
+		 * @param y
+		 */
 		void deactivate(long x, long y);
 
+		/**
+		 * Total active cells
+		 * @return number of active cells
+		 */
 		long totalActiveCells();
 
+		/**
+		 * Next active cell from passed offset
+		 * @param fromOffset
+		 * @return the next active offset using the natural ordering
+		 */
 		long nextActiveOffset(long fromOffset);
 
+		/**
+		 * Invert the status of each cell
+		 */
 		void invert();
 
 		/**
