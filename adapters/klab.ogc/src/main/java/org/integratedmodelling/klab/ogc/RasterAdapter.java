@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.raster;
+package org.integratedmodelling.klab.ogc;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -21,31 +21,29 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
-import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
-import org.integratedmodelling.klab.raster.wcs.WcsPublisher;
-import org.integratedmodelling.klab.raster.wcs.WcsValidator;
+import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.integratedmodelling.klab.raster.files.RasterPublisher;
+import org.integratedmodelling.klab.raster.files.RasterValidator;
 
 /**
- * The Class WcsAdapter.
+ * The Class RasterAdapter.
  */
-@ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = {"serviceUrl", "wcsVersion"},
-    optional = {"namespace"})
-public class WcsAdapter implements IResourceAdapter {
+@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = {"fileUrl"})
+public class RasterAdapter implements IResourceAdapter {
 
   @Override
   public IResourceValidator getValidator() {
-    return new WcsValidator();
+    return new RasterValidator();
   }
 
   @Override
   public IResourcePublisher getPublisher() {
-    return new WcsPublisher();
+    return new RasterPublisher();
   }
 
   @Override
   public IResourceEncoder getEncoder() {
-    return new WcsEncoder();
+    return new RasterEncoder();
   }
-
 
 }

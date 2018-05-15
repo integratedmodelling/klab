@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.raster.RasterAdapter;
+import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.junit.After;

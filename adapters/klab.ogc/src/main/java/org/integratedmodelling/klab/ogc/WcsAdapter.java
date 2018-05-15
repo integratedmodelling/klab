@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.raster;
+package org.integratedmodelling.klab.ogc;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -21,26 +21,31 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
+import org.integratedmodelling.klab.raster.wcs.WcsPublisher;
+import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 
 /**
- * The Class VectorAdapter.
+ * The Class WcsAdapter.
  */
-@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = {"fileUrl"})
-public class VectorAdapter implements IResourceAdapter {
+@ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = {"serviceUrl", "wcsVersion"},
+    optional = {"namespace"})
+public class WcsAdapter implements IResourceAdapter {
 
   @Override
   public IResourceValidator getValidator() {
-    return null;
+    return new WcsValidator();
   }
 
   @Override
   public IResourcePublisher getPublisher() {
-    return null;
+    return new WcsPublisher();
   }
 
   @Override
   public IResourceEncoder getEncoder() {
-    return null;
+    return new WcsEncoder();
   }
+
 
 }

@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.raster;
+package org.integratedmodelling.klab.ogc;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -21,29 +21,26 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
-import org.integratedmodelling.klab.raster.files.RasterEncoder;
-import org.integratedmodelling.klab.raster.files.RasterPublisher;
-import org.integratedmodelling.klab.raster.files.RasterValidator;
 
 /**
- * The Class RasterAdapter.
+ * The Class VectorAdapter.
  */
-@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = {"fileUrl"})
-public class RasterAdapter implements IResourceAdapter {
+@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = {"fileUrl"})
+public class VectorAdapter implements IResourceAdapter {
 
   @Override
   public IResourceValidator getValidator() {
-    return new RasterValidator();
+    return null;
   }
 
   @Override
   public IResourcePublisher getPublisher() {
-    return new RasterPublisher();
+    return null;
   }
 
   @Override
   public IResourceEncoder getEncoder() {
-    return new RasterEncoder();
+    return null;
   }
 
 }
