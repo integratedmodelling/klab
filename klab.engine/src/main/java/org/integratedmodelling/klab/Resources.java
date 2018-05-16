@@ -59,6 +59,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 public enum Resources implements IResourceService {
 
+    /**
+     * The global instance singleton.
+     */
 	INSTANCE;
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
@@ -268,7 +271,7 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public IResource getLocalResource(File file, IParameters parameters, String adapterType, IMonitor monitor) {
+	public IResource getLocalResource(File file, IParameters parameters, IProject project, String adapterType, IMonitor monitor) {
 
 		// get URN from k.IM service, unique per file
 		String urn = Urns.INSTANCE.getFileUrn(file);

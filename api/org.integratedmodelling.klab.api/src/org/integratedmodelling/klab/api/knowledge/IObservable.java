@@ -15,8 +15,6 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
-import java.util.List;
-
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.resolution.IResolvable;

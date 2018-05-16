@@ -15,17 +15,12 @@
  */
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
-import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
-import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.services.IDataflowService;
-import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**

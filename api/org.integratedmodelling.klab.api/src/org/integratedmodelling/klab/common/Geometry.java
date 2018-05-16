@@ -460,12 +460,12 @@ public class Geometry implements IGeometry {
     }
 
     public static void main(String[] args) {
-        Geometry g1 = create("S2");
-        Geometry g2 = create("#S2T1,#T1");
-        Geometry g3 = create("S2(200,100)");
-        Geometry g4 = create("T1(23)S2(200,100)");
-        Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
-        System.out.println("hla");
+//        Geometry g1 = create("S2");
+//        Geometry g2 = create("#S2T1,#T1");
+//        Geometry g3 = create("S2(200,100)");
+//        Geometry g4 = create("T1(23)S2(200,100)");
+//        Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
+//        System.out.println("hla");
     }
 
     @Override

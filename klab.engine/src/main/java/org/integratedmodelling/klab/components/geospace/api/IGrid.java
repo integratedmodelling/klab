@@ -216,10 +216,9 @@ public interface IGrid extends Iterable<Cell> {
 	long getCellCount();
 
 	/**
-	 * Return the cell area. Use coordinates if projection not available, else
-	 * return in default SI unit for area (square meters).
+	 * Return the cell area in a SI unit for area (compatible with square meters).
 	 * 
-	 * @param unit
+	 * @param unit area unit.
 	 *
 	 * @return the cell area
 	 */

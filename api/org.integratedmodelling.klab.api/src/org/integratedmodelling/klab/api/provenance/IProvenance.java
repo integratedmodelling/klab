@@ -18,8 +18,6 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimMetadata;
-
 // TODO: Auto-generated Javadoc
 /**
  * The k.LAB view of provenance is made up of actions that link an actor to a

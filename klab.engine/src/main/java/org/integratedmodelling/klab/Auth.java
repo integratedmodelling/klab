@@ -16,6 +16,9 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 public enum Auth implements IAuthenticationService {
     
+    /**
+     * The global instance singleton.
+     */
     INSTANCE;
 
     /**

@@ -142,8 +142,11 @@ public class ResourceCatalog implements IResourceCatalog {
 	public static void main(String args[]) {
 
 		ResourceCatalog catalog = new ResourceCatalog("test");
-		IResource resource = new ResourceBuilder().setResourceVersion(Version.getCurrent()).setAdapterType("wcs")
-				.setGeometry(Geometry.empty()).build("zio:cane:test:hostia");
+		IResource resource = new ResourceBuilder()
+				.setResourceVersion(Version.getCurrent())
+				.setAdapterType("wcs")
+				.setGeometry(Geometry.empty())
+				.build("zio:cane:test:hostia");
 
 		catalog.put(resource.getUrn(), resource);
 		IResource retrieved = catalog.get(resource.getUrn());

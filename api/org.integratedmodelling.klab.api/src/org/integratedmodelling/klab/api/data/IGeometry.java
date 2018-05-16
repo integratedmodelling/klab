@@ -158,7 +158,7 @@ public interface IGeometry extends Serializable, ILocator {
 
         /**
          * Return the topological numerosity and shape correspondent to the passed dimension of the
-         * underlying geometry. For example, <code>locator.getShape(Type.SPACE)</code> called on a scale
+         * underlying geometry. For example, {@code locator.getShape(Type.SPACE)} called on a scale
          * locator where space is a 10x20 grid will return [10, 20]. This is normally called in
          * contextualizers when numeric offsets need to be exposed. Because contextualizers are declared
          * with their geometry, there should be no need for error checking, and asking for a dimension
@@ -178,9 +178,9 @@ public interface IGeometry extends Serializable, ILocator {
          * linked to small POD data or arrays, and to enable transferring fully specified geometries
          * across services. These are given after each dimension specification within braces and are
          * named with field names and text values, e.g.:
-         * <p>
-         * <code>S2[10,10]{srid=EPSG:3040,bounds=[23.3,221.0,25.2,444.4]}<code>
-         * <p>
+         * <pre>
+         * S2[10,10]{srid=EPSG:3040,bounds=[23.3,221.0,25.2,444.4]}
+         * </pre>
          * Geometry implementations should expose an API to specify and read these parameters in
          * idiomatic ways and not rely on users providing identifiers.
          * <p>

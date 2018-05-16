@@ -10,158 +10,167 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class Projection implements IProjection {
 
-  private String                code;
-  CoordinateReferenceSystem     crs;
+	private String code;
+	CoordinateReferenceSystem crs;
 
-  public static final String    DEFAULT_METERS_PROJECTION = "EPSG:3005";
-  public static final String    DEFAULT_PROJECTION_CODE   = "EPSG:4326";
-  public static final String    LATLON_PROJECTION_CODE    = "EPSG:4326";
-  private static Projection     defaultProjection;
-  private static Projection     latlonProjection;
-  private static Projection[][] utmProjections            = new Projection[2][60];
+	public static final String DEFAULT_METERS_PROJECTION = "EPSG:3005";
+	public static final String DEFAULT_PROJECTION_CODE = "EPSG:4326";
+	public static final String LATLON_PROJECTION_CODE = "EPSG:4326";
+	private static Projection defaultProjection;
+	private static Projection latlonProjection;
+	private static Projection[][] utmProjections = new Projection[2][60];
 
-  /**
-   * Obtain the projection corresponding to the passed EPSG (or other supported authority) code, in
-   * the format "EPSG:nnnn".
-   * 
-   * @param code
-   * @return the projection, which may be invalid.
-   */
-  public static Projection create(String code) {
-    return new Projection(code);
-  }
+	/**
+	 * Obtain the projection corresponding to the passed EPSG (or other supported
+	 * authority) code, in the format "EPSG:nnnn".
+	 * 
+	 * @param code
+	 * @return the projection, which may be invalid.
+	 */
+	public static Projection create(String code) {
+		return new Projection(code);
+	}
 
-  public static Projection create(String authority, int code) {
-    return new Projection(authority + ":" + code);
-  }
+	public static Projection create(String authority, int code) {
+		return new Projection(authority + ":" + code);
+	}
 
-  public static Projection getDefault() {
-    if (defaultProjection == null) {
-      defaultProjection = Projection.create(DEFAULT_PROJECTION_CODE);
-    }
-    return defaultProjection;
-  }
+	public static Projection getDefault() {
+		if (defaultProjection == null) {
+			defaultProjection = Projection.create(DEFAULT_PROJECTION_CODE);
+		}
+		return defaultProjection;
+	}
 
-  public static Projection getLatLon() {
-    if (latlonProjection == null) {
-      latlonProjection = Projection.create(LATLON_PROJECTION_CODE);
-    }
-    return latlonProjection;
-  }
+	public static Projection getLatLon() {
+		if (latlonProjection == null) {
+			latlonProjection = Projection.create(LATLON_PROJECTION_CODE);
+		}
+		return latlonProjection;
+	}
 
-  /**
-   * Get the UTM projection most appropriate to geolocate the passed envelope, which can be in any
-   * projection.
-   * 
-   * @param envelope
-   * @return the projection corresponding to the best UTM zone for this envelope
-   */
-  public static Projection getUTM(Envelope envelope) {
+	/**
+	 * Get the UTM projection most appropriate to geolocate the passed envelope,
+	 * which can be in any projection.
+	 * 
+	 * @param envelope
+	 * @return the projection corresponding to the best UTM zone for this envelope
+	 */
+	public static Projection getUTM(Envelope envelope) {
 
-    Envelope standardized = envelope.transform(getLatLon(), true);
-    double[] xy = standardized.getCenterCoordinates();
-    WGS84 wgs = new WGS84(xy[1], xy[0]);
-    UTM utm = new UTM(wgs);
+		Envelope standardized = envelope.transform(getLatLon(), true);
+		double[] xy = standardized.getCenterCoordinates();
+		WGS84 wgs = new WGS84(xy[1], xy[0]);
+		UTM utm = new UTM(wgs);
 
-    int idx = 0;
-    if (wgs.getHemisphere() == 'S') {
-      idx = 1;
-    }
+		int idx = 0;
+		if (wgs.getHemisphere() == 'S') {
+			idx = 1;
+		}
 
-    if (utmProjections[idx][utm.getZone()] == null) {
-      String code = "EPSG:32" + (wgs.getHemisphere() == 'S' ? "7" : "6")
-          + String.format("%02d", utm.getZone());
-      utmProjections[idx][utm.getZone()] = create(code);
-    }
+		if (utmProjections[idx][utm.getZone()] == null) {
+			String code = "EPSG:32" + (wgs.getHemisphere() == 'S' ? "7" : "6") + String.format("%02d", utm.getZone());
+			utmProjections[idx][utm.getZone()] = create(code);
+		}
 
-    return utmProjections[idx][utm.getZone()];
-  }
+		return utmProjections[idx][utm.getZone()];
+	}
 
-  private Projection(String code) {
-    this.code = code;
-    try {
-      this.crs = CRS.decode(this.code, true);
-    } catch (FactoryException e) {
-      throw new KlabValidationException(e);
-    }
-  }
+	private Projection(String code) {
+		this.code = code;
+		try {
+			this.crs = CRS.decode(this.code, true);
+		} catch (FactoryException e) {
+			throw new KlabValidationException(e);
+		}
+	}
 
-  private Projection(String code, CoordinateReferenceSystem crs) {
-    this.code = code;
-    this.crs = crs;
-  }
+	private Projection(String code, CoordinateReferenceSystem crs) {
+		this.code = code;
+		this.crs = crs;
+	}
 
-  @Override
-  public String getCode() {
-    return code;
-  }
+	@Override
+	public String getCode() {
+		return code;
+	}
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((code == null) ? 0 : code.hashCode());
-    return result;
-  }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		return result;
+	}
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Projection other = (Projection) obj;
-    if (code == null) {
-      if (other.code != null)
-        return false;
-    } else if (!code.equals(other.code))
-      return false;
-    return true;
-  }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Projection other = (Projection) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		return true;
+	}
 
-  public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-    return crs;
-  }
+	public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+		return crs;
+	}
 
-  static Projection create(CoordinateReferenceSystem coordinateReferenceSystem) {
-    try {
-      String code = CRS.lookupIdentifier(coordinateReferenceSystem, true);
-      return new Projection(code, coordinateReferenceSystem);
-    } catch (FactoryException e) {
-      throw new KlabValidationException(e);
-    }
-  }
+	static Projection create(CoordinateReferenceSystem coordinateReferenceSystem) {
+		try {
+			String code = CRS.lookupIdentifier(coordinateReferenceSystem, true);
+			return new Projection(code, coordinateReferenceSystem);
+		} catch (FactoryException e) {
+			throw new KlabValidationException(e);
+		}
+	}
 
-  /**
-   * The haversine formula calculates great-circle distance between two points on a sphere from
-   * their longitudes and latitudes.
-   * 
-   * From http://rosettacode.org/wiki/Haversine_formula#Java
-   * 
-   * @param lat1 PointOne latitude
-   * @param lon1 PointOne longitude
-   * @param lat2 PointTwo latitude
-   * @param lon2 PointTwo longitude
-   * @return distance in meters
-   */
-  public static double haversine(double lat1, double lon1, double lat2, double lon2) {
-    double R = 6372800; // in m
-    double dLat = Math.toRadians(lat2 - lat1);
-    double dLon = Math.toRadians(lon2 - lon1);
-    lat1 = Math.toRadians(lat1);
-    lat2 = Math.toRadians(lat2);
+	/**
+	 * The haversine formula calculates great-circle distance between two points on
+	 * a sphere from their longitudes and latitudes.
+	 * 
+	 * From http://rosettacode.org/wiki/Haversine_formula#Java
+	 * 
+	 * @param lat1
+	 *            PointOne latitude
+	 * @param lon1
+	 *            PointOne longitude
+	 * @param lat2
+	 *            PointTwo latitude
+	 * @param lon2
+	 *            PointTwo longitude
+	 * @return distance in meters
+	 */
+	public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+		double R = 6372800; // in m
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLon = Math.toRadians(lon2 - lon1);
+		lat1 = Math.toRadians(lat1);
+		lat2 = Math.toRadians(lat2);
 
-    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-        + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-    double c = 2 * Math.asin(Math.sqrt(a));
-    return R * c;
-  }
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+				+ Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+		double c = 2 * Math.asin(Math.sqrt(a));
+		return R * c;
+	}
 
-  public int getSRID() {
-    // TODO Auto-generated method stub
-    return Integer.parseInt(code.split(":")[1]);
-  }
+	public int getSRID() {
+		// TODO Auto-generated method stub
+		return Integer.parseInt(code.split(":")[1]);
+	}
+
+	@Override
+	public boolean isMeters() {
+		// TODO Auto-generated method stub
+		return getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit().toString().equals("m");
+	}
 
 }

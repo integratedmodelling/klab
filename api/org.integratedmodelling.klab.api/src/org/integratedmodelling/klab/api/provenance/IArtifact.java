@@ -16,16 +16,13 @@
 package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Collection;
+
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.data.artifacts.IModelArtifact;
-import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 

@@ -17,8 +17,8 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**

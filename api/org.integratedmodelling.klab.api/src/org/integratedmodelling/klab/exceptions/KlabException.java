@@ -17,16 +17,15 @@ package org.integratedmodelling.klab.exceptions;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class KlabException.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-@SuppressWarnings("javadoc")
 public class KlabException extends RuntimeException {
 
     private static final long serialVersionUID = 5999457326224959271L;

@@ -16,8 +16,8 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IServiceCall;
 
 // TODO: Auto-generated Javadoc
 /**

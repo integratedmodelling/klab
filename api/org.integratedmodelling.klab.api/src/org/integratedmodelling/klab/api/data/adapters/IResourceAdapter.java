@@ -15,10 +15,6 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
-import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
-import org.integratedmodelling.klab.api.extensions.component.Initialize;
-import org.integratedmodelling.klab.api.extensions.component.Shutdown;
-
 /**
  * A {@code IResourceAdapter} is the interface for a plug-in providing a new adapter for a resource
  * type. A class implementing {@code IResourceAdapter} must be annotated with a

@@ -54,6 +54,7 @@ public class CamelCase {
      * "abc" => "ABC" => "A_B_C").
      * 
      * @param value
+     * @param sep 
      * @return the upper case string with the chosen separator
      */
     public static String toUpperCase(String value, char sep) {
@@ -65,6 +66,7 @@ public class CamelCase {
      * becomes "just_a_simple_string"). This function is idempotent.
      * 
      * @param value
+     * @param sep 
      * @return the lower case string with the chosen separator
      */
     public static String toLowerCase(String value, char sep) {
@@ -76,6 +78,7 @@ public class CamelCase {
      * "JustASimpleString"). This function is idempotent.
      * 
      * @param value
+     * @param sep 
      * @return the upper underscore case string
      */
     public static String toUpperCamelCase(String value, char sep) {
@@ -87,6 +90,7 @@ public class CamelCase {
      * "justASimpleString"). This function is idempotent.
      * 
      * @param value
+     * @param sep 
      * @return the upper underscore case string
      */
     public static String toLowerCamelCase(String value, char sep) {

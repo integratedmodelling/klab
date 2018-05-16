@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.api.data.artifacts;
 
 import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**

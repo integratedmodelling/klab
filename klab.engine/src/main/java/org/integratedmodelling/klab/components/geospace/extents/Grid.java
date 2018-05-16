@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
 /**
@@ -75,6 +74,16 @@ public class Grid extends Area implements IGrid {
 		return new Grid(shape, x, y);
 	}
 
+	/**
+	 * @param gxmin
+	 * @param gymin
+	 * @param gxmax
+	 * @param gymax
+	 * @param nx
+	 * @param ny
+	 * @param projection
+	 * @return grid
+	 */
 	public static Grid create(double gxmin, double gymin, double gxmax, double gymax, long nx, long ny,
 			Projection projection) {
 		return new Grid(gxmin, gymin, gxmax, gymax, nx, ny, projection);
@@ -535,6 +544,7 @@ public class Grid extends Area implements IGrid {
 	 */
 	long[] offsetInSupergrid = null;
 	String superGridId = null;
+	private Double cellAreaM;
 
 	public Grid() {
 		// TODO Auto-generated constructor stub
@@ -592,8 +602,17 @@ public class Grid extends Area implements IGrid {
 
 	@Override
 	public double getCellArea(IUnit unit) {
-		// TODO Auto-generated method stub
-		return 0;
+		if (cellAreaM == null) {
+			double xm = getCellWidth();
+			double ym = getCellHeight();
+			if (projection.isMeters()) {
+				cellAreaM = Units.INSTANCE.SQUARE_METERS.convert(xm * ym, unit).doubleValue();
+			} else {
+				// TODO!
+				
+			}
+		}
+		return cellAreaM;
 	}
 
 	@Override
@@ -897,12 +916,11 @@ public class Grid extends Area implements IGrid {
 	 */
 	private void setAdjustedEnvelope(Shape shape, double squareSize) throws KlabException {
 		long x = 0, y = 0;
-		double dx = 0, dy = 0;
+		// double dx = 0, dy = 0;
 		Envelope env = shape.getEnvelope();
 
 		// Case one: both CRS and square size are in meters.
-		if (shape.getProjection().getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit().toString()
-				.equals("m")) {
+		if (shape.getProjection().isMeters()) {
 
 			double height = env.getHeight();
 			double width = env.getWidth();
@@ -910,31 +928,33 @@ public class Grid extends Area implements IGrid {
 			x = (long) Math.ceil(width / squareSize);
 			y = (long) Math.ceil(height / squareSize);
 
-			dx = (x * squareSize) - width;
-			dy = (y * squareSize) - height;
+			// dx = (x * squareSize) - width;
+			// dy = (y * squareSize) - height;
 
-			ReferencedEnvelope envelop_ = new ReferencedEnvelope(env.getMinX() - dx, env.getMaxX() + dx,
-					env.getMinY() - dy, env.getMaxY() + dy, shape.getProjection().getCoordinateReferenceSystem());
+			// ReferencedEnvelope envelop_ = new ReferencedEnvelope(env.getMinX() - dx,
+			// env.getMaxX() + dx,
+			// env.getMinY() - dy, env.getMaxY() + dy,
+			// shape.getProjection().getCoordinateReferenceSystem());
 
 			// After doing the calculations in the original CRS,
 			// shape and envelope is transformed to default.
 
-			this.shape = shape.transform(Projection.getDefault());
-			try {
-				this.envelope = Envelope
-						.create(envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(), true));
-			} catch (Exception e) {
-				// shouldn't happen
-				throw new KlabValidationException(e);
-			}
-			this.projection = Projection.getDefault();
+			// this.shape = shape.transform(Projection.getDefault());
+			// try {
+			// this.envelope = Envelope
+			// .create(envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(),
+			// true));
+			// } catch (Exception e) {
+			// // shouldn't happen
+			// throw new KlabValidationException(e);
+			// }
+			// this.projection = Projection.getDefault();
 
 		}
 		// Case 2: CRS uses degrees
 		else {
-			// lets get height and width in meters
+			// get height and width in meters
 			double height = Projection.haversine(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
-
 			double width = Projection.haversine(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
 			x = (long) Math.ceil(width / squareSize);
 			y = (long) Math.ceil(height / squareSize);
@@ -959,16 +979,16 @@ public class Grid extends Area implements IGrid {
 
 		}
 
-		if (!this.projection.equals(Projection.getDefault())) {
-			this.shape = this.shape.transform(Projection.getDefault());
-			try {
-				this.envelope = this.envelope.transform(Projection.getDefault(), true);
-			} catch (Exception e) {
-				// TODO: Shouldn't happen
-				e.printStackTrace();
-			}
-			this.projection = Projection.getDefault();
-		}
+		// if (!this.projection.equals(Projection.getDefault())) {
+		// this.shape = this.shape.transform(Projection.getDefault());
+		// try {
+		// this.envelope = this.envelope.transform(Projection.getDefault(), true);
+		// } catch (Exception e) {
+		// // TODO: Shouldn't happen
+		// e.printStackTrace();
+		// }
+		// this.projection = Projection.getDefault();
+		// }
 
 		this.setResolution(x, y);
 

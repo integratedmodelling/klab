@@ -15,10 +15,7 @@
  */
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
  * A contextualizer builds the observation of an observable in a context based on what the

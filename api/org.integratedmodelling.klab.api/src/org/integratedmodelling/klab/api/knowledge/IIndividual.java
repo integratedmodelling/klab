@@ -16,8 +16,6 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.services.IReasonerService;
 
 /**
  * The individual (instance). In k.LAB, individuals do not need to be generated unless the runtime context

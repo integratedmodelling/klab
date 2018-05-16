@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimNotifier;
-import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.persistence.ModelKbox;
 import org.integratedmodelling.klab.resolution.ResolutionScope;

@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 /**

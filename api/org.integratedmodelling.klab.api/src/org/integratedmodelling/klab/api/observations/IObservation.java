@@ -18,7 +18,6 @@ package org.integratedmodelling.klab.api.observations;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;

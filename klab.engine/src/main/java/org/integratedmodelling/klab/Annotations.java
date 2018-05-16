@@ -25,6 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum Annotations implements IAnnotationService {
 
+    /**
+     * The global instance singleton.
+     */
     INSTANCE;
 
     /**

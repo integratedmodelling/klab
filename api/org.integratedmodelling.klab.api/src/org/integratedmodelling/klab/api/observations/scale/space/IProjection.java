@@ -30,4 +30,11 @@ public interface IProjection {
      * @return a {@link java.lang.String} object.
      */
     String getCode();
+
+    /**
+     * Check if the values projected according to this projection express meters.
+     * 
+     * @return true if a meter projection
+     */
+	boolean isMeters();
 }

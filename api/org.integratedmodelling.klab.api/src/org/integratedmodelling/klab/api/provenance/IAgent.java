@@ -15,9 +15,7 @@
  */
 package org.integratedmodelling.klab.api.provenance;
 
-import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**

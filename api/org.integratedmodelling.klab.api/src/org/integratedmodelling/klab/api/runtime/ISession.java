@@ -75,7 +75,7 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * on particular spatial and/or temporal extents, which can be used when
 	 * observations are made without stating a context.
 	 * 
-	 * @return
+	 * @return the region of interest, or the empty geometry
 	 */
 	IGeometry getRegionOfInterest();
 

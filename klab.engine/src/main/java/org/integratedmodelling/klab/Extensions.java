@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -32,14 +33,17 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
-import org.integratedmodelling.klab.utils.Path;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum Extensions implements IExtensionService {
 
+	/**
+     * The global instance singleton.
+     */
     INSTANCE;
 
     public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";

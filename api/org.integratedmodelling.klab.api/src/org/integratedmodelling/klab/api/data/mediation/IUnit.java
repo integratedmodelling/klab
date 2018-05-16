@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.api.data.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.services.IUnitService;
 
 /**
  * Units of measurement. Creation and inquiry methods are provided by {@link org.integratedmodelling.klab.api.services.IUnitService}.
