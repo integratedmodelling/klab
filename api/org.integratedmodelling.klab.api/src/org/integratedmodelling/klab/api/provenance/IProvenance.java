@@ -17,29 +17,36 @@ package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.klab.api.auth.IEngineIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 
 // TODO: Auto-generated Javadoc
 /**
- * The k.LAB view of provenance is made up of actions that link an actor to a result. It is built
- * using direct actions (in the "active voice") and can be accessed backwards to build the OPM
- * graph, which is a "passive voice" model. This makes it much easier to build through observations
- * and resolutions. The data models is more compact than the W3's provenance model: it's a graph
- * where the vertices are {@link org.integratedmodelling.klab.api.provenance.IProvenance.Node}s and the edges are {@link org.integratedmodelling.klab.api.provenance.IActivity}s. Actions may be linked
- * to each other in a causal graph that is independent from the primary graph. Actions that are not
- * caused by another action are called "primary" and can be obtained in chronological order. All
- * nodes and actions are timestamped with their time of creation and hold arbitrary metadata using
- * the standard Dublin Core tags from {@link org.integratedmodelling.klab.api.knowledge.IMetadata}.
+ * The k.LAB view of provenance is made up of actions that link an actor to a
+ * result. It is built using direct actions (in the "active voice") and can be
+ * accessed backwards to build the OPM graph, which is a "passive voice" model.
+ * This makes it much easier to build through observations and resolutions. The
+ * data models is more compact than the W3's provenance model: it's a graph
+ * where the vertices are
+ * {@link org.integratedmodelling.klab.api.provenance.IProvenance.Node}s and the
+ * edges are {@link org.integratedmodelling.klab.api.provenance.IActivity}s.
+ * Actions may be linked to each other in a causal graph that is independent
+ * from the primary graph. Actions that are not caused by another action are
+ * called "primary" and can be obtained in chronological order. All nodes and
+ * actions are timestamped with their time of creation and hold arbitrary
+ * metadata using the standard Dublin Core tags from
+ * {@link org.integratedmodelling.klab.api.knowledge.IMetadata}.
  * <p>
- * Because k.LAB is an intelligent system, we always have at least two agents: a User (personified
- * by a {@link org.integratedmodelling.klab.api.auth.IUserIdentity} and the k.LAB engine, personifying the AI in the system through a
- * {@link org.integratedmodelling.klab.api.auth.IEngineIdentity}. Primary actions are typically caused by users (through
- * <strong>acknowledgement</strong> observations), secondary by the AI in k.LAB (through
- * <strong>computation</strong> or <strong>detection</strong> observations). Provenance is used to
- * document the model resolution strategy and to build the IReport that documents the model results.
+ * Because k.LAB is an intelligent system, we always have at least two agents: a
+ * User (personified by a
+ * {@link org.integratedmodelling.klab.api.auth.IUserIdentity} and the k.LAB
+ * engine, personifying the AI in the system through a
+ * {@link org.integratedmodelling.klab.api.auth.IEngineIdentity}. Primary
+ * actions are typically caused by users (through
+ * <strong>acknowledgement</strong> observations), secondary by the AI in k.LAB
+ * (through <strong>computation</strong> or <strong>detection</strong>
+ * observations). Provenance is used to document the model resolution strategy
+ * and to build the IReport that documents the model results.
  * <p>
  *
  * @author Ferd
@@ -47,65 +54,67 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
  */
 public interface IProvenance {
 
-  /**
-   * Everything except Actions is a node. Used only to allow generalizing the API.
-   * 
-   * @author Ferd
-   */
-  abstract interface Node {
+	/**
+	 * Everything except Actions is a node. Used only to allow generalizing the API.
+	 * 
+	 * @author Ferd
+	 */
+	abstract interface Node {
 
-    long getTimestamp();
+		long getTimestamp();
 
-    /**
-     * Return the graph we're part of.
-     * 
-     * @return the provenance graph
-     */
-    IProvenance getProvenance();
+		/**
+		 * Return the graph we're part of.
+		 * 
+		 * @return the provenance graph
+		 */
+		IProvenance getProvenance();
 
-    /**
-     * Workflows that don't end well produce these.
-     * 
-     * @return true if empty
-     */
-    boolean isEmpty();
-  }
+		/**
+		 * Workflows that don't end well produce these.
+		 * 
+		 * @return true if empty
+		 */
+		boolean isEmpty();
+	}
 
-  /**
-   * True if there's nothing to see.
-   *
-   * @return true if empty
-   */
-  boolean isEmpty();
+	/**
+	 * True if there's nothing to see.
+	 *
+	 * @return true if empty
+	 */
+	boolean isEmpty();
 
-  /**
-   * Temporary - to be improved. Collect metadata for a node, merging with upstream metadata as
-   * needed.
-   *
-   * @param node the node
-   * @return collect metadata from node
-   */
-  public IKimMetadata collectMetadata(Object node);
+//	/**
+//	 * Temporary - to be improved. Collect metadata for a node, merging with
+//	 * upstream metadata as needed.
+//	 *
+//	 * @param node
+//	 *            the node
+//	 * @return collect metadata from node
+//	 */
+//	public IKimMetadata collectMetadata(Object node);
 
-  /**
-   * Return all the primary actions in chronological order.
-   *
-   * @return a {@link java.util.List} object.
-   */
-  List<IActivity> getPrimaryActions();
+	/**
+	 * Return all the primary actions in chronological order.
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	List<IActivity> getPrimaryActions();
 
-  /**
-   * There is always a root observation/artifact, with consumer = the user.
-   *
-   * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact} object.
-   */
-  IArtifact getRootArtifact();
+	/**
+	 * There is always a root observation/artifact, with consumer = the user.
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact}
+	 *         object.
+	 */
+	IArtifact getRootArtifact();
 
-  /**
-   * Return all artifacts.
-   *
-   * @return a {@link java.util.Collection} object.
-   */
-  Collection<IArtifact> getArtifacts();
+	/**
+	 * Return all artifacts.
+	 *
+	 * @return a {@link java.util.Collection} object.
+	 */
+	Collection<IArtifact> getArtifacts();
 
 }

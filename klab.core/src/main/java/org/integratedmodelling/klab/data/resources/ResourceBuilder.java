@@ -135,8 +135,9 @@ public class ResourceBuilder implements IResource.Builder {
 
   /** {@inheritDoc} */
   @Override
-  public void setAdapterType(String string) {
+  public ResourceBuilder setAdapterType(String string) {
     this.adapterType = string;
+    return this;
   }
 
 }

@@ -203,7 +203,7 @@ public interface IResource extends Serializable {
      * 
      * @param string
      */
-    void setAdapterType(String string);
+    Builder setAdapterType(String string);
 
   }
 

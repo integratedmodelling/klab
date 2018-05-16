@@ -459,7 +459,7 @@ public enum Resources implements IResourceService {
 	@Override
 	public IResourceCatalog getLocalResourceCatalog() {
 		if (localResourceCatalog == null) {
-			localResourceCatalog = new ResourceCatalog();
+			localResourceCatalog = new ResourceCatalog("localresources");
 		}
 		return localResourceCatalog;
 	}
@@ -467,7 +467,7 @@ public enum Resources implements IResourceService {
 	@Override
 	public IResourceCatalog getPublicResourceCatalog() {
 		if (publicResourceCatalog == null) {
-			publicResourceCatalog = new ResourceCatalog();
+			publicResourceCatalog = new ResourceCatalog("publicresources");
 		}
 		return publicResourceCatalog;
 	}

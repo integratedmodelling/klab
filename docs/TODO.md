@@ -22,7 +22,7 @@
     
 ### Resolution
 
-- Rescaling mediators; get test5 working
+- DONE Rescaling mediators; get test5 working
 - Relationship instantiator and resolver: test cases
 - Smart resolution of sub-object qualities: use ranking system with scale constraints (i.e. 
   produce Model metadata from states, search there first, if something > x% don't use the network, configure 
@@ -42,11 +42,12 @@
 
 ### Modeling functionalities
 
-- Missing GIS stuff: rasterizer, distances, spatial indexing, routing across both features 
+- Missing GIS stuff: rasterizer [DONE], distances, spatial indexing, routing across both features 
   and terrains, spatial networks
 - Recover all Groovy functionalities
 - Groovy funcs for documentation generator
-
+- Reintegrate WEKA 
+  
 ### Provenance
 
 - Flesh out model and provide adapters for docs, display and export

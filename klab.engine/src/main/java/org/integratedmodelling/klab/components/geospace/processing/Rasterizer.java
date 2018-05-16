@@ -30,23 +30,23 @@ import com.vividsolutions.jts.geom.Polygon;
  * Simple, flexible rasterizer using an AWT image as a backend and closures to
  * determine (a) the mapping between each shape and the rasterized value, and
  * (b) the final output of that value to an arbitrary x/y indexable collection.
- * The rasterized type can be any number type, boolean, or anything that can
- * be used as key in a map and won't have more than {@link Integer#MAX_VALUE}
+ * The rasterized type can be any number type, boolean, or anything that can be
+ * used as key in a map and won't result in more than {@link Integer#MAX_VALUE}
  * different keys.
  * <p>
- * The image behind the scenes encodes floats values as RGB values, so the
+ * The image behind the scenes encodes floats values as RGB-8 values, so the
  * resolution of a float (or a long for categorical values) limits the precision
  * of the value retained in the final product. Changing to doubles is easy if
  * needed.
  * <p>
- * Simple example with presence/absence rasterization:
+ * Simple example building a mask with presence/absence rasterization:
  * 
  * <pre>
  * Rasterizer&lt;Boolean&gt; rasterizer = new Rasterizer<>(grid);
  * for (IShape shape : shapes) {
  * 	// use anything different from boolean and a more complex function for shapes
  * 	// with attributes
- * 	rasterizer.add(shape, (shape) -> true);
+ * 	rasterizer.add(shape, (s) -> true);
  * }
  * 
  * // paint the shapes over a boolean grid

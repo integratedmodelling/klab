@@ -24,7 +24,7 @@ public class Provenance extends DefaultDirectedGraph<IArtifact, Activity> implem
     return vertexSet().isEmpty();
   }
 
-  @Override
+//  @Override
   public IKimMetadata collectMetadata(Object node) {
     // TODO Auto-generated method stub
     return null;

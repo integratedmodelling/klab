@@ -21,14 +21,17 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -53,13 +56,13 @@ public class Resource implements IResource {
 
     private static final long serialVersionUID = -923039635832182164L;
 
-    Version version;
-    IMetadata metadata;
     String urn;
+    Version version;
     String adapterType;
     IGeometry geometry;
-    Parameters parameters;
     long resourceTimestamp;
+    IMetadata metadata = new Metadata();
+    Parameters parameters = new Parameters();
     List<INotification> history = new ArrayList<>();
     List<INotification> notifications = new ArrayList<>();
 
@@ -146,5 +149,31 @@ public class Resource implements IResource {
         }
         return false;
     }
+
+	public void validate(IResourceService resourceService) {
+		
+		if (adapterType == null) {
+			throw new IllegalStateException("invalid resource: adapter type is undefined");
+		}
+		if (version == null) {
+			throw new IllegalStateException("invalid resource: version is undefined");
+		}
+		if (geometry == null) {
+			throw new IllegalStateException("invalid resource: geometry is undefined");
+		}
+		if (urn == null) {
+			throw new IllegalStateException("invalid resource: urn is undefined");
+		}
+		// TODO more checks: consistent version history, metadata consistency for adapter
+	}
+
+	@Override
+	public String toString() {
+		return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType + ", geometry="
+				+ geometry + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
+				+ "]";
+	}
+	
+	
 
 }

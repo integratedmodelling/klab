@@ -70,10 +70,11 @@ public interface IResourceService {
       throws KlabResourceNotFoundException, KlabAuthorizationException;
 
   /**
-   * <p>getLocalFileResource.</p>
+   * Create a locally available resource from a specification or/and by examining a local file.
    *
    * @param file a {@link java.io.File} object. May be null (if userData contain all relevant info)
    * @param userData user data. May be empty (if all that's needed is the file).
+   * @param adapterType pass null to interrogate all adapters and choose the first fitting adapter
    * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
    * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
    */
