@@ -150,17 +150,6 @@ public interface IResourceService {
 	IWorkspace getComponentsWorkspace();
 
 	/**
-	 * <p>
-	 * getProject.
-	 * </p>
-	 *
-	 * @param projectId
-	 *            a {@link java.lang.String} object.
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IProject} object.
-	 */
-	IProject getProject(String projectId);
-
-	/**
 	 * Retrieve a model object identified through a URN - either an observer or a
 	 * model, local or remote, in the latter case triggering any necessary
 	 * synchronization with the network.

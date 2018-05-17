@@ -59,9 +59,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 public enum Resources implements IResourceService {
 
-    /**
-     * The global instance singleton.
-     */
+	/**
+	 * The global instance singleton.
+	 */
 	INSTANCE;
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
@@ -75,7 +75,7 @@ public enum Resources implements IResourceService {
 	IResourceCatalog localResourceCatalog;
 	IResourceCatalog publicResourceCatalog;
 
-	Map<String, Project> projects = new HashMap<>();
+	Map<String, Map<String, Project>> projectCatalog = new HashMap<>();
 
 	Map<String, IWorkspace> workspaces = new HashMap<>();
 
@@ -214,19 +214,20 @@ public enum Resources implements IResourceService {
 		return workspaces.get(name);
 	}
 
-	@Override
-	public Project getProject(String projectId) {
-		return projects.get(projectId);
-	}
-
 	public IProject retrieveOrCreate(IKimProject project) {
-		
-		if (projects.containsKey(project.getName())) {
-			return projects.get(project.getName());
+
+		String workspace = project.getWorkspace().getName();
+
+		if (projectCatalog.get(workspace) != null && projectCatalog.get(workspace).containsKey(project.getName())) {
+			return projectCatalog.get(workspace).get(project.getName());
 		}
 
 		Project ret = new Project(project);
-		projects.put(ret.getName(), ret);
+		if (projectCatalog.get(workspace) == null) {
+			projectCatalog.put(workspace, new HashMap<>());
+		}
+		projectCatalog.get(workspace).put(ret.getName(), ret);
+
 		return ret;
 	}
 
@@ -252,7 +253,8 @@ public enum Resources implements IResourceService {
 	public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
 	@Override
-	public IResource resolveResource(final String urn) throws KlabResourceNotFoundException, KlabAuthorizationException {
+	public IResource resolveResource(final String urn)
+			throws KlabResourceNotFoundException, KlabAuthorizationException {
 
 		IResource ret = getLocalResourceCatalog().get(urn);
 
@@ -272,7 +274,8 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public IResource getLocalResource(File file, IParameters parameters, IProject project, String adapterType, IMonitor monitor) {
+	public IResource getLocalResource(File file, IParameters parameters, IProject project, String adapterType,
+			IMonitor monitor) {
 
 		// get URN from k.IM service, unique per file
 		String urn = Urns.INSTANCE.getFileUrn(file);
