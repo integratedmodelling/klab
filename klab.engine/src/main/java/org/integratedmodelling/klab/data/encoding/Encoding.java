@@ -6,6772 +6,6653 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 // source: Encoding.proto
 
 public final class Encoding {
-  private Encoding() {}
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
-  }
-
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-  public interface KlabDataOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:KlabData)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>string geometry = 1;</code>
-     */
-    java.lang.String getGeometry();
-    /**
-     * <code>string geometry = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getGeometryBytes();
-
-    /**
-     * <code>string semantics = 2;</code>
-     */
-    java.lang.String getSemantics();
-    /**
-     * <code>string semantics = 2;</code>
-     */
-    com.google.protobuf.ByteString
-        getSemanticsBytes();
-
-    /**
-     * <code>int64 elapsed = 3;</code>
-     */
-    long getElapsed();
-
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    java.util.List<Encoding.KlabData.Notification> 
-        getNotificationsList();
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    Encoding.KlabData.Notification getNotifications(int index);
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    int getNotificationsCount();
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    java.util.List<? extends Encoding.KlabData.NotificationOrBuilder> 
-        getNotificationsOrBuilderList();
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(
-        int index);
-
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    java.util.List<Encoding.KlabData.Object> 
-        getObjectsList();
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    Encoding.KlabData.Object getObjects(int index);
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    int getObjectsCount();
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> 
-        getObjectsOrBuilderList();
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
-        int index);
-
-    /**
-     * <code>.KlabData.State state = 6;</code>
-     */
-    boolean hasState();
-    /**
-     * <code>.KlabData.State state = 6;</code>
-     */
-    Encoding.KlabData.State getState();
-    /**
-     * <code>.KlabData.State state = 6;</code>
-     */
-    Encoding.KlabData.StateOrBuilder getStateOrBuilder();
-  }
-  
-  /**
-   * <pre>
-   **
-   * The data response to a URN get() request. Will contain a state or one or more objects,
-   * with the correspondent geometry for validation and optional semantics.
-   * </pre>
-   *
-   * Protobuf type {@code KlabData}
-   */
-  public  static final class KlabData extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:KlabData)
-      KlabDataOrBuilder, IKlabData {
-  private static final long serialVersionUID = 0L;
-    // Use KlabData.newBuilder() to construct.
-    private KlabData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private KlabData() {
-      geometry_ = "";
-      semantics_ = "";
-      elapsed_ = 0L;
-      notifications_ = java.util.Collections.emptyList();
-      objects_ = java.util.Collections.emptyList();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private KlabData(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              geometry_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              semantics_ = s;
-              break;
-            }
-            case 24: {
-
-              elapsed_ = input.readInt64();
-              break;
-            }
-            case 34: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                notifications_ = new java.util.ArrayList<Encoding.KlabData.Notification>();
-                mutable_bitField0_ |= 0x00000008;
-              }
-              notifications_.add(
-                  input.readMessage(Encoding.KlabData.Notification.parser(), extensionRegistry));
-              break;
-            }
-            case 42: {
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-                objects_ = new java.util.ArrayList<Encoding.KlabData.Object>();
-                mutable_bitField0_ |= 0x00000010;
-              }
-              objects_.add(
-                  input.readMessage(Encoding.KlabData.Object.parser(), extensionRegistry));
-              break;
-            }
-            case 50: {
-              Encoding.KlabData.State.Builder subBuilder = null;
-              if (state_ != null) {
-                subBuilder = state_.toBuilder();
-              }
-              state_ = input.readMessage(Encoding.KlabData.State.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(state_);
-                state_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-          notifications_ = java.util.Collections.unmodifiableList(notifications_);
-        }
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-          objects_ = java.util.Collections.unmodifiableList(objects_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return Encoding.internal_static_KlabData_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return Encoding.internal_static_KlabData_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              Encoding.KlabData.class, Encoding.KlabData.Builder.class);
-    }
-
-    /**
-     * Protobuf enum {@code KlabData.Severity}
-     */
-    public enum Severity
-        implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       * <code>INFO = 0;</code>
-       */
-      INFO(0),
-      /**
-       * <code>WARNING = 1;</code>
-       */
-      WARNING(1),
-      /**
-       * <code>ERROR = 2;</code>
-       */
-      ERROR(2),
-      /**
-       * <code>DEBUG = 3;</code>
-       */
-      DEBUG(3),
-      UNRECOGNIZED(-1),
-      ;
-
-      /**
-       * <code>INFO = 0;</code>
-       */
-      public static final int INFO_VALUE = 0;
-      /**
-       * <code>WARNING = 1;</code>
-       */
-      public static final int WARNING_VALUE = 1;
-      /**
-       * <code>ERROR = 2;</code>
-       */
-      public static final int ERROR_VALUE = 2;
-      /**
-       * <code>DEBUG = 3;</code>
-       */
-      public static final int DEBUG_VALUE = 3;
-
-
-      public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
-        return value;
-      }
-
-      /**
-       * @deprecated Use {@link #forNumber(int)} instead.
-       */
-      @java.lang.Deprecated
-      public static Severity valueOf(int value) {
-        return forNumber(value);
-      }
-
-      public static Severity forNumber(int value) {
-        switch (value) {
-          case 0: return INFO;
-          case 1: return WARNING;
-          case 2: return ERROR;
-          case 3: return DEBUG;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<Severity>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static final com.google.protobuf.Internal.EnumLiteMap<
-          Severity> internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Severity>() {
-              public Severity findValueByNumber(int number) {
-                return Severity.forNumber(number);
-              }
-            };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(ordinal());
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return Encoding.KlabData.getDescriptor().getEnumTypes().get(0);
-      }
-
-      private static final Severity[] VALUES = values();
-
-      public static Severity valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        if (desc.getIndex() == -1) {
-          return UNRECOGNIZED;
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int value;
-
-      private Severity(int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:KlabData.Severity)
-    }
-
-    public interface NotificationOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:KlabData.Notification)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>string text = 1;</code>
-       */
-      java.lang.String getText();
-      /**
-       * <code>string text = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getTextBytes();
-
-      /**
-       * <code>.KlabData.Severity severity = 2;</code>
-       */
-      int getSeverityValue();
-      /**
-       * <code>.KlabData.Severity severity = 2;</code>
-       */
-      Encoding.KlabData.Severity getSeverity();
-    }
-    /**
-     * Protobuf type {@code KlabData.Notification}
-     */
-    public  static final class Notification extends
-        com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:KlabData.Notification)
-        NotificationOrBuilder {
-    private static final long serialVersionUID = 0L;
-      // Use Notification.newBuilder() to construct.
-      private Notification(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-        super(builder);
-      }
-      private Notification() {
-        text_ = "";
-        severity_ = 0;
-      }
-
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-      getUnknownFields() {
-        return this.unknownFields;
-      }
-      private Notification(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownFieldProto3(
-                    input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                text_ = s;
-                break;
-              }
-              case 16: {
-                int rawValue = input.readEnum();
-
-                severity_ = rawValue;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e).setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return Encoding.internal_static_KlabData_Notification_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return Encoding.internal_static_KlabData_Notification_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                Encoding.KlabData.Notification.class, Encoding.KlabData.Notification.Builder.class);
-      }
-
-      public static final int TEXT_FIELD_NUMBER = 1;
-      private volatile java.lang.Object text_;
-      /**
-       * <code>string text = 1;</code>
-       */
-      public java.lang.String getText() {
-        java.lang.Object ref = text_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          text_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string text = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getTextBytes() {
-        java.lang.Object ref = text_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          text_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int SEVERITY_FIELD_NUMBER = 2;
-      private int severity_;
-      /**
-       * <code>.KlabData.Severity severity = 2;</code>
-       */
-      public int getSeverityValue() {
-        return severity_;
-      }
-      /**
-       * <code>.KlabData.Severity severity = 2;</code>
-       */
-      public Encoding.KlabData.Severity getSeverity() {
-        Encoding.KlabData.Severity result = Encoding.KlabData.Severity.valueOf(severity_);
-        return result == null ? Encoding.KlabData.Severity.UNRECOGNIZED : result;
-      }
-
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        if (!getTextBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, text_);
-        }
-        if (severity_ != Encoding.KlabData.Severity.INFO.getNumber()) {
-          output.writeEnum(2, severity_);
-        }
-        unknownFields.writeTo(output);
-      }
-
-      public int getSerializedSize() {
-        int size = memoizedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (!getTextBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, text_);
-        }
-        if (severity_ != Encoding.KlabData.Severity.INFO.getNumber()) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(2, severity_);
-        }
-        size += unknownFields.getSerializedSize();
-        memoizedSize = size;
-        return size;
-      }
-
-      @java.lang.Override
-      public boolean equals(final java.lang.Object obj) {
-        if (obj == this) {
-         return true;
-        }
-        if (!(obj instanceof Encoding.KlabData.Notification)) {
-          return super.equals(obj);
-        }
-        Encoding.KlabData.Notification other = (Encoding.KlabData.Notification) obj;
-
-        boolean result = true;
-        result = result && getText()
-            .equals(other.getText());
-        result = result && severity_ == other.severity_;
-        result = result && unknownFields.equals(other.unknownFields);
-        return result;
-      }
-
-      @java.lang.Override
-      public int hashCode() {
-        if (memoizedHashCode != 0) {
-          return memoizedHashCode;
-        }
-        int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + TEXT_FIELD_NUMBER;
-        hash = (53 * hash) + getText().hashCode();
-        hash = (37 * hash) + SEVERITY_FIELD_NUMBER;
-        hash = (53 * hash) + severity_;
-        hash = (29 * hash) + unknownFields.hashCode();
-        memoizedHashCode = hash;
-        return hash;
-      }
-
-      public static Encoding.KlabData.Notification parseFrom(
-          java.nio.ByteBuffer data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          java.nio.ByteBuffer data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.Notification parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.Notification parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.Notification parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.Notification parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.Notification parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder() {
-        return DEFAULT_INSTANCE.toBuilder();
-      }
-      public static Builder newBuilder(Encoding.KlabData.Notification prototype) {
-        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() {
-        return this == DEFAULT_INSTANCE
-            ? new Builder() : new Builder().mergeFrom(this);
-      }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code KlabData.Notification}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:KlabData.Notification)
-          Encoding.KlabData.NotificationOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return Encoding.internal_static_KlabData_Notification_descriptor;
-        }
-
-        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return Encoding.internal_static_KlabData_Notification_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  Encoding.KlabData.Notification.class, Encoding.KlabData.Notification.Builder.class);
-        }
-
-        // Construct using Encoding.KlabData.Notification.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3
-                  .alwaysUseFieldBuilders) {
-          }
-        }
-        public Builder clear() {
-          super.clear();
-          text_ = "";
-
-          severity_ = 0;
-
-          return this;
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return Encoding.internal_static_KlabData_Notification_descriptor;
-        }
-
-        public Encoding.KlabData.Notification getDefaultInstanceForType() {
-          return Encoding.KlabData.Notification.getDefaultInstance();
-        }
-
-        public Encoding.KlabData.Notification build() {
-          Encoding.KlabData.Notification result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public Encoding.KlabData.Notification buildPartial() {
-          Encoding.KlabData.Notification result = new Encoding.KlabData.Notification(this);
-          result.text_ = text_;
-          result.severity_ = severity_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder clone() {
-          return (Builder) super.clone();
-        }
-        public Builder setField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.setField(field, value);
-        }
-        public Builder clearField(
-            com.google.protobuf.Descriptors.FieldDescriptor field) {
-          return (Builder) super.clearField(field);
-        }
-        public Builder clearOneof(
-            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-          return (Builder) super.clearOneof(oneof);
-        }
-        public Builder setRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
-          return (Builder) super.setRepeatedField(field, index, value);
-        }
-        public Builder addRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.addRepeatedField(field, value);
-        }
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof Encoding.KlabData.Notification) {
-            return mergeFrom((Encoding.KlabData.Notification)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(Encoding.KlabData.Notification other) {
-          if (other == Encoding.KlabData.Notification.getDefaultInstance()) return this;
-          if (!other.getText().isEmpty()) {
-            text_ = other.text_;
-            onChanged();
-          }
-          if (other.severity_ != 0) {
-            setSeverityValue(other.getSeverityValue());
-          }
-          this.mergeUnknownFields(other.unknownFields);
-          onChanged();
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          Encoding.KlabData.Notification parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (Encoding.KlabData.Notification) e.getUnfinishedMessage();
-            throw e.unwrapIOException();
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-
-        private java.lang.Object text_ = "";
-        /**
-         * <code>string text = 1;</code>
-         */
-        public java.lang.String getText() {
-          java.lang.Object ref = text_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            text_ = s;
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>string text = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getTextBytes() {
-          java.lang.Object ref = text_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            text_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string text = 1;</code>
-         */
-        public Builder setText(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          text_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string text = 1;</code>
-         */
-        public Builder clearText() {
-          
-          text_ = getDefaultInstance().getText();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string text = 1;</code>
-         */
-        public Builder setTextBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          text_ = value;
-          onChanged();
-          return this;
-        }
-
-        private int severity_ = 0;
-        /**
-         * <code>.KlabData.Severity severity = 2;</code>
-         */
-        public int getSeverityValue() {
-          return severity_;
-        }
-        /**
-         * <code>.KlabData.Severity severity = 2;</code>
-         */
-        public Builder setSeverityValue(int value) {
-          severity_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>.KlabData.Severity severity = 2;</code>
-         */
-        public Encoding.KlabData.Severity getSeverity() {
-          Encoding.KlabData.Severity result = Encoding.KlabData.Severity.valueOf(severity_);
-          return result == null ? Encoding.KlabData.Severity.UNRECOGNIZED : result;
-        }
-        /**
-         * <code>.KlabData.Severity severity = 2;</code>
-         */
-        public Builder setSeverity(Encoding.KlabData.Severity value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          
-          severity_ = value.getNumber();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>.KlabData.Severity severity = 2;</code>
-         */
-        public Builder clearSeverity() {
-          
-          severity_ = 0;
-          onChanged();
-          return this;
-        }
-        public final Builder setUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.setUnknownFieldsProto3(unknownFields);
-        }
-
-        public final Builder mergeUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.mergeUnknownFields(unknownFields);
-        }
-
-
-        // @@protoc_insertion_point(builder_scope:KlabData.Notification)
-      }
-
-      // @@protoc_insertion_point(class_scope:KlabData.Notification)
-      private static final Encoding.KlabData.Notification DEFAULT_INSTANCE;
-      static {
-        DEFAULT_INSTANCE = new Encoding.KlabData.Notification();
-      }
-
-      public static Encoding.KlabData.Notification getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-      }
-
-      private static final com.google.protobuf.Parser<Notification>
-          PARSER = new com.google.protobuf.AbstractParser<Notification>() {
-        public Notification parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Notification(input, extensionRegistry);
-        }
-      };
-
-      public static com.google.protobuf.Parser<Notification> parser() {
-        return PARSER;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<Notification> getParserForType() {
-        return PARSER;
-      }
-
-      public Encoding.KlabData.Notification getDefaultInstanceForType() {
-        return DEFAULT_INSTANCE;
-      }
-
-    }
-
-    public interface ObjectOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:KlabData.Object)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>string name = 1;</code>
-       */
-      java.lang.String getName();
-      /**
-       * <code>string name = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getNameBytes();
-
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-      int getPropertiesCount();
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-      boolean containsProperties(
-          java.lang.String key);
-      /**
-       * Use {@link #getPropertiesMap()} instead.
-       */
-      @java.lang.Deprecated
-      java.util.Map<java.lang.String, com.google.protobuf.Any>
-      getProperties();
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-      java.util.Map<java.lang.String, com.google.protobuf.Any>
-      getPropertiesMap();
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-
-      com.google.protobuf.Any getPropertiesOrDefault(
-          java.lang.String key,
-          com.google.protobuf.Any defaultValue);
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-
-      com.google.protobuf.Any getPropertiesOrThrow(
-          java.lang.String key);
-
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      java.util.List<Encoding.KlabData.State> 
-          getStatesList();
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      Encoding.KlabData.State getStates(int index);
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      int getStatesCount();
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      java.util.List<? extends Encoding.KlabData.StateOrBuilder> 
-          getStatesOrBuilderList();
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      Encoding.KlabData.StateOrBuilder getStatesOrBuilder(
-          int index);
-
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      java.util.List<Encoding.KlabData.Object> 
-          getObjectsList();
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      Encoding.KlabData.Object getObjects(int index);
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      int getObjectsCount();
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> 
-          getObjectsOrBuilderList();
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
-          int index);
-    }
-    /**
-     * Protobuf type {@code KlabData.Object}
-     */
-    public  static final class Object extends
-        com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:KlabData.Object)
-        ObjectOrBuilder {
-    private static final long serialVersionUID = 0L;
-      // Use Object.newBuilder() to construct.
-      private Object(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-        super(builder);
-      }
-      private Object() {
-        name_ = "";
-        states_ = java.util.Collections.emptyList();
-        objects_ = java.util.Collections.emptyList();
-      }
-
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-      getUnknownFields() {
-        return this.unknownFields;
-      }
-      private Object(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownFieldProto3(
-                    input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                name_ = s;
-                break;
-              }
-              case 18: {
-                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                  properties_ = com.google.protobuf.MapField.newMapField(
-                      PropertiesDefaultEntryHolder.defaultEntry);
-                  mutable_bitField0_ |= 0x00000002;
-                }
-                com.google.protobuf.MapEntry<java.lang.String, com.google.protobuf.Any>
-                properties__ = input.readMessage(
-                    PropertiesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-                properties_.getMutableMap().put(
-                    properties__.getKey(), properties__.getValue());
-                break;
-              }
-              case 26: {
-                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                  states_ = new java.util.ArrayList<Encoding.KlabData.State>();
-                  mutable_bitField0_ |= 0x00000004;
-                }
-                states_.add(
-                    input.readMessage(Encoding.KlabData.State.parser(), extensionRegistry));
-                break;
-              }
-              case 34: {
-                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                  objects_ = new java.util.ArrayList<Encoding.KlabData.Object>();
-                  mutable_bitField0_ |= 0x00000008;
-                }
-                objects_.add(
-                    input.readMessage(Encoding.KlabData.Object.parser(), extensionRegistry));
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e).setUnfinishedMessage(this);
-        } finally {
-          if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-            states_ = java.util.Collections.unmodifiableList(states_);
-          }
-          if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-            objects_ = java.util.Collections.unmodifiableList(objects_);
-          }
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return Encoding.internal_static_KlabData_Object_descriptor;
-      }
-
-      @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMapField(
-          int number) {
-        switch (number) {
-          case 2:
-            return internalGetProperties();
-          default:
-            throw new RuntimeException(
-                "Invalid map field number: " + number);
-        }
-      }
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return Encoding.internal_static_KlabData_Object_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                Encoding.KlabData.Object.class, Encoding.KlabData.Object.Builder.class);
-      }
-
-      private int bitField0_;
-      public static final int NAME_FIELD_NUMBER = 1;
-      private volatile java.lang.Object name_;
-      /**
-       * <code>string name = 1;</code>
-       */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          name_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string name = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int PROPERTIES_FIELD_NUMBER = 2;
-      private static final class PropertiesDefaultEntryHolder {
-        static final com.google.protobuf.MapEntry<
-            java.lang.String, com.google.protobuf.Any> defaultEntry =
-                com.google.protobuf.MapEntry
-                .<java.lang.String, com.google.protobuf.Any>newDefaultInstance(
-                    Encoding.internal_static_KlabData_Object_PropertiesEntry_descriptor, 
-                    com.google.protobuf.WireFormat.FieldType.STRING,
-                    "",
-                    com.google.protobuf.WireFormat.FieldType.MESSAGE,
-                    com.google.protobuf.Any.getDefaultInstance());
-      }
-      private com.google.protobuf.MapField<
-          java.lang.String, com.google.protobuf.Any> properties_;
-      private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any>
-      internalGetProperties() {
-        if (properties_ == null) {
-          return com.google.protobuf.MapField.emptyMapField(
-              PropertiesDefaultEntryHolder.defaultEntry);
-        }
-        return properties_;
-      }
-
-      public int getPropertiesCount() {
-        return internalGetProperties().getMap().size();
-      }
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-
-      public boolean containsProperties(
-          java.lang.String key) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        return internalGetProperties().getMap().containsKey(key);
-      }
-      /**
-       * Use {@link #getPropertiesMap()} instead.
-       */
-      @java.lang.Deprecated
-      public java.util.Map<java.lang.String, com.google.protobuf.Any> getProperties() {
-        return getPropertiesMap();
-      }
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-
-      public java.util.Map<java.lang.String, com.google.protobuf.Any> getPropertiesMap() {
-        return internalGetProperties().getMap();
-      }
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-
-      public com.google.protobuf.Any getPropertiesOrDefault(
-          java.lang.String key,
-          com.google.protobuf.Any defaultValue) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        java.util.Map<java.lang.String, com.google.protobuf.Any> map =
-            internalGetProperties().getMap();
-        return map.containsKey(key) ? map.get(key) : defaultValue;
-      }
-      /**
-       * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-       */
-
-      public com.google.protobuf.Any getPropertiesOrThrow(
-          java.lang.String key) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        java.util.Map<java.lang.String, com.google.protobuf.Any> map =
-            internalGetProperties().getMap();
-        if (!map.containsKey(key)) {
-          throw new java.lang.IllegalArgumentException();
-        }
-        return map.get(key);
-      }
-
-      public static final int STATES_FIELD_NUMBER = 3;
-      private java.util.List<Encoding.KlabData.State> states_;
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      public java.util.List<Encoding.KlabData.State> getStatesList() {
-        return states_;
-      }
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      public java.util.List<? extends Encoding.KlabData.StateOrBuilder> 
-          getStatesOrBuilderList() {
-        return states_;
-      }
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      public int getStatesCount() {
-        return states_.size();
-      }
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      public Encoding.KlabData.State getStates(int index) {
-        return states_.get(index);
-      }
-      /**
-       * <code>repeated .KlabData.State states = 3;</code>
-       */
-      public Encoding.KlabData.StateOrBuilder getStatesOrBuilder(
-          int index) {
-        return states_.get(index);
-      }
-
-      public static final int OBJECTS_FIELD_NUMBER = 4;
-      private java.util.List<Encoding.KlabData.Object> objects_;
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      public java.util.List<Encoding.KlabData.Object> getObjectsList() {
-        return objects_;
-      }
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> 
-          getObjectsOrBuilderList() {
-        return objects_;
-      }
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      public int getObjectsCount() {
-        return objects_.size();
-      }
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      public Encoding.KlabData.Object getObjects(int index) {
-        return objects_.get(index);
-      }
-      /**
-       * <code>repeated .KlabData.Object objects = 4;</code>
-       */
-      public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
-          int index) {
-        return objects_.get(index);
-      }
-
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        if (!getNameBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
-        }
-        com.google.protobuf.GeneratedMessageV3
-          .serializeStringMapTo(
-            output,
-            internalGetProperties(),
-            PropertiesDefaultEntryHolder.defaultEntry,
-            2);
-        for (int i = 0; i < states_.size(); i++) {
-          output.writeMessage(3, states_.get(i));
-        }
-        for (int i = 0; i < objects_.size(); i++) {
-          output.writeMessage(4, objects_.get(i));
-        }
-        unknownFields.writeTo(output);
-      }
-
-      public int getSerializedSize() {
-        int size = memoizedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (!getNameBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
-        }
-        for (java.util.Map.Entry<java.lang.String, com.google.protobuf.Any> entry
-             : internalGetProperties().getMap().entrySet()) {
-          com.google.protobuf.MapEntry<java.lang.String, com.google.protobuf.Any>
-          properties__ = PropertiesDefaultEntryHolder.defaultEntry.newBuilderForType()
-              .setKey(entry.getKey())
-              .setValue(entry.getValue())
-              .build();
-          size += com.google.protobuf.CodedOutputStream
-              .computeMessageSize(2, properties__);
-        }
-        for (int i = 0; i < states_.size(); i++) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(3, states_.get(i));
-        }
-        for (int i = 0; i < objects_.size(); i++) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(4, objects_.get(i));
-        }
-        size += unknownFields.getSerializedSize();
-        memoizedSize = size;
-        return size;
-      }
-
-      @java.lang.Override
-      public boolean equals(final java.lang.Object obj) {
-        if (obj == this) {
-         return true;
-        }
-        if (!(obj instanceof Encoding.KlabData.Object)) {
-          return super.equals(obj);
-        }
-        Encoding.KlabData.Object other = (Encoding.KlabData.Object) obj;
-
-        boolean result = true;
-        result = result && getName()
-            .equals(other.getName());
-        result = result && internalGetProperties().equals(
-            other.internalGetProperties());
-        result = result && getStatesList()
-            .equals(other.getStatesList());
-        result = result && getObjectsList()
-            .equals(other.getObjectsList());
-        result = result && unknownFields.equals(other.unknownFields);
-        return result;
-      }
-
-      @java.lang.Override
-      public int hashCode() {
-        if (memoizedHashCode != 0) {
-          return memoizedHashCode;
-        }
-        int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getName().hashCode();
-        if (!internalGetProperties().getMap().isEmpty()) {
-          hash = (37 * hash) + PROPERTIES_FIELD_NUMBER;
-          hash = (53 * hash) + internalGetProperties().hashCode();
-        }
-        if (getStatesCount() > 0) {
-          hash = (37 * hash) + STATES_FIELD_NUMBER;
-          hash = (53 * hash) + getStatesList().hashCode();
-        }
-        if (getObjectsCount() > 0) {
-          hash = (37 * hash) + OBJECTS_FIELD_NUMBER;
-          hash = (53 * hash) + getObjectsList().hashCode();
-        }
-        hash = (29 * hash) + unknownFields.hashCode();
-        memoizedHashCode = hash;
-        return hash;
-      }
-
-      public static Encoding.KlabData.Object parseFrom(
-          java.nio.ByteBuffer data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          java.nio.ByteBuffer data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.Object parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.Object parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.Object parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.Object parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.Object parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder() {
-        return DEFAULT_INSTANCE.toBuilder();
-      }
-      public static Builder newBuilder(Encoding.KlabData.Object prototype) {
-        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() {
-        return this == DEFAULT_INSTANCE
-            ? new Builder() : new Builder().mergeFrom(this);
-      }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code KlabData.Object}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:KlabData.Object)
-          Encoding.KlabData.ObjectOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return Encoding.internal_static_KlabData_Object_descriptor;
-        }
-
-        @SuppressWarnings({"rawtypes"})
-        protected com.google.protobuf.MapField internalGetMapField(
-            int number) {
-          switch (number) {
-            case 2:
-              return internalGetProperties();
-            default:
-              throw new RuntimeException(
-                  "Invalid map field number: " + number);
-          }
-        }
-        @SuppressWarnings({"rawtypes"})
-        protected com.google.protobuf.MapField internalGetMutableMapField(
-            int number) {
-          switch (number) {
-            case 2:
-              return internalGetMutableProperties();
-            default:
-              throw new RuntimeException(
-                  "Invalid map field number: " + number);
-          }
-        }
-        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return Encoding.internal_static_KlabData_Object_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  Encoding.KlabData.Object.class, Encoding.KlabData.Object.Builder.class);
-        }
-
-        // Construct using Encoding.KlabData.Object.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3
-                  .alwaysUseFieldBuilders) {
-            getStatesFieldBuilder();
-            getObjectsFieldBuilder();
-          }
-        }
-        public Builder clear() {
-          super.clear();
-          name_ = "";
-
-          internalGetMutableProperties().clear();
-          if (statesBuilder_ == null) {
-            states_ = java.util.Collections.emptyList();
-            bitField0_ = (bitField0_ & ~0x00000004);
-          } else {
-            statesBuilder_.clear();
-          }
-          if (objectsBuilder_ == null) {
-            objects_ = java.util.Collections.emptyList();
-            bitField0_ = (bitField0_ & ~0x00000008);
-          } else {
-            objectsBuilder_.clear();
-          }
-          return this;
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return Encoding.internal_static_KlabData_Object_descriptor;
-        }
-
-        public Encoding.KlabData.Object getDefaultInstanceForType() {
-          return Encoding.KlabData.Object.getDefaultInstance();
-        }
-
-        public Encoding.KlabData.Object build() {
-          Encoding.KlabData.Object result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public Encoding.KlabData.Object buildPartial() {
-          Encoding.KlabData.Object result = new Encoding.KlabData.Object(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          result.name_ = name_;
-          result.properties_ = internalGetProperties();
-          result.properties_.makeImmutable();
-          if (statesBuilder_ == null) {
-            if (((bitField0_ & 0x00000004) == 0x00000004)) {
-              states_ = java.util.Collections.unmodifiableList(states_);
-              bitField0_ = (bitField0_ & ~0x00000004);
-            }
-            result.states_ = states_;
-          } else {
-            result.states_ = statesBuilder_.build();
-          }
-          if (objectsBuilder_ == null) {
-            if (((bitField0_ & 0x00000008) == 0x00000008)) {
-              objects_ = java.util.Collections.unmodifiableList(objects_);
-              bitField0_ = (bitField0_ & ~0x00000008);
-            }
-            result.objects_ = objects_;
-          } else {
-            result.objects_ = objectsBuilder_.build();
-          }
-          result.bitField0_ = to_bitField0_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder clone() {
-          return (Builder) super.clone();
-        }
-        public Builder setField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.setField(field, value);
-        }
-        public Builder clearField(
-            com.google.protobuf.Descriptors.FieldDescriptor field) {
-          return (Builder) super.clearField(field);
-        }
-        public Builder clearOneof(
-            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-          return (Builder) super.clearOneof(oneof);
-        }
-        public Builder setRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
-          return (Builder) super.setRepeatedField(field, index, value);
-        }
-        public Builder addRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.addRepeatedField(field, value);
-        }
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof Encoding.KlabData.Object) {
-            return mergeFrom((Encoding.KlabData.Object)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(Encoding.KlabData.Object other) {
-          if (other == Encoding.KlabData.Object.getDefaultInstance()) return this;
-          if (!other.getName().isEmpty()) {
-            name_ = other.name_;
-            onChanged();
-          }
-          internalGetMutableProperties().mergeFrom(
-              other.internalGetProperties());
-          if (statesBuilder_ == null) {
-            if (!other.states_.isEmpty()) {
-              if (states_.isEmpty()) {
-                states_ = other.states_;
-                bitField0_ = (bitField0_ & ~0x00000004);
-              } else {
-                ensureStatesIsMutable();
-                states_.addAll(other.states_);
-              }
-              onChanged();
-            }
-          } else {
-            if (!other.states_.isEmpty()) {
-              if (statesBuilder_.isEmpty()) {
-                statesBuilder_.dispose();
-                statesBuilder_ = null;
-                states_ = other.states_;
-                bitField0_ = (bitField0_ & ~0x00000004);
-                statesBuilder_ = 
-                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                     getStatesFieldBuilder() : null;
-              } else {
-                statesBuilder_.addAllMessages(other.states_);
-              }
-            }
-          }
-          if (objectsBuilder_ == null) {
-            if (!other.objects_.isEmpty()) {
-              if (objects_.isEmpty()) {
-                objects_ = other.objects_;
-                bitField0_ = (bitField0_ & ~0x00000008);
-              } else {
-                ensureObjectsIsMutable();
-                objects_.addAll(other.objects_);
-              }
-              onChanged();
-            }
-          } else {
-            if (!other.objects_.isEmpty()) {
-              if (objectsBuilder_.isEmpty()) {
-                objectsBuilder_.dispose();
-                objectsBuilder_ = null;
-                objects_ = other.objects_;
-                bitField0_ = (bitField0_ & ~0x00000008);
-                objectsBuilder_ = 
-                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                     getObjectsFieldBuilder() : null;
-              } else {
-                objectsBuilder_.addAllMessages(other.objects_);
-              }
-            }
-          }
-          this.mergeUnknownFields(other.unknownFields);
-          onChanged();
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          Encoding.KlabData.Object parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (Encoding.KlabData.Object) e.getUnfinishedMessage();
-            throw e.unwrapIOException();
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        private java.lang.Object name_ = "";
-        /**
-         * <code>string name = 1;</code>
-         */
-        public java.lang.String getName() {
-          java.lang.Object ref = name_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            name_ = s;
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getNameBytes() {
-          java.lang.Object ref = name_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            name_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public Builder setName(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          name_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public Builder clearName() {
-          
-          name_ = getDefaultInstance().getName();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public Builder setNameBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          name_ = value;
-          onChanged();
-          return this;
-        }
-
-        private com.google.protobuf.MapField<
-            java.lang.String, com.google.protobuf.Any> properties_;
-        private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any>
-        internalGetProperties() {
-          if (properties_ == null) {
-            return com.google.protobuf.MapField.emptyMapField(
-                PropertiesDefaultEntryHolder.defaultEntry);
-          }
-          return properties_;
-        }
-        private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any>
-        internalGetMutableProperties() {
-          onChanged();;
-          if (properties_ == null) {
-            properties_ = com.google.protobuf.MapField.newMapField(
-                PropertiesDefaultEntryHolder.defaultEntry);
-          }
-          if (!properties_.isMutable()) {
-            properties_ = properties_.copy();
-          }
-          return properties_;
-        }
-
-        public int getPropertiesCount() {
-          return internalGetProperties().getMap().size();
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-
-        public boolean containsProperties(
-            java.lang.String key) {
-          if (key == null) { throw new java.lang.NullPointerException(); }
-          return internalGetProperties().getMap().containsKey(key);
-        }
-        /**
-         * Use {@link #getPropertiesMap()} instead.
-         */
-        @java.lang.Deprecated
-        public java.util.Map<java.lang.String, com.google.protobuf.Any> getProperties() {
-          return getPropertiesMap();
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-
-        public java.util.Map<java.lang.String, com.google.protobuf.Any> getPropertiesMap() {
-          return internalGetProperties().getMap();
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-
-        public com.google.protobuf.Any getPropertiesOrDefault(
-            java.lang.String key,
-            com.google.protobuf.Any defaultValue) {
-          if (key == null) { throw new java.lang.NullPointerException(); }
-          java.util.Map<java.lang.String, com.google.protobuf.Any> map =
-              internalGetProperties().getMap();
-          return map.containsKey(key) ? map.get(key) : defaultValue;
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-
-        public com.google.protobuf.Any getPropertiesOrThrow(
-            java.lang.String key) {
-          if (key == null) { throw new java.lang.NullPointerException(); }
-          java.util.Map<java.lang.String, com.google.protobuf.Any> map =
-              internalGetProperties().getMap();
-          if (!map.containsKey(key)) {
-            throw new java.lang.IllegalArgumentException();
-          }
-          return map.get(key);
-        }
-
-        public Builder clearProperties() {
-          internalGetMutableProperties().getMutableMap()
-              .clear();
-          return this;
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-
-        public Builder removeProperties(
-            java.lang.String key) {
-          if (key == null) { throw new java.lang.NullPointerException(); }
-          internalGetMutableProperties().getMutableMap()
-              .remove(key);
-          return this;
-        }
-        /**
-         * Use alternate mutation accessors instead.
-         */
-        @java.lang.Deprecated
-        public java.util.Map<java.lang.String, com.google.protobuf.Any>
-        getMutableProperties() {
-          return internalGetMutableProperties().getMutableMap();
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-        public Builder putProperties(
-            java.lang.String key,
-            com.google.protobuf.Any value) {
-          if (key == null) { throw new java.lang.NullPointerException(); }
-          if (value == null) { throw new java.lang.NullPointerException(); }
-          internalGetMutableProperties().getMutableMap()
-              .put(key, value);
-          return this;
-        }
-        /**
-         * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
-         */
-
-        public Builder putAllProperties(
-            java.util.Map<java.lang.String, com.google.protobuf.Any> values) {
-          internalGetMutableProperties().getMutableMap()
-              .putAll(values);
-          return this;
-        }
-
-        private java.util.List<Encoding.KlabData.State> states_ =
-          java.util.Collections.emptyList();
-        private void ensureStatesIsMutable() {
-          if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-            states_ = new java.util.ArrayList<Encoding.KlabData.State>(states_);
-            bitField0_ |= 0x00000004;
-           }
-        }
-
-        private com.google.protobuf.RepeatedFieldBuilderV3<
-            Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> statesBuilder_;
-
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public java.util.List<Encoding.KlabData.State> getStatesList() {
-          if (statesBuilder_ == null) {
-            return java.util.Collections.unmodifiableList(states_);
-          } else {
-            return statesBuilder_.getMessageList();
-          }
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public int getStatesCount() {
-          if (statesBuilder_ == null) {
-            return states_.size();
-          } else {
-            return statesBuilder_.getCount();
-          }
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Encoding.KlabData.State getStates(int index) {
-          if (statesBuilder_ == null) {
-            return states_.get(index);
-          } else {
-            return statesBuilder_.getMessage(index);
-          }
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder setStates(
-            int index, Encoding.KlabData.State value) {
-          if (statesBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            ensureStatesIsMutable();
-            states_.set(index, value);
-            onChanged();
-          } else {
-            statesBuilder_.setMessage(index, value);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder setStates(
-            int index, Encoding.KlabData.State.Builder builderForValue) {
-          if (statesBuilder_ == null) {
-            ensureStatesIsMutable();
-            states_.set(index, builderForValue.build());
-            onChanged();
-          } else {
-            statesBuilder_.setMessage(index, builderForValue.build());
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder addStates(Encoding.KlabData.State value) {
-          if (statesBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            ensureStatesIsMutable();
-            states_.add(value);
-            onChanged();
-          } else {
-            statesBuilder_.addMessage(value);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder addStates(
-            int index, Encoding.KlabData.State value) {
-          if (statesBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            ensureStatesIsMutable();
-            states_.add(index, value);
-            onChanged();
-          } else {
-            statesBuilder_.addMessage(index, value);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder addStates(
-            Encoding.KlabData.State.Builder builderForValue) {
-          if (statesBuilder_ == null) {
-            ensureStatesIsMutable();
-            states_.add(builderForValue.build());
-            onChanged();
-          } else {
-            statesBuilder_.addMessage(builderForValue.build());
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder addStates(
-            int index, Encoding.KlabData.State.Builder builderForValue) {
-          if (statesBuilder_ == null) {
-            ensureStatesIsMutable();
-            states_.add(index, builderForValue.build());
-            onChanged();
-          } else {
-            statesBuilder_.addMessage(index, builderForValue.build());
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder addAllStates(
-            java.lang.Iterable<? extends Encoding.KlabData.State> values) {
-          if (statesBuilder_ == null) {
-            ensureStatesIsMutable();
-            com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                values, states_);
-            onChanged();
-          } else {
-            statesBuilder_.addAllMessages(values);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder clearStates() {
-          if (statesBuilder_ == null) {
-            states_ = java.util.Collections.emptyList();
-            bitField0_ = (bitField0_ & ~0x00000004);
-            onChanged();
-          } else {
-            statesBuilder_.clear();
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Builder removeStates(int index) {
-          if (statesBuilder_ == null) {
-            ensureStatesIsMutable();
-            states_.remove(index);
-            onChanged();
-          } else {
-            statesBuilder_.remove(index);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Encoding.KlabData.State.Builder getStatesBuilder(
-            int index) {
-          return getStatesFieldBuilder().getBuilder(index);
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Encoding.KlabData.StateOrBuilder getStatesOrBuilder(
-            int index) {
-          if (statesBuilder_ == null) {
-            return states_.get(index);  } else {
-            return statesBuilder_.getMessageOrBuilder(index);
-          }
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public java.util.List<? extends Encoding.KlabData.StateOrBuilder> 
-             getStatesOrBuilderList() {
-          if (statesBuilder_ != null) {
-            return statesBuilder_.getMessageOrBuilderList();
-          } else {
-            return java.util.Collections.unmodifiableList(states_);
-          }
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Encoding.KlabData.State.Builder addStatesBuilder() {
-          return getStatesFieldBuilder().addBuilder(
-              Encoding.KlabData.State.getDefaultInstance());
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public Encoding.KlabData.State.Builder addStatesBuilder(
-            int index) {
-          return getStatesFieldBuilder().addBuilder(
-              index, Encoding.KlabData.State.getDefaultInstance());
-        }
-        /**
-         * <code>repeated .KlabData.State states = 3;</code>
-         */
-        public java.util.List<Encoding.KlabData.State.Builder> 
-             getStatesBuilderList() {
-          return getStatesFieldBuilder().getBuilderList();
-        }
-        private com.google.protobuf.RepeatedFieldBuilderV3<
-            Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> 
-            getStatesFieldBuilder() {
-          if (statesBuilder_ == null) {
-            statesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-                Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder>(
-                    states_,
-                    ((bitField0_ & 0x00000004) == 0x00000004),
-                    getParentForChildren(),
-                    isClean());
-            states_ = null;
-          }
-          return statesBuilder_;
-        }
-
-        private java.util.List<Encoding.KlabData.Object> objects_ =
-          java.util.Collections.emptyList();
-        private void ensureObjectsIsMutable() {
-          if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-            objects_ = new java.util.ArrayList<Encoding.KlabData.Object>(objects_);
-            bitField0_ |= 0x00000008;
-           }
-        }
-
-        private com.google.protobuf.RepeatedFieldBuilderV3<
-            Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> objectsBuilder_;
-
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public java.util.List<Encoding.KlabData.Object> getObjectsList() {
-          if (objectsBuilder_ == null) {
-            return java.util.Collections.unmodifiableList(objects_);
-          } else {
-            return objectsBuilder_.getMessageList();
-          }
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public int getObjectsCount() {
-          if (objectsBuilder_ == null) {
-            return objects_.size();
-          } else {
-            return objectsBuilder_.getCount();
-          }
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Encoding.KlabData.Object getObjects(int index) {
-          if (objectsBuilder_ == null) {
-            return objects_.get(index);
-          } else {
-            return objectsBuilder_.getMessage(index);
-          }
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder setObjects(
-            int index, Encoding.KlabData.Object value) {
-          if (objectsBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            ensureObjectsIsMutable();
-            objects_.set(index, value);
-            onChanged();
-          } else {
-            objectsBuilder_.setMessage(index, value);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder setObjects(
-            int index, Encoding.KlabData.Object.Builder builderForValue) {
-          if (objectsBuilder_ == null) {
-            ensureObjectsIsMutable();
-            objects_.set(index, builderForValue.build());
-            onChanged();
-          } else {
-            objectsBuilder_.setMessage(index, builderForValue.build());
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder addObjects(Encoding.KlabData.Object value) {
-          if (objectsBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            ensureObjectsIsMutable();
-            objects_.add(value);
-            onChanged();
-          } else {
-            objectsBuilder_.addMessage(value);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder addObjects(
-            int index, Encoding.KlabData.Object value) {
-          if (objectsBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            ensureObjectsIsMutable();
-            objects_.add(index, value);
-            onChanged();
-          } else {
-            objectsBuilder_.addMessage(index, value);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder addObjects(
-            Encoding.KlabData.Object.Builder builderForValue) {
-          if (objectsBuilder_ == null) {
-            ensureObjectsIsMutable();
-            objects_.add(builderForValue.build());
-            onChanged();
-          } else {
-            objectsBuilder_.addMessage(builderForValue.build());
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder addObjects(
-            int index, Encoding.KlabData.Object.Builder builderForValue) {
-          if (objectsBuilder_ == null) {
-            ensureObjectsIsMutable();
-            objects_.add(index, builderForValue.build());
-            onChanged();
-          } else {
-            objectsBuilder_.addMessage(index, builderForValue.build());
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder addAllObjects(
-            java.lang.Iterable<? extends Encoding.KlabData.Object> values) {
-          if (objectsBuilder_ == null) {
-            ensureObjectsIsMutable();
-            com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                values, objects_);
-            onChanged();
-          } else {
-            objectsBuilder_.addAllMessages(values);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder clearObjects() {
-          if (objectsBuilder_ == null) {
-            objects_ = java.util.Collections.emptyList();
-            bitField0_ = (bitField0_ & ~0x00000008);
-            onChanged();
-          } else {
-            objectsBuilder_.clear();
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Builder removeObjects(int index) {
-          if (objectsBuilder_ == null) {
-            ensureObjectsIsMutable();
-            objects_.remove(index);
-            onChanged();
-          } else {
-            objectsBuilder_.remove(index);
-          }
-          return this;
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Encoding.KlabData.Object.Builder getObjectsBuilder(
-            int index) {
-          return getObjectsFieldBuilder().getBuilder(index);
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
-            int index) {
-          if (objectsBuilder_ == null) {
-            return objects_.get(index);  } else {
-            return objectsBuilder_.getMessageOrBuilder(index);
-          }
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> 
-             getObjectsOrBuilderList() {
-          if (objectsBuilder_ != null) {
-            return objectsBuilder_.getMessageOrBuilderList();
-          } else {
-            return java.util.Collections.unmodifiableList(objects_);
-          }
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Encoding.KlabData.Object.Builder addObjectsBuilder() {
-          return getObjectsFieldBuilder().addBuilder(
-              Encoding.KlabData.Object.getDefaultInstance());
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public Encoding.KlabData.Object.Builder addObjectsBuilder(
-            int index) {
-          return getObjectsFieldBuilder().addBuilder(
-              index, Encoding.KlabData.Object.getDefaultInstance());
-        }
-        /**
-         * <code>repeated .KlabData.Object objects = 4;</code>
-         */
-        public java.util.List<Encoding.KlabData.Object.Builder> 
-             getObjectsBuilderList() {
-          return getObjectsFieldBuilder().getBuilderList();
-        }
-        private com.google.protobuf.RepeatedFieldBuilderV3<
-            Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> 
-            getObjectsFieldBuilder() {
-          if (objectsBuilder_ == null) {
-            objectsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-                Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder>(
-                    objects_,
-                    ((bitField0_ & 0x00000008) == 0x00000008),
-                    getParentForChildren(),
-                    isClean());
-            objects_ = null;
-          }
-          return objectsBuilder_;
-        }
-        public final Builder setUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.setUnknownFieldsProto3(unknownFields);
-        }
-
-        public final Builder mergeUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.mergeUnknownFields(unknownFields);
-        }
-
-
-        // @@protoc_insertion_point(builder_scope:KlabData.Object)
-      }
-
-      // @@protoc_insertion_point(class_scope:KlabData.Object)
-      private static final Encoding.KlabData.Object DEFAULT_INSTANCE;
-      static {
-        DEFAULT_INSTANCE = new Encoding.KlabData.Object();
-      }
-
-      public static Encoding.KlabData.Object getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-      }
-
-      private static final com.google.protobuf.Parser<Object>
-          PARSER = new com.google.protobuf.AbstractParser<Object>() {
-        public Object parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Object(input, extensionRegistry);
-        }
-      };
-
-      public static com.google.protobuf.Parser<Object> parser() {
-        return PARSER;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<Object> getParserForType() {
-        return PARSER;
-      }
-
-      public Encoding.KlabData.Object getDefaultInstanceForType() {
-        return DEFAULT_INSTANCE;
-      }
-
-    }
-
-    public interface LookupTableOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:KlabData.LookupTable)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-      int getTableCount();
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-      boolean containsTable(
-          int key);
-      /**
-       * Use {@link #getTableMap()} instead.
-       */
-      @java.lang.Deprecated
-      java.util.Map<java.lang.Integer, java.lang.String>
-      getTable();
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-      java.util.Map<java.lang.Integer, java.lang.String>
-      getTableMap();
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-
-      java.lang.String getTableOrDefault(
-          int key,
-          java.lang.String defaultValue);
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-
-      java.lang.String getTableOrThrow(
-          int key);
-    }
-    /**
-     * Protobuf type {@code KlabData.LookupTable}
-     */
-    public  static final class LookupTable extends
-        com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:KlabData.LookupTable)
-        LookupTableOrBuilder {
-    private static final long serialVersionUID = 0L;
-      // Use LookupTable.newBuilder() to construct.
-      private LookupTable(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-        super(builder);
-      }
-      private LookupTable() {
-      }
-
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-      getUnknownFields() {
-        return this.unknownFields;
-      }
-      private LookupTable(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownFieldProto3(
-                    input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                  table_ = com.google.protobuf.MapField.newMapField(
-                      TableDefaultEntryHolder.defaultEntry);
-                  mutable_bitField0_ |= 0x00000001;
-                }
-                com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String>
-                table__ = input.readMessage(
-                    TableDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-                table_.getMutableMap().put(
-                    table__.getKey(), table__.getValue());
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e).setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return Encoding.internal_static_KlabData_LookupTable_descriptor;
-      }
-
-      @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMapField(
-          int number) {
-        switch (number) {
-          case 1:
-            return internalGetTable();
-          default:
-            throw new RuntimeException(
-                "Invalid map field number: " + number);
-        }
-      }
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return Encoding.internal_static_KlabData_LookupTable_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                Encoding.KlabData.LookupTable.class, Encoding.KlabData.LookupTable.Builder.class);
-      }
-
-      public static final int TABLE_FIELD_NUMBER = 1;
-      private static final class TableDefaultEntryHolder {
-        static final com.google.protobuf.MapEntry<
-            java.lang.Integer, java.lang.String> defaultEntry =
-                com.google.protobuf.MapEntry
-                .<java.lang.Integer, java.lang.String>newDefaultInstance(
-                    Encoding.internal_static_KlabData_LookupTable_TableEntry_descriptor, 
-                    com.google.protobuf.WireFormat.FieldType.SINT32,
-                    0,
-                    com.google.protobuf.WireFormat.FieldType.STRING,
-                    "");
-      }
-      private com.google.protobuf.MapField<
-          java.lang.Integer, java.lang.String> table_;
-      private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-      internalGetTable() {
-        if (table_ == null) {
-          return com.google.protobuf.MapField.emptyMapField(
-              TableDefaultEntryHolder.defaultEntry);
-        }
-        return table_;
-      }
-
-      public int getTableCount() {
-        return internalGetTable().getMap().size();
-      }
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-
-      public boolean containsTable(
-          int key) {
-        
-        return internalGetTable().getMap().containsKey(key);
-      }
-      /**
-       * Use {@link #getTableMap()} instead.
-       */
-      @java.lang.Deprecated
-      public java.util.Map<java.lang.Integer, java.lang.String> getTable() {
-        return getTableMap();
-      }
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-
-      public java.util.Map<java.lang.Integer, java.lang.String> getTableMap() {
-        return internalGetTable().getMap();
-      }
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-
-      public java.lang.String getTableOrDefault(
-          int key,
-          java.lang.String defaultValue) {
-        
-        java.util.Map<java.lang.Integer, java.lang.String> map =
-            internalGetTable().getMap();
-        return map.containsKey(key) ? map.get(key) : defaultValue;
-      }
-      /**
-       * <code>map&lt;sint32, string&gt; table = 1;</code>
-       */
-
-      public java.lang.String getTableOrThrow(
-          int key) {
-        
-        java.util.Map<java.lang.Integer, java.lang.String> map =
-            internalGetTable().getMap();
-        if (!map.containsKey(key)) {
-          throw new java.lang.IllegalArgumentException();
-        }
-        return map.get(key);
-      }
-
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        com.google.protobuf.GeneratedMessageV3
-          .serializeIntegerMapTo(
-            output,
-            internalGetTable(),
-            TableDefaultEntryHolder.defaultEntry,
-            1);
-        unknownFields.writeTo(output);
-      }
-
-      public int getSerializedSize() {
-        int size = memoizedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        for (java.util.Map.Entry<java.lang.Integer, java.lang.String> entry
-             : internalGetTable().getMap().entrySet()) {
-          com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String>
-          table__ = TableDefaultEntryHolder.defaultEntry.newBuilderForType()
-              .setKey(entry.getKey())
-              .setValue(entry.getValue())
-              .build();
-          size += com.google.protobuf.CodedOutputStream
-              .computeMessageSize(1, table__);
-        }
-        size += unknownFields.getSerializedSize();
-        memoizedSize = size;
-        return size;
-      }
-
-      @java.lang.Override
-      public boolean equals(final java.lang.Object obj) {
-        if (obj == this) {
-         return true;
-        }
-        if (!(obj instanceof Encoding.KlabData.LookupTable)) {
-          return super.equals(obj);
-        }
-        Encoding.KlabData.LookupTable other = (Encoding.KlabData.LookupTable) obj;
-
-        boolean result = true;
-        result = result && internalGetTable().equals(
-            other.internalGetTable());
-        result = result && unknownFields.equals(other.unknownFields);
-        return result;
-      }
-
-      @java.lang.Override
-      public int hashCode() {
-        if (memoizedHashCode != 0) {
-          return memoizedHashCode;
-        }
-        int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
-        if (!internalGetTable().getMap().isEmpty()) {
-          hash = (37 * hash) + TABLE_FIELD_NUMBER;
-          hash = (53 * hash) + internalGetTable().hashCode();
-        }
-        hash = (29 * hash) + unknownFields.hashCode();
-        memoizedHashCode = hash;
-        return hash;
-      }
-
-      public static Encoding.KlabData.LookupTable parseFrom(
-          java.nio.ByteBuffer data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          java.nio.ByteBuffer data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.LookupTable parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.LookupTable parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.LookupTable parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder() {
-        return DEFAULT_INSTANCE.toBuilder();
-      }
-      public static Builder newBuilder(Encoding.KlabData.LookupTable prototype) {
-        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() {
-        return this == DEFAULT_INSTANCE
-            ? new Builder() : new Builder().mergeFrom(this);
-      }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code KlabData.LookupTable}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:KlabData.LookupTable)
-          Encoding.KlabData.LookupTableOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return Encoding.internal_static_KlabData_LookupTable_descriptor;
-        }
-
-        @SuppressWarnings({"rawtypes"})
-        protected com.google.protobuf.MapField internalGetMapField(
-            int number) {
-          switch (number) {
-            case 1:
-              return internalGetTable();
-            default:
-              throw new RuntimeException(
-                  "Invalid map field number: " + number);
-          }
-        }
-        @SuppressWarnings({"rawtypes"})
-        protected com.google.protobuf.MapField internalGetMutableMapField(
-            int number) {
-          switch (number) {
-            case 1:
-              return internalGetMutableTable();
-            default:
-              throw new RuntimeException(
-                  "Invalid map field number: " + number);
-          }
-        }
-        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return Encoding.internal_static_KlabData_LookupTable_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  Encoding.KlabData.LookupTable.class, Encoding.KlabData.LookupTable.Builder.class);
-        }
-
-        // Construct using Encoding.KlabData.LookupTable.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3
-                  .alwaysUseFieldBuilders) {
-          }
-        }
-        public Builder clear() {
-          super.clear();
-          internalGetMutableTable().clear();
-          return this;
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return Encoding.internal_static_KlabData_LookupTable_descriptor;
-        }
-
-        public Encoding.KlabData.LookupTable getDefaultInstanceForType() {
-          return Encoding.KlabData.LookupTable.getDefaultInstance();
-        }
-
-        public Encoding.KlabData.LookupTable build() {
-          Encoding.KlabData.LookupTable result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public Encoding.KlabData.LookupTable buildPartial() {
-          Encoding.KlabData.LookupTable result = new Encoding.KlabData.LookupTable(this);
-          int from_bitField0_ = bitField0_;
-          result.table_ = internalGetTable();
-          result.table_.makeImmutable();
-          onBuilt();
-          return result;
-        }
-
-        public Builder clone() {
-          return (Builder) super.clone();
-        }
-        public Builder setField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.setField(field, value);
-        }
-        public Builder clearField(
-            com.google.protobuf.Descriptors.FieldDescriptor field) {
-          return (Builder) super.clearField(field);
-        }
-        public Builder clearOneof(
-            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-          return (Builder) super.clearOneof(oneof);
-        }
-        public Builder setRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
-          return (Builder) super.setRepeatedField(field, index, value);
-        }
-        public Builder addRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.addRepeatedField(field, value);
-        }
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof Encoding.KlabData.LookupTable) {
-            return mergeFrom((Encoding.KlabData.LookupTable)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(Encoding.KlabData.LookupTable other) {
-          if (other == Encoding.KlabData.LookupTable.getDefaultInstance()) return this;
-          internalGetMutableTable().mergeFrom(
-              other.internalGetTable());
-          this.mergeUnknownFields(other.unknownFields);
-          onChanged();
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          Encoding.KlabData.LookupTable parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (Encoding.KlabData.LookupTable) e.getUnfinishedMessage();
-            throw e.unwrapIOException();
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        private com.google.protobuf.MapField<
-            java.lang.Integer, java.lang.String> table_;
-        private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-        internalGetTable() {
-          if (table_ == null) {
-            return com.google.protobuf.MapField.emptyMapField(
-                TableDefaultEntryHolder.defaultEntry);
-          }
-          return table_;
-        }
-        private com.google.protobuf.MapField<java.lang.Integer, java.lang.String>
-        internalGetMutableTable() {
-          onChanged();;
-          if (table_ == null) {
-            table_ = com.google.protobuf.MapField.newMapField(
-                TableDefaultEntryHolder.defaultEntry);
-          }
-          if (!table_.isMutable()) {
-            table_ = table_.copy();
-          }
-          return table_;
-        }
-
-        public int getTableCount() {
-          return internalGetTable().getMap().size();
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-
-        public boolean containsTable(
-            int key) {
-          
-          return internalGetTable().getMap().containsKey(key);
-        }
-        /**
-         * Use {@link #getTableMap()} instead.
-         */
-        @java.lang.Deprecated
-        public java.util.Map<java.lang.Integer, java.lang.String> getTable() {
-          return getTableMap();
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-
-        public java.util.Map<java.lang.Integer, java.lang.String> getTableMap() {
-          return internalGetTable().getMap();
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-
-        public java.lang.String getTableOrDefault(
-            int key,
-            java.lang.String defaultValue) {
-          
-          java.util.Map<java.lang.Integer, java.lang.String> map =
-              internalGetTable().getMap();
-          return map.containsKey(key) ? map.get(key) : defaultValue;
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-
-        public java.lang.String getTableOrThrow(
-            int key) {
-          
-          java.util.Map<java.lang.Integer, java.lang.String> map =
-              internalGetTable().getMap();
-          if (!map.containsKey(key)) {
-            throw new java.lang.IllegalArgumentException();
-          }
-          return map.get(key);
-        }
-
-        public Builder clearTable() {
-          internalGetMutableTable().getMutableMap()
-              .clear();
-          return this;
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-
-        public Builder removeTable(
-            int key) {
-          
-          internalGetMutableTable().getMutableMap()
-              .remove(key);
-          return this;
-        }
-        /**
-         * Use alternate mutation accessors instead.
-         */
-        @java.lang.Deprecated
-        public java.util.Map<java.lang.Integer, java.lang.String>
-        getMutableTable() {
-          return internalGetMutableTable().getMutableMap();
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-        public Builder putTable(
-            int key,
-            java.lang.String value) {
-          
-          if (value == null) { throw new java.lang.NullPointerException(); }
-          internalGetMutableTable().getMutableMap()
-              .put(key, value);
-          return this;
-        }
-        /**
-         * <code>map&lt;sint32, string&gt; table = 1;</code>
-         */
-
-        public Builder putAllTable(
-            java.util.Map<java.lang.Integer, java.lang.String> values) {
-          internalGetMutableTable().getMutableMap()
-              .putAll(values);
-          return this;
-        }
-        public final Builder setUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.setUnknownFieldsProto3(unknownFields);
-        }
-
-        public final Builder mergeUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.mergeUnknownFields(unknownFields);
-        }
-
-
-        // @@protoc_insertion_point(builder_scope:KlabData.LookupTable)
-      }
-
-      // @@protoc_insertion_point(class_scope:KlabData.LookupTable)
-      private static final Encoding.KlabData.LookupTable DEFAULT_INSTANCE;
-      static {
-        DEFAULT_INSTANCE = new Encoding.KlabData.LookupTable();
-      }
-
-      public static Encoding.KlabData.LookupTable getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-      }
-
-      private static final com.google.protobuf.Parser<LookupTable>
-          PARSER = new com.google.protobuf.AbstractParser<LookupTable>() {
-        public LookupTable parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new LookupTable(input, extensionRegistry);
-        }
-      };
-
-      public static com.google.protobuf.Parser<LookupTable> parser() {
-        return PARSER;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<LookupTable> getParserForType() {
-        return PARSER;
-      }
-
-      public Encoding.KlabData.LookupTable getDefaultInstanceForType() {
-        return DEFAULT_INSTANCE;
-      }
-
-    }
-
-    public interface StateOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:KlabData.State)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>string name = 1;</code>
-       */
-      java.lang.String getName();
-      /**
-       * <code>string name = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getNameBytes();
-
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      java.lang.String getSemantics();
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      com.google.protobuf.ByteString
-          getSemanticsBytes();
-
-      /**
-       * <code>repeated double doubledata = 3;</code>
-       */
-      java.util.List<java.lang.Double> getDoubledataList();
-      /**
-       * <code>repeated double doubledata = 3;</code>
-       */
-      int getDoubledataCount();
-      /**
-       * <code>repeated double doubledata = 3;</code>
-       */
-      double getDoubledata(int index);
-
-      /**
-       * <pre>
-       * if this is set, it comes with a LookupTable
-       * </pre>
-       *
-       * <code>repeated sint32 tabledata = 4;</code>
-       */
-      java.util.List<java.lang.Integer> getTabledataList();
-      /**
-       * <pre>
-       * if this is set, it comes with a LookupTable
-       * </pre>
-       *
-       * <code>repeated sint32 tabledata = 4;</code>
-       */
-      int getTabledataCount();
-      /**
-       * <pre>
-       * if this is set, it comes with a LookupTable
-       * </pre>
-       *
-       * <code>repeated sint32 tabledata = 4;</code>
-       */
-      int getTabledata(int index);
-
-      /**
-       * <code>repeated sint64 intdata = 5;</code>
-       */
-      java.util.List<java.lang.Long> getIntdataList();
-      /**
-       * <code>repeated sint64 intdata = 5;</code>
-       */
-      int getIntdataCount();
-      /**
-       * <code>repeated sint64 intdata = 5;</code>
-       */
-      long getIntdata(int index);
-
-      /**
-       * <code>repeated bool booleandata = 6;</code>
-       */
-      java.util.List<java.lang.Boolean> getBooleandataList();
-      /**
-       * <code>repeated bool booleandata = 6;</code>
-       */
-      int getBooleandataCount();
-      /**
-       * <code>repeated bool booleandata = 6;</code>
-       */
-      boolean getBooleandata(int index);
-
-      /**
-       * <code>.KlabData.LookupTable table = 7;</code>
-       */
-      boolean hasTable();
-      /**
-       * <code>.KlabData.LookupTable table = 7;</code>
-       */
-      Encoding.KlabData.LookupTable getTable();
-      /**
-       * <code>.KlabData.LookupTable table = 7;</code>
-       */
-      Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder();
-
-      /**
-       * <code>string externalDatasourceUrl = 8;</code>
-       */
-      java.lang.String getExternalDatasourceUrl();
-      /**
-       * <code>string externalDatasourceUrl = 8;</code>
-       */
-      com.google.protobuf.ByteString
-          getExternalDatasourceUrlBytes();
-    }
-    /**
-     * <pre>
-     * check the externalDatasourceUrl for data too large to fit in the response.	
-     * </pre>
-     *
-     * Protobuf type {@code KlabData.State}
-     */
-    public  static final class State extends
-        com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:KlabData.State)
-        StateOrBuilder {
-    private static final long serialVersionUID = 0L;
-      // Use State.newBuilder() to construct.
-      private State(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-        super(builder);
-      }
-      private State() {
-        name_ = "";
-        semantics_ = "";
-        doubledata_ = java.util.Collections.emptyList();
-        tabledata_ = java.util.Collections.emptyList();
-        intdata_ = java.util.Collections.emptyList();
-        booleandata_ = java.util.Collections.emptyList();
-        externalDatasourceUrl_ = "";
-      }
-
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-      getUnknownFields() {
-        return this.unknownFields;
-      }
-      private State(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownFieldProto3(
-                    input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                name_ = s;
-                break;
-              }
-              case 18: {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                semantics_ = s;
-                break;
-              }
-              case 25: {
-                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                  doubledata_ = new java.util.ArrayList<java.lang.Double>();
-                  mutable_bitField0_ |= 0x00000004;
-                }
-                doubledata_.add(input.readDouble());
-                break;
-              }
-              case 26: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
-                  doubledata_ = new java.util.ArrayList<java.lang.Double>();
-                  mutable_bitField0_ |= 0x00000004;
-                }
-                while (input.getBytesUntilLimit() > 0) {
-                  doubledata_.add(input.readDouble());
-                }
-                input.popLimit(limit);
-                break;
-              }
-              case 32: {
-                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                  tabledata_ = new java.util.ArrayList<java.lang.Integer>();
-                  mutable_bitField0_ |= 0x00000008;
-                }
-                tabledata_.add(input.readSInt32());
-                break;
-              }
-              case 34: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
-                  tabledata_ = new java.util.ArrayList<java.lang.Integer>();
-                  mutable_bitField0_ |= 0x00000008;
-                }
-                while (input.getBytesUntilLimit() > 0) {
-                  tabledata_.add(input.readSInt32());
-                }
-                input.popLimit(limit);
-                break;
-              }
-              case 40: {
-                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-                  intdata_ = new java.util.ArrayList<java.lang.Long>();
-                  mutable_bitField0_ |= 0x00000010;
-                }
-                intdata_.add(input.readSInt64());
-                break;
-              }
-              case 42: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
-                  intdata_ = new java.util.ArrayList<java.lang.Long>();
-                  mutable_bitField0_ |= 0x00000010;
-                }
-                while (input.getBytesUntilLimit() > 0) {
-                  intdata_.add(input.readSInt64());
-                }
-                input.popLimit(limit);
-                break;
-              }
-              case 48: {
-                if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-                  booleandata_ = new java.util.ArrayList<java.lang.Boolean>();
-                  mutable_bitField0_ |= 0x00000020;
-                }
-                booleandata_.add(input.readBool());
-                break;
-              }
-              case 50: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
-                  booleandata_ = new java.util.ArrayList<java.lang.Boolean>();
-                  mutable_bitField0_ |= 0x00000020;
-                }
-                while (input.getBytesUntilLimit() > 0) {
-                  booleandata_.add(input.readBool());
-                }
-                input.popLimit(limit);
-                break;
-              }
-              case 58: {
-                Encoding.KlabData.LookupTable.Builder subBuilder = null;
-                if (table_ != null) {
-                  subBuilder = table_.toBuilder();
-                }
-                table_ = input.readMessage(Encoding.KlabData.LookupTable.parser(), extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(table_);
-                  table_ = subBuilder.buildPartial();
-                }
-
-                break;
-              }
-              case 66: {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                externalDatasourceUrl_ = s;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e).setUnfinishedMessage(this);
-        } finally {
-          if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-            doubledata_ = java.util.Collections.unmodifiableList(doubledata_);
-          }
-          if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-            tabledata_ = java.util.Collections.unmodifiableList(tabledata_);
-          }
-          if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-            intdata_ = java.util.Collections.unmodifiableList(intdata_);
-          }
-          if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
-            booleandata_ = java.util.Collections.unmodifiableList(booleandata_);
-          }
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return Encoding.internal_static_KlabData_State_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return Encoding.internal_static_KlabData_State_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                Encoding.KlabData.State.class, Encoding.KlabData.State.Builder.class);
-      }
-
-      private int bitField0_;
-      public static final int NAME_FIELD_NUMBER = 1;
-      private volatile java.lang.Object name_;
-      /**
-       * <code>string name = 1;</code>
-       */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          name_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string name = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int SEMANTICS_FIELD_NUMBER = 2;
-      private volatile java.lang.Object semantics_;
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public java.lang.String getSemantics() {
-        java.lang.Object ref = semantics_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          semantics_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getSemanticsBytes() {
-        java.lang.Object ref = semantics_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          semantics_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int DOUBLEDATA_FIELD_NUMBER = 3;
-      private java.util.List<java.lang.Double> doubledata_;
-      /**
-       * <code>repeated double doubledata = 3;</code>
-       */
-      public java.util.List<java.lang.Double>
-          getDoubledataList() {
-        return doubledata_;
-      }
-      /**
-       * <code>repeated double doubledata = 3;</code>
-       */
-      public int getDoubledataCount() {
-        return doubledata_.size();
-      }
-      /**
-       * <code>repeated double doubledata = 3;</code>
-       */
-      public double getDoubledata(int index) {
-        return doubledata_.get(index);
-      }
-      private int doubledataMemoizedSerializedSize = -1;
-
-      public static final int TABLEDATA_FIELD_NUMBER = 4;
-      private java.util.List<java.lang.Integer> tabledata_;
-      /**
-       * <pre>
-       * if this is set, it comes with a LookupTable
-       * </pre>
-       *
-       * <code>repeated sint32 tabledata = 4;</code>
-       */
-      public java.util.List<java.lang.Integer>
-          getTabledataList() {
-        return tabledata_;
-      }
-      /**
-       * <pre>
-       * if this is set, it comes with a LookupTable
-       * </pre>
-       *
-       * <code>repeated sint32 tabledata = 4;</code>
-       */
-      public int getTabledataCount() {
-        return tabledata_.size();
-      }
-      /**
-       * <pre>
-       * if this is set, it comes with a LookupTable
-       * </pre>
-       *
-       * <code>repeated sint32 tabledata = 4;</code>
-       */
-      public int getTabledata(int index) {
-        return tabledata_.get(index);
-      }
-      private int tabledataMemoizedSerializedSize = -1;
-
-      public static final int INTDATA_FIELD_NUMBER = 5;
-      private java.util.List<java.lang.Long> intdata_;
-      /**
-       * <code>repeated sint64 intdata = 5;</code>
-       */
-      public java.util.List<java.lang.Long>
-          getIntdataList() {
-        return intdata_;
-      }
-      /**
-       * <code>repeated sint64 intdata = 5;</code>
-       */
-      public int getIntdataCount() {
-        return intdata_.size();
-      }
-      /**
-       * <code>repeated sint64 intdata = 5;</code>
-       */
-      public long getIntdata(int index) {
-        return intdata_.get(index);
-      }
-      private int intdataMemoizedSerializedSize = -1;
-
-      public static final int BOOLEANDATA_FIELD_NUMBER = 6;
-      private java.util.List<java.lang.Boolean> booleandata_;
-      /**
-       * <code>repeated bool booleandata = 6;</code>
-       */
-      public java.util.List<java.lang.Boolean>
-          getBooleandataList() {
-        return booleandata_;
-      }
-      /**
-       * <code>repeated bool booleandata = 6;</code>
-       */
-      public int getBooleandataCount() {
-        return booleandata_.size();
-      }
-      /**
-       * <code>repeated bool booleandata = 6;</code>
-       */
-      public boolean getBooleandata(int index) {
-        return booleandata_.get(index);
-      }
-      private int booleandataMemoizedSerializedSize = -1;
-
-      public static final int TABLE_FIELD_NUMBER = 7;
-      private Encoding.KlabData.LookupTable table_;
-      /**
-       * <code>.KlabData.LookupTable table = 7;</code>
-       */
-      public boolean hasTable() {
-        return table_ != null;
-      }
-      /**
-       * <code>.KlabData.LookupTable table = 7;</code>
-       */
-      public Encoding.KlabData.LookupTable getTable() {
-        return table_ == null ? Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
-      }
-      /**
-       * <code>.KlabData.LookupTable table = 7;</code>
-       */
-      public Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder() {
-        return getTable();
-      }
-
-      public static final int EXTERNALDATASOURCEURL_FIELD_NUMBER = 8;
-      private volatile java.lang.Object externalDatasourceUrl_;
-      /**
-       * <code>string externalDatasourceUrl = 8;</code>
-       */
-      public java.lang.String getExternalDatasourceUrl() {
-        java.lang.Object ref = externalDatasourceUrl_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          externalDatasourceUrl_ = s;
-          return s;
-        }
-      }
-      /**
-       * <code>string externalDatasourceUrl = 8;</code>
-       */
-      public com.google.protobuf.ByteString
-          getExternalDatasourceUrlBytes() {
-        java.lang.Object ref = externalDatasourceUrl_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          externalDatasourceUrl_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        if (!getNameBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
-        }
-        if (!getSemanticsBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, semantics_);
-        }
-        if (getDoubledataList().size() > 0) {
-          output.writeUInt32NoTag(26);
-          output.writeUInt32NoTag(doubledataMemoizedSerializedSize);
-        }
-        for (int i = 0; i < doubledata_.size(); i++) {
-          output.writeDoubleNoTag(doubledata_.get(i));
-        }
-        if (getTabledataList().size() > 0) {
-          output.writeUInt32NoTag(34);
-          output.writeUInt32NoTag(tabledataMemoizedSerializedSize);
-        }
-        for (int i = 0; i < tabledata_.size(); i++) {
-          output.writeSInt32NoTag(tabledata_.get(i));
-        }
-        if (getIntdataList().size() > 0) {
-          output.writeUInt32NoTag(42);
-          output.writeUInt32NoTag(intdataMemoizedSerializedSize);
-        }
-        for (int i = 0; i < intdata_.size(); i++) {
-          output.writeSInt64NoTag(intdata_.get(i));
-        }
-        if (getBooleandataList().size() > 0) {
-          output.writeUInt32NoTag(50);
-          output.writeUInt32NoTag(booleandataMemoizedSerializedSize);
-        }
-        for (int i = 0; i < booleandata_.size(); i++) {
-          output.writeBoolNoTag(booleandata_.get(i));
-        }
-        if (table_ != null) {
-          output.writeMessage(7, getTable());
-        }
-        if (!getExternalDatasourceUrlBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 8, externalDatasourceUrl_);
-        }
-        unknownFields.writeTo(output);
-      }
-
-      public int getSerializedSize() {
-        int size = memoizedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (!getNameBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
-        }
-        if (!getSemanticsBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, semantics_);
-        }
-        {
-          int dataSize = 0;
-          dataSize = 8 * getDoubledataList().size();
-          size += dataSize;
-          if (!getDoubledataList().isEmpty()) {
-            size += 1;
-            size += com.google.protobuf.CodedOutputStream
-                .computeInt32SizeNoTag(dataSize);
-          }
-          doubledataMemoizedSerializedSize = dataSize;
-        }
-        {
-          int dataSize = 0;
-          for (int i = 0; i < tabledata_.size(); i++) {
-            dataSize += com.google.protobuf.CodedOutputStream
-              .computeSInt32SizeNoTag(tabledata_.get(i));
-          }
-          size += dataSize;
-          if (!getTabledataList().isEmpty()) {
-            size += 1;
-            size += com.google.protobuf.CodedOutputStream
-                .computeInt32SizeNoTag(dataSize);
-          }
-          tabledataMemoizedSerializedSize = dataSize;
-        }
-        {
-          int dataSize = 0;
-          for (int i = 0; i < intdata_.size(); i++) {
-            dataSize += com.google.protobuf.CodedOutputStream
-              .computeSInt64SizeNoTag(intdata_.get(i));
-          }
-          size += dataSize;
-          if (!getIntdataList().isEmpty()) {
-            size += 1;
-            size += com.google.protobuf.CodedOutputStream
-                .computeInt32SizeNoTag(dataSize);
-          }
-          intdataMemoizedSerializedSize = dataSize;
-        }
-        {
-          int dataSize = 0;
-          dataSize = 1 * getBooleandataList().size();
-          size += dataSize;
-          if (!getBooleandataList().isEmpty()) {
-            size += 1;
-            size += com.google.protobuf.CodedOutputStream
-                .computeInt32SizeNoTag(dataSize);
-          }
-          booleandataMemoizedSerializedSize = dataSize;
-        }
-        if (table_ != null) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(7, getTable());
-        }
-        if (!getExternalDatasourceUrlBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, externalDatasourceUrl_);
-        }
-        size += unknownFields.getSerializedSize();
-        memoizedSize = size;
-        return size;
-      }
-
-      @java.lang.Override
-      public boolean equals(final java.lang.Object obj) {
-        if (obj == this) {
-         return true;
-        }
-        if (!(obj instanceof Encoding.KlabData.State)) {
-          return super.equals(obj);
-        }
-        Encoding.KlabData.State other = (Encoding.KlabData.State) obj;
-
-        boolean result = true;
-        result = result && getName()
-            .equals(other.getName());
-        result = result && getSemantics()
-            .equals(other.getSemantics());
-        result = result && getDoubledataList()
-            .equals(other.getDoubledataList());
-        result = result && getTabledataList()
-            .equals(other.getTabledataList());
-        result = result && getIntdataList()
-            .equals(other.getIntdataList());
-        result = result && getBooleandataList()
-            .equals(other.getBooleandataList());
-        result = result && (hasTable() == other.hasTable());
-        if (hasTable()) {
-          result = result && getTable()
-              .equals(other.getTable());
-        }
-        result = result && getExternalDatasourceUrl()
-            .equals(other.getExternalDatasourceUrl());
-        result = result && unknownFields.equals(other.unknownFields);
-        return result;
-      }
-
-      @java.lang.Override
-      public int hashCode() {
-        if (memoizedHashCode != 0) {
-          return memoizedHashCode;
-        }
-        int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getName().hashCode();
-        hash = (37 * hash) + SEMANTICS_FIELD_NUMBER;
-        hash = (53 * hash) + getSemantics().hashCode();
-        if (getDoubledataCount() > 0) {
-          hash = (37 * hash) + DOUBLEDATA_FIELD_NUMBER;
-          hash = (53 * hash) + getDoubledataList().hashCode();
-        }
-        if (getTabledataCount() > 0) {
-          hash = (37 * hash) + TABLEDATA_FIELD_NUMBER;
-          hash = (53 * hash) + getTabledataList().hashCode();
-        }
-        if (getIntdataCount() > 0) {
-          hash = (37 * hash) + INTDATA_FIELD_NUMBER;
-          hash = (53 * hash) + getIntdataList().hashCode();
-        }
-        if (getBooleandataCount() > 0) {
-          hash = (37 * hash) + BOOLEANDATA_FIELD_NUMBER;
-          hash = (53 * hash) + getBooleandataList().hashCode();
-        }
-        if (hasTable()) {
-          hash = (37 * hash) + TABLE_FIELD_NUMBER;
-          hash = (53 * hash) + getTable().hashCode();
-        }
-        hash = (37 * hash) + EXTERNALDATASOURCEURL_FIELD_NUMBER;
-        hash = (53 * hash) + getExternalDatasourceUrl().hashCode();
-        hash = (29 * hash) + unknownFields.hashCode();
-        memoizedHashCode = hash;
-        return hash;
-      }
-
-      public static Encoding.KlabData.State parseFrom(
-          java.nio.ByteBuffer data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          java.nio.ByteBuffer data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.State parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static Encoding.KlabData.State parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.State parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.State parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input);
-      }
-      public static Encoding.KlabData.State parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return com.google.protobuf.GeneratedMessageV3
-            .parseWithIOException(PARSER, input, extensionRegistry);
-      }
-
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder() {
-        return DEFAULT_INSTANCE.toBuilder();
-      }
-      public static Builder newBuilder(Encoding.KlabData.State prototype) {
-        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() {
-        return this == DEFAULT_INSTANCE
-            ? new Builder() : new Builder().mergeFrom(this);
-      }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * <pre>
-       * check the externalDatasourceUrl for data too large to fit in the response.	
-       * </pre>
-       *
-       * Protobuf type {@code KlabData.State}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:KlabData.State)
-          Encoding.KlabData.StateOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return Encoding.internal_static_KlabData_State_descriptor;
-        }
-
-        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return Encoding.internal_static_KlabData_State_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  Encoding.KlabData.State.class, Encoding.KlabData.State.Builder.class);
-        }
-
-        // Construct using Encoding.KlabData.State.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3
-                  .alwaysUseFieldBuilders) {
-          }
-        }
-        public Builder clear() {
-          super.clear();
-          name_ = "";
-
-          semantics_ = "";
-
-          doubledata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          tabledata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
-          intdata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
-          booleandata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000020);
-          if (tableBuilder_ == null) {
-            table_ = null;
-          } else {
-            table_ = null;
-            tableBuilder_ = null;
-          }
-          externalDatasourceUrl_ = "";
-
-          return this;
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return Encoding.internal_static_KlabData_State_descriptor;
-        }
-
-        public Encoding.KlabData.State getDefaultInstanceForType() {
-          return Encoding.KlabData.State.getDefaultInstance();
-        }
-
-        public Encoding.KlabData.State build() {
-          Encoding.KlabData.State result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public Encoding.KlabData.State buildPartial() {
-          Encoding.KlabData.State result = new Encoding.KlabData.State(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          result.name_ = name_;
-          result.semantics_ = semantics_;
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            doubledata_ = java.util.Collections.unmodifiableList(doubledata_);
-            bitField0_ = (bitField0_ & ~0x00000004);
-          }
-          result.doubledata_ = doubledata_;
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
-            tabledata_ = java.util.Collections.unmodifiableList(tabledata_);
-            bitField0_ = (bitField0_ & ~0x00000008);
-          }
-          result.tabledata_ = tabledata_;
-          if (((bitField0_ & 0x00000010) == 0x00000010)) {
-            intdata_ = java.util.Collections.unmodifiableList(intdata_);
-            bitField0_ = (bitField0_ & ~0x00000010);
-          }
-          result.intdata_ = intdata_;
-          if (((bitField0_ & 0x00000020) == 0x00000020)) {
-            booleandata_ = java.util.Collections.unmodifiableList(booleandata_);
-            bitField0_ = (bitField0_ & ~0x00000020);
-          }
-          result.booleandata_ = booleandata_;
-          if (tableBuilder_ == null) {
-            result.table_ = table_;
-          } else {
-            result.table_ = tableBuilder_.build();
-          }
-          result.externalDatasourceUrl_ = externalDatasourceUrl_;
-          result.bitField0_ = to_bitField0_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder clone() {
-          return (Builder) super.clone();
-        }
-        public Builder setField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.setField(field, value);
-        }
-        public Builder clearField(
-            com.google.protobuf.Descriptors.FieldDescriptor field) {
-          return (Builder) super.clearField(field);
-        }
-        public Builder clearOneof(
-            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-          return (Builder) super.clearOneof(oneof);
-        }
-        public Builder setRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
-          return (Builder) super.setRepeatedField(field, index, value);
-        }
-        public Builder addRepeatedField(
-            com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
-          return (Builder) super.addRepeatedField(field, value);
-        }
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof Encoding.KlabData.State) {
-            return mergeFrom((Encoding.KlabData.State)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(Encoding.KlabData.State other) {
-          if (other == Encoding.KlabData.State.getDefaultInstance()) return this;
-          if (!other.getName().isEmpty()) {
-            name_ = other.name_;
-            onChanged();
-          }
-          if (!other.getSemantics().isEmpty()) {
-            semantics_ = other.semantics_;
-            onChanged();
-          }
-          if (!other.doubledata_.isEmpty()) {
-            if (doubledata_.isEmpty()) {
-              doubledata_ = other.doubledata_;
-              bitField0_ = (bitField0_ & ~0x00000004);
-            } else {
-              ensureDoubledataIsMutable();
-              doubledata_.addAll(other.doubledata_);
-            }
-            onChanged();
-          }
-          if (!other.tabledata_.isEmpty()) {
-            if (tabledata_.isEmpty()) {
-              tabledata_ = other.tabledata_;
-              bitField0_ = (bitField0_ & ~0x00000008);
-            } else {
-              ensureTabledataIsMutable();
-              tabledata_.addAll(other.tabledata_);
-            }
-            onChanged();
-          }
-          if (!other.intdata_.isEmpty()) {
-            if (intdata_.isEmpty()) {
-              intdata_ = other.intdata_;
-              bitField0_ = (bitField0_ & ~0x00000010);
-            } else {
-              ensureIntdataIsMutable();
-              intdata_.addAll(other.intdata_);
-            }
-            onChanged();
-          }
-          if (!other.booleandata_.isEmpty()) {
-            if (booleandata_.isEmpty()) {
-              booleandata_ = other.booleandata_;
-              bitField0_ = (bitField0_ & ~0x00000020);
-            } else {
-              ensureBooleandataIsMutable();
-              booleandata_.addAll(other.booleandata_);
-            }
-            onChanged();
-          }
-          if (other.hasTable()) {
-            mergeTable(other.getTable());
-          }
-          if (!other.getExternalDatasourceUrl().isEmpty()) {
-            externalDatasourceUrl_ = other.externalDatasourceUrl_;
-            onChanged();
-          }
-          this.mergeUnknownFields(other.unknownFields);
-          onChanged();
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          Encoding.KlabData.State parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (Encoding.KlabData.State) e.getUnfinishedMessage();
-            throw e.unwrapIOException();
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        private java.lang.Object name_ = "";
-        /**
-         * <code>string name = 1;</code>
-         */
-        public java.lang.String getName() {
-          java.lang.Object ref = name_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            name_ = s;
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getNameBytes() {
-          java.lang.Object ref = name_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            name_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public Builder setName(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          name_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public Builder clearName() {
-          
-          name_ = getDefaultInstance().getName();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string name = 1;</code>
-         */
-        public Builder setNameBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          name_ = value;
-          onChanged();
-          return this;
-        }
-
-        private java.lang.Object semantics_ = "";
-        /**
-         * <code>string semantics = 2;</code>
-         */
-        public java.lang.String getSemantics() {
-          java.lang.Object ref = semantics_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            semantics_ = s;
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>string semantics = 2;</code>
-         */
-        public com.google.protobuf.ByteString
-            getSemanticsBytes() {
-          java.lang.Object ref = semantics_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            semantics_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string semantics = 2;</code>
-         */
-        public Builder setSemantics(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          semantics_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string semantics = 2;</code>
-         */
-        public Builder clearSemantics() {
-          
-          semantics_ = getDefaultInstance().getSemantics();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string semantics = 2;</code>
-         */
-        public Builder setSemanticsBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          semantics_ = value;
-          onChanged();
-          return this;
-        }
-
-        private java.util.List<java.lang.Double> doubledata_ = java.util.Collections.emptyList();
-        private void ensureDoubledataIsMutable() {
-          if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-            doubledata_ = new java.util.ArrayList<java.lang.Double>(doubledata_);
-            bitField0_ |= 0x00000004;
-           }
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public java.util.List<java.lang.Double>
-            getDoubledataList() {
-          return java.util.Collections.unmodifiableList(doubledata_);
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public int getDoubledataCount() {
-          return doubledata_.size();
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public double getDoubledata(int index) {
-          return doubledata_.get(index);
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public Builder setDoubledata(
-            int index, double value) {
-          ensureDoubledataIsMutable();
-          doubledata_.set(index, value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public Builder addDoubledata(double value) {
-          ensureDoubledataIsMutable();
-          doubledata_.add(value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public Builder addAllDoubledata(
-            java.lang.Iterable<? extends java.lang.Double> values) {
-          ensureDoubledataIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, doubledata_);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double doubledata = 3;</code>
-         */
-        public Builder clearDoubledata() {
-          doubledata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          onChanged();
-          return this;
-        }
-
-        private java.util.List<java.lang.Integer> tabledata_ = java.util.Collections.emptyList();
-        private void ensureTabledataIsMutable() {
-          if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-            tabledata_ = new java.util.ArrayList<java.lang.Integer>(tabledata_);
-            bitField0_ |= 0x00000008;
-           }
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public java.util.List<java.lang.Integer>
-            getTabledataList() {
-          return java.util.Collections.unmodifiableList(tabledata_);
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public int getTabledataCount() {
-          return tabledata_.size();
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public int getTabledata(int index) {
-          return tabledata_.get(index);
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public Builder setTabledata(
-            int index, int value) {
-          ensureTabledataIsMutable();
-          tabledata_.set(index, value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public Builder addTabledata(int value) {
-          ensureTabledataIsMutable();
-          tabledata_.add(value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public Builder addAllTabledata(
-            java.lang.Iterable<? extends java.lang.Integer> values) {
-          ensureTabledataIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, tabledata_);
-          onChanged();
-          return this;
-        }
-        /**
-         * <pre>
-         * if this is set, it comes with a LookupTable
-         * </pre>
-         *
-         * <code>repeated sint32 tabledata = 4;</code>
-         */
-        public Builder clearTabledata() {
-          tabledata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
-          onChanged();
-          return this;
-        }
-
-        private java.util.List<java.lang.Long> intdata_ = java.util.Collections.emptyList();
-        private void ensureIntdataIsMutable() {
-          if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-            intdata_ = new java.util.ArrayList<java.lang.Long>(intdata_);
-            bitField0_ |= 0x00000010;
-           }
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public java.util.List<java.lang.Long>
-            getIntdataList() {
-          return java.util.Collections.unmodifiableList(intdata_);
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public int getIntdataCount() {
-          return intdata_.size();
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public long getIntdata(int index) {
-          return intdata_.get(index);
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public Builder setIntdata(
-            int index, long value) {
-          ensureIntdataIsMutable();
-          intdata_.set(index, value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public Builder addIntdata(long value) {
-          ensureIntdataIsMutable();
-          intdata_.add(value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public Builder addAllIntdata(
-            java.lang.Iterable<? extends java.lang.Long> values) {
-          ensureIntdataIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, intdata_);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated sint64 intdata = 5;</code>
-         */
-        public Builder clearIntdata() {
-          intdata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
-          onChanged();
-          return this;
-        }
-
-        private java.util.List<java.lang.Boolean> booleandata_ = java.util.Collections.emptyList();
-        private void ensureBooleandataIsMutable() {
-          if (!((bitField0_ & 0x00000020) == 0x00000020)) {
-            booleandata_ = new java.util.ArrayList<java.lang.Boolean>(booleandata_);
-            bitField0_ |= 0x00000020;
-           }
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public java.util.List<java.lang.Boolean>
-            getBooleandataList() {
-          return java.util.Collections.unmodifiableList(booleandata_);
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public int getBooleandataCount() {
-          return booleandata_.size();
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public boolean getBooleandata(int index) {
-          return booleandata_.get(index);
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public Builder setBooleandata(
-            int index, boolean value) {
-          ensureBooleandataIsMutable();
-          booleandata_.set(index, value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public Builder addBooleandata(boolean value) {
-          ensureBooleandataIsMutable();
-          booleandata_.add(value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public Builder addAllBooleandata(
-            java.lang.Iterable<? extends java.lang.Boolean> values) {
-          ensureBooleandataIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, booleandata_);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated bool booleandata = 6;</code>
-         */
-        public Builder clearBooleandata() {
-          booleandata_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000020);
-          onChanged();
-          return this;
-        }
-
-        private Encoding.KlabData.LookupTable table_ = null;
-        private com.google.protobuf.SingleFieldBuilderV3<
-            Encoding.KlabData.LookupTable, Encoding.KlabData.LookupTable.Builder, Encoding.KlabData.LookupTableOrBuilder> tableBuilder_;
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public boolean hasTable() {
-          return tableBuilder_ != null || table_ != null;
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Encoding.KlabData.LookupTable getTable() {
-          if (tableBuilder_ == null) {
-            return table_ == null ? Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
-          } else {
-            return tableBuilder_.getMessage();
-          }
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Builder setTable(Encoding.KlabData.LookupTable value) {
-          if (tableBuilder_ == null) {
-            if (value == null) {
-              throw new NullPointerException();
-            }
-            table_ = value;
-            onChanged();
-          } else {
-            tableBuilder_.setMessage(value);
-          }
-
-          return this;
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Builder setTable(
-            Encoding.KlabData.LookupTable.Builder builderForValue) {
-          if (tableBuilder_ == null) {
-            table_ = builderForValue.build();
-            onChanged();
-          } else {
-            tableBuilder_.setMessage(builderForValue.build());
-          }
-
-          return this;
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Builder mergeTable(Encoding.KlabData.LookupTable value) {
-          if (tableBuilder_ == null) {
-            if (table_ != null) {
-              table_ =
-                Encoding.KlabData.LookupTable.newBuilder(table_).mergeFrom(value).buildPartial();
-            } else {
-              table_ = value;
-            }
-            onChanged();
-          } else {
-            tableBuilder_.mergeFrom(value);
-          }
-
-          return this;
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Builder clearTable() {
-          if (tableBuilder_ == null) {
-            table_ = null;
-            onChanged();
-          } else {
-            table_ = null;
-            tableBuilder_ = null;
-          }
-
-          return this;
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Encoding.KlabData.LookupTable.Builder getTableBuilder() {
-          
-          onChanged();
-          return getTableFieldBuilder().getBuilder();
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        public Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder() {
-          if (tableBuilder_ != null) {
-            return tableBuilder_.getMessageOrBuilder();
-          } else {
-            return table_ == null ?
-                Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
-          }
-        }
-        /**
-         * <code>.KlabData.LookupTable table = 7;</code>
-         */
-        private com.google.protobuf.SingleFieldBuilderV3<
-            Encoding.KlabData.LookupTable, Encoding.KlabData.LookupTable.Builder, Encoding.KlabData.LookupTableOrBuilder> 
-            getTableFieldBuilder() {
-          if (tableBuilder_ == null) {
-            tableBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-                Encoding.KlabData.LookupTable, Encoding.KlabData.LookupTable.Builder, Encoding.KlabData.LookupTableOrBuilder>(
-                    getTable(),
-                    getParentForChildren(),
-                    isClean());
-            table_ = null;
-          }
-          return tableBuilder_;
-        }
-
-        private java.lang.Object externalDatasourceUrl_ = "";
-        /**
-         * <code>string externalDatasourceUrl = 8;</code>
-         */
-        public java.lang.String getExternalDatasourceUrl() {
-          java.lang.Object ref = externalDatasourceUrl_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            externalDatasourceUrl_ = s;
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>string externalDatasourceUrl = 8;</code>
-         */
-        public com.google.protobuf.ByteString
-            getExternalDatasourceUrlBytes() {
-          java.lang.Object ref = externalDatasourceUrl_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            externalDatasourceUrl_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>string externalDatasourceUrl = 8;</code>
-         */
-        public Builder setExternalDatasourceUrl(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  
-          externalDatasourceUrl_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string externalDatasourceUrl = 8;</code>
-         */
-        public Builder clearExternalDatasourceUrl() {
-          
-          externalDatasourceUrl_ = getDefaultInstance().getExternalDatasourceUrl();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>string externalDatasourceUrl = 8;</code>
-         */
-        public Builder setExternalDatasourceUrlBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-          
-          externalDatasourceUrl_ = value;
-          onChanged();
-          return this;
-        }
-        public final Builder setUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.setUnknownFieldsProto3(unknownFields);
-        }
-
-        public final Builder mergeUnknownFields(
-            final com.google.protobuf.UnknownFieldSet unknownFields) {
-          return super.mergeUnknownFields(unknownFields);
-        }
-
-
-        // @@protoc_insertion_point(builder_scope:KlabData.State)
-      }
-
-      // @@protoc_insertion_point(class_scope:KlabData.State)
-      private static final Encoding.KlabData.State DEFAULT_INSTANCE;
-      static {
-        DEFAULT_INSTANCE = new Encoding.KlabData.State();
-      }
-
-      public static Encoding.KlabData.State getDefaultInstance() {
-        return DEFAULT_INSTANCE;
-      }
-
-      private static final com.google.protobuf.Parser<State>
-          PARSER = new com.google.protobuf.AbstractParser<State>() {
-        public State parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new State(input, extensionRegistry);
-        }
-      };
-
-      public static com.google.protobuf.Parser<State> parser() {
-        return PARSER;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<State> getParserForType() {
-        return PARSER;
-      }
-
-      public Encoding.KlabData.State getDefaultInstanceForType() {
-        return DEFAULT_INSTANCE;
-      }
-
-    }
-
-    private int bitField0_;
-    public static final int GEOMETRY_FIELD_NUMBER = 1;
-    private volatile java.lang.Object geometry_;
-    /**
-     * <code>string geometry = 1;</code>
-     */
-    public java.lang.String getGeometry() {
-      java.lang.Object ref = geometry_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        geometry_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string geometry = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getGeometryBytes() {
-      java.lang.Object ref = geometry_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        geometry_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int SEMANTICS_FIELD_NUMBER = 2;
-    private volatile java.lang.Object semantics_;
-    /**
-     * <code>string semantics = 2;</code>
-     */
-    public java.lang.String getSemantics() {
-      java.lang.Object ref = semantics_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        semantics_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string semantics = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getSemanticsBytes() {
-      java.lang.Object ref = semantics_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        semantics_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int ELAPSED_FIELD_NUMBER = 3;
-    private long elapsed_;
-    /**
-     * <code>int64 elapsed = 3;</code>
-     */
-    public long getElapsed() {
-      return elapsed_;
-    }
-
-    public static final int NOTIFICATIONS_FIELD_NUMBER = 4;
-    private java.util.List<Encoding.KlabData.Notification> notifications_;
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    public java.util.List<Encoding.KlabData.Notification> getNotificationsList() {
-      return notifications_;
-    }
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    public java.util.List<? extends Encoding.KlabData.NotificationOrBuilder> 
-        getNotificationsOrBuilderList() {
-      return notifications_;
-    }
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    public int getNotificationsCount() {
-      return notifications_.size();
-    }
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    public Encoding.KlabData.Notification getNotifications(int index) {
-      return notifications_.get(index);
-    }
-    /**
-     * <pre>
-     * if there is 1+ notification with ERROR severity, the next fields should not be set.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Notification notifications = 4;</code>
-     */
-    public Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(
-        int index) {
-      return notifications_.get(index);
-    }
-
-    public static final int OBJECTS_FIELD_NUMBER = 5;
-    private java.util.List<Encoding.KlabData.Object> objects_;
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    public java.util.List<Encoding.KlabData.Object> getObjectsList() {
-      return objects_;
-    }
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> 
-        getObjectsOrBuilderList() {
-      return objects_;
-    }
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    public int getObjectsCount() {
-      return objects_.size();
-    }
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    public Encoding.KlabData.Object getObjects(int index) {
-      return objects_.get(index);
-    }
-    /**
-     * <pre>
-     * these two should be in a oneof , but no joy there.
-     * </pre>
-     *
-     * <code>repeated .KlabData.Object objects = 5;</code>
-     */
-    public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
-        int index) {
-      return objects_.get(index);
-    }
-
-    public static final int STATE_FIELD_NUMBER = 6;
-    private Encoding.KlabData.State state_;
-    /**
-     * <code>.KlabData.State state = 6;</code>
-     */
-    public boolean hasState() {
-      return state_ != null;
-    }
-    /**
-     * <code>.KlabData.State state = 6;</code>
-     */
-    public Encoding.KlabData.State getState() {
-      return state_ == null ? Encoding.KlabData.State.getDefaultInstance() : state_;
-    }
-    /**
-     * <code>.KlabData.State state = 6;</code>
-     */
-    public Encoding.KlabData.StateOrBuilder getStateOrBuilder() {
-      return getState();
-    }
-
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!getGeometryBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, geometry_);
-      }
-      if (!getSemanticsBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, semantics_);
-      }
-      if (elapsed_ != 0L) {
-        output.writeInt64(3, elapsed_);
-      }
-      for (int i = 0; i < notifications_.size(); i++) {
-        output.writeMessage(4, notifications_.get(i));
-      }
-      for (int i = 0; i < objects_.size(); i++) {
-        output.writeMessage(5, objects_.get(i));
-      }
-      if (state_ != null) {
-        output.writeMessage(6, getState());
-      }
-      unknownFields.writeTo(output);
-    }
-
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!getGeometryBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, geometry_);
-      }
-      if (!getSemanticsBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, semantics_);
-      }
-      if (elapsed_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, elapsed_);
-      }
-      for (int i = 0; i < notifications_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, notifications_.get(i));
-      }
-      for (int i = 0; i < objects_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, objects_.get(i));
-      }
-      if (state_ != null) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, getState());
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof Encoding.KlabData)) {
-        return super.equals(obj);
-      }
-      Encoding.KlabData other = (Encoding.KlabData) obj;
-
-      boolean result = true;
-      result = result && getGeometry()
-          .equals(other.getGeometry());
-      result = result && getSemantics()
-          .equals(other.getSemantics());
-      result = result && (getElapsed()
-          == other.getElapsed());
-      result = result && getNotificationsList()
-          .equals(other.getNotificationsList());
-      result = result && getObjectsList()
-          .equals(other.getObjectsList());
-      result = result && (hasState() == other.hasState());
-      if (hasState()) {
-        result = result && getState()
-            .equals(other.getState());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + GEOMETRY_FIELD_NUMBER;
-      hash = (53 * hash) + getGeometry().hashCode();
-      hash = (37 * hash) + SEMANTICS_FIELD_NUMBER;
-      hash = (53 * hash) + getSemantics().hashCode();
-      hash = (37 * hash) + ELAPSED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getElapsed());
-      if (getNotificationsCount() > 0) {
-        hash = (37 * hash) + NOTIFICATIONS_FIELD_NUMBER;
-        hash = (53 * hash) + getNotificationsList().hashCode();
-      }
-      if (getObjectsCount() > 0) {
-        hash = (37 * hash) + OBJECTS_FIELD_NUMBER;
-        hash = (53 * hash) + getObjectsList().hashCode();
-      }
-      if (hasState()) {
-        hash = (37 * hash) + STATE_FIELD_NUMBER;
-        hash = (53 * hash) + getState().hashCode();
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static Encoding.KlabData parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static Encoding.KlabData parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static Encoding.KlabData parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static Encoding.KlabData parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static Encoding.KlabData parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static Encoding.KlabData parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static Encoding.KlabData parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static Encoding.KlabData parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static Encoding.KlabData parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static Encoding.KlabData parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static Encoding.KlabData parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static Encoding.KlabData parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(Encoding.KlabData prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     **
-     * The data response to a URN get() request. Will contain a state or one or more objects,
-     * with the correspondent geometry for validation and optional semantics.
-     * </pre>
-     *
-     * Protobuf type {@code KlabData}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:KlabData)
-        Encoding.KlabDataOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return Encoding.internal_static_KlabData_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return Encoding.internal_static_KlabData_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                Encoding.KlabData.class, Encoding.KlabData.Builder.class);
-      }
-
-      // Construct using Encoding.KlabData.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-          getNotificationsFieldBuilder();
-          getObjectsFieldBuilder();
-        }
-      }
-      public Builder clear() {
-        super.clear();
-        geometry_ = "";
-
-        semantics_ = "";
-
-        elapsed_ = 0L;
-
-        if (notificationsBuilder_ == null) {
-          notifications_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
-        } else {
-          notificationsBuilder_.clear();
-        }
-        if (objectsBuilder_ == null) {
-          objects_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
-        } else {
-          objectsBuilder_.clear();
-        }
-        if (stateBuilder_ == null) {
-          state_ = null;
-        } else {
-          state_ = null;
-          stateBuilder_ = null;
-        }
-        return this;
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return Encoding.internal_static_KlabData_descriptor;
-      }
-
-      public Encoding.KlabData getDefaultInstanceForType() {
-        return Encoding.KlabData.getDefaultInstance();
-      }
-
-      public Encoding.KlabData build() {
-        Encoding.KlabData result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public Encoding.KlabData buildPartial() {
-        Encoding.KlabData result = new Encoding.KlabData(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.geometry_ = geometry_;
-        result.semantics_ = semantics_;
-        result.elapsed_ = elapsed_;
-        if (notificationsBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
-            notifications_ = java.util.Collections.unmodifiableList(notifications_);
-            bitField0_ = (bitField0_ & ~0x00000008);
-          }
-          result.notifications_ = notifications_;
-        } else {
-          result.notifications_ = notificationsBuilder_.build();
-        }
-        if (objectsBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) == 0x00000010)) {
-            objects_ = java.util.Collections.unmodifiableList(objects_);
-            bitField0_ = (bitField0_ & ~0x00000010);
-          }
-          result.objects_ = objects_;
-        } else {
-          result.objects_ = objectsBuilder_.build();
-        }
-        if (stateBuilder_ == null) {
-          result.state_ = state_;
-        } else {
-          result.state_ = stateBuilder_.build();
-        }
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof Encoding.KlabData) {
-          return mergeFrom((Encoding.KlabData)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(Encoding.KlabData other) {
-        if (other == Encoding.KlabData.getDefaultInstance()) return this;
-        if (!other.getGeometry().isEmpty()) {
-          geometry_ = other.geometry_;
-          onChanged();
-        }
-        if (!other.getSemantics().isEmpty()) {
-          semantics_ = other.semantics_;
-          onChanged();
-        }
-        if (other.getElapsed() != 0L) {
-          setElapsed(other.getElapsed());
-        }
-        if (notificationsBuilder_ == null) {
-          if (!other.notifications_.isEmpty()) {
-            if (notifications_.isEmpty()) {
-              notifications_ = other.notifications_;
-              bitField0_ = (bitField0_ & ~0x00000008);
-            } else {
-              ensureNotificationsIsMutable();
-              notifications_.addAll(other.notifications_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.notifications_.isEmpty()) {
-            if (notificationsBuilder_.isEmpty()) {
-              notificationsBuilder_.dispose();
-              notificationsBuilder_ = null;
-              notifications_ = other.notifications_;
-              bitField0_ = (bitField0_ & ~0x00000008);
-              notificationsBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getNotificationsFieldBuilder() : null;
-            } else {
-              notificationsBuilder_.addAllMessages(other.notifications_);
-            }
-          }
-        }
-        if (objectsBuilder_ == null) {
-          if (!other.objects_.isEmpty()) {
-            if (objects_.isEmpty()) {
-              objects_ = other.objects_;
-              bitField0_ = (bitField0_ & ~0x00000010);
-            } else {
-              ensureObjectsIsMutable();
-              objects_.addAll(other.objects_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.objects_.isEmpty()) {
-            if (objectsBuilder_.isEmpty()) {
-              objectsBuilder_.dispose();
-              objectsBuilder_ = null;
-              objects_ = other.objects_;
-              bitField0_ = (bitField0_ & ~0x00000010);
-              objectsBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getObjectsFieldBuilder() : null;
-            } else {
-              objectsBuilder_.addAllMessages(other.objects_);
-            }
-          }
-        }
-        if (other.hasState()) {
-          mergeState(other.getState());
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        Encoding.KlabData parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (Encoding.KlabData) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object geometry_ = "";
-      /**
-       * <code>string geometry = 1;</code>
-       */
-      public java.lang.String getGeometry() {
-        java.lang.Object ref = geometry_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          geometry_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string geometry = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getGeometryBytes() {
-        java.lang.Object ref = geometry_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          geometry_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string geometry = 1;</code>
-       */
-      public Builder setGeometry(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        geometry_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string geometry = 1;</code>
-       */
-      public Builder clearGeometry() {
-        
-        geometry_ = getDefaultInstance().getGeometry();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string geometry = 1;</code>
-       */
-      public Builder setGeometryBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        geometry_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object semantics_ = "";
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public java.lang.String getSemantics() {
-        java.lang.Object ref = semantics_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          semantics_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getSemanticsBytes() {
-        java.lang.Object ref = semantics_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          semantics_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public Builder setSemantics(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        semantics_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public Builder clearSemantics() {
-        
-        semantics_ = getDefaultInstance().getSemantics();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string semantics = 2;</code>
-       */
-      public Builder setSemanticsBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        semantics_ = value;
-        onChanged();
-        return this;
-      }
-
-      private long elapsed_ ;
-      /**
-       * <code>int64 elapsed = 3;</code>
-       */
-      public long getElapsed() {
-        return elapsed_;
-      }
-      /**
-       * <code>int64 elapsed = 3;</code>
-       */
-      public Builder setElapsed(long value) {
-        
-        elapsed_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 elapsed = 3;</code>
-       */
-      public Builder clearElapsed() {
-        
-        elapsed_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private java.util.List<Encoding.KlabData.Notification> notifications_ =
-        java.util.Collections.emptyList();
-      private void ensureNotificationsIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-          notifications_ = new java.util.ArrayList<Encoding.KlabData.Notification>(notifications_);
-          bitField0_ |= 0x00000008;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          Encoding.KlabData.Notification, Encoding.KlabData.Notification.Builder, Encoding.KlabData.NotificationOrBuilder> notificationsBuilder_;
-
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public java.util.List<Encoding.KlabData.Notification> getNotificationsList() {
-        if (notificationsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(notifications_);
-        } else {
-          return notificationsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public int getNotificationsCount() {
-        if (notificationsBuilder_ == null) {
-          return notifications_.size();
-        } else {
-          return notificationsBuilder_.getCount();
-        }
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Encoding.KlabData.Notification getNotifications(int index) {
-        if (notificationsBuilder_ == null) {
-          return notifications_.get(index);
-        } else {
-          return notificationsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder setNotifications(
-          int index, Encoding.KlabData.Notification value) {
-        if (notificationsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureNotificationsIsMutable();
-          notifications_.set(index, value);
-          onChanged();
-        } else {
-          notificationsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder setNotifications(
-          int index, Encoding.KlabData.Notification.Builder builderForValue) {
-        if (notificationsBuilder_ == null) {
-          ensureNotificationsIsMutable();
-          notifications_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          notificationsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder addNotifications(Encoding.KlabData.Notification value) {
-        if (notificationsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureNotificationsIsMutable();
-          notifications_.add(value);
-          onChanged();
-        } else {
-          notificationsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder addNotifications(
-          int index, Encoding.KlabData.Notification value) {
-        if (notificationsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureNotificationsIsMutable();
-          notifications_.add(index, value);
-          onChanged();
-        } else {
-          notificationsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder addNotifications(
-          Encoding.KlabData.Notification.Builder builderForValue) {
-        if (notificationsBuilder_ == null) {
-          ensureNotificationsIsMutable();
-          notifications_.add(builderForValue.build());
-          onChanged();
-        } else {
-          notificationsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder addNotifications(
-          int index, Encoding.KlabData.Notification.Builder builderForValue) {
-        if (notificationsBuilder_ == null) {
-          ensureNotificationsIsMutable();
-          notifications_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          notificationsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder addAllNotifications(
-          java.lang.Iterable<? extends Encoding.KlabData.Notification> values) {
-        if (notificationsBuilder_ == null) {
-          ensureNotificationsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, notifications_);
-          onChanged();
-        } else {
-          notificationsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder clearNotifications() {
-        if (notificationsBuilder_ == null) {
-          notifications_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
-          onChanged();
-        } else {
-          notificationsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Builder removeNotifications(int index) {
-        if (notificationsBuilder_ == null) {
-          ensureNotificationsIsMutable();
-          notifications_.remove(index);
-          onChanged();
-        } else {
-          notificationsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Encoding.KlabData.Notification.Builder getNotificationsBuilder(
-          int index) {
-        return getNotificationsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(
-          int index) {
-        if (notificationsBuilder_ == null) {
-          return notifications_.get(index);  } else {
-          return notificationsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public java.util.List<? extends Encoding.KlabData.NotificationOrBuilder> 
-           getNotificationsOrBuilderList() {
-        if (notificationsBuilder_ != null) {
-          return notificationsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(notifications_);
-        }
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Encoding.KlabData.Notification.Builder addNotificationsBuilder() {
-        return getNotificationsFieldBuilder().addBuilder(
-            Encoding.KlabData.Notification.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public Encoding.KlabData.Notification.Builder addNotificationsBuilder(
-          int index) {
-        return getNotificationsFieldBuilder().addBuilder(
-            index, Encoding.KlabData.Notification.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * if there is 1+ notification with ERROR severity, the next fields should not be set.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Notification notifications = 4;</code>
-       */
-      public java.util.List<Encoding.KlabData.Notification.Builder> 
-           getNotificationsBuilderList() {
-        return getNotificationsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          Encoding.KlabData.Notification, Encoding.KlabData.Notification.Builder, Encoding.KlabData.NotificationOrBuilder> 
-          getNotificationsFieldBuilder() {
-        if (notificationsBuilder_ == null) {
-          notificationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              Encoding.KlabData.Notification, Encoding.KlabData.Notification.Builder, Encoding.KlabData.NotificationOrBuilder>(
-                  notifications_,
-                  ((bitField0_ & 0x00000008) == 0x00000008),
-                  getParentForChildren(),
-                  isClean());
-          notifications_ = null;
-        }
-        return notificationsBuilder_;
-      }
-
-      private java.util.List<Encoding.KlabData.Object> objects_ =
-        java.util.Collections.emptyList();
-      private void ensureObjectsIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-          objects_ = new java.util.ArrayList<Encoding.KlabData.Object>(objects_);
-          bitField0_ |= 0x00000010;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> objectsBuilder_;
-
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public java.util.List<Encoding.KlabData.Object> getObjectsList() {
-        if (objectsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(objects_);
-        } else {
-          return objectsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public int getObjectsCount() {
-        if (objectsBuilder_ == null) {
-          return objects_.size();
-        } else {
-          return objectsBuilder_.getCount();
-        }
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Encoding.KlabData.Object getObjects(int index) {
-        if (objectsBuilder_ == null) {
-          return objects_.get(index);
-        } else {
-          return objectsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder setObjects(
-          int index, Encoding.KlabData.Object value) {
-        if (objectsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureObjectsIsMutable();
-          objects_.set(index, value);
-          onChanged();
-        } else {
-          objectsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder setObjects(
-          int index, Encoding.KlabData.Object.Builder builderForValue) {
-        if (objectsBuilder_ == null) {
-          ensureObjectsIsMutable();
-          objects_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          objectsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder addObjects(Encoding.KlabData.Object value) {
-        if (objectsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureObjectsIsMutable();
-          objects_.add(value);
-          onChanged();
-        } else {
-          objectsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder addObjects(
-          int index, Encoding.KlabData.Object value) {
-        if (objectsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureObjectsIsMutable();
-          objects_.add(index, value);
-          onChanged();
-        } else {
-          objectsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder addObjects(
-          Encoding.KlabData.Object.Builder builderForValue) {
-        if (objectsBuilder_ == null) {
-          ensureObjectsIsMutable();
-          objects_.add(builderForValue.build());
-          onChanged();
-        } else {
-          objectsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder addObjects(
-          int index, Encoding.KlabData.Object.Builder builderForValue) {
-        if (objectsBuilder_ == null) {
-          ensureObjectsIsMutable();
-          objects_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          objectsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder addAllObjects(
-          java.lang.Iterable<? extends Encoding.KlabData.Object> values) {
-        if (objectsBuilder_ == null) {
-          ensureObjectsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, objects_);
-          onChanged();
-        } else {
-          objectsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder clearObjects() {
-        if (objectsBuilder_ == null) {
-          objects_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
-          onChanged();
-        } else {
-          objectsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Builder removeObjects(int index) {
-        if (objectsBuilder_ == null) {
-          ensureObjectsIsMutable();
-          objects_.remove(index);
-          onChanged();
-        } else {
-          objectsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Encoding.KlabData.Object.Builder getObjectsBuilder(
-          int index) {
-        return getObjectsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
-          int index) {
-        if (objectsBuilder_ == null) {
-          return objects_.get(index);  } else {
-          return objectsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> 
-           getObjectsOrBuilderList() {
-        if (objectsBuilder_ != null) {
-          return objectsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(objects_);
-        }
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Encoding.KlabData.Object.Builder addObjectsBuilder() {
-        return getObjectsFieldBuilder().addBuilder(
-            Encoding.KlabData.Object.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public Encoding.KlabData.Object.Builder addObjectsBuilder(
-          int index) {
-        return getObjectsFieldBuilder().addBuilder(
-            index, Encoding.KlabData.Object.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * these two should be in a oneof , but no joy there.
-       * </pre>
-       *
-       * <code>repeated .KlabData.Object objects = 5;</code>
-       */
-      public java.util.List<Encoding.KlabData.Object.Builder> 
-           getObjectsBuilderList() {
-        return getObjectsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> 
-          getObjectsFieldBuilder() {
-        if (objectsBuilder_ == null) {
-          objectsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder>(
-                  objects_,
-                  ((bitField0_ & 0x00000010) == 0x00000010),
-                  getParentForChildren(),
-                  isClean());
-          objects_ = null;
-        }
-        return objectsBuilder_;
-      }
-
-      private Encoding.KlabData.State state_ = null;
-      private com.google.protobuf.SingleFieldBuilderV3<
-          Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> stateBuilder_;
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public boolean hasState() {
-        return stateBuilder_ != null || state_ != null;
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Encoding.KlabData.State getState() {
-        if (stateBuilder_ == null) {
-          return state_ == null ? Encoding.KlabData.State.getDefaultInstance() : state_;
-        } else {
-          return stateBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Builder setState(Encoding.KlabData.State value) {
-        if (stateBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          state_ = value;
-          onChanged();
-        } else {
-          stateBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Builder setState(
-          Encoding.KlabData.State.Builder builderForValue) {
-        if (stateBuilder_ == null) {
-          state_ = builderForValue.build();
-          onChanged();
-        } else {
-          stateBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Builder mergeState(Encoding.KlabData.State value) {
-        if (stateBuilder_ == null) {
-          if (state_ != null) {
-            state_ =
-              Encoding.KlabData.State.newBuilder(state_).mergeFrom(value).buildPartial();
-          } else {
-            state_ = value;
-          }
-          onChanged();
-        } else {
-          stateBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Builder clearState() {
-        if (stateBuilder_ == null) {
-          state_ = null;
-          onChanged();
-        } else {
-          state_ = null;
-          stateBuilder_ = null;
-        }
-
-        return this;
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Encoding.KlabData.State.Builder getStateBuilder() {
-        
-        onChanged();
-        return getStateFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      public Encoding.KlabData.StateOrBuilder getStateOrBuilder() {
-        if (stateBuilder_ != null) {
-          return stateBuilder_.getMessageOrBuilder();
-        } else {
-          return state_ == null ?
-              Encoding.KlabData.State.getDefaultInstance() : state_;
-        }
-      }
-      /**
-       * <code>.KlabData.State state = 6;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilderV3<
-          Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> 
-          getStateFieldBuilder() {
-        if (stateBuilder_ == null) {
-          stateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder>(
-                  getState(),
-                  getParentForChildren(),
-                  isClean());
-          state_ = null;
-        }
-        return stateBuilder_;
-      }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:KlabData)
-    }
-
-    // @@protoc_insertion_point(class_scope:KlabData)
-    private static final Encoding.KlabData DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new Encoding.KlabData();
-    }
-
-    public static Encoding.KlabData getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<KlabData>
-        PARSER = new com.google.protobuf.AbstractParser<KlabData>() {
-      public KlabData parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new KlabData(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<KlabData> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<KlabData> getParserForType() {
-      return PARSER;
-    }
-
-    public Encoding.KlabData getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_Notification_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_Notification_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_Object_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_Object_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_Object_PropertiesEntry_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_Object_PropertiesEntry_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_LookupTable_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_LookupTable_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_LookupTable_TableEntry_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_LookupTable_TableEntry_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_KlabData_State_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_KlabData_State_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static  com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
-  static {
-    java.lang.String[] descriptorData = {
-      "\n\016Encoding.proto\032\031google/protobuf/any.pr" +
-      "oto\"\266\006\n\010KlabData\022\020\n\010geometry\030\001 \001(\t\022\021\n\tse" +
-      "mantics\030\002 \001(\t\022\017\n\007elapsed\030\003 \001(\003\022-\n\rnotifi" +
-      "cations\030\004 \003(\0132\026.KlabData.Notification\022!\n" +
-      "\007objects\030\005 \003(\0132\020.KlabData.Object\022\036\n\005stat" +
-      "e\030\006 \001(\0132\017.KlabData.State\032B\n\014Notification" +
-      "\022\014\n\004text\030\001 \001(\t\022$\n\010severity\030\002 \001(\0162\022.KlabD" +
-      "ata.Severity\032\331\001\n\006Object\022\014\n\004name\030\001 \001(\t\0224\n" +
-      "\nproperties\030\002 \003(\0132 .KlabData.Object.Prop" +
-      "ertiesEntry\022\037\n\006states\030\003 \003(\0132\017.KlabData.S" +
-      "tate\022!\n\007objects\030\004 \003(\0132\020.KlabData.Object\032" +
-      "G\n\017PropertiesEntry\022\013\n\003key\030\001 \001(\t\022#\n\005value" +
-      "\030\002 \001(\0132\024.google.protobuf.Any:\0028\001\032l\n\013Look" +
-      "upTable\022/\n\005table\030\001 \003(\0132 .KlabData.Lookup" +
-      "Table.TableEntry\032,\n\nTableEntry\022\013\n\003key\030\001 " +
-      "\001(\021\022\r\n\005value\030\002 \001(\t:\0028\001\032\272\001\n\005State\022\014\n\004name" +
-      "\030\001 \001(\t\022\021\n\tsemantics\030\002 \001(\t\022\022\n\ndoubledata\030" +
-      "\003 \003(\001\022\021\n\ttabledata\030\004 \003(\021\022\017\n\007intdata\030\005 \003(" +
-      "\022\022\023\n\013booleandata\030\006 \003(\010\022$\n\005table\030\007 \001(\0132\025." +
-      "KlabData.LookupTable\022\035\n\025externalDatasour" +
-      "ceUrl\030\010 \001(\t\"7\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007WAR" +
-      "NING\020\001\022\t\n\005ERROR\020\002\022\t\n\005DEBUG\020\003b\006proto3"
-    };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.google.protobuf.AnyProto.getDescriptor(),
-        }, assigner);
-    internal_static_KlabData_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_KlabData_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_descriptor,
-        new java.lang.String[] { "Geometry", "Semantics", "Elapsed", "Notifications", "Objects", "State", });
-    internal_static_KlabData_Notification_descriptor =
-      internal_static_KlabData_descriptor.getNestedTypes().get(0);
-    internal_static_KlabData_Notification_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_Notification_descriptor,
-        new java.lang.String[] { "Text", "Severity", });
-    internal_static_KlabData_Object_descriptor =
-      internal_static_KlabData_descriptor.getNestedTypes().get(1);
-    internal_static_KlabData_Object_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_Object_descriptor,
-        new java.lang.String[] { "Name", "Properties", "States", "Objects", });
-    internal_static_KlabData_Object_PropertiesEntry_descriptor =
-      internal_static_KlabData_Object_descriptor.getNestedTypes().get(0);
-    internal_static_KlabData_Object_PropertiesEntry_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_Object_PropertiesEntry_descriptor,
-        new java.lang.String[] { "Key", "Value", });
-    internal_static_KlabData_LookupTable_descriptor =
-      internal_static_KlabData_descriptor.getNestedTypes().get(2);
-    internal_static_KlabData_LookupTable_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_LookupTable_descriptor,
-        new java.lang.String[] { "Table", });
-    internal_static_KlabData_LookupTable_TableEntry_descriptor =
-      internal_static_KlabData_LookupTable_descriptor.getNestedTypes().get(0);
-    internal_static_KlabData_LookupTable_TableEntry_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_LookupTable_TableEntry_descriptor,
-        new java.lang.String[] { "Key", "Value", });
-    internal_static_KlabData_State_descriptor =
-      internal_static_KlabData_descriptor.getNestedTypes().get(3);
-    internal_static_KlabData_State_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_KlabData_State_descriptor,
-        new java.lang.String[] { "Name", "Semantics", "Doubledata", "Tabledata", "Intdata", "Booleandata", "Table", "ExternalDatasourceUrl", });
-    com.google.protobuf.AnyProto.getDescriptor();
-  }
-
-  // @@protoc_insertion_point(outer_class_scope)
+	private Encoding() {
+	}
+
+	public static void registerAllExtensions(com.google.protobuf.ExtensionRegistryLite registry) {
+	}
+
+	public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
+		registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
+	}
+
+	public interface KlabDataOrBuilder extends
+			// @@protoc_insertion_point(interface_extends:KlabData)
+			com.google.protobuf.MessageOrBuilder {
+
+		/**
+		 * <code>string geometry = 1;</code>
+		 */
+		java.lang.String getGeometry();
+
+		/**
+		 * <code>string geometry = 1;</code>
+		 */
+		com.google.protobuf.ByteString getGeometryBytes();
+
+		/**
+		 * <code>string semantics = 2;</code>
+		 */
+		java.lang.String getSemantics();
+
+		/**
+		 * <code>string semantics = 2;</code>
+		 */
+		com.google.protobuf.ByteString getSemanticsBytes();
+
+		/**
+		 * <code>int64 elapsed = 3;</code>
+		 */
+		long getElapsed();
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		java.util.List<Encoding.KlabData.Notification> getNotificationsList();
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		Encoding.KlabData.Notification getNotifications(int index);
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		int getNotificationsCount();
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		java.util.List<? extends Encoding.KlabData.NotificationOrBuilder> getNotificationsOrBuilderList();
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(int index);
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		java.util.List<Encoding.KlabData.Object> getObjectsList();
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		Encoding.KlabData.Object getObjects(int index);
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		int getObjectsCount();
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> getObjectsOrBuilderList();
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(int index);
+
+		/**
+		 * <code>.KlabData.State state = 6;</code>
+		 */
+		boolean hasState();
+
+		/**
+		 * <code>.KlabData.State state = 6;</code>
+		 */
+		Encoding.KlabData.State getState();
+
+		/**
+		 * <code>.KlabData.State state = 6;</code>
+		 */
+		Encoding.KlabData.StateOrBuilder getStateOrBuilder();
+	}
+
+	/**
+	 * <pre>
+	 **
+	 * The data response to a URN get() request. Will contain a state or one or more objects,
+	 * with the correspondent geometry for validation and optional semantics.
+	 * </pre>
+	 *
+	 * Protobuf type {@code KlabData}
+	 */
+	public static final class KlabData extends com.google.protobuf.GeneratedMessageV3 implements
+			// @@protoc_insertion_point(message_implements:KlabData)
+			KlabDataOrBuilder, IKlabData {
+		private static final long serialVersionUID = 0L;
+
+		// Use KlabData.newBuilder() to construct.
+		private KlabData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+			super(builder);
+		}
+
+		private KlabData() {
+			geometry_ = "";
+			semantics_ = "";
+			elapsed_ = 0L;
+			notifications_ = java.util.Collections.emptyList();
+			objects_ = java.util.Collections.emptyList();
+		}
+
+		@java.lang.Override
+		public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+			return this.unknownFields;
+		}
+
+		private KlabData(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			this();
+			if (extensionRegistry == null) {
+				throw new java.lang.NullPointerException();
+			}
+			int mutable_bitField0_ = 0;
+			com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+					.newBuilder();
+			try {
+				boolean done = false;
+				while (!done) {
+					int tag = input.readTag();
+					switch (tag) {
+					case 0:
+						done = true;
+						break;
+					default: {
+						if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
+							done = true;
+						}
+						break;
+					}
+					case 10: {
+						java.lang.String s = input.readStringRequireUtf8();
+
+						geometry_ = s;
+						break;
+					}
+					case 18: {
+						java.lang.String s = input.readStringRequireUtf8();
+
+						semantics_ = s;
+						break;
+					}
+					case 24: {
+
+						elapsed_ = input.readInt64();
+						break;
+					}
+					case 34: {
+						if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+							notifications_ = new java.util.ArrayList<Encoding.KlabData.Notification>();
+							mutable_bitField0_ |= 0x00000008;
+						}
+						notifications_
+								.add(input.readMessage(Encoding.KlabData.Notification.parser(), extensionRegistry));
+						break;
+					}
+					case 42: {
+						if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+							objects_ = new java.util.ArrayList<Encoding.KlabData.Object>();
+							mutable_bitField0_ |= 0x00000010;
+						}
+						objects_.add(input.readMessage(Encoding.KlabData.Object.parser(), extensionRegistry));
+						break;
+					}
+					case 50: {
+						Encoding.KlabData.State.Builder subBuilder = null;
+						if (state_ != null) {
+							subBuilder = state_.toBuilder();
+						}
+						state_ = input.readMessage(Encoding.KlabData.State.parser(), extensionRegistry);
+						if (subBuilder != null) {
+							subBuilder.mergeFrom(state_);
+							state_ = subBuilder.buildPartial();
+						}
+
+						break;
+					}
+					}
+				}
+			} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+				throw e.setUnfinishedMessage(this);
+			} catch (java.io.IOException e) {
+				throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+			} finally {
+				if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+					notifications_ = java.util.Collections.unmodifiableList(notifications_);
+				}
+				if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+					objects_ = java.util.Collections.unmodifiableList(objects_);
+				}
+				this.unknownFields = unknownFields.build();
+				makeExtensionsImmutable();
+			}
+		}
+
+		public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+			return Encoding.internal_static_KlabData_descriptor;
+		}
+
+		protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+			return Encoding.internal_static_KlabData_fieldAccessorTable
+					.ensureFieldAccessorsInitialized(Encoding.KlabData.class, Encoding.KlabData.Builder.class);
+		}
+
+		/**
+		 * Protobuf enum {@code KlabData.Severity}
+		 */
+		public enum Severity implements com.google.protobuf.ProtocolMessageEnum {
+			/**
+			 * <code>INFO = 0;</code>
+			 */
+			INFO(0),
+			/**
+			 * <code>WARNING = 1;</code>
+			 */
+			WARNING(1),
+			/**
+			 * <code>ERROR = 2;</code>
+			 */
+			ERROR(2),
+			/**
+			 * <code>DEBUG = 3;</code>
+			 */
+			DEBUG(3), UNRECOGNIZED(-1),;
+
+			/**
+			 * <code>INFO = 0;</code>
+			 */
+			public static final int INFO_VALUE = 0;
+			/**
+			 * <code>WARNING = 1;</code>
+			 */
+			public static final int WARNING_VALUE = 1;
+			/**
+			 * <code>ERROR = 2;</code>
+			 */
+			public static final int ERROR_VALUE = 2;
+			/**
+			 * <code>DEBUG = 3;</code>
+			 */
+			public static final int DEBUG_VALUE = 3;
+
+			public final int getNumber() {
+				if (this == UNRECOGNIZED) {
+					throw new java.lang.IllegalArgumentException("Can't get the number of an unknown enum value.");
+				}
+				return value;
+			}
+
+			/**
+			 * @deprecated Use {@link #forNumber(int)} instead.
+			 */
+			@java.lang.Deprecated
+			public static Severity valueOf(int value) {
+				return forNumber(value);
+			}
+
+			public static Severity forNumber(int value) {
+				switch (value) {
+				case 0:
+					return INFO;
+				case 1:
+					return WARNING;
+				case 2:
+					return ERROR;
+				case 3:
+					return DEBUG;
+				default:
+					return null;
+				}
+			}
+
+			public static com.google.protobuf.Internal.EnumLiteMap<Severity> internalGetValueMap() {
+				return internalValueMap;
+			}
+
+			private static final com.google.protobuf.Internal.EnumLiteMap<Severity> internalValueMap = new com.google.protobuf.Internal.EnumLiteMap<Severity>() {
+				public Severity findValueByNumber(int number) {
+					return Severity.forNumber(number);
+				}
+			};
+
+			public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+				return getDescriptor().getValues().get(ordinal());
+			}
+
+			public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+				return getDescriptor();
+			}
+
+			public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+				return Encoding.KlabData.getDescriptor().getEnumTypes().get(0);
+			}
+
+			private static final Severity[] VALUES = values();
+
+			public static Severity valueOf(com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+				if (desc.getType() != getDescriptor()) {
+					throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+				}
+				if (desc.getIndex() == -1) {
+					return UNRECOGNIZED;
+				}
+				return VALUES[desc.getIndex()];
+			}
+
+			private final int value;
+
+			private Severity(int value) {
+				this.value = value;
+			}
+
+			// @@protoc_insertion_point(enum_scope:KlabData.Severity)
+		}
+
+		public interface NotificationOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:KlabData.Notification)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>string text = 1;</code>
+			 */
+			java.lang.String getText();
+
+			/**
+			 * <code>string text = 1;</code>
+			 */
+			com.google.protobuf.ByteString getTextBytes();
+
+			/**
+			 * <code>.KlabData.Severity severity = 2;</code>
+			 */
+			int getSeverityValue();
+
+			/**
+			 * <code>.KlabData.Severity severity = 2;</code>
+			 */
+			Encoding.KlabData.Severity getSeverity();
+		}
+
+		/**
+		 * Protobuf type {@code KlabData.Notification}
+		 */
+		public static final class Notification extends com.google.protobuf.GeneratedMessageV3 implements
+				// @@protoc_insertion_point(message_implements:KlabData.Notification)
+				NotificationOrBuilder {
+			private static final long serialVersionUID = 0L;
+
+			// Use Notification.newBuilder() to construct.
+			private Notification(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+				super(builder);
+			}
+
+			private Notification() {
+				text_ = "";
+				severity_ = 0;
+			}
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return this.unknownFields;
+			}
+
+			private Notification(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				this();
+				if (extensionRegistry == null) {
+					throw new java.lang.NullPointerException();
+				}
+				int mutable_bitField0_ = 0;
+				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							java.lang.String s = input.readStringRequireUtf8();
+
+							text_ = s;
+							break;
+						}
+						case 16: {
+							int rawValue = input.readEnum();
+
+							severity_ = rawValue;
+							break;
+						}
+						}
+					}
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+				} finally {
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return Encoding.internal_static_KlabData_Notification_descriptor;
+			}
+
+			protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+				return Encoding.internal_static_KlabData_Notification_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(Encoding.KlabData.Notification.class,
+								Encoding.KlabData.Notification.Builder.class);
+			}
+
+			public static final int TEXT_FIELD_NUMBER = 1;
+			private volatile java.lang.Object text_;
+
+			/**
+			 * <code>string text = 1;</code>
+			 */
+			public java.lang.String getText() {
+				java.lang.Object ref = text_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					text_ = s;
+					return s;
+				}
+			}
+
+			/**
+			 * <code>string text = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getTextBytes() {
+				java.lang.Object ref = text_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					text_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int SEVERITY_FIELD_NUMBER = 2;
+			private int severity_;
+
+			/**
+			 * <code>.KlabData.Severity severity = 2;</code>
+			 */
+			public int getSeverityValue() {
+				return severity_;
+			}
+
+			/**
+			 * <code>.KlabData.Severity severity = 2;</code>
+			 */
+			public Encoding.KlabData.Severity getSeverity() {
+				Encoding.KlabData.Severity result = Encoding.KlabData.Severity.valueOf(severity_);
+				return result == null ? Encoding.KlabData.Severity.UNRECOGNIZED : result;
+			}
+
+			private byte memoizedIsInitialized = -1;
+
+			public final boolean isInitialized() {
+				byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				if (!getTextBytes().isEmpty()) {
+					com.google.protobuf.GeneratedMessageV3.writeString(output, 1, text_);
+				}
+				if (severity_ != Encoding.KlabData.Severity.INFO.getNumber()) {
+					output.writeEnum(2, severity_);
+				}
+				unknownFields.writeTo(output);
+			}
+
+			public int getSerializedSize() {
+				int size = memoizedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				if (!getTextBytes().isEmpty()) {
+					size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, text_);
+				}
+				if (severity_ != Encoding.KlabData.Severity.INFO.getNumber()) {
+					size += com.google.protobuf.CodedOutputStream.computeEnumSize(2, severity_);
+				}
+				size += unknownFields.getSerializedSize();
+				memoizedSize = size;
+				return size;
+			}
+
+			@java.lang.Override
+			public boolean equals(final java.lang.Object obj) {
+				if (obj == this) {
+					return true;
+				}
+				if (!(obj instanceof Encoding.KlabData.Notification)) {
+					return super.equals(obj);
+				}
+				Encoding.KlabData.Notification other = (Encoding.KlabData.Notification) obj;
+
+				boolean result = true;
+				result = result && getText().equals(other.getText());
+				result = result && severity_ == other.severity_;
+				result = result && unknownFields.equals(other.unknownFields);
+				return result;
+			}
+
+			@java.lang.Override
+			public int hashCode() {
+				if (memoizedHashCode != 0) {
+					return memoizedHashCode;
+				}
+				int hash = 41;
+				hash = (19 * hash) + getDescriptor().hashCode();
+				hash = (37 * hash) + TEXT_FIELD_NUMBER;
+				hash = (53 * hash) + getText().hashCode();
+				hash = (37 * hash) + SEVERITY_FIELD_NUMBER;
+				hash = (53 * hash) + severity_;
+				hash = (29 * hash) + unknownFields.hashCode();
+				memoizedHashCode = hash;
+				return hash;
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(java.nio.ByteBuffer data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(java.nio.ByteBuffer data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(com.google.protobuf.ByteString data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(com.google.protobuf.ByteString data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Notification parseDelimitedFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.Notification parseDelimitedFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input,
+						extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(com.google.protobuf.CodedInputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.Notification parseFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			public static Builder newBuilder() {
+				return DEFAULT_INSTANCE.toBuilder();
+			}
+
+			public static Builder newBuilder(Encoding.KlabData.Notification prototype) {
+				return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+			}
+
+			public Builder toBuilder() {
+				return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+				Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			/**
+			 * Protobuf type {@code KlabData.Notification}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+					// @@protoc_insertion_point(builder_implements:KlabData.Notification)
+					Encoding.KlabData.NotificationOrBuilder {
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return Encoding.internal_static_KlabData_Notification_descriptor;
+				}
+
+				protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+					return Encoding.internal_static_KlabData_Notification_fieldAccessorTable
+							.ensureFieldAccessorsInitialized(Encoding.KlabData.Notification.class,
+									Encoding.KlabData.Notification.Builder.class);
+				}
+
+				// Construct using Encoding.KlabData.Notification.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+					}
+				}
+
+				public Builder clear() {
+					super.clear();
+					text_ = "";
+
+					severity_ = 0;
+
+					return this;
+				}
+
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return Encoding.internal_static_KlabData_Notification_descriptor;
+				}
+
+				public Encoding.KlabData.Notification getDefaultInstanceForType() {
+					return Encoding.KlabData.Notification.getDefaultInstance();
+				}
+
+				public Encoding.KlabData.Notification build() {
+					Encoding.KlabData.Notification result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				public Encoding.KlabData.Notification buildPartial() {
+					Encoding.KlabData.Notification result = new Encoding.KlabData.Notification(this);
+					result.text_ = text_;
+					result.severity_ = severity_;
+					onBuilt();
+					return result;
+				}
+
+				public Builder clone() {
+					return (Builder) super.clone();
+				}
+
+				public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+					return (Builder) super.setField(field, value);
+				}
+
+				public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+					return (Builder) super.clearField(field);
+				}
+
+				public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+					return (Builder) super.clearOneof(oneof);
+				}
+
+				public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
+						java.lang.Object value) {
+					return (Builder) super.setRepeatedField(field, index, value);
+				}
+
+				public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field,
+						java.lang.Object value) {
+					return (Builder) super.addRepeatedField(field, value);
+				}
+
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof Encoding.KlabData.Notification) {
+						return mergeFrom((Encoding.KlabData.Notification) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(Encoding.KlabData.Notification other) {
+					if (other == Encoding.KlabData.Notification.getDefaultInstance())
+						return this;
+					if (!other.getText().isEmpty()) {
+						text_ = other.text_;
+						onChanged();
+					}
+					if (other.severity_ != 0) {
+						setSeverityValue(other.getSeverityValue());
+					}
+					this.mergeUnknownFields(other.unknownFields);
+					onChanged();
+					return this;
+				}
+
+				public final boolean isInitialized() {
+					return true;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					Encoding.KlabData.Notification parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (Encoding.KlabData.Notification) e.getUnfinishedMessage();
+						throw e.unwrapIOException();
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				private java.lang.Object text_ = "";
+
+				/**
+				 * <code>string text = 1;</code>
+				 */
+				public java.lang.String getText() {
+					java.lang.Object ref = text_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						text_ = s;
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>string text = 1;</code>
+				 */
+				public com.google.protobuf.ByteString getTextBytes() {
+					java.lang.Object ref = text_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						text_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>string text = 1;</code>
+				 */
+				public Builder setText(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+
+					text_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string text = 1;</code>
+				 */
+				public Builder clearText() {
+
+					text_ = getDefaultInstance().getText();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string text = 1;</code>
+				 */
+				public Builder setTextBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					checkByteStringIsUtf8(value);
+
+					text_ = value;
+					onChanged();
+					return this;
+				}
+
+				private int severity_ = 0;
+
+				/**
+				 * <code>.KlabData.Severity severity = 2;</code>
+				 */
+				public int getSeverityValue() {
+					return severity_;
+				}
+
+				/**
+				 * <code>.KlabData.Severity severity = 2;</code>
+				 */
+				public Builder setSeverityValue(int value) {
+					severity_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>.KlabData.Severity severity = 2;</code>
+				 */
+				public Encoding.KlabData.Severity getSeverity() {
+					Encoding.KlabData.Severity result = Encoding.KlabData.Severity.valueOf(severity_);
+					return result == null ? Encoding.KlabData.Severity.UNRECOGNIZED : result;
+				}
+
+				/**
+				 * <code>.KlabData.Severity severity = 2;</code>
+				 */
+				public Builder setSeverity(Encoding.KlabData.Severity value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+
+					severity_ = value.getNumber();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>.KlabData.Severity severity = 2;</code>
+				 */
+				public Builder clearSeverity() {
+
+					severity_ = 0;
+					onChanged();
+					return this;
+				}
+
+				public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.setUnknownFieldsProto3(unknownFields);
+				}
+
+				public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.mergeUnknownFields(unknownFields);
+				}
+
+				// @@protoc_insertion_point(builder_scope:KlabData.Notification)
+			}
+
+			// @@protoc_insertion_point(class_scope:KlabData.Notification)
+			private static final Encoding.KlabData.Notification DEFAULT_INSTANCE;
+			static {
+				DEFAULT_INSTANCE = new Encoding.KlabData.Notification();
+			}
+
+			public static Encoding.KlabData.Notification getDefaultInstance() {
+				return DEFAULT_INSTANCE;
+			}
+
+			private static final com.google.protobuf.Parser<Notification> PARSER = new com.google.protobuf.AbstractParser<Notification>() {
+				public Notification parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+					return new Notification(input, extensionRegistry);
+				}
+			};
+
+			public static com.google.protobuf.Parser<Notification> parser() {
+				return PARSER;
+			}
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<Notification> getParserForType() {
+				return PARSER;
+			}
+
+			public Encoding.KlabData.Notification getDefaultInstanceForType() {
+				return DEFAULT_INSTANCE;
+			}
+
+		}
+
+		public interface ObjectOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:KlabData.Object)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			java.lang.String getName();
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			com.google.protobuf.ByteString getNameBytes();
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+			int getPropertiesCount();
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+			boolean containsProperties(java.lang.String key);
+
+			/**
+			 * Use {@link #getPropertiesMap()} instead.
+			 */
+			@java.lang.Deprecated
+			java.util.Map<java.lang.String, com.google.protobuf.Any> getProperties();
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+			java.util.Map<java.lang.String, com.google.protobuf.Any> getPropertiesMap();
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+
+			com.google.protobuf.Any getPropertiesOrDefault(java.lang.String key, com.google.protobuf.Any defaultValue);
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+
+			com.google.protobuf.Any getPropertiesOrThrow(java.lang.String key);
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			java.util.List<Encoding.KlabData.State> getStatesList();
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			Encoding.KlabData.State getStates(int index);
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			int getStatesCount();
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			java.util.List<? extends Encoding.KlabData.StateOrBuilder> getStatesOrBuilderList();
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			Encoding.KlabData.StateOrBuilder getStatesOrBuilder(int index);
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			java.util.List<Encoding.KlabData.Object> getObjectsList();
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			Encoding.KlabData.Object getObjects(int index);
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			int getObjectsCount();
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> getObjectsOrBuilderList();
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(int index);
+		}
+
+		/**
+		 * Protobuf type {@code KlabData.Object}
+		 */
+		public static final class Object extends com.google.protobuf.GeneratedMessageV3 implements
+				// @@protoc_insertion_point(message_implements:KlabData.Object)
+				ObjectOrBuilder {
+			private static final long serialVersionUID = 0L;
+
+			// Use Object.newBuilder() to construct.
+			private Object(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+				super(builder);
+			}
+
+			private Object() {
+				name_ = "";
+				states_ = java.util.Collections.emptyList();
+				objects_ = java.util.Collections.emptyList();
+			}
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return this.unknownFields;
+			}
+
+			private Object(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				this();
+				if (extensionRegistry == null) {
+					throw new java.lang.NullPointerException();
+				}
+				int mutable_bitField0_ = 0;
+				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							java.lang.String s = input.readStringRequireUtf8();
+
+							name_ = s;
+							break;
+						}
+						case 18: {
+							if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+								properties_ = com.google.protobuf.MapField
+										.newMapField(PropertiesDefaultEntryHolder.defaultEntry);
+								mutable_bitField0_ |= 0x00000002;
+							}
+							com.google.protobuf.MapEntry<java.lang.String, com.google.protobuf.Any> properties__ = input
+									.readMessage(PropertiesDefaultEntryHolder.defaultEntry.getParserForType(),
+											extensionRegistry);
+							properties_.getMutableMap().put(properties__.getKey(), properties__.getValue());
+							break;
+						}
+						case 26: {
+							if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+								states_ = new java.util.ArrayList<Encoding.KlabData.State>();
+								mutable_bitField0_ |= 0x00000004;
+							}
+							states_.add(input.readMessage(Encoding.KlabData.State.parser(), extensionRegistry));
+							break;
+						}
+						case 34: {
+							if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+								objects_ = new java.util.ArrayList<Encoding.KlabData.Object>();
+								mutable_bitField0_ |= 0x00000008;
+							}
+							objects_.add(input.readMessage(Encoding.KlabData.Object.parser(), extensionRegistry));
+							break;
+						}
+						}
+					}
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+				} finally {
+					if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+						states_ = java.util.Collections.unmodifiableList(states_);
+					}
+					if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+						objects_ = java.util.Collections.unmodifiableList(objects_);
+					}
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return Encoding.internal_static_KlabData_Object_descriptor;
+			}
+
+			@SuppressWarnings({ "rawtypes" })
+			protected com.google.protobuf.MapField internalGetMapField(int number) {
+				switch (number) {
+				case 2:
+					return internalGetProperties();
+				default:
+					throw new RuntimeException("Invalid map field number: " + number);
+				}
+			}
+
+			protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+				return Encoding.internal_static_KlabData_Object_fieldAccessorTable.ensureFieldAccessorsInitialized(
+						Encoding.KlabData.Object.class, Encoding.KlabData.Object.Builder.class);
+			}
+
+			private int bitField0_;
+			public static final int NAME_FIELD_NUMBER = 1;
+			private volatile java.lang.Object name_;
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			public java.lang.String getName() {
+				java.lang.Object ref = name_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					name_ = s;
+					return s;
+				}
+			}
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getNameBytes() {
+				java.lang.Object ref = name_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					name_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int PROPERTIES_FIELD_NUMBER = 2;
+
+			private static final class PropertiesDefaultEntryHolder {
+				static final com.google.protobuf.MapEntry<java.lang.String, com.google.protobuf.Any> defaultEntry = com.google.protobuf.MapEntry.<java.lang.String, com.google.protobuf.Any>newDefaultInstance(
+						Encoding.internal_static_KlabData_Object_PropertiesEntry_descriptor,
+						com.google.protobuf.WireFormat.FieldType.STRING, "",
+						com.google.protobuf.WireFormat.FieldType.MESSAGE, com.google.protobuf.Any.getDefaultInstance());
+			}
+
+			private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any> properties_;
+
+			private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any> internalGetProperties() {
+				if (properties_ == null) {
+					return com.google.protobuf.MapField.emptyMapField(PropertiesDefaultEntryHolder.defaultEntry);
+				}
+				return properties_;
+			}
+
+			public int getPropertiesCount() {
+				return internalGetProperties().getMap().size();
+			}
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+
+			public boolean containsProperties(java.lang.String key) {
+				if (key == null) {
+					throw new java.lang.NullPointerException();
+				}
+				return internalGetProperties().getMap().containsKey(key);
+			}
+
+			/**
+			 * Use {@link #getPropertiesMap()} instead.
+			 */
+			@java.lang.Deprecated
+			public java.util.Map<java.lang.String, com.google.protobuf.Any> getProperties() {
+				return getPropertiesMap();
+			}
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+
+			public java.util.Map<java.lang.String, com.google.protobuf.Any> getPropertiesMap() {
+				return internalGetProperties().getMap();
+			}
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+
+			public com.google.protobuf.Any getPropertiesOrDefault(java.lang.String key,
+					com.google.protobuf.Any defaultValue) {
+				if (key == null) {
+					throw new java.lang.NullPointerException();
+				}
+				java.util.Map<java.lang.String, com.google.protobuf.Any> map = internalGetProperties().getMap();
+				return map.containsKey(key) ? map.get(key) : defaultValue;
+			}
+
+			/**
+			 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+			 */
+
+			public com.google.protobuf.Any getPropertiesOrThrow(java.lang.String key) {
+				if (key == null) {
+					throw new java.lang.NullPointerException();
+				}
+				java.util.Map<java.lang.String, com.google.protobuf.Any> map = internalGetProperties().getMap();
+				if (!map.containsKey(key)) {
+					throw new java.lang.IllegalArgumentException();
+				}
+				return map.get(key);
+			}
+
+			public static final int STATES_FIELD_NUMBER = 3;
+			private java.util.List<Encoding.KlabData.State> states_;
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			public java.util.List<Encoding.KlabData.State> getStatesList() {
+				return states_;
+			}
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			public java.util.List<? extends Encoding.KlabData.StateOrBuilder> getStatesOrBuilderList() {
+				return states_;
+			}
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			public int getStatesCount() {
+				return states_.size();
+			}
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			public Encoding.KlabData.State getStates(int index) {
+				return states_.get(index);
+			}
+
+			/**
+			 * <code>repeated .KlabData.State states = 3;</code>
+			 */
+			public Encoding.KlabData.StateOrBuilder getStatesOrBuilder(int index) {
+				return states_.get(index);
+			}
+
+			public static final int OBJECTS_FIELD_NUMBER = 4;
+			private java.util.List<Encoding.KlabData.Object> objects_;
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			public java.util.List<Encoding.KlabData.Object> getObjectsList() {
+				return objects_;
+			}
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> getObjectsOrBuilderList() {
+				return objects_;
+			}
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			public int getObjectsCount() {
+				return objects_.size();
+			}
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			public Encoding.KlabData.Object getObjects(int index) {
+				return objects_.get(index);
+			}
+
+			/**
+			 * <code>repeated .KlabData.Object objects = 4;</code>
+			 */
+			public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(int index) {
+				return objects_.get(index);
+			}
+
+			private byte memoizedIsInitialized = -1;
+
+			public final boolean isInitialized() {
+				byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				if (!getNameBytes().isEmpty()) {
+					com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+				}
+				com.google.protobuf.GeneratedMessageV3.serializeStringMapTo(output, internalGetProperties(),
+						PropertiesDefaultEntryHolder.defaultEntry, 2);
+				for (int i = 0; i < states_.size(); i++) {
+					output.writeMessage(3, states_.get(i));
+				}
+				for (int i = 0; i < objects_.size(); i++) {
+					output.writeMessage(4, objects_.get(i));
+				}
+				unknownFields.writeTo(output);
+			}
+
+			public int getSerializedSize() {
+				int size = memoizedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				if (!getNameBytes().isEmpty()) {
+					size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+				}
+				for (java.util.Map.Entry<java.lang.String, com.google.protobuf.Any> entry : internalGetProperties()
+						.getMap().entrySet()) {
+					com.google.protobuf.MapEntry<java.lang.String, com.google.protobuf.Any> properties__ = PropertiesDefaultEntryHolder.defaultEntry
+							.newBuilderForType().setKey(entry.getKey()).setValue(entry.getValue()).build();
+					size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, properties__);
+				}
+				for (int i = 0; i < states_.size(); i++) {
+					size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, states_.get(i));
+				}
+				for (int i = 0; i < objects_.size(); i++) {
+					size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, objects_.get(i));
+				}
+				size += unknownFields.getSerializedSize();
+				memoizedSize = size;
+				return size;
+			}
+
+			@java.lang.Override
+			public boolean equals(final java.lang.Object obj) {
+				if (obj == this) {
+					return true;
+				}
+				if (!(obj instanceof Encoding.KlabData.Object)) {
+					return super.equals(obj);
+				}
+				Encoding.KlabData.Object other = (Encoding.KlabData.Object) obj;
+
+				boolean result = true;
+				result = result && getName().equals(other.getName());
+				result = result && internalGetProperties().equals(other.internalGetProperties());
+				result = result && getStatesList().equals(other.getStatesList());
+				result = result && getObjectsList().equals(other.getObjectsList());
+				result = result && unknownFields.equals(other.unknownFields);
+				return result;
+			}
+
+			@java.lang.Override
+			public int hashCode() {
+				if (memoizedHashCode != 0) {
+					return memoizedHashCode;
+				}
+				int hash = 41;
+				hash = (19 * hash) + getDescriptor().hashCode();
+				hash = (37 * hash) + NAME_FIELD_NUMBER;
+				hash = (53 * hash) + getName().hashCode();
+				if (!internalGetProperties().getMap().isEmpty()) {
+					hash = (37 * hash) + PROPERTIES_FIELD_NUMBER;
+					hash = (53 * hash) + internalGetProperties().hashCode();
+				}
+				if (getStatesCount() > 0) {
+					hash = (37 * hash) + STATES_FIELD_NUMBER;
+					hash = (53 * hash) + getStatesList().hashCode();
+				}
+				if (getObjectsCount() > 0) {
+					hash = (37 * hash) + OBJECTS_FIELD_NUMBER;
+					hash = (53 * hash) + getObjectsList().hashCode();
+				}
+				hash = (29 * hash) + unknownFields.hashCode();
+				memoizedHashCode = hash;
+				return hash;
+			}
+
+			public static Encoding.KlabData.Object parseFrom(java.nio.ByteBuffer data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(java.nio.ByteBuffer data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(com.google.protobuf.ByteString data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(com.google.protobuf.ByteString data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(java.io.InputStream input) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Object parseDelimitedFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.Object parseDelimitedFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input,
+						extensionRegistry);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(com.google.protobuf.CodedInputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.Object parseFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			public static Builder newBuilder() {
+				return DEFAULT_INSTANCE.toBuilder();
+			}
+
+			public static Builder newBuilder(Encoding.KlabData.Object prototype) {
+				return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+			}
+
+			public Builder toBuilder() {
+				return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+				Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			/**
+			 * Protobuf type {@code KlabData.Object}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+					// @@protoc_insertion_point(builder_implements:KlabData.Object)
+					Encoding.KlabData.ObjectOrBuilder {
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return Encoding.internal_static_KlabData_Object_descriptor;
+				}
+
+				@SuppressWarnings({ "rawtypes" })
+				protected com.google.protobuf.MapField internalGetMapField(int number) {
+					switch (number) {
+					case 2:
+						return internalGetProperties();
+					default:
+						throw new RuntimeException("Invalid map field number: " + number);
+					}
+				}
+
+				@SuppressWarnings({ "rawtypes" })
+				protected com.google.protobuf.MapField internalGetMutableMapField(int number) {
+					switch (number) {
+					case 2:
+						return internalGetMutableProperties();
+					default:
+						throw new RuntimeException("Invalid map field number: " + number);
+					}
+				}
+
+				protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+					return Encoding.internal_static_KlabData_Object_fieldAccessorTable.ensureFieldAccessorsInitialized(
+							Encoding.KlabData.Object.class, Encoding.KlabData.Object.Builder.class);
+				}
+
+				// Construct using Encoding.KlabData.Object.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+						getStatesFieldBuilder();
+						getObjectsFieldBuilder();
+					}
+				}
+
+				public Builder clear() {
+					super.clear();
+					name_ = "";
+
+					internalGetMutableProperties().clear();
+					if (statesBuilder_ == null) {
+						states_ = java.util.Collections.emptyList();
+						bitField0_ = (bitField0_ & ~0x00000004);
+					} else {
+						statesBuilder_.clear();
+					}
+					if (objectsBuilder_ == null) {
+						objects_ = java.util.Collections.emptyList();
+						bitField0_ = (bitField0_ & ~0x00000008);
+					} else {
+						objectsBuilder_.clear();
+					}
+					return this;
+				}
+
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return Encoding.internal_static_KlabData_Object_descriptor;
+				}
+
+				public Encoding.KlabData.Object getDefaultInstanceForType() {
+					return Encoding.KlabData.Object.getDefaultInstance();
+				}
+
+				public Encoding.KlabData.Object build() {
+					Encoding.KlabData.Object result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				public Encoding.KlabData.Object buildPartial() {
+					Encoding.KlabData.Object result = new Encoding.KlabData.Object(this);
+					int from_bitField0_ = bitField0_;
+					int to_bitField0_ = 0;
+					result.name_ = name_;
+					result.properties_ = internalGetProperties();
+					result.properties_.makeImmutable();
+					if (statesBuilder_ == null) {
+						if (((bitField0_ & 0x00000004) == 0x00000004)) {
+							states_ = java.util.Collections.unmodifiableList(states_);
+							bitField0_ = (bitField0_ & ~0x00000004);
+						}
+						result.states_ = states_;
+					} else {
+						result.states_ = statesBuilder_.build();
+					}
+					if (objectsBuilder_ == null) {
+						if (((bitField0_ & 0x00000008) == 0x00000008)) {
+							objects_ = java.util.Collections.unmodifiableList(objects_);
+							bitField0_ = (bitField0_ & ~0x00000008);
+						}
+						result.objects_ = objects_;
+					} else {
+						result.objects_ = objectsBuilder_.build();
+					}
+					result.bitField0_ = to_bitField0_;
+					onBuilt();
+					return result;
+				}
+
+				public Builder clone() {
+					return (Builder) super.clone();
+				}
+
+				public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+					return (Builder) super.setField(field, value);
+				}
+
+				public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+					return (Builder) super.clearField(field);
+				}
+
+				public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+					return (Builder) super.clearOneof(oneof);
+				}
+
+				public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
+						java.lang.Object value) {
+					return (Builder) super.setRepeatedField(field, index, value);
+				}
+
+				public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field,
+						java.lang.Object value) {
+					return (Builder) super.addRepeatedField(field, value);
+				}
+
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof Encoding.KlabData.Object) {
+						return mergeFrom((Encoding.KlabData.Object) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(Encoding.KlabData.Object other) {
+					if (other == Encoding.KlabData.Object.getDefaultInstance())
+						return this;
+					if (!other.getName().isEmpty()) {
+						name_ = other.name_;
+						onChanged();
+					}
+					internalGetMutableProperties().mergeFrom(other.internalGetProperties());
+					if (statesBuilder_ == null) {
+						if (!other.states_.isEmpty()) {
+							if (states_.isEmpty()) {
+								states_ = other.states_;
+								bitField0_ = (bitField0_ & ~0x00000004);
+							} else {
+								ensureStatesIsMutable();
+								states_.addAll(other.states_);
+							}
+							onChanged();
+						}
+					} else {
+						if (!other.states_.isEmpty()) {
+							if (statesBuilder_.isEmpty()) {
+								statesBuilder_.dispose();
+								statesBuilder_ = null;
+								states_ = other.states_;
+								bitField0_ = (bitField0_ & ~0x00000004);
+								statesBuilder_ = com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+										? getStatesFieldBuilder()
+										: null;
+							} else {
+								statesBuilder_.addAllMessages(other.states_);
+							}
+						}
+					}
+					if (objectsBuilder_ == null) {
+						if (!other.objects_.isEmpty()) {
+							if (objects_.isEmpty()) {
+								objects_ = other.objects_;
+								bitField0_ = (bitField0_ & ~0x00000008);
+							} else {
+								ensureObjectsIsMutable();
+								objects_.addAll(other.objects_);
+							}
+							onChanged();
+						}
+					} else {
+						if (!other.objects_.isEmpty()) {
+							if (objectsBuilder_.isEmpty()) {
+								objectsBuilder_.dispose();
+								objectsBuilder_ = null;
+								objects_ = other.objects_;
+								bitField0_ = (bitField0_ & ~0x00000008);
+								objectsBuilder_ = com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+										? getObjectsFieldBuilder()
+										: null;
+							} else {
+								objectsBuilder_.addAllMessages(other.objects_);
+							}
+						}
+					}
+					this.mergeUnknownFields(other.unknownFields);
+					onChanged();
+					return this;
+				}
+
+				public final boolean isInitialized() {
+					return true;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					Encoding.KlabData.Object parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (Encoding.KlabData.Object) e.getUnfinishedMessage();
+						throw e.unwrapIOException();
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				private int bitField0_;
+
+				private java.lang.Object name_ = "";
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public java.lang.String getName() {
+					java.lang.Object ref = name_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						name_ = s;
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public com.google.protobuf.ByteString getNameBytes() {
+					java.lang.Object ref = name_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						name_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public Builder setName(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+
+					name_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public Builder clearName() {
+
+					name_ = getDefaultInstance().getName();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public Builder setNameBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					checkByteStringIsUtf8(value);
+
+					name_ = value;
+					onChanged();
+					return this;
+				}
+
+				private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any> properties_;
+
+				private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any> internalGetProperties() {
+					if (properties_ == null) {
+						return com.google.protobuf.MapField.emptyMapField(PropertiesDefaultEntryHolder.defaultEntry);
+					}
+					return properties_;
+				}
+
+				private com.google.protobuf.MapField<java.lang.String, com.google.protobuf.Any> internalGetMutableProperties() {
+					onChanged();
+					;
+					if (properties_ == null) {
+						properties_ = com.google.protobuf.MapField
+								.newMapField(PropertiesDefaultEntryHolder.defaultEntry);
+					}
+					if (!properties_.isMutable()) {
+						properties_ = properties_.copy();
+					}
+					return properties_;
+				}
+
+				public int getPropertiesCount() {
+					return internalGetProperties().getMap().size();
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+
+				public boolean containsProperties(java.lang.String key) {
+					if (key == null) {
+						throw new java.lang.NullPointerException();
+					}
+					return internalGetProperties().getMap().containsKey(key);
+				}
+
+				/**
+				 * Use {@link #getPropertiesMap()} instead.
+				 */
+				@java.lang.Deprecated
+				public java.util.Map<java.lang.String, com.google.protobuf.Any> getProperties() {
+					return getPropertiesMap();
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+
+				public java.util.Map<java.lang.String, com.google.protobuf.Any> getPropertiesMap() {
+					return internalGetProperties().getMap();
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+
+				public com.google.protobuf.Any getPropertiesOrDefault(java.lang.String key,
+						com.google.protobuf.Any defaultValue) {
+					if (key == null) {
+						throw new java.lang.NullPointerException();
+					}
+					java.util.Map<java.lang.String, com.google.protobuf.Any> map = internalGetProperties().getMap();
+					return map.containsKey(key) ? map.get(key) : defaultValue;
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+
+				public com.google.protobuf.Any getPropertiesOrThrow(java.lang.String key) {
+					if (key == null) {
+						throw new java.lang.NullPointerException();
+					}
+					java.util.Map<java.lang.String, com.google.protobuf.Any> map = internalGetProperties().getMap();
+					if (!map.containsKey(key)) {
+						throw new java.lang.IllegalArgumentException();
+					}
+					return map.get(key);
+				}
+
+				public Builder clearProperties() {
+					internalGetMutableProperties().getMutableMap().clear();
+					return this;
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+
+				public Builder removeProperties(java.lang.String key) {
+					if (key == null) {
+						throw new java.lang.NullPointerException();
+					}
+					internalGetMutableProperties().getMutableMap().remove(key);
+					return this;
+				}
+
+				/**
+				 * Use alternate mutation accessors instead.
+				 */
+				@java.lang.Deprecated
+				public java.util.Map<java.lang.String, com.google.protobuf.Any> getMutableProperties() {
+					return internalGetMutableProperties().getMutableMap();
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+				public Builder putProperties(java.lang.String key, com.google.protobuf.Any value) {
+					if (key == null) {
+						throw new java.lang.NullPointerException();
+					}
+					if (value == null) {
+						throw new java.lang.NullPointerException();
+					}
+					internalGetMutableProperties().getMutableMap().put(key, value);
+					return this;
+				}
+
+				/**
+				 * <code>map&lt;string, .google.protobuf.Any&gt; properties = 2;</code>
+				 */
+
+				public Builder putAllProperties(java.util.Map<java.lang.String, com.google.protobuf.Any> values) {
+					internalGetMutableProperties().getMutableMap().putAll(values);
+					return this;
+				}
+
+				private java.util.List<Encoding.KlabData.State> states_ = java.util.Collections.emptyList();
+
+				private void ensureStatesIsMutable() {
+					if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+						states_ = new java.util.ArrayList<Encoding.KlabData.State>(states_);
+						bitField0_ |= 0x00000004;
+					}
+				}
+
+				private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> statesBuilder_;
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public java.util.List<Encoding.KlabData.State> getStatesList() {
+					if (statesBuilder_ == null) {
+						return java.util.Collections.unmodifiableList(states_);
+					} else {
+						return statesBuilder_.getMessageList();
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public int getStatesCount() {
+					if (statesBuilder_ == null) {
+						return states_.size();
+					} else {
+						return statesBuilder_.getCount();
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Encoding.KlabData.State getStates(int index) {
+					if (statesBuilder_ == null) {
+						return states_.get(index);
+					} else {
+						return statesBuilder_.getMessage(index);
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder setStates(int index, Encoding.KlabData.State value) {
+					if (statesBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						ensureStatesIsMutable();
+						states_.set(index, value);
+						onChanged();
+					} else {
+						statesBuilder_.setMessage(index, value);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder setStates(int index, Encoding.KlabData.State.Builder builderForValue) {
+					if (statesBuilder_ == null) {
+						ensureStatesIsMutable();
+						states_.set(index, builderForValue.build());
+						onChanged();
+					} else {
+						statesBuilder_.setMessage(index, builderForValue.build());
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder addStates(Encoding.KlabData.State value) {
+					if (statesBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						ensureStatesIsMutable();
+						states_.add(value);
+						onChanged();
+					} else {
+						statesBuilder_.addMessage(value);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder addStates(int index, Encoding.KlabData.State value) {
+					if (statesBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						ensureStatesIsMutable();
+						states_.add(index, value);
+						onChanged();
+					} else {
+						statesBuilder_.addMessage(index, value);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder addStates(Encoding.KlabData.State.Builder builderForValue) {
+					if (statesBuilder_ == null) {
+						ensureStatesIsMutable();
+						states_.add(builderForValue.build());
+						onChanged();
+					} else {
+						statesBuilder_.addMessage(builderForValue.build());
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder addStates(int index, Encoding.KlabData.State.Builder builderForValue) {
+					if (statesBuilder_ == null) {
+						ensureStatesIsMutable();
+						states_.add(index, builderForValue.build());
+						onChanged();
+					} else {
+						statesBuilder_.addMessage(index, builderForValue.build());
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder addAllStates(java.lang.Iterable<? extends Encoding.KlabData.State> values) {
+					if (statesBuilder_ == null) {
+						ensureStatesIsMutable();
+						com.google.protobuf.AbstractMessageLite.Builder.addAll(values, states_);
+						onChanged();
+					} else {
+						statesBuilder_.addAllMessages(values);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder clearStates() {
+					if (statesBuilder_ == null) {
+						states_ = java.util.Collections.emptyList();
+						bitField0_ = (bitField0_ & ~0x00000004);
+						onChanged();
+					} else {
+						statesBuilder_.clear();
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Builder removeStates(int index) {
+					if (statesBuilder_ == null) {
+						ensureStatesIsMutable();
+						states_.remove(index);
+						onChanged();
+					} else {
+						statesBuilder_.remove(index);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Encoding.KlabData.State.Builder getStatesBuilder(int index) {
+					return getStatesFieldBuilder().getBuilder(index);
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Encoding.KlabData.StateOrBuilder getStatesOrBuilder(int index) {
+					if (statesBuilder_ == null) {
+						return states_.get(index);
+					} else {
+						return statesBuilder_.getMessageOrBuilder(index);
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public java.util.List<? extends Encoding.KlabData.StateOrBuilder> getStatesOrBuilderList() {
+					if (statesBuilder_ != null) {
+						return statesBuilder_.getMessageOrBuilderList();
+					} else {
+						return java.util.Collections.unmodifiableList(states_);
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Encoding.KlabData.State.Builder addStatesBuilder() {
+					return getStatesFieldBuilder().addBuilder(Encoding.KlabData.State.getDefaultInstance());
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public Encoding.KlabData.State.Builder addStatesBuilder(int index) {
+					return getStatesFieldBuilder().addBuilder(index, Encoding.KlabData.State.getDefaultInstance());
+				}
+
+				/**
+				 * <code>repeated .KlabData.State states = 3;</code>
+				 */
+				public java.util.List<Encoding.KlabData.State.Builder> getStatesBuilderList() {
+					return getStatesFieldBuilder().getBuilderList();
+				}
+
+				private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> getStatesFieldBuilder() {
+					if (statesBuilder_ == null) {
+						statesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder>(
+								states_, ((bitField0_ & 0x00000004) == 0x00000004), getParentForChildren(), isClean());
+						states_ = null;
+					}
+					return statesBuilder_;
+				}
+
+				private java.util.List<Encoding.KlabData.Object> objects_ = java.util.Collections.emptyList();
+
+				private void ensureObjectsIsMutable() {
+					if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+						objects_ = new java.util.ArrayList<Encoding.KlabData.Object>(objects_);
+						bitField0_ |= 0x00000008;
+					}
+				}
+
+				private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> objectsBuilder_;
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public java.util.List<Encoding.KlabData.Object> getObjectsList() {
+					if (objectsBuilder_ == null) {
+						return java.util.Collections.unmodifiableList(objects_);
+					} else {
+						return objectsBuilder_.getMessageList();
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public int getObjectsCount() {
+					if (objectsBuilder_ == null) {
+						return objects_.size();
+					} else {
+						return objectsBuilder_.getCount();
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Encoding.KlabData.Object getObjects(int index) {
+					if (objectsBuilder_ == null) {
+						return objects_.get(index);
+					} else {
+						return objectsBuilder_.getMessage(index);
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder setObjects(int index, Encoding.KlabData.Object value) {
+					if (objectsBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						ensureObjectsIsMutable();
+						objects_.set(index, value);
+						onChanged();
+					} else {
+						objectsBuilder_.setMessage(index, value);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder setObjects(int index, Encoding.KlabData.Object.Builder builderForValue) {
+					if (objectsBuilder_ == null) {
+						ensureObjectsIsMutable();
+						objects_.set(index, builderForValue.build());
+						onChanged();
+					} else {
+						objectsBuilder_.setMessage(index, builderForValue.build());
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder addObjects(Encoding.KlabData.Object value) {
+					if (objectsBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						ensureObjectsIsMutable();
+						objects_.add(value);
+						onChanged();
+					} else {
+						objectsBuilder_.addMessage(value);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder addObjects(int index, Encoding.KlabData.Object value) {
+					if (objectsBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						ensureObjectsIsMutable();
+						objects_.add(index, value);
+						onChanged();
+					} else {
+						objectsBuilder_.addMessage(index, value);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder addObjects(Encoding.KlabData.Object.Builder builderForValue) {
+					if (objectsBuilder_ == null) {
+						ensureObjectsIsMutable();
+						objects_.add(builderForValue.build());
+						onChanged();
+					} else {
+						objectsBuilder_.addMessage(builderForValue.build());
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder addObjects(int index, Encoding.KlabData.Object.Builder builderForValue) {
+					if (objectsBuilder_ == null) {
+						ensureObjectsIsMutable();
+						objects_.add(index, builderForValue.build());
+						onChanged();
+					} else {
+						objectsBuilder_.addMessage(index, builderForValue.build());
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder addAllObjects(java.lang.Iterable<? extends Encoding.KlabData.Object> values) {
+					if (objectsBuilder_ == null) {
+						ensureObjectsIsMutable();
+						com.google.protobuf.AbstractMessageLite.Builder.addAll(values, objects_);
+						onChanged();
+					} else {
+						objectsBuilder_.addAllMessages(values);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder clearObjects() {
+					if (objectsBuilder_ == null) {
+						objects_ = java.util.Collections.emptyList();
+						bitField0_ = (bitField0_ & ~0x00000008);
+						onChanged();
+					} else {
+						objectsBuilder_.clear();
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Builder removeObjects(int index) {
+					if (objectsBuilder_ == null) {
+						ensureObjectsIsMutable();
+						objects_.remove(index);
+						onChanged();
+					} else {
+						objectsBuilder_.remove(index);
+					}
+					return this;
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Encoding.KlabData.Object.Builder getObjectsBuilder(int index) {
+					return getObjectsFieldBuilder().getBuilder(index);
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(int index) {
+					if (objectsBuilder_ == null) {
+						return objects_.get(index);
+					} else {
+						return objectsBuilder_.getMessageOrBuilder(index);
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> getObjectsOrBuilderList() {
+					if (objectsBuilder_ != null) {
+						return objectsBuilder_.getMessageOrBuilderList();
+					} else {
+						return java.util.Collections.unmodifiableList(objects_);
+					}
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Encoding.KlabData.Object.Builder addObjectsBuilder() {
+					return getObjectsFieldBuilder().addBuilder(Encoding.KlabData.Object.getDefaultInstance());
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public Encoding.KlabData.Object.Builder addObjectsBuilder(int index) {
+					return getObjectsFieldBuilder().addBuilder(index, Encoding.KlabData.Object.getDefaultInstance());
+				}
+
+				/**
+				 * <code>repeated .KlabData.Object objects = 4;</code>
+				 */
+				public java.util.List<Encoding.KlabData.Object.Builder> getObjectsBuilderList() {
+					return getObjectsFieldBuilder().getBuilderList();
+				}
+
+				private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> getObjectsFieldBuilder() {
+					if (objectsBuilder_ == null) {
+						objectsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder>(
+								objects_, ((bitField0_ & 0x00000008) == 0x00000008), getParentForChildren(), isClean());
+						objects_ = null;
+					}
+					return objectsBuilder_;
+				}
+
+				public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.setUnknownFieldsProto3(unknownFields);
+				}
+
+				public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.mergeUnknownFields(unknownFields);
+				}
+
+				// @@protoc_insertion_point(builder_scope:KlabData.Object)
+			}
+
+			// @@protoc_insertion_point(class_scope:KlabData.Object)
+			private static final Encoding.KlabData.Object DEFAULT_INSTANCE;
+			static {
+				DEFAULT_INSTANCE = new Encoding.KlabData.Object();
+			}
+
+			public static Encoding.KlabData.Object getDefaultInstance() {
+				return DEFAULT_INSTANCE;
+			}
+
+			private static final com.google.protobuf.Parser<Object> PARSER = new com.google.protobuf.AbstractParser<Object>() {
+				public Object parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+					return new Object(input, extensionRegistry);
+				}
+			};
+
+			public static com.google.protobuf.Parser<Object> parser() {
+				return PARSER;
+			}
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<Object> getParserForType() {
+				return PARSER;
+			}
+
+			public Encoding.KlabData.Object getDefaultInstanceForType() {
+				return DEFAULT_INSTANCE;
+			}
+
+		}
+
+		public interface LookupTableOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:KlabData.LookupTable)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+			int getTableCount();
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+			boolean containsTable(int key);
+
+			/**
+			 * Use {@link #getTableMap()} instead.
+			 */
+			@java.lang.Deprecated
+			java.util.Map<java.lang.Integer, java.lang.String> getTable();
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+			java.util.Map<java.lang.Integer, java.lang.String> getTableMap();
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+
+			java.lang.String getTableOrDefault(int key, java.lang.String defaultValue);
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+
+			java.lang.String getTableOrThrow(int key);
+		}
+
+		/**
+		 * Protobuf type {@code KlabData.LookupTable}
+		 */
+		public static final class LookupTable extends com.google.protobuf.GeneratedMessageV3 implements
+				// @@protoc_insertion_point(message_implements:KlabData.LookupTable)
+				LookupTableOrBuilder {
+			private static final long serialVersionUID = 0L;
+
+			// Use LookupTable.newBuilder() to construct.
+			private LookupTable(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+				super(builder);
+			}
+
+			private LookupTable() {
+			}
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return this.unknownFields;
+			}
+
+			private LookupTable(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				this();
+				if (extensionRegistry == null) {
+					throw new java.lang.NullPointerException();
+				}
+				int mutable_bitField0_ = 0;
+				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+								table_ = com.google.protobuf.MapField.newMapField(TableDefaultEntryHolder.defaultEntry);
+								mutable_bitField0_ |= 0x00000001;
+							}
+							com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String> table__ = input
+									.readMessage(TableDefaultEntryHolder.defaultEntry.getParserForType(),
+											extensionRegistry);
+							table_.getMutableMap().put(table__.getKey(), table__.getValue());
+							break;
+						}
+						}
+					}
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+				} finally {
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return Encoding.internal_static_KlabData_LookupTable_descriptor;
+			}
+
+			@SuppressWarnings({ "rawtypes" })
+			protected com.google.protobuf.MapField internalGetMapField(int number) {
+				switch (number) {
+				case 1:
+					return internalGetTable();
+				default:
+					throw new RuntimeException("Invalid map field number: " + number);
+				}
+			}
+
+			protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+				return Encoding.internal_static_KlabData_LookupTable_fieldAccessorTable.ensureFieldAccessorsInitialized(
+						Encoding.KlabData.LookupTable.class, Encoding.KlabData.LookupTable.Builder.class);
+			}
+
+			public static final int TABLE_FIELD_NUMBER = 1;
+
+			private static final class TableDefaultEntryHolder {
+				static final com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String> defaultEntry = com.google.protobuf.MapEntry.<java.lang.Integer, java.lang.String>newDefaultInstance(
+						Encoding.internal_static_KlabData_LookupTable_TableEntry_descriptor,
+						com.google.protobuf.WireFormat.FieldType.SINT32, 0,
+						com.google.protobuf.WireFormat.FieldType.STRING, "");
+			}
+
+			private com.google.protobuf.MapField<java.lang.Integer, java.lang.String> table_;
+
+			private com.google.protobuf.MapField<java.lang.Integer, java.lang.String> internalGetTable() {
+				if (table_ == null) {
+					return com.google.protobuf.MapField.emptyMapField(TableDefaultEntryHolder.defaultEntry);
+				}
+				return table_;
+			}
+
+			public int getTableCount() {
+				return internalGetTable().getMap().size();
+			}
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+
+			public boolean containsTable(int key) {
+
+				return internalGetTable().getMap().containsKey(key);
+			}
+
+			/**
+			 * Use {@link #getTableMap()} instead.
+			 */
+			@java.lang.Deprecated
+			public java.util.Map<java.lang.Integer, java.lang.String> getTable() {
+				return getTableMap();
+			}
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+
+			public java.util.Map<java.lang.Integer, java.lang.String> getTableMap() {
+				return internalGetTable().getMap();
+			}
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+
+			public java.lang.String getTableOrDefault(int key, java.lang.String defaultValue) {
+
+				java.util.Map<java.lang.Integer, java.lang.String> map = internalGetTable().getMap();
+				return map.containsKey(key) ? map.get(key) : defaultValue;
+			}
+
+			/**
+			 * <code>map&lt;sint32, string&gt; table = 1;</code>
+			 */
+
+			public java.lang.String getTableOrThrow(int key) {
+
+				java.util.Map<java.lang.Integer, java.lang.String> map = internalGetTable().getMap();
+				if (!map.containsKey(key)) {
+					throw new java.lang.IllegalArgumentException();
+				}
+				return map.get(key);
+			}
+
+			private byte memoizedIsInitialized = -1;
+
+			public final boolean isInitialized() {
+				byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				com.google.protobuf.GeneratedMessageV3.serializeIntegerMapTo(output, internalGetTable(),
+						TableDefaultEntryHolder.defaultEntry, 1);
+				unknownFields.writeTo(output);
+			}
+
+			public int getSerializedSize() {
+				int size = memoizedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				for (java.util.Map.Entry<java.lang.Integer, java.lang.String> entry : internalGetTable().getMap()
+						.entrySet()) {
+					com.google.protobuf.MapEntry<java.lang.Integer, java.lang.String> table__ = TableDefaultEntryHolder.defaultEntry
+							.newBuilderForType().setKey(entry.getKey()).setValue(entry.getValue()).build();
+					size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, table__);
+				}
+				size += unknownFields.getSerializedSize();
+				memoizedSize = size;
+				return size;
+			}
+
+			@java.lang.Override
+			public boolean equals(final java.lang.Object obj) {
+				if (obj == this) {
+					return true;
+				}
+				if (!(obj instanceof Encoding.KlabData.LookupTable)) {
+					return super.equals(obj);
+				}
+				Encoding.KlabData.LookupTable other = (Encoding.KlabData.LookupTable) obj;
+
+				boolean result = true;
+				result = result && internalGetTable().equals(other.internalGetTable());
+				result = result && unknownFields.equals(other.unknownFields);
+				return result;
+			}
+
+			@java.lang.Override
+			public int hashCode() {
+				if (memoizedHashCode != 0) {
+					return memoizedHashCode;
+				}
+				int hash = 41;
+				hash = (19 * hash) + getDescriptor().hashCode();
+				if (!internalGetTable().getMap().isEmpty()) {
+					hash = (37 * hash) + TABLE_FIELD_NUMBER;
+					hash = (53 * hash) + internalGetTable().hashCode();
+				}
+				hash = (29 * hash) + unknownFields.hashCode();
+				memoizedHashCode = hash;
+				return hash;
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(java.nio.ByteBuffer data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(java.nio.ByteBuffer data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(com.google.protobuf.ByteString data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(com.google.protobuf.ByteString data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.LookupTable parseDelimitedFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.LookupTable parseDelimitedFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input,
+						extensionRegistry);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(com.google.protobuf.CodedInputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.LookupTable parseFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			public static Builder newBuilder() {
+				return DEFAULT_INSTANCE.toBuilder();
+			}
+
+			public static Builder newBuilder(Encoding.KlabData.LookupTable prototype) {
+				return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+			}
+
+			public Builder toBuilder() {
+				return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+				Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			/**
+			 * Protobuf type {@code KlabData.LookupTable}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+					// @@protoc_insertion_point(builder_implements:KlabData.LookupTable)
+					Encoding.KlabData.LookupTableOrBuilder {
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return Encoding.internal_static_KlabData_LookupTable_descriptor;
+				}
+
+				@SuppressWarnings({ "rawtypes" })
+				protected com.google.protobuf.MapField internalGetMapField(int number) {
+					switch (number) {
+					case 1:
+						return internalGetTable();
+					default:
+						throw new RuntimeException("Invalid map field number: " + number);
+					}
+				}
+
+				@SuppressWarnings({ "rawtypes" })
+				protected com.google.protobuf.MapField internalGetMutableMapField(int number) {
+					switch (number) {
+					case 1:
+						return internalGetMutableTable();
+					default:
+						throw new RuntimeException("Invalid map field number: " + number);
+					}
+				}
+
+				protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+					return Encoding.internal_static_KlabData_LookupTable_fieldAccessorTable
+							.ensureFieldAccessorsInitialized(Encoding.KlabData.LookupTable.class,
+									Encoding.KlabData.LookupTable.Builder.class);
+				}
+
+				// Construct using Encoding.KlabData.LookupTable.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+					}
+				}
+
+				public Builder clear() {
+					super.clear();
+					internalGetMutableTable().clear();
+					return this;
+				}
+
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return Encoding.internal_static_KlabData_LookupTable_descriptor;
+				}
+
+				public Encoding.KlabData.LookupTable getDefaultInstanceForType() {
+					return Encoding.KlabData.LookupTable.getDefaultInstance();
+				}
+
+				public Encoding.KlabData.LookupTable build() {
+					Encoding.KlabData.LookupTable result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				public Encoding.KlabData.LookupTable buildPartial() {
+					Encoding.KlabData.LookupTable result = new Encoding.KlabData.LookupTable(this);
+					int from_bitField0_ = bitField0_;
+					result.table_ = internalGetTable();
+					result.table_.makeImmutable();
+					onBuilt();
+					return result;
+				}
+
+				public Builder clone() {
+					return (Builder) super.clone();
+				}
+
+				public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+					return (Builder) super.setField(field, value);
+				}
+
+				public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+					return (Builder) super.clearField(field);
+				}
+
+				public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+					return (Builder) super.clearOneof(oneof);
+				}
+
+				public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
+						java.lang.Object value) {
+					return (Builder) super.setRepeatedField(field, index, value);
+				}
+
+				public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field,
+						java.lang.Object value) {
+					return (Builder) super.addRepeatedField(field, value);
+				}
+
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof Encoding.KlabData.LookupTable) {
+						return mergeFrom((Encoding.KlabData.LookupTable) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(Encoding.KlabData.LookupTable other) {
+					if (other == Encoding.KlabData.LookupTable.getDefaultInstance())
+						return this;
+					internalGetMutableTable().mergeFrom(other.internalGetTable());
+					this.mergeUnknownFields(other.unknownFields);
+					onChanged();
+					return this;
+				}
+
+				public final boolean isInitialized() {
+					return true;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					Encoding.KlabData.LookupTable parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (Encoding.KlabData.LookupTable) e.getUnfinishedMessage();
+						throw e.unwrapIOException();
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				private int bitField0_;
+
+				private com.google.protobuf.MapField<java.lang.Integer, java.lang.String> table_;
+
+				private com.google.protobuf.MapField<java.lang.Integer, java.lang.String> internalGetTable() {
+					if (table_ == null) {
+						return com.google.protobuf.MapField.emptyMapField(TableDefaultEntryHolder.defaultEntry);
+					}
+					return table_;
+				}
+
+				private com.google.protobuf.MapField<java.lang.Integer, java.lang.String> internalGetMutableTable() {
+					onChanged();
+					;
+					if (table_ == null) {
+						table_ = com.google.protobuf.MapField.newMapField(TableDefaultEntryHolder.defaultEntry);
+					}
+					if (!table_.isMutable()) {
+						table_ = table_.copy();
+					}
+					return table_;
+				}
+
+				public int getTableCount() {
+					return internalGetTable().getMap().size();
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+
+				public boolean containsTable(int key) {
+
+					return internalGetTable().getMap().containsKey(key);
+				}
+
+				/**
+				 * Use {@link #getTableMap()} instead.
+				 */
+				@java.lang.Deprecated
+				public java.util.Map<java.lang.Integer, java.lang.String> getTable() {
+					return getTableMap();
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+
+				public java.util.Map<java.lang.Integer, java.lang.String> getTableMap() {
+					return internalGetTable().getMap();
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+
+				public java.lang.String getTableOrDefault(int key, java.lang.String defaultValue) {
+
+					java.util.Map<java.lang.Integer, java.lang.String> map = internalGetTable().getMap();
+					return map.containsKey(key) ? map.get(key) : defaultValue;
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+
+				public java.lang.String getTableOrThrow(int key) {
+
+					java.util.Map<java.lang.Integer, java.lang.String> map = internalGetTable().getMap();
+					if (!map.containsKey(key)) {
+						throw new java.lang.IllegalArgumentException();
+					}
+					return map.get(key);
+				}
+
+				public Builder clearTable() {
+					internalGetMutableTable().getMutableMap().clear();
+					return this;
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+
+				public Builder removeTable(int key) {
+
+					internalGetMutableTable().getMutableMap().remove(key);
+					return this;
+				}
+
+				/**
+				 * Use alternate mutation accessors instead.
+				 */
+				@java.lang.Deprecated
+				public java.util.Map<java.lang.Integer, java.lang.String> getMutableTable() {
+					return internalGetMutableTable().getMutableMap();
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+				public Builder putTable(int key, java.lang.String value) {
+
+					if (value == null) {
+						throw new java.lang.NullPointerException();
+					}
+					internalGetMutableTable().getMutableMap().put(key, value);
+					return this;
+				}
+
+				/**
+				 * <code>map&lt;sint32, string&gt; table = 1;</code>
+				 */
+
+				public Builder putAllTable(java.util.Map<java.lang.Integer, java.lang.String> values) {
+					internalGetMutableTable().getMutableMap().putAll(values);
+					return this;
+				}
+
+				public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.setUnknownFieldsProto3(unknownFields);
+				}
+
+				public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.mergeUnknownFields(unknownFields);
+				}
+
+				// @@protoc_insertion_point(builder_scope:KlabData.LookupTable)
+			}
+
+			// @@protoc_insertion_point(class_scope:KlabData.LookupTable)
+			private static final Encoding.KlabData.LookupTable DEFAULT_INSTANCE;
+			static {
+				DEFAULT_INSTANCE = new Encoding.KlabData.LookupTable();
+			}
+
+			public static Encoding.KlabData.LookupTable getDefaultInstance() {
+				return DEFAULT_INSTANCE;
+			}
+
+			private static final com.google.protobuf.Parser<LookupTable> PARSER = new com.google.protobuf.AbstractParser<LookupTable>() {
+				public LookupTable parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+					return new LookupTable(input, extensionRegistry);
+				}
+			};
+
+			public static com.google.protobuf.Parser<LookupTable> parser() {
+				return PARSER;
+			}
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<LookupTable> getParserForType() {
+				return PARSER;
+			}
+
+			public Encoding.KlabData.LookupTable getDefaultInstanceForType() {
+				return DEFAULT_INSTANCE;
+			}
+
+		}
+
+		public interface StateOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:KlabData.State)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			java.lang.String getName();
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			com.google.protobuf.ByteString getNameBytes();
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			java.lang.String getSemantics();
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			com.google.protobuf.ByteString getSemanticsBytes();
+
+			/**
+			 * <code>repeated double doubledata = 3;</code>
+			 */
+			java.util.List<java.lang.Double> getDoubledataList();
+
+			/**
+			 * <code>repeated double doubledata = 3;</code>
+			 */
+			int getDoubledataCount();
+
+			/**
+			 * <code>repeated double doubledata = 3;</code>
+			 */
+			double getDoubledata(int index);
+
+			/**
+			 * <pre>
+			 * if this is set, it comes with a LookupTable
+			 * </pre>
+			 *
+			 * <code>repeated sint32 tabledata = 4;</code>
+			 */
+			java.util.List<java.lang.Integer> getTabledataList();
+
+			/**
+			 * <pre>
+			 * if this is set, it comes with a LookupTable
+			 * </pre>
+			 *
+			 * <code>repeated sint32 tabledata = 4;</code>
+			 */
+			int getTabledataCount();
+
+			/**
+			 * <pre>
+			 * if this is set, it comes with a LookupTable
+			 * </pre>
+			 *
+			 * <code>repeated sint32 tabledata = 4;</code>
+			 */
+			int getTabledata(int index);
+
+			/**
+			 * <code>repeated sint64 intdata = 5;</code>
+			 */
+			java.util.List<java.lang.Long> getIntdataList();
+
+			/**
+			 * <code>repeated sint64 intdata = 5;</code>
+			 */
+			int getIntdataCount();
+
+			/**
+			 * <code>repeated sint64 intdata = 5;</code>
+			 */
+			long getIntdata(int index);
+
+			/**
+			 * <code>repeated bool booleandata = 6;</code>
+			 */
+			java.util.List<java.lang.Boolean> getBooleandataList();
+
+			/**
+			 * <code>repeated bool booleandata = 6;</code>
+			 */
+			int getBooleandataCount();
+
+			/**
+			 * <code>repeated bool booleandata = 6;</code>
+			 */
+			boolean getBooleandata(int index);
+
+			/**
+			 * <code>.KlabData.LookupTable table = 7;</code>
+			 */
+			boolean hasTable();
+
+			/**
+			 * <code>.KlabData.LookupTable table = 7;</code>
+			 */
+			Encoding.KlabData.LookupTable getTable();
+
+			/**
+			 * <code>.KlabData.LookupTable table = 7;</code>
+			 */
+			Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder();
+
+			/**
+			 * <code>string externalDatasourceUrl = 8;</code>
+			 */
+			java.lang.String getExternalDatasourceUrl();
+
+			/**
+			 * <code>string externalDatasourceUrl = 8;</code>
+			 */
+			com.google.protobuf.ByteString getExternalDatasourceUrlBytes();
+		}
+
+		/**
+		 * <pre>
+		 * check the externalDatasourceUrl for data too large to fit in the response.
+		 * </pre>
+		 *
+		 * Protobuf type {@code KlabData.State}
+		 */
+		public static final class State extends com.google.protobuf.GeneratedMessageV3 implements
+				// @@protoc_insertion_point(message_implements:KlabData.State)
+				StateOrBuilder {
+			private static final long serialVersionUID = 0L;
+
+			// Use State.newBuilder() to construct.
+			private State(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+				super(builder);
+			}
+
+			private State() {
+				name_ = "";
+				semantics_ = "";
+				doubledata_ = java.util.Collections.emptyList();
+				tabledata_ = java.util.Collections.emptyList();
+				intdata_ = java.util.Collections.emptyList();
+				booleandata_ = java.util.Collections.emptyList();
+				externalDatasourceUrl_ = "";
+			}
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return this.unknownFields;
+			}
+
+			private State(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				this();
+				if (extensionRegistry == null) {
+					throw new java.lang.NullPointerException();
+				}
+				int mutable_bitField0_ = 0;
+				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							java.lang.String s = input.readStringRequireUtf8();
+
+							name_ = s;
+							break;
+						}
+						case 18: {
+							java.lang.String s = input.readStringRequireUtf8();
+
+							semantics_ = s;
+							break;
+						}
+						case 25: {
+							if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+								doubledata_ = new java.util.ArrayList<java.lang.Double>();
+								mutable_bitField0_ |= 0x00000004;
+							}
+							doubledata_.add(input.readDouble());
+							break;
+						}
+						case 26: {
+							int length = input.readRawVarint32();
+							int limit = input.pushLimit(length);
+							if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+								doubledata_ = new java.util.ArrayList<java.lang.Double>();
+								mutable_bitField0_ |= 0x00000004;
+							}
+							while (input.getBytesUntilLimit() > 0) {
+								doubledata_.add(input.readDouble());
+							}
+							input.popLimit(limit);
+							break;
+						}
+						case 32: {
+							if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+								tabledata_ = new java.util.ArrayList<java.lang.Integer>();
+								mutable_bitField0_ |= 0x00000008;
+							}
+							tabledata_.add(input.readSInt32());
+							break;
+						}
+						case 34: {
+							int length = input.readRawVarint32();
+							int limit = input.pushLimit(length);
+							if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
+								tabledata_ = new java.util.ArrayList<java.lang.Integer>();
+								mutable_bitField0_ |= 0x00000008;
+							}
+							while (input.getBytesUntilLimit() > 0) {
+								tabledata_.add(input.readSInt32());
+							}
+							input.popLimit(limit);
+							break;
+						}
+						case 40: {
+							if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+								intdata_ = new java.util.ArrayList<java.lang.Long>();
+								mutable_bitField0_ |= 0x00000010;
+							}
+							intdata_.add(input.readSInt64());
+							break;
+						}
+						case 42: {
+							int length = input.readRawVarint32();
+							int limit = input.pushLimit(length);
+							if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+								intdata_ = new java.util.ArrayList<java.lang.Long>();
+								mutable_bitField0_ |= 0x00000010;
+							}
+							while (input.getBytesUntilLimit() > 0) {
+								intdata_.add(input.readSInt64());
+							}
+							input.popLimit(limit);
+							break;
+						}
+						case 48: {
+							if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+								booleandata_ = new java.util.ArrayList<java.lang.Boolean>();
+								mutable_bitField0_ |= 0x00000020;
+							}
+							booleandata_.add(input.readBool());
+							break;
+						}
+						case 50: {
+							int length = input.readRawVarint32();
+							int limit = input.pushLimit(length);
+							if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
+								booleandata_ = new java.util.ArrayList<java.lang.Boolean>();
+								mutable_bitField0_ |= 0x00000020;
+							}
+							while (input.getBytesUntilLimit() > 0) {
+								booleandata_.add(input.readBool());
+							}
+							input.popLimit(limit);
+							break;
+						}
+						case 58: {
+							Encoding.KlabData.LookupTable.Builder subBuilder = null;
+							if (table_ != null) {
+								subBuilder = table_.toBuilder();
+							}
+							table_ = input.readMessage(Encoding.KlabData.LookupTable.parser(), extensionRegistry);
+							if (subBuilder != null) {
+								subBuilder.mergeFrom(table_);
+								table_ = subBuilder.buildPartial();
+							}
+
+							break;
+						}
+						case 66: {
+							java.lang.String s = input.readStringRequireUtf8();
+
+							externalDatasourceUrl_ = s;
+							break;
+						}
+						}
+					}
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+				} finally {
+					if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+						doubledata_ = java.util.Collections.unmodifiableList(doubledata_);
+					}
+					if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+						tabledata_ = java.util.Collections.unmodifiableList(tabledata_);
+					}
+					if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+						intdata_ = java.util.Collections.unmodifiableList(intdata_);
+					}
+					if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+						booleandata_ = java.util.Collections.unmodifiableList(booleandata_);
+					}
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return Encoding.internal_static_KlabData_State_descriptor;
+			}
+
+			protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+				return Encoding.internal_static_KlabData_State_fieldAccessorTable.ensureFieldAccessorsInitialized(
+						Encoding.KlabData.State.class, Encoding.KlabData.State.Builder.class);
+			}
+
+			private int bitField0_;
+			public static final int NAME_FIELD_NUMBER = 1;
+			private volatile java.lang.Object name_;
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			public java.lang.String getName() {
+				java.lang.Object ref = name_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					name_ = s;
+					return s;
+				}
+			}
+
+			/**
+			 * <code>string name = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getNameBytes() {
+				java.lang.Object ref = name_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					name_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int SEMANTICS_FIELD_NUMBER = 2;
+			private volatile java.lang.Object semantics_;
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public java.lang.String getSemantics() {
+				java.lang.Object ref = semantics_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					semantics_ = s;
+					return s;
+				}
+			}
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public com.google.protobuf.ByteString getSemanticsBytes() {
+				java.lang.Object ref = semantics_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					semantics_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int DOUBLEDATA_FIELD_NUMBER = 3;
+			private java.util.List<java.lang.Double> doubledata_;
+
+			/**
+			 * <code>repeated double doubledata = 3;</code>
+			 */
+			public java.util.List<java.lang.Double> getDoubledataList() {
+				return doubledata_;
+			}
+
+			/**
+			 * <code>repeated double doubledata = 3;</code>
+			 */
+			public int getDoubledataCount() {
+				return doubledata_.size();
+			}
+
+			/**
+			 * <code>repeated double doubledata = 3;</code>
+			 */
+			public double getDoubledata(int index) {
+				return doubledata_.get(index);
+			}
+
+			private int doubledataMemoizedSerializedSize = -1;
+
+			public static final int TABLEDATA_FIELD_NUMBER = 4;
+			private java.util.List<java.lang.Integer> tabledata_;
+
+			/**
+			 * <pre>
+			 * if this is set, it comes with a LookupTable
+			 * </pre>
+			 *
+			 * <code>repeated sint32 tabledata = 4;</code>
+			 */
+			public java.util.List<java.lang.Integer> getTabledataList() {
+				return tabledata_;
+			}
+
+			/**
+			 * <pre>
+			 * if this is set, it comes with a LookupTable
+			 * </pre>
+			 *
+			 * <code>repeated sint32 tabledata = 4;</code>
+			 */
+			public int getTabledataCount() {
+				return tabledata_.size();
+			}
+
+			/**
+			 * <pre>
+			 * if this is set, it comes with a LookupTable
+			 * </pre>
+			 *
+			 * <code>repeated sint32 tabledata = 4;</code>
+			 */
+			public int getTabledata(int index) {
+				return tabledata_.get(index);
+			}
+
+			private int tabledataMemoizedSerializedSize = -1;
+
+			public static final int INTDATA_FIELD_NUMBER = 5;
+			private java.util.List<java.lang.Long> intdata_;
+
+			/**
+			 * <code>repeated sint64 intdata = 5;</code>
+			 */
+			public java.util.List<java.lang.Long> getIntdataList() {
+				return intdata_;
+			}
+
+			/**
+			 * <code>repeated sint64 intdata = 5;</code>
+			 */
+			public int getIntdataCount() {
+				return intdata_.size();
+			}
+
+			/**
+			 * <code>repeated sint64 intdata = 5;</code>
+			 */
+			public long getIntdata(int index) {
+				return intdata_.get(index);
+			}
+
+			private int intdataMemoizedSerializedSize = -1;
+
+			public static final int BOOLEANDATA_FIELD_NUMBER = 6;
+			private java.util.List<java.lang.Boolean> booleandata_;
+
+			/**
+			 * <code>repeated bool booleandata = 6;</code>
+			 */
+			public java.util.List<java.lang.Boolean> getBooleandataList() {
+				return booleandata_;
+			}
+
+			/**
+			 * <code>repeated bool booleandata = 6;</code>
+			 */
+			public int getBooleandataCount() {
+				return booleandata_.size();
+			}
+
+			/**
+			 * <code>repeated bool booleandata = 6;</code>
+			 */
+			public boolean getBooleandata(int index) {
+				return booleandata_.get(index);
+			}
+
+			private int booleandataMemoizedSerializedSize = -1;
+
+			public static final int TABLE_FIELD_NUMBER = 7;
+			private Encoding.KlabData.LookupTable table_;
+
+			/**
+			 * <code>.KlabData.LookupTable table = 7;</code>
+			 */
+			public boolean hasTable() {
+				return table_ != null;
+			}
+
+			/**
+			 * <code>.KlabData.LookupTable table = 7;</code>
+			 */
+			public Encoding.KlabData.LookupTable getTable() {
+				return table_ == null ? Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
+			}
+
+			/**
+			 * <code>.KlabData.LookupTable table = 7;</code>
+			 */
+			public Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder() {
+				return getTable();
+			}
+
+			public static final int EXTERNALDATASOURCEURL_FIELD_NUMBER = 8;
+			private volatile java.lang.Object externalDatasourceUrl_;
+
+			/**
+			 * <code>string externalDatasourceUrl = 8;</code>
+			 */
+			public java.lang.String getExternalDatasourceUrl() {
+				java.lang.Object ref = externalDatasourceUrl_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					externalDatasourceUrl_ = s;
+					return s;
+				}
+			}
+
+			/**
+			 * <code>string externalDatasourceUrl = 8;</code>
+			 */
+			public com.google.protobuf.ByteString getExternalDatasourceUrlBytes() {
+				java.lang.Object ref = externalDatasourceUrl_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					externalDatasourceUrl_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			private byte memoizedIsInitialized = -1;
+
+			public final boolean isInitialized() {
+				byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				getSerializedSize();
+				if (!getNameBytes().isEmpty()) {
+					com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+				}
+				if (!getSemanticsBytes().isEmpty()) {
+					com.google.protobuf.GeneratedMessageV3.writeString(output, 2, semantics_);
+				}
+				if (getDoubledataList().size() > 0) {
+					output.writeUInt32NoTag(26);
+					output.writeUInt32NoTag(doubledataMemoizedSerializedSize);
+				}
+				for (int i = 0; i < doubledata_.size(); i++) {
+					output.writeDoubleNoTag(doubledata_.get(i));
+				}
+				if (getTabledataList().size() > 0) {
+					output.writeUInt32NoTag(34);
+					output.writeUInt32NoTag(tabledataMemoizedSerializedSize);
+				}
+				for (int i = 0; i < tabledata_.size(); i++) {
+					output.writeSInt32NoTag(tabledata_.get(i));
+				}
+				if (getIntdataList().size() > 0) {
+					output.writeUInt32NoTag(42);
+					output.writeUInt32NoTag(intdataMemoizedSerializedSize);
+				}
+				for (int i = 0; i < intdata_.size(); i++) {
+					output.writeSInt64NoTag(intdata_.get(i));
+				}
+				if (getBooleandataList().size() > 0) {
+					output.writeUInt32NoTag(50);
+					output.writeUInt32NoTag(booleandataMemoizedSerializedSize);
+				}
+				for (int i = 0; i < booleandata_.size(); i++) {
+					output.writeBoolNoTag(booleandata_.get(i));
+				}
+				if (table_ != null) {
+					output.writeMessage(7, getTable());
+				}
+				if (!getExternalDatasourceUrlBytes().isEmpty()) {
+					com.google.protobuf.GeneratedMessageV3.writeString(output, 8, externalDatasourceUrl_);
+				}
+				unknownFields.writeTo(output);
+			}
+
+			public int getSerializedSize() {
+				int size = memoizedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				if (!getNameBytes().isEmpty()) {
+					size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+				}
+				if (!getSemanticsBytes().isEmpty()) {
+					size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, semantics_);
+				}
+				{
+					int dataSize = 0;
+					dataSize = 8 * getDoubledataList().size();
+					size += dataSize;
+					if (!getDoubledataList().isEmpty()) {
+						size += 1;
+						size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+					}
+					doubledataMemoizedSerializedSize = dataSize;
+				}
+				{
+					int dataSize = 0;
+					for (int i = 0; i < tabledata_.size(); i++) {
+						dataSize += com.google.protobuf.CodedOutputStream.computeSInt32SizeNoTag(tabledata_.get(i));
+					}
+					size += dataSize;
+					if (!getTabledataList().isEmpty()) {
+						size += 1;
+						size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+					}
+					tabledataMemoizedSerializedSize = dataSize;
+				}
+				{
+					int dataSize = 0;
+					for (int i = 0; i < intdata_.size(); i++) {
+						dataSize += com.google.protobuf.CodedOutputStream.computeSInt64SizeNoTag(intdata_.get(i));
+					}
+					size += dataSize;
+					if (!getIntdataList().isEmpty()) {
+						size += 1;
+						size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+					}
+					intdataMemoizedSerializedSize = dataSize;
+				}
+				{
+					int dataSize = 0;
+					dataSize = 1 * getBooleandataList().size();
+					size += dataSize;
+					if (!getBooleandataList().isEmpty()) {
+						size += 1;
+						size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+					}
+					booleandataMemoizedSerializedSize = dataSize;
+				}
+				if (table_ != null) {
+					size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, getTable());
+				}
+				if (!getExternalDatasourceUrlBytes().isEmpty()) {
+					size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, externalDatasourceUrl_);
+				}
+				size += unknownFields.getSerializedSize();
+				memoizedSize = size;
+				return size;
+			}
+
+			@java.lang.Override
+			public boolean equals(final java.lang.Object obj) {
+				if (obj == this) {
+					return true;
+				}
+				if (!(obj instanceof Encoding.KlabData.State)) {
+					return super.equals(obj);
+				}
+				Encoding.KlabData.State other = (Encoding.KlabData.State) obj;
+
+				boolean result = true;
+				result = result && getName().equals(other.getName());
+				result = result && getSemantics().equals(other.getSemantics());
+				result = result && getDoubledataList().equals(other.getDoubledataList());
+				result = result && getTabledataList().equals(other.getTabledataList());
+				result = result && getIntdataList().equals(other.getIntdataList());
+				result = result && getBooleandataList().equals(other.getBooleandataList());
+				result = result && (hasTable() == other.hasTable());
+				if (hasTable()) {
+					result = result && getTable().equals(other.getTable());
+				}
+				result = result && getExternalDatasourceUrl().equals(other.getExternalDatasourceUrl());
+				result = result && unknownFields.equals(other.unknownFields);
+				return result;
+			}
+
+			@java.lang.Override
+			public int hashCode() {
+				if (memoizedHashCode != 0) {
+					return memoizedHashCode;
+				}
+				int hash = 41;
+				hash = (19 * hash) + getDescriptor().hashCode();
+				hash = (37 * hash) + NAME_FIELD_NUMBER;
+				hash = (53 * hash) + getName().hashCode();
+				hash = (37 * hash) + SEMANTICS_FIELD_NUMBER;
+				hash = (53 * hash) + getSemantics().hashCode();
+				if (getDoubledataCount() > 0) {
+					hash = (37 * hash) + DOUBLEDATA_FIELD_NUMBER;
+					hash = (53 * hash) + getDoubledataList().hashCode();
+				}
+				if (getTabledataCount() > 0) {
+					hash = (37 * hash) + TABLEDATA_FIELD_NUMBER;
+					hash = (53 * hash) + getTabledataList().hashCode();
+				}
+				if (getIntdataCount() > 0) {
+					hash = (37 * hash) + INTDATA_FIELD_NUMBER;
+					hash = (53 * hash) + getIntdataList().hashCode();
+				}
+				if (getBooleandataCount() > 0) {
+					hash = (37 * hash) + BOOLEANDATA_FIELD_NUMBER;
+					hash = (53 * hash) + getBooleandataList().hashCode();
+				}
+				if (hasTable()) {
+					hash = (37 * hash) + TABLE_FIELD_NUMBER;
+					hash = (53 * hash) + getTable().hashCode();
+				}
+				hash = (37 * hash) + EXTERNALDATASOURCEURL_FIELD_NUMBER;
+				hash = (53 * hash) + getExternalDatasourceUrl().hashCode();
+				hash = (29 * hash) + unknownFields.hashCode();
+				memoizedHashCode = hash;
+				return hash;
+			}
+
+			public static Encoding.KlabData.State parseFrom(java.nio.ByteBuffer data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.State parseFrom(java.nio.ByteBuffer data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.State parseFrom(com.google.protobuf.ByteString data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.State parseFrom(com.google.protobuf.ByteString data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.State parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static Encoding.KlabData.State parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.State parseFrom(java.io.InputStream input) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.State parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public static Encoding.KlabData.State parseDelimitedFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.State parseDelimitedFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input,
+						extensionRegistry);
+			}
+
+			public static Encoding.KlabData.State parseFrom(com.google.protobuf.CodedInputStream input)
+					throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+			}
+
+			public static Encoding.KlabData.State parseFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+			}
+
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			public static Builder newBuilder() {
+				return DEFAULT_INSTANCE.toBuilder();
+			}
+
+			public static Builder newBuilder(Encoding.KlabData.State prototype) {
+				return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+			}
+
+			public Builder toBuilder() {
+				return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+				Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			/**
+			 * <pre>
+			 * check the externalDatasourceUrl for data too large to fit in the response.
+			 * </pre>
+			 *
+			 * Protobuf type {@code KlabData.State}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+					// @@protoc_insertion_point(builder_implements:KlabData.State)
+					Encoding.KlabData.StateOrBuilder {
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return Encoding.internal_static_KlabData_State_descriptor;
+				}
+
+				protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+					return Encoding.internal_static_KlabData_State_fieldAccessorTable.ensureFieldAccessorsInitialized(
+							Encoding.KlabData.State.class, Encoding.KlabData.State.Builder.class);
+				}
+
+				// Construct using Encoding.KlabData.State.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+					}
+				}
+
+				public Builder clear() {
+					super.clear();
+					name_ = "";
+
+					semantics_ = "";
+
+					doubledata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000004);
+					tabledata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000008);
+					intdata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000010);
+					booleandata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000020);
+					if (tableBuilder_ == null) {
+						table_ = null;
+					} else {
+						table_ = null;
+						tableBuilder_ = null;
+					}
+					externalDatasourceUrl_ = "";
+
+					return this;
+				}
+
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return Encoding.internal_static_KlabData_State_descriptor;
+				}
+
+				public Encoding.KlabData.State getDefaultInstanceForType() {
+					return Encoding.KlabData.State.getDefaultInstance();
+				}
+
+				public Encoding.KlabData.State build() {
+					Encoding.KlabData.State result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				public Encoding.KlabData.State buildPartial() {
+					Encoding.KlabData.State result = new Encoding.KlabData.State(this);
+					int from_bitField0_ = bitField0_;
+					int to_bitField0_ = 0;
+					result.name_ = name_;
+					result.semantics_ = semantics_;
+					if (((bitField0_ & 0x00000004) == 0x00000004)) {
+						doubledata_ = java.util.Collections.unmodifiableList(doubledata_);
+						bitField0_ = (bitField0_ & ~0x00000004);
+					}
+					result.doubledata_ = doubledata_;
+					if (((bitField0_ & 0x00000008) == 0x00000008)) {
+						tabledata_ = java.util.Collections.unmodifiableList(tabledata_);
+						bitField0_ = (bitField0_ & ~0x00000008);
+					}
+					result.tabledata_ = tabledata_;
+					if (((bitField0_ & 0x00000010) == 0x00000010)) {
+						intdata_ = java.util.Collections.unmodifiableList(intdata_);
+						bitField0_ = (bitField0_ & ~0x00000010);
+					}
+					result.intdata_ = intdata_;
+					if (((bitField0_ & 0x00000020) == 0x00000020)) {
+						booleandata_ = java.util.Collections.unmodifiableList(booleandata_);
+						bitField0_ = (bitField0_ & ~0x00000020);
+					}
+					result.booleandata_ = booleandata_;
+					if (tableBuilder_ == null) {
+						result.table_ = table_;
+					} else {
+						result.table_ = tableBuilder_.build();
+					}
+					result.externalDatasourceUrl_ = externalDatasourceUrl_;
+					result.bitField0_ = to_bitField0_;
+					onBuilt();
+					return result;
+				}
+
+				public Builder clone() {
+					return (Builder) super.clone();
+				}
+
+				public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+					return (Builder) super.setField(field, value);
+				}
+
+				public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+					return (Builder) super.clearField(field);
+				}
+
+				public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+					return (Builder) super.clearOneof(oneof);
+				}
+
+				public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
+						java.lang.Object value) {
+					return (Builder) super.setRepeatedField(field, index, value);
+				}
+
+				public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field,
+						java.lang.Object value) {
+					return (Builder) super.addRepeatedField(field, value);
+				}
+
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof Encoding.KlabData.State) {
+						return mergeFrom((Encoding.KlabData.State) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(Encoding.KlabData.State other) {
+					if (other == Encoding.KlabData.State.getDefaultInstance())
+						return this;
+					if (!other.getName().isEmpty()) {
+						name_ = other.name_;
+						onChanged();
+					}
+					if (!other.getSemantics().isEmpty()) {
+						semantics_ = other.semantics_;
+						onChanged();
+					}
+					if (!other.doubledata_.isEmpty()) {
+						if (doubledata_.isEmpty()) {
+							doubledata_ = other.doubledata_;
+							bitField0_ = (bitField0_ & ~0x00000004);
+						} else {
+							ensureDoubledataIsMutable();
+							doubledata_.addAll(other.doubledata_);
+						}
+						onChanged();
+					}
+					if (!other.tabledata_.isEmpty()) {
+						if (tabledata_.isEmpty()) {
+							tabledata_ = other.tabledata_;
+							bitField0_ = (bitField0_ & ~0x00000008);
+						} else {
+							ensureTabledataIsMutable();
+							tabledata_.addAll(other.tabledata_);
+						}
+						onChanged();
+					}
+					if (!other.intdata_.isEmpty()) {
+						if (intdata_.isEmpty()) {
+							intdata_ = other.intdata_;
+							bitField0_ = (bitField0_ & ~0x00000010);
+						} else {
+							ensureIntdataIsMutable();
+							intdata_.addAll(other.intdata_);
+						}
+						onChanged();
+					}
+					if (!other.booleandata_.isEmpty()) {
+						if (booleandata_.isEmpty()) {
+							booleandata_ = other.booleandata_;
+							bitField0_ = (bitField0_ & ~0x00000020);
+						} else {
+							ensureBooleandataIsMutable();
+							booleandata_.addAll(other.booleandata_);
+						}
+						onChanged();
+					}
+					if (other.hasTable()) {
+						mergeTable(other.getTable());
+					}
+					if (!other.getExternalDatasourceUrl().isEmpty()) {
+						externalDatasourceUrl_ = other.externalDatasourceUrl_;
+						onChanged();
+					}
+					this.mergeUnknownFields(other.unknownFields);
+					onChanged();
+					return this;
+				}
+
+				public final boolean isInitialized() {
+					return true;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					Encoding.KlabData.State parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (Encoding.KlabData.State) e.getUnfinishedMessage();
+						throw e.unwrapIOException();
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				private int bitField0_;
+
+				private java.lang.Object name_ = "";
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public java.lang.String getName() {
+					java.lang.Object ref = name_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						name_ = s;
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public com.google.protobuf.ByteString getNameBytes() {
+					java.lang.Object ref = name_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						name_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public Builder setName(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+
+					name_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public Builder clearName() {
+
+					name_ = getDefaultInstance().getName();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string name = 1;</code>
+				 */
+				public Builder setNameBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					checkByteStringIsUtf8(value);
+
+					name_ = value;
+					onChanged();
+					return this;
+				}
+
+				private java.lang.Object semantics_ = "";
+
+				/**
+				 * <code>string semantics = 2;</code>
+				 */
+				public java.lang.String getSemantics() {
+					java.lang.Object ref = semantics_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						semantics_ = s;
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>string semantics = 2;</code>
+				 */
+				public com.google.protobuf.ByteString getSemanticsBytes() {
+					java.lang.Object ref = semantics_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						semantics_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>string semantics = 2;</code>
+				 */
+				public Builder setSemantics(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+
+					semantics_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string semantics = 2;</code>
+				 */
+				public Builder clearSemantics() {
+
+					semantics_ = getDefaultInstance().getSemantics();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string semantics = 2;</code>
+				 */
+				public Builder setSemanticsBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					checkByteStringIsUtf8(value);
+
+					semantics_ = value;
+					onChanged();
+					return this;
+				}
+
+				private java.util.List<java.lang.Double> doubledata_ = java.util.Collections.emptyList();
+
+				private void ensureDoubledataIsMutable() {
+					if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+						doubledata_ = new java.util.ArrayList<java.lang.Double>(doubledata_);
+						bitField0_ |= 0x00000004;
+					}
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public java.util.List<java.lang.Double> getDoubledataList() {
+					return java.util.Collections.unmodifiableList(doubledata_);
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public int getDoubledataCount() {
+					return doubledata_.size();
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public double getDoubledata(int index) {
+					return doubledata_.get(index);
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public Builder setDoubledata(int index, double value) {
+					ensureDoubledataIsMutable();
+					doubledata_.set(index, value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public Builder addDoubledata(double value) {
+					ensureDoubledataIsMutable();
+					doubledata_.add(value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public Builder addAllDoubledata(java.lang.Iterable<? extends java.lang.Double> values) {
+					ensureDoubledataIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, doubledata_);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double doubledata = 3;</code>
+				 */
+				public Builder clearDoubledata() {
+					doubledata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000004);
+					onChanged();
+					return this;
+				}
+
+				private java.util.List<java.lang.Integer> tabledata_ = java.util.Collections.emptyList();
+
+				private void ensureTabledataIsMutable() {
+					if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+						tabledata_ = new java.util.ArrayList<java.lang.Integer>(tabledata_);
+						bitField0_ |= 0x00000008;
+					}
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public java.util.List<java.lang.Integer> getTabledataList() {
+					return java.util.Collections.unmodifiableList(tabledata_);
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public int getTabledataCount() {
+					return tabledata_.size();
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public int getTabledata(int index) {
+					return tabledata_.get(index);
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public Builder setTabledata(int index, int value) {
+					ensureTabledataIsMutable();
+					tabledata_.set(index, value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public Builder addTabledata(int value) {
+					ensureTabledataIsMutable();
+					tabledata_.add(value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public Builder addAllTabledata(java.lang.Iterable<? extends java.lang.Integer> values) {
+					ensureTabledataIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tabledata_);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <pre>
+				 * if this is set, it comes with a LookupTable
+				 * </pre>
+				 *
+				 * <code>repeated sint32 tabledata = 4;</code>
+				 */
+				public Builder clearTabledata() {
+					tabledata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000008);
+					onChanged();
+					return this;
+				}
+
+				private java.util.List<java.lang.Long> intdata_ = java.util.Collections.emptyList();
+
+				private void ensureIntdataIsMutable() {
+					if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+						intdata_ = new java.util.ArrayList<java.lang.Long>(intdata_);
+						bitField0_ |= 0x00000010;
+					}
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public java.util.List<java.lang.Long> getIntdataList() {
+					return java.util.Collections.unmodifiableList(intdata_);
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public int getIntdataCount() {
+					return intdata_.size();
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public long getIntdata(int index) {
+					return intdata_.get(index);
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public Builder setIntdata(int index, long value) {
+					ensureIntdataIsMutable();
+					intdata_.set(index, value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public Builder addIntdata(long value) {
+					ensureIntdataIsMutable();
+					intdata_.add(value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public Builder addAllIntdata(java.lang.Iterable<? extends java.lang.Long> values) {
+					ensureIntdataIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, intdata_);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated sint64 intdata = 5;</code>
+				 */
+				public Builder clearIntdata() {
+					intdata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000010);
+					onChanged();
+					return this;
+				}
+
+				private java.util.List<java.lang.Boolean> booleandata_ = java.util.Collections.emptyList();
+
+				private void ensureBooleandataIsMutable() {
+					if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+						booleandata_ = new java.util.ArrayList<java.lang.Boolean>(booleandata_);
+						bitField0_ |= 0x00000020;
+					}
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public java.util.List<java.lang.Boolean> getBooleandataList() {
+					return java.util.Collections.unmodifiableList(booleandata_);
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public int getBooleandataCount() {
+					return booleandata_.size();
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public boolean getBooleandata(int index) {
+					return booleandata_.get(index);
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public Builder setBooleandata(int index, boolean value) {
+					ensureBooleandataIsMutable();
+					booleandata_.set(index, value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public Builder addBooleandata(boolean value) {
+					ensureBooleandataIsMutable();
+					booleandata_.add(value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public Builder addAllBooleandata(java.lang.Iterable<? extends java.lang.Boolean> values) {
+					ensureBooleandataIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, booleandata_);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated bool booleandata = 6;</code>
+				 */
+				public Builder clearBooleandata() {
+					booleandata_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000020);
+					onChanged();
+					return this;
+				}
+
+				private Encoding.KlabData.LookupTable table_ = null;
+				private com.google.protobuf.SingleFieldBuilderV3<Encoding.KlabData.LookupTable, Encoding.KlabData.LookupTable.Builder, Encoding.KlabData.LookupTableOrBuilder> tableBuilder_;
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public boolean hasTable() {
+					return tableBuilder_ != null || table_ != null;
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Encoding.KlabData.LookupTable getTable() {
+					if (tableBuilder_ == null) {
+						return table_ == null ? Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
+					} else {
+						return tableBuilder_.getMessage();
+					}
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Builder setTable(Encoding.KlabData.LookupTable value) {
+					if (tableBuilder_ == null) {
+						if (value == null) {
+							throw new NullPointerException();
+						}
+						table_ = value;
+						onChanged();
+					} else {
+						tableBuilder_.setMessage(value);
+					}
+
+					return this;
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Builder setTable(Encoding.KlabData.LookupTable.Builder builderForValue) {
+					if (tableBuilder_ == null) {
+						table_ = builderForValue.build();
+						onChanged();
+					} else {
+						tableBuilder_.setMessage(builderForValue.build());
+					}
+
+					return this;
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Builder mergeTable(Encoding.KlabData.LookupTable value) {
+					if (tableBuilder_ == null) {
+						if (table_ != null) {
+							table_ = Encoding.KlabData.LookupTable.newBuilder(table_).mergeFrom(value).buildPartial();
+						} else {
+							table_ = value;
+						}
+						onChanged();
+					} else {
+						tableBuilder_.mergeFrom(value);
+					}
+
+					return this;
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Builder clearTable() {
+					if (tableBuilder_ == null) {
+						table_ = null;
+						onChanged();
+					} else {
+						table_ = null;
+						tableBuilder_ = null;
+					}
+
+					return this;
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Encoding.KlabData.LookupTable.Builder getTableBuilder() {
+
+					onChanged();
+					return getTableFieldBuilder().getBuilder();
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				public Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder() {
+					if (tableBuilder_ != null) {
+						return tableBuilder_.getMessageOrBuilder();
+					} else {
+						return table_ == null ? Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
+					}
+				}
+
+				/**
+				 * <code>.KlabData.LookupTable table = 7;</code>
+				 */
+				private com.google.protobuf.SingleFieldBuilderV3<Encoding.KlabData.LookupTable, Encoding.KlabData.LookupTable.Builder, Encoding.KlabData.LookupTableOrBuilder> getTableFieldBuilder() {
+					if (tableBuilder_ == null) {
+						tableBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<Encoding.KlabData.LookupTable, Encoding.KlabData.LookupTable.Builder, Encoding.KlabData.LookupTableOrBuilder>(
+								getTable(), getParentForChildren(), isClean());
+						table_ = null;
+					}
+					return tableBuilder_;
+				}
+
+				private java.lang.Object externalDatasourceUrl_ = "";
+
+				/**
+				 * <code>string externalDatasourceUrl = 8;</code>
+				 */
+				public java.lang.String getExternalDatasourceUrl() {
+					java.lang.Object ref = externalDatasourceUrl_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						externalDatasourceUrl_ = s;
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>string externalDatasourceUrl = 8;</code>
+				 */
+				public com.google.protobuf.ByteString getExternalDatasourceUrlBytes() {
+					java.lang.Object ref = externalDatasourceUrl_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						externalDatasourceUrl_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>string externalDatasourceUrl = 8;</code>
+				 */
+				public Builder setExternalDatasourceUrl(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+
+					externalDatasourceUrl_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string externalDatasourceUrl = 8;</code>
+				 */
+				public Builder clearExternalDatasourceUrl() {
+
+					externalDatasourceUrl_ = getDefaultInstance().getExternalDatasourceUrl();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>string externalDatasourceUrl = 8;</code>
+				 */
+				public Builder setExternalDatasourceUrlBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					checkByteStringIsUtf8(value);
+
+					externalDatasourceUrl_ = value;
+					onChanged();
+					return this;
+				}
+
+				public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.setUnknownFieldsProto3(unknownFields);
+				}
+
+				public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+					return super.mergeUnknownFields(unknownFields);
+				}
+
+				// @@protoc_insertion_point(builder_scope:KlabData.State)
+			}
+
+			// @@protoc_insertion_point(class_scope:KlabData.State)
+			private static final Encoding.KlabData.State DEFAULT_INSTANCE;
+			static {
+				DEFAULT_INSTANCE = new Encoding.KlabData.State();
+			}
+
+			public static Encoding.KlabData.State getDefaultInstance() {
+				return DEFAULT_INSTANCE;
+			}
+
+			private static final com.google.protobuf.Parser<State> PARSER = new com.google.protobuf.AbstractParser<State>() {
+				public State parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+					return new State(input, extensionRegistry);
+				}
+			};
+
+			public static com.google.protobuf.Parser<State> parser() {
+				return PARSER;
+			}
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<State> getParserForType() {
+				return PARSER;
+			}
+
+			public Encoding.KlabData.State getDefaultInstanceForType() {
+				return DEFAULT_INSTANCE;
+			}
+
+		}
+
+		private int bitField0_;
+		public static final int GEOMETRY_FIELD_NUMBER = 1;
+		private volatile java.lang.Object geometry_;
+
+		/**
+		 * <code>string geometry = 1;</code>
+		 */
+		public java.lang.String getGeometry() {
+			java.lang.Object ref = geometry_;
+			if (ref instanceof java.lang.String) {
+				return (java.lang.String) ref;
+			} else {
+				com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+				java.lang.String s = bs.toStringUtf8();
+				geometry_ = s;
+				return s;
+			}
+		}
+
+		/**
+		 * <code>string geometry = 1;</code>
+		 */
+		public com.google.protobuf.ByteString getGeometryBytes() {
+			java.lang.Object ref = geometry_;
+			if (ref instanceof java.lang.String) {
+				com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+				geometry_ = b;
+				return b;
+			} else {
+				return (com.google.protobuf.ByteString) ref;
+			}
+		}
+
+		public static final int SEMANTICS_FIELD_NUMBER = 2;
+		private volatile java.lang.Object semantics_;
+
+		/**
+		 * <code>string semantics = 2;</code>
+		 */
+		public java.lang.String getSemantics() {
+			java.lang.Object ref = semantics_;
+			if (ref instanceof java.lang.String) {
+				return (java.lang.String) ref;
+			} else {
+				com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+				java.lang.String s = bs.toStringUtf8();
+				semantics_ = s;
+				return s;
+			}
+		}
+
+		/**
+		 * <code>string semantics = 2;</code>
+		 */
+		public com.google.protobuf.ByteString getSemanticsBytes() {
+			java.lang.Object ref = semantics_;
+			if (ref instanceof java.lang.String) {
+				com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+				semantics_ = b;
+				return b;
+			} else {
+				return (com.google.protobuf.ByteString) ref;
+			}
+		}
+
+		public static final int ELAPSED_FIELD_NUMBER = 3;
+		private long elapsed_;
+
+		/**
+		 * <code>int64 elapsed = 3;</code>
+		 */
+		public long getElapsed() {
+			return elapsed_;
+		}
+
+		public static final int NOTIFICATIONS_FIELD_NUMBER = 4;
+		private java.util.List<Encoding.KlabData.Notification> notifications_;
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		public java.util.List<Encoding.KlabData.Notification> getNotificationsList() {
+			return notifications_;
+		}
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		public java.util.List<? extends Encoding.KlabData.NotificationOrBuilder> getNotificationsOrBuilderList() {
+			return notifications_;
+		}
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		public int getNotificationsCount() {
+			return notifications_.size();
+		}
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		public Encoding.KlabData.Notification getNotifications(int index) {
+			return notifications_.get(index);
+		}
+
+		/**
+		 * <pre>
+		 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Notification notifications = 4;</code>
+		 */
+		public Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(int index) {
+			return notifications_.get(index);
+		}
+
+		public static final int OBJECTS_FIELD_NUMBER = 5;
+		private java.util.List<Encoding.KlabData.Object> objects_;
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		public java.util.List<Encoding.KlabData.Object> getObjectsList() {
+			return objects_;
+		}
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> getObjectsOrBuilderList() {
+			return objects_;
+		}
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		public int getObjectsCount() {
+			return objects_.size();
+		}
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		public Encoding.KlabData.Object getObjects(int index) {
+			return objects_.get(index);
+		}
+
+		/**
+		 * <pre>
+		 * these two should be in a oneof , but no joy there.
+		 * </pre>
+		 *
+		 * <code>repeated .KlabData.Object objects = 5;</code>
+		 */
+		public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(int index) {
+			return objects_.get(index);
+		}
+
+		public static final int STATE_FIELD_NUMBER = 6;
+		private Encoding.KlabData.State state_;
+
+		/**
+		 * <code>.KlabData.State state = 6;</code>
+		 */
+		public boolean hasState() {
+			return state_ != null;
+		}
+
+		/**
+		 * <code>.KlabData.State state = 6;</code>
+		 */
+		public Encoding.KlabData.State getState() {
+			return state_ == null ? Encoding.KlabData.State.getDefaultInstance() : state_;
+		}
+
+		/**
+		 * <code>.KlabData.State state = 6;</code>
+		 */
+		public Encoding.KlabData.StateOrBuilder getStateOrBuilder() {
+			return getState();
+		}
+
+		private byte memoizedIsInitialized = -1;
+
+		public final boolean isInitialized() {
+			byte isInitialized = memoizedIsInitialized;
+			if (isInitialized == 1)
+				return true;
+			if (isInitialized == 0)
+				return false;
+
+			memoizedIsInitialized = 1;
+			return true;
+		}
+
+		public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+			if (!getGeometryBytes().isEmpty()) {
+				com.google.protobuf.GeneratedMessageV3.writeString(output, 1, geometry_);
+			}
+			if (!getSemanticsBytes().isEmpty()) {
+				com.google.protobuf.GeneratedMessageV3.writeString(output, 2, semantics_);
+			}
+			if (elapsed_ != 0L) {
+				output.writeInt64(3, elapsed_);
+			}
+			for (int i = 0; i < notifications_.size(); i++) {
+				output.writeMessage(4, notifications_.get(i));
+			}
+			for (int i = 0; i < objects_.size(); i++) {
+				output.writeMessage(5, objects_.get(i));
+			}
+			if (state_ != null) {
+				output.writeMessage(6, getState());
+			}
+			unknownFields.writeTo(output);
+		}
+
+		public int getSerializedSize() {
+			int size = memoizedSize;
+			if (size != -1)
+				return size;
+
+			size = 0;
+			if (!getGeometryBytes().isEmpty()) {
+				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, geometry_);
+			}
+			if (!getSemanticsBytes().isEmpty()) {
+				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, semantics_);
+			}
+			if (elapsed_ != 0L) {
+				size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, elapsed_);
+			}
+			for (int i = 0; i < notifications_.size(); i++) {
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, notifications_.get(i));
+			}
+			for (int i = 0; i < objects_.size(); i++) {
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, objects_.get(i));
+			}
+			if (state_ != null) {
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(6, getState());
+			}
+			size += unknownFields.getSerializedSize();
+			memoizedSize = size;
+			return size;
+		}
+
+		@java.lang.Override
+		public boolean equals(final java.lang.Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof Encoding.KlabData)) {
+				return super.equals(obj);
+			}
+			Encoding.KlabData other = (Encoding.KlabData) obj;
+
+			boolean result = true;
+			result = result && getGeometry().equals(other.getGeometry());
+			result = result && getSemantics().equals(other.getSemantics());
+			result = result && (getElapsed() == other.getElapsed());
+			result = result && getNotificationsList().equals(other.getNotificationsList());
+			result = result && getObjectsList().equals(other.getObjectsList());
+			result = result && (hasState() == other.hasState());
+			if (hasState()) {
+				result = result && getState().equals(other.getState());
+			}
+			result = result && unknownFields.equals(other.unknownFields);
+			return result;
+		}
+
+		@java.lang.Override
+		public int hashCode() {
+			if (memoizedHashCode != 0) {
+				return memoizedHashCode;
+			}
+			int hash = 41;
+			hash = (19 * hash) + getDescriptor().hashCode();
+			hash = (37 * hash) + GEOMETRY_FIELD_NUMBER;
+			hash = (53 * hash) + getGeometry().hashCode();
+			hash = (37 * hash) + SEMANTICS_FIELD_NUMBER;
+			hash = (53 * hash) + getSemantics().hashCode();
+			hash = (37 * hash) + ELAPSED_FIELD_NUMBER;
+			hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getElapsed());
+			if (getNotificationsCount() > 0) {
+				hash = (37 * hash) + NOTIFICATIONS_FIELD_NUMBER;
+				hash = (53 * hash) + getNotificationsList().hashCode();
+			}
+			if (getObjectsCount() > 0) {
+				hash = (37 * hash) + OBJECTS_FIELD_NUMBER;
+				hash = (53 * hash) + getObjectsList().hashCode();
+			}
+			if (hasState()) {
+				hash = (37 * hash) + STATE_FIELD_NUMBER;
+				hash = (53 * hash) + getState().hashCode();
+			}
+			hash = (29 * hash) + unknownFields.hashCode();
+			memoizedHashCode = hash;
+			return hash;
+		}
+
+		public static Encoding.KlabData parseFrom(java.nio.ByteBuffer data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static Encoding.KlabData parseFrom(java.nio.ByteBuffer data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static Encoding.KlabData parseFrom(com.google.protobuf.ByteString data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static Encoding.KlabData parseFrom(com.google.protobuf.ByteString data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static Encoding.KlabData parseFrom(byte[] data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static Encoding.KlabData parseFrom(byte[] data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static Encoding.KlabData parseFrom(java.io.InputStream input) throws java.io.IOException {
+			return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+		}
+
+		public static Encoding.KlabData parseFrom(java.io.InputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+		}
+
+		public static Encoding.KlabData parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+			return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+		}
+
+		public static Encoding.KlabData parseDelimitedFrom(java.io.InputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input,
+					extensionRegistry);
+		}
+
+		public static Encoding.KlabData parseFrom(com.google.protobuf.CodedInputStream input)
+				throws java.io.IOException {
+			return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+		}
+
+		public static Encoding.KlabData parseFrom(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input, extensionRegistry);
+		}
+
+		public Builder newBuilderForType() {
+			return newBuilder();
+		}
+
+		public static Builder newBuilder() {
+			return DEFAULT_INSTANCE.toBuilder();
+		}
+
+		public static Builder newBuilder(Encoding.KlabData prototype) {
+			return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+		}
+
+		public Builder toBuilder() {
+			return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+		}
+
+		@java.lang.Override
+		protected Builder newBuilderForType(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+			Builder builder = new Builder(parent);
+			return builder;
+		}
+
+		/**
+		 * <pre>
+		 **
+		 * The data response to a URN get() request. Will contain a state or one or more objects,
+		 * with the correspondent geometry for validation and optional semantics.
+		 * </pre>
+		 *
+		 * Protobuf type {@code KlabData}
+		 */
+		public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+				// @@protoc_insertion_point(builder_implements:KlabData)
+				Encoding.KlabDataOrBuilder {
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return Encoding.internal_static_KlabData_descriptor;
+			}
+
+			protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internalGetFieldAccessorTable() {
+				return Encoding.internal_static_KlabData_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(Encoding.KlabData.class, Encoding.KlabData.Builder.class);
+			}
+
+			// Construct using Encoding.KlabData.newBuilder()
+			private Builder() {
+				maybeForceBuilderInitialization();
+			}
+
+			private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+				super(parent);
+				maybeForceBuilderInitialization();
+			}
+
+			private void maybeForceBuilderInitialization() {
+				if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+					getNotificationsFieldBuilder();
+					getObjectsFieldBuilder();
+				}
+			}
+
+			public Builder clear() {
+				super.clear();
+				geometry_ = "";
+
+				semantics_ = "";
+
+				elapsed_ = 0L;
+
+				if (notificationsBuilder_ == null) {
+					notifications_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000008);
+				} else {
+					notificationsBuilder_.clear();
+				}
+				if (objectsBuilder_ == null) {
+					objects_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000010);
+				} else {
+					objectsBuilder_.clear();
+				}
+				if (stateBuilder_ == null) {
+					state_ = null;
+				} else {
+					state_ = null;
+					stateBuilder_ = null;
+				}
+				return this;
+			}
+
+			public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+				return Encoding.internal_static_KlabData_descriptor;
+			}
+
+			public Encoding.KlabData getDefaultInstanceForType() {
+				return Encoding.KlabData.getDefaultInstance();
+			}
+
+			public Encoding.KlabData build() {
+				Encoding.KlabData result = buildPartial();
+				if (!result.isInitialized()) {
+					throw newUninitializedMessageException(result);
+				}
+				return result;
+			}
+
+			public Encoding.KlabData buildPartial() {
+				Encoding.KlabData result = new Encoding.KlabData(this);
+				int from_bitField0_ = bitField0_;
+				int to_bitField0_ = 0;
+				result.geometry_ = geometry_;
+				result.semantics_ = semantics_;
+				result.elapsed_ = elapsed_;
+				if (notificationsBuilder_ == null) {
+					if (((bitField0_ & 0x00000008) == 0x00000008)) {
+						notifications_ = java.util.Collections.unmodifiableList(notifications_);
+						bitField0_ = (bitField0_ & ~0x00000008);
+					}
+					result.notifications_ = notifications_;
+				} else {
+					result.notifications_ = notificationsBuilder_.build();
+				}
+				if (objectsBuilder_ == null) {
+					if (((bitField0_ & 0x00000010) == 0x00000010)) {
+						objects_ = java.util.Collections.unmodifiableList(objects_);
+						bitField0_ = (bitField0_ & ~0x00000010);
+					}
+					result.objects_ = objects_;
+				} else {
+					result.objects_ = objectsBuilder_.build();
+				}
+				if (stateBuilder_ == null) {
+					result.state_ = state_;
+				} else {
+					result.state_ = stateBuilder_.build();
+				}
+				result.bitField0_ = to_bitField0_;
+				onBuilt();
+				return result;
+			}
+
+			public Builder clone() {
+				return (Builder) super.clone();
+			}
+
+			public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+				return (Builder) super.setField(field, value);
+			}
+
+			public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+				return (Builder) super.clearField(field);
+			}
+
+			public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+				return (Builder) super.clearOneof(oneof);
+			}
+
+			public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
+					java.lang.Object value) {
+				return (Builder) super.setRepeatedField(field, index, value);
+			}
+
+			public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field,
+					java.lang.Object value) {
+				return (Builder) super.addRepeatedField(field, value);
+			}
+
+			public Builder mergeFrom(com.google.protobuf.Message other) {
+				if (other instanceof Encoding.KlabData) {
+					return mergeFrom((Encoding.KlabData) other);
+				} else {
+					super.mergeFrom(other);
+					return this;
+				}
+			}
+
+			public Builder mergeFrom(Encoding.KlabData other) {
+				if (other == Encoding.KlabData.getDefaultInstance())
+					return this;
+				if (!other.getGeometry().isEmpty()) {
+					geometry_ = other.geometry_;
+					onChanged();
+				}
+				if (!other.getSemantics().isEmpty()) {
+					semantics_ = other.semantics_;
+					onChanged();
+				}
+				if (other.getElapsed() != 0L) {
+					setElapsed(other.getElapsed());
+				}
+				if (notificationsBuilder_ == null) {
+					if (!other.notifications_.isEmpty()) {
+						if (notifications_.isEmpty()) {
+							notifications_ = other.notifications_;
+							bitField0_ = (bitField0_ & ~0x00000008);
+						} else {
+							ensureNotificationsIsMutable();
+							notifications_.addAll(other.notifications_);
+						}
+						onChanged();
+					}
+				} else {
+					if (!other.notifications_.isEmpty()) {
+						if (notificationsBuilder_.isEmpty()) {
+							notificationsBuilder_.dispose();
+							notificationsBuilder_ = null;
+							notifications_ = other.notifications_;
+							bitField0_ = (bitField0_ & ~0x00000008);
+							notificationsBuilder_ = com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+									? getNotificationsFieldBuilder()
+									: null;
+						} else {
+							notificationsBuilder_.addAllMessages(other.notifications_);
+						}
+					}
+				}
+				if (objectsBuilder_ == null) {
+					if (!other.objects_.isEmpty()) {
+						if (objects_.isEmpty()) {
+							objects_ = other.objects_;
+							bitField0_ = (bitField0_ & ~0x00000010);
+						} else {
+							ensureObjectsIsMutable();
+							objects_.addAll(other.objects_);
+						}
+						onChanged();
+					}
+				} else {
+					if (!other.objects_.isEmpty()) {
+						if (objectsBuilder_.isEmpty()) {
+							objectsBuilder_.dispose();
+							objectsBuilder_ = null;
+							objects_ = other.objects_;
+							bitField0_ = (bitField0_ & ~0x00000010);
+							objectsBuilder_ = com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+									? getObjectsFieldBuilder()
+									: null;
+						} else {
+							objectsBuilder_.addAllMessages(other.objects_);
+						}
+					}
+				}
+				if (other.hasState()) {
+					mergeState(other.getState());
+				}
+				this.mergeUnknownFields(other.unknownFields);
+				onChanged();
+				return this;
+			}
+
+			public final boolean isInitialized() {
+				return true;
+			}
+
+			public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				Encoding.KlabData parsedMessage = null;
+				try {
+					parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					parsedMessage = (Encoding.KlabData) e.getUnfinishedMessage();
+					throw e.unwrapIOException();
+				} finally {
+					if (parsedMessage != null) {
+						mergeFrom(parsedMessage);
+					}
+				}
+				return this;
+			}
+
+			private int bitField0_;
+
+			private java.lang.Object geometry_ = "";
+
+			/**
+			 * <code>string geometry = 1;</code>
+			 */
+			public java.lang.String getGeometry() {
+				java.lang.Object ref = geometry_;
+				if (!(ref instanceof java.lang.String)) {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					geometry_ = s;
+					return s;
+				} else {
+					return (java.lang.String) ref;
+				}
+			}
+
+			/**
+			 * <code>string geometry = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getGeometryBytes() {
+				java.lang.Object ref = geometry_;
+				if (ref instanceof String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					geometry_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			/**
+			 * <code>string geometry = 1;</code>
+			 */
+			public Builder setGeometry(java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+
+				geometry_ = value;
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>string geometry = 1;</code>
+			 */
+			public Builder clearGeometry() {
+
+				geometry_ = getDefaultInstance().getGeometry();
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>string geometry = 1;</code>
+			 */
+			public Builder setGeometryBytes(com.google.protobuf.ByteString value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				checkByteStringIsUtf8(value);
+
+				geometry_ = value;
+				onChanged();
+				return this;
+			}
+
+			private java.lang.Object semantics_ = "";
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public java.lang.String getSemantics() {
+				java.lang.Object ref = semantics_;
+				if (!(ref instanceof java.lang.String)) {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					semantics_ = s;
+					return s;
+				} else {
+					return (java.lang.String) ref;
+				}
+			}
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public com.google.protobuf.ByteString getSemanticsBytes() {
+				java.lang.Object ref = semantics_;
+				if (ref instanceof String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					semantics_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public Builder setSemantics(java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+
+				semantics_ = value;
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public Builder clearSemantics() {
+
+				semantics_ = getDefaultInstance().getSemantics();
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>string semantics = 2;</code>
+			 */
+			public Builder setSemanticsBytes(com.google.protobuf.ByteString value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				checkByteStringIsUtf8(value);
+
+				semantics_ = value;
+				onChanged();
+				return this;
+			}
+
+			private long elapsed_;
+
+			/**
+			 * <code>int64 elapsed = 3;</code>
+			 */
+			public long getElapsed() {
+				return elapsed_;
+			}
+
+			/**
+			 * <code>int64 elapsed = 3;</code>
+			 */
+			public Builder setElapsed(long value) {
+
+				elapsed_ = value;
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>int64 elapsed = 3;</code>
+			 */
+			public Builder clearElapsed() {
+
+				elapsed_ = 0L;
+				onChanged();
+				return this;
+			}
+
+			private java.util.List<Encoding.KlabData.Notification> notifications_ = java.util.Collections.emptyList();
+
+			private void ensureNotificationsIsMutable() {
+				if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+					notifications_ = new java.util.ArrayList<Encoding.KlabData.Notification>(notifications_);
+					bitField0_ |= 0x00000008;
+				}
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Notification, Encoding.KlabData.Notification.Builder, Encoding.KlabData.NotificationOrBuilder> notificationsBuilder_;
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public java.util.List<Encoding.KlabData.Notification> getNotificationsList() {
+				if (notificationsBuilder_ == null) {
+					return java.util.Collections.unmodifiableList(notifications_);
+				} else {
+					return notificationsBuilder_.getMessageList();
+				}
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public int getNotificationsCount() {
+				if (notificationsBuilder_ == null) {
+					return notifications_.size();
+				} else {
+					return notificationsBuilder_.getCount();
+				}
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Encoding.KlabData.Notification getNotifications(int index) {
+				if (notificationsBuilder_ == null) {
+					return notifications_.get(index);
+				} else {
+					return notificationsBuilder_.getMessage(index);
+				}
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder setNotifications(int index, Encoding.KlabData.Notification value) {
+				if (notificationsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureNotificationsIsMutable();
+					notifications_.set(index, value);
+					onChanged();
+				} else {
+					notificationsBuilder_.setMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder setNotifications(int index, Encoding.KlabData.Notification.Builder builderForValue) {
+				if (notificationsBuilder_ == null) {
+					ensureNotificationsIsMutable();
+					notifications_.set(index, builderForValue.build());
+					onChanged();
+				} else {
+					notificationsBuilder_.setMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder addNotifications(Encoding.KlabData.Notification value) {
+				if (notificationsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureNotificationsIsMutable();
+					notifications_.add(value);
+					onChanged();
+				} else {
+					notificationsBuilder_.addMessage(value);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder addNotifications(int index, Encoding.KlabData.Notification value) {
+				if (notificationsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureNotificationsIsMutable();
+					notifications_.add(index, value);
+					onChanged();
+				} else {
+					notificationsBuilder_.addMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder addNotifications(Encoding.KlabData.Notification.Builder builderForValue) {
+				if (notificationsBuilder_ == null) {
+					ensureNotificationsIsMutable();
+					notifications_.add(builderForValue.build());
+					onChanged();
+				} else {
+					notificationsBuilder_.addMessage(builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder addNotifications(int index, Encoding.KlabData.Notification.Builder builderForValue) {
+				if (notificationsBuilder_ == null) {
+					ensureNotificationsIsMutable();
+					notifications_.add(index, builderForValue.build());
+					onChanged();
+				} else {
+					notificationsBuilder_.addMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder addAllNotifications(java.lang.Iterable<? extends Encoding.KlabData.Notification> values) {
+				if (notificationsBuilder_ == null) {
+					ensureNotificationsIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, notifications_);
+					onChanged();
+				} else {
+					notificationsBuilder_.addAllMessages(values);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder clearNotifications() {
+				if (notificationsBuilder_ == null) {
+					notifications_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000008);
+					onChanged();
+				} else {
+					notificationsBuilder_.clear();
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Builder removeNotifications(int index) {
+				if (notificationsBuilder_ == null) {
+					ensureNotificationsIsMutable();
+					notifications_.remove(index);
+					onChanged();
+				} else {
+					notificationsBuilder_.remove(index);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Encoding.KlabData.Notification.Builder getNotificationsBuilder(int index) {
+				return getNotificationsFieldBuilder().getBuilder(index);
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(int index) {
+				if (notificationsBuilder_ == null) {
+					return notifications_.get(index);
+				} else {
+					return notificationsBuilder_.getMessageOrBuilder(index);
+				}
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public java.util.List<? extends Encoding.KlabData.NotificationOrBuilder> getNotificationsOrBuilderList() {
+				if (notificationsBuilder_ != null) {
+					return notificationsBuilder_.getMessageOrBuilderList();
+				} else {
+					return java.util.Collections.unmodifiableList(notifications_);
+				}
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Encoding.KlabData.Notification.Builder addNotificationsBuilder() {
+				return getNotificationsFieldBuilder().addBuilder(Encoding.KlabData.Notification.getDefaultInstance());
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public Encoding.KlabData.Notification.Builder addNotificationsBuilder(int index) {
+				return getNotificationsFieldBuilder().addBuilder(index,
+						Encoding.KlabData.Notification.getDefaultInstance());
+			}
+
+			/**
+			 * <pre>
+			 * if there is 1+ notification with ERROR severity, the next fields should not be set.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Notification notifications = 4;</code>
+			 */
+			public java.util.List<Encoding.KlabData.Notification.Builder> getNotificationsBuilderList() {
+				return getNotificationsFieldBuilder().getBuilderList();
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Notification, Encoding.KlabData.Notification.Builder, Encoding.KlabData.NotificationOrBuilder> getNotificationsFieldBuilder() {
+				if (notificationsBuilder_ == null) {
+					notificationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Notification, Encoding.KlabData.Notification.Builder, Encoding.KlabData.NotificationOrBuilder>(
+							notifications_, ((bitField0_ & 0x00000008) == 0x00000008), getParentForChildren(),
+							isClean());
+					notifications_ = null;
+				}
+				return notificationsBuilder_;
+			}
+
+			private java.util.List<Encoding.KlabData.Object> objects_ = java.util.Collections.emptyList();
+
+			private void ensureObjectsIsMutable() {
+				if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+					objects_ = new java.util.ArrayList<Encoding.KlabData.Object>(objects_);
+					bitField0_ |= 0x00000010;
+				}
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> objectsBuilder_;
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public java.util.List<Encoding.KlabData.Object> getObjectsList() {
+				if (objectsBuilder_ == null) {
+					return java.util.Collections.unmodifiableList(objects_);
+				} else {
+					return objectsBuilder_.getMessageList();
+				}
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public int getObjectsCount() {
+				if (objectsBuilder_ == null) {
+					return objects_.size();
+				} else {
+					return objectsBuilder_.getCount();
+				}
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Encoding.KlabData.Object getObjects(int index) {
+				if (objectsBuilder_ == null) {
+					return objects_.get(index);
+				} else {
+					return objectsBuilder_.getMessage(index);
+				}
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder setObjects(int index, Encoding.KlabData.Object value) {
+				if (objectsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureObjectsIsMutable();
+					objects_.set(index, value);
+					onChanged();
+				} else {
+					objectsBuilder_.setMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder setObjects(int index, Encoding.KlabData.Object.Builder builderForValue) {
+				if (objectsBuilder_ == null) {
+					ensureObjectsIsMutable();
+					objects_.set(index, builderForValue.build());
+					onChanged();
+				} else {
+					objectsBuilder_.setMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder addObjects(Encoding.KlabData.Object value) {
+				if (objectsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureObjectsIsMutable();
+					objects_.add(value);
+					onChanged();
+				} else {
+					objectsBuilder_.addMessage(value);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder addObjects(int index, Encoding.KlabData.Object value) {
+				if (objectsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureObjectsIsMutable();
+					objects_.add(index, value);
+					onChanged();
+				} else {
+					objectsBuilder_.addMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder addObjects(Encoding.KlabData.Object.Builder builderForValue) {
+				if (objectsBuilder_ == null) {
+					ensureObjectsIsMutable();
+					objects_.add(builderForValue.build());
+					onChanged();
+				} else {
+					objectsBuilder_.addMessage(builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder addObjects(int index, Encoding.KlabData.Object.Builder builderForValue) {
+				if (objectsBuilder_ == null) {
+					ensureObjectsIsMutable();
+					objects_.add(index, builderForValue.build());
+					onChanged();
+				} else {
+					objectsBuilder_.addMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder addAllObjects(java.lang.Iterable<? extends Encoding.KlabData.Object> values) {
+				if (objectsBuilder_ == null) {
+					ensureObjectsIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, objects_);
+					onChanged();
+				} else {
+					objectsBuilder_.addAllMessages(values);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder clearObjects() {
+				if (objectsBuilder_ == null) {
+					objects_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000010);
+					onChanged();
+				} else {
+					objectsBuilder_.clear();
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Builder removeObjects(int index) {
+				if (objectsBuilder_ == null) {
+					ensureObjectsIsMutable();
+					objects_.remove(index);
+					onChanged();
+				} else {
+					objectsBuilder_.remove(index);
+				}
+				return this;
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Encoding.KlabData.Object.Builder getObjectsBuilder(int index) {
+				return getObjectsFieldBuilder().getBuilder(index);
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(int index) {
+				if (objectsBuilder_ == null) {
+					return objects_.get(index);
+				} else {
+					return objectsBuilder_.getMessageOrBuilder(index);
+				}
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public java.util.List<? extends Encoding.KlabData.ObjectOrBuilder> getObjectsOrBuilderList() {
+				if (objectsBuilder_ != null) {
+					return objectsBuilder_.getMessageOrBuilderList();
+				} else {
+					return java.util.Collections.unmodifiableList(objects_);
+				}
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Encoding.KlabData.Object.Builder addObjectsBuilder() {
+				return getObjectsFieldBuilder().addBuilder(Encoding.KlabData.Object.getDefaultInstance());
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public Encoding.KlabData.Object.Builder addObjectsBuilder(int index) {
+				return getObjectsFieldBuilder().addBuilder(index, Encoding.KlabData.Object.getDefaultInstance());
+			}
+
+			/**
+			 * <pre>
+			 * these two should be in a oneof , but no joy there.
+			 * </pre>
+			 *
+			 * <code>repeated .KlabData.Object objects = 5;</code>
+			 */
+			public java.util.List<Encoding.KlabData.Object.Builder> getObjectsBuilderList() {
+				return getObjectsFieldBuilder().getBuilderList();
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder> getObjectsFieldBuilder() {
+				if (objectsBuilder_ == null) {
+					objectsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<Encoding.KlabData.Object, Encoding.KlabData.Object.Builder, Encoding.KlabData.ObjectOrBuilder>(
+							objects_, ((bitField0_ & 0x00000010) == 0x00000010), getParentForChildren(), isClean());
+					objects_ = null;
+				}
+				return objectsBuilder_;
+			}
+
+			private Encoding.KlabData.State state_ = null;
+			private com.google.protobuf.SingleFieldBuilderV3<Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> stateBuilder_;
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public boolean hasState() {
+				return stateBuilder_ != null || state_ != null;
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Encoding.KlabData.State getState() {
+				if (stateBuilder_ == null) {
+					return state_ == null ? Encoding.KlabData.State.getDefaultInstance() : state_;
+				} else {
+					return stateBuilder_.getMessage();
+				}
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Builder setState(Encoding.KlabData.State value) {
+				if (stateBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					state_ = value;
+					onChanged();
+				} else {
+					stateBuilder_.setMessage(value);
+				}
+
+				return this;
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Builder setState(Encoding.KlabData.State.Builder builderForValue) {
+				if (stateBuilder_ == null) {
+					state_ = builderForValue.build();
+					onChanged();
+				} else {
+					stateBuilder_.setMessage(builderForValue.build());
+				}
+
+				return this;
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Builder mergeState(Encoding.KlabData.State value) {
+				if (stateBuilder_ == null) {
+					if (state_ != null) {
+						state_ = Encoding.KlabData.State.newBuilder(state_).mergeFrom(value).buildPartial();
+					} else {
+						state_ = value;
+					}
+					onChanged();
+				} else {
+					stateBuilder_.mergeFrom(value);
+				}
+
+				return this;
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Builder clearState() {
+				if (stateBuilder_ == null) {
+					state_ = null;
+					onChanged();
+				} else {
+					state_ = null;
+					stateBuilder_ = null;
+				}
+
+				return this;
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Encoding.KlabData.State.Builder getStateBuilder() {
+
+				onChanged();
+				return getStateFieldBuilder().getBuilder();
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			public Encoding.KlabData.StateOrBuilder getStateOrBuilder() {
+				if (stateBuilder_ != null) {
+					return stateBuilder_.getMessageOrBuilder();
+				} else {
+					return state_ == null ? Encoding.KlabData.State.getDefaultInstance() : state_;
+				}
+			}
+
+			/**
+			 * <code>.KlabData.State state = 6;</code>
+			 */
+			private com.google.protobuf.SingleFieldBuilderV3<Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder> getStateFieldBuilder() {
+				if (stateBuilder_ == null) {
+					stateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<Encoding.KlabData.State, Encoding.KlabData.State.Builder, Encoding.KlabData.StateOrBuilder>(
+							getState(), getParentForChildren(), isClean());
+					state_ = null;
+				}
+				return stateBuilder_;
+			}
+
+			public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+				return super.setUnknownFieldsProto3(unknownFields);
+			}
+
+			public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
+				return super.mergeUnknownFields(unknownFields);
+			}
+
+			// @@protoc_insertion_point(builder_scope:KlabData)
+		}
+
+		// @@protoc_insertion_point(class_scope:KlabData)
+		private static final Encoding.KlabData DEFAULT_INSTANCE;
+		static {
+			DEFAULT_INSTANCE = new Encoding.KlabData();
+		}
+
+		public static Encoding.KlabData getDefaultInstance() {
+			return DEFAULT_INSTANCE;
+		}
+
+		private static final com.google.protobuf.Parser<KlabData> PARSER = new com.google.protobuf.AbstractParser<KlabData>() {
+			public KlabData parsePartialFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return new KlabData(input, extensionRegistry);
+			}
+		};
+
+		public static com.google.protobuf.Parser<KlabData> parser() {
+			return PARSER;
+		}
+
+		@java.lang.Override
+		public com.google.protobuf.Parser<KlabData> getParserForType() {
+			return PARSER;
+		}
+
+		public Encoding.KlabData getDefaultInstanceForType() {
+			return DEFAULT_INSTANCE;
+		}
+
+	}
+
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_Notification_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_Notification_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_Object_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_Object_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_Object_PropertiesEntry_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_Object_PropertiesEntry_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_LookupTable_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_LookupTable_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_LookupTable_TableEntry_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_LookupTable_TableEntry_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_KlabData_State_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_KlabData_State_fieldAccessorTable;
+
+	public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
+		return descriptor;
+	}
+
+	private static com.google.protobuf.Descriptors.FileDescriptor descriptor;
+	static {
+		java.lang.String[] descriptorData = { "\n\016Encoding.proto\032\031google/protobuf/any.pr"
+				+ "oto\"\266\006\n\010KlabData\022\020\n\010geometry\030\001 \001(\t\022\021\n\tse"
+				+ "mantics\030\002 \001(\t\022\017\n\007elapsed\030\003 \001(\003\022-\n\rnotifi"
+				+ "cations\030\004 \003(\0132\026.KlabData.Notification\022!\n"
+				+ "\007objects\030\005 \003(\0132\020.KlabData.Object\022\036\n\005stat"
+				+ "e\030\006 \001(\0132\017.KlabData.State\032B\n\014Notification"
+				+ "\022\014\n\004text\030\001 \001(\t\022$\n\010severity\030\002 \001(\0162\022.KlabD"
+				+ "ata.Severity\032\331\001\n\006Object\022\014\n\004name\030\001 \001(\t\0224\n"
+				+ "\nproperties\030\002 \003(\0132 .KlabData.Object.Prop"
+				+ "ertiesEntry\022\037\n\006states\030\003 \003(\0132\017.KlabData.S"
+				+ "tate\022!\n\007objects\030\004 \003(\0132\020.KlabData.Object\032"
+				+ "G\n\017PropertiesEntry\022\013\n\003key\030\001 \001(\t\022#\n\005value"
+				+ "\030\002 \001(\0132\024.google.protobuf.Any:\0028\001\032l\n\013Look"
+				+ "upTable\022/\n\005table\030\001 \003(\0132 .KlabData.Lookup"
+				+ "Table.TableEntry\032,\n\nTableEntry\022\013\n\003key\030\001 "
+				+ "\001(\021\022\r\n\005value\030\002 \001(\t:\0028\001\032\272\001\n\005State\022\014\n\004name"
+				+ "\030\001 \001(\t\022\021\n\tsemantics\030\002 \001(\t\022\022\n\ndoubledata\030"
+				+ "\003 \003(\001\022\021\n\ttabledata\030\004 \003(\021\022\017\n\007intdata\030\005 \003("
+				+ "\022\022\023\n\013booleandata\030\006 \003(\010\022$\n\005table\030\007 \001(\0132\025."
+				+ "KlabData.LookupTable\022\035\n\025externalDatasour"
+				+ "ceUrl\030\010 \001(\t\"7\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007WAR"
+				+ "NING\020\001\022\t\n\005ERROR\020\002\022\t\n\005DEBUG\020\003b\006proto3" };
+		com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner = new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+			public com.google.protobuf.ExtensionRegistry assignDescriptors(
+					com.google.protobuf.Descriptors.FileDescriptor root) {
+				descriptor = root;
+				return null;
+			}
+		};
+		com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(descriptorData,
+				new com.google.protobuf.Descriptors.FileDescriptor[] { com.google.protobuf.AnyProto.getDescriptor(), },
+				assigner);
+		internal_static_KlabData_descriptor = getDescriptor().getMessageTypes().get(0);
+		internal_static_KlabData_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_descriptor,
+				new java.lang.String[] { "Geometry", "Semantics", "Elapsed", "Notifications", "Objects", "State", });
+		internal_static_KlabData_Notification_descriptor = internal_static_KlabData_descriptor.getNestedTypes().get(0);
+		internal_static_KlabData_Notification_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_Notification_descriptor, new java.lang.String[] { "Text", "Severity", });
+		internal_static_KlabData_Object_descriptor = internal_static_KlabData_descriptor.getNestedTypes().get(1);
+		internal_static_KlabData_Object_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_Object_descriptor,
+				new java.lang.String[] { "Name", "Properties", "States", "Objects", });
+		internal_static_KlabData_Object_PropertiesEntry_descriptor = internal_static_KlabData_Object_descriptor
+				.getNestedTypes().get(0);
+		internal_static_KlabData_Object_PropertiesEntry_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_Object_PropertiesEntry_descriptor, new java.lang.String[] { "Key", "Value", });
+		internal_static_KlabData_LookupTable_descriptor = internal_static_KlabData_descriptor.getNestedTypes().get(2);
+		internal_static_KlabData_LookupTable_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_LookupTable_descriptor, new java.lang.String[] { "Table", });
+		internal_static_KlabData_LookupTable_TableEntry_descriptor = internal_static_KlabData_LookupTable_descriptor
+				.getNestedTypes().get(0);
+		internal_static_KlabData_LookupTable_TableEntry_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_LookupTable_TableEntry_descriptor, new java.lang.String[] { "Key", "Value", });
+		internal_static_KlabData_State_descriptor = internal_static_KlabData_descriptor.getNestedTypes().get(3);
+		internal_static_KlabData_State_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+				internal_static_KlabData_State_descriptor, new java.lang.String[] { "Name", "Semantics", "Doubledata",
+						"Tabledata", "Intdata", "Booleandata", "Table", "ExternalDatasourceUrl", });
+		com.google.protobuf.AnyProto.getDescriptor();
+	}
+
+	// @@protoc_insertion_point(outer_class_scope)
 }
