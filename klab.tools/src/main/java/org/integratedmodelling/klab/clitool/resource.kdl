@@ -7,7 +7,20 @@
 @version 0.10.0
 @namespace resource
 
-// import -adapter=XXX project file parameter=value*
+// create -adapter=XXX project file parameter=value*
 // publish urn
 // delete urn
 // list -owner (local|own|remote)
+
+void create
+	"Import a resource from a file or by naming parameters."
+{
+	text project
+		"The project where to import the resource"
+
+	optional input adapter 
+		"The adapter to use for import. Leave unspecified to have k.LAB choose the most suitable."
+		default ""
+	
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Create
+}

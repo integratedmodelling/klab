@@ -438,7 +438,12 @@ public enum Klab implements IRuntimeService {
      * @return an existing file, or null.
      */
     public File resolveFile(String filename) {
-        File ret = new File(filename);
+
+    	if (filename.startsWith("~")) {
+    		filename = System.getProperty("user.home") + filename.substring(1);
+    	}
+    	
+    	File ret = new File(filename);
         if (ret.exists()) {
             return ret;
         }

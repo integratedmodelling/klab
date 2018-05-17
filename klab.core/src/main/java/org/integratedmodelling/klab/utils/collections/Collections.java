@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.utils.collections;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 // TODO: Auto-generated Javadoc
@@ -35,10 +36,10 @@ public class Collections {
 	 * @return a single list with the content of all those passed
 	 */
 	@SafeVarargs
-	public static <T> List<T> join(List<T>... lists) {
+	public static <T> List<T> join(Collection<T>... lists) {
 		List<T> ret = new ArrayList<>();
 		if (lists != null) {
-			for (List<T> list : lists) {
+			for (Collection<T> list : lists) {
 				ret.addAll(list);
 			}
 		}

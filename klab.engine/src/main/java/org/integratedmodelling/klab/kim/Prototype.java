@@ -4,6 +4,7 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.collections.Collections;
 
 /**
  * The k.LAB prototype specializes {@link org.integratedmodelling.klab.common.Prototype} in the k.IM
@@ -28,7 +29,8 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     if (actuator.getDescription() != null) {
       this.description = StringUtils.pack(actuator.getDescription());
     }
-    for (IKdlActuator arg : actuator.getParameters()) {
+    
+    for (IKdlActuator arg : actuator.getActors()) {
 
       ArgumentImpl a = new ArgumentImpl();
       a.name = arg.getName();
@@ -55,6 +57,11 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       this.geometry = Geometry.create(actuator.getGeometry());
     } else {
       this.geometry = Geometry.empty();
+    }
+    
+    // compute short arguments
+    for (Argument argument : arguments.values()) {
+    	// TODO
     }
   }
 

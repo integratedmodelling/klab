@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -60,10 +61,27 @@ public interface IWorkspace {
     List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException;
     
     /**
-     * <p>getProjects.</p>
+     * Get all the projects in the workspace.
      *
-     * @return a {@link java.util.Collection} object.
+     * @return a {@link java.util.Collection} of all projects.
      */
     Collection<IProject> getProjects();
+
+    /**
+     * Create an empty project in this workspace.
+     * 
+     * @param projectId
+     * @return the new project
+     * @throws IllegalStateException if the project already exists in the workspace.
+     */
+	IProject createProject(String projectId);
+
+	/**
+	 * Retrieve the named project.
+	 * 
+	 * @param projectId
+	 * @return the project or null if project is not in the workspace
+	 */
+	IProject getProject(String projectId);
     
 }

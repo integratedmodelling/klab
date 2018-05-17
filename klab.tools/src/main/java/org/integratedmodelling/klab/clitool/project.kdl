@@ -11,3 +11,15 @@
 // delete ID
 // list 
 // list ID
+
+void create
+	"Create new projects in the local workspace."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.project.Create
+}
+
+void all
+	"List the projects in the local workspace."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.project.List
+}

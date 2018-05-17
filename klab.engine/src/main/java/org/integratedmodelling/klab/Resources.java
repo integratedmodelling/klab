@@ -220,6 +220,7 @@ public enum Resources implements IResourceService {
 	}
 
 	public IProject retrieveOrCreate(IKimProject project) {
+		
 		if (projects.containsKey(project.getName())) {
 			return projects.get(project.getName());
 		}
