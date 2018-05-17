@@ -28,24 +28,28 @@ import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 /**
  * The Class WcsAdapter.
  */
-@ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = {"serviceUrl", "wcsVersion"},
-    optional = {"namespace"})
+@ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = { "serviceUrl", "wcsVersion" }, optional = {
+		"namespace" })
 public class WcsAdapter implements IResourceAdapter {
 
-  @Override
-  public IResourceValidator getValidator() {
-    return new WcsValidator();
-  }
+	@Override
+	public String getName() {
+		return "wcs";
+	}
 
-  @Override
-  public IResourcePublisher getPublisher() {
-    return new WcsPublisher();
-  }
+	@Override
+	public IResourceValidator getValidator() {
+		return new WcsValidator();
+	}
 
-  @Override
-  public IResourceEncoder getEncoder() {
-    return new WcsEncoder();
-  }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new WcsPublisher();
+	}
 
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new WcsEncoder();
+	}
 
 }

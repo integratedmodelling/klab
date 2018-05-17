@@ -41,4 +41,10 @@ public class RasterEncoder implements IResourceEncoder {
 				.build();
 	}
 
+	@Override
+	public boolean isOnline(IResource resource) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

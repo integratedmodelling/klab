@@ -1,6 +1,10 @@
 package org.integratedmodelling.klab.data.storage;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.INotification;
@@ -14,83 +18,118 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
- * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
- * call) to a IResource; the IResource can then be contextualized to a {@link IGeometry} (using the
- * <code>get</code> API call) to produce the corresponding {@link IKlabData} that will be used to
- * build {@link IArtifact artifacts}.
+ * The k.LAB resource is identified by a URN. A URN is resolved (using the
+ * <code>resolve</code> API call) to a IResource; the IResource can then be
+ * contextualized to a {@link IGeometry} (using the <code>get</code> API call)
+ * to produce the corresponding {@link IKlabData} that will be used to build
+ * {@link IArtifact artifacts}.
  * 
- * When a URN is referenced in k.IM, it is turned into a {@link IComputableResource} which is passed
- * to the {@link IRuntimeProvider runtime} and turned into a KDL function call or literal, which
- * encodes their computation or resolution. Executing the KDL call as part of a {@link IDataflow}
- * builds the {@link IArtifact}.
+ * When a URN is referenced in k.IM, it is turned into a
+ * {@link IComputableResource} which is passed to the {@link IRuntimeProvider
+ * runtime} and turned into a KDL function call or literal, which encodes their
+ * computation or resolution. Executing the KDL call as part of a
+ * {@link IDataflow} builds the {@link IArtifact}.
  * 
  * @author Ferd
  *
  */
-public class FutureResource implements IResource {
+public class FutureResource implements IResource, Future<IResource> {
 
-  private static final long serialVersionUID = -923039635832182164L;
-  
-  private String urn;
-  private IResource delegate;
-  private long timeout = 1000;
-  
-  public FutureResource(String urn) {
-    
-  }
+	private static final long serialVersionUID = -923039635832182164L;
 
-  private IResource getDelegate(long timeout) {
-    if (delegate == null) {
-      while (!Resources.INSTANCE.getLocalResourceCatalog().containsKey(urn)) {
-        try {
-          Thread.sleep(timeout);
-        } catch (InterruptedException e) {
-          // boh
-        }
-      }
-      this.delegate = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
-    }
-    return delegate;
-  }
-  
-  public String getUrn() {
-    return getDelegate(timeout).getUrn();
-  }
+	private String urn;
+	private IResource delegate;
+	private long timeout = 1000;
+	private IMonitor monitor;
 
-  public IGeometry getGeometry() {
-    return getDelegate(timeout).getGeometry();
-  }
+	public FutureResource(String urn, IMonitor monitor) {
+		this.urn = urn;
+		this.monitor = monitor;
+	}
 
-  public Version getVersion() {
-    return getDelegate(timeout).getVersion();
-  }
+	private IResource getDelegate(long timeout) {
+		if (delegate == null) {
+			while (!Resources.INSTANCE.getLocalResourceCatalog().containsKey(urn)) {
+				try {
+					Thread.sleep(timeout);
+				} catch (InterruptedException e) {
+					// boh
+				}
+			}
+			this.delegate = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+		}
+		return delegate;
+	}
 
-  public String getAdapterType() {
-    return getDelegate(timeout).getAdapterType();
-  }
+	public String getUrn() {
+		return getDelegate(timeout).getUrn();
+	}
 
-  public IMetadata getMetadata() {
-    return getDelegate(timeout).getMetadata();
-  }
+	public IGeometry getGeometry() {
+		return getDelegate(timeout).getGeometry();
+	}
 
-  public List<INotification> getHistory() {
-    return getDelegate(timeout).getHistory();
-  }
+	public Version getVersion() {
+		return getDelegate(timeout).getVersion();
+	}
 
-  public IParameters getParameters() {
-    return getDelegate(timeout).getParameters();
-  }
+	public String getAdapterType() {
+		return getDelegate(timeout).getAdapterType();
+	}
 
-  public long getResourceTimestamp() {
-    return getDelegate(timeout).getResourceTimestamp();
-  }
+	public IMetadata getMetadata() {
+		return getDelegate(timeout).getMetadata();
+	}
 
-  @Override
-  public boolean hasErrors() {
-    return getDelegate(timeout).hasErrors();
-  }
+	public List<INotification> getHistory() {
+		return getDelegate(timeout).getHistory();
+	}
 
+	public IParameters getParameters() {
+		return getDelegate(timeout).getParameters();
+	}
+
+	public long getResourceTimestamp() {
+		return getDelegate(timeout).getResourceTimestamp();
+	}
+
+	@Override
+	public boolean hasErrors() {
+		return getDelegate(timeout).hasErrors();
+	}
+
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isDone() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IResource get() throws InterruptedException, ExecutionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IResource get(long timeout, TimeUnit unit)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

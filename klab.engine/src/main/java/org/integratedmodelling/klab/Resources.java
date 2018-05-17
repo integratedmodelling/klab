@@ -9,16 +9,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -63,6 +67,8 @@ public enum Resources implements IResourceService {
 	 * The global instance singleton.
 	 */
 	INSTANCE;
+
+	private ExecutorService resourceTaskExecutor;
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 
@@ -241,8 +247,13 @@ public enum Resources implements IResourceService {
 	}
 
 	// @Override
-	public List<IResourceAdapter> getResourceAdapter(File resource) {
+	public List<IResourceAdapter> getResourceAdapter(File resource, IParameters parameters) {
 		List<IResourceAdapter> ret = new ArrayList<>();
+		for (IResourceAdapter adapter : resourceAdapters.values()) {
+			if (adapter.getValidator().canHandle(resource, parameters)) {
+				ret.add(adapter);
+			}
+		}
 		return ret;
 	}
 
@@ -274,76 +285,93 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public IResource getLocalResource(File file, IParameters parameters, IProject project, String adapterType,
-			IMonitor monitor) {
+	public IResource createLocalResource(String resourceId, File file, IParameters parameters, IProject project,
+			String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
 
-		// get URN from k.IM service, unique per file
-		String urn = Urns.INSTANCE.getFileUrn(file);
+		IUserIdentity user = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(IUserIdentity.class);
+		if (user == null) {
+			throw new KlabAuthorizationException("cannot establish current user: resources cannot be created");
+		}
+
+		String urn = "local:" + user.getUsername() + ":" + project.getName() + ":" + resourceId;
 		IResource ret = null;
 
 		/**
 		 * 2. see if it was processed before and timestamps match; if so, return
-		 * existing resource
+		 * existing resource unless we're forcing a revision
 		 */
 		ret = getLocalResourceCatalog().get(urn);
 
-		if (ret != null && ret.getResourceTimestamp() >= file.lastModified()) {
+		if (!forceUpdate && ret != null && ret.getResourceTimestamp() >= file.lastModified()) {
 			return ret;
 		}
 
-		/**
-		 * 3. else, spawn resource processing thread for local publishing and return
-		 * temporary resource record
-		 */
-		new Thread() {
+		final Version version = ret == null ? Version.create("0.1")
+				: ret.getVersion().withMinor(ret.getVersion().getMinor() + 1);
 
-			@Override
-			public void run() {
+		// TODO define history items - add to previous if existing, date of creation
+		// etc.
 
-				List<Throwable> errors = new ArrayList<>();
-				IResource resource = null;
-				try {
+		return asynchronous ? importResourceAsynchronously(urn, adapterType, file, parameters, version, monitor)
+				: importResource(urn, adapterType, file, parameters, version, monitor);
+	}
 
-					IResourceAdapter adapter = null;
-					if (adapterType == null) {
-						List<IResourceAdapter> adapters = getResourceAdapter(file);
-						if (adapters.size() > 0) {
-							/*
-							 * TODO logics to pick the best for the input
-							 */
-							adapter = adapters.get(0);
-						}
-					} else {
-						adapter = resourceAdapters.get(adapterType);
-					}
+	private IResource importResource(String urn, String adapterType, File file, IParameters parameters, Version version,
+			IMonitor monitor) {
 
-					if (adapter != null) {
-						/*
-						 * TODO enable parameters TODO use adapter metadata to validate the input before
-						 * calling validate()
-						 */
-						Builder builder = adapter.getValidator().validate(file.toURI().toURL(), new Parameters(),
-								monitor);
-						resource = builder.build(urn);
+		List<Throwable> errors = new ArrayList<>();
+		IResource resource = null;
+		try {
 
-					} else {
-						errors.add(new KlabValidationException("cannot find an adapter to process file " + file));
-					}
-
-				} catch (Exception e) {
-					errors.add(e);
+			IResourceAdapter adapter = null;
+			if (adapterType == null) {
+				List<IResourceAdapter> adapters = getResourceAdapter(file, parameters);
+				if (adapters.size() > 0) {
+					/*
+					 * TODO logics to pick the best for the input
+					 */
+					adapter = adapters.get(0);
 				}
-
-				if (resource == null) {
-					resource = Resource.error(urn, errors);
-				}
-
-				localResourceCatalog.put(urn, resource);
+			} else {
+				adapter = resourceAdapters.get(adapterType);
 			}
 
-		}.start();
+			if (adapter != null) {
 
-		return new FutureResource(urn);
+				IResourceValidator validator = adapter.getValidator();
+
+				/*
+				 * TODO use adapter metadata to validate the input before calling validate()
+				 */
+				Builder builder = validator.validate(file.toURI().toURL(), parameters, monitor);
+
+				/*
+				 * TODO if no errors, copy files and add notifications to resource
+				 */
+				
+				resource = builder.setResourceVersion(version).build(urn);
+
+			} else {
+				errors.add(new KlabValidationException("cannot find an adapter to process file " + file));
+			}
+
+		} catch (Exception e) {
+			errors.add(e);
+		}
+
+		if (resource == null) {
+			resource = Resource.error(urn, errors);
+		}
+
+		localResourceCatalog.put(urn, resource);
+
+		return resource;
+	}
+
+	private FutureResource importResourceAsynchronously(String urn, String adapterType, File file,
+			IParameters parameters, Version version, IMonitor monitor) {
+		// TODO create future, send it for execution
+		return null;
 	}
 
 	/**
@@ -482,6 +510,14 @@ public enum Resources implements IResourceService {
 	@Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
+	}
+
+	public ExecutorService getResourceTaskExecutor() {
+		if (resourceTaskExecutor == null) {
+			// TODO condition both the type and the parameters of the executor to options
+			resourceTaskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getResourceThreadCount());
+		}
+		return resourceTaskExecutor;
 	}
 
 }

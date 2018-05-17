@@ -74,10 +74,12 @@ public interface IResourceService {
 	IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException;
 
 	/**
-	 * Create a locally available resource from a specification or/and by examining
-	 * a local file. This is the beginning of a resource's life cycle. When a
-	 * resource is successfully created, its data will be stored in the project
-	 * under the resources folder, and synchronized with the local resource catalog.
+	 * Create or update a locally available resource from a specification or/and by
+	 * examining a local file. This is the beginning of a resource's life cycle.
+	 * When a resource is successfully created, its data will be stored in the
+	 * project under the resources folder, and synchronized with the local resource
+	 * catalog. If the file has been seen already, the resource is updated in the
+	 * local catalog with full history records.
 	 * <p>
 	 * The local resource will have a
 	 * {@code [urn:klab:]local:user:project:resourceid.version} URN which is visible
@@ -86,7 +88,16 @@ public interface IResourceService {
 	 * <p>
 	 * The resource ID is created from the file name if an id field is not present
 	 * in the parameters. It is an error to pass a null file and no id.
-	 *
+	 * <p>
+	 * The update parameter controls whether revisions are possible with files that
+	 * don't have a newer timestamp than the resource. It will normally be set to
+	 * true only when the resource creation is created explicitly. This function is
+	 * also used when reading or updating a resource for a file named in a k.IM
+	 * model.
+	 * 
+	 * @param resourceId
+	 *            the ID for the resource, which will be part of the URN and must be
+	 *            unique within a project.
 	 * @param file
 	 *            a {@link java.io.File} object. May be null if userData contain all
 	 *            relevant info. The local path of the file (starting at the project
@@ -102,6 +113,13 @@ public interface IResourceService {
 	 * @param adapterType
 	 *            pass null to interrogate all adapters and choose the first fitting
 	 *            adapter. Must be passed if file is null.
+	 * @param update
+	 *            if true, allow updating of the resource every time this is called.
+	 *            Otherwise just create if absent or update when the timestamp on
+	 *            the resource is older than that of the file.
+	 * @param asynchronous 
+	 * 			  if true, spawn a validator thread and return a proxy for the resource
+	 * 			  without blocking.
 	 * @param monitor
 	 *            a
 	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
@@ -109,7 +127,8 @@ public interface IResourceService {
 	 * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
 	 *         with a local URN if successful.
 	 */
-	IResource getLocalResource(File file, IParameters userData, IProject project, String adapterType, IMonitor monitor);
+	IResource createLocalResource(String resourceId, File file, IParameters userData, IProject project,
+			String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
 
 	/**
 	 * The workspace with all local projects. The only workspace that is not read

@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.raster.wcs;
+package org.integratedmodelling.klab.ogc.vector.files;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -24,9 +24,9 @@ import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State;
 
 /**
- * The Class WcsEncoder.
+ * The Class RasterEncoder.
  */
-public class WcsEncoder implements IResourceEncoder {
+public class VectorEncoder implements IResourceEncoder {
 	
 	@Override
 	public IKlabData getEncodedData(IResource resource, IGeometry geometry, IMonitor monitor) {

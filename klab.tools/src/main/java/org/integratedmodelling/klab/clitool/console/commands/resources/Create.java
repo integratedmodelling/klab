@@ -6,10 +6,12 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public class Create implements ICommand {
@@ -23,7 +25,8 @@ public class Create implements ICommand {
 		IProject project = Resources.INSTANCE.getLocalWorkspace().getProject(projectId);
 
 		if (project == null) {
-			throw new KlabValidationException("resource::create: project " + projectId + " does not exist in local workspace");
+			throw new KlabValidationException(
+					"resource::create: project " + projectId + " does not exist in local workspace");
 		}
 
 		File file = null;
@@ -34,7 +37,8 @@ public class Create implements ICommand {
 				parameters.put(ss[0], ss[1]);
 			} else {
 				if (file != null) {
-					throw new KlabValidationException("the resource::create command only supports one file argument: " + argument);
+					throw new KlabValidationException(
+							"the resource::create command only supports one file argument: " + argument);
 				}
 				file = Klab.INSTANCE.resolveFile(argument);
 				if (!file.exists()) {
@@ -43,7 +47,19 @@ public class Create implements ICommand {
 			}
 		}
 
-		return Resources.INSTANCE.getLocalResource(file, parameters, project, adapter, session.getMonitor());
+		String id = parameters.get("id", String.class);
+		if (id == null && file != null) {
+			id = MiscUtilities.getFileBaseName(file);
+		}
+		if (id == null) {
+			throw new KlabValidationException(
+					"resource::create: file is null and the parameters do not contain an 'id' field");
+		}
+
+		IResource ret = Resources.INSTANCE.createLocalResource(id, file, parameters, project, adapter, true, false,
+				session.getMonitor());
+		
+		return ret.getUrn() + " [v" + ret.getVersion() + "; adapter=" + ret.getAdapterType() + "]\n   Geometry: " + ret.getGeometry();
 	}
 
 }

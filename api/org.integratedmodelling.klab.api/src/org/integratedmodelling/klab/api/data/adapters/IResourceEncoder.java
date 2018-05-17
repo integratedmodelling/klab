@@ -26,14 +26,32 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @version $Id: $Id
  */
 public interface IResourceEncoder {
-  
-  /**
-   * <p>getEncodedData.</p>
-   *
-   * @param resource a {@link org.integratedmodelling.klab.api.data.IResource} object.
-   * @param geometry a {@link org.integratedmodelling.klab.api.data.IGeometry} object.
-   * @param monitor for notifications and identity retrieval
-   * @return a {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} object.
-   */
-  IKlabData getEncodedData(IResource resource, IGeometry geometry, IMonitor monitor);
+
+	/**
+	 * Check if the resource can be accessed. This should ensure the ability of
+	 * calling {@link #getEncodedData(IResource, IGeometry, IMonitor)} without
+	 * spending too much time.
+	 * 
+	 * @param resource
+	 * @return true if resource can be used at the moment of this call.
+	 */
+	boolean isOnline(IResource resource);
+
+	/**
+	 * Get the encoded data for the resource.
+	 *
+	 * @param resource
+	 *            a {@link org.integratedmodelling.klab.api.data.IResource}. It
+	 *            should have been recently inspected with
+	 *            {@link #isOnline(IResource)}.
+	 * @param geometry
+	 *            the {@link org.integratedmodelling.klab.api.data.IGeometry} of
+	 *            reference for the query. The resolution process should guarantee
+	 *            that the intersection with the resource's geometry is not empty.
+	 * @param monitor
+	 *            for notifications and identity retrieval
+	 * @return a {@link org.integratedmodelling.klab.api.data.adapters.IKlabData}
+	 *         object.
+	 */
+	IKlabData getEncodedData(IResource resource, IGeometry geometry, IMonitor monitor);
 }

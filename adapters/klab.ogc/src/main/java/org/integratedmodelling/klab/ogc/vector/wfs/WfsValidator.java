@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.raster.wcs;
+package org.integratedmodelling.klab.ogc.vector.wfs;
 
 import java.io.File;
 import java.net.URL;
@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 /**
  * The Class WcsValidator.
  */
-public class WcsValidator implements IResourceValidator {
+public class WfsValidator implements IResourceValidator {
 
 	@Override
 	public Builder validate(URL url, IParameters userData, IMonitor monitor) {

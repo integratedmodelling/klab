@@ -13,15 +13,26 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.api.data.adapters;
+package org.integratedmodelling.klab.ogc.vector.files;
+
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * Encoded k.LAB data resulting from decoding a resource URN in a specified
- * geometry.
- *
+ * The raster publisher will attempt WCS publishing if a WCS server is connected.
+ * 
  * @author ferdinando.villa
- * @version $Id: $Id
+ *
  */
-public interface IKlabData {
+public class VectorPublisher implements IResourcePublisher {
+
+  @Override
+  public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 
 }

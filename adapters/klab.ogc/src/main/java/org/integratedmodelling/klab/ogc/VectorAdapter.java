@@ -21,26 +21,34 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
+import org.integratedmodelling.klab.ogc.vector.files.VectorPublisher;
+import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 
 /**
  * The Class VectorAdapter.
  */
-@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = {"fileUrl"})
+@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = { "fileUrl" })
 public class VectorAdapter implements IResourceAdapter {
 
-  @Override
-  public IResourceValidator getValidator() {
-    return null;
-  }
+	@Override
+	public String getName() {
+		return "vector";
+	}
 
-  @Override
-  public IResourcePublisher getPublisher() {
-    return null;
-  }
+	@Override
+	public IResourceValidator getValidator() {
+		return new VectorValidator();
+	}
 
-  @Override
-  public IResourceEncoder getEncoder() {
-    return null;
-  }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new VectorPublisher();
+	}
+
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new VectorEncoder();
+	}
 
 }

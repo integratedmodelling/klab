@@ -28,22 +28,27 @@ import org.integratedmodelling.klab.raster.files.RasterValidator;
 /**
  * The Class RasterAdapter.
  */
-@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = {"fileUrl"})
+@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" })
 public class RasterAdapter implements IResourceAdapter {
 
-  @Override
-  public IResourceValidator getValidator() {
-    return new RasterValidator();
-  }
+	@Override
+	public String getName() {
+		return "raster";
+	}
 
-  @Override
-  public IResourcePublisher getPublisher() {
-    return new RasterPublisher();
-  }
+	@Override
+	public IResourceValidator getValidator() {
+		return new RasterValidator();
+	}
 
-  @Override
-  public IResourceEncoder getEncoder() {
-    return new RasterEncoder();
-  }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new RasterPublisher();
+	}
+
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new RasterEncoder();
+	}
 
 }

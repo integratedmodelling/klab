@@ -306,6 +306,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cNameAlternatives_0_2_0 = (Alternatives)cNameAssignment_0_2.eContents().get(0);
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_2_0_0 = (RuleCall)cNameAlternatives_0_2_0.eContents().get(0);
 		private final RuleCall cNameLOWERCASE_DASHIDTerminalRuleCall_0_2_0_1 = (RuleCall)cNameAlternatives_0_2_0.eContents().get(1);
+		private final RuleCall cNameSTRINGTerminalRuleCall_0_2_0_2 = (RuleCall)cNameAlternatives_0_2_0.eContents().get(2);
 		private final Group cGroup_0_3 = (Group)cGroup_0.eContents().get(3);
 		private final Keyword cForKeyword_0_3_0 = (Keyword)cGroup_0_3.eContents().get(0);
 		private final Assignment cTargetsAssignment_0_3_1 = (Assignment)cGroup_0_3.eContents().get(1);
@@ -373,24 +374,25 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//
 		//ActorDefinition:
 		//	(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
-		//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID) ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING?
-		//	('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)? |
-		//	(optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=LOWERCASE_ID
-		//	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{'
-		//	body=DataflowBody '}')?;
+		//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
+		//	docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+		//	coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
+		//	parameter?='input' name=LOWERCASE_ID ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
+		//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
-		//type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID) ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING?
-		//('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)? |
-		//(optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=LOWERCASE_ID
-		//('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{'
-		//body=DataflowBody '}')?
+		//type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
+		//docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+		//coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
+		//parameter?='input' name=LOWERCASE_ID ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
+		//docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
-		//type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID) ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING?
-		//('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?
+		//type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
+		//docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+		//coverage+=Function)*)?
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
@@ -450,10 +452,10 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//ACTOR
 		public RuleCall getTypeACTORParserRuleCall_0_1_0() { return cTypeACTORParserRuleCall_0_1_0; }
 		
-		//name=(LOWERCASE_ID | LOWERCASE_DASHID)
+		//name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
 		public Assignment getNameAssignment_0_2() { return cNameAssignment_0_2; }
 		
-		//(LOWERCASE_ID | LOWERCASE_DASHID)
+		//(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
 		public Alternatives getNameAlternatives_0_2_0() { return cNameAlternatives_0_2_0; }
 		
 		//LOWERCASE_ID
@@ -461,6 +463,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//LOWERCASE_DASHID
 		public RuleCall getNameLOWERCASE_DASHIDTerminalRuleCall_0_2_0_1() { return cNameLOWERCASE_DASHIDTerminalRuleCall_0_2_0_1; }
+		
+		//STRING
+		public RuleCall getNameSTRINGTerminalRuleCall_0_2_0_2() { return cNameSTRINGTerminalRuleCall_0_2_0_2; }
 		
 		//('for' targets+=TARGET (',' targets+=TARGET)*)?
 		public Group getGroup_0_3() { return cGroup_0_3; }
@@ -3578,11 +3583,11 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//
 	//ActorDefinition:
 	//	(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
-	//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID) ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING?
-	//	('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)? |
-	//	(optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=LOWERCASE_ID
-	//	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{'
-	//	body=DataflowBody '}')?;
+	//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
+	//	docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+	//	coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
+	//	parameter?='input' name=LOWERCASE_ID ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
+	//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}

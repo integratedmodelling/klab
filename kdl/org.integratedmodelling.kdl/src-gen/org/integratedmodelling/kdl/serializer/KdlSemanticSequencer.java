@@ -155,7 +155,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         (
 	 *             (exported?='export' | (optional?='optional'? imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
 	 *             type=ACTOR 
-	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID) 
+	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
 	 *             (targets+=TARGET targets+=TARGET*)? 
 	 *             docstring=STRING? 
 	 *             body=DataflowBody? 

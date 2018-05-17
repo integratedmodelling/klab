@@ -103,6 +103,14 @@ public class Version implements Comparable<Version>, Serializable {
     public Version(String version) {
         parseString(version);
     }
+    
+    public Version(Version version) {
+    	this.major = version.major;
+    	this.minor = version.minor;
+    	this.build = version.build;
+    	this.name = version.name;
+    }
+    
 
     private void parseString(final String str) {
 
@@ -417,5 +425,29 @@ public class Version implements Comparable<Version>, Serializable {
         }
         return currentVersion;
     }
+
+	public Version withMinor(int i) {
+		Version ret = new Version(this);
+		ret.minor = i;
+		return ret;
+	}
+
+	public Version withBuild(int i) {
+		Version ret = new Version(this);
+		ret.build = i;
+		return ret;
+	}
+
+	public Version withName(String name) {
+		Version ret = new Version(this);
+		ret.name = name;
+		return ret;
+	}
+
+	public Version withMajor(int i) {
+		Version ret = new Version(this);
+		ret.major = i;
+		return ret;
+	}
 
 }

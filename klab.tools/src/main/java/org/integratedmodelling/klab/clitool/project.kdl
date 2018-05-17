@@ -18,8 +18,12 @@ void create
 	class org.integratedmodelling.klab.clitool.console.commands.project.Create
 }
 
-void all
+void 'list'
 	"List the projects in the local workspace."
 {
+	optional input verbose
+		"Verbose output: list resource details"
+		default false
+		
 	class org.integratedmodelling.klab.clitool.console.commands.project.List
 }

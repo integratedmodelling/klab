@@ -749,6 +749,21 @@ ruleActorDefinition returns [EObject current=null]
 								lv_name_7_2,
 								"org.integratedmodelling.kdl.Kdl.LOWERCASE_DASHID");
 						}
+						    |
+						lv_name_7_3=RULE_STRING
+						{
+							newLeafNode(lv_name_7_3, grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_0_2_0_2());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActorDefinitionRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"name",
+								lv_name_7_3,
+								"org.eclipse.xtext.common.Terminals.STRING");
+						}
 					)
 				)
 			)

@@ -21,31 +21,35 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
-import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
-import org.integratedmodelling.klab.raster.wcs.WcsPublisher;
-import org.integratedmodelling.klab.raster.wcs.WcsValidator;
+import org.integratedmodelling.klab.ogc.vector.wfs.WfsEncoder;
+import org.integratedmodelling.klab.ogc.vector.wfs.WfsPublisher;
+import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 
 /**
  * The Class WfsAdapter.
  */
-@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = {"serviceUrl", "wfsVersion"},
-    optional = {"namespace"})
+@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = { "serviceUrl", "wfsVersion" }, optional = {
+		"namespace" })
 public class WfsAdapter implements IResourceAdapter {
 
-  @Override
-  public IResourceValidator getValidator() {
-    return new WcsValidator();
-  }
+	@Override
+	public String getName() {
+		return "wfs";
+	}
 
-  @Override
-  public IResourcePublisher getPublisher() {
-    return new WcsPublisher();
-  }
+	@Override
+	public IResourceValidator getValidator() {
+		return new WfsValidator();
+	}
 
-  @Override
-  public IResourceEncoder getEncoder() {
-    return new WcsEncoder();
-  }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new WfsPublisher();
+	}
 
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new WfsEncoder();
+	}
 
 }

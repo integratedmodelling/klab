@@ -210,6 +210,11 @@ public enum Configuration implements IConfigurationService {
 		return 3;
 	}
 
+	public int getResourceThreadCount() {
+		// TODO Auto-generated method stub
+		return 3;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isRemoteResolutionEnabled() {

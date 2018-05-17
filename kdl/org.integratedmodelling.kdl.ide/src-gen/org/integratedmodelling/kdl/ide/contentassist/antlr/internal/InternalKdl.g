@@ -1141,6 +1141,12 @@ rule__ActorDefinition__NameAlternatives_0_2_0
 		RULE_LOWERCASE_DASHID
 		{ after(grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_0_2_0_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_0_2_0_2()); }
+		RULE_STRING
+		{ after(grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_0_2_0_2()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

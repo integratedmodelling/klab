@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.raster.files;
+package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
 import java.net.URL;
@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * The Class RasterValidator.
  */
-public class RasterValidator implements IResourceValidator {
+public class VectorValidator implements IResourceValidator {
 
 	@Override
 	public IResource.Builder validate(URL url, IParameters userData, IMonitor monitor) {
@@ -59,36 +59,28 @@ public class RasterValidator implements IResourceValidator {
 			CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
 			GridGeometry2D grid = coverage.getGridGeometry();
 
-			String crsCode = null;
 			if (crs == null) {
 				ret.addError("Coverage has no coordinate reference system");
-			} else {
-				// TODO also try transforming to the UTM zone 
+			} else
 				try {
 					CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
-					crsCode = CRS.lookupIdentifier(crs, true);
 				} catch (Throwable e) {
 					ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
 				}
-				
-				if (crsCode == null) {
-					ret.addError("Projection CRS code cannot be assessed");
-				}
-			}
 
 			if (!ret.hasErrors()) {
 
 				Geometry geometry = Geometry.create("S2")
 						.withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0), envelope.getMinimum(1),
 								envelope.getMaximum(1))
-						.withProjection(crsCode)
+						.withProjection(CRS.toSRS(crs))
 						.withSpatialShape((long) grid.getGridRange().getSpan(0), (long) grid.getGridRange().getSpan(1));
 
 				ret.setGeometry(geometry);
 			}
 
 		} catch (Throwable e) {
-			ret.addError("Errors validating resource: " + e.getMessage());
+			ret.addError("Error validating " + e.getMessage());
 		}
 
 		return ret;
@@ -96,18 +88,17 @@ public class RasterValidator implements IResourceValidator {
 
 	@Override
 	public boolean canHandle(File resource, IParameters parameters) {
-
+		
 		if (resource == null) {
 			return false;
 		}
 		String extension = MiscUtilities.getFileExtension(resource);
 		if (extension != null) {
-			return
-			// TODO other raster formats understandable by geotools
-			extension.toLowerCase().equals("tif") || extension.toLowerCase().equals("tiff")
-					|| extension.toLowerCase().equals("geotiff");
+			return 
+					// TODO other raster formats understandable by geotools
+					extension.toLowerCase().equals("shp");
 		}
-
+		
 		return false;
 	}
 }

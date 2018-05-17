@@ -37,15 +37,20 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
- * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
- * call) to a IResource; the IResource can then be contextualized to a {@link org.integratedmodelling.klab.api.data.IGeometry} (using the
- * <code>get</code> API call) to produce the corresponding {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} that will be used to
- * build {@link IArtifact artifacts}.
+ * The k.LAB resource is identified by a URN. A URN is resolved (using the
+ * <code>resolve</code> API call) to a IResource; the IResource can then be
+ * contextualized to a {@link org.integratedmodelling.klab.api.data.IGeometry}
+ * (using the <code>get</code> API call) to produce the corresponding
+ * {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} that will be
+ * used to build {@link IArtifact artifacts}.
  *
- * When a URN is referenced in k.IM, it is turned into a {@link org.integratedmodelling.kim.api.IComputableResource} which is passed
- * to the {@link IRuntimeProvider runtime} and turned into a KDL function call or literal, which
- * encodes their computation or resolution. Executing the KDL call as part of a {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow}
- * builds the {@link org.integratedmodelling.klab.api.provenance.IArtifact}.
+ * When a URN is referenced in k.IM, it is turned into a
+ * {@link org.integratedmodelling.kim.api.IComputableResource} which is passed
+ * to the {@link IRuntimeProvider runtime} and turned into a KDL function call
+ * or literal, which encodes their computation or resolution. Executing the KDL
+ * call as part of a
+ * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow} builds
+ * the {@link org.integratedmodelling.klab.api.provenance.IArtifact}.
  *
  * @author Ferd
  * @version $Id: $Id
@@ -54,117 +59,127 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonDeserialize(using = ResourceDeserializer.class)
 public class Resource implements IResource {
 
-    private static final long serialVersionUID = -923039635832182164L;
+	private static final long serialVersionUID = -923039635832182164L;
 
-    String urn;
-    Version version;
-    String adapterType;
-    IGeometry geometry;
-    long resourceTimestamp;
-    IMetadata metadata = new Metadata();
-    Parameters parameters = new Parameters();
-    List<INotification> history = new ArrayList<>();
-    List<INotification> notifications = new ArrayList<>();
+	String urn;
+	Version version;
+	String adapterType;
+	IGeometry geometry;
+	long resourceTimestamp;
+	IMetadata metadata = new Metadata();
+	Parameters parameters = new Parameters();
+	List<INotification> history = new ArrayList<>();
+	List<INotification> notifications = new ArrayList<>();
 
-    // only meant to be built by the custom deserializer in this package
-    Resource() {
-    }
+	// only meant to be built by the custom deserializer in this package
+	Resource() {
+	}
 
-    /**
-     * Create a resource with the passed URN and a list of errors.
-     *
-     * @param urn the urn
-     * @param errors the errors
-     * @return the resource
-     */
-    public static Resource error(String urn, List<Throwable> errors) {
-        Resource ret = new Resource();
-        ret.urn = urn;
-        for (Throwable t : errors) {
-            ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
-        }
-        return ret;
-    }
+	/**
+	 * Create a resource with the passed URN and a list of errors.
+	 *
+	 * @param urn
+	 *            the urn
+	 * @param errors
+	 *            the errors
+	 * @return the resource
+	 */
+	public static Resource error(String urn, List<Throwable> errors) {
+		Resource ret = new Resource();
+		ret.urn = urn;
+		for (Throwable t : errors) {
+			ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
+		}
+		return ret;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public Version getVersion() {
-        return version;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public Version getVersion() {
+		return version;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IMetadata getMetadata() {
-        return metadata;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IMetadata getMetadata() {
+		return metadata;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String getUrn() {
-        return urn;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String getUrn() {
+		return urn;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public List<INotification> getHistory() {
-        return history;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public List<INotification> getHistory() {
+		return history;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IGeometry getGeometry() {
-        return geometry;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IParameters getParameters() {
-        return parameters;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IParameters getParameters() {
+		return parameters;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String getAdapterType() {
-        return adapterType;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String getAdapterType() {
+		return adapterType;
+	}
 
-    /**
-     * <p>Getter for the field <code>resourceTimestamp</code>.</p>
-     *
-     * @return a long.
-     */
-    public long getResourceTimestamp() {
-        return resourceTimestamp;
-    }
+	/**
+	 * <p>
+	 * Getter for the field <code>resourceTimestamp</code>.
+	 * </p>
+	 *
+	 * @return a long.
+	 */
+	public long getResourceTimestamp() {
+		return resourceTimestamp;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasErrors() {
-        if (notifications != null) {
-            for (INotification notification : notifications) {
-                if (notification.getLevel() == Level.SEVERE) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public boolean hasErrors() {
+		if (notifications != null) {
+			for (INotification notification : notifications) {
+				if (notification.getLevel() == Level.SEVERE) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public void validate(IResourceService resourceService) {
+
+		if (!hasErrors()) {
+
+			if (adapterType == null) {
+				throw new IllegalStateException("invalid resource: adapter type is undefined");
+			}
+			if (version == null) {
+				throw new IllegalStateException("invalid resource: version is undefined");
+			}
+			if (geometry == null) {
+				throw new IllegalStateException("invalid resource: geometry is undefined");
+			}
+			if (urn == null) {
+				throw new IllegalStateException("invalid resource: urn is undefined");
+			}
+			
+			//  TODO metadata consistency check for adapter
+		}
 		
-		if (adapterType == null) {
-			throw new IllegalStateException("invalid resource: adapter type is undefined");
-		}
-		if (version == null) {
-			throw new IllegalStateException("invalid resource: version is undefined");
-		}
-		if (geometry == null) {
-			throw new IllegalStateException("invalid resource: geometry is undefined");
-		}
-		if (urn == null) {
-			throw new IllegalStateException("invalid resource: urn is undefined");
-		}
-		// TODO more checks: consistent version history, metadata consistency for adapter
+		// TODO more checks: consistent version history
 	}
 
 	@Override
@@ -173,7 +188,5 @@ public class Resource implements IResource {
 				+ geometry + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
 				+ "]";
 	}
-	
-	
 
 }
