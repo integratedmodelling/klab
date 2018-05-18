@@ -34,79 +34,97 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class JsonUtils {
 
-  static ObjectMapper defaultMapper = new ObjectMapper();
+	static ObjectMapper defaultMapper = new ObjectMapper();
 
-  /**
-   * Default conversion for a map object.
-   *
-   * @param node the node
-   * @return the map
-   */
-  @SuppressWarnings("unchecked")
-  public static Map<String, Object> asMap(JsonNode node) {
-    return defaultMapper.convertValue(node, Map.class);
-  }
+	/**
+	 * Default conversion for a map object.
+	 *
+	 * @param node
+	 *            the node
+	 * @return the map
+	 */
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> asMap(JsonNode node) {
+		return defaultMapper.convertValue(node, Map.class);
+	}
 
-  /**
-   * Default conversion, use within custom deserializers to "normally" deserialize an object.
-   *
-   * @param <T> the generic type
-   * @param node the node
-   * @param cls the cls
-   * @return the t
-   */
-  public static <T> T as(JsonNode node, Class<T> cls) {
-    return defaultMapper.convertValue(node, cls);
-  }
+	/**
+	 * Default conversion, use within custom deserializers to "normally" deserialize
+	 * an object.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param node
+	 *            the node
+	 * @param cls
+	 *            the cls
+	 * @return the t
+	 */
+	public static <T> T as(JsonNode node, Class<T> cls) {
+		return defaultMapper.convertValue(node, cls);
+	}
 
-  /**
-   * Convert node to list of type T.
-   *
-   * @param <T> the generic type
-   * @param node the node
-   * @param cls the cls
-   * @return the list
-   */
-  public static <T> List<T> asList(JsonNode node, Class<T> cls) {
-    return defaultMapper.convertValue(node, new TypeReference<List<T>>() {});
-  }
-  
-  /**
-   * Convert node to list of type T.
-   *
-   * @param <T> the generic type
-   * @param node the node
-   * @param cls the cls
-   * @return the sets the
-   */
-  public static <T> Set<T> asSet(JsonNode node, Class<T> cls) {
-    return defaultMapper.convertValue(node, new TypeReference<Set<T>>() {});
-  }
-  
+	/**
+	 * Convert node to list of type T.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param node
+	 *            the node
+	 * @param cls
+	 *            the cls
+	 * @return the list
+	 */
+	public static <T> List<T> asList(JsonNode node, Class<T> cls) {
+		return defaultMapper.convertValue(node, new TypeReference<List<T>>() {
+		});
+	}
 
-  /**
-   * Pretty-print the passed map as a JSON object.
-   *
-   * @param object the object
-   * @return the string
-   */
-  public static String printAsJson(Object object) {
+	public static <T> List<T> asList(JsonNode node, Class<T> cls, ObjectMapper mapper) {
+		return mapper.convertValue(node, new TypeReference<List<T>>() {
+		});
+	}
 
-      ObjectMapper om = new ObjectMapper();
-      om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
-      om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
-      om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+	/**
+	 * Convert node to list of type T.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param node
+	 *            the node
+	 * @param cls
+	 *            the cls
+	 * @return the sets the
+	 */
+	public static <T> Set<T> asSet(JsonNode node, Class<T> cls) {
+		return defaultMapper.convertValue(node, new TypeReference<Set<T>>() {
+		});
+	}
 
-//    DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-//    prettyPrinter.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
-//
-//    String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
+	/**
+	 * Pretty-print the passed map as a JSON object.
+	 *
+	 * @param object
+	 *            the object
+	 * @return the string
+	 */
+	public static String printAsJson(Object object) {
 
-      try {
-          return om.writeValueAsString(object);
-      } catch (JsonProcessingException e) {
-          throw new IllegalArgumentException("serialization failed: " + e.getMessage());
-      }
-  }
+		ObjectMapper om = new ObjectMapper();
+		om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+		om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
+		om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+
+		// DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+		// prettyPrinter.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
+		//
+		// String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
+
+		try {
+			return om.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			throw new IllegalArgumentException("serialization failed: " + e.getMessage());
+		}
+	}
 
 }

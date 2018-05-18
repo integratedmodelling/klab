@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.ogc.vector.wfs;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
@@ -39,4 +41,8 @@ public class WfsValidator implements IResourceValidator {
 		return false;
 	}
 
+	@Override
+	public Collection<File> getAllFilesForResource(File file) {
+		throw new IllegalStateException("the WFS adapter does not handle files");
+	}
 }

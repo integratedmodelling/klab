@@ -15,11 +15,15 @@
  */
 package org.integratedmodelling.klab.ogc.vector.files;
 
+import java.io.File;
+
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State;
 
@@ -43,8 +47,26 @@ public class VectorEncoder implements IResourceEncoder {
 
 	@Override
 	public boolean isOnline(IResource resource) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		File base = null;
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			base = Resources.INSTANCE.getLocalWorkspace().getRoot();
+		} else {
+			// TODO
+		}
+		
+		if (base == null) {
+			return false;
+		}
+		
+		for (String s : resource.getLocalPaths()) {
+			File rfile = new File(base + File.separator + s);
+			if (!rfile.exists() || !rfile.canRead()) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

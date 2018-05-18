@@ -12,7 +12,7 @@
 // delete urn
 // list -owner (local|own|remote)
 
-void create
+void 'import'
 	"Import a resource from a file or by naming parameters."
 {
 	text project
@@ -22,7 +22,7 @@ void create
 		"The adapter to use for import. Leave unspecified to have k.LAB choose the most suitable."
 		default ""
 	
-	class org.integratedmodelling.klab.clitool.console.commands.resources.Create
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Import
 }
 
 void 'list'
@@ -34,4 +34,10 @@ void 'list'
 		default false
 	
 	class org.integratedmodelling.klab.clitool.console.commands.resources.List
+}
+
+void clear
+	"Remove all resources in the local workspace."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Clear
 }

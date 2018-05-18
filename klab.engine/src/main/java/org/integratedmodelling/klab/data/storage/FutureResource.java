@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
@@ -84,7 +83,7 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).getMetadata();
 	}
 
-	public List<INotification> getHistory() {
+	public List<IResource> getHistory() {
 		return getDelegate(timeout).getHistory();
 	}
 
@@ -130,6 +129,11 @@ public class FutureResource implements IResource, Future<IResource> {
 			throws InterruptedException, ExecutionException, TimeoutException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<String> getLocalPaths() {
+		return getDelegate(timeout).getLocalPaths();
 	}
 
 }

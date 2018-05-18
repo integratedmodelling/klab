@@ -18,19 +18,22 @@ package org.integratedmodelling.klab.data.resources;
 import java.io.IOException;
 
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.CastUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,11 +46,16 @@ public class ResourceDeserializer extends StdDeserializer<Resource> {
 
   private static final long serialVersionUID = -1395932709465412782L;
 
+//  ObjectMapper mapper = new ObjectMapper();
+  
   /**
    * Instantiates a new resource deserializer.
    */
   public ResourceDeserializer() {
     super(Resource.class);
+//    SimpleModule module = new SimpleModule();
+//    module.addDeserializer(Resource.class, new ResourceDeserializer());
+//    mapper.registerModule(module);
   }
 
   /** {@inheritDoc} */
@@ -65,10 +73,13 @@ public class ResourceDeserializer extends StdDeserializer<Resource> {
     ret.version = Version.create(node.get("version").asText());
     ret.parameters = new Parameters(JsonUtils.asMap(node.get("parameters")));
     ret.metadata = new Metadata(JsonUtils.asMap(node.get("metadata")));
-    ret.history = new CastUtils<KimNotification, INotification>()
-        .cast(JsonUtils.asList(node.get("history"), KimNotification.class));
+    // FOCK converts to maps, not resources
+    ret.history = new CastUtils<Resource, IResource>()
+        .cast(JsonUtils.asList(node.get("history"), Resource.class));
     ret.notifications = new CastUtils<KimNotification, INotification>()
         .cast(JsonUtils.asList(node.get("notifications"), KimNotification.class));
+    ret.localPaths = new CastUtils<String, String>()
+            .cast(JsonUtils.asList(node.get("localPaths"), String.class));
 
     return ret;
   }

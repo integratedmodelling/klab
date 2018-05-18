@@ -48,7 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
-import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -220,6 +220,13 @@ public enum Resources implements IResourceService {
 		return workspaces.get(name);
 	}
 
+	/**
+	 * Return the IProject wrapper for a IKimProject, creating it if it does not exist. Project
+	 * names are unique within a workspace.
+	 * 
+	 * @param project
+	 * @return the IProject wrapper.
+	 */
 	public IProject retrieveOrCreate(IKimProject project) {
 
 		String workspace = project.getWorkspace().getName();
@@ -306,19 +313,34 @@ public enum Resources implements IResourceService {
 			return ret;
 		}
 
-		final Version version = ret == null ? Version.create("0.1")
-				: ret.getVersion().withMinor(ret.getVersion().getMinor() + 1);
+		/**
+		 * Local resource versions are 0.0.build with the build starting at 1.
+		 * Publishing them makes 0.1.build. Only their owners (or peer review?) can
+		 * promote them to 1.0.0 or anything higher than the initial version.
+		 */
+		final Version version = ret == null ? Version.create("0.0.1")
+				: ret.getVersion().withBuild(ret.getVersion().getBuild() + 1);
 
 		// TODO define history items - add to previous if existing, date of creation
 		// etc.
+		List<IResource> history = new ArrayList<>();
+		if (ret != null) {
+			for (IResource resource : ret.getHistory()) {
+				history.add(resource);
+			}
+			ret.getHistory().clear();
+			history.add(ret);
+		}
 
-		return asynchronous ? importResourceAsynchronously(urn, adapterType, file, parameters, version, monitor)
-				: importResource(urn, adapterType, file, parameters, version, monitor);
+		return asynchronous
+				? importResourceAsynchronously(urn, project, adapterType, file, parameters, version, history, monitor)
+				: importResource(urn, project, adapterType, file, parameters, version, history, monitor);
 	}
 
-	private IResource importResource(String urn, String adapterType, File file, IParameters parameters, Version version,
-			IMonitor monitor) {
+	private IResource importResource(String urn, IProject project, String adapterType, File file,
+			IParameters parameters, Version version, List<IResource> history, IMonitor monitor) {
 
+		String id = Path.getLast(urn, ':');
 		List<Throwable> errors = new ArrayList<>();
 		IResource resource = null;
 		try {
@@ -345,10 +367,29 @@ public enum Resources implements IResourceService {
 				 */
 				Builder builder = validator.validate(file.toURI().toURL(), parameters, monitor);
 
+				// add all history items
+				for (IResource his : history) {
+					builder.addHistory(his);
+				}
+
 				/*
-				 * TODO if no errors, copy files and add notifications to resource
+				 * if no errors, copy files and add notifications to resource; set relative
+				 * paths in resource metadata
 				 */
-				
+				if (!builder.hasErrors() && file != null) {
+					String resourceDataDir = id + ".v" + version;
+					File resourceDatapath = new File(
+							project.getRoot() + File.separator + "resources" + File.separator + resourceDataDir);
+					resourceDatapath.mkdirs();
+
+					for (File f : validator.getAllFilesForResource(file)) {
+						FileUtils.copyFile(f,
+								new File(resourceDatapath + File.separator + MiscUtilities.getFileName(f)));
+						builder.addLocalResourcePath(project.getName() + "/resources/" + resourceDataDir + "/"
+								+ MiscUtilities.getFileName(f));
+					}
+				}
+
 				resource = builder.setResourceVersion(version).build(urn);
 
 			} else {
@@ -368,9 +409,10 @@ public enum Resources implements IResourceService {
 		return resource;
 	}
 
-	private FutureResource importResourceAsynchronously(String urn, String adapterType, File file,
-			IParameters parameters, Version version, IMonitor monitor) {
-		// TODO create future, send it for execution
+	private FutureResource importResourceAsynchronously(String urn, IProject project, String adapterType, File file,
+			IParameters parameters, Version version, List<IResource> history, IMonitor monitor) {
+		// TODO create future, send it for execution, return it. The future knows its
+		// URN so it can be used for basic ops.
 		return null;
 	}
 
@@ -507,7 +549,7 @@ public enum Resources implements IResourceService {
 		return publicResourceCatalog;
 	}
 
-	@Override
+//	@Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
 	}

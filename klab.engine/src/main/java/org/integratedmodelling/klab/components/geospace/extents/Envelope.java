@@ -153,7 +153,7 @@ public class Envelope implements IEnvelope {
     return this.scaleRank;
   }
 
-  public com.vividsolutions.jts.geom.Envelope getJTSEnvelope() {
+  public ReferencedEnvelope getJTSEnvelope() {
     return envelope;
   }
 

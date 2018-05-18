@@ -28,8 +28,29 @@ import org.integratedmodelling.klab.raster.files.RasterValidator;
 /**
  * The Class RasterAdapter.
  */
-@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" })
+@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
+		"interpolation", "nodata" })
 public class RasterAdapter implements IResourceAdapter {
+
+	/**
+	 * All recognized primary file extensions.
+	 */
+	public static String[] fileExtensions = { "tif", "tiff" };
+
+	/**
+	 * All recognized secondary file extensions
+	 */
+	public static String[] secondaryFileExtensions = { "twf", "prj", "txt", "pdf" };
+
+	/**
+	 * Interpolation type for metadata
+	 */
+	public static final String INTERPOLATION_TYPE_FIELD = "interpolation";
+
+	/**
+	 * Possible values of interpolation type (JAI classes)
+	 */
+	public static final String[] INTERPOLATION_TYPE_VALUES = { "bilinear", "nearest", "bicubic", "bicubic2" };
 
 	@Override
 	public String getName() {

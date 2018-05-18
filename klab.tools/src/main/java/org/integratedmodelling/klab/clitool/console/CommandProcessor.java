@@ -106,17 +106,17 @@ public class CommandProcessor extends org.integratedmodelling.klab.clitool.contr
 		boolean inline = false;
 
 		// enable one-off package use with package prefix
-		if (input.contains(".") || input.contains(" ")) {
+		if (input.contains("::") || input.contains(" ")) {
 			String pname = "";
 			for (int i = 0; i < input.length(); i++) {
-				if (input.charAt(i) == '.' || input.charAt(i) == ' ') {
+				if (input.charAt(i) == ':' || input.charAt(i) == ' ') {
 					break;
 				}
 				pname += input.charAt(i);
 			}
 			if (packages.containsKey(pname)) {
 				cpack = pname;
-				input = input.substring(pname.length() + 1).trim();
+				input = input.substring(pname.length() + (input.charAt(pname.length() + 1) == ':' ? 2 : 1)).trim();
 				inline = true;
 			}
 		}
@@ -158,7 +158,7 @@ public class CommandProcessor extends org.integratedmodelling.klab.clitool.contr
 						/*
 						 * TODO run asynchronously if command requires it.
 						 */
-						terminal.echo((getCurrentPackage().equals("main") ? "" : getCurrentPackage()) + "> " + input);
+						terminal.echo("> " + (cpack.equals("main") ? "" : cpack) + "::" + input);
 						Object ret = execute(command, cpack);
 						terminal.outputResult(input, ret);
 					} catch (Throwable e) {

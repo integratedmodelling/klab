@@ -16,9 +16,12 @@
 package org.integratedmodelling.klab.data.resources;
 
 import java.io.IOException;
+
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.utils.Parameters;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -65,7 +68,7 @@ public class ResourceSerializer extends StdSerializer<Resource> {
     gen.writeObjectField("metadata", ((Metadata) resource.metadata).getData());;
 
     gen.writeArrayFieldStart("history");
-    for (INotification h : resource.history) {
+    for (Object h : resource.history) {
       gen.writeObject(h);
     }
     gen.writeEndArray();
@@ -75,7 +78,12 @@ public class ResourceSerializer extends StdSerializer<Resource> {
       gen.writeObject(h);
     }
     gen.writeEndArray();
-
+    
+    gen.writeArrayFieldStart("localPaths");
+    for (String h : resource.localPaths) {
+      gen.writeString(h);
+    }
+    gen.writeEndArray();
     gen.writeEndObject();
   }
 

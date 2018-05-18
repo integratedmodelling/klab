@@ -798,9 +798,9 @@ public class Grid extends Area implements IGrid {
 		return new long[] { xx, yy };
 	}
 
-	public static long[] getXYCoordinates(long index, long width, long height) {
-		long xx = index % width;
-		long yy = /* height - ( */index / width/* ) - 1 */;
+	public static long[] getXYCoordinates(long index, long xCells, long yCells) {
+		long xx = index % xCells;
+		long yy = yCells - (index / xCells) - 1;
 		return new long[] { xx, yy };
 	}
 

@@ -94,6 +94,12 @@ public interface IResourceService {
 	 * true only when the resource creation is created explicitly. This function is
 	 * also used when reading or updating a resource for a file named in a k.IM
 	 * model.
+	 * <p>
+	 * Local resource versions are in the form 0.0.build with the build starting at
+	 * 1 and increasing at each update. Publishing them modifies the minor version,
+	 * starting at 0.1.build. Only their owners' explicit action, or peer review in
+	 * a reviewed repository, modifies the major version to make them 1.x.b or
+	 * anything higher than the initial version.
 	 * 
 	 * @param resourceId
 	 *            the ID for the resource, which will be part of the URN and must be
@@ -117,9 +123,9 @@ public interface IResourceService {
 	 *            if true, allow updating of the resource every time this is called.
 	 *            Otherwise just create if absent or update when the timestamp on
 	 *            the resource is older than that of the file.
-	 * @param asynchronous 
-	 * 			  if true, spawn a validator thread and return a proxy for the resource
-	 * 			  without blocking.
+	 * @param asynchronous
+	 *            if true, spawn a validator thread and return a proxy for the
+	 *            resource without blocking.
 	 * @param monitor
 	 *            a
 	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
@@ -189,14 +195,5 @@ public interface IResourceService {
 	 * @return a resolvable resource, or null if nothing can be found.
 	 */
 	IResolvable getResolvableResource(String urn);
-
-	/**
-	 * Create a builder to describe a future valid resource or the errors that will
-	 * prevent it from being published.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.data.IResource.Builder}
-	 *         object.
-	 */
-	IResource.Builder createResourceBuilder();
 
 }

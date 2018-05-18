@@ -31,6 +31,20 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 @ResourceAdapter(type = "vector", version = Version.CURRENT, requires = { "fileUrl" })
 public class VectorAdapter implements IResourceAdapter {
 
+	/**
+	 * All recognized primary file extensions. 
+	 */
+	public static String[] fileExtensions = {
+			"shp"
+	};
+
+	/**
+	 * All recognized secondary file extensions
+	 */
+	public static String[] secondaryFileExtensions = {
+			"sbx", "prj", "shx", "dbf", "shp.xml", "txt", "pdf"
+	};
+	
 	@Override
 	public String getName() {
 		return "vector";

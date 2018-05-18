@@ -17,6 +17,10 @@ package org.integratedmodelling.klab.raster.files;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridGeometry2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
@@ -109,5 +113,12 @@ public class RasterValidator implements IResourceValidator {
 		}
 
 		return false;
+	}
+	
+	@Override
+	public Collection<File> getAllFilesForResource(File file) {
+		List<File> ret = new ArrayList<>();
+		ret.add(file);
+		return ret;
 	}
 }

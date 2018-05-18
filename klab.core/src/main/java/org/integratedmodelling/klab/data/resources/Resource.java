@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.services.IResourceService;
-import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -68,7 +67,8 @@ public class Resource implements IResource {
 	long resourceTimestamp;
 	IMetadata metadata = new Metadata();
 	Parameters parameters = new Parameters();
-	List<INotification> history = new ArrayList<>();
+	List<String> localPaths = new ArrayList<>();
+	List<IResource> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
 
 	// only meant to be built by the custom deserializer in this package
@@ -113,7 +113,7 @@ public class Resource implements IResource {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<INotification> getHistory() {
+	public List<IResource> getHistory() {
 		return history;
 	}
 
@@ -135,6 +135,11 @@ public class Resource implements IResource {
 		return adapterType;
 	}
 
+	@Override
+	public List<String> getLocalPaths() {
+		return localPaths;
+	}
+	
 	/**
 	 * <p>
 	 * Getter for the field <code>resourceTimestamp</code>.

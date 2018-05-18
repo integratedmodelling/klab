@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 
-public class Create implements ICommand {
+public class Import implements ICommand {
 
 	@Override
 	public Object execute(IServiceCall call, ISession session) throws Exception {

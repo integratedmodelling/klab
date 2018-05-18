@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.raster.wcs;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
@@ -38,5 +40,9 @@ public class WcsValidator implements IResourceValidator {
 		// TODO file must be null, parameters must contain server, resource id and service version
 		return false;
 	}
-
+	
+	@Override
+	public Collection<File> getAllFilesForResource(File file) {
+		throw new IllegalStateException("the WCS adapter does not handle files");
+	}
 }

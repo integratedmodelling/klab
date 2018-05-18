@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api.data;
 import java.io.Serializable;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -106,11 +105,11 @@ public interface IResource extends Serializable {
 	IMetadata getMetadata();
 
 	/**
-	 * Get the history of changes affecting this resources.
+	 * Get the history of this resource as a list of all its versions.
 	 *
-	 * @return the list of changes in order of time (oldest first).
+	 * @return the list of previous resources in order of timestamp (oldest first).
 	 */
-	List<INotification> getHistory();
+	List<IResource> getHistory();
 
 	/**
 	 * URNs coming with parameters will list them here.
@@ -154,6 +153,14 @@ public interface IResource extends Serializable {
 		Builder setGeometry(IGeometry geometry);
 
 		/**
+		 * Add a local resource path.
+		 * 
+		 * @param path
+		 * @return the builder itself
+		 */
+		Builder addLocalResourcePath(String path);
+		
+		/**
 		 * 
 		 * @param o
 		 * @return the builder itself
@@ -189,11 +196,13 @@ public interface IResource extends Serializable {
 		Builder setResourceTimestamp(long timestamp);
 
 		/**
+		 * Add a history item. The passed resource should have no history of its own and
+		 * these should be added in order of timestamp, oldest first.
 		 * 
-		 * @param notification
+		 * @param previousResource
 		 * @return the builder itself
 		 */
-		Builder addHistory(INotification notification);
+		Builder addHistory(IResource previousResource);
 
 		/**
 		 * True if error() was ever called.
@@ -215,7 +224,8 @@ public interface IResource extends Serializable {
 		/**
 		 * Set the adapter type of the built resource.
 		 * 
-		 * @param string the adapter type
+		 * @param string
+		 *            the adapter type
 		 * @return the builder itself
 		 */
 		Builder setAdapterType(String string);
@@ -237,4 +247,13 @@ public interface IResource extends Serializable {
 	 * @return a boolean.
 	 */
 	boolean hasErrors();
+
+	/**
+	 * Return all local resource file paths, as slash-separated strings starting at
+	 * a point depending on the resource type (e.g. in local resources it will start
+	 * at the project name). May be empty, never null.
+	 * 
+	 * @return all local resource file paths
+	 */
+	List<String> getLocalPaths();
 }

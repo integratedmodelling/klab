@@ -15,6 +15,8 @@ package org.integratedmodelling.klab.api.data.adapters;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -61,5 +63,14 @@ public interface IResourceValidator {
 	 * @return true if input can be validated
 	 */
 	boolean canHandle(File resource, IParameters parameters);
+
+	/**
+	 * Return all the files that make up a resource identified by the main file imported, including
+	 * the main file itself. Returned files must exist.
+	 * 
+	 * @param file
+	 * @return all relevant files for the resource.
+	 */
+	Collection<File> getAllFilesForResource(File file);
 
 }
