@@ -39,12 +39,14 @@ public interface IResourceEncoder {
 	boolean isOnline(IResource resource);
 
 	/**
-	 * Get the encoded data for the resource.
+	 * Build the resource data corresponding to the passed resource in the passed
+	 * geometry. The data are created using a builder passed by the runtime.
 	 *
 	 * @param resource
 	 *            a {@link org.integratedmodelling.klab.api.data.IResource}. It
 	 *            should have been recently inspected with
-	 *            {@link #isOnline(IResource)}.
+	 *            {@link #isOnline(IResource)} so it can be assumed that it is
+	 *            correct and active.
 	 * @param geometry
 	 *            the {@link org.integratedmodelling.klab.api.data.IGeometry} of
 	 *            reference for the query. The resolution process should guarantee
