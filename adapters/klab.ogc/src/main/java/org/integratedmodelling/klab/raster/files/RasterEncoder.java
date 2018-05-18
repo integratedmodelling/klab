@@ -36,18 +36,16 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
-import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
@@ -62,9 +60,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RasterEncoder implements IResourceEncoder {
 
 	@Override
-	public IKlabData getEncodedData(IResource resource, IGeometry geometry, IMonitor monitor) {
+	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
 
-		State.Builder sBuilder = KlabData.State.newBuilder();
+//		State.Builder sBuilder = KlabData.State.newBuilder();
 
 		/*
 		 * Find and open the files to Geotools coverages. TODO support time-aware
@@ -87,6 +85,8 @@ public class RasterEncoder implements IResourceEncoder {
 		 * 
 		 * TODO use different methods for non-doubles
 		 */
+		
+		builder.startState(null);
 		for (long ofs = 0; ofs < space.size(); ofs++) {
 
 			long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
@@ -105,11 +105,10 @@ public class RasterEncoder implements IResourceEncoder {
 				}
 			}
 			
-			sBuilder.addDoubledata(value);
-
+			builder.add(value);
 		}
-
-		return KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
+		builder.finishState();
+//		return KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
 	}
 
 	private double[] getNodata(IResource resource) {

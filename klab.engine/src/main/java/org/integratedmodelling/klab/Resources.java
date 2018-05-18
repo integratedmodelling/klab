@@ -18,9 +18,11 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -31,10 +33,12 @@ import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
@@ -43,8 +47,10 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -221,8 +227,8 @@ public enum Resources implements IResourceService {
 	}
 
 	/**
-	 * Return the IProject wrapper for a IKimProject, creating it if it does not exist. Project
-	 * names are unique within a workspace.
+	 * Return the IProject wrapper for a IKimProject, creating it if it does not
+	 * exist. Project names are unique within a workspace.
 	 * 
 	 * @param project
 	 * @return the IProject wrapper.
@@ -274,9 +280,12 @@ public enum Resources implements IResourceService {
 	public IResource resolveResource(final String urn)
 			throws KlabResourceNotFoundException, KlabAuthorizationException {
 
-		IResource ret = getLocalResourceCatalog().get(urn);
+		if (Urns.INSTANCE.isLocal(urn)) {
+			return getLocalResourceCatalog().get(urn);
+		}
 
-		if (ret != null && !Urns.INSTANCE.isLocal(urn)) {
+		IResource ret = getPublicResourceCatalog().get(urn);
+		if (ret != null) {
 			/*
 			 * TODO check if we need to refresh the URN from the network; if so, set ret to
 			 * null again.
@@ -404,7 +413,16 @@ public enum Resources implements IResourceService {
 			resource = Resource.error(urn, errors);
 		}
 
+		/*
+		 * Resources with errors go in the catalog and become bright red eyesores in
+		 * k.IM
+		 */
 		localResourceCatalog.put(urn, resource);
+
+		if (resource.hasErrors()) {
+			// TODO report errors but leave the resource so we can validate any use of it
+			monitor.error("RESOURCE " + urn + " HAS ERRORS - TODO REPORT PROPERLY");
+		}
 
 		return resource;
 	}
@@ -456,6 +474,31 @@ public enum Resources implements IResourceService {
 			FileUtils.copyInputStreamToFile(is, dest);
 			is.close();
 		}
+	}
+
+	@Override
+	public IKlabData getResourceData(IResource resource, IGeometry geometry, IComputationContext context) {
+
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + resource.getAdapterType() + " not available");
+			}
+			
+			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
+			adapter.getEncoder().getEncodedData(resource, geometry, builder, context);
+			return builder.build();
+			
+		} else {
+			/*
+			 * TODO send REST request to any node that owns this resource - start with the
+			 * named owner if we have it; if unsuccessful, try using resolution service on
+			 * all nodes.
+			 */
+		}
+		return null;
 	}
 
 	@Override
@@ -549,7 +592,7 @@ public enum Resources implements IResourceService {
 		return publicResourceCatalog;
 	}
 
-//	@Override
+	// @Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
 	}
@@ -560,6 +603,28 @@ public enum Resources implements IResourceService {
 			resourceTaskExecutor = Executors.newFixedThreadPool(Configuration.INSTANCE.getResourceThreadCount());
 		}
 		return resourceTaskExecutor;
+	}
+
+	public boolean isResourceOnline(IResource resource) {
+
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter != null) {
+				return adapter.getEncoder().isOnline(resource);
+			}
+		} else {
+
+			/*
+			 * TODO only check using the network services if the resource needs refreshing
+			 */
+
+			/*
+			 * TODO send REST request to any node that owns this resource - start with the
+			 * named owner if we have it; if unsuccessful, try using resolution service on
+			 * all nodes.
+			 */
+		}
+		return false;
 	}
 
 }

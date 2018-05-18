@@ -18,8 +18,10 @@ package org.integratedmodelling.klab.api.services;
 import java.io.File;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
@@ -28,13 +30,15 @@ import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 /**
- * The <code>IResourceService</code> service handles all semantic and
- * non-semantic assets.
+ * The <code>IResourceService</code> service provides access to all
+ * URN-identified non-semantic assets. It also bridges to read-only semantic
+ * assets such as observations and concepts when identified through URNs.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -72,6 +76,20 @@ public interface IResourceService {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
 	 */
 	IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException;
+
+	/**
+	 * Resolve a resource to data in a passed geometry. This involves retrieval of
+	 * the adapter, decoding of the resource (remotely or locally according to the
+	 * resource itself) and building of the data object. If no exceptions are
+	 * thrown, the result is guaranteed consistent with the geometry and free of
+	 * errors.
+	 * 
+	 * @param resource
+	 * @param geometry
+	 * @param context
+	 * @return KlabException if anything goes wrong
+	 */
+	IKlabData getResourceData(IResource resource, IGeometry geometry, IComputationContext context);
 
 	/**
 	 * Create or update a locally available resource from a specification or/and by

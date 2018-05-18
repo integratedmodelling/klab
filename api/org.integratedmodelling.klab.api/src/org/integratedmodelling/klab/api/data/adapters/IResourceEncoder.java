@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.api.data.adapters;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
  * The Interface IResourceEncoder.
@@ -29,8 +29,9 @@ public interface IResourceEncoder {
 
 	/**
 	 * Check if the resource can be accessed. This should ensure the ability of
-	 * calling {@link #getEncodedData(IResource, IGeometry, IMonitor)} without
-	 * spending too much time.
+	 * calling
+	 * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IComputationContext)}
+	 * without spending too much time.
 	 * 
 	 * @param resource
 	 * @return true if resource can be used at the moment of this call.
@@ -48,10 +49,10 @@ public interface IResourceEncoder {
 	 *            the {@link org.integratedmodelling.klab.api.data.IGeometry} of
 	 *            reference for the query. The resolution process should guarantee
 	 *            that the intersection with the resource's geometry is not empty.
-	 * @param monitor
-	 *            for notifications and identity retrieval
-	 * @return a {@link org.integratedmodelling.klab.api.data.adapters.IKlabData}
-	 *         object.
+	 * @param builder
+	 *            a suitable builder to use to build the dataset
+	 * @param context
+	 *            the context of computation
 	 */
-	IKlabData getEncodedData(IResource resource, IGeometry geometry, IMonitor monitor);
+	void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder, IComputationContext context);
 }

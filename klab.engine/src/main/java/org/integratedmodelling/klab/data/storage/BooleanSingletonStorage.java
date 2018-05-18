@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.data.storage;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.scale.Scale;
 
-public class BooleanSingletonStorage extends AbstractSingletonStorage {
+public class BooleanSingletonStorage extends AbstractSingletonStorage<Boolean> {
 
   public BooleanSingletonStorage(IObservable observable, Scale scale) {
     super(observable, scale);

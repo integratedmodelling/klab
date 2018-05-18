@@ -17,9 +17,7 @@ package org.integratedmodelling.klab.raster.files;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridGeometry2D;
@@ -34,6 +32,8 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.ogc.RasterAdapter;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.opengis.geometry.Envelope;
@@ -117,8 +117,6 @@ public class RasterValidator implements IResourceValidator {
 	
 	@Override
 	public Collection<File> getAllFilesForResource(File file) {
-		List<File> ret = new ArrayList<>();
-		ret.add(file);
-		return ret;
+		return FileUtils.getSidecarFiles(file, RasterAdapter.secondaryFileExtensions);
 	}
 }

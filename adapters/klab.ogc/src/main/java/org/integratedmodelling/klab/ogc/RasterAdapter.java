@@ -40,7 +40,7 @@ public class RasterAdapter implements IResourceAdapter {
 	/**
 	 * All recognized secondary file extensions
 	 */
-	public static String[] secondaryFileExtensions = { "twf", "prj", "txt", "pdf" };
+	public static String[] secondaryFileExtensions = { "tfw", "prj", "tif.ovr", "tif.aux.xml", "txt", "pdf" };
 
 	/**
 	 * Interpolation type for metadata

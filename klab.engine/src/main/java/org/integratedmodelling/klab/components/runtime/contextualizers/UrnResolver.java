@@ -3,22 +3,31 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
   public final static String FUNCTION_ID = "klab.resolve.urn";
   
+  private IResource resource;
+  
   // don't remove - only used as expression
   public UrnResolver() {}
   
   public UrnResolver(String urn) {
-    // TODO Auto-generated constructor stub
+    this.resource = Resources.INSTANCE.resolveResource(urn);
+    if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+    	throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
+    }
   }
 
   public static IServiceCall getServiceCall(String urn) {
@@ -27,7 +36,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
   @Override
   public IArtifact resolve(IArtifact observation, IComputationContext context) {
-    // TODO Auto-generated method stub
+    IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
     return null;
   }
 
@@ -40,8 +49,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
   @Override
   public IGeometry getGeometry() {
-    // TODO Auto-generated method stub
-    return null;
+    return resource.getGeometry();
   }
 
 }
