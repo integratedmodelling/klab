@@ -20,6 +20,16 @@ public class Envelope implements IEnvelope {
     ret.projection = projection;
     return ret;
   }
+  
+
+  public static Envelope create(org.opengis.geometry.Envelope envelope,
+      Projection projection) {
+    Envelope ret = new Envelope();
+    ret.envelope = new ReferencedEnvelope(envelope);
+    ret.projection = projection;
+    return ret;
+  }
+
 
   public static Envelope create(ReferencedEnvelope envelope) {
     Envelope ret = new Envelope();

@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Geometry.OffsetLocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.InstanceIdentifier;
@@ -292,6 +293,30 @@ public class Scale implements IScale {
 		}
 		ret.sort();
 		return ret;
+	}
+
+	/**
+	 * Create from either another scale or a simpler geometry.
+	 * 
+	 * @param geometry
+	 * @return a new scale
+	 * @throw {@link IllegalArgumentException} if the argument is a geometry without
+	 *        sufficient information to build a scale.
+	 */
+	public static Scale create(IGeometry geometry) {
+		if (geometry instanceof Scale) {
+			return createLike((Scale) geometry, new IExtent[] {});
+		}
+		List<IExtent> extents = new ArrayList<>();
+		for (Dimension dimension : geometry.getDimensions()) {
+			if (dimension.getType() == Type.SPACE) {
+				extents.add(Space.create(dimension));
+			} else if (dimension.getType() == Type.TIME) {
+				// TODO
+			} 
+			// TODO ELSE
+		}
+		return create(extents);
 	}
 
 	/**
@@ -1082,5 +1107,10 @@ public class Scale implements IScale {
 			this.geometry = Geometry.create(encode());
 		}
 		return this.geometry;
+	}
+
+	@Override
+	public ILocator getLocator(long offset) {
+		return asGeometry().getLocator(offset);
 	}
 }

@@ -27,7 +27,6 @@ public class Geospace {
   public void initialize() {
     // TODO create the desired geometry factory
     // TODO set up defaults for projections etc.
-    System.out.println("DIOCAN BEIBE");
   }
 
   // void registerAdditionalCRS() throws KlabException {

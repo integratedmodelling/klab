@@ -43,7 +43,7 @@ annotation run for observers
 		"After resolving the observable, launch a suitable viewer for the context."
 		default false
 		
-	class org.integratedmodelling.klab.engine.annotations.RunHandler
+	class org.integratedmodelling.klab.engine.apps.RunHandler
 }
 
 /**
@@ -79,10 +79,15 @@ annotation test for observers
          fragment returning false or raising an exception causes the test to fail."
 		default ()
 
+	optional input resources
+		"A list of resource URNs that must be available in for the test to run. If the named resources
+		 are unavailable, a warning is emitted and the test terminates without failure."
+		default ()
+
 	optional input visualize
 		"After resolving the observable, launch a suitable viewer for the context."
 		default false
 
-	class org.integratedmodelling.klab.engine.annotations.TestHandler
+	class org.integratedmodelling.klab.engine.apps.TestHandler
 
 }

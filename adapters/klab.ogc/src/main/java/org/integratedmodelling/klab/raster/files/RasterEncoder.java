@@ -17,6 +17,9 @@ package org.integratedmodelling.klab.raster.files;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.media.jai.Interpolation;
 import javax.media.jai.InterpolationBicubic;
@@ -27,8 +30,14 @@ import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
 
 import org.geotools.coverage.grid.GeneralGridEnvelope;
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridGeometry2D;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.coverage.processing.Operations;
+import org.geotools.factory.Hints;
+import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.integratedmodelling.klab.Resources;
@@ -46,10 +55,14 @@ import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -62,7 +75,7 @@ public class RasterEncoder implements IResourceEncoder {
 	@Override
 	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
 
-//		State.Builder sBuilder = KlabData.State.newBuilder();
+		// State.Builder sBuilder = KlabData.State.newBuilder();
 
 		/*
 		 * Find and open the files to Geotools coverages. TODO support time-aware
@@ -76,48 +89,53 @@ public class RasterEncoder implements IResourceEncoder {
 		RenderedImage image = coverage.getRenderedImage();
 		RandomIter iterator = RandomIterFactory.create(image, null);
 		Dimension space = geometry.getDimension(Type.SPACE);
-		int band = getRasterBand(resource);
-		double[] nodata = getNodata(resource);
+		int band = resource.getParameters().get("band", 0);
+		Set<Double> nodata = getNodata(resource, coverage, band);
 
 		/*
 		 * if so configured, cache the transformed coverage for the space dimension
 		 * signature
 		 * 
 		 * TODO use different methods for non-doubles
+		 * TODO support multi-band expressions
 		 */
-		
+
 		builder.startState(null);
 		for (long ofs = 0; ofs < space.size(); ofs++) {
 
 			long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-
 			Double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
 
 			// this is cheeky but will catch most of the nodata and
 			// none of the good data
+			// FIXME see if this is really necessary
 			if (value < -1.0E35 || value > 1.0E35) {
 				value = Double.NaN;
 			}
-			
+
 			for (double nd : nodata) {
 				if (NumberUtils.equal(value, nd)) {
 					value = Double.NaN;
 				}
 			}
-			
+
 			builder.add(value);
 		}
 		builder.finishState();
-//		return KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
+		// return
+		// KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
 	}
 
-	private double[] getNodata(IResource resource) {
-		return new double[] {};
-	}
-
-	private int getRasterBand(IResource resource) {
-		// TODO Auto-generated method stub
-		return 0;
+	private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
+		Set<Double> ret = new HashSet<>();
+		SampleDimension sdim = coverage.getSampleDimension(band);
+		for (double d : sdim.getNoDataValues()) {
+			ret.add(d);
+		}
+		if (resource.getParameters().contains("nodata")) {
+			ret.add(resource.getParameters().get("nodata", Double.class));
+		}
+		return ret;
 	}
 
 	private CoordinateReferenceSystem getCrs(IGeometry geometry) {
@@ -189,11 +207,11 @@ public class RasterEncoder implements IResourceEncoder {
 	 */
 	private GridCoverage getCoverage(IResource resource, IGeometry geometry) {
 
-		// TODO if we have it in the cache for the principal file + space signature,
-		// return that
-
 		GridCoverage coverage = getOriginalCoverage(resource);
 
+		// TODO if we have it in the cache for the principal file + space signature,
+		// return that
+		
 		/*
 		 * build the needed Geotools context and the interpolation method
 		 */
@@ -218,8 +236,42 @@ public class RasterEncoder implements IResourceEncoder {
 	}
 
 	private GridCoverage getOriginalCoverage(IResource resource) {
-		// TODO Auto-generated method stub
-		return null;
+
+		File mainFile = null;
+		GridCoverage2D ret = null;
+		
+		for (String path : resource.getLocalPaths()) {
+			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
+				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
+				if (mainFile.exists() && mainFile.canRead()) {
+					break;
+				}
+			}
+		}
+
+		if (mainFile == null) {
+			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
+		}
+
+		// TODO check in cache first
+		
+
+		AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
+		// this is a bit hacky but does make more geotiffs work
+		Hints hints = new Hints();
+		if (format instanceof GeoTiffFormat) {
+			hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+		}
+		GridCoverage2DReader reader = format.getReader(mainFile, hints);
+		try {
+			ret = reader.read(null);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+				
+		// TODO caching
+		
+		return ret;
 	}
 
 	@Override

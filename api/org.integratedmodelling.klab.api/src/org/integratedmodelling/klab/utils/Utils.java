@@ -60,6 +60,28 @@ public class Utils {
     Arrays.fill(ret, value);
     return ret;
   }
+  
+  /**
+   * Return the closest POD that the value can be parsed into. For now only handle
+   * int and double. May add k.IM - like maps, lists, ranges.
+   * 
+   * @param value
+   * @return
+   */
+  public static Object asPOD(String value) {
+	  
+	  try {
+		  return Integer.parseInt(value);
+	  } catch (Throwable e) {
+	  }
+	  try {
+		  return Double.parseDouble(value);
+	  } catch (Throwable e) {
+	  }
+	  
+	  return value;
+	  
+  }
 
   /**
    * Basic conversions to match a type, including null -> NaN when what's wanted is a double or float

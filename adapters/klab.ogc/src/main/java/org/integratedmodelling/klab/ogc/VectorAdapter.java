@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.util.Set;
+
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -25,6 +27,8 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.ogc.vector.files.VectorPublisher;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 
+import com.google.common.collect.Sets;
+
 /**
  * The Class VectorAdapter.
  */
@@ -32,19 +36,16 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 public class VectorAdapter implements IResourceAdapter {
 
 	/**
-	 * All recognized primary file extensions. 
+	 * All recognized primary file extensions.
 	 */
-	public static String[] fileExtensions = {
-			"shp"
-	};
+	public static Set<String> fileExtensions = Sets.newHashSet("shp");
 
 	/**
 	 * All recognized secondary file extensions
 	 */
-	public static String[] secondaryFileExtensions = {
-			"sbx", "prj", "shx", "dbf", "shp.xml", "txt", "pdf"
-	};
-	
+	public static Set<String> secondaryFileExtensions = Sets.newHashSet("sbx", "prj", "shx", "dbf", "shp.xml", "txt",
+			"pdf");
+
 	@Override
 	public String getName() {
 		return "vector";

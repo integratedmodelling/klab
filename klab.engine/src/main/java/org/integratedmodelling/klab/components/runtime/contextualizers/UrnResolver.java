@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
-  public final static String FUNCTION_ID = "klab.resolve.urn";
+  public final static String FUNCTION_ID = "klab.runtime.urn";
   
   private IResource resource;
   
@@ -37,7 +37,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
   @Override
   public IArtifact resolve(IArtifact observation, IComputationContext context) {
     IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
-    return null;
+    return data.getArtifact();
   }
 
   @Override

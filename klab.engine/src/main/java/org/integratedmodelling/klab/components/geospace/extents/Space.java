@@ -19,7 +19,9 @@ import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -55,10 +57,53 @@ public class Space extends Extent implements ISpace {
 		return EMPTY_SPACE;
 	}
 
-	public static Space create(Shape shape, double resolutionInMeters) throws KlabException {
+	public static Space create(Dimension dimension) {
+
+		double[] bbox = dimension.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
+		String gridres = dimension.getParameters().get(Geometry.PARAMETER_SPACE_GRIDRESOLUTION, String.class);
+		String projectionSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+		String shapeSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_SHAPE, String.class);
+		long[] dims = dimension.shape();
+
+		Projection projection = null;
+		Shape shape = null;
+
+		if (projectionSpec != null) {
+			projection = Projection.create(projectionSpec);
+		} else {
+			throw new IllegalArgumentException(
+					"not enough information in spatial dimension to build a space extent: projection");
+		}
+
+		if (shapeSpec != null) {
+			shape = Shape.create(shapeSpec);
+		} else if (bbox != null) {
+			shape = Shape.create(bbox[0], bbox[2], bbox[1], bbox[3], projection);
+		} else {
+			throw new IllegalArgumentException(
+					"not enough information in spatial dimension to build a space extent: shape or bounding box");
+		}
+
+		if (gridres != null) {
+			return create(shape,
+					org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(gridres));
+		} else if (dims.length > 1) {
+			return create(shape, dims[0], dims[1]);
+		}
+
+		return create(shape);
+	}
+
+	public static Space create(Shape shape, double resolutionInMeters) {
 		Grid grid = Grid.create(shape, resolutionInMeters);
 		Space ret = new Space(shape, grid);
 		ret.gridSpecs = resolutionInMeters + " m";
+		return ret;
+	}
+
+	public static Space create(Shape shape, long xCells, long yCells) {
+		Grid grid = Grid.create(shape, xCells, yCells);
+		Space ret = new Space(shape, grid);
 		return ret;
 	}
 
@@ -79,16 +124,16 @@ public class Space extends Extent implements ISpace {
 		this.projection = shape.getProjection();
 		this.shape = shape;
 		this.grid = grid;
-//		if (grid != null) {
-//			this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
-//			if (grid instanceof Grid) {
-//				this.grid.offsetInSupergrid = ((Grid) grid).offsetInSupergrid;
-//				this.grid.superGridId = ((Grid) grid).superGridId;
-//			}
-//			this.envelope = ((Grid) grid).getEnvelope();
-//		} else {
-			this.envelope = this.shape.getEnvelope();
-//		}
+		// if (grid != null) {
+		// this.grid = Grid.create(this.shape, grid.getXCells(), grid.getYCells());
+		// if (grid instanceof Grid) {
+		// this.grid.offsetInSupergrid = ((Grid) grid).offsetInSupergrid;
+		// this.grid.superGridId = ((Grid) grid).superGridId;
+		// }
+		// this.envelope = ((Grid) grid).getEnvelope();
+		// } else {
+		this.envelope = this.shape.getEnvelope();
+		// }
 	}
 
 	public String toString() {
@@ -256,7 +301,7 @@ public class Space extends Extent implements ISpace {
 		if (other == null) {
 			return new Space();
 		}
-		
+
 		return adaptToShape(this.shape.intersection(other), other);
 	}
 
@@ -272,7 +317,8 @@ public class Space extends Extent implements ISpace {
 				if (error <= Configuration.INSTANCE.getAcceptedSubsettingError()) {
 					return new Space(common, Subgrid.create(grid, common));
 				} else {
-					throw new KlabUnsupportedFeatureException("Unsupported operation: non-conformant grid to grid (subsetting error = " + error);
+					throw new KlabUnsupportedFeatureException(
+							"Unsupported operation: non-conformant grid to grid (subsetting error = " + error);
 				}
 			} else if (features != null) {
 				// cut features to merged shape
@@ -551,20 +597,20 @@ public class Space extends Extent implements ISpace {
 			throw new IllegalArgumentException("extent " + extent + " cannot mediate to " + this);
 		}
 
-		ISpace other = (ISpace)extent;
+		ISpace other = (ISpace) extent;
 
-		if (grid != null && other instanceof Space && ((Space)other).grid != null) {
-			return new GridToGrid(grid, ((Space)other).grid);
+		if (grid != null && other instanceof Space && ((Space) other).grid != null) {
+			return new GridToGrid(grid, ((Space) other).grid);
 		}
-		
+
 		/*
-		 * if this == extent return identity;
-		 * if this.grid != null && extent.grid != null && this.grid isa subgrid && this.grid.originalgrid == extent.grid
-		 * 	return conformant offset remapper;
-		 * if this.grid != null && extent.grid != null && extent.grid isa subgrid && extent.grid.originalgrid == this.grid
-		 * 	return inverse conformant offset remapper;
+		 * if this == extent return identity; if this.grid != null && extent.grid !=
+		 * null && this.grid isa subgrid && this.grid.originalgrid == extent.grid return
+		 * conformant offset remapper; if this.grid != null && extent.grid != null &&
+		 * extent.grid isa subgrid && extent.grid.originalgrid == this.grid return
+		 * inverse conformant offset remapper;
 		 */
-		
+
 		return null;
 	}
 
@@ -589,7 +635,7 @@ public class Space extends Extent implements ISpace {
 
 		Shape common = connector.equals(LogicalConnector.INTERSECTION) ? this.shape.intersection(other)
 				: this.shape.union(other);
-		
+
 		return new Space(common);
 	}
 

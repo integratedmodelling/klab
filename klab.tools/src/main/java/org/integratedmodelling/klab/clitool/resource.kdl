@@ -41,3 +41,17 @@ void clear
 {
 	class org.integratedmodelling.klab.clitool.console.commands.resources.Clear
 }
+
+void info
+	"Print useful information and k.IM bindings for a resource."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Info
+}
+
+void update
+	"Update resource parameters. Call with the URN as a first parameter, followed either
+	  by 'set', the value key and the value to be set (which may include spaces) or with 
+	  'key=value' pairs for setting multiple individual values."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Update
+}

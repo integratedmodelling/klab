@@ -14,6 +14,6 @@ observe earth:Region named utah
    	shape = "EPSG:26912 POLYGON ((544094.0217883228 4170364.8084266614, 690094.0217883228 4170364.8084266614, 690094.0217883228 4340364.808426661, 544094.0217883228 4340364.808426661, 544094.0217883228 4170364.8084266614))",
    	grid = "1 km"
    );
-   
-// within the 'test' project, this can be referred to simply as utah_landcover[.tif]   
+  
+// within the test project, this can be referred to simply as utah_landcover[.tif]   
 model local:anonymous:test:utah_landcover as geography:Slope in degree_angle;

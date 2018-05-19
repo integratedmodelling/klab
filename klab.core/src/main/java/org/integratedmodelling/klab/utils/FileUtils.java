@@ -99,7 +99,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * @param extensions
      * @return the original file and all sidecar files
      */
-    public static Collection<File> getSidecarFiles(File original, String... extensions) {
+    public static Collection<File> getSidecarFiles(File original, Collection<String> extensions) {
     	Set<File> ret = new HashSet<>();
     	ret.add(original);
     	String base = MiscUtilities.getFilePath(original.toString()) + File.separator + MiscUtilities.getFileBaseName(original);

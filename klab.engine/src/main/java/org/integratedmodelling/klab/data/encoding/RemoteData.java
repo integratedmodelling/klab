@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 
@@ -23,18 +22,6 @@ public class RemoteData implements IKlabData {
 	}
 
 	@Override
-	public List<IState> getStates() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<IDirectObservation> getObjects() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<INotification> getNotifications() {
 		// TODO Auto-generated method stub
 		return null;
@@ -44,6 +31,12 @@ public class RemoteData implements IKlabData {
 	public boolean hasErrors() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public IArtifact getArtifact() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

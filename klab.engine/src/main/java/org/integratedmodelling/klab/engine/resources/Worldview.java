@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.scale.Scale;
 
 public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 
@@ -17,8 +18,7 @@ public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 
     @Override
     public IScale getScale(IGeometry geometry) {
-        // TODO Auto-generated method stub
-        return null;
+        return Scale.create(geometry);
     }
 
 }

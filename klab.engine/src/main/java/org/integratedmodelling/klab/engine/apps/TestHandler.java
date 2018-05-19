@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.annotations;
+package org.integratedmodelling.klab.engine.apps;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,8 +8,10 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -28,12 +30,26 @@ public class TestHandler implements Annotations.Handler {
   public Object process(IKimObject target, Parameters arguments, IMonitor monitor)
       throws Exception {
 
-    String id = arguments.containsKey("name") ? arguments.get("name").toString() : "unnamed test";
-    int repetitions = arguments.containsKey("repeat") ? (Integer) arguments.get("repeat") : 1;
+    String id = arguments.get("name", "unnamed test");
+    int repetitions = arguments.get("repeat", 1);
 
     if (!(arguments.get("observations") instanceof List)) {
       monitor.warn("test annotation does not specify observations");
       return null;
+    }
+
+    if (arguments.contains("resources")) {
+    	boolean ok = true;
+    	for (Object o : arguments.get("resources", List.class)) {
+    		IResource resource = Resources.INSTANCE.resolveResource(o.toString());
+    		if (resource == null || !Resources.INSTANCE.isResourceOnline(resource)) {
+    		      monitor.warn("resource " + o + " is not available: canceling test " + id);
+    		      ok = false;
+    		}
+    	}
+    	if (!ok) {
+    		return null;
+    	}
     }
 
     List<IObservation> result = new ArrayList<>();

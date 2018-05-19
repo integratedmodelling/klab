@@ -20,6 +20,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
  * Encoded k.LAB data resulting from decoding a resource URN in a specified
@@ -114,23 +115,18 @@ public interface IKlabData {
 	}
 
 	/**
+	 * Return the primary artifact that we are meant to build, building it if necessary.
 	 * 
-	 * @return all states built
+	 * @return
 	 */
-	List<IState> getStates();
-	
-	/**
-	 * 
-	 * @return all objects built
-	 */
-	List<IDirectObservation> getObjects();
+	IArtifact getArtifact();
 	
 	/**
 	 * 
 	 * @return all notifications
 	 */
 	List<INotification> getNotifications();
-	
+		
 	/**
 	 * True if errors happened and no results should be used.
 	 * 

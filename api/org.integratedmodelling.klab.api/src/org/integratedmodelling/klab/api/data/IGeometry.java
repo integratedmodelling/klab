@@ -277,6 +277,15 @@ public interface IGeometry extends Serializable, ILocator {
     ILocator at(Dimension.Type dimension, long... offsets);
 
     /**
+     * Return a trivial locator for the passed numeric offset. May check for suitable offsets or
+     * indexability through a long.
+     * 
+     * @param offset a global offset
+     * @return a locator for long-indexed state operations
+     */
+	ILocator getLocator(long offset);
+    
+    /**
      * Return a long if this maps directly to the original geometry, or -1 if mediation is necessary.
      * 
      * @param index
@@ -293,5 +302,6 @@ public interface IGeometry extends Serializable, ILocator {
      * @return the dimension's shape
      */
     long[] shape(Type space);
+
 
 }

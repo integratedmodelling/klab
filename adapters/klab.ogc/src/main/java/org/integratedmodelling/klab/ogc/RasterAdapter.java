@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.util.Set;
+
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -25,22 +27,25 @@ import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.files.RasterPublisher;
 import org.integratedmodelling.klab.raster.files.RasterValidator;
 
+import com.google.common.collect.Sets;
+
 /**
  * The Class RasterAdapter.
  */
 @ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
-		"interpolation", "nodata" })
+		"interpolation", "nodata", "bandmixer" })
 public class RasterAdapter implements IResourceAdapter {
 
 	/**
 	 * All recognized primary file extensions.
 	 */
-	public static String[] fileExtensions = { "tif", "tiff" };
+	public static Set<String> fileExtensions = Sets.newHashSet("tif", "tiff");
 
 	/**
 	 * All recognized secondary file extensions
 	 */
-	public static String[] secondaryFileExtensions = { "tfw", "prj", "tif.ovr", "tif.aux.xml", "txt", "pdf" };
+	public static Set<String> secondaryFileExtensions = Sets.newHashSet("tfw", "prj", "tif.ovr", "tif.aux.xml", "txt",
+			"pdf");
 
 	/**
 	 * Interpolation type for metadata

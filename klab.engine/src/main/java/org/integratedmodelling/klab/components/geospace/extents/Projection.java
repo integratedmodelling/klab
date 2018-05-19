@@ -96,6 +96,11 @@ public class Projection implements IProjection {
 	}
 
 	@Override
+	public String toString() {
+		return code;
+	}
+	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -124,7 +129,7 @@ public class Projection implements IProjection {
 		return crs;
 	}
 
-	static Projection create(CoordinateReferenceSystem coordinateReferenceSystem) {
+	public static Projection create(CoordinateReferenceSystem coordinateReferenceSystem) {
 		try {
 			String code = CRS.lookupIdentifier(coordinateReferenceSystem, true);
 			return new Projection(code, coordinateReferenceSystem);

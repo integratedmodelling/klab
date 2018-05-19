@@ -279,11 +279,14 @@ public enum Resources implements IResourceService {
 	@Override
 	public IResource resolveResource(final String urn)
 			throws KlabResourceNotFoundException, KlabAuthorizationException {
-
+		
 		if (Urns.INSTANCE.isLocal(urn)) {
 			return getLocalResourceCatalog().get(urn);
 		}
 
+		/*
+		 * see if we have cached it, and if so, whether we need to refresh
+		 */
 		IResource ret = getPublicResourceCatalog().get(urn);
 		if (ret != null) {
 			/*

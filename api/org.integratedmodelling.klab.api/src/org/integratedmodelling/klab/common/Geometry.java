@@ -21,7 +21,7 @@ public class Geometry implements IGeometry {
 
     public static final String PARAMETER_SPACE_BOUNDINGBOX = "bbox";
     public static final String PARAMETER_SPACE_PROJECTION = "proj";
-    public static final String PARAMETER_SPACE_GRIDRESOLUTION = "sgrid";
+	public static final String PARAMETER_SPACE_GRIDRESOLUTION = "sgrid";
     public static final String PARAMETER_SPACE_SHAPE = "shape";
     public static final String PARAMETER_TIME_PERIOD = "period";
     public static final String PARAMETER_TIME_GRIDRESOLUTION = "tgrid";
@@ -534,6 +534,9 @@ public class Geometry implements IGeometry {
             this.offset = computeOffset(offsets);
         }
 
+        OffsetLocator() {
+        }
+        
         public long getOffset() {
             return offset;
         }
@@ -555,6 +558,12 @@ public class Geometry implements IGeometry {
         }
         return this.cursor.getElementOffset(offsets);
     }
+    
+    public ILocator getLocator(long offset) {
+    	OffsetLocator ret = new OffsetLocator();
+    	ret.offset = offset;
+    	return ret;
+    }
 
     @Override
     public long getOffset(ILocator index) {
@@ -563,7 +572,7 @@ public class Geometry implements IGeometry {
         }
         throw new IllegalArgumentException("cannot use " + index + " as a scale locator");
     }
-
+    
     @Override
     public long[] shape(Type dimensionType) {
         Dimension dim = getDimension(dimensionType);
