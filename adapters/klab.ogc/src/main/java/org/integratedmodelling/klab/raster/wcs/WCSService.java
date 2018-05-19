@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class WCSService {
@@ -23,6 +24,7 @@ public class WCSService {
 	Map<String, WCSLayer> layers = new HashMap<>();
 	private String serviceUrl;
 	private Version version;
+	Parser parser;
 
 	public class WCSLayer {
 
@@ -31,6 +33,22 @@ public class WCSService {
 
 		// set to true when a getCoverage has been sent
 		boolean finished = false;
+		boolean error = false;
+
+		// TODO change to private
+		public void finish() {
+			if (!finished) {
+				finished = true;
+				try {
+					URL url = new URL(serviceUrl
+					        + "?service=WCS&version=" + version + "&request=DescribeCoverage&" + (version.getMajor() >= 2 ? "coverageId=" : "identifiers=") + name);
+					Map<?, ?> coverage = (Map<?, ?>) parser.parse(url.openStream());
+					System.out.println(JsonUtils.printAsJson(coverage));
+				} catch (Throwable e) {
+					error = true;
+				}
+			}
+		}
 
 		@Override
 		public String toString() {
@@ -43,9 +61,9 @@ public class WCSService {
 
 		this.serviceUrl = serviceUrl;
 		this.version = version;
-		
+
 		try {
-			Parser parser = new Parser(new WCSConfiguration());
+			this.parser = new Parser(new WCSConfiguration());
 			URL url = new URL(serviceUrl + "?service=WCS&request=getCapabilities&version=" + version);
 			Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(url.openStream());
 
