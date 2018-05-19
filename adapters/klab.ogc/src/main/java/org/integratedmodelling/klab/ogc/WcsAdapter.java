@@ -15,12 +15,16 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.raster.wcs.WCSService;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsPublisher;
 import org.integratedmodelling.klab.raster.wcs.WcsValidator;
@@ -32,6 +36,31 @@ import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 		"namespace" })
 public class WcsAdapter implements IResourceAdapter {
 
+	/**
+	 * Map all service URLs encountered to their handlers.
+	 * TODO see if we want to cache this.
+	 */
+	static Map<String, WCSService> services = new HashMap<>();
+	
+	/**
+	 * Get the service handler for the passed service URL and version. The version is 
+	 * ignored if the service handler was already there with a different one.
+	 * 
+	 * @param serviceUrl
+	 * @param version
+	 * @return a WCS service. Inspect for errors before using.
+	 */
+	public static WCSService getService(String serviceUrl, Version version) {
+		if (services.containsKey(serviceUrl)) {
+			return services.get(serviceUrl);
+		}
+		WCSService ret = new WCSService(serviceUrl, version);
+		if (ret != null) {
+			services.put(serviceUrl, ret);
+		}
+		return ret;
+	}
+	
 	@Override
 	public String getName() {
 		return "wcs";

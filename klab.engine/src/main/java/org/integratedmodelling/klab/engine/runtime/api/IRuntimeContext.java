@@ -83,18 +83,7 @@ public interface IRuntimeContext extends IComputationContext {
      * @param outFile
      */
     void exportNetwork(String outFile);
-
-//    /**
-//     * The target artifact of the passed actuator's computation. In k.LAB usually an IObservation.
-//     * External computations may use non-semantic artifacts. These should be created if necessary; if
-//     * they haven't been already, they should be created as non-semantic artifacts.
-//     * 
-//     * @param actuator
-//     * 
-//     * @return the target artifact for the passed actuator.
-//     */
-//    IArtifact getTargetArtifact(IActuator actuator);
-
+    
     /**
      * Set the main target of the computation being carried on by the actuator. Used by
      * Actuator.compute().
@@ -133,5 +122,13 @@ public interface IRuntimeContext extends IComputationContext {
      * @return the set of all children of class cls
      */
     <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
+
+    /**
+     * Return the local name of the target artifact, which is also the name of the actuator
+     * being computed.
+     * 
+     * @return the name of the target artifact
+     */
+	String getTargetName();
 
 }

@@ -182,6 +182,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	}
 
 	@Override
+	public String getTargetName() {
+		return targetName;
+	}
+	
+	@Override
 	public IRuntimeContext copy() {
 		RuntimeContext ret = new RuntimeContext(this);
 		// make a deep copy of all localizable info so we can rename elements

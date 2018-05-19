@@ -45,7 +45,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -73,7 +74,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RasterEncoder implements IResourceEncoder {
 
 	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
+	public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder, IComputationContext context) {
 
 		// State.Builder sBuilder = KlabData.State.newBuilder();
 
@@ -100,11 +101,12 @@ public class RasterEncoder implements IResourceEncoder {
 		 * TODO support multi-band expressions
 		 */
 
-		builder.startState(null);
+		builder.startState(((IRuntimeContext)context).getTargetName());
+		
 		for (long ofs = 0; ofs < space.size(); ofs++) {
 
 			long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-			Double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+			double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
 
 			// this is cheeky but will catch most of the nodata and
 			// none of the good data
@@ -116,8 +118,13 @@ public class RasterEncoder implements IResourceEncoder {
 			for (double nd : nodata) {
 				if (NumberUtils.equal(value, nd)) {
 					value = Double.NaN;
+					break;
 				}
 			}
+			
+//			if (!Double.isNaN(value)) {
+//				System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs = " + ofs + ")");
+//			}
 
 			builder.add(value);
 		}

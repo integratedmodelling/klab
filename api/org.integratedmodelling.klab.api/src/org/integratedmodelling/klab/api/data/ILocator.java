@@ -4,7 +4,7 @@ package org.integratedmodelling.klab.api.data;
  * Any geometry or subset of it can be used as a locator. Scales and extents are also locators and
  * can produce their component locators as appropriate. They can also "relocate" by producing lazy
  * mediators that allow seeing observations through different lenses.
- * 
+ * <p>
  * Numeric offsets are only exposed to communicate with external raw data APIs; within k.LAB code ,
  * translation should happen within the implementing classes, and the "conformant" cases where the
  * locator correspond to a simple offset without mediations should be detected and translated as
@@ -26,6 +26,5 @@ public interface ILocator {
    *         either in extent or geometry.
    */
   ILocator at(ILocator locator);
-
 
 }

@@ -16,59 +16,54 @@
 package org.integratedmodelling.klab.ogc.test;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.geotools.wcs.WCSConfiguration;
-import org.geotools.xml.Parser;
-import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.raster.wcs.WCSService;
 import org.xml.sax.SAXException;
-
-import net.opengis.wcs11.GetCapabilitiesType;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class GeotoolsTest.
  */
 /*
- * TEMPORARY - not a test case, just a sandbox for requests with poorly undocumented Geotools WCS
- * schemata. Delete when everything is figured out.
+ * TEMPORARY - not a test case, just a sandbox for requests with poorly
+ * undocumented Geotools WCS schema parsing. Delete when everything is figured
+ * out.
  */
 public class GeotoolsTest {
-  
-  /**
-   * The main method.
-   *
-   * @param args the arguments
-   * @throws IOException Signals that an I/O exception has occurred.
-   * @throws SAXException the SAX exception
-   * @throws ParserConfigurationException the parser configuration exception
-   */
-  public static void main(String[] args)
-      throws IOException, SAXException, ParserConfigurationException {
-    // String baseurl =
-    // "https://www.wcs.nrw.de/geobasis/wcs_nw_dgm?service=wcs&request=getcapabilities";
-    String baseurl = "http://www.integratedmodelling.org/geoserver/wcs?request=getcapabilities";
-    String sdeurl =
-        "https://www.mrlc.gov/arcgis/services/LandCover/USGS_EROS_LandCover_NLCD/MapServer/WCSServer?request=GetCapabilities&version=2.0&service=WCS";
-    GeotoolsTest me = new GeotoolsTest();
-    me.getCapabilitiesType(sdeurl);
-  }
 
-  GetCapabilitiesType getCapabilitiesType(String capRequestPath)
-      throws IOException, SAXException, ParserConfigurationException {
-    Parser parser = new Parser(new WCSConfiguration());
-    URL url = new URL(capRequestPath);
-    Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(url.openStream());
-    System.out.println(JsonUtils.printAsJson(capabilitiesType));
+	/**
+	 * The main method.
+	 *
+	 * @param args
+	 *            the arguments
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws SAXException
+	 *             the SAX exception
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 */
+	public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
 
-    // Wcs20Factory factory = Wcs20FactoryImpl.init();
-    // net.opengis.wcs20.GetCapabilitiesType wcsGetCapabilities =
-    // factory.createGetCapabilitiesType();
-    // wcsGetCapabilities.setBaseUrl(capRequestPath);
+		// String baseurl =
+		// "https://www.wcs.nrw.de/geobasis/wcs_nw_dgm?service=wcs&request=getcapabilities";
 
-    return null;
-  }
+		WCSService imWcs = new WCSService("http://www.integratedmodelling.org/geoserver/wcs", Version.create("1.1.0"));
+		WCSService usWcs = new WCSService(
+				"https://www.mrlc.gov/arcgis/services/LandCover/USGS_EROS_LandCover_NLCD/MapServer/WCSServer",
+				Version.create("2.0.1"));
+		
+		System.out.println("--- IM ---");
+		for (WCSService.WCSLayer layer : imWcs.getLayers()) {
+			System.out.println(layer + "");
+		}
+		System.out.println("--- US ---");
+		for (WCSService.WCSLayer layer : usWcs.getLayers()) {
+			System.out.println(layer + "");
+		}
+
+	}
 }

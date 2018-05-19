@@ -6,9 +6,6 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
 
-import xerial.larray.LFloatArray;
-import xerial.larray.japi.LArrayJ;
-
 /**
  * TODO/FIXME: Using Float arrays because LDoubleArray simply DOES NOT WORK (stores X and returns Y).
  * Of course this should be a good argument to avoid LArrayJ.
@@ -19,10 +16,10 @@ import xerial.larray.japi.LArrayJ;
 public class DoubleStorage extends Storage implements IDataArtifact {
 
 //  private LFloatArray data;
-	private float[] data;
+	private double[] data;
   public DoubleStorage(IGeometry scale) {
     super(scale);
-    this.data = new float[(int)scale.size()]; //LArrayJ.newLFloatArray(scale.size());
+    this.data = new double[(int)scale.size()]; //LArrayJ.newLFloatArray(scale.size());
   }
 
   @Override
@@ -35,10 +32,10 @@ public class DoubleStorage extends Storage implements IDataArtifact {
     long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
-      throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
+      throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    float ret = data[(int)offset]; // data.apply(offset);
-    return Float.isNaN(ret) ? null : (double)ret;
+    double ret = data[(int)offset]; // data.apply(offset);
+    return Double.isNaN(ret) ? null : (double)ret;
   }
 
   @Override
@@ -46,16 +43,16 @@ public class DoubleStorage extends Storage implements IDataArtifact {
     long offset = getGeometry().getOffset(index);
     if (offset < 0) {
       // mediation needed
-      throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
+      throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
     }
-    data[(int)offset] = value instanceof Number ? ((Number) value).floatValue() : convert(value);
+    data[(int)offset] = value instanceof Number ? ((Number) value).doubleValue() : convert(value);
     // data.update(offset, value instanceof Number ? ((Number) value).floatValue() : convert(value));
     return offset;
   }
 
-  private float convert(Object value) {
+  private double convert(Object value) {
     // TODO convert distributions and the like
-    return Float.NaN;
+    return Double.NaN;
   }
 
   @Override
