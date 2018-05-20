@@ -51,7 +51,7 @@ public class GeotoolsTest {
 		// String baseurl =
 		// "https://www.wcs.nrw.de/geobasis/wcs_nw_dgm?service=wcs&request=getcapabilities";
 
-		WCSService imWcs = new WCSService("http://www.integratedmodelling.org/geoserver/wcs", Version.create("1.1.1"));
+		WCSService imWcs = new WCSService("http://www.integratedmodelling.org/geoserver/wcs", Version.create("2.0.0"));
 		WCSService usWcs = new WCSService(
 				"https://www.mrlc.gov/arcgis/services/LandCover/USGS_EROS_LandCover_NLCD/MapServer/WCSServer",
 				Version.create("2.0.1"));

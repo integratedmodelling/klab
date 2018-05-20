@@ -12,6 +12,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -86,7 +87,7 @@ public enum GeotoolsUtils {
     /*
      * TODO raster should be pre-filled with a chosen nodata value TODO use activation layer
      */
-    // IGridMask act = extent.requireActivationLayer(true);
+    //IGrid.Mask act = space.requireActivationLayer(true);
 
     for (Cell cell : grid) {
       Object o = state.get(cell);

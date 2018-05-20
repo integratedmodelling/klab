@@ -382,7 +382,7 @@ public enum Resources implements IResourceService {
 				/*
 				 * TODO use adapter metadata to validate the input before calling validate()
 				 */
-				Builder builder = validator.validate(file.toURI().toURL(), parameters, monitor);
+				Builder builder = validator.validate(file == null ? null : file.toURI().toURL(), parameters, monitor);
 
 				// add all history items
 				for (IResource his : history) {
@@ -414,19 +414,26 @@ public enum Resources implements IResourceService {
 			}
 
 		} catch (Exception e) {
+			// FIXME only add KlabResourceException 
 			errors.add(e);
 		}
 
 		if (resource == null) {
+			// FIXME not sure this is OK
 			resource = Resource.error(urn, errors);
 		}
 
 		/*
-		 * Resources with errors go in the catalog and become bright red eyesores in
-		 * k.IM
+		 * Resources with errors and files go in the catalog and become bright red
+		 * eyesores in k.IM
+		 * 
+		 * FIXME these should only be errors that the user can do something about. Must
+		 * properly encode those as KlabResourceException.
 		 */
-		localResourceCatalog.put(urn, resource);
-
+		if (file != null || !resource.hasErrors()) {
+			localResourceCatalog.put(urn, resource);
+		}
+		
 		if (resource.hasErrors()) {
 			// TODO report errors but leave the resource so we can validate any use of it
 			monitor.error("RESOURCE " + urn + " HAS ERRORS - TODO REPORT PROPERLY");

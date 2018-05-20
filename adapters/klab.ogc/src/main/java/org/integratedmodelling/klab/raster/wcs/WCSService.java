@@ -53,7 +53,6 @@ public class WCSService {
 		// set to true when a getCoverage response has been parsed
 		private boolean finished = false;
 		
-		
 		private boolean error = false;
 
 		public String getName() {
@@ -99,6 +98,7 @@ public class WCSService {
 			if (!finished) {
 				finished = true;
 				try {
+//					Version version = Version.create("2.0.0");
 					URL url = new URL(serviceUrl + "?service=WCS&version=" + version + "&request=DescribeCoverage&"
 							+ (version.getMajor() >= 2 ? "coverageId=" : "identifiers=") + name);
 					try (InputStream input = url.openStream()) {

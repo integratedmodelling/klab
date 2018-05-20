@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 
@@ -41,16 +42,23 @@ public class WcsValidator implements IResourceValidator {
 			throw new IllegalArgumentException("WCS specifications are invalid or incomplete");
 		}
 
-		WCSService service = WcsAdapter.getService(userData.get("serviceId", String.class),
+		WCSService service = WcsAdapter.getService(userData.get("serviceUrl", String.class),
 				Version.create(userData.get("wcsVersion", String.class)));
 
 		WCSLayer layer = service.getLayer(userData.get("wcsIdentifier", String.class));
+		
+		if (layer == null) {
+			throw new KlabResourceNotFoundException("WCS layer " + userData.get("wcsIdentifier") + " not found on server");
+		}
 		
 		/*
 		 * Substitute user identifier with official one from layer, validating the layer at the
 		 * same time.
 		 */
 		userData.put("wcsIdentifier", layer.getIdentifier());
+		if (!layer.getNodata().isEmpty()) {
+			userData.put("nodata", layer.getNodata().iterator().next());
+		}
 		IGeometry geometry = layer.getGeometry();
 		
 		return new ResourceBuilder().setParameters(userData).setGeometry(geometry);
@@ -58,7 +66,7 @@ public class WcsValidator implements IResourceValidator {
 
 	@Override
 	public boolean canHandle(File resource, IParameters parameters) {
-		return resource == null && parameters.contains("wcsVersion") && parameters.contains("serverId")
+		return resource == null && parameters.contains("wcsVersion") && parameters.contains("serviceUrl")
 				&& parameters.contains("wcsIdentifier");
 	}
 

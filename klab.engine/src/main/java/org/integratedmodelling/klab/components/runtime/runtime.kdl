@@ -55,17 +55,6 @@ contextualizer convert
 
 }
 
-contextualizer merge
-	"Return a contextualizer that merges existing artifacts from different models into a common one"
-{
-	
-	list artifacts
-		"The IDs of the artifacts to be merged"
-				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.ArtifactMerger
-
-}
-
 contextualizer urn
 	"Return a contextualizer for a literal value"
 {
