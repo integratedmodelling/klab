@@ -136,4 +136,9 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).getLocalPaths();
 	}
 
+	@Override
+	public String getLocalPath() {
+		return getDelegate(timeout).getLocalPath();
+	}
+
 }

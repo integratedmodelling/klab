@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -40,6 +41,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private Metadata metadata = new Metadata();
 	private Parameters parameters = new Parameters();
 	private IGeometry geometry;
+	private String localPath;
 	private List<String> resourcePaths = new ArrayList<>();
 	private List<IResource> history = new ArrayList<>();
 	private List<INotification> notifications = new ArrayList<>();
@@ -62,6 +64,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.resourceTimestamp = this.resourceTimestamp;
 		ret.version = this.resourceVersion;
 		ret.adapterType = this.adapterType;
+		ret.localPath = this.localPath;
 		ret.localPaths.addAll(resourcePaths);
 		return ret;
 	}
@@ -79,6 +82,13 @@ public class ResourceBuilder implements IResource.Builder {
 		parameters.put(key, value);
 		return this;
 	}
+	
+	@Override
+	public ResourceBuilder setLocalPath(String localPath) {
+		this.localPath = localPath;
+		return this;
+	}
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -146,6 +156,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public Builder addLocalResourcePath(String path) {
 		this.resourcePaths.add(path);
+		return this;
+	}
+
+	@Override
+	public Builder setParameters(IParameters parameters) {
+		this.parameters.putAll(parameters);
 		return this;
 	}
 

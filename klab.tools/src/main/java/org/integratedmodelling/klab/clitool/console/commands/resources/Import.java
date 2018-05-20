@@ -33,7 +33,10 @@ public class Import implements ICommand {
 		for (Object arg : (List<?>) call.getParameters().get("arguments")) {
 			String argument = arg.toString();
 			if (argument.contains("=")) {
-				String[] ss = argument.split("=");
+				String[] ss = argument.split("\\=");
+				if (ss.length != 2) {
+					throw new KlabValidationException("arguments following the URN must be in the form key=value");
+				}
 				parameters.put(ss[0], ss[1]);
 			} else {
 				if (file != null) {

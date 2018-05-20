@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.CRS.AxisOrder;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.components.geospace.utils.UTM;
 import org.integratedmodelling.klab.components.geospace.utils.WGS84;
@@ -80,6 +81,9 @@ public class Projection implements IProjection {
 		this.code = code;
 		try {
 			this.crs = CRS.decode(this.code, true);
+			if (CRS.getAxisOrder(crs).equals(AxisOrder.EAST_NORTH)) {
+				System.setProperty("org.geotools.referencing.forceXY", "true");
+			}
 		} catch (FactoryException e) {
 			throw new KlabValidationException(e);
 		}
@@ -99,7 +103,7 @@ public class Projection implements IProjection {
 	public String toString() {
 		return code;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

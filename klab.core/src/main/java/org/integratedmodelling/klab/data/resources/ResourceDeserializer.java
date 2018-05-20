@@ -69,6 +69,7 @@ public class ResourceDeserializer extends StdDeserializer<Resource> {
     ret.urn = node.get("urn").asText();
     ret.resourceTimestamp = node.get("resourceTimestamp").asLong();
     ret.adapterType = node.get("adapterType").asText();
+    ret.localPath = node.get("localPath").asText();
     ret.geometry = Geometry.create(node.get("geometry").asText());
     ret.version = Version.create(node.get("version").asText());
     ret.parameters = new Parameters(JsonUtils.asMap(node.get("parameters")));

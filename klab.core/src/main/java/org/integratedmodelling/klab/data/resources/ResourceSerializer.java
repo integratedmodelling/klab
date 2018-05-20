@@ -18,7 +18,6 @@ package org.integratedmodelling.klab.data.resources;
 import java.io.IOException;
 
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -34,58 +33,61 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 public class ResourceSerializer extends StdSerializer<Resource> {
 
-  private static final long serialVersionUID = 7503848628165833367L;
+	private static final long serialVersionUID = 7503848628165833367L;
 
-  /**
-   * <p>Constructor for ResourceSerializer.</p>
-   */
-  protected ResourceSerializer() {
-    super(Resource.class);
-  }
+	/**
+	 * <p>
+	 * Constructor for ResourceSerializer.
+	 * </p>
+	 */
+	protected ResourceSerializer() {
+		super(Resource.class);
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public void serialize(final Resource resource, JsonGenerator gen, SerializerProvider provider)
-      throws IOException {
+	/** {@inheritDoc} */
+	@Override
+	public void serialize(final Resource resource, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
-    gen.writeStartObject();
+		gen.writeStartObject();
 
-    gen.writeNumberField("resourceTimestamp", resource.resourceTimestamp);
-    if (resource.urn != null) {
-      gen.writeStringField("urn", resource.urn);
-    }
-    if (resource.geometry != null) {
-      gen.writeStringField("geometry", resource.geometry.toString());
-    }
-    if (resource.version != null) {
-      gen.writeStringField("version", resource.version.toString());
-    }
-    if (resource.adapterType != null) {
-      gen.writeStringField("adapterType", resource.adapterType);
-    }
+		gen.writeNumberField("resourceTimestamp", resource.resourceTimestamp);
+		if (resource.urn != null) {
+			gen.writeStringField("urn", resource.urn);
+		}
+		if (resource.geometry != null) {
+			gen.writeStringField("geometry", resource.geometry.toString());
+		}
+		if (resource.version != null) {
+			gen.writeStringField("version", resource.version.toString());
+		}
+		if (resource.adapterType != null) {
+			gen.writeStringField("adapterType", resource.adapterType);
+		}
+		if (resource.localPath != null) {
+			gen.writeStringField("localPath", resource.localPath);
+		}
 
-    gen.writeObjectField("parameters", ((Parameters) resource.parameters).getData());;
-    gen.writeObjectField("metadata", ((Metadata) resource.metadata).getData());;
+		gen.writeObjectField("parameters", ((Parameters) resource.parameters).getData());
+		gen.writeObjectField("metadata", ((Metadata) resource.metadata).getData());
 
-    gen.writeArrayFieldStart("history");
-    for (Object h : resource.history) {
-      gen.writeObject(h);
-    }
-    gen.writeEndArray();
+		gen.writeArrayFieldStart("history");
+		for (Object h : resource.history) {
+			gen.writeObject(h);
+		}
+		gen.writeEndArray();
 
-    gen.writeArrayFieldStart("notifications");
-    for (INotification h : resource.notifications) {
-      gen.writeObject(h);
-    }
-    gen.writeEndArray();
-    
-    gen.writeArrayFieldStart("localPaths");
-    for (String h : resource.localPaths) {
-      gen.writeString(h);
-    }
-    gen.writeEndArray();
-    gen.writeEndObject();
-  }
+		gen.writeArrayFieldStart("notifications");
+		for (INotification h : resource.notifications) {
+			gen.writeObject(h);
+		}
+		gen.writeEndArray();
 
+		gen.writeArrayFieldStart("localPaths");
+		for (String h : resource.localPaths) {
+			gen.writeString(h);
+		}
+		gen.writeEndArray();
+		gen.writeEndObject();
+	}
 
 }

@@ -58,13 +58,11 @@ public class GeotoolsTest {
 		
 		System.out.println("--- IM ---");
 		for (WCSService.WCSLayer layer : imWcs.getLayers()) {
-			System.out.println(layer + "");
-			layer.finish();
+			System.out.println(layer.getIdentifier());
 		}
 		System.out.println("--- US ---");
 		for (WCSService.WCSLayer layer : usWcs.getLayers()) {
-			System.out.println(layer + "");
-			layer.finish();
+			System.out.println(layer.getIdentifier());
 		}
 
 	}

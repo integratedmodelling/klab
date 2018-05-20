@@ -63,6 +63,7 @@ public class Resource implements IResource {
 	String urn;
 	Version version;
 	String adapterType;
+	String localPath;
 	IGeometry geometry;
 	long resourceTimestamp;
 	IMetadata metadata = new Metadata();
@@ -192,6 +193,11 @@ public class Resource implements IResource {
 		return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType + ", geometry="
 				+ geometry + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
 				+ "]";
+	}
+
+	@Override
+	public String getLocalPath() {
+		return localPath;
 	}
 
 }

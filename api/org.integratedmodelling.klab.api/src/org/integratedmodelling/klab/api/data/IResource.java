@@ -159,7 +159,7 @@ public interface IResource extends Serializable {
 		 * @return the builder itself
 		 */
 		Builder addLocalResourcePath(String path);
-		
+
 		/**
 		 * 
 		 * @param o
@@ -230,6 +230,21 @@ public interface IResource extends Serializable {
 		 */
 		Builder setAdapterType(String string);
 
+		/**
+		 * Set the local resource path.
+		 * 
+		 * @param localPath the local resource path
+		 * @return the builder itself
+		 */
+		Builder setLocalPath(String localPath);
+
+		/**
+		 * Add all the passed parameters
+		 * @param parameters a parameters object
+		 * @return the builder itself
+		 */
+		Builder setParameters(IParameters parameters);
+
 	}
 
 	/**
@@ -251,9 +266,19 @@ public interface IResource extends Serializable {
 	/**
 	 * Return all local resource file paths, as slash-separated strings starting at
 	 * a point depending on the resource type (e.g. in local resources it will start
-	 * at the project name). May be empty, never null.
+	 * at the project name). May be empty, never null. All paths will start with the
+	 * return value of {@link #getLocalPath()}.
 	 * 
 	 * @return all local resource file paths
 	 */
 	List<String> getLocalPaths();
+
+	/**
+	 * If the resource is local, a local path should be defined and will identify a
+	 * directory where all the {@link #getLocalPaths() local file resources} are
+	 * found.
+	 * 
+	 * @return
+	 */
+	String getLocalPath();
 }

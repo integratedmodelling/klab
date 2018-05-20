@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.data.storage;
 import static org.dizitart.no2.objects.filters.ObjectFilters.eq;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,9 +23,13 @@ import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.JsonUtils;
 
 /**
- * The Nitrite database storing resource data.
+ * The Nitrite database storing resource data. Resource data are automatically
+ * replicated to a local directory if that is passed in the constructor.
  * 
  * @author ferdinando.villa
  *
@@ -34,11 +39,17 @@ public class ResourceCatalog implements IResourceCatalog {
 	Nitrite db;
 	ObjectRepository<Resource> resources;
 
+	/**
+	 * Create a new resource catalog.
+	 * 
+	 * @param name
+	 * @param localPath
+	 */
 	public ResourceCatalog(String name) {
-		db = Nitrite.builder()// .compressed() TODO may reintegrate in production
+		this.db = Nitrite.builder()// .compressed() TODO may reintegrate in production
 				.filePath(Configuration.INSTANCE.getDataPath() + File.separator + name + ".db")
 				.openOrCreate("user", "password");
-		resources = db.getRepository(Resource.class);
+		this.resources = db.getRepository(Resource.class);
 	}
 
 	@Override
@@ -73,16 +84,51 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		IResource ret = get(value.getUrn());
 		if (ret != null) {
-			remove(value.getUrn());
+			removeDefinition(value.getUrn());
 		}
 		resources.insert((Resource) value);
+
+		if (value.getLocalPath() != null) {
+			/*
+			 * Save resource data as JSON in resource path
+			 */
+			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + value.getLocalPath());
+			resourcePath.mkdir();
+			try {
+				FileUtils.writeStringToFile(new File(resourcePath + File.separator + "resource.json"),
+						JsonUtils.printAsJson(value));
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+
 		return ret;
 	}
 
+	public IResource removeDefinition(Object key) {
+		IResource ret = get(key);
+		resources.remove(eq("urn", key));
+		return ret;
+	}
+	
+	
 	@Override
 	public IResource remove(Object key) {
 		IResource ret = get(key);
 		resources.remove(eq("urn", key));
+		if (ret != null && ret.getLocalPath() != null) {
+			/*
+			 * Save resource data as JSON in resource path
+			 */
+			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + ret.getLocalPath());
+			if (resourcePath.exists()) {
+				try {
+					FileUtils.deleteDirectory(resourcePath);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+		}
 		return ret;
 	}
 
@@ -94,6 +140,18 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public void clear() {
+		for (IResource resource : values()) {
+			if (resource.getLocalPath() != null) {
+				File respath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + resource.getLocalPath());
+				if (respath.isDirectory()) {
+					try {
+						FileUtils.deleteDirectory(respath);
+					} catch (IOException e) {
+						throw new KlabIOException(e);
+					}
+				}
+			}
+		}
 		resources.remove((ObjectFilter) null);
 	}
 
@@ -125,10 +183,12 @@ public class ResourceCatalog implements IResourceCatalog {
 				public String getKey() {
 					return rr.getUrn();
 				}
+
 				@Override
 				public IResource getValue() {
 					return rr;
 				}
+
 				@Override
 				public IResource setValue(IResource value) {
 					put(value.getUrn(), value);
@@ -142,11 +202,8 @@ public class ResourceCatalog implements IResourceCatalog {
 	public static void main(String args[]) {
 
 		ResourceCatalog catalog = new ResourceCatalog("test");
-		IResource resource = new ResourceBuilder()
-				.setResourceVersion(Version.getCurrent())
-				.setAdapterType("wcs")
-				.setGeometry(Geometry.empty())
-				.build("zio:cane:test:hostia");
+		IResource resource = new ResourceBuilder().setResourceVersion(Version.getCurrent()).setAdapterType("wcs")
+				.setGeometry(Geometry.empty()).build("zio:cane:test:hostia");
 
 		catalog.put(resource.getUrn(), resource);
 		IResource retrieved = catalog.get(resource.getUrn());

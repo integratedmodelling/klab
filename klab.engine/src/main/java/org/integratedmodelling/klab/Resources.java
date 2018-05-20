@@ -49,11 +49,13 @@ import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
@@ -279,7 +281,7 @@ public enum Resources implements IResourceService {
 	@Override
 	public IResource resolveResource(final String urn)
 			throws KlabResourceNotFoundException, KlabAuthorizationException {
-		
+
 		if (Urns.INSTANCE.isLocal(urn)) {
 			return getLocalResourceCatalog().get(urn);
 		}
@@ -355,6 +357,9 @@ public enum Resources implements IResourceService {
 		String id = Path.getLast(urn, ':');
 		List<Throwable> errors = new ArrayList<>();
 		IResource resource = null;
+		File resourceDatapath = null;
+		String resourceDataDir = id + ".v" + version;
+
 		try {
 
 			IResourceAdapter adapter = null;
@@ -389,8 +394,7 @@ public enum Resources implements IResourceService {
 				 * paths in resource metadata
 				 */
 				if (!builder.hasErrors() && file != null) {
-					String resourceDataDir = id + ".v" + version;
-					File resourceDatapath = new File(
+					resourceDatapath = new File(
 							project.getRoot() + File.separator + "resources" + File.separator + resourceDataDir);
 					resourceDatapath.mkdirs();
 
@@ -402,7 +406,8 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				resource = builder.setResourceVersion(version).build(urn);
+				resource = builder.setResourceVersion(version).setParameters(parameters)
+						.setLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
 
 			} else {
 				errors.add(new KlabValidationException("cannot find an adapter to process file " + file));
@@ -483,17 +488,17 @@ public enum Resources implements IResourceService {
 	public IKlabData getResourceData(IResource resource, IGeometry geometry, IComputationContext context) {
 
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-			
+
 			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 			if (adapter == null) {
 				throw new KlabUnsupportedFeatureException(
 						"adapter for resource of type " + resource.getAdapterType() + " not available");
 			}
-			
+
 			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
 			adapter.getEncoder().getEncodedData(resource, geometry, builder, context);
 			return builder.build();
-			
+
 		} else {
 			/*
 			 * TODO send REST request to any node that owns this resource - start with the
