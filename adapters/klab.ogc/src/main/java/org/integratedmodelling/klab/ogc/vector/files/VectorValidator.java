@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.xtext.util.Arrays;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -40,12 +41,14 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.URLUtils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.Lineal;
+import com.vividsolutions.jts.geom.Polygonal;
 
 /**
  * The Class RasterValidator.
@@ -78,17 +81,31 @@ public class VectorValidator implements IResourceValidator {
 				// we only do this when importing, so let's go through them
 				envelope = collection.getBounds();
 			}
-
+			
+			Map<String, Class<?>> attributeTypes = new HashMap<>(); 
+			
 			int shapeDimension = 0;
 			for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
 				if (ad.getLocalName().equals("the_geom")) {
-					// TODO set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
+					// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
+					if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
+						if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
+							shapeDimension = 1;
+						} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
+							shapeDimension = 2;
+						} else {
+							ret.addError("cannot establish geometry dimensionality for resource " + typeName);
+						}
+					} else {
+						ret.addError("cannot establish geometry type for resource " + typeName);
+					}
 				} else {
-					// TODO store attribute ID and type
+					// store attribute ID and type
+					attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
 				}
 			}
 
-			// really?
+			// really? Compute union or convex hull (or maybe indices - we could do that on demand)
 			try (FeatureIterator<SimpleFeature> features = collection.features()) {
 				while (features.hasNext()) {
 					SimpleFeature feature = features.next();

@@ -33,7 +33,6 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -103,6 +102,10 @@ public class RasterValidator implements IResourceValidator {
 								+ userData.get("band", Integer.class) + " is requested");
 					}
 				}
+				
+				/*
+				 * TODO we could (maybe on demand) compute the shape of the covered region
+				 */
 				
 				/*
 				 * If userdata do not contain nodata values, add them

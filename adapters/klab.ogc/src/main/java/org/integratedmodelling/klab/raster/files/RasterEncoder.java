@@ -109,6 +109,10 @@ public class RasterEncoder implements IResourceEncoder {
 		Set<Double> nodata = getNodata(resource, coverage, band);
 
 		/*
+		 * TODO support band mixer if set in resource
+		 */
+		
+		/*
 		 * if so configured, cache the transformed coverage for the space dimension
 		 * signature
 		 * 
