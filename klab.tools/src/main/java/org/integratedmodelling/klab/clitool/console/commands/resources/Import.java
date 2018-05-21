@@ -44,7 +44,7 @@ public class Import implements ICommand {
 							"the resource::create command only supports one file argument: " + argument);
 				}
 				file = Klab.INSTANCE.resolveFile(argument);
-				if (!file.exists()) {
+				if (file == null || !file.exists()) {
 					throw new KlabValidationException("resource::create: file " + argument + " can't be read");
 				}
 			}

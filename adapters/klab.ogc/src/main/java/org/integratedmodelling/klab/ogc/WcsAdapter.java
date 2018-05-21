@@ -15,10 +15,12 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -41,6 +43,7 @@ public class WcsAdapter implements IResourceAdapter {
 	 * TODO see if we want to cache this.
 	 */
 	static Map<String, WCSService> services = new HashMap<>();
+	static Map<String, File> fileCache = new HashMap<>();
 	
 	/**
 	 * Get the service handler for the passed service URL and version. The version is 
@@ -81,4 +84,18 @@ public class WcsAdapter implements IResourceAdapter {
 		return new WcsEncoder();
 	}
 
+	public static File getCachedFile(String identifier, IGeometry geometry) {
+		String key = identifier + "#" + geometry.toString();
+		File ret = fileCache.get(key);
+		if (ret != null && ret.exists()) {
+			return ret;
+		} 
+		fileCache.remove(key);
+		return null;
+	}
+	
+	public static void setCachedFile(File file, String identifier, IGeometry geometry) {
+		String key = identifier + "#" + geometry.toString();
+		fileCache.put(key, file);
+	}
 }

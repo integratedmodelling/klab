@@ -1054,8 +1054,15 @@ public class Scale implements IScale {
 
 	@Override
 	public IExtent getDimension(Type type) {
+		
+		Dimension dimension = asGeometry().getDimension(type);
+		if (dimension == null) {
+			return null;
+		}
 		for (IExtent extent : extents) {
 			if (extent.getType() == type) {
+				// ensure the extent has its basic geometry set
+				((AbstractExtent)extent).setDimension(dimension);
 				return extent;
 			}
 		}

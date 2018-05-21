@@ -478,8 +478,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IParameters getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return baseDimension.getParameters();
 	}
 
 	/**
@@ -493,7 +492,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public String encode() {
-		return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + ",proj=" + getProjection().getCode() + "}";
+		return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + getEnvelope().encode() + ",proj=" + getProjection().getCode() + "}";
 	}
 
 	@Override

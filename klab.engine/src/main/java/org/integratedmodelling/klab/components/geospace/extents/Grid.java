@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -35,6 +36,78 @@ public class Grid extends Area implements IGrid {
 	 */
 	public static enum CellPositionClass {
 		SW_CORNER, SE_CORNER, NW_CORNER, NE_CORNER, S_EDGE, E_EDGE, N_EDGE, W_EDGE, INTERNAL
+	}
+
+	/**
+	 * A trivial grid mask with almost no memory footpring that automatically
+	 * graduates to a proper one when any operation sets a cell inactive.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	class FullMask implements Mask {
+
+		Mask delegate = null;
+		IShape shape;
+
+		FullMask(IShape shape) {
+			this.shape = shape;
+		}
+
+		Mask getDelegate() {
+			this.delegate = new GridMask(Grid.this, shape);
+			return this.delegate;
+		}
+
+		@Override
+		public void merge(Mask other, LogicalConnector connector) {
+			getDelegate().merge(other, connector);
+		}
+
+		@Override
+		public boolean isActive(long x, long y) {
+			return delegate == null ? true : delegate.isActive(x, y);
+		}
+
+		@Override
+		public void activate(long x, long y) {
+			if (delegate != null) {
+				delegate.activate(x, y);
+			}
+		}
+
+		@Override
+		public void deactivate(long x, long y) {
+			getDelegate().deactivate(x, y);
+		}
+
+		@Override
+		public long totalActiveCells() {
+			return delegate == null ? Grid.this.getCellCount() : delegate.totalActiveCells();
+		}
+
+		@Override
+		public long nextActiveOffset(long fromOffset) {
+			return delegate == null ? fromOffset + 1 : delegate.nextActiveOffset(fromOffset);
+		}
+
+		@Override
+		public void invert() {
+			getDelegate().invert();
+		}
+
+		@Override
+		public void deactivate() {
+			getDelegate().deactivate();
+		}
+
+		@Override
+		public void activate() {
+			if (delegate != null) {
+				delegate.activate();
+			}
+		}
+
 	}
 
 	/**
@@ -103,9 +176,11 @@ public class Grid extends Area implements IGrid {
 		mask = createMask(shape);
 	}
 
-	private Mask createMask(Shape shape2) {
-		// TODO Auto-generated method stub
-		return null;
+	/*
+	 * Make a trivial mask unless the shape differs from its envelope
+	 */
+	private Mask createMask(Shape shape) {
+		return shape.equals(shape.getEnvelope().asShape()) ? new FullMask(shape) : new GridMask(this, shape);
 	}
 
 	/**
@@ -499,8 +574,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public IParameters getParameters() {
-			// TODO Auto-generated method stub
-			return null;
+			return baseDimension.getParameters();
 		}
 
 		@Override
@@ -609,7 +683,7 @@ public class Grid extends Area implements IGrid {
 				cellAreaM = Units.INSTANCE.SQUARE_METERS.convert(xm * ym, unit).doubleValue();
 			} else {
 				// TODO!
-				
+
 			}
 		}
 		return cellAreaM;

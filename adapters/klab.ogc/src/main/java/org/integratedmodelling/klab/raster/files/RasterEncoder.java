@@ -74,16 +74,31 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RasterEncoder implements IResourceEncoder {
 
 	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder, IComputationContext context) {
-
-		// State.Builder sBuilder = KlabData.State.newBuilder();
+	public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder,
+			IComputationContext context) {
 
 		/*
 		 * Find and open the files to Geotools coverages. TODO support time-aware
 		 * scenarios.
 		 */
-		GridCoverage coverage = getCoverage(resource, geometry);
+		encodeFromCoverage(resource, getCoverage(resource, geometry), geometry, builder, context);
+		
+		// State.Builder sBuilder = KlabData.State.newBuilder();
+		// return
+		// KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
+	}
 
+	/**
+	 * Take a Geotools coverage and do the rest. Separated so that WCS can use it as is.
+	 * 
+	 * @param resource
+	 * @param coverage
+	 * @param geometry
+	 * @param builder
+	 * @param context
+	 */
+	public void encodeFromCoverage(IResource resource, GridCoverage coverage, IGeometry geometry,
+			IKlabData.Builder builder, IComputationContext context) {
 		/*
 		 * Set the data from the transformed coverage
 		 */
@@ -97,12 +112,12 @@ public class RasterEncoder implements IResourceEncoder {
 		 * if so configured, cache the transformed coverage for the space dimension
 		 * signature
 		 * 
-		 * TODO use different methods for non-doubles
-		 * TODO support multi-band expressions
+		 * TODO use different methods for non-doubles TODO support multi-band
+		 * expressions
 		 */
 
-		builder.startState(((IRuntimeContext)context).getTargetName());
-		
+		builder.startState(((IRuntimeContext) context).getTargetName());
+
 		for (long ofs = 0; ofs < space.size(); ofs++) {
 
 			long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
@@ -121,16 +136,15 @@ public class RasterEncoder implements IResourceEncoder {
 					break;
 				}
 			}
-			
-//			if (!Double.isNaN(value)) {
-//				System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs = " + ofs + ")");
-//			}
+
+			// if (!Double.isNaN(value)) {
+			// System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
+			// = " + ofs + ")");
+			// }
 
 			builder.add(value);
 		}
 		builder.finishState();
-		// return
-		// KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
 	}
 
 	private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
@@ -218,7 +232,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 		// TODO if we have it in the cache for the principal file + space signature,
 		// return that
-		
+
 		/*
 		 * build the needed Geotools context and the interpolation method
 		 */
@@ -245,8 +259,7 @@ public class RasterEncoder implements IResourceEncoder {
 	private GridCoverage getOriginalCoverage(IResource resource) {
 
 		File mainFile = null;
-		GridCoverage2D ret = null;
-		
+
 		for (String path : resource.getLocalPaths()) {
 			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
 				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
@@ -260,9 +273,12 @@ public class RasterEncoder implements IResourceEncoder {
 			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
 		}
 
-		// TODO check in cache first
-		
+		return readCoverage(mainFile);
+	}
+	
+	public GridCoverage readCoverage(File mainFile) {
 
+		GridCoverage2D ret = null;
 		AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
 		// this is a bit hacky but does make more geotiffs work
 		Hints hints = new Hints();
@@ -275,9 +291,9 @@ public class RasterEncoder implements IResourceEncoder {
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
-				
-		// TODO caching
-		
+
+		// TODO caching?
+
 		return ret;
 	}
 

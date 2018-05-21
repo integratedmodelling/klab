@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 public abstract class AbstractExtent implements IExtent {
 
 	private transient long scaleId;
+	protected transient Dimension baseDimension;
 
 	void setScaleId(long id) {
 		this.scaleId = id;
@@ -88,4 +89,8 @@ public abstract class AbstractExtent implements IExtent {
 	 * @return the k.IM function call specifying this extent.
 	 */
 	public abstract IServiceCall getKimSpecification();
+
+	public void setDimension(Dimension dimension) {
+		this.baseDimension = dimension;
+	}
 }

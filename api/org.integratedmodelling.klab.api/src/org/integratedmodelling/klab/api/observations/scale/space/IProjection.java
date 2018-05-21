@@ -23,18 +23,26 @@ package org.integratedmodelling.klab.api.observations.scale.space;
  */
 public interface IProjection {
 
-    /**
-     * Unique identifier of projection, enough to rebuild it at another
-     * endpoint.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getCode();
+	/**
+	 * Unique identifier of projection, enough to rebuild it at another endpoint.
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getCode();
 
-    /**
-     * Check if the values projected according to this projection express meters.
-     * 
-     * @return true if a meter projection
-     */
+	/**
+	 * Check if the values projected according to this projection express meters.
+	 * 
+	 * @return true if a meter projection
+	 */
 	boolean isMeters();
+
+	/**
+	 * If true, the projection uses the first coordinate for the S->N direction and
+	 * the second for the W->E. This applies to the default lat-lon projection unless
+	 * it was forced into sanity.
+	 * 
+	 * @return true if projection is silly
+	 */
+	boolean flipsCoordinates();
 }

@@ -19,11 +19,33 @@ public class Geometry implements IGeometry {
 
     private static final long serialVersionUID = 8430057200107796568L;
 
+    /**
+     * Bounding box as a double[]{minX, maxX, minY, maxY}
+     */
     public static final String PARAMETER_SPACE_BOUNDINGBOX = "bbox";
+    /**
+     * Projection code
+     */
     public static final String PARAMETER_SPACE_PROJECTION = "proj";
+    
+    /**
+     * Grid resolution as a string "n unit"
+     */
 	public static final String PARAMETER_SPACE_GRIDRESOLUTION = "sgrid";
-    public static final String PARAMETER_SPACE_SHAPE = "shape";
+    
+	/**
+	 * Shape specs in WKB
+	 */
+	public static final String PARAMETER_SPACE_SHAPE = "shape";
+
+	/**
+	 * Time period as a long[]{startMillis, endMillis}
+	 */
     public static final String PARAMETER_TIME_PERIOD = "period";
+    
+    /**
+     * time period as a long
+     */
     public static final String PARAMETER_TIME_GRIDRESOLUTION = "tgrid";
 
     public static Geometry create(String geometry) {

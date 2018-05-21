@@ -370,6 +370,7 @@ public enum Resources implements IResourceService {
 					 * TODO logics to pick the best for the input
 					 */
 					adapter = adapters.get(0);
+					adapterType = adapter.getName();
 				}
 			} else {
 				adapter = resourceAdapters.get(adapterType);
@@ -406,7 +407,7 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				resource = builder.setResourceVersion(version).setParameters(parameters)
+				resource = builder.setResourceVersion(version).setParameters(parameters).setAdapterType(adapterType)
 						.setLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
 
 			} else {

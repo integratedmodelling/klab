@@ -17,9 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
-import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -438,7 +436,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public IEnvelope getEnvelope() {
+	public Envelope getEnvelope() {
 		return envelope;
 	}
 
@@ -573,18 +571,16 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public IParameters getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return baseDimension.getParameters();
 	}
 
 	@Override
 	public String encode() {
 		if (grid != null) {
-			return "S2(" + grid.getXCells() + "," + grid.getYCells() + "){bounds=[" + grid.getEnvelope().getMinX() + " "
-					+ grid.getEnvelope().getMaxX() + " " + grid.getEnvelope().getMinX() + " "
-					+ grid.getEnvelope().getMaxY() + "],shape=" + getShape().getWKB() + "}";
+			return "S2(" + grid.getXCells() + "," + grid.getYCells() + "){" + grid.getEnvelope().encode() + ",shape="
+					+ getShape().getWKB() + ",proj=" + getProjection().getCode() + "}";
 		} else if (features != null) {
-			return "s1(" + features.size() + ")";
+			return "s1(" + features.size() + "){proj=" + getProjection().getCode() + "," + getEnvelope().encode() + "}";
 		}
 		return getShape().encode();
 	}

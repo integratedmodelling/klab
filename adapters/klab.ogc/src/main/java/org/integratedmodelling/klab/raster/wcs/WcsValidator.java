@@ -42,6 +42,8 @@ public class WcsValidator implements IResourceValidator {
 			throw new IllegalArgumentException("WCS specifications are invalid or incomplete");
 		}
 
+		int band = userData.get("band", 0);
+		
 		WCSService service = WcsAdapter.getService(userData.get("serviceUrl", String.class),
 				Version.create(userData.get("wcsVersion", String.class)));
 
@@ -55,9 +57,15 @@ public class WcsValidator implements IResourceValidator {
 		 * Substitute user identifier with official one from layer, validating the layer at the
 		 * same time.
 		 */
-		userData.put("wcsIdentifier", layer.getIdentifier());
-		if (!layer.getNodata().isEmpty()) {
-			userData.put("nodata", layer.getNodata().iterator().next());
+		String identifier = layer.getIdentifier();
+
+		if (layer.isError()) {
+			throw new KlabResourceNotFoundException("WCS layer " + userData.get("wcsIdentifier") + " is available but has errors");
+		}
+		
+		userData.put("wcsIdentifier", identifier);
+		if (!layer.getNodata(band).isEmpty()) {
+			userData.put("nodata", layer.getNodata(band).iterator().next());
 		}
 		IGeometry geometry = layer.getGeometry();
 		

@@ -81,9 +81,6 @@ public class Projection implements IProjection {
 		this.code = code;
 		try {
 			this.crs = CRS.decode(this.code, true);
-			if (CRS.getAxisOrder(crs).equals(AxisOrder.EAST_NORTH)) {
-				System.setProperty("org.geotools.referencing.forceXY", "true");
-			}
 		} catch (FactoryException e) {
 			throw new KlabValidationException(e);
 		}
@@ -178,8 +175,12 @@ public class Projection implements IProjection {
 
 	@Override
 	public boolean isMeters() {
-		// TODO Auto-generated method stub
 		return getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit().toString().equals("m");
+	}
+
+	@Override
+	public boolean flipsCoordinates() {
+		return !CRS.getAxisOrder(this.crs).equals(AxisOrder.EAST_NORTH);
 	}
 
 }
