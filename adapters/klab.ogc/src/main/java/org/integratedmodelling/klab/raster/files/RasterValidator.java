@@ -58,7 +58,6 @@ public class RasterValidator implements IResourceValidator {
 			monitor.info("Validating raster resource " + url);
 
 			ret.setParameter("fileUrl", url);
-			ret.setAdapterType("raster");
 
 			monitor.info("Running access tests...");
 			AbstractGridFormat format = GridFormatFinder.findFormat(file);

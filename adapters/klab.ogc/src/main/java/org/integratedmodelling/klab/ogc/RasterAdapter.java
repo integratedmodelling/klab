@@ -31,6 +31,16 @@ import com.google.common.collect.Sets;
 
 /**
  * The Class RasterAdapter.
+ * 
+ * TODO evaluate: simple transformations
+ * 
+ * 	clipRange (clip to it)
+ *  dataRange (not in range -> NaN)
+ *  legalRange (not in range -> exception)
+ *  transform (expr for each true datapoint)
+ *  valueFilter (expr tied to specific values 10 -> 1 or 10 -> [x * 2])
+ *  
+ * Store range and percent nodata when validating?
  */
 @ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
 		"interpolation", "nodata", "bandmixer" })
