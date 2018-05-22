@@ -197,7 +197,7 @@ public class WCSService {
 			describeCoverage();
 			return error || identifier == null;
 		}
-		
+
 		public WCSService getService() {
 			return WCSService.this;
 		}
@@ -396,7 +396,7 @@ public class WCSService {
 			errors.add(e);
 		}
 	}
-	
+
 	public URL buildRetrieveUrl(WCSLayer layer, Version version, IGeometry geometry) {
 
 		/*
@@ -438,29 +438,31 @@ public class WCSService {
 		}
 
 		String s = null;
-		
+
 		if (version.getMajor() == 1) {
 			if (version.getMinor() == 0) {
 
-				s = serviceUrl + "?service=WCS&version=" + version
-						+ "&request=GetCoverage&coverage=" + layer.getRequestIdentifier() + "&bbox=" + west + "," + south + "," + east
-						+ "," + north + "&crs=" + rcrs + "&responseCRS=" + rcrs + "&width=" + xc + "&height=" + yc + "&format="
+				s = serviceUrl + "?service=WCS&version=" + version + "&request=GetCoverage&coverage="
+						+ layer.getRequestIdentifier() + "&bbox=" + west + "," + south + "," + east + "," + north
+						+ "&crs=" + rcrs + "&responseCRS=" + rcrs + "&width=" + xc + "&height=" + yc + "&format="
 						+ "GeoTIFF";
-				
+
 			} else {
 
 				// TODO WRONG!
-				s = serviceUrl + "?service=WCS&version=" + version
-						+ "&request=GetCoverage&identifier=" + layer.getRequestIdentifier() + "&boundingbox=" + west + "," + south + "," + east
-						+ "," + north + "," + rcrs + "&responseCRS=" + rcrs + "&width=" + xc + "&height=" + yc + "&format="
+				s = serviceUrl + "?service=WCS&version=" + version + "&request=GetCoverage&identifier="
+						+ layer.getRequestIdentifier() + "&boundingbox=" + west + "," + south + "," + east + "," + north
+						+ "," + rcrs + "&responseCRS=" + rcrs + "&width=" + xc + "&height=" + yc + "&format="
 						+ "GeoTIFF";
 			}
 		} else if (version.getMajor() == 2) {
 			// TODO
+			// http://194.66.252.155/cgi-bin/BGS_EMODnet_bathymetry/ows?service=WCS&version=2.0.1&request=GetCoverage&CoverageId=BGS_EMODNET_AegeanLevantineSeas-MCol&format=image/png&subset=lat%2834.53627,38.88686%29&subset=long%2825.43366,31.32234%29&
+			// http://194.66.252.155/cgi-bin/BGS_EMODnet_bathymetry/ows?service=WCS&version=2.0.1&request=GetCoverage&CoverageId=BGS_EMODNET_AegeanLevantineSeas-MCol&format=image/png&subset=lat,http://www.opengis.net/def/crs/EPSG/0/4326%2834.53627,38.88686%29&subset=long,http://www.opengis.net/def/crs/EPSG/0/4326%2825.43366,31.32234%29&
 		} else {
 			throw new KlabUnsupportedFeatureException("WCS version " + version + " is not supported");
 		}
-		
+
 		/*
 		 * ACHTUNG this is a 2.0 only request
 		 */
@@ -473,6 +475,5 @@ public class WCSService {
 
 		return url;
 	}
-
 
 }

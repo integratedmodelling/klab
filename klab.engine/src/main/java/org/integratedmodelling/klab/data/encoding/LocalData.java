@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.data.encoding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -14,12 +15,20 @@ public class LocalData implements IKlabData {
 	IState state;
 	IDirectObservation object;
 	List<INotification> notifications = new ArrayList<>();
+	boolean error = false;
 	
-	public LocalData(IArtifact artifact) {
-		if (artifact instanceof IState) {
-			this.state = (IState)artifact;
-		} else if (artifact instanceof IDirectObservation) {
-			this.object = (IDirectObservation)artifact;
+	public LocalData(LocalDataBuilder builder) {
+		if (builder.state != null) {
+			this.state = builder.state;
+		} 
+		if (builder.observation != null) {
+			this.object = builder.observation;
+		}
+		for (INotification notification : builder.notifications) {
+			if (notification.getLevel().equals(Level.SEVERE)) {
+				error = true;
+			}
+			notifications.add(notification);
 		}
 	}
 	
@@ -35,8 +44,7 @@ public class LocalData implements IKlabData {
 
 	@Override
 	public boolean hasErrors() {
-		// TODO Auto-generated method stub
-		return false;
+		return error;
 	}
 
 	

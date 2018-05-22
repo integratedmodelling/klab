@@ -32,7 +32,11 @@ import com.google.common.collect.Sets;
 /**
  * The Class VectorAdapter.
  */
-@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = { "fileUrl" })
+@ResourceAdapter(
+		type = "vector", 
+		version = Version.CURRENT, 
+		requires = { "fileUrl" }, 
+		optional = {"computeUnion", "computeHull", "filter"})
 public class VectorAdapter implements IResourceAdapter {
 
 	/**

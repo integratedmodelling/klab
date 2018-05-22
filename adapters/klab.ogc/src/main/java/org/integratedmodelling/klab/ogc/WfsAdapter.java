@@ -15,6 +15,13 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.geotools.data.DataStore;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -28,9 +35,13 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 /**
  * The Class WfsAdapter.
  */
-@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = { "serviceUrl", "wfsVersion" }, optional = {
-		"namespace" })
+@ResourceAdapter(
+		type = "wfs", version = Version.CURRENT, 
+		requires = { "serviceUrl", "wfsIdentifier" }, 
+		optional = {"namespace", "filter", "computeShape"})
 public class WfsAdapter implements IResourceAdapter {
+
+	static Map<String, DataStore> dataStores = new HashMap<>();
 
 	@Override
 	public String getName() {
@@ -50,6 +61,33 @@ public class WfsAdapter implements IResourceAdapter {
 	@Override
 	public IResourceEncoder getEncoder() {
 		return new WfsEncoder();
+	}
+
+	public static DataStore getDatastore(String serverUrl) {
+
+		DataStore ret = dataStores.get(serverUrl);
+
+		if (ret == null) {
+			String getCapabilities = serverUrl + "?REQUEST=getCapabilities";
+			WFSDataStoreFactory dsf = new WFSDataStoreFactory();
+			try {
+				Map<String, Serializable> connectionParameters = new HashMap<>();
+				connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+				ret = dsf.createDataStore(connectionParameters);
+				dataStores.put(serverUrl, ret);
+				// SimpleFeatureSource source =
+				// dataStore.getFeatureSource("ali:Manategh_Tehran");
+				// SimpleFeatureCollection fc = source.getFeatures();
+				// while(fc.features().hasNext()){
+				// SimpleFeature sf = fc.features().next();
+				// System.out.println(sf.getAttribute("myname"));
+				// }
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+
+		}
+		return ret;
 	}
 
 }

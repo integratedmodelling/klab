@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
@@ -49,6 +51,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Lineal;
 import com.vividsolutions.jts.geom.Polygonal;
+import com.vividsolutions.jts.io.WKBWriter;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 /**
  * The Class RasterValidator.
@@ -63,96 +67,120 @@ public class VectorValidator implements IResourceValidator {
 		try {
 
 			ret.setParameter("fileUrl", url);
-
 			Map<String, Object> map = new HashMap<>();
 			map.put("url", url);
 
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
-
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
 
-			Filter filter = Filter.INCLUDE; // ECQL.toFilter("BBOX(THE_GEOM, 10,20,30,40)")
-			FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
-
-			ReferencedEnvelope envelope = source.getBounds();
-			CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
-			if (envelope == null) {
-				// we only do this when importing, so let's go through them
-				envelope = collection.getBounds();
-			}
-			
-			Map<String, Class<?>> attributeTypes = new HashMap<>(); 
-			
-			int shapeDimension = 0;
-			for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-				if (ad.getLocalName().equals("the_geom")) {
-					// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
-					if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
-						if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
-							shapeDimension = 1;
-						} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
-							shapeDimension = 2;
-						} else {
-							ret.addError("cannot establish geometry dimensionality for resource " + typeName);
-						}
-					} else {
-						ret.addError("cannot establish geometry type for resource " + typeName);
-					}
-				} else {
-					// store attribute ID and type
-					attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
-				}
-			}
-
-			// really? Compute union or convex hull (or maybe indices - we could do that on demand)
-			try (FeatureIterator<SimpleFeature> features = collection.features()) {
-				while (features.hasNext()) {
-					SimpleFeature feature = features.next();
-					System.out.print(feature.getID());
-					System.out.print(": ");
-					System.out.println(feature.getDefaultGeometryProperty().getValue());
-				}
-			}
-
-			String crsCode = null;
-			if (crs == null) {
-				ret.addError("Coverage has no coordinate reference system");
-			} else
-				monitor.info("Running projection tests...");
-
-			try {
-
-				monitor.info("Testing reprojection to WGS84...");
-
-				CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
-				Projection utmProjection = Projection.getUTM(Envelope.create(envelope));
-
-				if (!crs.equals(utmProjection.getCoordinateReferenceSystem())) {
-					monitor.info("Testing reprojection to UTM " + utmProjection + "...");
-					CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
-				}
-				crsCode = CRS.lookupIdentifier(crs, true);
-
-			} catch (Throwable e) {
-				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
-			}
-
-			if (!ret.hasErrors()) {
-
-				Geometry geometry = Geometry.create("#s" + shapeDimension)
-						.withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0), envelope.getMinimum(1),
-								envelope.getMaximum(1))
-						.withProjection(CRS.toSRS(crs)).withSpatialShape(collection.size());
-
-				ret.setGeometry(geometry);
-			}
+			validateCollection(source, ret, userData, monitor);
 
 		} catch (Throwable e) {
 			ret.addError("Error validating " + e.getMessage());
 		}
 
 		return ret;
+	}
+
+	private void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
+			IParameters userData, IMonitor monitor) throws IOException {
+
+		Filter filter = Filter.INCLUDE; // ECQL.toFilter("BBOX(THE_GEOM, 10,20,30,40)")
+		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
+
+		ReferencedEnvelope envelope = source.getBounds();
+		CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
+		if (envelope == null) {
+			// we only do this when importing, so let's go through them
+			envelope = collection.getBounds();
+		}
+
+		Map<String, Class<?>> attributeTypes = new HashMap<>();
+
+		int shapeDimension = 0;
+		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
+			if (ad.getLocalName().equals("the_geom")) {
+				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
+				if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
+					if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
+						shapeDimension = 1;
+					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
+						shapeDimension = 2;
+					} else {
+						ret.addError("cannot establish geometry dimensionality for vector resource");
+					}
+				} else {
+					ret.addError("cannot establish geometry type for vector resource");
+				}
+			} else {
+				// store attribute ID and type
+				attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
+			}
+		}
+
+		// Compute union or convex hull if requested
+		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {
+			com.vividsolutions.jts.geom.Geometry geometry = null;
+			try (FeatureIterator<SimpleFeature> features = collection.features()) {
+				while (features.hasNext()) {
+					SimpleFeature feature = features.next();
+					Object shape = feature.getDefaultGeometryProperty().getValue();
+					if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+						geometry = geometry == null ? (com.vividsolutions.jts.geom.Geometry) shape
+								: geometry.union((com.vividsolutions.jts.geom.Geometry) shape);
+					}
+				}
+			}
+			if (geometry != null) {
+				if (userData.get("computeHull", false)) {
+					geometry = geometry.convexHull();
+				}
+				geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
+				ret.setParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
+			}
+		}
+
+		String crsCode = null;
+		if (crs == null) {
+			ret.addError("Coverage has no coordinate reference system");
+		} else {
+
+			crsCode = CRS.toSRS(crs);
+
+			monitor.info("Running projection tests...");
+
+			try {
+
+				monitor.info("Testing reprojection to WGS84...");
+
+				CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
+
+				Projection utmProjection = Projection.getUTM(Envelope.create(envelope));
+				if (!crs.equals(utmProjection.getCoordinateReferenceSystem())) {
+					monitor.info("Testing reprojection to best-guess UTM " + utmProjection + "...");
+					CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
+				}
+				String crsId = CRS.lookupIdentifier(crs, true);
+				if (crsId != null && crsId.startsWith("EPSG:")) {
+					// use the simpler identifier
+					crsCode = crsId;
+				}
+
+			} catch (Throwable e) {
+				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
+			}
+		}
+		if (!ret.hasErrors()) {
+
+			Geometry geometry = Geometry
+					.create("#s" + shapeDimension).withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
+							envelope.getMinimum(1), envelope.getMaximum(1))
+					.withProjection(crsCode).withSpatialShape(collection.size());
+
+			ret.setGeometry(geometry);
+		}
+
 	}
 
 	@Override

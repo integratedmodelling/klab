@@ -9,8 +9,8 @@ import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 
 /**
- * A data object builder that is initialized with a protobuf object
- * coming from a network response.
+ * A data object initialized with a protobuf object encoded by a remote builder
+ * and obtained through a REST call.
  * 
  * @author ferdinando.villa
  *
@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 public class RemoteData implements IKlabData {
 
 	public RemoteData(KlabData data, IRuntimeContext context) {
-		
+
 	}
 
 	@Override
@@ -38,5 +38,5 @@ public class RemoteData implements IKlabData {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

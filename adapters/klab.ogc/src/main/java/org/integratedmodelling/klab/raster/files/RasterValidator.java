@@ -70,7 +70,6 @@ public class RasterValidator implements IResourceValidator {
 			if (crs == null) {
 				ret.addError("Coverage has no coordinate reference system");
 			} else {
-				monitor.info("Running projection tests...");
 
 				try {
 					monitor.info("Testing reprojection to WGS84...");
@@ -82,7 +81,9 @@ public class RasterValidator implements IResourceValidator {
 						monitor.info("Testing reprojection to UTM " + utmProjection + "...");
 						CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
 					}
+					
 					crsCode = CRS.lookupIdentifier(crs, true);
+					
 				} catch (Throwable e) {
 					ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
 				}

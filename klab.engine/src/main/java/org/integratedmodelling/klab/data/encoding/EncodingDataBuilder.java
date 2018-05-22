@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.data.encoding;
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -61,7 +63,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder startObject(String name) {
+	public Builder startObject(String artifactName, String objectName, IScale scale) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -91,6 +93,18 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	@Override
 	public IKlabData build() {
 		return new RemoteData(buildEncoded(), (IRuntimeContext) context);
+	}
+
+	@Override
+	public void add(boolean booleanValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void add(IConcept conceptValue) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

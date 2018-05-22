@@ -99,6 +99,7 @@ public class RasterEncoder implements IResourceEncoder {
 	 */
 	public void encodeFromCoverage(IResource resource, GridCoverage coverage, IGeometry geometry,
 			IKlabData.Builder builder, IComputationContext context) {
+		
 		/*
 		 * Set the data from the transformed coverage
 		 */
