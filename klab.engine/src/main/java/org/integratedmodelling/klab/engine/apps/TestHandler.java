@@ -102,7 +102,7 @@ public class TestHandler implements Annotations.Handler {
             if (subject != null && (arguments.get("visualize", false)
                 || System.getProperty("visualize", "false").equals("true"))) {
 
-              if (subject.getScale().isSpatiallyDistributed()) {
+              if (subject.getScale().getSpace() != null) {
                 SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
 
                 for (IArtifact artifact : subject.getProvenance().getArtifacts()) {
