@@ -193,6 +193,14 @@ public class Actuator implements IActuator {
 		ctx.getProvenance().addArtifact(ret);
 
 		/*
+		 * if we have produced the artifact (through an instantiator), set it in the
+		 * context.
+		 */
+		if (runtimeContext.getTargetArtifact() == null) {
+			((IRuntimeContext)runtimeContext).setTarget(ret);
+		}
+
+		/*
 		 * when computation is finished, pass all annotations from the models to the
 		 * context, so it can execute any post-contextualization actions.
 		 */
