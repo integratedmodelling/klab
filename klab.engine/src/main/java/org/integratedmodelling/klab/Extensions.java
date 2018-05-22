@@ -107,7 +107,7 @@ public enum Extensions implements IExtensionService {
         Prototype prototype = getPrototype(functionCall.getName());
         if (prototype == null) {
             throw new KlabResourceNotFoundException(
-                    "cannot find function implementation for " + functionCall.getName());
+                    "cannot find a function implementation for " + functionCall.getName());
         }
 
         Class<?> cls = prototype.getExecutorClass();

@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
-  public final static String FUNCTION_ID = "klab.runtime.urn";
+  public final static String FUNCTION_ID = "klab.runtime.resolve";
   
   private IResource resource;
   

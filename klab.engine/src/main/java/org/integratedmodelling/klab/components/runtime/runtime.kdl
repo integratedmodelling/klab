@@ -45,23 +45,33 @@ contextualizer convert
 	"Return a contextualizer for a literal value"
 {
 	
-	object from
+	object 'from'
 		"The value mediator (unit, range, currency) describing the source values"
 
-	object to
+	object 'to'
 		"The value mediator (unit, range, currency) describing the target values"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver
 
 }
 
-contextualizer urn
-	"Return a contextualizer for a literal value"
+contextualizer resolve
+	"Return a resolver for a URN-specified resource"
 {
 	
 	text urn
 		"The URN pointing to the resource to be resolved and retrieved"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
+}
+
+contextualizer instantiate
+	"Return an instantiator for a URN-specified resource"
+{
+	
+	text urn
+		"The URN pointing to the resource to be resolved and retrieved"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator
 
 }

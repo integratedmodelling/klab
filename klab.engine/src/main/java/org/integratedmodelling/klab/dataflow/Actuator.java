@@ -60,7 +60,7 @@ public class Actuator implements IActuator {
 
 	public void addComputation(IComputableResource resource) {
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
 		computationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -68,7 +68,7 @@ public class Actuator implements IActuator {
 		((ComputableResource) resource).setTarget(target.getAlias() == null ? target.getName() : target.getAlias());
 		((ComputableResource) resource).setMediation(true);
 		computedResources.add(resource);
-		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource);
+		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 

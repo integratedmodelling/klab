@@ -92,9 +92,12 @@ public interface IRuntimeProvider {
 	 * @param resource
 	 *            a {@link org.integratedmodelling.kim.api.IComputableResource}
 	 *            object.
+	 * @param actuator 
+	 * 			  the actuator providing the context for the computation.
+	 * 
 	 * @return the service call encoding the resource
 	 */
-	IServiceCall getServiceCall(IComputableResource resource);
+	IServiceCall getServiceCall(IComputableResource resource, IActuator actuator);
 
 	/**
 	 * Distribute the computation of the passed state resolver over the passed

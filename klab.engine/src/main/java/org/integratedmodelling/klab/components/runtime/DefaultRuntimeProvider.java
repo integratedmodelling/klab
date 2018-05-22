@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -101,7 +102,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 								return Integer.compare(((Actuator) o2).getPriority(), ((Actuator) o1).getPriority());
 							}
 						});
-				
+
 				while (sorter.hasNext()) {
 
 					Actuator active = (Actuator) sorter.next();
@@ -168,11 +169,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IServiceCall getServiceCall(IComputableResource resource) {
+	public IServiceCall getServiceCall(IComputableResource resource, IActuator target) {
 		if (resource.getServiceCall() != null) {
 			return resource.getServiceCall();
 		} else if (resource.getUrn() != null) {
-			return UrnResolver.getServiceCall(resource.getUrn());
+			return ((Actuator) target).getObservable().is(Type.COUNTABLE)
+					? UrnInstantiator.getServiceCall(resource.getUrn())
+					: UrnResolver.getServiceCall(resource.getUrn());
 		} else if (resource.getExpression() != null) {
 			return ExpressionResolver.getServiceCall(resource);
 		} else if (resource.getLiteral() != null) {
