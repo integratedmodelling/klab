@@ -123,12 +123,5 @@ public interface IRuntimeContext extends IComputationContext {
      */
     <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
 
-    /**
-     * Return the local name of the target artifact, which is also the name of the actuator
-     * being computed.
-     * 
-     * @return the name of the target artifact
-     */
-	String getTargetName();
 
 }

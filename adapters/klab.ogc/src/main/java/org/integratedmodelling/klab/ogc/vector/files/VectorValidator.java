@@ -28,6 +28,8 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.filter.text.cql2.CQLException;
+import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -40,6 +42,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -70,6 +73,14 @@ public class VectorValidator implements IResourceValidator {
 			Map<String, Object> map = new HashMap<>();
 			map.put("url", url);
 
+			if (userData.contains("filter")) {
+				try {
+					ECQL.toFilter(userData.get("filter", String.class));
+				} catch (CQLException e) {
+					ret.addError("CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
+				}
+			}
+			
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
@@ -86,7 +97,7 @@ public class VectorValidator implements IResourceValidator {
 	private void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters userData, IMonitor monitor) throws IOException {
 
-		Filter filter = Filter.INCLUDE; // ECQL.toFilter("BBOX(THE_GEOM, 10,20,30,40)")
+		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 
 		ReferencedEnvelope envelope = source.getBounds();
@@ -118,6 +129,8 @@ public class VectorValidator implements IResourceValidator {
 				attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
 			}
 		}
+		
+		// TODO if attributes are requested, validate their type and name
 
 		// Compute union or convex hull if requested
 		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {

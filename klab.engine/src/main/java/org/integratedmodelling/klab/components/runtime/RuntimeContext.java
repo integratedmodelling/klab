@@ -96,7 +96,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.inputs = new HashSet<>();
 		this.outputs = new HashSet<>();
 		this.semantics = new HashMap<>();
-
+		this.semantics.put(actuator.getName(), this.targetSemantics);
+		
 		if (!actuator.getObservable().is(Type.COUNTABLE)) {
 			this.outputs.add(actuator.getName());
 			this.semantics.put(actuator.getName(), actuator.getObservable());
@@ -303,6 +304,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		ret.semantics = new HashMap<>();
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
+		ret.semantics.put(actuator.getName(), ret.targetSemantics);
 		
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {

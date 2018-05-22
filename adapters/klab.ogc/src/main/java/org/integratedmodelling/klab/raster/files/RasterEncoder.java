@@ -76,16 +76,7 @@ public class RasterEncoder implements IResourceEncoder {
 	@Override
 	public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder,
 			IComputationContext context) {
-
-		/*
-		 * Find and open the files to Geotools coverages. TODO support time-aware
-		 * scenarios.
-		 */
 		encodeFromCoverage(resource, getCoverage(resource, geometry), geometry, builder, context);
-		
-		// State.Builder sBuilder = KlabData.State.newBuilder();
-		// return
-		// KlabData.newBuilder().setGeometry("S2").setState(sBuilder.build()).build();
 	}
 
 	/**

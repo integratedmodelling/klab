@@ -3,9 +3,11 @@ worldview im;
 @test(
 	name = "tests.core.vector.0",
 	description  = "Spatial data generation from vanilla WCS",
-	observations = ("policy:State earth:Region"),
+	observations = ("policy:State"),
 	resources = ("local:anonymous:test:states"),
-	assertions = (/* TODO */)
+	assertions = (
+//		assert.nodata.percentage(state="geography:Elevation", max=0)
+	)
 )
 observe earth:Region named test
    over space(shape = "EPSG:4326 POLYGON ((-124.73142200000001 24.955967, -66.969849 24.955967, -66.969849 49.371735, -124.73142200000001 49.371735, -124.73142200000001 24.955967))");

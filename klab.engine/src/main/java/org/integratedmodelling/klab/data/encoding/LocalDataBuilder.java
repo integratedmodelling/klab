@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -32,6 +33,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	IRuntimeContext context = null;
 	long offset = 0;
 	List<INotification> notifications = new ArrayList<>();
+	Metadata metadata = new Metadata();
 	LocalDataBuilder parent;
 	
 	public LocalDataBuilder(IRuntimeContext context) {
@@ -109,6 +111,9 @@ public class LocalDataBuilder implements IKlabData.Builder {
 			// TODO add state to observation
 			throw new KlabUnsupportedFeatureException("ADD STATE TO OBJECT!");
 		}
+		for (String key : metadata.keySet()) {
+			this.state.getMetadata().put(key, metadata.get(key));
+		}
 		if (parent.state == null) {
 			parent.state = this.state;
 		} else {
@@ -129,7 +134,10 @@ public class LocalDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public Builder finishObject() {
-		// TODO Auto-generated method stub
+
+		for (String key : metadata.keySet()) {
+			this.observation.getMetadata().put(key, metadata.get(key));
+		}
 		if (parent.observation == null) {
 			parent.observation = this.observation;
 		} else {
@@ -145,7 +153,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		if (artifact == null) {
 			throw new IllegalStateException("data builder: cannot set property: no observation is set");
 		}
-		artifact.getMetadata().put(property, object);
+		metadata.put(property, object);
 		return this;
 	}
 

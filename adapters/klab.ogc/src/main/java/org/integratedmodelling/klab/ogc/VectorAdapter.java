@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 		type = "vector", 
 		version = Version.CURRENT, 
 		requires = { "fileUrl" }, 
-		optional = {"computeUnion", "computeHull", "filter"})
+		optional = {"computeUnion", "computeHull", "filter", "nameAttribute"})
 public class VectorAdapter implements IResourceAdapter {
 
 	/**

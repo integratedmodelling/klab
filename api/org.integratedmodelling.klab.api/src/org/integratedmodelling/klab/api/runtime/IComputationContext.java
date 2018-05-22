@@ -39,11 +39,11 @@ import org.integratedmodelling.klab.utils.Pair;
  * actuators and contextualizers, customized to reflect names, states and
  * locators as each actuator expects them.
  *
- * The {@link org.integratedmodelling.kim.api.IParameters} methods access user-defined parameters, including any
- * passed to the calling functions or URNs and, if appropriate,
- * context-localized POD values for states (e.g. the specific values at the
- * point of computation). The actual input and output artifacts are always
- * available through {@link #getArtifact(String)}.
+ * The {@link org.integratedmodelling.kim.api.IParameters} methods access
+ * user-defined parameters, including any passed to the calling functions or
+ * URNs and, if appropriate, context-localized POD values for states (e.g. the
+ * specific values at the point of computation). The actual input and output
+ * artifacts are always available through {@link #getArtifact(String)}.
  *
  * @author Ferd
  * @version $Id: $Id
@@ -60,14 +60,18 @@ public interface IComputationContext extends IParameters {
 	INamespace getNamespace();
 
 	/**
-	 * <p>getProvenance.</p>
+	 * <p>
+	 * getProvenance.
+	 * </p>
 	 *
 	 * @return the provenance graph. Null in an empty context.
 	 */
 	IProvenance getProvenance();
 
 	/**
-	 * <p>getEventBus.</p>
+	 * <p>
+	 * getEventBus.
+	 * </p>
 	 *
 	 * @return the event bus. Null in an empty context.
 	 */
@@ -77,7 +81,9 @@ public interface IComputationContext extends IParameters {
 	 * Inspect the network graph of the current context, returning all relationships
 	 * that have the passed subject as target.
 	 *
-	 * @param observation a {@link org.integratedmodelling.klab.api.observations.ISubject} object.
+	 * @param observation
+	 *            a {@link org.integratedmodelling.klab.api.observations.ISubject}
+	 *            object.
 	 * @return a {@link java.util.Collection} object.
 	 */
 	Collection<IRelationship> getOutgoingRelationships(ISubject observation);
@@ -86,7 +92,9 @@ public interface IComputationContext extends IParameters {
 	 * Inspect the network graph of the current context, returning all relationships
 	 * that have the passed subject as target.
 	 *
-	 * @param observation a {@link org.integratedmodelling.klab.api.observations.ISubject} object.
+	 * @param observation
+	 *            a {@link org.integratedmodelling.klab.api.observations.ISubject}
+	 *            object.
 	 * @return a {@link java.util.Collection} object.
 	 */
 	Collection<IRelationship> getIncomingRelationships(ISubject observation);
@@ -106,7 +114,8 @@ public interface IComputationContext extends IParameters {
 	 * name. Use {@link IParameters IParameters get methods} to retrieve
 	 * contextualized values for states or parameters.
 	 *
-	 * @param localName a {@link java.lang.String} object.
+	 * @param localName
+	 *            a {@link java.lang.String} object.
 	 * @return the artifact, null if not found.
 	 */
 	IArtifact getArtifact(String localName);
@@ -116,10 +125,13 @@ public interface IComputationContext extends IParameters {
 	 * name as an object of the passed class. If the artifact is not there or it is
 	 * not of a compatible type, return null with no error.
 	 *
-	 * @param localName a {@link java.lang.String} object.
-	 * @param cls a {@link java.lang.Class} object.
+	 * @param localName
+	 *            a {@link java.lang.String} object.
+	 * @param cls
+	 *            a {@link java.lang.Class} object.
 	 * @return the artifact, null if not found or not of passed class.
-	 * @param <T> a T object.
+	 * @param <T>
+	 *            a T object.
 	 */
 	<T extends IArtifact> T getArtifact(String localName, Class<T> cls);
 
@@ -128,9 +140,11 @@ public interface IComputationContext extends IParameters {
 	 * context. For example, all data artifacts known at the time of computation can
 	 * be retrieved using <code>getData(IDataArtifact.class)</code>.
 	 *
-	 * @param type a {@link java.lang.Class} object.
+	 * @param type
+	 *            a {@link java.lang.Class} object.
 	 * @return a collection of pair <name, artifact>, possibly empty, never null.
-	 * @param <T> a T object.
+	 * @param <T>
+	 *            a T object.
 	 */
 	<T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type);
 
@@ -176,12 +190,14 @@ public interface IComputationContext extends IParameters {
 	public Collection<String> getOutputs();
 
 	/**
-	 * Get the semantics for the passed identifier, which must be one of those returned by either
-	 * {@link #getInputs()} or {@link #getOutputs()}.
+	 * Get the semantics for the passed identifier, which must be one of those
+	 * returned by either {@link #getInputs()} or {@link #getOutputs()}.
 	 *
-	 * @param identifier the identifier
+	 * @param identifier
+	 *            the identifier
 	 * @return the observable linked to the identifier
-	 * @throws java.lang.IllegalArgumentException if the identifier is unknown
+	 * @throws java.lang.IllegalArgumentException
+	 *             if the identifier is unknown
 	 */
 	public IObservable getSemantics(String identifier);
 
@@ -192,20 +208,29 @@ public interface IComputationContext extends IParameters {
 	 * {@link #newRelationship(IObservable, IScale, IObjectArtifact, IObjectArtifact)}
 	 * to create a relationship.
 	 * <p>
-	 * While any k.LAB-aware implementation will receive a {@link org.integratedmodelling.klab.api.observations.scale.IScale} instead of
-	 * a {@link org.integratedmodelling.klab.api.data.IGeometry} and return a {@link org.integratedmodelling.klab.api.observations.ICountableObservation} rather than
-	 * just {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, we keep the basic, non-semantic types in the
-	 * signature for consistency with derived APIs of remote services and other
-	 * non-semantic computations.
+	 * While any k.LAB-aware implementation will receive a
+	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale} instead of
+	 * a {@link org.integratedmodelling.klab.api.data.IGeometry} and return a
+	 * {@link org.integratedmodelling.klab.api.observations.ICountableObservation}
+	 * rather than just
+	 * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, we
+	 * keep the basic, non-semantic types in the signature for consistency with
+	 * derived APIs of remote services and other non-semantic computations.
 	 * <p>
 	 * As the runtime provider is responsible for creating the
 	 * {@code IComputationContext}, this is where it can control the type and
 	 * features of any new object created.
 	 * <p>
 	 *
-	 * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
-	 * @param name a {@link java.lang.String} object.
-	 * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
+	 * @param observable
+	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *            object.
+	 * @param name
+	 *            a {@link java.lang.String} object.
+	 * @param scale
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
+	 *            object.
 	 * @return a new observation for the observable and geometry
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 *             from the resolution
@@ -223,10 +248,21 @@ public interface IComputationContext extends IParameters {
 	 * choices.
 	 * <p>
 	 *
-	 * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
-	 * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
-	 * @param source a {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact} object.
-	 * @param target a {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact} object.
+	 * @param observable
+	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *            object.
+	 * @param scale
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
+	 *            object.
+	 * @param source
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}
+	 *            object.
+	 * @param target
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}
+	 *            object.
 	 * @return a new observation for the observable and geometry
 	 * @throw IllegalArgumentException if the observable does not describe a
 	 *        relationship.
@@ -240,5 +276,13 @@ public interface IComputationContext extends IParameters {
 	 * @return observable being described
 	 */
 	IObservable getTargetSemantics();
+
+	/**
+	 * Return the local name of the target artifact, which is also the name of the
+	 * actuator being computed.
+	 * 
+	 * @return the name of the target artifact
+	 */
+	String getTargetName();
 
 }

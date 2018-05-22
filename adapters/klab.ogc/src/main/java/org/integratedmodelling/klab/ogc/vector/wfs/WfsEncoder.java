@@ -15,28 +15,23 @@
  */
 package org.integratedmodelling.klab.ogc.vector.wfs;
 
+import org.geotools.data.FeatureSource;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
- * The Class WcsEncoder.
+ * The WFS encoder simply redefines the getFeatureSource method within a vector encoder.
  */
-public class WfsEncoder implements IResourceEncoder {
-	
-	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
+public class WfsEncoder extends VectorEncoder {
 		
-//		State.Builder sBuilder = KlabData.State.newBuilder();
-//		
-//		// TODO Auto-generated method stub - set the data from the map
-//
-//		return KlabData.newBuilder()
-//				.setGeometry("S2")
-//				.setState(sBuilder.build())
-//				.build();
+	@Override
+	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource,
+			IGeometry geometry) {
+		// TODO Auto-generated method stub
+		return super.getFeatureSource(resource, geometry);
 	}
 
 	@Override
