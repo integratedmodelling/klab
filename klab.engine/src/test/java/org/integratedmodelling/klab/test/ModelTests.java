@@ -14,12 +14,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
 /**
- * Runs every .kim test file in src/main/resources/kim as a k.LAB test
- * namespace.
- * <p>
- * If a system property <code>test.case = [kim file name (no extension)]</code>
- * is passed, only run the specific file named. Otherwise run them all.
- * <p>
+ * Runners for all the k.IM test cases in /kim.
  * 
  * @author ferdinando.villa
  *
@@ -90,7 +85,7 @@ public class ModelTests {
 		engine.run(getClass().getClassLoader().getResource("kim/test7.kim")).get();
 	}
 	
-	@Ignore
+	@Ignore("not supported yet")
 	@Test
 	public void featureUpstreamResolution() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test8.kim")).get();
@@ -99,6 +94,12 @@ public class ModelTests {
 	@Test
 	public void nonStandardProjection() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test9.kim")).get();
+	}
+	
+	@Test
+	@Ignore("not supported yet")
+	public void indirectDistanceComputation() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim/test10.kim")).get();
 	}
 
 }
