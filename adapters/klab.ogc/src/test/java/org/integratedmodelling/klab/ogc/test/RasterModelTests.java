@@ -16,72 +16,91 @@
 package org.integratedmodelling.klab.ogc.test;
 
 import java.util.regex.Pattern;
+
 import org.integratedmodelling.klab.engine.Engine;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
 // TODO: Auto-generated Javadoc
 /**
- * Runs every .kim test file in src/main/resources/kim as a k.LAB test namespace.
+ * Runs every .kim test file in src/main/resources/kim as a k.LAB test
+ * namespace.
  * <p>
- * If a system property <code>test.case = [kim file name (no extension)]</code> is passed, only run
- * the specific file named. Otherwise run them all.
+ * If a system property <code>test.case = [kim file name (no extension)]</code>
+ * is passed, only run the specific file named. Otherwise run them all.
  * <p>
  * TODO fix run logics according to Luke's comments.
  * <p>
+ * 
  * @author ferdinando.villa
  *
  */
 public class RasterModelTests {
 
-  Engine engine;
+	static Engine engine;
 
-  /**
-   * Sets the up.
-   *
-   * @throws Exception the exception
-   */
-  @Before
-  public void setUp() throws Exception {
-    
-    engine = Engine.start();
-//    // load test resource set
-//    Resources.INSTANCE.setResourceCatalog(
-//         FileCatalog.create(getClass().getClassLoader().getResource("resources.raster/resources.json"),
-//            IResource.class, Resource.class));
-  }
+	/**
+	 * Sets the up.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@BeforeClass
+	public static void setUp() throws Exception {
 
-  /**
-   * Tear down.
-   *
-   * @throws Exception the exception
-   */
-  @After
-  public void tearDown() throws Exception {
-    engine.stop();
-  }
+		engine = Engine.start();
+		/*
+		 * TODO create test project, load resources, ensure present
+		 */
+	}
 
-  /**
-   * Run tests.
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void runTests() throws Exception {
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@AfterClass
+	public static void tearDown() throws Exception {
+		engine.stop();
+	}
 
-    String file = System.getProperty("test.case");
+	/**
+	 * Previous version, no longer a test case
+	 * 
+	 * @throws Exception
+	 */
+	public void runAllTests() throws Exception {
 
-    /*
-     * run every file in the kim/ package, under tests/resources
-     */
-    for (String test : new Reflections("kim.raster", new ResourcesScanner())
-        .getResources(Pattern.compile(".*\\.kim"))) {
-      if (file == null || test.endsWith(file + ".kim")) {
-        engine.run(getClass().getClassLoader().getResource(test)).get();
-      }
-    }
-  }
+		String file = System.getProperty("test.case");
+
+		/*
+		 * run every file in the kim/ package, under tests/resources
+		 */
+		for (String test : new Reflections("kim.raster", new ResourcesScanner())
+				.getResources(Pattern.compile(".*\\.kim"))) {
+			if (file == null || test.endsWith(file + ".kim")) {
+				engine.run(getClass().getClassLoader().getResource(test)).get();
+			}
+		}
+	}
+
+	@Test
+	public void rasterUtmProjection() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test1.kim")).get();
+	}
+
+	@Test
+	public void simpleWCSTest() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test2.kim")).get();
+	}
+
+	@Test
+	public void simpleVectorTest() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test3.kim")).get();
+	}
+
 }
