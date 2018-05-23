@@ -18,11 +18,9 @@ package org.integratedmodelling.klab.ogc.vector.wfs;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.integratedmodelling.kim.api.IParameters;
@@ -43,6 +41,10 @@ public class WfsValidator extends VectorValidator {
 	@Override
 	public IResource.Builder validate(URL url, IParameters userData, IMonitor monitor) {
 
+		if (!canHandle(null, userData)) {
+			throw new IllegalArgumentException("WFS specifications are invalid or incomplete");
+		}
+		
 		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
 		Version version = Version.create(userData.get("wfsVersion", "1.0.0"));
 
@@ -57,9 +59,9 @@ public class WfsValidator extends VectorValidator {
 				}
 			}
 
-			DataStore dataStore = WfsAdapter.getDatastore(userData.get("serverUrl", String.class), version);
-			String typeName = dataStore.getTypeNames()[0];
-			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
+			WFSDataStore dataStore = WfsAdapter.getDatastore(userData.get("serviceUrl", String.class), version);
+			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore
+					.getFeatureSource(userData.get("wfsIdentifier", String.class));
 
 			validateCollection(source, ret, userData, monitor);
 

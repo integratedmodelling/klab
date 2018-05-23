@@ -1,0 +1,13 @@
+worldview im;
+
+@test(
+	name = "tests.core.vector.0",
+	description  = "Spatial data generation from vanilla WCS",
+	observations = ("infrastructure:Road"),
+	resources = ("local:anonymous:test:nyroads"),
+	assertions = (/* TODO */)
+)
+observe earth:Region named test
+   over space(shape = "EPSG:4326 POLYGON ((-74.02722 40.684221, -73.907005 40.684221, -73.907005 40.878178, -74.02722 40.878178, -74.02722 40.684221))");
+    
+model each local:anonymous:test:nyroads as infrastructure:Road;

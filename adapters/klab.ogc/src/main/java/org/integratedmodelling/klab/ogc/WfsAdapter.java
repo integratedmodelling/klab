@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotools.data.DataStore;
+import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -46,7 +46,7 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 		})
 public class WfsAdapter implements IResourceAdapter {
 
-	static Map<String, DataStore> dataStores = new HashMap<>();
+	static Map<String, WFSDataStore> dataStores = new HashMap<>();
 
 	@Override
 	public String getName() {
@@ -68,12 +68,12 @@ public class WfsAdapter implements IResourceAdapter {
 		return new WfsEncoder();
 	}
 
-	public static DataStore getDatastore(String serverUrl, Version version) {
+	public static WFSDataStore getDatastore(String serverUrl, Version version) {
 
-		DataStore ret = dataStores.get(serverUrl);
+		WFSDataStore ret = dataStores.get(serverUrl);
 
 		if (ret == null) {
-			String getCapabilities = serverUrl + "?REQUEST=getCapabilities&version=" + version;
+			String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
 			WFSDataStoreFactory dsf = new WFSDataStoreFactory();
 			try {
 				
@@ -86,10 +86,8 @@ public class WfsAdapter implements IResourceAdapter {
 				
 				
 				ret = dsf.createDataStore(connectionParameters);
-
-				
-				
 				dataStores.put(serverUrl, ret);
+
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

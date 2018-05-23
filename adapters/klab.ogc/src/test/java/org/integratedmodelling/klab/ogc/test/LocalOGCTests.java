@@ -38,7 +38,10 @@ public class LocalOGCTests {
 	static Engine engine;
 
 	String[] resources = {
-
+			"local:anonymous:test:utah_landcover",
+			"local:anonymous:test:dem90m",
+			"local:anonymous:test:states",
+			"local:anonymous:test:nyroads"
 	};
 
 	/**
@@ -110,4 +113,8 @@ public class LocalOGCTests {
 		engine.run(getClass().getClassLoader().getResource("kim.raster/test3.kim")).get();
 	}
 
+	@Test
+	public void simpleWFSTest() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test4.kim")).get();
+	}
 }

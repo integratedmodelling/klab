@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.NetUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -80,7 +81,8 @@ public class RasterEncoder implements IResourceEncoder {
 	}
 
 	/**
-	 * Take a Geotools coverage and do the rest. Separated so that WCS can use it as is.
+	 * Take a Geotools coverage and do the rest. Separated so that WCS can use it as
+	 * is.
 	 * 
 	 * @param resource
 	 * @param coverage
@@ -90,7 +92,7 @@ public class RasterEncoder implements IResourceEncoder {
 	 */
 	public void encodeFromCoverage(IResource resource, GridCoverage coverage, IGeometry geometry,
 			IKlabData.Builder builder, IComputationContext context) {
-		
+
 		/*
 		 * Set the data from the transformed coverage
 		 */
@@ -103,7 +105,7 @@ public class RasterEncoder implements IResourceEncoder {
 		/*
 		 * TODO support band mixer if set in resource
 		 */
-		
+
 		/*
 		 * if so configured, cache the transformed coverage for the space dimension
 		 * signature
@@ -271,7 +273,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 		return readCoverage(mainFile);
 	}
-	
+
 	public GridCoverage readCoverage(File mainFile) {
 
 		GridCoverage2D ret = null;
@@ -295,26 +297,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 	@Override
 	public boolean isOnline(IResource resource) {
-
-		File base = null;
-		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-			base = Resources.INSTANCE.getLocalWorkspace().getRoot();
-		} else {
-			// TODO
-		}
-
-		if (base == null) {
-			return false;
-		}
-
-		for (String s : resource.getLocalPaths()) {
-			File rfile = new File(base + File.separator + s);
-			if (!rfile.exists() || !rfile.canRead()) {
-				return false;
-			}
-		}
-
-		return true;
+		return true;// NetUtilities.urlResponds(resource.getParameters().get("serviceUrl", String.class));
 	}
 
 }

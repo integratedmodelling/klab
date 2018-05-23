@@ -86,7 +86,6 @@ public class VectorEncoder implements IResourceEncoder {
 
 		Map<String, Object> map = new HashMap<>();
 		try {
-
 			map.put("url", mainFile.toURI().toURL().toString());
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
