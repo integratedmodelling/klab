@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.ogc.test;
 
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.engine.Engine;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,29 +26,23 @@ import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
-// TODO: Auto-generated Javadoc
 /**
- * Runs every .kim test file in src/main/resources/kim as a k.LAB test
- * namespace.
- * <p>
- * If a system property <code>test.case = [kim file name (no extension)]</code>
- * is passed, only run the specific file named. Otherwise run them all.
- * <p>
- * TODO fix run logics according to Luke's comments.
- * <p>
+ * Test cases with local resources. Will create a project and load/validate
+ * resources in them.
  * 
  * @author ferdinando.villa
  *
  */
-public class RasterModelTests {
+public class LocalOGCTests {
 
 	static Engine engine;
 
+	String[] resources = {
+
+	};
+
 	/**
-	 * Sets the up.
-	 *
-	 * @throws Exception
-	 *             the exception
+	 * Start the engine and ensure all our test URNs are present.
 	 */
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -54,6 +50,17 @@ public class RasterModelTests {
 		engine = Engine.start();
 		/*
 		 * TODO create test project, load resources, ensure present
+		 */
+		if (Resources.INSTANCE.getLocalWorkspace().getProject("test") == null) {
+			Resources.INSTANCE.getLocalWorkspace().createProject("test");
+		}
+
+		IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test");
+		
+		/*
+		 * TODO validate and build resources. This should be a set of test cases of its
+		 * own, but there's no way in JUnit to ensure some tests are required to run
+		 * before others, so we'll just use the test cases from another class.
 		 */
 	}
 
@@ -78,7 +85,7 @@ public class RasterModelTests {
 		String file = System.getProperty("test.case");
 
 		/*
-		 * run every file in the kim/ package, under tests/resources
+		 * run every file in the kim.raster/ package, under tests/resources
 		 */
 		for (String test : new Reflections("kim.raster", new ResourcesScanner())
 				.getResources(Pattern.compile(".*\\.kim"))) {
