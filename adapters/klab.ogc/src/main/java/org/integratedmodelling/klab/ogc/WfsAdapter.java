@@ -38,7 +38,12 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 @ResourceAdapter(
 		type = "wfs", version = Version.CURRENT, 
 		requires = { "serviceUrl", "wfsIdentifier" }, 
-		optional = {"namespace", "filter", "computeShape"})
+		optional = {
+				// TODO check out http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
+				// TODO find a way to provide documentation for all these options
+				"wfsVersion", "bufferSize", "serverType", "timeoutSeconds", 
+				"filter", "computeShape"
+		})
 public class WfsAdapter implements IResourceAdapter {
 
 	static Map<String, DataStore> dataStores = new HashMap<>();
@@ -63,25 +68,28 @@ public class WfsAdapter implements IResourceAdapter {
 		return new WfsEncoder();
 	}
 
-	public static DataStore getDatastore(String serverUrl) {
+	public static DataStore getDatastore(String serverUrl, Version version) {
 
 		DataStore ret = dataStores.get(serverUrl);
 
 		if (ret == null) {
-			String getCapabilities = serverUrl + "?REQUEST=getCapabilities";
+			String getCapabilities = serverUrl + "?REQUEST=getCapabilities&version=" + version;
 			WFSDataStoreFactory dsf = new WFSDataStoreFactory();
 			try {
+				
 				Map<String, Serializable> connectionParameters = new HashMap<>();
 				connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
+				
+				/*
+				 * TODO all other parameters
+				 */
+				
+				
 				ret = dsf.createDataStore(connectionParameters);
+
+				
+				
 				dataStores.put(serverUrl, ret);
-				// SimpleFeatureSource source =
-				// dataStore.getFeatureSource("ali:Manategh_Tehran");
-				// SimpleFeatureCollection fc = source.getFeatures();
-				// while(fc.features().hasNext()){
-				// SimpleFeature sf = fc.features().next();
-				// System.out.println(sf.getAttribute("myname"));
-				// }
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -89,5 +97,4 @@ public class WfsAdapter implements IResourceAdapter {
 		}
 		return ret;
 	}
-
 }

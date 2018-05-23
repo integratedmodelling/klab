@@ -94,7 +94,7 @@ public class VectorValidator implements IResourceValidator {
 		return ret;
 	}
 
-	private void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
+	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters userData, IMonitor monitor) throws IOException {
 
 		Filter filter = Filter.INCLUDE;
