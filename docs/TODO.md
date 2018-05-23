@@ -46,7 +46,9 @@
   and terrains, spatial networks
 - Recover all Groovy functionalities
 - Groovy funcs for documentation generator
+- Model artifacts
 - Reintegrate WEKA 
+- Reintegrate MCA
   
 ### Provenance
 
