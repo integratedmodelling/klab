@@ -9,5 +9,49 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator"
+            icon="icons/k-lab-icon-16.gif"
+            id="org.integratedmodelling.thinkcap.ide.navigator"
+            name="k.LAB Navigator"
+            restorable="true">
+      </view>
+      <category
+            id="org.integratedmodelling.klab.ide.category"
+            name="k.LAB">
+      </category>
+      <category
+            id="org.integratedmodelling.klab.ide.navigator"
+            name="name">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="org.integratedmodelling.klab.ide.navigator.parts.TreeContentProvider"
+            id="org.integratedmodelling.klab.ide.navigator.navigatorContent1"
+            labelProvider="org.integratedmodelling.klab.ide.navigator.parts.ViewerLabelProvider"
+            name="k.LAB model">
+      </navigatorContent>
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IWorkspaceRoot">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimStatement">
+               </instanceof>
+            </or>
+         </triggerPoints>   </extension>
 
 </plugin>

@@ -73,4 +73,14 @@ public interface IResourceAdapter {
 	 */
 	IResourceEncoder getEncoder();
 
+	/**
+	 * Return an importer for this resource type. This handles bulk import from
+	 * URLs, directories or other resources. This may be null if no bulk importing
+	 * is supported.
+	 * 
+	 * @return an importer, or null if the resource adapter does not support
+	 *         importing.
+	 */
+	IResourceImporter getImporter();
+
 }
