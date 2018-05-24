@@ -25,6 +25,7 @@ import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
@@ -94,5 +95,11 @@ public class WfsAdapter implements IResourceAdapter {
 
 		}
 		return ret;
+	}
+
+	@Override
+	public IResourceImporter getImporter() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

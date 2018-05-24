@@ -1,0 +1,14 @@
+worldview im;
+
+@test(
+	name = "tests.core.wcs.1",
+	description  = "Spatial data generation from vanilla WCS",
+	observations = ("geography:Slope"),
+	resources = ("local:anonymous:test:rwandalandcover"),
+	assertions = (/* TODO this is good to test shape extraction - boundary is all 0s (when reported 
+		             nodata is 15)*/)
+)
+observe earth:Region named test
+   over space(shape = "EPSG:4326 POLYGON ((28.846756065804954 -2.8937223144869773, 30.911365364631454 -2.8937223144869773, 30.911365364631454 -1.021849585840688, 28.846756065804954 -1.021849585840688, 28.846756065804954 -2.8937223144869773))", grid="1 km");
+    
+model local:anonymous:test:rwandalandcover as geography:Slope in degree_angle;
