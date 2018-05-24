@@ -114,7 +114,7 @@ public class RasterEncoder implements IResourceEncoder {
 		 * expressions
 		 */
 
-		builder.startState(((IRuntimeContext) context).getTargetName());
+		builder = builder.startState(((IRuntimeContext) context).getTargetName());
 
 		for (long ofs = 0; ofs < space.size(); ofs++) {
 
@@ -142,7 +142,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 			builder.add(value);
 		}
-		builder.finishState();
+		builder = builder.finishState();
 	}
 
 	private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
