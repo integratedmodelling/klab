@@ -17,10 +17,10 @@ import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.provenance.Artifact;
 
 /**
- * A builder that encodes the data into an existing (or creates a new) local
- * artifact. The build() step merely moves the finished artifact to the data
- * object for retrieval, which is even unnecessary if the target artifact is
- * pre-built by the runtime.
+ * A {@link IKlabData} builder that organizes raw data into a local artifact.
+ * Artifacts that are pre-built by the context are used directly. The build()
+ * step moves the finished artifacts to the data object where they can be
+ * retrieved.
  * 
  * @author ferdinando.villa
  *
@@ -34,7 +34,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	List<INotification> notifications = new ArrayList<>();
 	Metadata metadata = new Metadata();
 	LocalDataBuilder parent;
-	
+
 	public LocalDataBuilder(IRuntimeContext context) {
 		this.context = context;
 		if (context.getTargetArtifact() instanceof IState) {
@@ -49,7 +49,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		this.observation = parent.observation;
 		this.state = state;
 	}
-	
+
 	private LocalDataBuilder(IDirectObservation obs, LocalDataBuilder parent) {
 		this.context = parent.context;
 		this.parent = parent;
@@ -76,6 +76,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 			throw new IllegalStateException("data builder: cannot add items: no state set");
 		}
 	}
+
 	@Override
 	public Builder finishState() {
 		if (observation != null) {
@@ -88,7 +89,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		if (parent.state == null) {
 			parent.state = this.state;
 		} else {
-			((Artifact)parent.state).chain(this.state);
+			((Artifact) parent.state).chain(this.state);
 		}
 		return parent;
 	}
@@ -96,9 +97,10 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public Builder startObject(String artifactName, String objectName, IScale scale) {
 		// TODO Auto-generated method stub
-		IObservable observable = ((IRuntimeContext)context).getSemantics(artifactName);
+		IObservable observable = ((IRuntimeContext) context).getSemantics(artifactName);
 		if (observable == null) {
-			throw new IllegalArgumentException("data builder: cannot find semantics for the artifact named " + artifactName);
+			throw new IllegalArgumentException(
+					"data builder: cannot find semantics for the artifact named " + artifactName);
 		}
 		return new LocalDataBuilder((IDirectObservation) context.newObservation(observable, objectName, scale), this);
 	}
@@ -112,7 +114,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		if (parent.observation == null) {
 			parent.observation = this.observation;
 		} else {
-			((Artifact)parent.observation).chain(this.observation);
+			((Artifact) parent.observation).chain(this.observation);
 		}
 
 		return parent;

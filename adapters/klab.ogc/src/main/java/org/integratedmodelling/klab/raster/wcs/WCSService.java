@@ -405,6 +405,10 @@ public class WCSService {
 		Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
 		URL url = null;
 
+		if (space.shape().length != 2 || !space.isRegular()) {
+			throw new IllegalArgumentException("cannot retrieve a grid dataset from WCS in a non-grid context");
+		}
+		
 		String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
 		Projection crs = Projection.create(rcrs);
 		double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);

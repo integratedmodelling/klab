@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="k.LAB navigator" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/k-lab-icon-16.gif" tooltip="" category="org.integratedmodelling.klab.ide.category" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.parts.KlabNavigator">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="k.LAB navigator" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/k-lab-icon-16.gif" tooltip="" category="org.integratedmodelling.klab.ide.category" closeable="true" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.parts.KlabNavigator">
       <tags>View</tags>
       <tags>categoryTag:org.integratedmodelling.klab.ide.category</tags>
       <handlers xmi:id="_DkObcE00EeiMqc9j7Difiw" elementId="org.integratedmodelling.klab.ide.navigator.handler.0" contributionURI="bundleclass://org.integratedmodelling.klab.ide.navigator/org.integratedmodelling.klab.ide.navigator.SwitchView" command="_-72FoE00EeiMqc9j7Difiw"/>
@@ -12,11 +12,6 @@
       <menus xmi:id="_A7duUFXYEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.menu.view" label="View">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_CJaIIFXYEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledmenuitem.merdolaz" label="Merdolaz"/>
       </menus>
-      <toolbar xmi:id="_GrZiEFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.toolbar.0">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_fsTawFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledtoolitem.developmentview" label="Development view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/k-lab-icon-16.gif" type="Radio"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_jyzWEFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledtoolitem.bookmarkview" label="Bookmark view" iconURI="platform:/plugin/org.integratedmodelling.klab.ide.navigator/icons/Sample.png" type="Radio"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_mIIOsFXXEeiAC5D-Rj6GEA" elementId="org.integratedmodelling.klab.ide.navigator.handledtoolitem.scriptview" label="Script view"/>
-      </toolbar>
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_1CKDsE00EeiMqc9j7Difiw" featurename="commands" parentElementId="xpath:/">

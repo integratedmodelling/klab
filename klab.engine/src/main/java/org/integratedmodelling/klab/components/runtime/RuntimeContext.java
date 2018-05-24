@@ -97,7 +97,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.outputs = new HashSet<>();
 		this.semantics = new HashMap<>();
 		this.semantics.put(actuator.getName(), this.targetSemantics);
-		
+
 		if (!actuator.getObservable().is(Type.COUNTABLE)) {
 			this.outputs.add(actuator.getName());
 			this.semantics.put(actuator.getName(), actuator.getObservable());
@@ -186,7 +186,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	public String getTargetName() {
 		return targetName;
 	}
-	
+
 	@Override
 	public IRuntimeContext copy() {
 		RuntimeContext ret = new RuntimeContext(this);
@@ -268,6 +268,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		Observable obs = new Observable((Observable) observable);
 		obs.setName(name);
 
+		/*
+		 * TODO preload all the possible resolvers in the wider scope before specializing the
+		 * scope to the child observation. Then leave it to the kbox to use the context with
+		 * the preloaded cache.
+		 */
+		this.resolutionScope.preloadResolvers(observable);
+		
 		// TODO have these public resolvers return dataflows or null, reusing dataflows
 		// from previous
 		// runs
@@ -305,7 +312,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
-		
+
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -325,7 +332,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
 		}
-		
+
 		return ret;
 	}
 
@@ -453,7 +460,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
 				if (parent != null && parent.target instanceof ISubject) {
-					this.network.addEdge((ISubject)observation, (ISubject)parent.target);
+					this.network.addEdge((ISubject) observation, (ISubject) parent.target);
 				}
 			}
 		}

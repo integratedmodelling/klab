@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
@@ -97,5 +98,11 @@ public class WcsAdapter implements IResourceAdapter {
 	public static void setCachedFile(File file, String identifier, IGeometry geometry) {
 		String key = identifier + "#" + geometry.toString();
 		fileCache.put(key, file);
+	}
+
+	@Override
+	public IResourceImporter getImporter() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

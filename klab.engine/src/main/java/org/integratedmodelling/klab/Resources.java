@@ -49,13 +49,11 @@ import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
-import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
@@ -437,7 +435,7 @@ public enum Resources implements IResourceService {
 		
 		if (resource.hasErrors()) {
 			// TODO report errors but leave the resource so we can validate any use of it
-			monitor.error("RESOURCE " + urn + " HAS ERRORS - TODO REPORT PROPERLY");
+			monitor.error("Resource " + urn + " has errors:");
 		}
 
 		return resource;

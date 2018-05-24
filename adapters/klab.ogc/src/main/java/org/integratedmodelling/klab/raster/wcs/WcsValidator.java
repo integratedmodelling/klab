@@ -47,8 +47,12 @@ public class WcsValidator implements IResourceValidator {
 		WCSService service = WcsAdapter.getService(userData.get("serviceUrl", String.class),
 				Version.create(userData.get("wcsVersion", String.class)));
 
-		WCSLayer layer = service.getLayer(userData.get("wcsIdentifier", String.class));
+		String layerId = userData.get("wcsIdentifier", String.class);
+		if (service.TRANSLATE_DOUBLEUNDERSCORE_TO_NAMESPACE_SEPARATOR) {
+			layerId = layerId.replaceAll(":", "__");
+		}
 		
+		WCSLayer layer = service.getLayer(layerId);
 		if (layer == null) {
 			throw new KlabResourceNotFoundException("WCS layer " + userData.get("wcsIdentifier") + " not found on server");
 		}

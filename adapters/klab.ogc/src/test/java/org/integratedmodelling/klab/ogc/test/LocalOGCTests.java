@@ -117,4 +117,10 @@ public class LocalOGCTests {
 	public void simpleWFSTest() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim.raster/test4.kim")).get();
 	}
+	
+	@Test
+	// TODO - shape extraction isn't there yet
+	public void simpleWCSTestWithShapeExtraction() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test5.kim")).get();
+	}
 }
