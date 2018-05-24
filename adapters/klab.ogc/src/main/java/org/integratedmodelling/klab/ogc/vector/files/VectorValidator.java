@@ -69,7 +69,7 @@ public class VectorValidator implements IResourceValidator {
 
 		try {
 
-			ret.setParameter("fileUrl", url);
+			ret.withParameter("fileUrl", url);
 			Map<String, Object> map = new HashMap<>();
 			map.put("url", url);
 
@@ -150,7 +150,7 @@ public class VectorValidator implements IResourceValidator {
 					geometry = geometry.convexHull();
 				}
 				geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
-				ret.setParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
+				ret.withParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
 			}
 		}
 
@@ -191,7 +191,7 @@ public class VectorValidator implements IResourceValidator {
 							envelope.getMinimum(1), envelope.getMaximum(1))
 					.withProjection(crsCode).withSpatialShape(collection.size());
 
-			ret.setGeometry(geometry);
+			ret.withGeometry(geometry);
 		}
 
 	}

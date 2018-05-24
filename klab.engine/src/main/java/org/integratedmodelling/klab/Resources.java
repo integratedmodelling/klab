@@ -407,8 +407,8 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				resource = builder.setResourceVersion(version).setParameters(parameters).setAdapterType(adapterType)
-						.setLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
+				resource = builder.withResourceVersion(version).withParameters(parameters).withAdapterType(adapterType)
+						.withLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
 
 			} else {
 				errors.add(new KlabValidationException("cannot find an adapter to process file " + file));

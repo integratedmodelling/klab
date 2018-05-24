@@ -18,7 +18,6 @@ package org.integratedmodelling.klab.api.data.adapters;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.INotification;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
@@ -50,7 +49,7 @@ public interface IKlabData {
 
 		/**
 		 * Get a builder that defines a state. Any further operation will operate on the
-		 * object until finishObject() is called.
+		 * object until {@link finishState()} is called.
 		 * <p>
 		 * If this was called before at the same level, the new artifact will be chained
 		 * to the previous when built.
@@ -58,80 +57,52 @@ public interface IKlabData {
 		 * @param name
 		 *            TODO
 		 * @return a builder on which the add() functions can be called.
+		 * @throws IllegalArgumentException
+		 *             if the state being build has a name not recognized by the context
+		 *             associated with this builder.
 		 */
 		Builder startState(String name);
 
 		/**
-		 * Add a double value to the current state.
+		 * Add a value to the state being defined by this builder. The state is added in
+		 * the k.LAB natural order for the geometry associated with the builder, i.e.
+		 * starting at an offset of 0 and moving up by 1 at every add.
 		 * 
-		 * @param doubleValue
+		 * @param value
 		 * @throws IllegalStateException
 		 *             if {@link #startState(String)} has not been called.
 		 */
-		void add(double doubleValue);
+		void add(Object value);
 
 		/**
+		 * Finish building a state artifact and return the original builder on which
+		 * {@link #startState(String)} was called.
 		 * 
-		 * @param floatValue
+		 * @return the builder on which {@link startState()} was called.
 		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
-		 */
-		void add(float floatValue);
-
-		/**
-		 * 
-		 * @param intValue
-		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
-		 */
-		void add(int intValue);
-
-		/**
-		 * 
-		 * @param longValue
-		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
-		 */
-		void add(long longValue);
-
-		/**
-		 * 
-		 * @param booleanValue
-		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
-		 */
-		void add(boolean booleanValue);
-
-		/**
-		 * 
-		 * @param conceptValue
-		 * @throws IllegalStateException
-		 *             if {@link #startState(String)} has not been called.
-		 */
-		void add(IConcept conceptValue);
-
-		// TODO add distribution values
-
-		/**
-		 * Finish building a state artifact.
-		 * 
-		 * @return the builder on which startState() was called.
+		 *             if {@link startState()} was not called before.
 		 */
 		Builder finishState();
 
 		/**
-		 * Get a builder that defines an object. Any further operation will operate on
-		 * the object until finishObject() is called.
+		 * Get a builder that defines an object. Any further operation should operate on
+		 * the object until {@link #finishObject()} is called, returning the builder
+		 * that gets this call.
 		 * <p>
 		 * If this was called before at the same level, the new artifact will be chained
 		 * to the previous when built.
 		 * 
 		 * @param artifactName
-		 *            the name of the target artifact (obtained through the runtime context)
+		 *            the name of the target artifact (obtained through the runtime
+		 *            context)
 		 * @param objectName
-		 * 			  the name of the object (which should be unique)
-		 * @param scale TODO
+		 *            the name of the object (which should be unique)
+		 * @param scale
+		 *            the scale for the new object
 		 * @return an object builder
+		 * @throws IllegalArgumentException
+		 *             if the artifact name is not recognized by the context
+		 *             associated with this builder.		 
 		 */
 		Builder startObject(String artifactName, String objectName, IScale scale);
 
@@ -140,6 +111,8 @@ public interface IKlabData {
 		 * original builder.
 		 * 
 		 * @return the builder on which startObject() was called.
+		 * @throws IllegalStateException
+		 *             if {@link startState()} was not called before.
 		 */
 		Builder finishObject();
 
@@ -150,7 +123,7 @@ public interface IKlabData {
 		 * @param object
 		 * @return the builder itself
 		 */
-		Builder setProperty(String property, Object object);
+		Builder withMetadata(String property, Object object);
 
 		/**
 		 * Add a notification to the result. Notifications are global, i.e. they refer

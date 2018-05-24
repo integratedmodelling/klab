@@ -6,7 +6,6 @@ import java.util.List;
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -70,41 +69,13 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(double doubleValue) {
+	public void add(Object value) {
 		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), doubleValue);
+			state.set(state.getGeometry().getLocator(offset++), value);
 		} else {
 			throw new IllegalStateException("data builder: cannot add items: no state set");
 		}
 	}
-
-	@Override
-	public void add(float floatValue) {
-		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), floatValue);
-		} else {
-			throw new IllegalStateException("data builder: cannot add items: no state set");
-		}
-	}
-
-	@Override
-	public void add(int intValue) {
-		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), intValue);
-		} else {
-			throw new IllegalStateException("data builder: cannot add items: no state set");
-		}
-	}
-
-	@Override
-	public void add(long longValue) {
-		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), longValue);
-		} else {
-			throw new IllegalStateException("data builder: cannot add items: no state set");
-		}
-	}
-
 	@Override
 	public Builder finishState() {
 		if (observation != null) {
@@ -148,7 +119,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder setProperty(String property, Object object) {
+	public Builder withMetadata(String property, Object object) {
 		IArtifact artifact = this.state == null ? this.observation : this.state;
 		if (artifact == null) {
 			throw new IllegalStateException("data builder: cannot set property: no observation is set");
@@ -167,23 +138,4 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	public IKlabData build() {
 		return new LocalData(this);
 	}
-
-	@Override
-	public void add(boolean booleanValue) {
-		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), booleanValue);
-		} else {
-			throw new IllegalStateException("data builder: cannot add items: no state set");
-		}
-	}
-
-	@Override
-	public void add(IConcept conceptValue) {
-		if (state != null) {
-			state.set(state.getGeometry().getLocator(offset++), conceptValue);
-		} else {
-			throw new IllegalStateException("data builder: cannot add items: no state set");
-		}
-	}
-
 }

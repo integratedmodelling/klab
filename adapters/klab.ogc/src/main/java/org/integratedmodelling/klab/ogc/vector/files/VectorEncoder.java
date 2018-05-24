@@ -197,7 +197,7 @@ public class VectorEncoder implements IResourceEncoder {
 					// TODO make object
 					// TODO process from metadata
 					for (String key : attributes.keySet()) {
-						builder.setProperty(key.toLowerCase(), attributes.get(key));
+						builder.withMetadata(key.toLowerCase(), attributes.get(key));
 					}
 					
 					

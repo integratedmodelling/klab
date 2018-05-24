@@ -135,7 +135,7 @@ public interface IResource extends Serializable {
 		 * @param value
 		 * @return the builder itself
 		 */
-		Builder setMetadata(String key, Object value);
+		Builder withMetadata(String key, Object value);
 
 		/**
 		 * 
@@ -143,14 +143,14 @@ public interface IResource extends Serializable {
 		 * @param value
 		 * @return the builder itself
 		 */
-		Builder setParameter(String key, Object value);
+		Builder withParameter(String key, Object value);
 
 		/**
 		 * 
 		 * @param geometry
 		 * @return the builder itself
 		 */
-		Builder setGeometry(IGeometry geometry);
+		Builder withGeometry(IGeometry geometry);
 
 		/**
 		 * Add a local resource path.
@@ -186,14 +186,14 @@ public interface IResource extends Serializable {
 		 * @param v
 		 * @return the builder itself
 		 */
-		Builder setResourceVersion(Version v);
+		Builder withResourceVersion(Version v);
 
 		/**
 		 * 
 		 * @param timestamp
 		 * @return the builder itself
 		 */
-		Builder setResourceTimestamp(long timestamp);
+		Builder withResourceTimestamp(long timestamp);
 
 		/**
 		 * Add a history item. The passed resource should have no history of its own and
@@ -228,7 +228,7 @@ public interface IResource extends Serializable {
 		 *            the adapter type
 		 * @return the builder itself
 		 */
-		Builder setAdapterType(String string);
+		Builder withAdapterType(String string);
 
 		/**
 		 * Set the local resource path.
@@ -236,14 +236,14 @@ public interface IResource extends Serializable {
 		 * @param localPath the local resource path
 		 * @return the builder itself
 		 */
-		Builder setLocalPath(String localPath);
+		Builder withLocalPath(String localPath);
 
 		/**
 		 * Add all the passed parameters
 		 * @param parameters a parameters object
 		 * @return the builder itself
 		 */
-		Builder setParameters(IParameters parameters);
+		Builder withParameters(IParameters parameters);
 
 	}
 

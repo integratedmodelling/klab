@@ -69,7 +69,7 @@ public class WcsValidator implements IResourceValidator {
 		}
 		IGeometry geometry = layer.getGeometry();
 		
-		return new ResourceBuilder().setParameters(userData).setGeometry(geometry);
+		return new ResourceBuilder().withParameters(userData).withGeometry(geometry);
 	}
 
 	@Override

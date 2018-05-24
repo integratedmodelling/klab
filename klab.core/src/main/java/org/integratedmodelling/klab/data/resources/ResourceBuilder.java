@@ -71,20 +71,20 @@ public class ResourceBuilder implements IResource.Builder {
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceBuilder setMetadata(String key, Object value) {
+	public ResourceBuilder withMetadata(String key, Object value) {
 		metadata.put(key, value);
 		return this;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceBuilder setParameter(String key, Object value) {
+	public ResourceBuilder withParameter(String key, Object value) {
 		parameters.put(key, value);
 		return this;
 	}
 	
 	@Override
-	public ResourceBuilder setLocalPath(String localPath) {
+	public ResourceBuilder withLocalPath(String localPath) {
 		this.localPath = localPath;
 		return this;
 	}
@@ -114,14 +114,14 @@ public class ResourceBuilder implements IResource.Builder {
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceBuilder setResourceVersion(Version v) {
+	public ResourceBuilder withResourceVersion(Version v) {
 		this.resourceVersion = v;
 		return this;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceBuilder setResourceTimestamp(long timestamp) {
+	public ResourceBuilder withResourceTimestamp(long timestamp) {
 		this.resourceTimestamp = timestamp;
 		return this;
 	}
@@ -135,7 +135,7 @@ public class ResourceBuilder implements IResource.Builder {
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceBuilder setGeometry(IGeometry s) {
+	public ResourceBuilder withGeometry(IGeometry s) {
 		this.geometry = s;
 		return this;
 	}
@@ -148,7 +148,7 @@ public class ResourceBuilder implements IResource.Builder {
 
 	/** {@inheritDoc} */
 	@Override
-	public ResourceBuilder setAdapterType(String string) {
+	public ResourceBuilder withAdapterType(String string) {
 		this.adapterType = string;
 		return this;
 	}
@@ -160,7 +160,7 @@ public class ResourceBuilder implements IResource.Builder {
 	}
 
 	@Override
-	public Builder setParameters(IParameters parameters) {
+	public Builder withParameters(IParameters parameters) {
 		this.parameters.putAll(parameters);
 		return this;
 	}

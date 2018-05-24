@@ -56,7 +56,7 @@ public class RasterValidator implements IResourceValidator {
 
 			monitor.info("Validating raster resource " + url);
 
-			ret.setParameter("fileUrl", url);
+			ret.withParameter("fileUrl", url);
 
 			monitor.info("Running access tests...");
 			AbstractGridFormat format = GridFormatFinder.findFormat(file);
@@ -122,7 +122,7 @@ public class RasterValidator implements IResourceValidator {
 						.withProjection(crsCode)
 						.withSpatialShape((long) grid.getGridRange().getSpan(0), (long) grid.getGridRange().getSpan(1));
 
-				ret.setGeometry(geometry);
+				ret.withGeometry(geometry);
 			} else {
 				monitor.info("Raster file is invalid; resource has errors");
 			}
