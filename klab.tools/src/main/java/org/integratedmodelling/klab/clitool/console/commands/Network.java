@@ -20,7 +20,7 @@ public class Network implements ICommand {
 						.startNetwork(
 								call.getParameters().contains("browser")
 										? () -> BrowserUtils
-												.startBrowser("http://localhost:8283/modeler/viewer?session="
+												.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
 														+ CliRuntime.INSTANCE.getSession().getId() + "&mode=ide")
 										: null);
 			} else if ("off".equals(arg)) {
