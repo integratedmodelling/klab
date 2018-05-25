@@ -53,7 +53,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
-            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.INFO, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Info, payload));
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.INFO.intValue()) {
@@ -73,7 +73,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
-            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.WARNING, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning, payload));
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
@@ -93,7 +93,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
-            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.ERROR, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
         }
 
         if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
@@ -112,7 +112,7 @@ public enum Logging implements ILoggingService {
         String payload = NotificationUtils.getMessage(o);
 
         if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
-            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.LOGGING, Type.DEBUG, payload));
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Debug, payload));
         }
 
         if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {

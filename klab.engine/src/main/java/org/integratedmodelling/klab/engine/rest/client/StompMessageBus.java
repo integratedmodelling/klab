@@ -115,7 +115,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
     
     public static void main(String[] args) {
         StompMessageBus bus = new StompMessageBus(URL, "abcde");
-        bus.post(Message.create("abcde", "Zio carbonaro", IMessage.MessageClass.LOGGING, IMessage.Type.INFO));
+        bus.post(Message.create("abcde", "Zio carbonaro", IMessage.MessageClass.Notification, IMessage.Type.Info));
     }
 
 }

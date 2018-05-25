@@ -293,7 +293,7 @@ public enum Klab implements IRuntimeService {
         @Override
         public void info(Object... info) {
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.INFO,
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Info,
                         NotificationUtils.getMessage(info)));
             } else {
                 Logging.INSTANCE.info(info);
@@ -303,7 +303,7 @@ public enum Klab implements IRuntimeService {
         @Override
         public void warn(Object... o) {
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.WARNING,
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Warning,
                         NotificationUtils.getMessage(o)));
             } else {
                 Logging.INSTANCE.warn(o);
@@ -314,7 +314,7 @@ public enum Klab implements IRuntimeService {
         public void error(Object... o) {
             errors ++;
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.ERROR,
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Error,
                         NotificationUtils.getMessage(o)));
             } else {
                 Logging.INSTANCE.error(o);
@@ -324,7 +324,7 @@ public enum Klab implements IRuntimeService {
         @Override
         public void debug(Object... o) {
             if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
-                messageBus.post(Message.create(getIdentity().getId(), MessageClass.LOGGING, Type.DEBUG,
+                messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Debug,
                         NotificationUtils.getMessage(o)));
             } else {
                 Logging.INSTANCE.debug(o);

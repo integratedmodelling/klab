@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.monitoring;
 
 /**
- * Messages 
+ * Messages exchanged between the engine and its web UI.
  * 
  * @author ferdinando.villa
  *
@@ -17,10 +17,35 @@ public interface IMessage {
      *
      */
     enum MessageClass {
-        LOGGING,
-        ENGINE,
-        AUTH,
-        TASK
+    	
+    	/**
+    	 * 
+    	 */
+        UserContextChange,
+        /**
+         * 
+         */
+        EngineLifecycle,
+        /**
+         * 
+         */
+        Authorization,
+        /**
+         * 
+         */
+        TaskLifecycle,
+        /**
+         * 
+         */
+        ObservationLifecycle,
+        /**
+         * 
+         */
+        SessionLifecycle,
+        /**
+         * 
+         */
+        Notification
     }
     
     /**
@@ -30,13 +55,20 @@ public interface IMessage {
      *
      */
     enum Type {
+    	
+    	/*
+    	 * UserContextChange-class types
+    	 */
+    	RegionOfInterest,
+    	PeriodOfInterest,
+    	
         /*
-         * LOGGING-class types
+         * Notification-class types
          */
-        DEBUG,
-        INFO,
-        WARNING,
-        ERROR
+        Debug,
+        Info,
+        Warning,
+        Error
         // TODO k.LAB specific types
     }
     
