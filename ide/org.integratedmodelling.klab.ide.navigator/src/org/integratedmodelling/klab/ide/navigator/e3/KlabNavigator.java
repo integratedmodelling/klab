@@ -26,6 +26,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.ide.navigator.e3;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
@@ -39,7 +40,12 @@ public class KlabNavigator extends CommonNavigator  {
     public KlabNavigator() {
     }
     
-    public static void refresh() {
+    @Override
+	protected Object getInitialInput() {
+    	return ResourcesPlugin.getWorkspace().getRoot();
+	}
+
+	public static void refresh() {
 
         if (_viewer != null) {
             Display.getDefault().asyncExec(new Runnable() {

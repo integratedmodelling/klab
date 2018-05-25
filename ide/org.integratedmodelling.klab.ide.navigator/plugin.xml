@@ -23,20 +23,32 @@
             id="org.integratedmodelling.klab.ide.category"
             name="k.LAB">
       </category>
-      <category
-            id="org.integratedmodelling.klab.ide.navigator"
-            name="name">
-      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewer
+            viewerId="org.integratedmodelling.thinkcap.ide.navigator">
+      </viewer>
+      <viewerContentBinding
+            viewerId="org.integratedmodelling.thinkcap.ide.navigator">
+         <includes>
+            <contentExtension
+                  pattern="org.integratedmodelling.klab.ide.navigator.navigatorContent1">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+      <viewerContentBinding
+            viewerId="org.integratedmodelling.thinkcap.ide.navigator">
+      </viewerContentBinding>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.integratedmodelling.klab.ide.navigator.parts.TreeContentProvider"
+            contentProvider="org.integratedmodelling.klab.ide.navigator.e3.TreeContentProvider"
             id="org.integratedmodelling.klab.ide.navigator.navigatorContent1"
-            labelProvider="org.integratedmodelling.klab.ide.navigator.parts.ViewerLabelProvider"
+            labelProvider="org.integratedmodelling.klab.ide.navigator.e3.ViewerLabelProvider"
             name="k.LAB model">
-      </navigatorContent>
          <triggerPoints>
             <or>
                <instanceof
@@ -52,6 +64,7 @@
                      value="org.integratedmodelling.kim.api.IKimStatement">
                </instanceof>
             </or>
-         </triggerPoints>   </extension>
-
+         </triggerPoints>
+      </navigatorContent>
+   </extension>
 </plugin>

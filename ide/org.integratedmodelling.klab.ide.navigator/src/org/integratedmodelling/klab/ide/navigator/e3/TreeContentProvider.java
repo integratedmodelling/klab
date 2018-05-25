@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.navigator.parts;
+package org.integratedmodelling.klab.ide.navigator.e3;
 
 import java.io.File;
 
@@ -14,6 +14,8 @@ import org.integratedmodelling.kim.model.Kim;
 
 class TreeContentProvider extends WorkbenchContentProvider {
 
+	public TreeContentProvider() {}
+	
     File wsRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

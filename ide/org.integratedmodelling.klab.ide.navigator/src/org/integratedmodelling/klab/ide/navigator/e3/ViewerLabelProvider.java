@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.navigator.parts;
+package org.integratedmodelling.klab.ide.navigator.e3;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -7,6 +7,8 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 
 class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {
     
+	public ViewerLabelProvider() {}
+	
     WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
     
 	public Image getImage(Object element) {
