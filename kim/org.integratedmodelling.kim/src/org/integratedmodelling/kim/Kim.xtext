@@ -34,7 +34,7 @@ ModelBodyStatement:
 		 * If the observable is a single role, then concept must be the actual observable and we're reinterpreting it.
 		 */
 		 ( name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
-		 ('observing' dependencies+=ObservableSemantics (',' dependencies+=ObservableSemantics)* )?
+		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
 		 ('using' contextualizers+=Contextualization (',' contextualizers+=Contextualization)*)?
 		 actions+=ActionSpecification*
 		 ('with' 'metadata' metadata=Metadata)? 
@@ -273,6 +273,12 @@ ObservableSemantics:
 		(from=Number 'to' to=Number)? &
 		('named' name=LOWERCASE_ID)?
 	);
+
+Dependency:
+	modelReference=(LOWERCASE_ID|PathName) |
+	observable=ObservableSemantics
+;
+
 
 ConceptDeclaration:
 	(name=STRING)? main+=Concept+ 

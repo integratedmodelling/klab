@@ -25,6 +25,7 @@ import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
@@ -281,6 +282,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         ObservableSemantics observableSemantics = (ObservableSemantics)theEObject;
         T result = caseObservableSemantics(observableSemantics);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.DEPENDENCY:
+      {
+        Dependency dependency = (Dependency)theEObject;
+        T result = caseDependency(dependency);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -842,6 +850,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseObservableSemantics(ObservableSemantics object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Dependency</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Dependency</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDependency(Dependency object)
   {
     return null;
   }

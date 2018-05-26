@@ -232,6 +232,15 @@ public interface KimFactory extends EFactory
   ObservableSemantics createObservableSemantics();
 
   /**
+   * Returns a new object of class '<em>Dependency</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Dependency</em>'.
+   * @generated
+   */
+  Dependency createDependency();
+
+  /**
    * Returns a new object of class '<em>Concept Declaration</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

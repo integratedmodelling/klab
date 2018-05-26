@@ -56,8 +56,9 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 	ArrayList<ModelReference> modelData = new ArrayList<>();
 	boolean sorted = false;
 	IMonitor monitor;
-	// ModelQuery query;
-	// RestTemplateHelper template;
+
+	// for logging only
+	boolean cached = false;
 
 	public class It implements Iterator<IRankedModel> {
 
@@ -74,14 +75,14 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
 				if (Configuration.INSTANCE.isDebuggingEnabled()) {
 					if (modelData.size() > 0) {
-						monitor.debug("---- SCORES ------");
+						monitor.debug("---- SCORES " + (cached ? " (from cached models)" : "") + "------");
 						int n = 1;
 						for (ModelReference md : modelData) {
 							monitor.debug(describeRanks(md, 2, n++));
 						}
 						monitor.debug("------------------");
 					} else {
-						monitor.debug("No results");
+						monitor.debug("No results" + (cached ? " (cached)" : ""));
 					}
 				}
 			}
@@ -269,6 +270,15 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 	public void addModel(ModelReference md) {
 		modelData.add(md);
 		sorted = false;
+	}
+
+	/*
+	 * Identical to the other, just sets a flag for logging.
+	 */
+	public void addCachedModel(ModelReference md) {
+		modelData.add(md);
+		sorted = false;
+		cached = true;
 	}
 
 	// public void setQuery(ModelQuery query) {

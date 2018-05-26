@@ -37,7 +37,7 @@ public interface IKimModel extends IKimActiveStatement {
     boolean isInstantiator();
 
     String getName();
-
+   
     Optional<Object> getInlineValue();
 
     Optional<IServiceCall> getResourceFunction();

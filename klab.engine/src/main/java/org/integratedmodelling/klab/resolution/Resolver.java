@@ -101,7 +101,7 @@ public enum Resolver {
 
   /**
    * Resolve the passed object in the passed parent scope, using the resolution strategy appropriate
-   * to the type.
+   * for the type.
    * 
    * TODO expose the version that returns a dataflow, make this private
    * 

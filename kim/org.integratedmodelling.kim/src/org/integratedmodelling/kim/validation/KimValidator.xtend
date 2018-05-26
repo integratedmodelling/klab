@@ -173,19 +173,24 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
+		/**
+		 * Find the original namespace: if we don't have one, don't register
+		 */
+		var namespace = if(statement !== null) getNamespace(statement) else null;
+
 		/*
 		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
 		 * observable is a role.
 		 */
-		var firstObservable = if (model.observables.size() > 0) {
+		var firstObservable = if (nonSemanticModels.contains(statement.model) && namespace !== null) {
+				Kim.INSTANCE.createNonSemanticObservable(statement.model, namespace.name + "." + model.name);
+			} else if (model.observables.size() > 0) {
 				Kim.INSTANCE.declareObservable(model.observables.get(0))
-			} else {
-				null;
 			}
 
 		var KimObservable interpretedRole = null
 
-		if (firstObservable !== null && firstObservable.descriptor.is(Type.ROLE)) {
+		if (firstObservable?.descriptor !== null && firstObservable.descriptor.is(Type.ROLE)) {
 
 			if (model.concept === null) {
 				error(
@@ -203,6 +208,10 @@ class KimValidator extends AbstractKimValidator {
 				}
 			// fall through to validation
 			}
+		}
+
+		if (firstObservable != null && nonSemanticModels.contains(statement.model)) {
+			observables.add(firstObservable)
 		}
 
 		/*
@@ -246,24 +255,42 @@ class KimValidator extends AbstractKimValidator {
 		var i = 0
 		for (cd : model.dependencies) {
 			// context consistency left to reasoner
-			var observable = Kim.INSTANCE.declareObservable(cd)
-			var definition = observable.descriptor
-			if (definition.isUndefined) {
-				error('Dependency has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i,
-					BAD_OBSERVABLE)
-				ok = false
-			} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT)) {
-				error('Models can only consume observables or traits',
-					KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
-				ok = false
-			} else {
-				// no error
-				dependencies.add(observable)
+			var observable = if (cd.observable !== null)
+					Kim.INSTANCE.declareObservable(cd.observable)
+				else
+					Kim.INSTANCE.declareModelReference(model, cd.modelReference)
+
+			if (cd.modelReference !== null) {
+				if (observable === null) {
+					error(
+						'Model reference ' + cd.modelReference + " is unresolved: please" +
+							(if(cd.modelReference.contains(".")) "import" else "declare") + " this model",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
+					ok = false
+				} else {
+					dependencies.add(observable)
+				}
+			}
+
+			if (cd.observable !== null) {
+				var definition = observable.descriptor
+				if (definition.isUndefined) {
+					error('Dependency has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
+						i, BAD_OBSERVABLE)
+					ok = false
+				} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT)) {
+					error('Models can only consume observables or traits',
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
+					ok = false
+				} else {
+					// no error
+					dependencies.add(observable)
+				}
 			}
 			i++
 		}
 
-		// all the contextualization stuff
+// all the contextualization stuff
 		for (contextualizer : model.contextualizers) {
 			var List<KimConcept> classifiers = null
 
@@ -295,11 +322,6 @@ class KimValidator extends AbstractKimValidator {
 		 */
 		if (ok && statement !== null) {
 
-			/**
-			 * Find the original namespace: if we don't have one, don't register
-			 */
-			var namespace = getNamespace(statement);
-
 			if (namespace !== null) {
 
 				// add to namespace
@@ -329,7 +351,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				// the rest
-				descriptor.private = statement.isPrivate || ns.isPrivate 
+				descriptor.private = statement.isPrivate || ns.isPrivate
 				descriptor.assessmentModel = statement.model.equals('assess')
 				descriptor.learningModel = statement.model.equals('learn')
 				descriptor.type = switch (statement.model) {
@@ -364,7 +386,13 @@ class KimValidator extends AbstractKimValidator {
 						descriptor.name = CamelCase.toLowerCase(st.name, '-') + "-" + name
 					}
 				}
-				
+
+				// set the reference of the model name in the first observable so it will work across calls
+				if (descriptor.observables.size() > 0) {
+					(descriptor.observables.get(0) as KimObservable).setModelReference(namespace.name + "." +
+						descriptor.name)
+				}
+
 				if (model.metadata !== null) {
 					descriptor.metadata = new KimMetadata(model.metadata, descriptor);
 				}
@@ -510,8 +538,7 @@ class KimValidator extends AbstractKimValidator {
 		}
 		return if(stat === null) null else getNamespace(stat)
 	}
-	
-	
+
 	@Check
 	def checkConceptDeclaration(ConceptDeclaration concept) {
 		/*
@@ -1056,8 +1083,7 @@ class KimValidator extends AbstractKimValidator {
 		var ok = true
 		var ns = KimValidator.getNamespace(statement);
 		if (ns !== null && ns.isWorldviewBound) {
-			error('Concept definitions are not admitted in sidecar files',
-				KimPackage.Literals.CONCEPT_STATEMENT__BODY)
+			error('Concept definitions are not admitted in sidecar files', KimPackage.Literals.CONCEPT_STATEMENT__BODY)
 			ok = false;
 		}
 
@@ -1145,11 +1171,10 @@ class KimValidator extends AbstractKimValidator {
 //			notify(notification, ann, KimPackage.Literals.ANNOTATION__NAME, 0)
 //		}
 //	}
-
 	def KimConceptStatement validateConceptBody(ConceptStatementBody concept, KimNamespace namespace,
 		KimConceptStatement parent, EnumSet<Type> type) {
 
-		var KimConceptStatement ret = new KimConceptStatement(concept, if (parent === null) namespace else parent)
+		var KimConceptStatement ret = new KimConceptStatement(concept, if(parent === null) namespace else parent)
 		var ok = true
 		var isAlias = concept.alias
 		var List<ParentConcept> declaredParents = newArrayList
@@ -1453,266 +1478,261 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret.observablesDescribed.add(
-					Pair.create(Kim.INSTANCE.declareConcept(concept.discretizesQuality),
-						DescriptionType.DISCRETIZES));
-				}
+					Pair.create(Kim.INSTANCE.declareConcept(concept.discretizesQuality), DescriptionType.DISCRETIZES));
 			}
+		}
 
-			if (concept.describedNonzeroQuality !== null) {
-				if (!type.contains(Type.DENIABLE)) {
-					error(
-						"The 'marks' clause can only be stated by deniable attributes to indicate non-zero values of a quality.",
-						concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY)
-					ok = false
-				}
-				var ttype = checkDeclaration(concept.describedNonzeroQuality)
-				if (Kim.intersection(ttype, IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
-					error("Only continuously valued qualities can be flagged as 'marks' attributes", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY)
-					ok = false
-				} else {
-					ret.observablesDescribed.add(
-						Pair.create(Kim.INSTANCE.declareConcept(concept.describedNonzeroQuality),
-							DescriptionType.MARKS));
-				}
+		if (concept.describedNonzeroQuality !== null) {
+			if (!type.contains(Type.DENIABLE)) {
+				error(
+					"The 'marks' clause can only be stated by deniable attributes to indicate non-zero values of a quality.",
+					concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY)
+				ok = false
 			}
+			var ttype = checkDeclaration(concept.describedNonzeroQuality)
+			if (Kim.intersection(ttype, IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
+				error("Only continuously valued qualities can be flagged as 'marks' attributes", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY)
+				ok = false
+			} else {
+				ret.observablesDescribed.add(
+					Pair.create(Kim.INSTANCE.declareConcept(concept.describedNonzeroQuality), DescriptionType.MARKS));
+			}
+		}
 
-			if (concept.roles.size > 0) {
-				// TODO roles also use 'for targetObservable' and 'in' restrictedObservable
-				if (!type.contains(Type.OBSERVABLE)) {
-					error("only observables can have roles.", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES)
-					ok = false
-				} else {
+		if (concept.roles.size > 0) {
+			// TODO roles also use 'for targetObservable' and 'in' restrictedObservable
+			if (!type.contains(Type.OBSERVABLE)) {
+				error("only observables can have roles.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES)
+				ok = false
+			} else {
 
-					// get all the targets
-					var i = 0;
-					var targets = <IKimConcept>newArrayList
-					for (t : concept.targetObservables) {
-						var target = Kim.INSTANCE.declareConcept(t)
-						if (!target.is(Type.COUNTABLE)) {
-							error("Role targets must be countable concepts (subject, event or relationship)", concept,
-								KimPackage.Literals.CONCEPT_STATEMENT_BODY__TARGET_OBSERVABLES, i)
-							ok = false
-						} else {
-							targets.add(target)
-						}
-						i++
+				// get all the targets
+				var i = 0;
+				var targets = <IKimConcept>newArrayList
+				for (t : concept.targetObservables) {
+					var target = Kim.INSTANCE.declareConcept(t)
+					if (!target.is(Type.COUNTABLE)) {
+						error("Role targets must be countable concepts (subject, event or relationship)", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__TARGET_OBSERVABLES, i)
+						ok = false
+					} else {
+						targets.add(target)
 					}
-					if (targets.isEmpty) {
-						targets.add(null)
+					i++
+				}
+				if (targets.isEmpty) {
+					targets.add(null)
+				}
+
+				// get all the restricting observables
+				i = 0;
+				var restricteds = <IKimConcept>newArrayList
+				for (t : concept.restrictedObservables) {
+					var robs = Kim.INSTANCE.declareConcept(t)
+					if (!robs.is(Type.COUNTABLE)) {
+						error("Role target scenarios can only be countable concepts (subject, event or relationship)",
+							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__RESTRICTED_OBSERVABLES, i)
+						ok = false
+					} else {
+						restricteds.add(robs)
 					}
+					i++
+				}
+				if (restricteds.isEmpty) {
+					restricteds.add(null)
+				}
 
-					// get all the restricting observables
-					i = 0;
-					var restricteds = <IKimConcept>newArrayList
-					for (t : concept.restrictedObservables) {
-						var robs = Kim.INSTANCE.declareConcept(t)
-						if (!robs.is(Type.COUNTABLE)) {
-							error(
-								"Role target scenarios can only be countable concepts (subject, event or relationship)",
-								concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__RESTRICTED_OBSERVABLES, i)
-							ok = false
-						} else {
-							restricteds.add(robs)
-						}
-						i++
-					}
-					if (restricteds.isEmpty) {
-						restricteds.add(null)
-					}
+				i = 0;
 
-					i = 0;
+				for (r : concept.roles) {
+					var role = Kim.INSTANCE.declareConcept(r)
+					if (!role.is(Type.ROLE)) {
+						error("This concept is not a role", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES, i)
+						ok = false
+					} else {
 
-					for (r : concept.roles) {
-						var role = Kim.INSTANCE.declareConcept(r)
-						if (!role.is(Type.ROLE)) {
-							error("This concept is not a role", concept,
-								KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES, i)
-							ok = false
-						} else {
-
-							for (target : targets) {
-								for (restricted : restricteds) {
-									ret.addRole(role, target, restricted)
-								}
+						for (target : targets) {
+							for (restricted : restricteds) {
+								ret.addRole(role, target, restricted)
 							}
 						}
-						i++
 					}
+					i++
 				}
 			}
+		}
 
-			if (concept.conferredTraits.size > 0) {
-				// process or event confers trait to participand subject (conferredTargets)	
-				if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT)) {
-					error("only processes and events can confer traits to their context subjects.", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS)
-					ok = false
-				} else {
-					var i = 0
-					for (decl : concept.conferredTraits) {
-						var trait = Kim.INSTANCE.declareConcept(decl)
-						if (!trait.is(Type.TRAIT)) {
-							error("only traits can be conferred by processes or events", concept,
-								KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS, i)
-						} else {
-							ret.traitsConferred.add(trait)
-						}
-						i++
+		if (concept.conferredTraits.size > 0) {
+			// process or event confers trait to participand subject (conferredTargets)	
+			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT)) {
+				error("only processes and events can confer traits to their context subjects.", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS)
+				ok = false
+			} else {
+				var i = 0
+				for (decl : concept.conferredTraits) {
+					var trait = Kim.INSTANCE.declareConcept(decl)
+					if (!trait.is(Type.TRAIT)) {
+						error("only traits can be conferred by processes or events", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS, i)
+					} else {
+						ret.traitsConferred.add(trait)
 					}
+					i++
 				}
 			}
+		}
 
-			if (concept.whole !== null) {
-				// use concept.isConstituent to check part vs. constituent and concept.isPartOf to check 
-				// for the use of 'of' which inverts the relationship.
-				if (!type.contains(Type.SUBJECT) && !type.contains(Type.AGENT) &&
-					!(type.contains(Type.CONFIGURATION) && concept.isConstitutes)) {
-					error("only subjects can use mereological relationships", concept,
+		if (concept.whole !== null) {
+			// use concept.isConstituent to check part vs. constituent and concept.isPartOf to check 
+			// for the use of 'of' which inverts the relationship.
+			if (!type.contains(Type.SUBJECT) && !type.contains(Type.AGENT) &&
+				!(type.contains(Type.CONFIGURATION) && concept.isConstitutes)) {
+				error("only subjects can use mereological relationships", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
+				ok = false
+			} else {
+				var countable = Kim.INSTANCE.declareConcept(concept.whole)
+				if (!type.contains(Type.CONFIGURATION) && !countable.is(Type.SUBJECT) && !countable.is(Type.AGENT)) {
+					error("only subjects can be parts of other subjects", concept,
 						KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
-					ok = false
 				} else {
-					var countable = Kim.INSTANCE.declareConcept(concept.whole)
-					if (!type.contains(Type.CONFIGURATION) && !countable.is(Type.SUBJECT) &&
-						!countable.is(Type.AGENT)) {
-						error("only subjects can be parts of other subjects", concept,
-							KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
+					if (concept.isConstituent) {
+						ret.constituentParticipants.add(countable)
+					} else if (concept.isPartOf) {
+						ret.partParticipants.add(countable)
+					} else if (concept.isConstitutes) {
+						ret.configurationParticipants.add(countable)
 					} else {
-						if (concept.isConstituent) {
-							ret.constituentParticipants.add(countable)
-						} else if (concept.isPartOf) {
-							ret.partParticipants.add(countable)
-						} else if (concept.isConstitutes) {
-							ret.configurationParticipants.add(countable)
-						} else {
-							// TODO
-							throw new IllegalArgumentException("inverse mereology still unsupported")
-						}
+						// TODO
+						throw new IllegalArgumentException("inverse mereology still unsupported")
 					}
 				}
 			}
-
-			if (concept.creates.size > 0) {
-				// process or event creates countable in context
-				if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT)) {
-					error("only processes can use the 'creates' clause", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
-					ok = false
-				} else {
-					var i = 0
-					for (decl : concept.creates) {
-						var countable = Kim.INSTANCE.declareConcept(decl)
-						if (!countable.is(Type.COUNTABLE)) {
-							error(
-								"only countable types (subject, event, relationship) can be created by processes or events",
-								concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
-						} else {
-							ret.countablesCreated.add(countable)
-						}
-						i++
-					}
-				}
-			}
-
-			if (concept.traitTargets.size > 0) {
-				// TODO applies to; can also restrict source and destination for relationships
-				for (target : concept.traitTargets) {
-				}
-			}
-
-			if (concept.domains.size > 0) {
-				if (!type.contains(Type.RELATIONSHIP)) {
-					error("only relationships can use the 'links clause", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS)
-					ok = false
-				} else {
-					// TODO for relationships, moves in parallel with concept.ranges
-				}
-			}
-
-			if (concept.inverse !== null) {
-				if (!type.contains(Type.RELATIONSHIP)) {
-					error("only relationships can use the 'inverse of' clause", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__INVERSE)
-					ok = false
-				} else {
-					// TODO inverse of relationship	
-				}
-			}
-
-			if (concept.qualitiesAffected.size > 0) {
-				if (!type.contains(Type.PROCESS)) {
-					error("only processes can use the 'affects' clause", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED)
-					ok = false
-				} else {
-					// TODO process affects quality; deliberative agents can affect states of subject types.
-				}
-			}
-
-			for (restriction : concept.restrictions) {
-				// TODO process restriction
-			}
-
-			if (concept.metadata !== null) {
-				ret.metadata = new KimMetadata(concept.metadata, ret)
-			}
-
-			if (ok) {
-
-				ret.name = if (concept.isRoot)
-					KimConceptStatement.ROOT_DOMAIN_NAME
-				else
-					concept.name
-
-				/*
-				 * proceed with concept descriptor; save template if any
-				 */
-				Kim.INSTANCE.setConceptDescriptor(namespace.name + ":" + concept.name,
-					new ConceptDescriptor(namespace.name + ":" + concept.name, type, if(template) ret else null,
-						concept.docstring))
-
-				/*
-				 * instantiate the rest of descriptor
-				 */
-				ret.macro = template
-				ret.type.addAll(type)
-
-				/*
-				 * add to namespace if we're top-level
-				 */
-				if (parent === null) {
-
-					/*
-					 * check for raw quality declaration unless we are using core concepts
-					 */
-					if (type.contains(Type.QUALITY) && !concept.coreConcept &&
-						!type.contains(Type.NOTHING) && /* !type.contains(Type.ABSTRACT) && */ Kim.
-							intersection(ret.type, IKimConcept.QUALITY_TYPES).isEmpty()) {
-						error("Cannot declare a raw quality without inheriting from a more specific type", concept,
-							KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME)
-
-					} else {
-						namespace.getChildren().add(ret)
-					}
-
-				}
-
-			}
-
-			return ret
 		}
 
-		def notify(KimNotification notification, EObject object, EStructuralFeature cls, int index) {
-			switch (notification.level) {
-				case Level.SEVERE:
-					error(notification.message, object, cls, index)
-				case Level.WARNING:
-					warning(notification.message, object, cls, index)
-				case Level.INFO:
-					info(notification.message, object, cls, index)
+		if (concept.creates.size > 0) {
+			// process or event creates countable in context
+			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT)) {
+				error("only processes can use the 'creates' clause", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
+				ok = false
+			} else {
+				var i = 0
+				for (decl : concept.creates) {
+					var countable = Kim.INSTANCE.declareConcept(decl)
+					if (!countable.is(Type.COUNTABLE)) {
+						error(
+							"only countable types (subject, event, relationship) can be created by processes or events",
+							concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
+					} else {
+						ret.countablesCreated.add(countable)
+					}
+					i++
+				}
 			}
 		}
+
+		if (concept.traitTargets.size > 0) {
+			// TODO applies to; can also restrict source and destination for relationships
+			for (target : concept.traitTargets) {
+			}
+		}
+
+		if (concept.domains.size > 0) {
+			if (!type.contains(Type.RELATIONSHIP)) {
+				error("only relationships can use the 'links clause", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS)
+				ok = false
+			} else {
+				// TODO for relationships, moves in parallel with concept.ranges
+			}
+		}
+
+		if (concept.inverse !== null) {
+			if (!type.contains(Type.RELATIONSHIP)) {
+				error("only relationships can use the 'inverse of' clause", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__INVERSE)
+				ok = false
+			} else {
+				// TODO inverse of relationship	
+			}
+		}
+
+		if (concept.qualitiesAffected.size > 0) {
+			if (!type.contains(Type.PROCESS)) {
+				error("only processes can use the 'affects' clause", concept,
+					KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED)
+				ok = false
+			} else {
+				// TODO process affects quality; deliberative agents can affect states of subject types.
+			}
+		}
+
+		for (restriction : concept.restrictions) {
+			// TODO process restriction
+		}
+
+		if (concept.metadata !== null) {
+			ret.metadata = new KimMetadata(concept.metadata, ret)
+		}
+
+		if (ok) {
+
+			ret.name = if (concept.isRoot)
+				KimConceptStatement.ROOT_DOMAIN_NAME
+			else
+				concept.name
+
+			/*
+			 * proceed with concept descriptor; save template if any
+			 */
+			Kim.INSTANCE.setConceptDescriptor(namespace.name + ":" + concept.name,
+				new ConceptDescriptor(namespace.name + ":" + concept.name, type, if(template) ret else null,
+					concept.docstring))
+
+			/*
+			 * instantiate the rest of descriptor
+			 */
+			ret.macro = template
+			ret.type.addAll(type)
+
+			/*
+			 * add to namespace if we're top-level
+			 */
+			if (parent === null) {
+
+				/*
+				 * check for raw quality declaration unless we are using core concepts
+				 */
+				if (type.contains(Type.QUALITY) && !concept.coreConcept &&
+					!type.contains(Type.NOTHING) && /* !type.contains(Type.ABSTRACT) && */ Kim.intersection(ret.type,
+						IKimConcept.QUALITY_TYPES).isEmpty()) {
+					error("Cannot declare a raw quality without inheriting from a more specific type", concept,
+						KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME)
+
+				} else {
+					namespace.getChildren().add(ret)
+				}
+
+			}
+
+		}
+
+		return ret
+	}
+
+	def notify(KimNotification notification, EObject object, EStructuralFeature cls, int index) {
+		switch (notification.level) {
+			case Level.SEVERE:
+				error(notification.message, object, cls, index)
+			case Level.WARNING:
+				warning(notification.message, object, cls, index)
+			case Level.INFO:
+				info(notification.message, object, cls, index)
+		}
+	}
 
 }

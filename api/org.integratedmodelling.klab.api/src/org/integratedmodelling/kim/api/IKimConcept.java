@@ -301,7 +301,11 @@ public interface IKimConcept extends IKimStatement {
     /**
      * 
      */
-    OBSERVABILITY
+    OBSERVABILITY,
+    /**
+     * Only for concept peers of non-semantic types: this should never appear in a declared concept
+     */
+    CATEGORY
   }
 
 

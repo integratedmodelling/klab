@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
@@ -175,7 +176,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    * @ordered
    */
-  protected EList<ObservableSemantics> dependencies;
+  protected EList<Dependency> dependencies;
 
   /**
    * The cached value of the '{@link #getContextualizers() <em>Contextualizers</em>}' containment reference list.
@@ -518,11 +519,11 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<ObservableSemantics> getDependencies()
+  public EList<Dependency> getDependencies()
   {
     if (dependencies == null)
     {
-      dependencies = new EObjectContainmentEList<ObservableSemantics>(ObservableSemantics.class, this, KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES);
+      dependencies = new EObjectContainmentEList<Dependency>(Dependency.class, this, KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES);
     }
     return dependencies;
   }
@@ -763,7 +764,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
-        getDependencies().addAll((Collection<? extends ObservableSemantics>)newValue);
+        getDependencies().addAll((Collection<? extends Dependency>)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();

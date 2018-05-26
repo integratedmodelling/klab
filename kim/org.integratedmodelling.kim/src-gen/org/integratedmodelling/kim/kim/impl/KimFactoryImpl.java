@@ -30,6 +30,7 @@ import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DataType;
+import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
@@ -142,6 +143,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.OBSERVE_STATEMENT: return createObserveStatement();
       case KimPackage.OBSERVE_STATEMENT_BODY: return createObserveStatementBody();
       case KimPackage.OBSERVABLE_SEMANTICS: return createObservableSemantics();
+      case KimPackage.DEPENDENCY: return createDependency();
       case KimPackage.CONCEPT_DECLARATION: return createConceptDeclaration();
       case KimPackage.CONCEPT_REFERENCE: return createConceptReference();
       case KimPackage.CONCEPT: return createConcept();
@@ -463,6 +465,17 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     ObservableSemanticsImpl observableSemantics = new ObservableSemanticsImpl();
     return observableSemantics;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Dependency createDependency()
+  {
+    DependencyImpl dependency = new DependencyImpl();
+    return dependency;
   }
 
   /**

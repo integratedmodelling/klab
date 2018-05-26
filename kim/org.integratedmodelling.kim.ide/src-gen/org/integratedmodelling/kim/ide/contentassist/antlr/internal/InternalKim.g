@@ -776,6 +776,31 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Entry rule entryRuleDependency
+entryRuleDependency
+:
+{ before(grammarAccess.getDependencyRule()); }
+	 ruleDependency
+{ after(grammarAccess.getDependencyRule()); } 
+	 EOF 
+;
+
+// Rule Dependency
+ruleDependency 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getDependencyAccess().getAlternatives()); }
+		(rule__Dependency__Alternatives)
+		{ after(grammarAccess.getDependencyAccess().getAlternatives()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 // Entry rule entryRuleConceptDeclaration
 entryRuleConceptDeclaration
 :
@@ -3546,6 +3571,48 @@ rule__ObservableSemantics__Alternatives_3_5
 		{ before(grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1()); }
 		'required'
 		{ after(grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Dependency__Alternatives
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getDependencyAccess().getModelReferenceAssignment_0()); }
+		(rule__Dependency__ModelReferenceAssignment_0)
+		{ after(grammarAccess.getDependencyAccess().getModelReferenceAssignment_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getDependencyAccess().getObservableAssignment_1()); }
+		(rule__Dependency__ObservableAssignment_1)
+		{ after(grammarAccess.getDependencyAccess().getObservableAssignment_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Dependency__ModelReferenceAlternatives_0_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getDependencyAccess().getModelReferenceLOWERCASE_IDTerminalRuleCall_0_0_0()); }
+		RULE_LOWERCASE_ID
+		{ after(grammarAccess.getDependencyAccess().getModelReferenceLOWERCASE_IDTerminalRuleCall_0_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getDependencyAccess().getModelReferencePathNameParserRuleCall_0_0_1()); }
+		rulePathName
+		{ after(grammarAccess.getDependencyAccess().getModelReferencePathNameParserRuleCall_0_0_1()); }
 	)
 ;
 finally {
@@ -29648,9 +29715,9 @@ rule__ModelBodyStatement__DependenciesAssignment_3_1
 	}
 :
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getDependenciesObservableSemanticsParserRuleCall_3_1_0()); }
-		ruleObservableSemantics
-		{ after(grammarAccess.getModelBodyStatementAccess().getDependenciesObservableSemanticsParserRuleCall_3_1_0()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_3_1_0()); }
+		ruleDependency
+		{ after(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_3_1_0()); }
 	)
 ;
 finally {
@@ -29663,9 +29730,9 @@ rule__ModelBodyStatement__DependenciesAssignment_3_2_1
 	}
 :
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getDependenciesObservableSemanticsParserRuleCall_3_2_1_0()); }
-		ruleObservableSemantics
-		{ after(grammarAccess.getModelBodyStatementAccess().getDependenciesObservableSemanticsParserRuleCall_3_2_1_0()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_3_2_1_0()); }
+		ruleDependency
+		{ after(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_3_2_1_0()); }
 	)
 ;
 finally {
@@ -32641,6 +32708,36 @@ rule__ObservableSemantics__NameAssignment_3_7_1
 		{ before(grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0()); }
 		RULE_LOWERCASE_ID
 		{ after(grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Dependency__ModelReferenceAssignment_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getDependencyAccess().getModelReferenceAlternatives_0_0()); }
+		(rule__Dependency__ModelReferenceAlternatives_0_0)
+		{ after(grammarAccess.getDependencyAccess().getModelReferenceAlternatives_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Dependency__ObservableAssignment_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getDependencyAccess().getObservableObservableSemanticsParserRuleCall_1_0()); }
+		ruleObservableSemantics
+		{ after(grammarAccess.getDependencyAccess().getObservableObservableSemanticsParserRuleCall_1_0()); }
 	)
 ;
 finally {

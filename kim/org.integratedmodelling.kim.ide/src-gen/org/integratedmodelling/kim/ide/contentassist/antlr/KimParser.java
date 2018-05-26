@@ -90,6 +90,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4(), "rule__ObservableSemantics__Alternatives_3_4");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4_0_1(), "rule__ObservableSemantics__Alternatives_3_4_0_1");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_5(), "rule__ObservableSemantics__Alternatives_3_5");
+					put(grammarAccess.getDependencyAccess().getAlternatives(), "rule__Dependency__Alternatives");
+					put(grammarAccess.getDependencyAccess().getModelReferenceAlternatives_0_0(), "rule__Dependency__ModelReferenceAlternatives_0_0");
 					put(grammarAccess.getConceptReferenceAccess().getAlternatives(), "rule__ConceptReference__Alternatives");
 					put(grammarAccess.getConceptReferenceAccess().getTemplateTypeAlternatives_2_0_0(), "rule__ConceptReference__TemplateTypeAlternatives_2_0_0");
 					put(grammarAccess.getConceptReferenceAccess().getAlternatives_2_1(), "rule__ConceptReference__Alternatives_2_1");
@@ -689,6 +691,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getObservableSemanticsAccess().getFromAssignment_3_6_0(), "rule__ObservableSemantics__FromAssignment_3_6_0");
 					put(grammarAccess.getObservableSemanticsAccess().getToAssignment_3_6_2(), "rule__ObservableSemantics__ToAssignment_3_6_2");
 					put(grammarAccess.getObservableSemanticsAccess().getNameAssignment_3_7_1(), "rule__ObservableSemantics__NameAssignment_3_7_1");
+					put(grammarAccess.getDependencyAccess().getModelReferenceAssignment_0(), "rule__Dependency__ModelReferenceAssignment_0");
+					put(grammarAccess.getDependencyAccess().getObservableAssignment_1(), "rule__Dependency__ObservableAssignment_1");
 					put(grammarAccess.getConceptDeclarationAccess().getNameAssignment_0(), "rule__ConceptDeclaration__NameAssignment_0");
 					put(grammarAccess.getConceptDeclarationAccess().getMainAssignment_1(), "rule__ConceptDeclaration__MainAssignment_1");
 					put(grammarAccess.getConceptDeclarationAccess().getInherencyAssignment_2_0_1(), "rule__ConceptDeclaration__InherencyAssignment_2_0_1");

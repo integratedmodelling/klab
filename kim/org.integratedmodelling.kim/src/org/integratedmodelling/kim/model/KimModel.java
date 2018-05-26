@@ -22,196 +22,195 @@ import org.integratedmodelling.kim.kim.ModelStatement;
  */
 public class KimModel extends KimStatement implements IKimModel {
 
-  private static final long serialVersionUID = -2936567328185233385L;
+	private static final long serialVersionUID = -2936567328185233385L;
 
-  public String name = "UNASSIGNED";
+	public String name = "UNASSIGNED";
 
-  public KimModel(ModelStatement statement, IKimStatement parent) {
-    super(statement, parent);
-  }
+	public KimModel(ModelStatement statement, IKimStatement parent) {
+		super(statement, parent);
+	}
 
-  private boolean instantiator = false;
-  private boolean inactive = false;
-  private boolean isAbstract = false;
-  private boolean interpreter = false;
-  private boolean learningModel = false;
-  private boolean assessmentModel = false;
-  private Type type = Type.SEMANTIC;
-  private boolean isPrivate = false;
-  private List<IKimObservable> observables = new ArrayList<>();
-  private List<IKimObservable> dependencies = new ArrayList<>();
-  private IKimConcept reinterpretingRole = null;
-  private IKimBehavior behavior = new KimBehavior();
+	private boolean instantiator = false;
+	private boolean inactive = false;
+	private boolean isAbstract = false;
+	private boolean interpreter = false;
+	private boolean learningModel = false;
+	private boolean assessmentModel = false;
+	private Type type = Type.SEMANTIC;
+	private boolean isPrivate = false;
+	private List<IKimObservable> observables = new ArrayList<>();
+	private List<IKimObservable> dependencies = new ArrayList<>();
+	private IKimConcept reinterpretingRole = null;
+	private IKimBehavior behavior = new KimBehavior();
 
-  // next four represent the datasource/inline value/URN given before 'as <observable>'. They are
-  // translated into the one IResource in IModel.
-  private String resourceUrn;
-  private IServiceCall resourceFunction;
-  private Object inlineValue;
+	// next four represent the datasource/inline value/URN given before 'as
+	// <observable>'. They are
+	// translated into the one IResource in IModel.
+	private String resourceUrn;
+	private IServiceCall resourceFunction;
+	private Object inlineValue;
 
-  // contextualizer/processing given after 'using'
-  private List<IComputableResource> contextualization = new ArrayList<>();
+	// contextualizer/processing given after 'using'
+	private List<IComputableResource> contextualization = new ArrayList<>();
 
-  // private Map<String, Object> parameters = new HashMap<>();
+	// private Map<String, Object> parameters = new HashMap<>();
 
-  @Override
-  public String getName() {
-    return name;
-  }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  @Override
-  public boolean isInstantiator() {
-    return instantiator;
-  }
+	@Override
+	public boolean isInstantiator() {
+		return instantiator;
+	}
 
-  public void setInstantiator(boolean instantiator) {
-    this.instantiator = instantiator;
-  }
+	public void setInstantiator(boolean instantiator) {
+		this.instantiator = instantiator;
+	}
 
-  @Override
-  public boolean isInactive() {
-    return inactive;
-  }
+	@Override
+	public boolean isInactive() {
+		return inactive;
+	}
 
-  public void setInactive(boolean inactive) {
-    this.inactive = inactive;
-  }
+	public void setInactive(boolean inactive) {
+		this.inactive = inactive;
+	}
 
-  @Override
-  public boolean isAbstract() {
-    return isAbstract;
-  }
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
+	}
 
-  public void setAbstract(boolean isAbstract) {
-    this.isAbstract = isAbstract;
-  }
+	public void setAbstract(boolean isAbstract) {
+		this.isAbstract = isAbstract;
+	}
 
-  @Override
-  public boolean isInterpreter() {
-    return interpreter;
-  }
+	@Override
+	public boolean isInterpreter() {
+		return interpreter;
+	}
 
-  public void setInterpreter(boolean interpreter) {
-    this.interpreter = interpreter;
-  }
+	public void setInterpreter(boolean interpreter) {
+		this.interpreter = interpreter;
+	}
 
-  @Override
-  public boolean isLearningModel() {
-    return learningModel;
-  }
+	@Override
+	public boolean isLearningModel() {
+		return learningModel;
+	}
 
-  public void setLearningModel(boolean learningModel) {
-    this.learningModel = learningModel;
-  }
+	public void setLearningModel(boolean learningModel) {
+		this.learningModel = learningModel;
+	}
 
-  @Override
-  public boolean isAssessmentModel() {
-    return assessmentModel;
-  }
+	@Override
+	public boolean isAssessmentModel() {
+		return assessmentModel;
+	}
 
-  public void setAssessmentModel(boolean assessmentModel) {
-    this.assessmentModel = assessmentModel;
-  }
+	public void setAssessmentModel(boolean assessmentModel) {
+		this.assessmentModel = assessmentModel;
+	}
 
-  @Override
-  public Type getType() {
-    return type;
-  }
+	@Override
+	public Type getType() {
+		return type;
+	}
 
-  public void setType(Type type) {
-    this.type = type;
-  }
+	public void setType(Type type) {
+		this.type = type;
+	}
 
-  @Override
-  public boolean isPrivate() {
-    return isPrivate;
-  }
+	@Override
+	public boolean isPrivate() {
+		return isPrivate;
+	}
 
-  public void setPrivate(boolean isPrivate) {
-    this.isPrivate = isPrivate;
-  }
+	public void setPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate;
+	}
 
-  @Override
-  public List<IKimObservable> getObservables() {
-    return observables;
-  }
+	@Override
+	public List<IKimObservable> getObservables() {
+		return observables;
+	}
 
-  public void setObservables(List<IKimObservable> observables) {
-    this.observables = observables;
-  }
+	public void setObservables(List<IKimObservable> observables) {
+		this.observables = observables;
+	}
 
-  @Override
-  public List<IKimObservable> getDependencies() {
-    return dependencies;
-  }
+	@Override
+	public List<IKimObservable> getDependencies() {
+		return dependencies;
+	}
 
-  public void setDependencies(List<IKimObservable> dependencies) {
-    this.dependencies = dependencies;
-  }
+	public void setDependencies(List<IKimObservable> dependencies) {
+		this.dependencies = dependencies;
+	}
 
-  public void setReinterpretingRole(IKimConcept reinterpretingRole) {
-    this.reinterpretingRole = reinterpretingRole;
-  }
+	public void setReinterpretingRole(IKimConcept reinterpretingRole) {
+		this.reinterpretingRole = reinterpretingRole;
+	}
 
-  @Override
-  protected String getStringRepresentation(int offset) {
-    String ret = offset(offset) + "[model " + name + "]";
-    for (IKimScope child : children) {
-      ret += "\n" + ((KimScope) child).getStringRepresentation(offset + 3);
-    }
-    return ret;
-  }
+	@Override
+	protected String getStringRepresentation(int offset) {
+		String ret = offset(offset) + "[model " + name + "]";
+		for (IKimScope child : children) {
+			ret += "\n" + ((KimScope) child).getStringRepresentation(offset + 3);
+		}
+		return ret;
+	}
 
-  @Override
-  public Optional<IKimConcept> getReinterpretingRole() {
-    return this.reinterpretingRole == null ? Optional.empty()
-        : Optional.of(this.reinterpretingRole);
-  }
+	@Override
+	public Optional<IKimConcept> getReinterpretingRole() {
+		return this.reinterpretingRole == null ? Optional.empty() : Optional.of(this.reinterpretingRole);
+	}
 
-  @Override
-  public Optional<String> getResourceUrn() {
-    return this.resourceUrn == null ? Optional.empty() : Optional.of(this.resourceUrn);
-  }
+	@Override
+	public Optional<String> getResourceUrn() {
+		return this.resourceUrn == null ? Optional.empty() : Optional.of(this.resourceUrn);
+	}
 
-  public void setResourceUrn(String resourceUrn) {
-    this.resourceUrn = resourceUrn;
-  }
+	public void setResourceUrn(String resourceUrn) {
+		this.resourceUrn = resourceUrn;
+	}
 
-  @Override
-  public Optional<IServiceCall> getResourceFunction() {
-    return resourceFunction == null ? Optional.empty() : Optional.of(resourceFunction);
-  }
+	@Override
+	public Optional<IServiceCall> getResourceFunction() {
+		return resourceFunction == null ? Optional.empty() : Optional.of(resourceFunction);
+	}
 
-  public void setResourceFunction(IServiceCall resourceFunction) {
-    this.resourceFunction = resourceFunction;
-  }
+	public void setResourceFunction(IServiceCall resourceFunction) {
+		this.resourceFunction = resourceFunction;
+	}
 
-  @Override
-  public Optional<Object> getInlineValue() {
-    return inlineValue == null ? Optional.empty() : Optional.of(inlineValue);
-  }
+	@Override
+	public Optional<Object> getInlineValue() {
+		return inlineValue == null ? Optional.empty() : Optional.of(inlineValue);
+	}
 
-  public void setInlineValue(Object inlineValue) {
-    this.inlineValue = inlineValue;
-  }
+	public void setInlineValue(Object inlineValue) {
+		this.inlineValue = inlineValue;
+	}
 
-  @Override
-  public IKimBehavior getBehavior() {
-    return this.behavior;
-  }
+	@Override
+	public IKimBehavior getBehavior() {
+		return this.behavior;
+	}
 
-  public void setBehavior(IKimBehavior behavior) {
-    this.behavior = behavior;
-  }
+	public void setBehavior(IKimBehavior behavior) {
+		this.behavior = behavior;
+	}
 
-  @Override
-  public List<IComputableResource> getContextualization() {
-    return contextualization;
-  }
-
+	@Override
+	public List<IComputableResource> getContextualization() {
+		return contextualization;
+	}
 
 }

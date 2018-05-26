@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
@@ -184,6 +185,13 @@ public enum KimKnowledgeProcessor {
 
 	public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
 
+		if (concept.getNonSemanticType() != null) {
+			Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(), concept.getNonSemanticType());
+			Observable observable = new Observable(nsmain);
+			observable.setModelReference((IModel)Resources.INSTANCE.getModelObject(concept.getModelReference()));
+			return observable;
+		}
+		
 		Concept main = declareInternal(concept.getMain(), monitor);
 
 		if (main == null) {

@@ -238,7 +238,7 @@ public interface ModelBodyStatement extends EObject
 
   /**
    * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Dependency}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Dependencies</em>' containment reference list isn't clear,
@@ -250,7 +250,7 @@ public interface ModelBodyStatement extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<ObservableSemantics> getDependencies();
+  EList<Dependency> getDependencies();
 
   /**
    * Returns the value of the '<em><b>Contextualizers</b></em>' containment reference list.

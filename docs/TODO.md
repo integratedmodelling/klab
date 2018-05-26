@@ -14,7 +14,7 @@
 - Functional adapters for classifications and k.IM syntax for map literals
 - Functional adapters for lookup tables and k.IM syntax for table literals
 - Improve lookup table k.IM declaration (mapping to table collection)
-- Websockets Messaging API: streamline, complete (JSON RPC inspired - no need to comply)
+- [IN PROGRESS] Websockets Messaging API: streamline, complete (JSON RPC inspired - no need to comply)
 - Build test cases for non-semantic models
 - Build test cases for non-semantic model libraries
 - Build test cases for non-semantic multiple contextualizers with internal references
@@ -22,11 +22,12 @@
     
 ### Resolution
 
-- DONE Rescaling mediators; get test5 working
+- [DONE] Rescaling mediators; get test5 working
 - Relationship instantiator and resolver: test cases
 - Smart resolution of sub-object qualities: use ranking system with scale constraints (i.e. 
   produce Model metadata from states, search there first, if something > x% don't use the network, configure 
   X)
+- [DONE] Cache resolvers at instantiation
 - Interactive resolution workflow (implement and test in both CLI and Eclipse)
 - Distributing observations ('by' <subject>) and aggregation by trait
 
@@ -36,20 +37,38 @@
 
 ### Resource API and URN handling
 
-- Local storage and publishing
-- Implement and test basic adapters (WCS, WFS, Raster, Vector, Table, JDBC)
+- Local storage lifecycle
+- Publishing and encoding
+- Implement and test basic adapters:
+  - [DONE] WCS
+  - [DONE] WFS
+  - [DONE] Raster
+  - [DONE] Vector
+  - Table
+  - JDBC
 - Design the publish/review/accept/reject model and API; explore DOI attribution
 
 ### Modeling functionalities
 
-- Missing GIS stuff: rasterizer [DONE], distances, spatial indexing, routing across both features 
-  and terrains, spatial networks
-- Recover all Groovy functionalities
-- Groovy funcs for documentation generator
+- Missing GIS stuff: 
+  - [DONE] rasterizer
+  - distance
+  - spatial indexing
+  - routing through features
+  - routing through cost terrains
+  - spatial network configurations 
 - Model artifacts
+- Event subscription
+- Configuration detection
 - Reintegrate WEKA 
 - Reintegrate MCA
-  
+
+### Action language
+
+- Groovy funcs for documentation generator
+- Syntax for preprocessing complex concept declarations
+- Recover all Groovy functionalities
+
 ### Provenance
 
 - Flesh out model and provide adapters for docs, display and export
@@ -58,8 +77,8 @@
 
 ### REST interface
 
-- API: work in progress to use RAML as source of truth
-    Maven generation -> API constants etc
+- [IN PROGRESS] API: use RAML as source of truth
+    - Maven generation -> API constants etc
 - Basic workflow to enable observations:
     - Observe context and in context
     - Context structure

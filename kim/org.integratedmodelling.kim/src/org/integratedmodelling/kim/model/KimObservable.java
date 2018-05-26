@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -14,6 +15,11 @@ import org.integratedmodelling.klab.utils.Range;
 public class KimObservable extends KimStatement implements IKimObservable {
 
 	private static final long serialVersionUID = 9015149238349286112L;
+
+	public KimObservable(String name, String type) {
+		this.nonSemanticType = IPrototype.Type.valueOf(type.toUpperCase());
+		this.modelReference = type;
+	}
 
 	public KimObservable(ObservableSemantics statement, IKimStatement parent) {
 		super(statement, parent);
@@ -31,6 +37,13 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private boolean optional;
 	private IKimConcept by = null;
 	private IKimConcept downTo = null;
+	private String modelReference;
+	private IPrototype.Type nonSemanticType = null;
+
+	@Override
+	public IPrototype.Type getNonSemanticType() {
+		return nonSemanticType;
+	}
 
 	@Override
 	public boolean isAbstractObservable() {
@@ -135,6 +148,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public String getDefinition() {
 
+		if (nonSemanticType != null) {
+			return nonSemanticType + " " + modelReference;
+		}
+		
 		String ret = main.getDefinition();
 
 		// TODO
@@ -219,6 +236,15 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setOptional(boolean optional) {
 		this.optional = optional;
+	}
+
+	@Override
+	public String getModelReference() {
+		return modelReference;
+	}
+
+	public void setModelReference(String modelReference) {
+		this.modelReference = modelReference;
 	}
 
 }

@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
@@ -239,6 +240,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseObservableSemantics(ObservableSemantics object)
       {
         return createObservableSemanticsAdapter();
+      }
+      @Override
+      public Adapter caseDependency(Dependency object)
+      {
+        return createDependencyAdapter();
       }
       @Override
       public Adapter caseConceptDeclaration(ConceptDeclaration object)
@@ -738,6 +744,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createObservableSemanticsAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Dependency <em>Dependency</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Dependency
+   * @generated
+   */
+  public Adapter createDependencyAdapter()
   {
     return null;
   }

@@ -173,7 +173,7 @@ public class ModelKbox extends ObservableKbox {
 
 			for (IRankedModel model : preResolved.getSecond()) {
 				// rank them again in our scale.
-				ret.addModel(((RankedModel) model).getModelData());
+				ret.addCachedModel(((RankedModel) model).getModelData());
 			}
 
 			if (!Configuration.INSTANCE.resolveAllInstances()) {

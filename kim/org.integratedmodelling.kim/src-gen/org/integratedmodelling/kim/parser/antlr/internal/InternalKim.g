@@ -639,9 +639,9 @@ ruleModelBodyStatement returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getModelBodyStatementAccess().getDependenciesObservableSemanticsParserRuleCall_3_1_0());
+						newCompositeNode(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_3_1_0());
 					}
-					lv_dependencies_12_0=ruleObservableSemantics
+					lv_dependencies_12_0=ruleDependency
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getModelBodyStatementRule());
@@ -650,7 +650,7 @@ ruleModelBodyStatement returns [EObject current=null]
 							$current,
 							"dependencies",
 							lv_dependencies_12_0,
-							"org.integratedmodelling.kim.Kim.ObservableSemantics");
+							"org.integratedmodelling.kim.Kim.Dependency");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -663,9 +663,9 @@ ruleModelBodyStatement returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getModelBodyStatementAccess().getDependenciesObservableSemanticsParserRuleCall_3_2_1_0());
+							newCompositeNode(grammarAccess.getModelBodyStatementAccess().getDependenciesDependencyParserRuleCall_3_2_1_0());
 						}
-						lv_dependencies_14_0=ruleObservableSemantics
+						lv_dependencies_14_0=ruleDependency
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getModelBodyStatementRule());
@@ -674,7 +674,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"dependencies",
 								lv_dependencies_14_0,
-								"org.integratedmodelling.kim.Kim.ObservableSemantics");
+								"org.integratedmodelling.kim.Kim.Dependency");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -5951,6 +5951,81 @@ ruleObservableSemantics returns [EObject current=null]
 finally {
 	myUnorderedGroupState.restore();
 }
+
+// Entry rule entryRuleDependency
+entryRuleDependency returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getDependencyRule()); }
+	iv_ruleDependency=ruleDependency
+	{ $current=$iv_ruleDependency.current; }
+	EOF;
+
+// Rule Dependency
+ruleDependency returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					lv_modelReference_0_1=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_modelReference_0_1, grammarAccess.getDependencyAccess().getModelReferenceLOWERCASE_IDTerminalRuleCall_0_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getDependencyRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"modelReference",
+							lv_modelReference_0_1,
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+					}
+					    |
+					{
+						newCompositeNode(grammarAccess.getDependencyAccess().getModelReferencePathNameParserRuleCall_0_0_1());
+					}
+					lv_modelReference_0_2=rulePathName
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getDependencyRule());
+						}
+						set(
+							$current,
+							"modelReference",
+							lv_modelReference_0_2,
+							"org.integratedmodelling.kim.Kim.PathName");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getDependencyAccess().getObservableObservableSemanticsParserRuleCall_1_0());
+				}
+				lv_observable_1_0=ruleObservableSemantics
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getDependencyRule());
+					}
+					set(
+						$current,
+						"observable",
+						lv_observable_1_0,
+						"org.integratedmodelling.kim.Kim.ObservableSemantics");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
 
 // Entry rule entryRuleConceptDeclaration
 entryRuleConceptDeclaration returns [EObject current=null]@init {
