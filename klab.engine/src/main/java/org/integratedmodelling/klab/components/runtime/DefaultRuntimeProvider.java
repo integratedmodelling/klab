@@ -211,6 +211,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	private IComputationContext localizeContext(RuntimeContext context, IScale state,
 			Collection<Pair<String, IDataArtifact>> variables) {
+		
+		if (context.getTargetArtifact() instanceof IDataArtifact) {
+			context.set("self", ((IDataArtifact) context.getTargetArtifact()).get(state));
+		}
+		
 		for (String var : context.getInputs()) {
 			IArtifact artifact = context.getArtifact(var);
 			if (artifact instanceof IDataArtifact) {

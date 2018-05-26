@@ -541,6 +541,8 @@ public class KimValidator extends AbstractKimValidator {
               String _plus_4 = (_namespaceId_1 + ".");
               String _plus_5 = (_plus_4 + descriptor.name);
               ((KimObservable) _get_1).setModelReference(_plus_5);
+              IKimObservable _get_2 = descriptor.getObservables().get(0);
+              ((KimObservable) _get_2).setFormalName(descriptor.name);
             }
             Metadata _metadata = model.getMetadata();
             boolean _tripleNotEquals_7 = (_metadata != null);

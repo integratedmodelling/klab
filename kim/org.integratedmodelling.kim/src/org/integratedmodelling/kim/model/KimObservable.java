@@ -246,7 +246,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setModelReference(String modelReference) {
 		this.modelReference = modelReference;
-		this.formalName = Path.getLast(modelReference, '.');
 	}
 
 }

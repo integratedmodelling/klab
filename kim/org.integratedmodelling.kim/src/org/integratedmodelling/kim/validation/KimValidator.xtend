@@ -392,6 +392,8 @@ class KimValidator extends AbstractKimValidator {
 				if (nonSemanticModels.contains(statement.model) && descriptor.observables.size() > 0) {
 					(descriptor.observables.get(0) as KimObservable).setModelReference(
 						KimProject.getNamespaceId(namespace) + "." + descriptor.name)
+					// important! Name should be the same as the model's.
+					(descriptor.observables.get(0) as KimObservable).setFormalName(descriptor.name)
 				}
 
 				if (model.metadata !== null) {
