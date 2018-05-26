@@ -243,10 +243,10 @@ public class KimValidator extends AbstractKimValidator {
       KimObservable _xifexpression_1 = null;
       if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (namespace != null))) {
         String _model = statement.getModel();
-        String _name = namespace.getName();
-        String _plus = (_name + ".");
-        String _name_1 = model.getName();
-        String _plus_1 = (_plus + _name_1);
+        String _namespaceId = KimProject.getNamespaceId(namespace);
+        String _plus = (_namespaceId + ".");
+        String _name = model.getName();
+        String _plus_1 = (_plus + _name);
         _xifexpression_1 = Kim.INSTANCE.createNonSemanticObservable(_model, _plus_1);
       } else {
         KimObservable _xifexpression_2 = null;
@@ -290,7 +290,7 @@ public class KimValidator extends AbstractKimValidator {
           }
         }
       }
-      if (((!Objects.equal(firstObservable, null)) && KimValidator.nonSemanticModels.contains(statement.getModel()))) {
+      if (((firstObservable != null) && KimValidator.nonSemanticModels.contains(statement.getModel()))) {
         observables.add(firstObservable);
       }
       for (int obsIdx = 0; (obsIdx < model.getObservables().size()); obsIdx++) {
@@ -505,8 +505,8 @@ public class KimValidator extends AbstractKimValidator {
               ComputableResource _computableResource = new ComputableResource(contextualizer_1, descriptor);
               _contextualization.add(_computableResource);
             }
-            String _name_2 = model.getName();
-            boolean _tripleNotEquals_5 = (_name_2 != null);
+            String _name_1 = model.getName();
+            boolean _tripleNotEquals_5 = (_name_1 != null);
             if (_tripleNotEquals_5) {
               descriptor.name = model.getName();
             } else {
@@ -526,8 +526,8 @@ public class KimValidator extends AbstractKimValidator {
                     _xifexpression_5 = "contextualizer";
                   }
                   String name = _xifexpression_5;
-                  String _name_3 = descriptor.getObservables().get(0).getMain().getObservable().getName();
-                  SemanticType st = new SemanticType(_name_3);
+                  String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
+                  SemanticType st = new SemanticType(_name_2);
                   String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');
                   String _plus_2 = (_lowerCase + "-");
                   String _plus_3 = (_plus_2 + name);
@@ -535,14 +535,11 @@ public class KimValidator extends AbstractKimValidator {
                 }
               }
             }
-            int _size_2 = descriptor.getObservables().size();
-            boolean _greaterThan_2 = (_size_2 > 0);
-            if (_greaterThan_2) {
+            if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (descriptor.getObservables().size() > 0))) {
               IKimObservable _get_1 = descriptor.getObservables().get(0);
-              String _name_4 = namespace.getName();
-              String _plus_4 = (_name_4 + ".");
-              String _plus_5 = (_plus_4 + 
-                descriptor.name);
+              String _namespaceId_1 = KimProject.getNamespaceId(namespace);
+              String _plus_4 = (_namespaceId_1 + ".");
+              String _plus_5 = (_plus_4 + descriptor.name);
               ((KimObservable) _get_1).setModelReference(_plus_5);
             }
             Metadata _metadata = model.getMetadata();

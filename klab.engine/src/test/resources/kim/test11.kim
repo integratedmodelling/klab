@@ -1,12 +1,11 @@
 worldview im;
 
 @test(
-	name = "tests.core.utmproj",
-	description  = "Simple non-semantic dependency",
+	name = "tests.core.nonsemantic.simplest",
+	description  = "Simplest non-semantic dependency",
 	observations = ("geography:Elevation"),
-	resources = ("local:anonymous:test:utah_landcover"),
 	assertions = (
-		assert.nodata.percentage(state="geography:Slope", max=0)
+		assert.nodata.percentage(state="geography:Elevation", min=100)
 	)
 )
 observe earth:Terrestrial earth:Region named tanzania-grr

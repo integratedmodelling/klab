@@ -183,7 +183,8 @@ class KimValidator extends AbstractKimValidator {
 		 * observable is a role.
 		 */
 		var firstObservable = if (nonSemanticModels.contains(statement.model) && namespace !== null) {
-				Kim.INSTANCE.createNonSemanticObservable(statement.model, namespace.name + "." + model.name);
+				Kim.INSTANCE.createNonSemanticObservable(statement.model,
+					KimProject.getNamespaceId(namespace) + "." + model.name);
 			} else if (model.observables.size() > 0) {
 				Kim.INSTANCE.declareObservable(model.observables.get(0))
 			}
@@ -210,7 +211,7 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
-		if (firstObservable != null && nonSemanticModels.contains(statement.model)) {
+		if (firstObservable !== null && nonSemanticModels.contains(statement.model)) {
 			observables.add(firstObservable)
 		}
 
@@ -388,9 +389,9 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				// set the reference of the model name in the first observable so it will work across calls
-				if (descriptor.observables.size() > 0) {
-					(descriptor.observables.get(0) as KimObservable).setModelReference(namespace.name + "." +
-						descriptor.name)
+				if (nonSemanticModels.contains(statement.model) && descriptor.observables.size() > 0) {
+					(descriptor.observables.get(0) as KimObservable).setModelReference(
+						KimProject.getNamespaceId(namespace) + "." + descriptor.name)
 				}
 
 				if (model.metadata !== null) {

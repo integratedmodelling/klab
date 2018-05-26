@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
+import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
 
 public class KimObservable extends KimStatement implements IKimObservable {
@@ -245,6 +246,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setModelReference(String modelReference) {
 		this.modelReference = modelReference;
+		this.formalName = Path.getLast(modelReference, '.');
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -14,10 +15,12 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -49,6 +52,7 @@ public class Observable extends Concept implements IObservable {
 	 * when models (including non-semantic) are used as dependencies
 	 */
 	transient IModel resolvedModel;
+	private String modelReference;
 
 	Observable(Concept concept) {
 		super(concept);
@@ -481,8 +485,19 @@ public class Observable extends Concept implements IObservable {
 		return false;
 	}
 
-	public void setModelReference(IModel modelReference) {
-		this.resolvedModel = modelReference;
+	public void setModelReference(String modelReference) {
+		this.modelReference = modelReference;
 	}
 
+	public IModel getReferencedModel() {
+		if (this.resolvedModel == null && this.modelReference != null) {
+			IKimObject model = Resources.INSTANCE.getModelObject(modelReference);
+			if (!(model instanceof IModel)) {
+				throw new KlabValidationException("referenced object " + modelReference + " does not exist or is not a model");
+			}
+			this.resolvedModel = (IModel)model;
+		}
+		return this.resolvedModel;
+	}
+	
 }

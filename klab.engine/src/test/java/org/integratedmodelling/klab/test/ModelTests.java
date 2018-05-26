@@ -102,4 +102,8 @@ public class ModelTests {
 		engine.run(getClass().getClassLoader().getResource("kim/test10.kim")).get();
 	}
 
+	@Test
+	public void simpleNonsemanticModel() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim/test11.kim")).get();
+	}
 }

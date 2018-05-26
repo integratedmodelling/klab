@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Path;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
@@ -188,7 +190,8 @@ public enum KimKnowledgeProcessor {
 		if (concept.getNonSemanticType() != null) {
 			Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(), concept.getNonSemanticType());
 			Observable observable = new Observable(nsmain);
-			observable.setModelReference((IModel)Resources.INSTANCE.getModelObject(concept.getModelReference()));
+			observable.setModelReference(concept.getModelReference());
+			observable.setName(concept.getFormalName());
 			return observable;
 		}
 		
