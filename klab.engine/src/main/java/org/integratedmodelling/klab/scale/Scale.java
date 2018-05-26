@@ -584,12 +584,8 @@ public class Scale implements IScale {
 	@Override
 	public boolean contains(IScale scale) throws KlabException {
 
-		if (!hasSameExtents(scale)) {
-			return false;
-		}
-
 		for (IExtent e : extents) {
-			if (!e.contains(((Scale) scale).getDimension(e.getType()))) {
+			if (scale.getDimension(e.getType()) == null || !e.contains(((Scale) scale).getDimension(e.getType()))) {
 				return false;
 			}
 		}
@@ -1120,4 +1116,5 @@ public class Scale implements IScale {
 	public ILocator getLocator(long offset) {
 		return asGeometry().getLocator(offset);
 	}
+
 }

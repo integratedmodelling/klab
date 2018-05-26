@@ -163,7 +163,7 @@ public enum Resolver {
       IScale scale) throws KlabException {
 
     ResolutionScope ret =
-        resolve(observable, parentScope.getChildScope(observable, (Scale) scale), mode);
+        resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale), mode);
     if (ret.getCoverage().isRelevant()) {
       parentScope.merge(ret);
     }

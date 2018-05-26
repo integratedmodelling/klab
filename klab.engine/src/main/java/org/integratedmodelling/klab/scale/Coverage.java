@@ -86,6 +86,15 @@ public class Coverage extends Scale implements ICoverage {
 	public static Coverage empty(IScale original) {
 		return new Coverage((Scale) original, 0.0);
 	}
+	
+	/**
+	 * Use this when we need the IScale semantics on our same extents.
+	 * 
+	 * @return
+	 */
+	public Scale asScale() {
+		return Scale.create(extents);
+	}
 
 	protected Coverage(Scale original, double initialCoverage) {
 		super(original.extents);

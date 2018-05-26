@@ -242,4 +242,10 @@ public enum Configuration implements IConfigurationService {
 		// TODO Auto-generated method stub
 		return 0.15;
 	}
+
+	@Override
+	public boolean resolveAllInstances() {
+		// TODO tie to engine configuration property
+		return false;
+	}
 }

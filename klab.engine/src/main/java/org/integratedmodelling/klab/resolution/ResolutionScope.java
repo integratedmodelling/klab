@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ResolutionScope implements IResolutionScope {
 
@@ -133,6 +134,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * instance being resolved.
 	 */
 	private Map<IObservable, Set<IRankedModel>> resolverCache = new HashMap<>();
+	private boolean caching;
 
 	/**
 	 * Get a root scope based on the definition of an observation.
@@ -273,10 +275,11 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
-	public ResolutionScope getChildScope(Observable observable, Scale scale) {
+	public ResolutionScope getChildScope(Observable observable, Mode mode, Scale scale) {
 
 		ResolutionScope ret = new ResolutionScope(scale, 1.0, this, false);
 		ret.observable = observable;
+		ret.mode = mode;
 
 		/*
 		 * check if we already can resolve this (directly or indirectly), and if so, set
@@ -694,10 +697,14 @@ public class ResolutionScope implements IResolutionScope {
 		return this.coverage;
 	}
 
-	public Set<IRankedModel> getResolverCache(IObservable observable) {
-		return this.resolverCache.get(observable);
-	}
-
+	/**
+	 * Called before each instance resolution when the passed observable is
+	 * instantiated in our context. Should fill in the resolver set in our scale
+	 * only once, so the same resolvers can be used above. The models will then be
+	 * ranked in the scale of each instance.
+	 * 
+	 * @param observable
+	 */
 	public void preloadResolvers(IObservable observable) {
 
 		/**
@@ -713,10 +720,14 @@ public class ResolutionScope implements IResolutionScope {
 		 * preload and cache resolvers to explain the observable in the current scale.
 		 * Called after instantiation when the first instance is resolved. The resolvers
 		 * are used by the kbox if a cache for this observable and scale is present
-		 * (including if empty).
+		 * (including if empty). The kbox will return any model within our scale,
+		 * independent of how much of the context they cover; they will be ranked in the
+		 * scale of the instance, not ours.
 		 */
-		resolvers.addAll(
-				Models.INSTANCE.resolve(observable, this.getChildScope((Observable) observable, Mode.RESOLUTION)));
+		ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
+		// ensure we don't try to find the cache for the cache
+		scope.caching = true;
+		resolvers.addAll(Models.INSTANCE.resolve(observable, scope));
 
 		/*
 		 * TODO this may include the existing states in the context, with enough
@@ -729,6 +740,44 @@ public class ResolutionScope implements IResolutionScope {
 		 * additional search.
 		 */
 		resolverCache.put(observable, resolvers);
+	}
+	
+	/**
+	 * True if this scope is being used to build a cache, indicating that we shouldn't
+	 * try to use the cache when resolving.
+	 * 
+	 * @return
+	 */
+	public boolean isCaching() {
+		return this.caching;
+	}
+
+	/**
+	 * Return the (possibly empty) set of resolver models that was cached after the
+	 * first instantiation, along with the scale of the instantiator.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	public Pair<Scale, Set<IRankedModel>> getPreresolvedModels(IObservable observable) {
+
+		if (mode != Mode.RESOLUTION) {
+			return null;
+		}
+
+		/*
+		 * look up in parents until the observable is the same and the mode is
+		 * instantiation.
+		 */
+		ResolutionScope target = this;
+		while (target != null && target.observable != null && target.observable.equals(observable)) {
+			if (target.mode == Mode.INSTANTIATION) {
+				break;
+			}
+			target = target.parent;
+		}
+		return (target == null || target.resolverCache.get(observable) == null) ? null
+				: new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
 	}
 
 }

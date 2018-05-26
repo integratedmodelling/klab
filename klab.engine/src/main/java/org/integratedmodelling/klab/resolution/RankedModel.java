@@ -37,7 +37,7 @@ public class RankedModel extends Model implements IRankedModel {
 	Map<String, Object> ranks;
 	int priority = 0;
 
-	private ModelReference modelData;
+	private transient ModelReference modelData;
 
 	public RankedModel(ModelReference model, Map<String, Object> ranks, int priority) {
 		this.modelUrn = model.getUrn();
@@ -62,6 +62,15 @@ public class RankedModel extends Model implements IRankedModel {
 		return delegate;
 	}
 
+	/**
+	 * Return the underlying model data. These may be ranked again in a different scale.
+	 * 
+	 * @return
+	 */
+	public ModelReference getModelData() {
+		return modelData;
+	}
+	
 	public List<IKimObject> getChildren() {
 		return getDelegate().getChildren();
 	}

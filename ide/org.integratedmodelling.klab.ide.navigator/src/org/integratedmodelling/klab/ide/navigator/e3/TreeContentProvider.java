@@ -12,7 +12,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 
-class TreeContentProvider extends WorkbenchContentProvider {
+public class TreeContentProvider extends WorkbenchContentProvider {
 
 	public TreeContentProvider() {}
 	

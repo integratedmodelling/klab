@@ -386,12 +386,12 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public boolean contains(IExtent other) throws KlabException {
-		if (!(other instanceof Space)) {
+		if (!(other instanceof ISpace)) {
 			throw new IllegalArgumentException(
 					"cannot check containment of a space extent within a " + other.getClass().getCanonicalName());
 		}
-		Space e = (Space) other;
-		return shape == null || e.shape == null ? false : shape.geometry.contains(e.shape.geometry);
+		Shape oShape = (Shape) ((ISpace) other).getShape();
+		return shape == null || oShape == null ? false : shape.geometry.contains(oShape.geometry);
 	}
 
 	@Override
@@ -400,8 +400,8 @@ public class Space extends Extent implements ISpace {
 			throw new IllegalArgumentException(
 					"cannot overlap a space extent with a " + other.getClass().getCanonicalName());
 		}
-		Space e = (Space) other;
-		return shape == null || e.shape == null ? false : shape.geometry.overlaps(e.shape.geometry);
+		Shape oShape = (Shape) ((ISpace) other).getShape();
+		return shape == null || oShape == null ? false : shape.geometry.overlaps(oShape.geometry);
 	}
 
 	@Override
@@ -410,8 +410,8 @@ public class Space extends Extent implements ISpace {
 			throw new IllegalArgumentException(
 					"cannot intersect a space extent with a " + other.getClass().getCanonicalName());
 		}
-		Space e = (Space) other;
-		return shape == null || e.shape == null ? false : shape.geometry.intersects(e.shape.geometry);
+		Shape oShape = (Shape) ((ISpace) other).getShape();
+		return shape == null || oShape == null ? false : shape.geometry.intersects(oShape.geometry);
 	}
 
 	@Override

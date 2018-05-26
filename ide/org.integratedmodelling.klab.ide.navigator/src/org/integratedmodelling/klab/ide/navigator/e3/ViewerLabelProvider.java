@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
-class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {
+public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {
     
 	public ViewerLabelProvider() {}
 	
