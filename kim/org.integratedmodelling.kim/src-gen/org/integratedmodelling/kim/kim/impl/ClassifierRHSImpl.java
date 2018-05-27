@@ -49,6 +49,7 @@ import org.integratedmodelling.kim.kim.REL_OPERATOR;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl#isAnything <em>Anything</em>}</li>
  * </ul>
  *
@@ -275,6 +276,26 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @ordered
    */
   protected String id = ID_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getExpr() <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpr()
+   * @generated
+   * @ordered
+   */
+  protected static final String EXPR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getExpr() <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpr()
+   * @generated
+   * @ordered
+   */
+  protected String expr = EXPR_EDEFAULT;
 
   /**
    * The default value of the '{@link #isAnything() <em>Anything</em>}' attribute.
@@ -833,6 +854,29 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getExpr()
+  {
+    return expr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpr(String newExpr)
+  {
+    String oldExpr = expr;
+    expr = newExpr;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CLASSIFIER_RHS__EXPR, oldExpr, expr));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isAnything()
   {
     return anything;
@@ -921,6 +965,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return isStar();
       case KimPackage.CLASSIFIER_RHS__ID:
         return getId();
+      case KimPackage.CLASSIFIER_RHS__EXPR:
+        return getExpr();
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         return isAnything();
     }
@@ -984,6 +1030,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KimPackage.CLASSIFIER_RHS__ID:
         setId((String)newValue);
         return;
+      case KimPackage.CLASSIFIER_RHS__EXPR:
+        setExpr((String)newValue);
+        return;
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         setAnything((Boolean)newValue);
         return;
@@ -1046,6 +1095,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KimPackage.CLASSIFIER_RHS__ID:
         setId(ID_EDEFAULT);
         return;
+      case KimPackage.CLASSIFIER_RHS__EXPR:
+        setExpr(EXPR_EDEFAULT);
+        return;
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         setAnything(ANYTHING_EDEFAULT);
         return;
@@ -1093,6 +1145,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return star != STAR_EDEFAULT;
       case KimPackage.CLASSIFIER_RHS__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+      case KimPackage.CLASSIFIER_RHS__EXPR:
+        return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
       case KimPackage.CLASSIFIER_RHS__ANYTHING:
         return anything != ANYTHING_EDEFAULT;
     }
@@ -1124,6 +1178,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
     result.append(star);
     result.append(", id: ");
     result.append(id);
+    result.append(", expr: ");
+    result.append(expr);
     result.append(", anything: ");
     result.append(anything);
     result.append(')');

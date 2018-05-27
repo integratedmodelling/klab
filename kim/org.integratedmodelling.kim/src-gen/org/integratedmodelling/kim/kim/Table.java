@@ -17,9 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.Table#getArgs <em>Args</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Table#getExpr <em>Expr</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Table#getElements <em>Elements</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Table#getRows <em>Rows</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getTable()
@@ -29,51 +27,19 @@ import org.eclipse.emf.ecore.EObject;
 public interface Table extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Args</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
+   * Returns the value of the '<em><b>Rows</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.TableRow}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Args</em>' attribute list isn't clear,
+   * If the meaning of the '<em>Rows</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Args</em>' attribute list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getTable_Args()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getArgs();
-
-  /**
-   * Returns the value of the '<em><b>Expr</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Expr</em>' attribute list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Expr</em>' attribute list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getTable_Expr()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getExpr();
-
-  /**
-   * Returns the value of the '<em><b>Elements</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.ClassifierRHS}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Elements</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Elements</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getTable_Elements()
+   * @return the value of the '<em>Rows</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getTable_Rows()
    * @model containment="true"
    * @generated
    */
-  EList<ClassifierRHS> getElements();
+  EList<TableRow> getRows();
 
 } // Table

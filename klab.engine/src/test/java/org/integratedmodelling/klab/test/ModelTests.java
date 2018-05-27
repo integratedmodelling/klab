@@ -35,21 +35,6 @@ public class ModelTests {
 		}
 	}
 
-	// @Test
-	public void runAllTests() throws Exception {
-
-		String file = System.getProperty("test.case");
-
-		/*
-		 * run every file in the kim/ package, under tests/resources
-		 */
-		for (String test : new Reflections("kim", new ResourcesScanner()).getResources(Pattern.compile(".*\\.kim"))) {
-			if (file == null || test.endsWith(file + ".kim")) {
-				engine.run(getClass().getClassLoader().getResource(test)).get();
-			}
-		}
-	}
-
 	@Test
 	public void simpleQualities() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test1.kim")).get();

@@ -27,6 +27,12 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDependencies <em>Dependencies</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getContextualizers <em>Contextualizers</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization <em>Discretization</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassification <em>Classification</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassificationProperty <em>Classification Property</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableArgs <em>Lookup Table Args</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTable <em>Lookup Table</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableId <em>Lookup Table Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocumentation <em>Documentation</em>}</li>
@@ -254,7 +260,7 @@ public interface ModelBodyStatement extends EObject
 
   /**
    * Returns the value of the '<em><b>Contextualizers</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.Contextualization}.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ValueAssignment}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Contextualizers</em>' containment reference list isn't clear,
@@ -266,7 +272,153 @@ public interface ModelBodyStatement extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<Contextualization> getContextualizers();
+  EList<ValueAssignment> getContextualizers();
+
+  /**
+   * Returns the value of the '<em><b>Discretization</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Discretization</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Discretization</em>' attribute.
+   * @see #setDiscretization(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Discretization()
+   * @model
+   * @generated
+   */
+  boolean isDiscretization();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization <em>Discretization</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Discretization</em>' attribute.
+   * @see #isDiscretization()
+   * @generated
+   */
+  void setDiscretization(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Classification</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Classification</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Classification</em>' containment reference.
+   * @see #setClassification(Classification)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Classification()
+   * @model containment="true"
+   * @generated
+   */
+  Classification getClassification();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassification <em>Classification</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Classification</em>' containment reference.
+   * @see #getClassification()
+   * @generated
+   */
+  void setClassification(Classification value);
+
+  /**
+   * Returns the value of the '<em><b>Classification Property</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Classification Property</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Classification Property</em>' attribute.
+   * @see #setClassificationProperty(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_ClassificationProperty()
+   * @model
+   * @generated
+   */
+  String getClassificationProperty();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassificationProperty <em>Classification Property</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Classification Property</em>' attribute.
+   * @see #getClassificationProperty()
+   * @generated
+   */
+  void setClassificationProperty(String value);
+
+  /**
+   * Returns the value of the '<em><b>Lookup Table Args</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Lookup Table Args</em>' attribute list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lookup Table Args</em>' attribute list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_LookupTableArgs()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getLookupTableArgs();
+
+  /**
+   * Returns the value of the '<em><b>Lookup Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Lookup Table</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lookup Table</em>' containment reference.
+   * @see #setLookupTable(Table)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_LookupTable()
+   * @model containment="true"
+   * @generated
+   */
+  Table getLookupTable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTable <em>Lookup Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Lookup Table</em>' containment reference.
+   * @see #getLookupTable()
+   * @generated
+   */
+  void setLookupTable(Table value);
+
+  /**
+   * Returns the value of the '<em><b>Lookup Table Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Lookup Table Id</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lookup Table Id</em>' attribute.
+   * @see #setLookupTableId(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_LookupTableId()
+   * @model
+   * @generated
+   */
+  String getLookupTableId();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableId <em>Lookup Table Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Lookup Table Id</em>' attribute.
+   * @see #getLookupTableId()
+   * @generated
+   */
+  void setLookupTableId(String value);
 
   /**
    * Returns the value of the '<em><b>Actions</b></em>' containment reference list.

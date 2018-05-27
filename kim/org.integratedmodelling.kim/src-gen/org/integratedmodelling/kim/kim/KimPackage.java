@@ -325,68 +325,13 @@ public interface KimPackage extends EPackage
   int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 9;
 
   /**
-   * The feature id for the '<em><b>Actions</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT__ACTIONS = 10;
-
-  /**
-   * The feature id for the '<em><b>Metadata</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT__METADATA = 11;
-
-  /**
-   * The feature id for the '<em><b>Documentation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT__DOCUMENTATION = 12;
-
-  /**
-   * The number of structural features of the '<em>Model Body Statement</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 13;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ContextualizationImpl <em>Contextualization</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.impl.ContextualizationImpl
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getContextualization()
-   * @generated
-   */
-  int CONTEXTUALIZATION = 4;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONTEXTUALIZATION__VALUE = 0;
-
-  /**
    * The feature id for the '<em><b>Discretization</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONTEXTUALIZATION__DISCRETIZATION = 1;
+  int MODEL_BODY_STATEMENT__DISCRETIZATION = 10;
 
   /**
    * The feature id for the '<em><b>Classification</b></em>' containment reference.
@@ -395,16 +340,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONTEXTUALIZATION__CLASSIFICATION = 2;
-
-  /**
-   * The feature id for the '<em><b>Lookup Table</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONTEXTUALIZATION__LOOKUP_TABLE = 3;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION = 11;
 
   /**
    * The feature id for the '<em><b>Classification Property</b></em>' attribute.
@@ -413,16 +349,70 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONTEXTUALIZATION__CLASSIFICATION_PROPERTY = 4;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 12;
 
   /**
-   * The number of structural features of the '<em>Contextualization</em>' class.
+   * The feature id for the '<em><b>Lookup Table Args</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONTEXTUALIZATION_FEATURE_COUNT = 5;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 13;
+
+  /**
+   * The feature id for the '<em><b>Lookup Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 14;
+
+  /**
+   * The feature id for the '<em><b>Lookup Table Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 15;
+
+  /**
+   * The feature id for the '<em><b>Actions</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__ACTIONS = 16;
+
+  /**
+   * The feature id for the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__METADATA = 17;
+
+  /**
+   * The feature id for the '<em><b>Documentation</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__DOCUMENTATION = 18;
+
+  /**
+   * The number of structural features of the '<em>Model Body Statement</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.AttributeIdentifierImpl <em>Attribute Identifier</em>}' class.
@@ -432,7 +422,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getAttributeIdentifier()
    * @generated
    */
-  int ATTRIBUTE_IDENTIFIER = 5;
+  int ATTRIBUTE_IDENTIFIER = 4;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -478,7 +468,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getClassification()
    * @generated
    */
-  int CLASSIFICATION = 6;
+  int CLASSIFICATION = 5;
 
   /**
    * The feature id for the '<em><b>Classifiers</b></em>' containment reference list.
@@ -506,7 +496,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getClassifier()
    * @generated
    */
-  int CLASSIFIER = 7;
+  int CLASSIFIER = 6;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -561,7 +551,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getClassifierRHS()
    * @generated
    */
-  int CLASSIFIER_RHS = 8;
+  int CLASSIFIER_RHS = 7;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -699,13 +689,22 @@ public interface KimPackage extends EPackage
   int CLASSIFIER_RHS__ID = 14;
 
   /**
+   * The feature id for the '<em><b>Expr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__EXPR = 15;
+
+  /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__ANYTHING = 15;
+  int CLASSIFIER_RHS__ANYTHING = 16;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -714,53 +713,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 16;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.impl.LookupTableImpl
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLookupTable()
-   * @generated
-   */
-  int LOOKUP_TABLE = 9;
-
-  /**
-   * The feature id for the '<em><b>Args</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOOKUP_TABLE__ARGS = 0;
-
-  /**
-   * The feature id for the '<em><b>Table</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOOKUP_TABLE__TABLE = 1;
-
-  /**
-   * The feature id for the '<em><b>Ref</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOOKUP_TABLE__REF = 2;
-
-  /**
-   * The number of structural features of the '<em>Lookup Table</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOOKUP_TABLE_FEATURE_COUNT = 3;
+  int CLASSIFIER_RHS_FEATURE_COUNT = 17;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UrnImpl <em>Urn</em>}' class.
@@ -770,7 +723,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUrn()
    * @generated
    */
-  int URN = 10;
+  int URN = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -791,6 +744,34 @@ public interface KimPackage extends EPackage
   int URN_FEATURE_COUNT = 1;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.LookupTableImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLookupTable()
+   * @generated
+   */
+  int LOOKUP_TABLE = 9;
+
+  /**
+   * The feature id for the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOOKUP_TABLE__TABLE = 0;
+
+  /**
+   * The number of structural features of the '<em>Lookup Table</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOOKUP_TABLE_FEATURE_COUNT = 1;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.TableImpl <em>Table</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -798,34 +779,16 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getTable()
    * @generated
    */
-  int TABLE = 11;
+  int TABLE = 10;
 
   /**
-   * The feature id for the '<em><b>Args</b></em>' attribute list.
+   * The feature id for the '<em><b>Rows</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TABLE__ARGS = 0;
-
-  /**
-   * The feature id for the '<em><b>Expr</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int TABLE__EXPR = 1;
-
-  /**
-   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int TABLE__ELEMENTS = 2;
+  int TABLE__ROWS = 0;
 
   /**
    * The number of structural features of the '<em>Table</em>' class.
@@ -834,7 +797,35 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int TABLE_FEATURE_COUNT = 3;
+  int TABLE_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.TableRowImpl <em>Table Row</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.TableRowImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getTableRow()
+   * @generated
+   */
+  int TABLE_ROW = 11;
+
+  /**
+   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_ROW__ELEMENTS = 0;
+
+  /**
+   * The number of structural features of the '<em>Table Row</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_ROW_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl <em>Action Specification</em>}' class.
@@ -3651,13 +3642,22 @@ public interface KimPackage extends EPackage
   int VALUE__ID = 7;
 
   /**
+   * The feature id for the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__TABLE = 8;
+
+  /**
    * The number of structural features of the '<em>Value</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 8;
+  int VALUE_FEATURE_COUNT = 9;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.
@@ -4293,6 +4293,72 @@ public interface KimPackage extends EPackage
   EReference getModelBodyStatement_Contextualizers();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization <em>Discretization</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Discretization</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_Discretization();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassification <em>Classification</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Classification</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getClassification()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EReference getModelBodyStatement_Classification();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getClassificationProperty <em>Classification Property</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Classification Property</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getClassificationProperty()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_ClassificationProperty();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableArgs <em>Lookup Table Args</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Lookup Table Args</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableArgs()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_LookupTableArgs();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTable <em>Lookup Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Lookup Table</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTable()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EReference getModelBodyStatement_LookupTable();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableId <em>Lookup Table Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Lookup Table Id</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableId()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_LookupTableId();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getActions <em>Actions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4324,71 +4390,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getModelBodyStatement_Documentation();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Contextualization <em>Contextualization</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Contextualization</em>'.
-   * @see org.integratedmodelling.kim.kim.Contextualization
-   * @generated
-   */
-  EClass getContextualization();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Contextualization#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Value</em>'.
-   * @see org.integratedmodelling.kim.kim.Contextualization#getValue()
-   * @see #getContextualization()
-   * @generated
-   */
-  EReference getContextualization_Value();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Contextualization#isDiscretization <em>Discretization</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Discretization</em>'.
-   * @see org.integratedmodelling.kim.kim.Contextualization#isDiscretization()
-   * @see #getContextualization()
-   * @generated
-   */
-  EAttribute getContextualization_Discretization();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Contextualization#getClassification <em>Classification</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Classification</em>'.
-   * @see org.integratedmodelling.kim.kim.Contextualization#getClassification()
-   * @see #getContextualization()
-   * @generated
-   */
-  EReference getContextualization_Classification();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Contextualization#getLookupTable <em>Lookup Table</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Lookup Table</em>'.
-   * @see org.integratedmodelling.kim.kim.Contextualization#getLookupTable()
-   * @see #getContextualization()
-   * @generated
-   */
-  EReference getContextualization_LookupTable();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Contextualization#getClassificationProperty <em>Classification Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Classification Property</em>'.
-   * @see org.integratedmodelling.kim.kim.Contextualization#getClassificationProperty()
-   * @see #getContextualization()
-   * @generated
-   */
-  EAttribute getContextualization_ClassificationProperty();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.AttributeIdentifier <em>Attribute Identifier</em>}'.
@@ -4684,6 +4685,17 @@ public interface KimPackage extends EPackage
   EAttribute getClassifierRHS_Id();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expr</em>'.
+   * @see org.integratedmodelling.kim.kim.ClassifierRHS#getExpr()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EAttribute getClassifierRHS_Expr();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ClassifierRHS#isAnything <em>Anything</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4693,49 +4705,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getClassifierRHS_Anything();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.LookupTable <em>Lookup Table</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Lookup Table</em>'.
-   * @see org.integratedmodelling.kim.kim.LookupTable
-   * @generated
-   */
-  EClass getLookupTable();
-
-  /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.LookupTable#getArgs <em>Args</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Args</em>'.
-   * @see org.integratedmodelling.kim.kim.LookupTable#getArgs()
-   * @see #getLookupTable()
-   * @generated
-   */
-  EAttribute getLookupTable_Args();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.LookupTable#getTable <em>Table</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Table</em>'.
-   * @see org.integratedmodelling.kim.kim.LookupTable#getTable()
-   * @see #getLookupTable()
-   * @generated
-   */
-  EReference getLookupTable_Table();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.LookupTable#getRef <em>Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Ref</em>'.
-   * @see org.integratedmodelling.kim.kim.LookupTable#getRef()
-   * @see #getLookupTable()
-   * @generated
-   */
-  EAttribute getLookupTable_Ref();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Urn <em>Urn</em>}'.
@@ -4759,6 +4728,27 @@ public interface KimPackage extends EPackage
   EAttribute getUrn_Name();
 
   /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.LookupTable <em>Lookup Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Lookup Table</em>'.
+   * @see org.integratedmodelling.kim.kim.LookupTable
+   * @generated
+   */
+  EClass getLookupTable();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.LookupTable#getTable <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Table</em>'.
+   * @see org.integratedmodelling.kim.kim.LookupTable#getTable()
+   * @see #getLookupTable()
+   * @generated
+   */
+  EReference getLookupTable_Table();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Table <em>Table</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4769,37 +4759,36 @@ public interface KimPackage extends EPackage
   EClass getTable();
 
   /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Table#getArgs <em>Args</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Table#getRows <em>Rows</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Args</em>'.
-   * @see org.integratedmodelling.kim.kim.Table#getArgs()
+   * @return the meta object for the containment reference list '<em>Rows</em>'.
+   * @see org.integratedmodelling.kim.kim.Table#getRows()
    * @see #getTable()
    * @generated
    */
-  EAttribute getTable_Args();
+  EReference getTable_Rows();
 
   /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Table#getExpr <em>Expr</em>}'.
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.TableRow <em>Table Row</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Expr</em>'.
-   * @see org.integratedmodelling.kim.kim.Table#getExpr()
-   * @see #getTable()
+   * @return the meta object for class '<em>Table Row</em>'.
+   * @see org.integratedmodelling.kim.kim.TableRow
    * @generated
    */
-  EAttribute getTable_Expr();
+  EClass getTableRow();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Table#getElements <em>Elements</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.TableRow#getElements <em>Elements</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Elements</em>'.
-   * @see org.integratedmodelling.kim.kim.Table#getElements()
-   * @see #getTable()
+   * @see org.integratedmodelling.kim.kim.TableRow#getElements()
+   * @see #getTableRow()
    * @generated
    */
-  EReference getTable_Elements();
+  EReference getTableRow_Elements();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.ActionSpecification <em>Action Specification</em>}'.
@@ -7816,6 +7805,17 @@ public interface KimPackage extends EPackage
   EAttribute getValue_Id();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getTable <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Table</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getTable()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Table();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Function <em>Function</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8399,6 +8399,54 @@ public interface KimPackage extends EPackage
     EReference MODEL_BODY_STATEMENT__CONTEXTUALIZERS = eINSTANCE.getModelBodyStatement_Contextualizers();
 
     /**
+     * The meta object literal for the '<em><b>Discretization</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__DISCRETIZATION = eINSTANCE.getModelBodyStatement_Discretization();
+
+    /**
+     * The meta object literal for the '<em><b>Classification</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MODEL_BODY_STATEMENT__CLASSIFICATION = eINSTANCE.getModelBodyStatement_Classification();
+
+    /**
+     * The meta object literal for the '<em><b>Classification Property</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = eINSTANCE.getModelBodyStatement_ClassificationProperty();
+
+    /**
+     * The meta object literal for the '<em><b>Lookup Table Args</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = eINSTANCE.getModelBodyStatement_LookupTableArgs();
+
+    /**
+     * The meta object literal for the '<em><b>Lookup Table</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MODEL_BODY_STATEMENT__LOOKUP_TABLE = eINSTANCE.getModelBodyStatement_LookupTable();
+
+    /**
+     * The meta object literal for the '<em><b>Lookup Table Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = eINSTANCE.getModelBodyStatement_LookupTableId();
+
+    /**
      * The meta object literal for the '<em><b>Actions</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8421,56 +8469,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference MODEL_BODY_STATEMENT__DOCUMENTATION = eINSTANCE.getModelBodyStatement_Documentation();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ContextualizationImpl <em>Contextualization</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.impl.ContextualizationImpl
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getContextualization()
-     * @generated
-     */
-    EClass CONTEXTUALIZATION = eINSTANCE.getContextualization();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONTEXTUALIZATION__VALUE = eINSTANCE.getContextualization_Value();
-
-    /**
-     * The meta object literal for the '<em><b>Discretization</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONTEXTUALIZATION__DISCRETIZATION = eINSTANCE.getContextualization_Discretization();
-
-    /**
-     * The meta object literal for the '<em><b>Classification</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONTEXTUALIZATION__CLASSIFICATION = eINSTANCE.getContextualization_Classification();
-
-    /**
-     * The meta object literal for the '<em><b>Lookup Table</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONTEXTUALIZATION__LOOKUP_TABLE = eINSTANCE.getContextualization_LookupTable();
-
-    /**
-     * The meta object literal for the '<em><b>Classification Property</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONTEXTUALIZATION__CLASSIFICATION_PROPERTY = eINSTANCE.getContextualization_ClassificationProperty();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.AttributeIdentifierImpl <em>Attribute Identifier</em>}' class.
@@ -8697,46 +8695,20 @@ public interface KimPackage extends EPackage
     EAttribute CLASSIFIER_RHS__ID = eINSTANCE.getClassifierRHS_Id();
 
     /**
+     * The meta object literal for the '<em><b>Expr</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CLASSIFIER_RHS__EXPR = eINSTANCE.getClassifierRHS_Expr();
+
+    /**
      * The meta object literal for the '<em><b>Anything</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute CLASSIFIER_RHS__ANYTHING = eINSTANCE.getClassifierRHS_Anything();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.impl.LookupTableImpl
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLookupTable()
-     * @generated
-     */
-    EClass LOOKUP_TABLE = eINSTANCE.getLookupTable();
-
-    /**
-     * The meta object literal for the '<em><b>Args</b></em>' attribute list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute LOOKUP_TABLE__ARGS = eINSTANCE.getLookupTable_Args();
-
-    /**
-     * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference LOOKUP_TABLE__TABLE = eINSTANCE.getLookupTable_Table();
-
-    /**
-     * The meta object literal for the '<em><b>Ref</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute LOOKUP_TABLE__REF = eINSTANCE.getLookupTable_Ref();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.UrnImpl <em>Urn</em>}' class.
@@ -8757,6 +8729,24 @@ public interface KimPackage extends EPackage
     EAttribute URN__NAME = eINSTANCE.getUrn_Name();
 
     /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.LookupTableImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLookupTable()
+     * @generated
+     */
+    EClass LOOKUP_TABLE = eINSTANCE.getLookupTable();
+
+    /**
+     * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LOOKUP_TABLE__TABLE = eINSTANCE.getLookupTable_Table();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.TableImpl <em>Table</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8767,20 +8757,22 @@ public interface KimPackage extends EPackage
     EClass TABLE = eINSTANCE.getTable();
 
     /**
-     * The meta object literal for the '<em><b>Args</b></em>' attribute list feature.
+     * The meta object literal for the '<em><b>Rows</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TABLE__ARGS = eINSTANCE.getTable_Args();
+    EReference TABLE__ROWS = eINSTANCE.getTable_Rows();
 
     /**
-     * The meta object literal for the '<em><b>Expr</b></em>' attribute list feature.
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.TableRowImpl <em>Table Row</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.TableRowImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getTableRow()
      * @generated
      */
-    EAttribute TABLE__EXPR = eINSTANCE.getTable_Expr();
+    EClass TABLE_ROW = eINSTANCE.getTableRow();
 
     /**
      * The meta object literal for the '<em><b>Elements</b></em>' containment reference list feature.
@@ -8788,7 +8780,7 @@ public interface KimPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference TABLE__ELEMENTS = eINSTANCE.getTable_Elements();
+    EReference TABLE_ROW__ELEMENTS = eINSTANCE.getTableRow_Elements();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl <em>Action Specification</em>}' class.
@@ -11071,6 +11063,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute VALUE__ID = eINSTANCE.getValue_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__TABLE = eINSTANCE.getValue_Table();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.

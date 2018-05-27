@@ -61,15 +61,6 @@ public interface KimFactory extends EFactory
   ModelBodyStatement createModelBodyStatement();
 
   /**
-   * Returns a new object of class '<em>Contextualization</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Contextualization</em>'.
-   * @generated
-   */
-  Contextualization createContextualization();
-
-  /**
    * Returns a new object of class '<em>Attribute Identifier</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -106,15 +97,6 @@ public interface KimFactory extends EFactory
   ClassifierRHS createClassifierRHS();
 
   /**
-   * Returns a new object of class '<em>Lookup Table</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Lookup Table</em>'.
-   * @generated
-   */
-  LookupTable createLookupTable();
-
-  /**
    * Returns a new object of class '<em>Urn</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -124,6 +106,15 @@ public interface KimFactory extends EFactory
   Urn createUrn();
 
   /**
+   * Returns a new object of class '<em>Lookup Table</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Lookup Table</em>'.
+   * @generated
+   */
+  LookupTable createLookupTable();
+
+  /**
    * Returns a new object of class '<em>Table</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -131,6 +122,15 @@ public interface KimFactory extends EFactory
    * @generated
    */
   Table createTable();
+
+  /**
+   * Returns a new object of class '<em>Table Row</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Table Row</em>'.
+   * @generated
+   */
+  TableRow createTableRow();
 
   /**
    * Returns a new object of class '<em>Action Specification</em>'.

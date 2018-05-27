@@ -35,18 +35,25 @@ ModelBodyStatement:
 		 */
 		 ( name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
-		 ('using' contextualizers+=Contextualization (',' contextualizers+=Contextualization)*)?
+		 ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		 (('classified' | discretization?='discretized') ('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId))?
+	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
+		 ('lookup' 
+		 	('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?  
+		 	'into' 
+		 		(lookupTable=Table | lookupTableId=LOWERCASE_ID)
+		 )?
 		 actions+=ActionSpecification*
 		 ('with' 'metadata' metadata=Metadata)? 
 		 ('with' 'documentation' documentation=Documentation)? 
 ;
 
-Contextualization:
-	value=ValueExecution |
-	(('classification'|discretization?='discretization') '(' classification=Classification ')' ) |
-	('lookup' lookupTable=LookupTable) |
-	('classified'|discretization?='discretized') 'according' 'to'  classificationProperty=PropertyId
-;
+//Contextualization:
+//	value=ValueExecution |
+//	(('classification'|discretization?='discretization') '(' classification=Classification ')' ) |
+//	('lookup' lookupTable=LookupTable) |
+//	('classified'|discretization?='discretized') 'according' 'to'  classificationProperty=PropertyId
+//;
 
 AttributeIdentifier:
 	name=(LOWERCASE_ID|UPPERCASE_ID) |
@@ -84,19 +91,29 @@ ClassifierRHSWithId returns ClassifierRHS:
 	nodata='unknown' |
 	star?='*';	
 	
-LookupTable:
-	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
-//	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
-;
+//LookupTable:
+//	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
+////	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
+//;
 
 Urn:
 	// String used when there are strange chars or keywords in the URN.
 	name=(UrnId|STRING|LocalFilePath)
 ;
 
+// Lookup table literal
+LookupTable: {LookupTable}
+	'{{' table=Table? '}}'
+;
+
 Table:
-	'(' ((args+=LOWERCASE_ID (',' args+=LOWERCASE_ID)*) | (expr+=EXPR (expr+=EXPR)*)) ')' ':' elements+=TableClassifier
-	(=> ',' elements+=TableClassifier)*;
+	rows+=TableRow (',' rows+=TableRow)*;
+//	'(' ((args+=LOWERCASE_ID (',' args+=LOWERCASE_ID)*) | (expr+=EXPR (expr+=EXPR)*)) ')' ':' elements+=TableClassifier
+//	(=> ',' elements+=TableClassifier)*;
+
+TableRow:
+	elements+=TableClassifier ('|' elements+=TableClassifier)*
+;
 
 TableClassifier returns ClassifierRHS:
 	(boolean='true' | boolean='false') | 
@@ -106,6 +123,7 @@ TableClassifier returns ClassifierRHS:
 	string=STRING | 
 	concept=ConceptDeclaration | 
 	op=REL_OPERATOR expression=Number | 
+	expr=EXPR |
 	nodata='unknown' |
 	star?='*' |
 	anything?='#';
@@ -650,6 +668,7 @@ Value:
 	expr=EXPR |
 	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	list=List |
+	table=LookupTable |
 	map=Map |
 	null?='unknown';
 	

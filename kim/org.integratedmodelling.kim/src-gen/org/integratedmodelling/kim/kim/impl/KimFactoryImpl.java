@@ -27,7 +27,6 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
-import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DataType;
 import org.integratedmodelling.kim.kim.Dependency;
@@ -60,6 +59,7 @@ import org.integratedmodelling.kim.kim.RestrictionDefinition;
 import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.TableRow;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.kim.UnitElement;
 import org.integratedmodelling.kim.kim.UnitOp;
@@ -124,14 +124,14 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.STATEMENT: return createStatement();
       case KimPackage.MODEL_STATEMENT: return createModelStatement();
       case KimPackage.MODEL_BODY_STATEMENT: return createModelBodyStatement();
-      case KimPackage.CONTEXTUALIZATION: return createContextualization();
       case KimPackage.ATTRIBUTE_IDENTIFIER: return createAttributeIdentifier();
       case KimPackage.CLASSIFICATION: return createClassification();
       case KimPackage.CLASSIFIER: return createClassifier();
       case KimPackage.CLASSIFIER_RHS: return createClassifierRHS();
-      case KimPackage.LOOKUP_TABLE: return createLookupTable();
       case KimPackage.URN: return createUrn();
+      case KimPackage.LOOKUP_TABLE: return createLookupTable();
       case KimPackage.TABLE: return createTable();
+      case KimPackage.TABLE_ROW: return createTableRow();
       case KimPackage.ACTION_SPECIFICATION: return createActionSpecification();
       case KimPackage.FUNCTION_OR_ID: return createFunctionOrID();
       case KimPackage.ACTION: return createAction();
@@ -263,17 +263,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Contextualization createContextualization()
-  {
-    ContextualizationImpl contextualization = new ContextualizationImpl();
-    return contextualization;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public AttributeIdentifier createAttributeIdentifier()
   {
     AttributeIdentifierImpl attributeIdentifier = new AttributeIdentifierImpl();
@@ -318,17 +307,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public LookupTable createLookupTable()
-  {
-    LookupTableImpl lookupTable = new LookupTableImpl();
-    return lookupTable;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Urn createUrn()
   {
     UrnImpl urn = new UrnImpl();
@@ -340,10 +318,32 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public LookupTable createLookupTable()
+  {
+    LookupTableImpl lookupTable = new LookupTableImpl();
+    return lookupTable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Table createTable()
   {
     TableImpl table = new TableImpl();
     return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TableRow createTableRow()
+  {
+    TableRowImpl tableRow = new TableRowImpl();
+    return tableRow;
   }
 
   /**

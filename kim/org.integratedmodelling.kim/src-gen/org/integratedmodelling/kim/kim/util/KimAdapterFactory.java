@@ -25,7 +25,6 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
-import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
@@ -56,6 +55,7 @@ import org.integratedmodelling.kim.kim.RestrictionDefinition;
 import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.TableRow;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.kim.UnitElement;
 import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
@@ -147,11 +147,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
         return createModelBodyStatementAdapter();
       }
       @Override
-      public Adapter caseContextualization(Contextualization object)
-      {
-        return createContextualizationAdapter();
-      }
-      @Override
       public Adapter caseAttributeIdentifier(AttributeIdentifier object)
       {
         return createAttributeIdentifierAdapter();
@@ -172,19 +167,24 @@ public class KimAdapterFactory extends AdapterFactoryImpl
         return createClassifierRHSAdapter();
       }
       @Override
-      public Adapter caseLookupTable(LookupTable object)
-      {
-        return createLookupTableAdapter();
-      }
-      @Override
       public Adapter caseUrn(Urn object)
       {
         return createUrnAdapter();
       }
       @Override
+      public Adapter caseLookupTable(LookupTable object)
+      {
+        return createLookupTableAdapter();
+      }
+      @Override
       public Adapter caseTable(Table object)
       {
         return createTableAdapter();
+      }
+      @Override
+      public Adapter caseTableRow(TableRow object)
+      {
+        return createTableRowAdapter();
       }
       @Override
       public Adapter caseActionSpecification(ActionSpecification object)
@@ -464,21 +464,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Contextualization <em>Contextualization</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.Contextualization
-   * @generated
-   */
-  public Adapter createContextualizationAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.AttributeIdentifier <em>Attribute Identifier</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -539,21 +524,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.LookupTable <em>Lookup Table</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.LookupTable
-   * @generated
-   */
-  public Adapter createLookupTableAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Urn <em>Urn</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -569,6 +539,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.LookupTable <em>Lookup Table</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.LookupTable
+   * @generated
+   */
+  public Adapter createLookupTableAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Table <em>Table</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -579,6 +564,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createTableAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.TableRow <em>Table Row</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.TableRow
+   * @generated
+   */
+  public Adapter createTableRowAdapter()
   {
     return null;
   }

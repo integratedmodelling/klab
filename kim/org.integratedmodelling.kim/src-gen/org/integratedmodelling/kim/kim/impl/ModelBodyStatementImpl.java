@@ -17,11 +17,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.ActionSpecification;
-import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
@@ -29,7 +30,9 @@ import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Urn;
+import org.integratedmodelling.kim.kim.ValueAssignment;
 
 /**
  * <!-- begin-user-doc -->
@@ -49,6 +52,12 @@ import org.integratedmodelling.kim.kim.Urn;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getObservables <em>Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDependencies <em>Dependencies</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getContextualizers <em>Contextualizers</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isDiscretization <em>Discretization</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getClassification <em>Classification</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getClassificationProperty <em>Classification Property</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTableArgs <em>Lookup Table Args</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTable <em>Lookup Table</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTableId <em>Lookup Table Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDocumentation <em>Documentation</em>}</li>
@@ -186,7 +195,97 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    * @ordered
    */
-  protected EList<Contextualization> contextualizers;
+  protected EList<ValueAssignment> contextualizers;
+
+  /**
+   * The default value of the '{@link #isDiscretization() <em>Discretization</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDiscretization()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DISCRETIZATION_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDiscretization() <em>Discretization</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDiscretization()
+   * @generated
+   * @ordered
+   */
+  protected boolean discretization = DISCRETIZATION_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getClassification() <em>Classification</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getClassification()
+   * @generated
+   * @ordered
+   */
+  protected Classification classification;
+
+  /**
+   * The default value of the '{@link #getClassificationProperty() <em>Classification Property</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getClassificationProperty()
+   * @generated
+   * @ordered
+   */
+  protected static final String CLASSIFICATION_PROPERTY_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getClassificationProperty() <em>Classification Property</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getClassificationProperty()
+   * @generated
+   * @ordered
+   */
+  protected String classificationProperty = CLASSIFICATION_PROPERTY_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getLookupTableArgs() <em>Lookup Table Args</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLookupTableArgs()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> lookupTableArgs;
+
+  /**
+   * The cached value of the '{@link #getLookupTable() <em>Lookup Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLookupTable()
+   * @generated
+   * @ordered
+   */
+  protected Table lookupTable;
+
+  /**
+   * The default value of the '{@link #getLookupTableId() <em>Lookup Table Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLookupTableId()
+   * @generated
+   * @ordered
+   */
+  protected static final String LOOKUP_TABLE_ID_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLookupTableId() <em>Lookup Table Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLookupTableId()
+   * @generated
+   * @ordered
+   */
+  protected String lookupTableId = LOOKUP_TABLE_ID_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference list.
@@ -533,13 +632,192 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Contextualization> getContextualizers()
+  public EList<ValueAssignment> getContextualizers()
   {
     if (contextualizers == null)
     {
-      contextualizers = new EObjectContainmentEList<Contextualization>(Contextualization.class, this, KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS);
+      contextualizers = new EObjectContainmentEList<ValueAssignment>(ValueAssignment.class, this, KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS);
     }
     return contextualizers;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isDiscretization()
+  {
+    return discretization;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDiscretization(boolean newDiscretization)
+  {
+    boolean oldDiscretization = discretization;
+    discretization = newDiscretization;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION, oldDiscretization, discretization));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Classification getClassification()
+  {
+    return classification;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetClassification(Classification newClassification, NotificationChain msgs)
+  {
+    Classification oldClassification = classification;
+    classification = newClassification;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION, oldClassification, newClassification);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setClassification(Classification newClassification)
+  {
+    if (newClassification != classification)
+    {
+      NotificationChain msgs = null;
+      if (classification != null)
+        msgs = ((InternalEObject)classification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION, null, msgs);
+      if (newClassification != null)
+        msgs = ((InternalEObject)newClassification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION, null, msgs);
+      msgs = basicSetClassification(newClassification, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION, newClassification, newClassification));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getClassificationProperty()
+  {
+    return classificationProperty;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setClassificationProperty(String newClassificationProperty)
+  {
+    String oldClassificationProperty = classificationProperty;
+    classificationProperty = newClassificationProperty;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY, oldClassificationProperty, classificationProperty));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<String> getLookupTableArgs()
+  {
+    if (lookupTableArgs == null)
+    {
+      lookupTableArgs = new EDataTypeEList<String>(String.class, this, KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS);
+    }
+    return lookupTableArgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Table getLookupTable()
+  {
+    return lookupTable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetLookupTable(Table newLookupTable, NotificationChain msgs)
+  {
+    Table oldLookupTable = lookupTable;
+    lookupTable = newLookupTable;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE, oldLookupTable, newLookupTable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLookupTable(Table newLookupTable)
+  {
+    if (newLookupTable != lookupTable)
+    {
+      NotificationChain msgs = null;
+      if (lookupTable != null)
+        msgs = ((InternalEObject)lookupTable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE, null, msgs);
+      if (newLookupTable != null)
+        msgs = ((InternalEObject)newLookupTable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE, null, msgs);
+      msgs = basicSetLookupTable(newLookupTable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE, newLookupTable, newLookupTable));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getLookupTableId()
+  {
+    return lookupTableId;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLookupTableId(String newLookupTableId)
+  {
+    String oldLookupTableId = lookupTableId;
+    lookupTableId = newLookupTableId;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, oldLookupTableId, lookupTableId));
   }
 
   /**
@@ -676,6 +954,10 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return ((InternalEList<?>)getDependencies()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return ((InternalEList<?>)getContextualizers()).basicRemove(otherEnd, msgs);
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION:
+        return basicSetClassification(null, msgs);
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
+        return basicSetLookupTable(null, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         return ((InternalEList<?>)getActions()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
@@ -716,6 +998,18 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getDependencies();
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return getContextualizers();
+      case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
+        return isDiscretization();
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION:
+        return getClassification();
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY:
+        return getClassificationProperty();
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS:
+        return getLookupTableArgs();
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
+        return getLookupTable();
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
+        return getLookupTableId();
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         return getActions();
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
@@ -768,7 +1062,26 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();
-        getContextualizers().addAll((Collection<? extends Contextualization>)newValue);
+        getContextualizers().addAll((Collection<? extends ValueAssignment>)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
+        setDiscretization((Boolean)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION:
+        setClassification((Classification)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY:
+        setClassificationProperty((String)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS:
+        getLookupTableArgs().clear();
+        getLookupTableArgs().addAll((Collection<? extends String>)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
+        setLookupTable((Table)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
+        setLookupTableId((String)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         getActions().clear();
@@ -824,6 +1137,24 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         getContextualizers().clear();
         return;
+      case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
+        setDiscretization(DISCRETIZATION_EDEFAULT);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION:
+        setClassification((Classification)null);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY:
+        setClassificationProperty(CLASSIFICATION_PROPERTY_EDEFAULT);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS:
+        getLookupTableArgs().clear();
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
+        setLookupTable((Table)null);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
+        setLookupTableId(LOOKUP_TABLE_ID_EDEFAULT);
+        return;
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         getActions().clear();
         return;
@@ -867,6 +1198,18 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return dependencies != null && !dependencies.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
         return contextualizers != null && !contextualizers.isEmpty();
+      case KimPackage.MODEL_BODY_STATEMENT__DISCRETIZATION:
+        return discretization != DISCRETIZATION_EDEFAULT;
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION:
+        return classification != null;
+      case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY:
+        return CLASSIFICATION_PROPERTY_EDEFAULT == null ? classificationProperty != null : !CLASSIFICATION_PROPERTY_EDEFAULT.equals(classificationProperty);
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS:
+        return lookupTableArgs != null && !lookupTableArgs.isEmpty();
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
+        return lookupTable != null;
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
+        return LOOKUP_TABLE_ID_EDEFAULT == null ? lookupTableId != null : !LOOKUP_TABLE_ID_EDEFAULT.equals(lookupTableId);
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         return actions != null && !actions.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
@@ -894,6 +1237,14 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     result.append(boolean_);
     result.append(", name: ");
     result.append(name);
+    result.append(", discretization: ");
+    result.append(discretization);
+    result.append(", classificationProperty: ");
+    result.append(classificationProperty);
+    result.append(", lookupTableArgs: ");
+    result.append(lookupTableArgs);
+    result.append(", lookupTableId: ");
+    result.append(lookupTableId);
     result.append(')');
     return result.toString();
   }

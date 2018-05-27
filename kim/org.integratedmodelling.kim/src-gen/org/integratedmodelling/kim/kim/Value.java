@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Value#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getTable <em>Table</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getValue()
@@ -238,5 +239,31 @@ public interface Value extends EObject
    * @generated
    */
   void setId(String value);
+
+  /**
+   * Returns the value of the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Table</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Table</em>' containment reference.
+   * @see #setTable(LookupTable)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Table()
+   * @model containment="true"
+   * @generated
+   */
+  LookupTable getTable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getTable <em>Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Table</em>' containment reference.
+   * @see #getTable()
+   * @generated
+   */
+  void setTable(LookupTable value);
 
 } // Value

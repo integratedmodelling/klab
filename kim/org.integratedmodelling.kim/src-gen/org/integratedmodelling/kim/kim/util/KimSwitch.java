@@ -23,7 +23,6 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
-import org.integratedmodelling.kim.kim.Contextualization;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
@@ -54,6 +53,7 @@ import org.integratedmodelling.kim.kim.RestrictionDefinition;
 import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.TableRow;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.kim.UnitElement;
 import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
@@ -152,13 +152,6 @@ public class KimSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case KimPackage.CONTEXTUALIZATION:
-      {
-        Contextualization contextualization = (Contextualization)theEObject;
-        T result = caseContextualization(contextualization);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case KimPackage.ATTRIBUTE_IDENTIFIER:
       {
         AttributeIdentifier attributeIdentifier = (AttributeIdentifier)theEObject;
@@ -187,13 +180,6 @@ public class KimSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case KimPackage.LOOKUP_TABLE:
-      {
-        LookupTable lookupTable = (LookupTable)theEObject;
-        T result = caseLookupTable(lookupTable);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case KimPackage.URN:
       {
         Urn urn = (Urn)theEObject;
@@ -201,10 +187,24 @@ public class KimSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case KimPackage.LOOKUP_TABLE:
+      {
+        LookupTable lookupTable = (LookupTable)theEObject;
+        T result = caseLookupTable(lookupTable);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case KimPackage.TABLE:
       {
         Table table = (Table)theEObject;
         T result = caseTable(table);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.TABLE_ROW:
+      {
+        TableRow tableRow = (TableRow)theEObject;
+        T result = caseTableRow(tableRow);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -551,22 +551,6 @@ public class KimSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Contextualization</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Contextualization</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseContextualization(Contextualization object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Attribute Identifier</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -631,22 +615,6 @@ public class KimSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseLookupTable(LookupTable object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Urn</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -663,6 +631,22 @@ public class KimSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLookupTable(LookupTable object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Table</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -674,6 +658,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseTable(Table object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Table Row</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Table Row</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTableRow(TableRow object)
   {
     return null;
   }

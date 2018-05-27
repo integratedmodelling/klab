@@ -4,8 +4,6 @@
  */
 package org.integratedmodelling.kim.kim;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -17,9 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.LookupTable#getArgs <em>Args</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.LookupTable#getTable <em>Table</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.LookupTable#getRef <em>Ref</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getLookupTable()
@@ -28,22 +24,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface LookupTable extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>Args</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Args</em>' attribute list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Args</em>' attribute list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getLookupTable_Args()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getArgs();
-
   /**
    * Returns the value of the '<em><b>Table</b></em>' containment reference.
    * <!-- begin-user-doc -->
@@ -69,31 +49,5 @@ public interface LookupTable extends EObject
    * @generated
    */
   void setTable(Table value);
-
-  /**
-   * Returns the value of the '<em><b>Ref</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Ref</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Ref</em>' attribute.
-   * @see #setRef(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getLookupTable_Ref()
-   * @model
-   * @generated
-   */
-  String getRef();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.LookupTable#getRef <em>Ref</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Ref</em>' attribute.
-   * @see #getRef()
-   * @generated
-   */
-  void setRef(String value);
 
 } // LookupTable

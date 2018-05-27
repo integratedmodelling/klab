@@ -3,6 +3,7 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,8 +14,9 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.ComputableValue;
-import org.integratedmodelling.kim.kim.Contextualization;
+import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.klab.utils.Pair;
@@ -83,25 +85,33 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.requiredResourceNames = requiredResourceNames;
 	}
 
-	public ComputableResource(Contextualization statement, IKimStatement parent) {
+	public ComputableResource(ValueAssignment statement, IKimStatement parent) {
 
 		super(statement, parent);
+		setFrom(statement);
+	}
 
-		if (statement.getValue() != null) {
-			setFrom(statement.getValue());
-		}
-		if (statement.getLookupTable() != null) {
-			setCode(statement.getLookupTable());
-			this.lookupTable = new KimLookupTable(statement.getLookupTable(), parent);
-			this.setPostProcessor(true);
-		} else if (statement.getClassification() != null) {
-			setCode(statement.getClassification());
-			this.classification = new KimClassification(statement.getClassification(), statement.isDiscretization(), parent);
-			this.setPostProcessor(true);
-		}
-		if ((this.accordingTo = statement.getClassificationProperty()) != null) {
-			this.setPostProcessor(true);
-		}
+	public ComputableResource(Classification statement, boolean isDiscretization, IKimStatement parent) {
+
+		super(statement, parent);
+		setCode(statement);
+		this.classification = new KimClassification(statement, isDiscretization, parent);
+		this.setPostProcessor(true);
+	}
+
+	public ComputableResource(IKimStatement parent, String classificationProperty) {
+
+		super(null, parent);
+		this.accordingTo = classificationProperty;
+		this.setPostProcessor(true);
+	}
+
+	public ComputableResource(Table lookupTable, List<String> lookupTableArgs, IKimStatement parent) {
+
+		super(lookupTable, parent);
+		setCode(lookupTable);
+		this.lookupTable = new KimLookupTable(lookupTable, lookupTableArgs, parent);
+		this.setPostProcessor(true);
 	}
 
 	public ComputableResource(Value value, IKimStatement parent) {
@@ -114,7 +124,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
 		}
 	}
-	
+
 	public ComputableResource(IValueMediator from, IValueMediator to) {
 		this.conversion = new Pair<>(from, to);
 	}

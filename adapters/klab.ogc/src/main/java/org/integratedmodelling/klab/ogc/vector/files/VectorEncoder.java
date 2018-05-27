@@ -158,7 +158,9 @@ public class VectorEncoder implements IResourceEncoder {
 		}
 
 		int n = 1;
-		for (FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features(); it.hasNext(); ) {
+		FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
+		
+		while (it.hasNext()) {
 
 			SimpleFeature feature = it.next();
 			Object shape = feature.getDefaultGeometryProperty().getValue();
@@ -204,10 +206,11 @@ public class VectorEncoder implements IResourceEncoder {
 					builder = builder.finishObject();
 
 				}
-
 			}
 		}
 
+		it.close();
+		
 		if (rasterize) {
 			// TODO rasterizer.finish(call builder)
 			builder = builder.finishState();

@@ -4,20 +4,14 @@
  */
 package org.integratedmodelling.kim.kim.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.LookupTable;
@@ -31,25 +25,13 @@ import org.integratedmodelling.kim.kim.Table;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl#getArgs <em>Args</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl#getTable <em>Table</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl#getRef <em>Ref</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class LookupTableImpl extends MinimalEObjectImpl.Container implements LookupTable
 {
-  /**
-   * The cached value of the '{@link #getArgs() <em>Args</em>}' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getArgs()
-   * @generated
-   * @ordered
-   */
-  protected EList<String> args;
-
   /**
    * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -59,26 +41,6 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
    * @ordered
    */
   protected Table table;
-
-  /**
-   * The default value of the '{@link #getRef() <em>Ref</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getRef()
-   * @generated
-   * @ordered
-   */
-  protected static final String REF_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getRef() <em>Ref</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getRef()
-   * @generated
-   * @ordered
-   */
-  protected String ref = REF_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -99,20 +61,6 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.LOOKUP_TABLE;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<String> getArgs()
-  {
-    if (args == null)
-    {
-      args = new EDataTypeEList<String>(String.class, this, KimPackage.LOOKUP_TABLE__ARGS);
-    }
-    return args;
   }
 
   /**
@@ -168,29 +116,6 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getRef()
-  {
-    return ref;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setRef(String newRef)
-  {
-    String oldRef = ref;
-    ref = newRef;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.LOOKUP_TABLE__REF, oldRef, ref));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -212,12 +137,8 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
   {
     switch (featureID)
     {
-      case KimPackage.LOOKUP_TABLE__ARGS:
-        return getArgs();
       case KimPackage.LOOKUP_TABLE__TABLE:
         return getTable();
-      case KimPackage.LOOKUP_TABLE__REF:
-        return getRef();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -227,21 +148,13 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
-      case KimPackage.LOOKUP_TABLE__ARGS:
-        getArgs().clear();
-        getArgs().addAll((Collection<? extends String>)newValue);
-        return;
       case KimPackage.LOOKUP_TABLE__TABLE:
         setTable((Table)newValue);
-        return;
-      case KimPackage.LOOKUP_TABLE__REF:
-        setRef((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -257,14 +170,8 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
   {
     switch (featureID)
     {
-      case KimPackage.LOOKUP_TABLE__ARGS:
-        getArgs().clear();
-        return;
       case KimPackage.LOOKUP_TABLE__TABLE:
         setTable((Table)null);
-        return;
-      case KimPackage.LOOKUP_TABLE__REF:
-        setRef(REF_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -280,33 +187,10 @@ public class LookupTableImpl extends MinimalEObjectImpl.Container implements Loo
   {
     switch (featureID)
     {
-      case KimPackage.LOOKUP_TABLE__ARGS:
-        return args != null && !args.isEmpty();
       case KimPackage.LOOKUP_TABLE__TABLE:
         return table != null;
-      case KimPackage.LOOKUP_TABLE__REF:
-        return REF_EDEFAULT == null ? ref != null : !REF_EDEFAULT.equals(ref);
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (args: ");
-    result.append(args);
-    result.append(", ref: ");
-    result.append(ref);
-    result.append(')');
-    return result.toString();
   }
 
 } //LookupTableImpl

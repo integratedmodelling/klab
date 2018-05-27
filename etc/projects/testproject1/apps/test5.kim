@@ -1,18 +1,24 @@
 worldview im;
 
 @test(
-	name = "tests.core.multi-dep-1",
-	description  = "Simplest multi-extent state contextualization",
-	observations = ("geography:Elevation")
+	name = "tests.core.classification.simplest",
+	description  = "Simplest discretization test",
+	observations = ("geography:Elevation by im:Level")
 )
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
-
-// top 
-model 100 as geography:Elevation in m
-	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -8.00, 33.796 -8.00, 33.796 -7.086))");
-
-// bottom
-model geography:Elevation in m
+	
+model geography:Elevation by im:Level
 	using gis.terrain()
-	over space(shape="EPSG:4326 POLYGON((33.796 -8.00, 35.946 -8.00, 35.946 -9.41, 33.796 -9.41, 33.796 -8.00))");
+	classified into
+		im:Low if < 500,
+		im:Medium if < 1500,
+		im:High otherwise;
+
+model geography:Elevation by im:Level
+	using gis.terrain()
+	lookup (self, *, ?) into 
+		im:Low | im:Putamadre | < 1,
+		im:Low | im:Putamadre | < 1,
+		im:Low | im:Putamadre | < 1;
+		

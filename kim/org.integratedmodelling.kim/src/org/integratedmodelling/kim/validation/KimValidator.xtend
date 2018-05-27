@@ -178,6 +178,8 @@ class KimValidator extends AbstractKimValidator {
 		 */
 		var namespace = if(statement !== null) getNamespace(statement) else null;
 
+		val isPrivate = statement.isPrivate || namespace.isPrivate || namespace.worldviewBound;
+
 		/*
 		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
 		 * observable is a role.
@@ -243,7 +245,7 @@ class KimValidator extends AbstractKimValidator {
 					"The first observable in an instantiator model ('model each') must be countable: subject, event or relationship",
 					KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 				ok = false
-			} else if (statement !== null && definition.is(Type.SUBJECTIVE) && !statement.isPrivate) {
+			} else if (statement !== null && definition.is(Type.SUBJECTIVE) && !isPrivate) {
 				error('A model producing subjective observables must be private',
 					KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 				ok = false
@@ -291,31 +293,41 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 
-// all the contextualization stuff
-		for (contextualizer : model.contextualizers) {
+		// all the contextualization stuff
+		if (model.classification !== null) {
+
 			var List<KimConcept> classifiers = null
+
+			// TODO observable must have a "by" or be a class/trait	
 
 			// if any of the observables (not the dependencies) or the classifications/lookup tables
 			// produce a subjective concept, model must be private
-			if (contextualizer.classification !== null) {
-				classifiers = newArrayList
-				var type = EnumSet.noneOf(Type);
-				var cchecked = false
-				for (classifier : contextualizer.classification.classifiers) {
-					var decl = Kim.INSTANCE.declareConcept(classifier.declaration)
-					if (type == 0) {
-						type = decl.getType
-					} else {
-						// TODO validate against both other classifiers and observable or 'by' type 
-					}
-					if (decl.is(Type.SUBJECTIVE) != 0 && !statement.isPrivate && !cchecked) {
-						error('A model producing subjective observables must be private', classifier,
-							KimPackage.Literals.CLASSIFIER__DECLARATION, BAD_OBSERVABLE)
-						ok = false
-						cchecked = true
-					}
+			classifiers = newArrayList
+			var type = EnumSet.noneOf(Type);
+			var cchecked = false
+			for (classifier : model.classification.classifiers) {
+				var decl = Kim.INSTANCE.declareConcept(classifier.declaration)
+				if (type == 0) {
+					type = decl.getType
+				} else {
+					// TODO validate against both other classifiers and observable or 'by' type 
+				}
+				if (decl.is(Type.SUBJECTIVE) != 0 && !isPrivate && !cchecked) {
+					error('A model producing subjective observables must be private', classifier,
+						KimPackage.Literals.CLASSIFIER__DECLARATION, BAD_OBSERVABLE)
+					ok = false
+					cchecked = true
 				}
 			}
+		}
+
+		if (model.lookupTable !== null || model.lookupTableId !== null) {
+			// TODO validate argument list agains dependency names, resolve reference
+			// TODO intercept errors from lookup table (such as different # items per row)
+		}
+
+		for (contextualizer : model.contextualizers) {
+			// TODO validate required arguments from prototype and dependencies
 		}
 
 		/*
@@ -370,10 +382,24 @@ class KimValidator extends AbstractKimValidator {
 					i++
 				}
 
-				// all contextualizers
+				// add all contextualizers
 				for (contextualizer : model.contextualizers) {
 					descriptor.contextualization.add(new ComputableResource(contextualizer, descriptor))
 				}
+
+				// these must come after
+				if (model.classification !== null) {
+					descriptor.contextualization.add(new ComputableResource(model.classification, model.isDiscretization, descriptor))
+				}
+				
+				if (model.lookupTable !== null) {
+					descriptor.contextualization.add(new ComputableResource(model.lookupTable, model.lookupTableArgs, descriptor))
+				}
+				
+				if (model.lookupTableId !== null) {
+					descriptor.contextualization.add(new ComputableResource(descriptor, model.lookupTableId))
+				}
+
 
 				if (model.name !== null) {
 					descriptor.name = model.name

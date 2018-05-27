@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getId <em>Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ClassifierRHS#isAnything <em>Anything</em>}</li>
  * </ul>
  *
@@ -420,6 +421,32 @@ public interface ClassifierRHS extends EObject
    * @generated
    */
   void setId(String value);
+
+  /**
+   * Returns the value of the '<em><b>Expr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Expr</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expr</em>' attribute.
+   * @see #setExpr(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getClassifierRHS_Expr()
+   * @model
+   * @generated
+   */
+  String getExpr();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ClassifierRHS#getExpr <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expr</em>' attribute.
+   * @see #getExpr()
+   * @generated
+   */
+  void setExpr(String value);
 
   /**
    * Returns the value of the '<em><b>Anything</b></em>' attribute.

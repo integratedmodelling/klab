@@ -15,13 +15,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.TableRow;
 
 /**
  * <!-- begin-user-doc -->
@@ -31,9 +30,7 @@ import org.integratedmodelling.kim.kim.Table;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getArgs <em>Args</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getExpr <em>Expr</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getElements <em>Elements</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getRows <em>Rows</em>}</li>
  * </ul>
  *
  * @generated
@@ -41,34 +38,14 @@ import org.integratedmodelling.kim.kim.Table;
 public class TableImpl extends MinimalEObjectImpl.Container implements Table
 {
   /**
-   * The cached value of the '{@link #getArgs() <em>Args</em>}' attribute list.
+   * The cached value of the '{@link #getRows() <em>Rows</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getArgs()
+   * @see #getRows()
    * @generated
    * @ordered
    */
-  protected EList<String> args;
-
-  /**
-   * The cached value of the '{@link #getExpr() <em>Expr</em>}' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getExpr()
-   * @generated
-   * @ordered
-   */
-  protected EList<String> expr;
-
-  /**
-   * The cached value of the '{@link #getElements() <em>Elements</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getElements()
-   * @generated
-   * @ordered
-   */
-  protected EList<ClassifierRHS> elements;
+  protected EList<TableRow> rows;
 
   /**
    * <!-- begin-user-doc -->
@@ -96,41 +73,13 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<String> getArgs()
+  public EList<TableRow> getRows()
   {
-    if (args == null)
+    if (rows == null)
     {
-      args = new EDataTypeEList<String>(String.class, this, KimPackage.TABLE__ARGS);
+      rows = new EObjectContainmentEList<TableRow>(TableRow.class, this, KimPackage.TABLE__ROWS);
     }
-    return args;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<String> getExpr()
-  {
-    if (expr == null)
-    {
-      expr = new EDataTypeEList<String>(String.class, this, KimPackage.TABLE__EXPR);
-    }
-    return expr;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<ClassifierRHS> getElements()
-  {
-    if (elements == null)
-    {
-      elements = new EObjectContainmentEList<ClassifierRHS>(ClassifierRHS.class, this, KimPackage.TABLE__ELEMENTS);
-    }
-    return elements;
+    return rows;
   }
 
   /**
@@ -143,8 +92,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
-      case KimPackage.TABLE__ELEMENTS:
-        return ((InternalEList<?>)getElements()).basicRemove(otherEnd, msgs);
+      case KimPackage.TABLE__ROWS:
+        return ((InternalEList<?>)getRows()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -159,12 +108,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
-      case KimPackage.TABLE__ARGS:
-        return getArgs();
-      case KimPackage.TABLE__EXPR:
-        return getExpr();
-      case KimPackage.TABLE__ELEMENTS:
-        return getElements();
+      case KimPackage.TABLE__ROWS:
+        return getRows();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -180,17 +125,9 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
-      case KimPackage.TABLE__ARGS:
-        getArgs().clear();
-        getArgs().addAll((Collection<? extends String>)newValue);
-        return;
-      case KimPackage.TABLE__EXPR:
-        getExpr().clear();
-        getExpr().addAll((Collection<? extends String>)newValue);
-        return;
-      case KimPackage.TABLE__ELEMENTS:
-        getElements().clear();
-        getElements().addAll((Collection<? extends ClassifierRHS>)newValue);
+      case KimPackage.TABLE__ROWS:
+        getRows().clear();
+        getRows().addAll((Collection<? extends TableRow>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -206,14 +143,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
-      case KimPackage.TABLE__ARGS:
-        getArgs().clear();
-        return;
-      case KimPackage.TABLE__EXPR:
-        getExpr().clear();
-        return;
-      case KimPackage.TABLE__ELEMENTS:
-        getElements().clear();
+      case KimPackage.TABLE__ROWS:
+        getRows().clear();
         return;
     }
     super.eUnset(featureID);
@@ -229,33 +160,10 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
-      case KimPackage.TABLE__ARGS:
-        return args != null && !args.isEmpty();
-      case KimPackage.TABLE__EXPR:
-        return expr != null && !expr.isEmpty();
-      case KimPackage.TABLE__ELEMENTS:
-        return elements != null && !elements.isEmpty();
+      case KimPackage.TABLE__ROWS:
+        return rows != null && !rows.isEmpty();
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (args: ");
-    result.append(args);
-    result.append(", expr: ");
-    result.append(expr);
-    result.append(')');
-    return result.toString();
   }
 
 } //TableImpl
