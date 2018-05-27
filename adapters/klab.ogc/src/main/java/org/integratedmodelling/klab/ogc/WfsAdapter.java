@@ -43,7 +43,7 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 				// TODO check out http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
 				// TODO find a way to provide documentation for all these options
 				"wfsVersion", "bufferSize", "serverType", "timeoutSeconds", 
-				"filter", "computeShape"
+				"filter", "computeShape", "sanitize"
 		})
 public class WfsAdapter implements IResourceAdapter {
 

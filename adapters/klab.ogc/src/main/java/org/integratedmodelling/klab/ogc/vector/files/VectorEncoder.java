@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -166,6 +167,10 @@ public class VectorEncoder implements IResourceEncoder {
 			Object shape = feature.getDefaultGeometryProperty().getValue();
 			if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
 
+				if (resource.getParameters().get("sanitize", false)) {
+					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+				}
+				
 				if (rasterize) {
 					// TODO compute value for shape
 					// TODO rasterizer.add (shape, function to pass value)
@@ -201,7 +206,6 @@ public class VectorEncoder implements IResourceEncoder {
 					for (String key : attributes.keySet()) {
 						builder.withMetadata(key.toLowerCase(), attributes.get(key));
 					}
-					
 					
 					builder = builder.finishObject();
 

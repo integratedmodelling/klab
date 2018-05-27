@@ -755,6 +755,7 @@ PROPERTY_TYPE:
 	'bidirectional' |
 	'unidirectional' |
 	'structural';
+	
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
 
