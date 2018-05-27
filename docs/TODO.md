@@ -15,10 +15,10 @@
 - Functional adapters for lookup tables and k.IM syntax for table literals
 - Improve lookup table k.IM declaration (mapping to table collection)
 - [IN PROGRESS] Websockets Messaging API: streamline, complete (JSON RPC inspired - no need to comply)
-- Build test cases for non-semantic models
+- [DONE] Build test cases for non-semantic models
 - Build test cases for non-semantic model libraries
 - Build test cases for non-semantic multiple contextualizers with internal references
-- Recover and test "define" functionalities and imports, including in function arguments
+- Recover and test "define" functionalities and imports, including in function arguments 
     
 ### Resolution
 
@@ -33,6 +33,7 @@
 
 ### Temporal contextualization
 
+- Build agent system in EventBus
 - TEMPORAL transitions and agents communication.
 
 ### Resource API and URN handling
@@ -58,6 +59,8 @@
   - routing through cost terrains
   - spatial network configurations 
 - Model artifacts
+- Attributes in instantiation (including proper provenance)
+- Multiple URNs in models (for filling holes in order of declaration)
 - Event subscription
 - Configuration detection
 - Reintegrate WEKA 

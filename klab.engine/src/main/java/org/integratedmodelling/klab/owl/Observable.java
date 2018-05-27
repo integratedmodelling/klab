@@ -48,8 +48,10 @@ public class Observable extends Concept implements IObservable {
 	private boolean generic;
 
 	/**
-	 * Situations in which the observable contains a pre-resolved model, such as
-	 * when models (including non-semantic) are used as dependencies
+	 * This and the next support situations in which the observable contains a
+	 * pre-resolved model, such as when models (including non-semantic ones) are
+	 * used as dependencies. It's a convenient implementation trick for now, so it
+	 * does not affect the public API.
 	 */
 	transient IModel resolvedModel;
 	private String modelReference;
@@ -493,11 +495,12 @@ public class Observable extends Concept implements IObservable {
 		if (this.resolvedModel == null && this.modelReference != null) {
 			IKimObject model = Resources.INSTANCE.getModelObject(modelReference);
 			if (!(model instanceof IModel)) {
-				throw new KlabValidationException("referenced object " + modelReference + " does not exist or is not a model");
+				throw new KlabValidationException(
+						"referenced object " + modelReference + " does not exist or is not a model");
 			}
-			this.resolvedModel = (IModel)model;
+			this.resolvedModel = (IModel) model;
 		}
 		return this.resolvedModel;
 	}
-	
+
 }

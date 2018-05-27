@@ -22,7 +22,7 @@ public class Run implements ICommand {
       } else {
           File file = Klab.INSTANCE.resolveFile(resource.toString());
           if (file != null) {
-              url = new File(resource.toString()).toURI().toURL();
+              url = file.toURI().toURL();
           } else {
               throw new KlabIOException("file " + resource + " was not found");
           }

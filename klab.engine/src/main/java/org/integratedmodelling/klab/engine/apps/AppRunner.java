@@ -21,13 +21,13 @@ import org.integratedmodelling.klab.utils.Parameters;
  * @author ferdinando.villa
  *
  */
-public class RunHandler implements Annotations.Handler {
+public class AppRunner implements Annotations.Handler {
 
   @Override
   public Object process(IKimObject target, Parameters arguments, IMonitor monitor) throws Exception {
 
     if (!(arguments.get("observations") instanceof List)) {
-        monitor.warn("run rannotation does not specify observations");
+        monitor.warn("run annotation does not specify observations");
         return null;
     }
     

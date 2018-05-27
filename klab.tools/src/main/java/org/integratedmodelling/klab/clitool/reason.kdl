@@ -62,6 +62,6 @@ void compare
 //		"A list of the concepts or objects to observe in the context after it is resolved."
 //		default ()
 //		
-//	class org.integratedmodelling.klab.engine.apps.RunHandler
+//	class org.integratedmodelling.klab.engine.apps.AppRunner
 //}
 

@@ -21,9 +21,7 @@ public interface INotification {
     
     long getTimestamp();
     
-//    String getUser();
-//    
-//    String getNotes();
+    String getMessage();
 
     Type getType();
     

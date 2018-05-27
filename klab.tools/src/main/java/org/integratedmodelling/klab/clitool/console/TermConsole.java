@@ -40,296 +40,306 @@ import org.integratedmodelling.klab.utils.NotificationUtils;
 
 public class TermConsole implements IConsole {
 
-  DragonConsoleFrame terminal;
+	DragonConsoleFrame terminal;
 
-  // class SessionListener implements ISession.Listener {
-  //
-  // @Override
-  // public void contextEvent(IContext context, boolean isNew) {
-  // if (isNew) {
-  // client.getMonitor().info("New context available: " + context
-  // + ": set as current", Messages.INFOCLASS_NEW_RESOURCE_AVAILABLE);
-  // Environment.get().setContext(context);
-  // } else {
-  // client.getMonitor()
-  // .info("Current context modified: " + context, Messages.INFOCLASS_RESOURCE_MODIFIED);
-  // }
-  // if (((ClientSession) context.getSession()).hasViewer()) {
-  // ((ClientSession) context.getSession()).getViewer().show(context);
-  // }
-  // }
-  //
-  // @Override
-  // public void taskEvent(ITask task, boolean isNew) {
-  // if (task.getStatus() == Status.ERROR) {
-  // client.getMonitor().error("error in task: " + task.getDescription());
-  // } else if (task.getStatus() == Status.RUNNING) {
-  // client.getMonitor().info("task started: " + task.getDescription(), Messages.TASK_STARTED);
-  // } else
-  // if (task.getStatus() == Status.FINISHED) {
-  // client.getMonitor().info("task finished: " + task.getDescription(), Messages.TASK_FINISHED);
-  // }
-  // }
-  // }
+	// class SessionListener implements ISession.Listener {
+	//
+	// @Override
+	// public void contextEvent(IContext context, boolean isNew) {
+	// if (isNew) {
+	// client.getMonitor().info("New context available: " + context
+	// + ": set as current", Messages.INFOCLASS_NEW_RESOURCE_AVAILABLE);
+	// Environment.get().setContext(context);
+	// } else {
+	// client.getMonitor()
+	// .info("Current context modified: " + context,
+	// Messages.INFOCLASS_RESOURCE_MODIFIED);
+	// }
+	// if (((ClientSession) context.getSession()).hasViewer()) {
+	// ((ClientSession) context.getSession()).getViewer().show(context);
+	// }
+	// }
+	//
+	// @Override
+	// public void taskEvent(ITask task, boolean isNew) {
+	// if (task.getStatus() == Status.ERROR) {
+	// client.getMonitor().error("error in task: " + task.getDescription());
+	// } else if (task.getStatus() == Status.RUNNING) {
+	// client.getMonitor().info("task started: " + task.getDescription(),
+	// Messages.TASK_STARTED);
+	// } else
+	// if (task.getStatus() == Status.FINISHED) {
+	// client.getMonitor().info("task finished: " + task.getDescription(),
+	// Messages.TASK_FINISHED);
+	// }
+	// }
+	// }
 
-  @Override
-  public void grabCommandLine(String prompt, String endCommand, CommandListener listener) {
-    terminal.console.grabCommandLine(prompt, endCommand, listener);
-  }
+	@Override
+	public void grabCommandLine(String prompt, String endCommand, CommandListener listener) {
+		terminal.console.grabCommandLine(prompt, endCommand, listener);
+	}
 
-  public class Monitor implements IMonitor {
-      
-    @Override
-    public void send(Object... o) {
-        if (o != null && o.length > 0) {
-            IMessageBus bus = Klab.INSTANCE.getMessageBus();
-            if (bus != null) {
-                if (o.length == 1 && o[0] instanceof IMessage) {
-                   bus.post((IMessage)o[0]);
-                } else {
-                    bus.post(Message.create(CliRuntime.INSTANCE.getSession().getId(), o));
-                }
-            }
-        }
-    }
+	public class Monitor implements IMonitor {
 
-    @Override
-    public void info(Object... info) {
-        TermConsole.this.info(NotificationUtils.getMessage(info), null);
-    }
+		@Override
+		public void send(Object... o) {
+			if (o != null && o.length > 0) {
+				IMessageBus bus = Klab.INSTANCE.getMessageBus();
+				if (bus != null) {
+					if (o.length == 1 && o[0] instanceof IMessage) {
+						bus.post((IMessage) o[0]);
+					} else {
+						bus.post(Message.create(CliRuntime.INSTANCE.getSession().getId(), o));
+					}
+				}
+			}
+		}
 
-    @Override
-    public void warn(Object... o) {
-        TermConsole.this.warning(NotificationUtils.getMessage(o));
-    }
+		@Override
+		public void info(Object... info) {
+			TermConsole.this.info(NotificationUtils.getMessage(info), null);
+		}
 
-    @Override
-    public void error(Object... o) {
-        TermConsole.this.error(NotificationUtils.getMessage(o));
-    }
+		@Override
+		public void warn(Object... o) {
+			TermConsole.this.warning(NotificationUtils.getMessage(o));
+		}
 
-    @Override
-    public void debug(Object... o) {
-        TermConsole.this.debug(NotificationUtils.getMessage(o));
-    }
+		@Override
+		public void error(Object... o) {
+			TermConsole.this.error(NotificationUtils.getMessage(o));
+		}
 
-    @Override
-    public IIdentity getIdentity() {
-      // TODO Auto-generated method stub
-      return null;
-    }
+		@Override
+		public void debug(Object... o) {
+			TermConsole.this.debug(NotificationUtils.getMessage(o));
+		}
 
-    @Override
-    public boolean hasErrors() {
-      // TODO Auto-generated method stub
-      return false;
-    }
+		@Override
+		public IIdentity getIdentity() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
-  }
+		@Override
+		public boolean hasErrors() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 
-  public void start(CliStartupOptions options) throws Exception {
+	}
 
-    // KLAB.CONFIG = new Configuration(true);
-    //
-    // String certfile = System.getProperty(IConfiguration.CERTFILE_PROPERTY);
-    // if (certfile == null) {
-    // certfile = KLAB.CONFIG.getDataPath() + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME;
-    // }
-    //
-    // File cert = new File(certfile);
-    // if (!cert.exists()) {
-    // throw new KlabIOException("IM certificate not found: " + certfile);
-    // }
-    //
-    // client = new ModelingClient(cert, new Monitor());
-    //
-    // client.addListener(new IModelingEngine.Listener() {
-    //
-    // @Override
-    // public void sessionOpened(ISession session) {
-    // session.addListener(new SessionListener());
-    // }
-    //
-    // @Override
-    // public void sessionClosed(ISession session) {
-    // }
-    //
-    // @Override
-    // public void engineLocked() {
-    // }
-    //
-    // @Override
-    // public void engineUnlocked() {
-    // }
-    //
-    // @Override
-    // public void engineUserAuthenticated(IUser user) {
-    // }
-    // });
+	public void start(CliStartupOptions options) throws Exception {
 
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          String buildInfo = "";
-          if (!Version.VERSION_BUILD.equals("VERSION_BUILD")) {
-            buildInfo = " build " + Version.VERSION_BUILD + " (" + Version.VERSION_BRANCH + " "
-                + Version.VERSION_DATE + ")";
-          }
-          terminal = new DragonConsoleFrame("k.LAB v" + Version.CURRENT + buildInfo, false,
-              new CommandHistory());
-          terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
-          terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
-          terminal.console.append("Work directory: " + Klab.INSTANCE.getWorkDirectory() + "\n");
-          terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
-          terminal.setVisible(true);
-          terminal.console.setPrompt(">> ");
+		// KLAB.CONFIG = new Configuration(true);
+		//
+		// String certfile = System.getProperty(IConfiguration.CERTFILE_PROPERTY);
+		// if (certfile == null) {
+		// certfile = KLAB.CONFIG.getDataPath() + File.separator +
+		// ICertificate.DEFAULT_CERTIFICATE_FILENAME;
+		// }
+		//
+		// File cert = new File(certfile);
+		// if (!cert.exists()) {
+		// throw new KlabIOException("IM certificate not found: " + certfile);
+		// }
+		//
+		// client = new ModelingClient(cert, new Monitor());
+		//
+		// client.addListener(new IModelingEngine.Listener() {
+		//
+		// @Override
+		// public void sessionOpened(ISession session) {
+		// session.addListener(new SessionListener());
+		// }
+		//
+		// @Override
+		// public void sessionClosed(ISession session) {
+		// }
+		//
+		// @Override
+		// public void engineLocked() {
+		// }
+		//
+		// @Override
+		// public void engineUnlocked() {
+		// }
+		//
+		// @Override
+		// public void engineUserAuthenticated(IUser user) {
+		// }
+		// });
 
-          new Thread() {
-            @Override
-            public void run() {
+		try {
+			javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					String buildInfo = "";
+					if (!Version.VERSION_BUILD.equals("VERSION_BUILD")) {
+						buildInfo = " build " + Version.VERSION_BUILD + " (" + Version.VERSION_BRANCH + " "
+								+ Version.VERSION_DATE + ")";
+					}
+					terminal = new DragonConsoleFrame("k.LAB v" + Version.CURRENT + buildInfo, false,
+							new CommandHistory());
+					terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
+					terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
+					terminal.console.append("Work directory: " + Klab.INSTANCE.getWorkDirectory() + "\n");
+					terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
+					terminal.setVisible(true);
+					terminal.console.setPrompt(">> ");
 
-              CliRuntime.INSTANCE.initialize(TermConsole.this, options);
-              terminal.console.setCommandProcessor(CliRuntime.INSTANCE.getCommandProcessor());
+					// redirect notifications to console
+					Logging.INSTANCE.setDebugWriter((message) -> debug(message));
+					Logging.INSTANCE.setInfoWriter((message) -> info(message, null));
+					Logging.INSTANCE.setErrorWriter((message) -> error(message));
+					Logging.INSTANCE.setWarningWriter((message) -> warning(message));
 
-              // client.addListener(new IModelingEngine.Listener() {
-              //
-              // @Override
-              // public void sessionOpened(ISession session) {
-              // IViewer viewer = ((ClientSession) session).getViewer();
-              // if (viewer instanceof WebViewer) {
-              // ((WebViewer) viewer).start();
-              // }
-              // }
-              //
-              // @Override
-              // public void sessionClosed(ISession session) {}
-              //
-              // @Override
-              // public void engineLocked() {
-              // // if (workspaceCleared) {
-              // // _this.info("remote workspace cleared", null);
-              // // }
-              // }
-              //
-              // @Override
-              // public void engineUnlocked() {
-              // // TODO Auto-generated method stub
-              //
-              // }
-              //
-              // @Override
-              // public void engineUserAuthenticated(IUser user) {
-              // // TODO Auto-generated method stub
-              //
-              // }
-              // });
-            }
-          }.start();
-        }
+					new Thread() {
+						@Override
+						public void run() {
 
-      });
-    } catch (Exception exc) {
-      exc.printStackTrace();
-    }
-  }
+							CliRuntime.INSTANCE.initialize(TermConsole.this, options);
+							terminal.console.setCommandProcessor(CliRuntime.INSTANCE.getCommandProcessor());
 
-  @Override
-  public void error(Object e) {
-    if (e instanceof Throwable) {
-      /*
-       * TODO log stack trace
-       */
-      e = ((Throwable) e).getMessage();
-    } else {
-      e = e.toString();
-    }
-    terminal.console.append("&R-" + e + "\n");
-  }
-  
-  public void debug(Object e) {
-    if (e instanceof Throwable) {
-      /*
-       * TODO log stack trace
-       */
-      e = ((Throwable) e).getMessage();
-    } else {
-      e = e.toString();
-    }
-    terminal.console.append("&R-" + e + "\n");
-  }
+							// client.addListener(new IModelingEngine.Listener() {
+							//
+							// @Override
+							// public void sessionOpened(ISession session) {
+							// IViewer viewer = ((ClientSession) session).getViewer();
+							// if (viewer instanceof WebViewer) {
+							// ((WebViewer) viewer).start();
+							// }
+							// }
+							//
+							// @Override
+							// public void sessionClosed(ISession session) {}
+							//
+							// @Override
+							// public void engineLocked() {
+							// // if (workspaceCleared) {
+							// // _this.info("remote workspace cleared", null);
+							// // }
+							// }
+							//
+							// @Override
+							// public void engineUnlocked() {
+							// // TODO Auto-generated method stub
+							//
+							// }
+							//
+							// @Override
+							// public void engineUserAuthenticated(IUser user) {
+							// // TODO Auto-generated method stub
+							//
+							// }
+							// });
+						}
+					}.start();
+				}
 
-  @Override
-  public void setPrompt(String s) {
-    terminal.console.setPrompt(s);
-  }
-  
-  @Override
-  public void warning(Object e) {
-    terminal.console.append("&D-" + e + "\n");
-  }
+			});
+		} catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
 
-  @Override
-  public void echo(Object e) {
-    terminal.console.append("&X-" + e + "\n");
-    terminal.console.repaint();
-  }
+	@Override
+	public void error(Object e) {
+		if (e instanceof Throwable) {
+			/*
+			 * TODO log stack trace
+			 */
+			e = ((Throwable) e).getMessage();
+		} else {
+			e = e.toString();
+		}
+		terminal.console.append("&R-" + e + "\n");
+	}
 
-  @Override
-  public void info(Object e, String infoClass) {
+	public void debug(Object e) {
+		if (e instanceof Throwable) {
+			/*
+			 * TODO log stack trace
+			 */
+			e = ((Throwable) e).getMessage();
+		} else {
+			e = e.toString();
+		}
+		terminal.console.append("&R-" + e + "\n");
+	}
 
-    if (e == null || terminal == null || terminal.console == null) {
-      Logging.INSTANCE.info(e);
-      return;
-    }
+	@Override
+	public void setPrompt(String s) {
+		terminal.console.setPrompt(s);
+	}
 
-    String color = "&l-";
-    if (infoClass != null) {
-      switch (infoClass) {
-        case "TASK":
-          color = "&g-";
-          break;
-        case "GENERAL":
-          color = "&p-";
-          break;
-      }
-    }
+	@Override
+	public void warning(Object e) {
+		terminal.console.append("&D-" + e + "\n");
+	}
 
-    if (terminal.console != null) {
-      terminal.console.append(color + e + "\n");
-    }
-  }
+	@Override
+	public void echo(Object e) {
+		terminal.console.append("&X-" + e + "\n");
+		terminal.console.repaint();
+	}
 
-  protected void output(Object e) {
-    terminal.console.append("&w-" + e + "\n");
-  }
+	@Override
+	public void info(Object e, String infoClass) {
 
-  @Override
-  public void outputResult(String input, Object ret) {
+		if (e == null || terminal == null || terminal.console == null) {
+			Logging.INSTANCE.info(e);
+			return;
+		}
 
-    if (ret == null) {
-      return;
-    }
+		String color = "&l-";
+		if (infoClass != null) {
+			switch (infoClass) {
+			case "TASK":
+				color = "&g-";
+				break;
+			case "GENERAL":
+				color = "&p-";
+				break;
+			}
+		}
 
-    if (ret instanceof Map) {
-      for (Object o : ((Map<?, ?>) ret).keySet()) {
-        output(o + " = " + ((Map<?, ?>) ret).get(o));
-      }
-    } else if (ret instanceof Iterable) {
-      for (Iterator<?> it = ((Iterable<?>) ret).iterator(); it.hasNext();) {
-        output(it.next());
-      }
-    } else {
-      output(ret);
-    }
-  }
+		if (terminal.console != null) {
+			terminal.console.append(color + e + "\n");
+		}
+	}
 
-  @Override
-  public void reportCommandResult(String input, boolean ok) {
-    // add to history
-    if (terminal.console.getHistory() != null) {
-      terminal.console.getHistory().append(input);
-    }
-  }
+	protected void output(Object e) {
+		terminal.console.append("&w-" + e + "\n");
+	}
+
+	@Override
+	public void outputResult(String input, Object ret) {
+
+		if (ret == null) {
+			return;
+		}
+
+		if (ret instanceof Map) {
+			for (Object o : ((Map<?, ?>) ret).keySet()) {
+				output(o + " = " + ((Map<?, ?>) ret).get(o));
+			}
+		} else if (ret instanceof Iterable) {
+			for (Iterator<?> it = ((Iterable<?>) ret).iterator(); it.hasNext();) {
+				output(it.next());
+			}
+		} else {
+			output(ret);
+		}
+	}
+
+	@Override
+	public void reportCommandResult(String input, boolean ok) {
+		// add to history
+		if (terminal.console.getHistory() != null) {
+			terminal.console.getHistory().append(input);
+		}
+	}
 
 }

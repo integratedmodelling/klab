@@ -43,7 +43,7 @@ annotation run for observers
 		"After resolving the observable, launch a suitable viewer for the context."
 		default false
 		
-	class org.integratedmodelling.klab.engine.apps.RunHandler
+	class org.integratedmodelling.klab.engine.apps.AppRunner
 }
 
 /**
@@ -88,6 +88,6 @@ annotation test for observers
 		"After resolving the observable, launch a suitable viewer for the context."
 		default false
 
-	class org.integratedmodelling.klab.engine.apps.TestHandler
+	class org.integratedmodelling.klab.engine.apps.TestRunner
 
 }
