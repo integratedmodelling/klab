@@ -80,10 +80,12 @@ public enum Auth implements IAuthenticationService {
         return ret;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T extends IIdentity> T getIdentity(String id, Class<T> type) {
         // TODO Auto-generated method stub
-        return null;
+        IIdentity ret = identities.get(id);
+        return type.isAssignableFrom(ret.getClass()) ? (T)ret : null;
     }
     
     /**

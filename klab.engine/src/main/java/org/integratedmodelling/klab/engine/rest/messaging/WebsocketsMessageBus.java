@@ -137,7 +137,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 		 * specific payload type. If so, turn the payload into that and dispatch it.
 		 */
 
-		IIdentity identity = Auth.INSTANCE.getIdentity(message.getIdentity(), IIdentity.class);
+		IIdentity identity = Auth.INSTANCE.getIdent ity(message.getIdentity(), IIdentity.class);
 		if (identity != null) {
 			dispatchMessage(message, identity);
 		}
