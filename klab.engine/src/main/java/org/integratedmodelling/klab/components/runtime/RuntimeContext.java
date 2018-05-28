@@ -45,6 +45,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
+import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
+
 /**
  * A runtime context is installed in the root subject to keep track of what
  * happens during contextualization.
@@ -60,7 +62,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	Provenance provenance;
 	EventBus eventBus;
 	ConfigurationDetector configurationDetector;
-	Graph<ISubject, IRelationship> network;
+	DirectedSparseMultigraph<ISubject, IRelationship> network;
 	Graph<IArtifact, DefaultEdge> structure;
 	Map<String, IArtifact> catalog;
 	IMonitor monitor;
@@ -80,7 +82,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	public RuntimeContext(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
 		this.catalog = new HashMap<>();
-		this.network = new DefaultDirectedGraph<>(Relationship.class);
+		this.network = new DirectedSparseMultigraph<>();
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		this.provenance = new Provenance();
 		this.monitor = monitor;
@@ -155,22 +157,22 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
 	@Override
 	public Collection<IRelationship> getOutgoingRelationships(ISubject observation) {
-		return network.outgoingEdgesOf(observation);
+		return network.getOutEdges(observation);
 	}
 
 	@Override
 	public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
-		return network.incomingEdgesOf(observation);
+		return network.getInEdges(observation);
 	}
 	
 	@Override
 	public ISubject getSourceSubject(IRelationship relationship) {
-		return network.getEdgeSource(relationship);
+		return network.getSource(relationship);
 	}
 
 	@Override
 	public ISubject getTargetSubject(IRelationship relationship) {
-		return network.getEdgeTarget(relationship);
+		return network.getDest(relationship);
 	}
 
 
@@ -496,7 +498,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
 				if (parent != null && parent.target instanceof ISubject) {
-					this.network.addEdge((ISubject) observation, (ISubject) parent.target);
+					this.structure.addEdge((ISubject) observation, (ISubject) parent.target);
 				}
 			}
 		}

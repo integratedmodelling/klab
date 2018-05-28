@@ -60,6 +60,8 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
+import edu.uci.ics.jung.graph.util.EdgeType;
+
 /**
  * This component provides the default dataflow execution runtime and the
  * associated services. Simply dispatches a topologically sorted computation to
@@ -214,11 +216,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	private IComputationContext localizeContext(RuntimeContext context, IScale state,
 			Collection<Pair<String, IDataArtifact>> variables) {
-		
+
 		if (context.getTargetArtifact() instanceof IDataArtifact) {
 			context.set("self", ((IDataArtifact) context.getTargetArtifact()).get(state));
 		}
-		
+
 		for (String var : context.getInputs()) {
 			IArtifact artifact = context.getArtifact(var);
 			if (artifact instanceof IDataArtifact) {
@@ -312,14 +314,19 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	static IRelationship createRelationship(Observable observable, IScale scale, ISubject relationshipSource,
 			ISubject relationshipTarget, RuntimeContext runtimeContext) {
+
+		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
+				runtimeContext);
 		
-		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale, runtimeContext);
-		runtimeContext.network.addEdge(relationshipSource, relationshipTarget, ret);
+		// TODO semantic of the relationship may define whether we want a directed or undirected edge.
+		runtimeContext.network.addEdge(ret,
+				new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget),
+				EdgeType.DIRECTED);
 
 		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
 		// into an Akka
 		// actor and register with the actor
-		
+
 		return ret;
 	}
 }
