@@ -93,6 +93,7 @@ public enum Auth implements IAuthenticationService {
      * @param session
      */
     public void registerSession(Session session) {
+    	
         session.addListener(new Listener() {
             @Override
             public void onClose(ISession session) {

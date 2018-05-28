@@ -23,6 +23,9 @@ public interface IMessageBus {
      * Make any object a receiver by implementing {@code Receiver} and 
      * {@link IMessageBus#subscribe(Receiver, Object...) subscribing} to the bus.
      *  
+     * TODO probably overkill and old-style. We could just simply annotate beans with handlers and
+     * retrieve them through the identity. Both methods could be kept.
+     *  
      * @author ferdinando.villa
      *
      */

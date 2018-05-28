@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -154,4 +156,15 @@ public class Session implements ISession, UserDetails {
 		return regionOfInterest;
 	}
 
+	/*
+	 * ------------------------------------------------------------------------
+	 * handlers for messages
+	 * ------------------------------------------------------------------------
+	 */
+	
+	@MessageHandler(SpatialExtent.class)
+	private void setRegionOfInterest(SpatialExtent extent) {
+		// TODO
+	}
+	
 }
