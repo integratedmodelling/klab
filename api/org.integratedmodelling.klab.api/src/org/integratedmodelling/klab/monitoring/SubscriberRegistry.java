@@ -20,6 +20,5 @@ public class SubscriberRegistry {
 
     public void unsubscribe(Receiver receiver, Object... filters) {
         // TODO Auto-generated method stub
-
     }
 }

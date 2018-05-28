@@ -40,6 +40,7 @@ public class Message implements IMessage, Serializable {
 	private Object payload;
 	private String id = NameGenerator.shortUUID();
 	private String inResponseTo;
+	private long timestamp = System.currentTimeMillis();
 
 	/**
 	 * Build a message by arranging all the arguments appropriately. Only one
@@ -181,4 +182,12 @@ public class Message implements IMessage, Serializable {
 		this.payloadClass = payloadClass;
 	}
 
+	@Override
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
 }

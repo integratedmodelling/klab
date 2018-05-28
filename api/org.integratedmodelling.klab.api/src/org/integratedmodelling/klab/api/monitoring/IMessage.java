@@ -8,89 +8,93 @@ package org.integratedmodelling.klab.api.monitoring;
  */
 public interface IMessage {
 
-    public static IMessage NO_RESPONSE = null;
-    
-    /**
-     * Message class. Ugly type name makes life easier. 
-     * 
-     * @author ferdinando.villa
-     *
-     */
-    enum MessageClass {
-    	
-    	/**
-    	 * 
-    	 */
-        UserContextChange,
-        /**
-         * 
-         */
-        EngineLifecycle,
-        /**
-         * 
-         */
-        Authorization,
-        /**
-         * 
-         */
-        TaskLifecycle,
-        /**
-         * 
-         */
-        ObservationLifecycle,
-        /**
-         * 
-         */
-        SessionLifecycle,
-        /**
-         * 
-         */
-        Notification
-    }
-    
-    /**
-     * Message type within its class.
-     * 
-     * @author ferdinando.villa
-     *
-     */
-    enum Type {
-    	
-    	/*
-    	 * UserContextChange-class types
-    	 */
-    	RegionOfInterest,
-    	PeriodOfInterest,
-    	
-        /*
-         * Notification-class types
-         */
-        Debug,
-        Info,
-        Warning,
-        Error
-        // TODO k.LAB specific types
-    }
-    
-    /**
-     * The message exposes the identity that created it through a token, which may 
-     * or may not be parseable at the receiving end but will be consistently linked
-     * to the message type. For example, task messages will have the identity of the
-     * task that generated them so they can be correctly distributed among tasks.
-     * 
-     * @return the sender's identity. Never null.
-     */
-    String getIdentity();
-    
-    /**
-     * 
-     * @return the message class
-     */
-    MessageClass getMessageClass();
-    
-    /**
-     * 
-     * @return the message type
-     */
-    Type getType();
+	public static IMessage NO_RESPONSE = null;
+
+	/**
+	 * Message class. Ugly type name makes life easier.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	enum MessageClass {
+
+		/**
+		 * 
+		 */
+		UserContextChange,
+		/**
+		 * 
+		 */
+		EngineLifecycle,
+		/**
+		 * 
+		 */
+		Authorization,
+		/**
+		 * 
+		 */
+		TaskLifecycle,
+		/**
+		 * 
+		 */
+		ObservationLifecycle,
+		/**
+		 * 
+		 */
+		SessionLifecycle,
+		/**
+		 * 
+		 */
+		Notification
+	}
+
+	/**
+	 * Message type within its class.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	enum Type {
+
+		/*
+		 * UserContextChange-class types
+		 */
+		RegionOfInterest, PeriodOfInterest,
+
+		/*
+		 * Notification-class types
+		 */
+		Debug, Info, Warning, Error
+		// TODO k.LAB specific types
+	}
+
+	/**
+	 * The message exposes the identity that created it through a token, which may
+	 * or may not be parseable at the receiving end but will be consistently linked
+	 * to the message type. For example, task messages will have the identity of the
+	 * task that generated them so they can be correctly distributed among tasks.
+	 * 
+	 * @return the sender's identity. Never null.
+	 */
+	String getIdentity();
+
+	/**
+	 * 
+	 * @return the message class
+	 */
+	MessageClass getMessageClass();
+
+	/**
+	 * 
+	 * @return the message type
+	 */
+	Type getType();
+
+	/**
+	 * Timestamp (milliseconds since epoch) of message at sender side. Meant to
+	 * enforce sequentiality rather than reliable date/time attribution.
+	 * 
+	 * @return
+	 */
+	long getTimestamp();
 }
