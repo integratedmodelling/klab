@@ -19,96 +19,123 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 // TODO: Auto-generated Javadoc
 /**
- * The resolution scope contains all the contextual information gathered during resolution,
- * including scale with coverage, traits and resolution criteria for all models being
- * contextualized. During resolution, any new condition spawns a child scope that is merged with the
- * parent upon successful resolution of the state. The resolution contexts compute the total
- * coverage, build the provenance graph and harmonize the merged scale as new models are accepted.
- *
- * Created and passed around during resolution, notably to the model query so that it can be used to
- * rank the outputs. Model query on network nodes gets passed enough information to build a
- * mock-scope at the query endpoint.
- *
+ * The resolution scope contains all the contextual information gathered during
+ * resolution, including scale with coverage, traits and resolution criteria for
+ * all models being contextualized. During resolution, any new condition spawns
+ * a child scope that is merged with the parent upon successful resolution of
+ * the state. The resolution contexts compute the total coverage, build the
+ * provenance graph and harmonize the merged scale as new models are accepted.
+ * <p>
+ * Created and passed around during resolution, notably to the model query so
+ * that it can be used to rank the outputs. Model query on network nodes gets
+ * passed enough information to build a mock-scope at the query endpoint.
+ * <p>
+ * The official API is small and opaque, except for a small set of methods. The
+ * actual behavior of the scope will depend on implementations.
+ * 
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IResolutionScope {
 
-  /**
-   * The Enum Mode.
-   */
-  public enum Mode {
-    /**
-     * this context is resolving a model for a single instance that may already exist (if a
-     * countable created by an instantiator) or will be created upon successful resolution (a
-     * non-countable).
-     */
-    RESOLUTION,
-    /**
-     * this context is trying to resolve an observable for direct observations that have not been
-     * instantiated, i.e. it will be resolved by models that instantiate them ('model each' models).
-     */
-    INSTANTIATION
-  }
+	/**
+	 * The Enum Mode.
+	 */
+	public enum Mode {
+		/**
+		 * this context is resolving a model for a single instance that may already
+		 * exist (if a countable created by an instantiator) or will be created upon
+		 * successful resolution (a non-countable).
+		 */
+		RESOLUTION,
+		/**
+		 * this context is trying to resolve an observable for direct observations that
+		 * have not been instantiated, i.e. it will be resolved by models that
+		 * instantiate them ('model each' models).
+		 */
+		INSTANTIATION
+	}
 
-  /**
-   * IDs of any scenarios we're resolving into. These are set in the root scope and inherited by all
-   * child scopes.
-   *
-   * @return the scenarios of resolution
-   */
-  Collection<String> getScenarios();
+	/**
+	 * IDs of any scenarios we're resolving into. These are set in the root scope
+	 * and inherited by all child scopes.
+	 *
+	 * @return the scenarios of resolution
+	 */
+	Collection<String> getScenarios();
 
-  /**
-   * Return the namespace of reference for this context. It should never be null; if we're resolving
-   * a model's dependency, it should be the model's namespace, otherwise it should be that of the
-   * subject or concept we're resolving. The namespace provides semantic distance, ranking criteria,
-   * white/blacklist for resolution, etc.
-   *
-   * @return the resolution namespace
-   */
-  INamespace getResolutionNamespace();
+	/**
+	 * Return the namespace of reference for this context. It should never be null;
+	 * if we're resolving a model's dependency, it should be the model's namespace,
+	 * otherwise it should be that of the subject or concept we're resolving. The
+	 * namespace provides semantic distance, ranking criteria, white/blacklist for
+	 * resolution, etc.
+	 *
+	 * @return the resolution namespace
+	 */
+	INamespace getResolutionNamespace();
 
-  /**
-   * Return the mode of resolution - whether we're looking for an instantiator or a resolver.
-   *
-   * @return the mode of resolution
-   */
-  Mode getMode();
+	/**
+	 * Return the mode of resolution - whether we're looking for an instantiator or
+	 * a resolver.
+	 *
+	 * @return the mode of resolution
+	 */
+	Mode getMode();
 
-  /**
-   * If true, we're resolving interactively, which implies giving the user a choice over values of
-   * editable parameters and optional outputs. Whenever these are available, the resolver will stop
-   * and ask the user for input through the engine notification bus.
-   *
-   * @return whether the resolution is interactive
-   */
-  boolean isInteractive();
+	/**
+	 * If true, we're resolving interactively, which implies giving the user a
+	 * choice over values of editable parameters and optional outputs. Whenever
+	 * these are available, the resolver will stop and ask the user for input
+	 * through the engine notification bus.
+	 *
+	 * @return whether the resolution is interactive
+	 */
+	boolean isInteractive();
 
-  /**
-   * Resolution is controlled by a task or script monitor.
-   *
-   * @return the monitor
-   */
-  IMonitor getMonitor();
+	/**
+	 * Resolution is controlled by a task or script monitor.
+	 *
+	 * @return the monitor
+	 */
+	IMonitor getMonitor();
 
-  /**
-   * Return the context in which this resolution is happening. Null for scopes that resolve a root
-   * context.
-   *
-   * @return the context, or null
-   */
-  IDirectObservation getContext();
+	/**
+	 * Return the context in which this resolution is happening. Null for scopes
+	 * that resolve a root context.
+	 *
+	 * @return the context, or null
+	 */
+	IDirectObservation getContext();
 
-  /**
-   * The scale of the resolution, including how much the resolution process managed to cover it.
-   *
-   * @return the coverage
-   */
-  ICoverage getCoverage();
+	/**
+	 * The scale of the resolution, including how much the resolution process
+	 * managed to cover it.
+	 *
+	 * @return the coverage
+	 */
+	ICoverage getCoverage();
+
+	/**
+	 * If this scope is resolving a relationship, it must know the source and target subject 
+	 * for it.
+	 * 
+	 * @return the source subject for the relationship being resolved
+	 */
+	ISubject getRelationshipSource();
+
+	/**
+	 * If this scope is resolving a relationship, it must know the source and target subject 
+	 * for it.
+	 * 
+	 * @return the target subject for the relationship being resolved
+	 */
+	ISubject getRelationshipTarget();
+
 
 }

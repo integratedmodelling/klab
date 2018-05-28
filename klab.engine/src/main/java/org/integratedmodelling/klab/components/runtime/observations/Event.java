@@ -10,7 +10,4 @@ public class Event extends CountableObservation implements IEvent {
   public Event(String name, Observable observable, Scale scale, RuntimeContext context) {
     super(name, observable, scale, context);
   }
-
-  private static final long serialVersionUID = -5518029878668042674L;
-
 }

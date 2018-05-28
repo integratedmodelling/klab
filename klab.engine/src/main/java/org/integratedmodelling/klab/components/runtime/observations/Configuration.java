@@ -12,6 +12,4 @@ public class Configuration extends CountableObservation implements IConfiguratio
         // TODO Auto-generated constructor stub
     }
 
-    private static final long serialVersionUID = -7911688766542253051L;
-
 }

@@ -19,8 +19,6 @@ public class State extends Observation implements IState {
     this.storage = data;
   }
 
-  private static final long serialVersionUID = -7075415960868285693L;
-  
   @Override
   public boolean isConstant() {
     // TODO Auto-generated method stub

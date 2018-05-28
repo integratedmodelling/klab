@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -24,6 +25,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
@@ -85,6 +87,14 @@ public class ResolutionScope implements IResolutionScope {
 	private Observable observable;
 	private Model model;
 	private Observer observer;
+
+	/*
+	 * When resolving relationships, we carry around their source and target
+	 * subjects to inform resolution and enable the runtime to create their
+	 * observations.
+	 */
+	private Subject relationshipSource;
+	private Subject relationshipTarget;
 
 	/*
 	 * These two are built at merge() and thrown away if a resolution ends up empty.
@@ -292,6 +302,29 @@ public class ResolutionScope implements IResolutionScope {
 			ret.coverage = previous.coverage;
 		}
 
+		return ret;
+	}
+	
+	/**
+	 * Return a scope to resolve a relationship that will link the passed subjects.
+	 * 
+	 * @param observable must be a relationship observable
+	 * @param scale scale of the relationship
+	 * @param source the source subject
+	 * @param target the target subject
+	 * @return a new scope
+	 */
+	public ResolutionScope getChildScope(Observable observable, Scale scale, Subject source, Subject target) {
+
+		if (!observable.is(Type.RELATIONSHIP)) {
+			throw new KlabInternalErrorException("cannot create scope for non-relationships with a source and target subject");
+		}
+
+		ResolutionScope ret = getChildScope(observable, Mode.RESOLUTION, scale);
+		
+		ret.relationshipSource = source;
+		ret.relationshipTarget = target;
+		
 		return ret;
 	}
 
@@ -741,10 +774,10 @@ public class ResolutionScope implements IResolutionScope {
 		 */
 		resolverCache.put(observable, resolvers);
 	}
-	
+
 	/**
-	 * True if this scope is being used to build a cache, indicating that we shouldn't
-	 * try to use the cache when resolving.
+	 * True if this scope is being used to build a cache, indicating that we
+	 * shouldn't try to use the cache when resolving.
 	 * 
 	 * @return
 	 */
@@ -778,6 +811,16 @@ public class ResolutionScope implements IResolutionScope {
 		}
 		return (target == null || target.resolverCache.get(observable) == null) ? null
 				: new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
+	}
+
+	@Override
+	public ISubject getRelationshipSource() {
+		return relationshipSource;
+	}
+
+	@Override
+	public ISubject getRelationshipTarget() {
+		return relationshipTarget;
 	}
 
 }

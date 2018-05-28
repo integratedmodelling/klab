@@ -24,8 +24,6 @@ public class Subject extends CountableObservation implements ISubject {
   public Subject(String name, Observable observable, Scale scale, RuntimeContext context) {
     super(name, observable, scale, context);
   }
-
-  private static final long serialVersionUID = 2466999232658613114L;
   
   @Override
   public Collection<IEvent> getEvents() {

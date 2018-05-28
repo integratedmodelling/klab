@@ -20,6 +20,4 @@ public abstract class CountableObservation extends DirectObservation {
     observable.setOptional(true);
   }
 
-  private static final long serialVersionUID = 3713632802098415506L;
-
 }

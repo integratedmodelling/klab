@@ -12,8 +12,6 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
     String name;
     
-    private static final long serialVersionUID = -3783226787593004279L;
-    
     protected DirectObservation(String name, Observable observable, Scale scale, RuntimeContext context) {
         super(observable, scale, context);
         this.name = name;

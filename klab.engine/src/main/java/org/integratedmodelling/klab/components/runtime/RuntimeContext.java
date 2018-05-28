@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
@@ -161,6 +162,17 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
 		return network.incomingEdgesOf(observation);
 	}
+	
+	@Override
+	public ISubject getSourceSubject(IRelationship relationship) {
+		return network.getEdgeSource(relationship);
+	}
+
+	@Override
+	public ISubject getTargetSubject(IRelationship relationship) {
+		return network.getEdgeTarget(relationship);
+	}
+
 
 	@Override
 	public void exportNetwork(String outFile) {
@@ -269,15 +281,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		obs.setName(name);
 
 		/*
-		 * TODO preload all the possible resolvers in the wider scope before specializing the
-		 * scope to the child observation. Then leave it to the kbox to use the context with
-		 * the preloaded cache.
+		 * preload all the possible resolvers in the wider scope before specializing the
+		 * scope to the child observation. Then leave it to the kbox to use the context
+		 * with the preloaded cache.
 		 */
 		this.resolutionScope.preloadResolvers(observable);
-		
-		// TODO have these public resolvers return dataflows or null, reusing dataflows
-		// from previous
-		// runs
 		ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, Mode.RESOLUTION, scale);
 
 		if (scope.getCoverage().isRelevant()) {
@@ -289,10 +297,32 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	}
 
 	@Override
-	public IRelationship newRelationship(IObservable observable, IScale scale, IObjectArtifact source,
+	public IRelationship newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
 			IObjectArtifact target) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (!observable.is(Type.RELATIONSHIP)) {
+			throw new IllegalArgumentException(
+					"RuntimeContext: cannot create a relationship of type " + observable.getType());
+		}
+
+		IRelationship ret = null;
+		Observable obs = new Observable((Observable) observable);
+		obs.setName(name);
+
+		/*
+		 * preload all the possible resolvers in the wider scope before specializing the
+		 * scope to the child observation. Then leave it to the kbox to use the context
+		 * with the preloaded cache.
+		 */
+		this.resolutionScope.preloadResolvers(observable);
+		ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, (Subject)source, (Subject)target, scale);
+
+		if (scope.getCoverage().isRelevant()) {
+			Dataflow dataflow = Dataflows.INSTANCE
+					.compile("local:task:" /* wazzafuck + session.getToken() + ":" + token */, scope);
+			ret = (IRelationship) dataflow.run(scale, monitor);
+		}
+		return ret;
 	}
 
 	@Override
@@ -454,7 +484,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		if (observation == null && (!actuator.getObservable().is(Type.COUNTABLE) || scope.getMode() == Mode.RESOLUTION)
 				&& !actuator.computesRescaledState()) {
 
-			observation = DefaultRuntimeProvider.createObservation(((Actuator) actuator).getObservable(), scale, this);
+			if (actuator.getObservable().is(Type.RELATIONSHIP)) {
+				observation = DefaultRuntimeProvider.createRelationship(((Actuator) actuator).getObservable(), scale,
+						scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
+			} else {
+				observation = DefaultRuntimeProvider.createObservation(((Actuator) actuator).getObservable(), scale,
+						this);
+			}
 			this.catalog.put(actuator.getName(), observation);
 			this.structure.addVertex(observation);
 			if (observation instanceof ISubject) {

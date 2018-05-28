@@ -21,7 +21,9 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -37,6 +39,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolv
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
+import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.storage.BooleanSingletonStorage;
@@ -307,12 +310,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return ret;
 	}
 
-	// @Override
-	// public IComputableResource getMergeArtifactServiceCall(IObservable
-	// observable,
-	// List<String> modelIds) {
-	// return new ComputableResource(ArtifactMerger.getServiceCall(observable,
-	// modelIds));
-	// }
+	static IRelationship createRelationship(Observable observable, IScale scale, ISubject relationshipSource,
+			ISubject relationshipTarget, RuntimeContext runtimeContext) {
+		
+		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale, runtimeContext);
+		runtimeContext.network.addEdge(relationshipSource, relationshipTarget, ret);
 
+		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
+		// into an Akka
+		// actor and register with the actor
+		
+		return ret;
+	}
 }

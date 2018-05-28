@@ -26,8 +26,6 @@ import org.integratedmodelling.klab.utils.Path;
  */
 public class Observation extends ObservedArtifact implements IObservation {
 
-  private static final long serialVersionUID = -7645502752899232235L;
-
   private Observable        observable;
   private Subject           observer;
 

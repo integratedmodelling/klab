@@ -251,6 +251,8 @@ public interface IComputationContext extends IParameters {
 	 * @param observable
 	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *            object.
+	 * @param name	
+	 * 			  as direct observations, all relationships have a name
 	 * @param scale
 	 *            a
 	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
@@ -267,7 +269,7 @@ public interface IComputationContext extends IParameters {
 	 * @throw IllegalArgumentException if the observable does not describe a
 	 *        relationship.
 	 */
-	IObjectArtifact newRelationship(IObservable observable, IScale scale, IObjectArtifact source,
+	IObjectArtifact newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
 			IObjectArtifact target);
 
 	/**
@@ -284,5 +286,21 @@ public interface IComputationContext extends IParameters {
 	 * @return the name of the target artifact
 	 */
 	String getTargetName();
+
+	/**
+	 * Return the source of the passed relationship.
+	 * 
+	 * @param relationship
+	 * @return a subject, never null
+	 */
+	ISubject getSourceSubject(IRelationship relationship);
+
+	/**
+	 * Return the target of the passed relationship.
+	 * 
+	 * @param relationship
+	 * @return a subject, never null
+	 */
+	ISubject getTargetSubject(IRelationship relationship);
 
 }

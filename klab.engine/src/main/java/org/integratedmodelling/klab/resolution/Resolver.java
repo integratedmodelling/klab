@@ -34,6 +34,11 @@ import org.integratedmodelling.klab.scale.Scale;
  * The resolver provides methods to find the observation strategy for any
  * {@link IResolvable} object. All state during resolution is held in the
  * associate {@link IResolutionScope}.
+ * <p>
+ * At the moment this does not correspond to any official API, although it is a
+ * fundamental component. We should expose methods that returns dataflows
+ * directly, instead of coverages and scopes that are independently compiled
+ * into dataflows. At that point this should become a IResolutionService.
  * 
  * @author ferdinando.villa
  *
@@ -104,8 +109,6 @@ public enum Resolver {
 	 * Resolve the passed object in the passed parent scope, using the resolution
 	 * strategy appropriate for the type.
 	 * 
-	 * TODO expose the version that returns a dataflow, make this private
-	 * 
 	 * @param resolvable
 	 * @param parentScope
 	 * @return the resolved scope
@@ -129,8 +132,6 @@ public enum Resolver {
 	 * Resolve a root observer to an acknowledged observation tree. This being an
 	 * acknowledgement, coverage will always be 100% unless errors happen.
 	 * 
-	 * TODO expose the version that returns a dataflow, make this private
-	 * 
 	 * @param observer
 	 * @param monitor
 	 * @param scenarios
@@ -150,9 +151,7 @@ public enum Resolver {
 	/**
 	 * Resolve an observer in a previously existing context using passed mode and
 	 * scale.
-	 * 
-	 * TODO expose the version that returns a dataflow, make this private
-	 * 
+	 *
 	 * @param observable
 	 * @param parentScope
 	 * @param mode
@@ -164,6 +163,28 @@ public enum Resolver {
 			throws KlabException {
 
 		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale), mode);
+		if (ret.getCoverage().isRelevant()) {
+			parentScope.merge(ret);
+		}
+		return ret;
+	}
+
+	/**
+	 * Resolve a relationship observable between two known subjects using passed
+	 * scale
+	 * 
+	 * @param observable
+	 * @param parentScope
+	 * @param mode
+	 * @param scale
+	 * @return the merged scope
+	 * @throws KlabException
+	 */
+	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Subject source, Subject target,
+			IScale scale) throws KlabException {
+
+		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, (Scale) scale, source, target),
+				Mode.RESOLUTION);
 		if (ret.getCoverage().isRelevant()) {
 			parentScope.merge(ret);
 		}
@@ -206,13 +227,13 @@ public enum Resolver {
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		if (observable.getReferencedModel() != null) {
-		
+
 			// observable comes complete with model, semantic or not
-			ResolutionScope mscope = resolve((Model)observable.getReferencedModel(), ret);
+			ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
 			if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
 				ret.link(mscope);
 			}
-			
+
 		} else {
 
 			// will be non-empty if this observable was resolved before, empty otherwise

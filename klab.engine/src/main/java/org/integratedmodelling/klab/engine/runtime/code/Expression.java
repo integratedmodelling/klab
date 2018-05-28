@@ -78,7 +78,7 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public IObjectArtifact newRelationship(IObservable observable, IScale scale,
+    public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale,
         IObjectArtifact source, IObjectArtifact target) {
       return null;
     }
@@ -135,6 +135,18 @@ public abstract class Expression implements IExpression {
 
 	@Override
 	public String getTargetName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISubject getSourceSubject(IRelationship relationship) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISubject getTargetSubject(IRelationship relationship) {
 		// TODO Auto-generated method stub
 		return null;
 	}
