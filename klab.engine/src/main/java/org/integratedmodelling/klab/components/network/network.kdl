@@ -1,0 +1,39 @@
+/**
+ * This file defines the contract for the services in k.IM that bridge to machine learning
+ * functionalities. Most of these wrap functionalities provided by WEKA.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace network
+
+contextualizer random
+	"Instantiator for random networks.
+
+	## TODO Markdown docs."
+{
+	
+	concept type
+		"The semantics for the relationships being instantiated"
+		
+	number p
+		"The parameter that defines the network being created. Its 
+         meaning changes according to the method."	
+		
+	optional input sourcetype 
+		"Semantics for the type of the subjects used as source for the relationships" 
+		default observation:Subject
+
+	optional input targettype 
+		"Semantics for the type of the subjects used as target for the relationships" 
+		default observation:Subject
+
+	optional input method 
+		"The method to use to create the random network. Choose between BarabasiAlbert, EppsteinPowerLaw, 
+		 ErdosRenyi, Lattice2D (restricted to grid space contexts) and KleinbergSmallWorld.
+		 ## TODO Markdown documentation
+		" 
+		default "groovy"
+		
+	class org.integratedmodelling.klab.components.network.services.RandomInstantiator
+
+}

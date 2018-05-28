@@ -12,7 +12,10 @@ observe earth:Terrestrial earth:Region named tanzania-grr
 // @resolveOnce <-- use to copy dataflows w/o search - OR the other way around, to force resolution of each one
 model each earth:Mountain
 	observing geography:Elevation in m
-	using gis.features.extract(select = "elevation > 3000")
+	using gis.features.extract(
+		select = "elevation > 3000",
+		concy = im:Normalized earth:Region
+	)
 	// should be able to add over space( grid = 30m ) <-- to combine scale within each instance
 ;
 

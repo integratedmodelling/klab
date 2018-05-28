@@ -34,11 +34,11 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getList <em>List</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getTable <em>Table</em>}</li>
  * </ul>
  *
  * @generated
@@ -94,6 +94,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected List list;
+
+  /**
+   * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTable()
+   * @generated
+   * @ordered
+   */
+  protected LookupTable table;
 
   /**
    * The cached value of the '{@link #getMap() <em>Map</em>}' containment reference.
@@ -154,16 +164,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected String id = ID_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getTable()
-   * @generated
-   * @ordered
-   */
-  protected LookupTable table;
 
   /**
    * <!-- begin-user-doc -->
@@ -358,6 +358,54 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
+  public LookupTable getTable()
+  {
+    return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetTable(LookupTable newTable, NotificationChain msgs)
+  {
+    LookupTable oldTable = table;
+    table = newTable;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__TABLE, oldTable, newTable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTable(LookupTable newTable)
+  {
+    if (newTable != table)
+    {
+      NotificationChain msgs = null;
+      if (table != null)
+        msgs = ((InternalEObject)table).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__TABLE, null, msgs);
+      if (newTable != null)
+        msgs = ((InternalEObject)newTable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__TABLE, null, msgs);
+      msgs = basicSetTable(newTable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__TABLE, newTable, newTable));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Map getMap()
   {
     return map;
@@ -500,54 +548,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public LookupTable getTable()
-  {
-    return table;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetTable(LookupTable newTable, NotificationChain msgs)
-  {
-    LookupTable oldTable = table;
-    table = newTable;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__TABLE, oldTable, newTable);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setTable(LookupTable newTable)
-  {
-    if (newTable != table)
-    {
-      NotificationChain msgs = null;
-      if (table != null)
-        msgs = ((InternalEObject)table).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__TABLE, null, msgs);
-      if (newTable != null)
-        msgs = ((InternalEObject)newTable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__TABLE, null, msgs);
-      msgs = basicSetTable(newTable, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__TABLE, newTable, newTable));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -559,12 +559,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetLiteral(null, msgs);
       case KimPackage.VALUE__LIST:
         return basicSetList(null, msgs);
+      case KimPackage.VALUE__TABLE:
+        return basicSetTable(null, msgs);
       case KimPackage.VALUE__MAP:
         return basicSetMap(null, msgs);
       case KimPackage.VALUE__FUNCTION:
         return basicSetFunction(null, msgs);
-      case KimPackage.VALUE__TABLE:
-        return basicSetTable(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -587,6 +587,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getExpr();
       case KimPackage.VALUE__LIST:
         return getList();
+      case KimPackage.VALUE__TABLE:
+        return getTable();
       case KimPackage.VALUE__MAP:
         return getMap();
       case KimPackage.VALUE__NULL:
@@ -595,8 +597,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getFunction();
       case KimPackage.VALUE__ID:
         return getId();
-      case KimPackage.VALUE__TABLE:
-        return getTable();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -623,6 +623,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KimPackage.VALUE__LIST:
         setList((List)newValue);
         return;
+      case KimPackage.VALUE__TABLE:
+        setTable((LookupTable)newValue);
+        return;
       case KimPackage.VALUE__MAP:
         setMap((Map)newValue);
         return;
@@ -634,9 +637,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__ID:
         setId((String)newValue);
-        return;
-      case KimPackage.VALUE__TABLE:
-        setTable((LookupTable)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -664,6 +664,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KimPackage.VALUE__LIST:
         setList((List)null);
         return;
+      case KimPackage.VALUE__TABLE:
+        setTable((LookupTable)null);
+        return;
       case KimPackage.VALUE__MAP:
         setMap((Map)null);
         return;
@@ -675,9 +678,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__ID:
         setId(ID_EDEFAULT);
-        return;
-      case KimPackage.VALUE__TABLE:
-        setTable((LookupTable)null);
         return;
     }
     super.eUnset(featureID);
@@ -701,6 +701,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
       case KimPackage.VALUE__LIST:
         return list != null;
+      case KimPackage.VALUE__TABLE:
+        return table != null;
       case KimPackage.VALUE__MAP:
         return map != null;
       case KimPackage.VALUE__NULL:
@@ -709,8 +711,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return function != null;
       case KimPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-      case KimPackage.VALUE__TABLE:
-        return table != null;
     }
     return super.eIsSet(featureID);
   }

@@ -1,0 +1,8 @@
+/**
+ * This file defines the contract for the services in k.IM that create or operate on observation
+ * networks. Most of these wrap functionalities provided by JUNG 2.0.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace learning.weka
+

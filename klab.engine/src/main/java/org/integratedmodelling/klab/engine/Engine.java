@@ -373,6 +373,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * read core OWL knowledge from classpath
 			 */
 			if (!Resources.INSTANCE.loadCoreKnowledge(this.monitor)) {
+				Logging.INSTANCE.error("could not load core knowledge");
 				return false;
 			}
 
@@ -396,6 +397,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * get worldview from certificate and sync it
 			 */
 			if (!Resources.INSTANCE.loadWorldview(certificate, this.monitor)) {
+				Logging.INSTANCE.error("could not load worldview");
 				return false;
 			}
 
@@ -423,6 +425,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * now we can finally load the workspace
 			 */
 			if (!Resources.INSTANCE.loadLocalWorkspace(this.monitor)) {
+				Logging.INSTANCE.error("could not load local workspace");
 				return false;
 			}
 

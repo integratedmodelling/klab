@@ -299,6 +299,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 					sequence_ValueWithConcept(context, (Value) semanticObject); 
 					return; 
 				}
+				else if (rule == grammarAccess.getValueWithIdAndConceptRule()) {
+					sequence_ValueWithIdAndConcept(context, (Value) semanticObject); 
+					return; 
+				}
 				else if (rule == grammarAccess.getValueRule()) {
 					sequence_Value(context, (Value) semanticObject); 
 					return; 
@@ -429,16 +433,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -860,7 +864,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     KeyValuePair returns KeyValuePair
 	 *
 	 * Constraint:
-	 *     ((name=LOWERCASE_ID | name=PathName) interactive?='?='? value=Value)
+	 *     ((name=LOWERCASE_ID | name=PathName) interactive?='?='? value=ValueWithIdAndConcept)
 	 */
 	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1461,11 +1465,36 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         literal=Literal | 
 	 *         expr=EXPR | 
 	 *         list=List | 
+	 *         table=LookupTable | 
 	 *         map=Map | 
 	 *         null?='unknown'
 	 *     )
 	 */
 	protected void sequence_ValueWithConcept(ISerializationContext context, Value semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ValueWithIdAndConcept returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         concept=ConceptDeclaration | 
+	 *         function=Function | 
+	 *         literal=Literal | 
+	 *         expr=EXPR | 
+	 *         id=LOWERCASE_ID | 
+	 *         id=UPPERCASE_ID | 
+	 *         id=CAMELCASE_ID | 
+	 *         list=List | 
+	 *         table=LookupTable | 
+	 *         map=Map | 
+	 *         null?='unknown'
+	 *     )
+	 */
+	protected void sequence_ValueWithIdAndConcept(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

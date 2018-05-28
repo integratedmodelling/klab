@@ -73,6 +73,29 @@
 	</build>
 	<dependencies>
 
+		<!-- JUNG for network analysis, generation and I/O. Visualization only included in test scope. -->
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-graph-impl</artifactId>
+			<version>${jung.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-algorithms</artifactId>
+			<version>${jung.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-io</artifactId>
+			<version>${jung.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-visualization</artifactId>
+			<version>${jung.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<!-- Websockets support -->
 		<dependency>
 			<groupId>org.springframework</groupId>
