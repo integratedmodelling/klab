@@ -18,6 +18,7 @@ import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
@@ -60,7 +61,7 @@ public enum KimKnowledgeProcessor {
 		try {
 
 			Concept ret = buildInternal(concept, ns, kimObject, monitor);
-			if (((KimConceptStatement)concept).getParents().isEmpty()) {
+			if (((KimConceptStatement) concept).getParents().isEmpty()) {
 				IConcept parent = null;
 				if (concept.getUpperConceptDefined() != null) {
 					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
@@ -113,7 +114,7 @@ public enum KimKnowledgeProcessor {
 		namespace.define();
 		main = namespace.getOntology().getConcept(mainId);
 
-		for (ParentConcept parent : ((KimConceptStatement)concept).getParents()) {
+		for (ParentConcept parent : ((KimConceptStatement) concept).getParents()) {
 
 			List<IConcept> concepts = new ArrayList<>();
 			for (IKimConcept pdecl : parent.getConcepts()) {
@@ -163,7 +164,7 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
-		for (IKimConcept inherited : ((KimConceptStatement)concept).getTraitsInherited()) {
+		for (IKimConcept inherited : ((KimConceptStatement) concept).getTraitsInherited()) {
 			IConcept trait = declare(inherited, monitor);
 			if (trait == null) {
 				monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);
@@ -177,9 +178,15 @@ public enum KimKnowledgeProcessor {
 		}
 
 		for (ApplicableConcept link : concept.getSubjectsLinked()) {
-			
+			if (link.getOriginalObservable() == null && link.getSource() != null) {
+				// relationship source->target
+				Observables.INSTANCE.defineRelationship(main, declare(link.getSource(), monitor),
+						declare(link.getTarget(), monitor));
+			} else {
+				// TODO
+			}
 		}
-		
+
 		if (kimObject != null) {
 			kimObject.set(main);
 		}
@@ -196,7 +203,7 @@ public enum KimKnowledgeProcessor {
 			observable.setName(concept.getFormalName());
 			return observable;
 		}
-		
+
 		Concept main = declareInternal(concept.getMain(), monitor);
 
 		if (main == null) {

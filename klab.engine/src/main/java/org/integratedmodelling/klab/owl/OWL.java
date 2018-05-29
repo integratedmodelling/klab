@@ -35,8 +35,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;

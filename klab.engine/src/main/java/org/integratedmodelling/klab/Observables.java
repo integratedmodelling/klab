@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -33,7 +35,9 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -222,7 +226,7 @@ public enum Observables implements IObservableService {
 
 		boolean mustBeSameCoreType = (flags & REQUIRE_SAME_CORE_TYPE) != 0;
 		boolean useRoleParentClosure = (flags & USE_ROLE_PARENT_CLOSURE) != 0;
-//		boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
+		// boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
 
 		// TODO unsupported
 		boolean useTraitParentClosure = (flags & USE_TRAIT_PARENT_CLOSURE) != 0;
@@ -379,14 +383,15 @@ public enum Observables implements IObservableService {
 		// the current observable has the same core type as the target
 
 		if (current.getType().equals(to.getType())) {
-			
+
 			/*
 			 * can only be a mediator issue, and if we get here, mediators are compatible
 			 */
 			if (current.getUnit() != null && to.getUnit() != null && !current.getUnit().equals(to.getUnit())) {
 				ret.add(new ComputableResource(current.getUnit(), to.getUnit()));
 			}
-			if (current.getCurrency() != null && to.getCurrency() != null && !current.getCurrency().equals(to.getCurrency())) {
+			if (current.getCurrency() != null && to.getCurrency() != null
+					&& !current.getCurrency().equals(to.getCurrency())) {
 				ret.add(new ComputableResource(current.getCurrency(), to.getCurrency()));
 			}
 			if (current.getRange() != null && to.getRange() != null && !current.getRange().equals(to.getRange())) {
@@ -405,6 +410,35 @@ public enum Observables implements IObservableService {
 					"trying to extract the observable type from non-observable " + observable);
 		}
 		return type.iterator().next();
+	}
+
+	@Override
+	public IConcept getRelationshipSource(IConcept relationship) {
+		Collection<IConcept> ret = getRelationshipSources(relationship);
+		return ret.size() == 0 ? null : ret.iterator().next();
+	}
+
+	@Override
+	public IConcept getRelationshipTarget(IConcept relationship) {
+		Collection<IConcept> ret = getRelationshipTargets(relationship);
+		return ret.size() == 0 ? null : ret.iterator().next();
+	}
+
+	@Override
+	public Collection<IConcept> getRelationshipSources(IConcept relationship) {
+		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY));
+	}
+
+	@Override
+	public Collection<IConcept> getRelationshipTargets(IConcept relationship) {
+		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY));
+	}
+
+	public void defineRelationship(Concept relationship, IConcept source, IConcept target) {
+		IProperty hasSource = Concepts.p(NS.IMPLIES_SOURCE_PROPERTY);
+		IProperty hasTarget = Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY);
+		OWL.INSTANCE.restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source));
+		OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target));
 	}
 
 }
