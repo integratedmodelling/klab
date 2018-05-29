@@ -20,15 +20,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Date;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 
 /**
  * Used on a {@link IIdentity identity implementation} to handle a message with
- * a specified payload type. The payload type must be specified as parameter in
- * the method that is annotated.
+ * a specified payload type. A payload type (recognizable based on package or
+ * some other means) must be specified as parameter in the method that is
+ * annotated.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -37,16 +36,4 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface MessageHandler {
-
-	/**
-	 * Class of the payload this method reacts to. The method can have a parameter
-	 * of that class which will be set to the payload when a message is received by
-	 * the implementing identity. Fields of {@link MessageClass},
-	 * {@link IMessage.Type} and {@link Date} will also be automatically set, if
-	 * present, to the class, type and send date of the message.
-	 * 
-	 * @return component id
-	 */
-	Class<?> value();
-
 }

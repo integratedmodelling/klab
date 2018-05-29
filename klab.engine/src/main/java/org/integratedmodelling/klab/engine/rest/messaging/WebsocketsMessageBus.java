@@ -39,11 +39,11 @@ public class WebsocketsMessageBus implements IMessageBus {
 	class ReceiverDescription {
 
 		public ReceiverDescription(Class<? extends IIdentity> cls) {
-			for (Method method : cls.getMethods()) {
+			for (Method method : cls.getDeclaredMethods()) {
 				for (Annotation annotation : method.getDeclaredAnnotations()) {
 					if (annotation instanceof MessageHandler) {
-						this.handlers.put(((MessageHandler) annotation).value(),
-								new MethodDescriptor(method, (MessageHandler) annotation));
+						MethodDescriptor mdesc = new MethodDescriptor(method, (MessageHandler) annotation);
+						this.handlers.put(mdesc.payloadType, mdesc);
 					}
 				}
 			}
@@ -56,15 +56,23 @@ public class WebsocketsMessageBus implements IMessageBus {
 			Class<?> payloadType;
 
 			public MethodDescriptor(Method method, MessageHandler handler) {
+				
 				this.method = method;
 				this.method.setAccessible(true);
-				this.payloadType = handler.value();
+				for (Class<?> cls : method.getParameterTypes()) {
+					if (cls.getPackage().getName().startsWith(Klab.REST_RESOURCES_PACKAGE_ID)) {
+						this.payloadType = cls;
+						break;
+					}
+				}
+				if (this.payloadType == null) {
+					throw new IllegalStateException(
+							"wrong usage of @MessageHandler: the annotated method must take a bean from package "
+									+ Klab.REST_RESOURCES_PACKAGE_ID + " as parameter");
+				}
 			}
 
 			void handle(Object identity, Object payload, IMessage message) {
-				
-				System.out.println("ZIOPOLLO identity " + identity + " handling payload of message " + message
-						+ " through method " + method);
 
 				List<Object> params = new ArrayList<>();
 				for (Class<?> cls : method.getParameterTypes()) {
@@ -84,16 +92,16 @@ public class WebsocketsMessageBus implements IMessageBus {
 						params.add(null);
 					}
 				}
-				
+
 				try {
 					this.method.invoke(identity, params.toArray());
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {	
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					Logging.INSTANCE.error("error while dispatching message to handler: " + e.getMessage());
 				}
 			}
 		}
 
-		Map<Class<?>, MethodDescriptor> handlers;
+		Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
 	}
 
 	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
@@ -122,7 +130,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 	@MessageMapping(API.MESSAGE)
 	public void handleTask(Message message) {
 
-		System.out.println(JsonUtils.printAsJson(message));
+//		System.out.println(JsonUtils.printAsJson(message));
 
 		if (message.getInResponseTo() != null) {
 			Receiver responder = responders.remove(message.getInResponseTo());
@@ -174,7 +182,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 			MethodDescriptor mdesc = rdesc.handlers.get(cls);
 			if (mdesc != null) {
 				Object payload = objectMapper.convertValue(message.getPayload(), cls);
-				mdesc.handle(payload, identity, message);
+				mdesc.handle(identity, payload, message);
 			}
 
 		} catch (Throwable e) {

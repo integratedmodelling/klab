@@ -31,129 +31,135 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * Engine session. Implements UserDetails to be directly usable as a principal in Spring security.
+ * Engine session. Implements UserDetails to be directly usable as a principal
+ * in Spring security.
  * 
  * @author ferdinando.villa
  *
  */
 public class Session implements ISession, UserDetails {
 
-    private static final long serialVersionUID = -1571090827271892549L;
+	private static final long serialVersionUID = -1571090827271892549L;
 
-    Monitor monitor;
-    String token = "s" + NameGenerator.shortUUID();
-    IEngineUserIdentity user;
-    List<Listener> listeners = new ArrayList<>();
-    boolean closed = false;
-    Set<GrantedAuthority> authorities = new HashSet<>();
-    long lastActivity = System.currentTimeMillis();
-    Geometry regionOfInterest = Geometry.empty();
+	Monitor monitor;
+	String token = "s" + NameGenerator.shortUUID();
+	IEngineUserIdentity user;
+	List<Listener> listeners = new ArrayList<>();
+	boolean closed = false;
+	Set<GrantedAuthority> authorities = new HashSet<>();
+	long lastActivity = System.currentTimeMillis();
+	SpatialExtent regionOfInterest = null;
 
-    public interface Listener {
-        void onClose(ISession session);
-    }
+	public interface Listener {
+		void onClose(ISession session);
+	}
 
-    public Session(Engine engine, IEngineUserIdentity user) {
-        this.user = user;
-        this.monitor = ((Monitor) engine.getMonitor()).get(this);
-        this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
-        Auth.INSTANCE.registerSession(this);
-    }
+	public Session(Engine engine, IEngineUserIdentity user) {
+		this.user = user;
+		this.monitor = ((Monitor) engine.getMonitor()).get(this);
+		this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
+		Auth.INSTANCE.registerSession(this);
+	}
 
-    void touch() {
-        this.lastActivity = System.currentTimeMillis();
-    }
-    
-    public void addListener(Listener listener) {
-        this.listeners.add(listener);
-    }
+	void touch() {
+		this.lastActivity = System.currentTimeMillis();
+	}
 
-    @Override
-    public String getId() {
-        return token;
-    }
+	public void addListener(Listener listener) {
+		this.listeners.add(listener);
+	}
 
-    @Override
-    public boolean is(Type type) {
-        return type == Type.MODEL_SESSION;
-    }
+	@Override
+	public String getId() {
+		return token;
+	}
 
-    @Override
-    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-        return IIdentity.findParent(this, type);
-    }
+	@Override
+	public boolean is(Type type) {
+		return type == Type.MODEL_SESSION;
+	}
 
-    @Override
-    public IEngineUserIdentity getParentIdentity() {
-        return user;
-    }
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		return IIdentity.findParent(this, type);
+	}
 
-    @Override
-    public Monitor getMonitor() {
-        return monitor;
-    }
+	@Override
+	public IEngineUserIdentity getParentIdentity() {
+		return user;
+	}
 
-    @Override
-    public void close() throws IOException {
-        for (Listener listener : listeners) {
-            listener.onClose(this);
-        }
-        this.closed = true;
-    }
+	@Override
+	public Monitor getMonitor() {
+		return monitor;
+	}
 
-    @Override
-    public Future<ISubject> observe(String urn, String... scenarios) throws KlabException {
-        touch();
-        IKimObject object = Resources.INSTANCE.getModelObject(urn);
-        if (!(object instanceof Observer)) {
-            throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
-        }
-        return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
-    }
+	@Override
+	public void close() throws IOException {
+		for (Listener listener : listeners) {
+			listener.onClose(this);
+		}
+		this.closed = true;
+	}
 
-    public String toString() {
-        // TODO add user
-        return "<session " + getId() + ">";
-    }
+	@Override
+	public Future<ISubject> observe(String urn, String... scenarios) throws KlabException {
+		touch();
+		IKimObject object = Resources.INSTANCE.getModelObject(urn);
+		if (!(object instanceof Observer)) {
+			throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
+		}
+		return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
+	}
 
-    @Override
-    public Set<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
+	public String toString() {
+		// TODO add user
+		return "<session " + getId() + ">";
+	}
 
-    @Override
-    public String getPassword() {
-        return getId();
-    }
+	@Override
+	public Set<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
+	}
 
-    @Override
-    public String getUsername() {
-        return getId();
-    }
+	@Override
+	public String getPassword() {
+		return getId();
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	@Override
+	public String getUsername() {
+		return getId();
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return !closed;
-    }
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return !closed;
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return !closed;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return !closed;
+	}
 
 	@Override
 	public IGeometry getRegionOfInterest() {
-		return regionOfInterest;
+		
+		if (regionOfInterest == null) {
+			return Geometry.empty();
+		}
+		return Geometry.create("S1").withBoundingBox(regionOfInterest.getEast(), regionOfInterest.getWest(),
+				regionOfInterest.getSouth(), regionOfInterest.getNorth());
 	}
 
 	/*
@@ -161,10 +167,11 @@ public class Session implements ISession, UserDetails {
 	 * handlers for messages
 	 * ------------------------------------------------------------------------
 	 */
-	
-	@MessageHandler(SpatialExtent.class)
+
+	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
-		// TODO
+		System.out.println("setting ROI = " + extent);
+		this.regionOfInterest = extent;
 	}
-	
+
 }
