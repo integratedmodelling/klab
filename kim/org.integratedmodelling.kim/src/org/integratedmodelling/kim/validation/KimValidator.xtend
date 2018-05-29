@@ -50,9 +50,10 @@ import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
+import org.integratedmodelling.klab.common.SemanticType
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
-import org.integratedmodelling.klab.common.SemanticType
+import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
 
 /**
  * This class contains custom validation rules. 
@@ -299,7 +300,6 @@ class KimValidator extends AbstractKimValidator {
 			var List<KimConcept> classifiers = null
 
 			// TODO observable must have a "by" or be a class/trait	
-
 			// if any of the observables (not the dependencies) or the classifications/lookup tables
 			// produce a subjective concept, model must be private
 			classifiers = newArrayList
@@ -389,17 +389,18 @@ class KimValidator extends AbstractKimValidator {
 
 				// these must come after
 				if (model.classification !== null) {
-					descriptor.contextualization.add(new ComputableResource(model.classification, model.isDiscretization, descriptor))
+					descriptor.contextualization.add(
+						new ComputableResource(model.classification, model.isDiscretization, descriptor))
 				}
-				
+
 				if (model.lookupTable !== null) {
-					descriptor.contextualization.add(new ComputableResource(model.lookupTable, model.lookupTableArgs, descriptor))
+					descriptor.contextualization.add(
+						new ComputableResource(model.lookupTable, model.lookupTableArgs, descriptor))
 				}
-				
+
 				if (model.lookupTableId !== null) {
 					descriptor.contextualization.add(new ComputableResource(descriptor, model.lookupTableId))
 				}
-
 
 				if (model.name !== null) {
 					descriptor.name = model.name
@@ -1672,11 +1673,29 @@ class KimValidator extends AbstractKimValidator {
 
 		if (concept.domains.size > 0) {
 			if (!type.contains(Type.RELATIONSHIP)) {
-				error("only relationships can use the 'links clause", concept,
+				error("only relationships can use the 'links' clause", concept,
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS)
 				ok = false
 			} else {
-				// TODO for relationships, moves in parallel with concept.ranges
+				// for relationships; moves in parallel with concept.ranges
+				for (var i = 0; i < concept.domains.size; i++) {
+					var domain = Kim.INSTANCE.declareConcept(concept.domains.get(i))
+					var range = Kim.INSTANCE.declareConcept(concept.ranges.get(i))
+					if (domain.type.contains(Type.SUBJECT)) {
+						error("relationship can only link subjects to subjects", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i)
+						ok = false
+					}
+					if (range.type.contains(Type.SUBJECT)) {
+						error("relationship can only link subjects to subjects", concept,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i)
+						ok = false
+					}
+					var link = new ApplicableConceptImpl
+					link.from = domain
+					link.to = range
+					ret.subjectsLinked.add(link)
+				}
 			}
 		}
 

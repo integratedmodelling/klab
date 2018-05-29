@@ -2154,10 +2154,32 @@ public class KimValidator extends AbstractKimValidator {
       boolean _contains_6 = type.contains(IKimConcept.Type.RELATIONSHIP);
       boolean _not_7 = (!_contains_6);
       if (_not_7) {
-        this.error("only relationships can use the \'links clause", concept, 
+        this.error("only relationships can use the \'links\' clause", concept, 
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS);
         ok = false;
       } else {
+        for (int i_6 = 0; (i_6 < concept.getDomains().size()); i_6++) {
+          {
+            KimConcept domain = Kim.INSTANCE.declareConcept(concept.getDomains().get(i_6));
+            KimConcept range = Kim.INSTANCE.declareConcept(concept.getRanges().get(i_6));
+            boolean _contains_7 = domain.getType().contains(IKimConcept.Type.SUBJECT);
+            if (_contains_7) {
+              this.error("relationship can only link subjects to subjects", concept, 
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i_6);
+              ok = false;
+            }
+            boolean _contains_8 = range.getType().contains(IKimConcept.Type.SUBJECT);
+            if (_contains_8) {
+              this.error("relationship can only link subjects to subjects", concept, 
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i_6);
+              ok = false;
+            }
+            KimConceptStatement.ApplicableConceptImpl link = new KimConceptStatement.ApplicableConceptImpl();
+            link.from = domain;
+            link.to = range;
+            ret.getSubjectsLinked().add(link);
+          }
+        }
       }
     }
     ConceptDeclaration _inverse = concept.getInverse();

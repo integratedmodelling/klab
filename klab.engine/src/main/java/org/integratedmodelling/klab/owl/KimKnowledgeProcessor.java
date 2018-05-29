@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimConceptStatement.ApplicableConcept;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement;
@@ -22,8 +23,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService.Builder;
@@ -33,7 +32,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.CamelCase;
-import org.integratedmodelling.klab.utils.Path;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
@@ -178,6 +176,10 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
+		for (ApplicableConcept link : concept.getSubjectsLinked()) {
+			
+		}
+		
 		if (kimObject != null) {
 			kimObject.set(main);
 		}

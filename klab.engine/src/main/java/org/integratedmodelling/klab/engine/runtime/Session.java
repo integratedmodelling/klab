@@ -170,6 +170,7 @@ public class Session implements ISession, UserDetails {
 
 	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
+		// TODO change to monitor.debug
 		System.out.println("setting ROI = " + extent);
 		this.regionOfInterest = extent;
 	}

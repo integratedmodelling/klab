@@ -2,24 +2,24 @@ worldview im;
 
 @test(
 	name = "tests.core.classification.simplest",
-	description  = "Simplest discretization test",
+	description  = "Simplest classification test",
 	observations = ("geography:Elevation by im:Level")
 )
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 	
 model geography:Elevation by im:Level
-	using gis.terrain()
+	using local:anonymous:test:dem90m
 	classified into
-		im:Low if < 500,
+		im:Low      if < 500,
 		im:Moderate if < 1500,
-		im:High otherwise;
+		im:High     otherwise;
 
 model geography:Elevation by im:Level
 	using gis.terrain()
 	lookup (self, *, ?) into 
 		< 500  | geography:Elevation     | im:Low,
 		< 1500 | geography:Slope         | im:Moderate,
-		   *   |  infrastructure:Road    | im:High,
+		   *   | infrastructure:Road     | im:High,
 		   #   | infrastructure:Building | agriculture:Manure physical:DelimitedBody; // piece of shit
 		

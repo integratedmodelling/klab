@@ -23,6 +23,40 @@ public interface IKimConceptStatement extends IKimStatement {
         DISCRETIZES
     }
 
+    /**
+     * Anything that "applies to" (including subject linked by relationships) gets
+     * this descriptor. If the application is defined for a role, the original
+     * observable is also indicated.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface ApplicableConcept {
+    	
+    	/**
+    	 * If the application is through a role, the original observable that
+    	 * is expected to incarnate it. Otherwise null.
+    	 *
+    	 * @return a concept declaration or null
+    	 */
+    	IKimConcept getOriginalObservable();
+    	
+    	/**
+    	 * Only filled in when the target concept is a relationship.
+    	 * 
+    	 * @return a concept declaration or null
+    	 */
+    	IKimConcept getSource();
+    	
+    	/**
+    	 * The concept that constitutes the target of the application. In relationships, the
+    	 * target of the relationship. 
+    	 *  
+    	 * @return a concept declaration or null
+    	 */
+    	IKimConcept getTarget();
+    }
+    
     EnumSet<Type> getType();
 
     String getUpperConceptDefined();
@@ -106,5 +140,9 @@ public interface IKimConceptStatement extends IKimStatement {
      * @return consists of
      */
     List<IKimConcept> getConfigurationParticipants();
+
+	List<ApplicableConcept> getSubjectsLinked();
+
+	List<ApplicableConcept> getAppliesTo();
 
 }
