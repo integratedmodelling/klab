@@ -776,6 +776,7 @@ class KimValidator extends AbstractKimValidator {
 				error("Only observables and configurations can have inherency", declaration.inherency, null,
 					KimPackage.CONCEPT_DECLARATION__INHERENCY)
 			}
+
 			flags = checkDeclaration(declaration.inherency)
 			if (flags.isEmpty) {
 				type.clear
@@ -793,6 +794,14 @@ class KimValidator extends AbstractKimValidator {
 						macro.setField(Field.INHERENT, declaration.inherency)
 					}
 				} else {
+
+					if (Kim.intersection(flags, IKimConcept.INHERENT_QUALITIES).size() > 0) {
+						error(
+							"The inherent type (of) cannot be used on qualities that are naturally inherent to an observable (value, presence, uncertainty, probability...); only context ('within') is allowed",
+							declaration.inherency, null, KimPackage.CONCEPT_DECLARATION__INHERENCY)
+						error = true
+					}
+
 					if (!flags.contains(Type.DIRECT_OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
 						error(
 							"The inherent type (of) must be a direct observable (process, subject, event or relationship) or a configuration",

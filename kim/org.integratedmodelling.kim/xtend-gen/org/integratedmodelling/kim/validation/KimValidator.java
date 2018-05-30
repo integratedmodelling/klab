@@ -1027,6 +1027,14 @@ public class KimValidator extends AbstractKimValidator {
               macro.setField(IKimMacro.Field.INHERENT, declaration.getInherency());
             }
           } else {
+            int _size = Kim.intersection(flags, IKimConcept.INHERENT_QUALITIES).size();
+            boolean _greaterThan = (_size > 0);
+            if (_greaterThan) {
+              this.error(
+                "The inherent type (of) cannot be used on qualities that are naturally inherent to an observable (value, presence, uncertainty, probability...); only context (\'within\') is allowed", 
+                declaration.getInherency(), null, KimPackage.CONCEPT_DECLARATION__INHERENCY);
+              error = true;
+            }
             if (((!flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE)) && (!flags.contains(IKimConcept.Type.CONFIGURATION)))) {
               this.error(
                 "The inherent type (of) must be a direct observable (process, subject, event or relationship) or a configuration", 

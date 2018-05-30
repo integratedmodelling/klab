@@ -12,7 +12,6 @@ import java.util.Map;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Path;
-import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
