@@ -89,6 +89,14 @@
 
 ### Debugger
 
+### Calibration
+
+- Calibrate with/to a scenario
+	- Build template scenario for calibration after baseline run
+	- Template has all function parameters and context/observables so far
+	- Add calibration data in it and run calibrate which modifies
+	  the parameters in the scenario.
+
 ## Visualization (Engine)
 
 - Define colormap, shading, bit depth and other visualization options through overriddable 
