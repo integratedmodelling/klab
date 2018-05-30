@@ -23,8 +23,14 @@ public class KimClassification extends KimStatement implements IKimClassificatio
 		super(classification, parent);
 		this.discretization = discretization;
 		for (Classifier classifier : classification.getClassifiers()) {
-			classifiers.add(new Pair<IKimConcept, IKimClassifier>(new KimConcept(classifier.getDeclaration(), this),
-					new KimClassifier(classifier.getClassifier(), this)));
+			KimConcept concept = new KimConcept(classifier.getDeclaration(), this);
+			if (classifier.isOtherwise()) {
+				// catch-all
+				classifiers.add(new Pair<IKimConcept, IKimClassifier>(concept, new KimClassifier(classifier, this)));
+			} else {
+				classifiers.add(new Pair<IKimConcept, IKimClassifier>(concept,
+					new KimClassifier(classifier.getClassifier(), classifier.isNegated(), concept, this)));
+			}
 		}
 	}
 
