@@ -66,8 +66,9 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * This component provides the default dataflow execution runtime and the
  * associated services. Simply dispatches a topologically sorted computation to
  * a threadpool executor. The JGraphT-based topological order built does not
- * account for possible parallel actuators, which it should.
- * 
+ * account for possible parallel actuators, which it should. 
+ * Use Coffman–Graham algorithm when practical.
+ * <p>
  * The initialization dataflow will build simple objects (essentially
  * storage-only observations) when the context is not temporal. If the context
  * is temporal, it will create Akka actors for all direct observations and
@@ -321,7 +322,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		// TODO semantic of the relationship may define whether we want a directed or undirected edge.
 		runtimeContext.network.addEdge(ret,
 				new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget),
-				EdgeType.DIRECTED);
+				observable.is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
 
 		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
 		// into an Akka

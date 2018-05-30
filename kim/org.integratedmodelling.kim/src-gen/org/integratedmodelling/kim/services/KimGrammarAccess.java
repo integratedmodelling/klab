@@ -1141,13 +1141,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameSTRINGTerminalRuleCall_0_1 = (RuleCall)cNameAlternatives_0.eContents().get(1);
 		private final RuleCall cNameLocalFilePathParserRuleCall_0_2 = (RuleCall)cNameAlternatives_0.eContents().get(2);
 		
-		////LookupTable:
-		//
-		////	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
-		//
-		//////	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
-		// //;
-		// Urn:
+		//Urn:
 		//	name=(UrnId | STRING | LocalFilePath);
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -1244,10 +1238,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cElementsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cElementsTableClassifierParserRuleCall_1_1_0 = (RuleCall)cElementsAssignment_1_1.eContents().get(0);
 		
-		////	'(' ((args+=LOWERCASE_ID (',' args+=LOWERCASE_ID)*) | (expr+=EXPR (expr+=EXPR)*)) ')' ':' elements+=TableClassifier
-		//
-		////	(=> ',' elements+=TableClassifier)*;
-		// TableRow:
+		//TableRow:
 		//	elements+=TableClassifier ('|' elements+=TableClassifier)*;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -7559,18 +7550,19 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cQuantityKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		private final Keyword cConfigurationKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
 		private final Keyword cRelationshipKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cExtentKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
-		private final RuleCall cEXTENSIVE_PROPERTYParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
-		private final RuleCall cINTENSIVE_PROPERTYParserRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
-		private final RuleCall cAGENT_TYPEParserRuleCall_7 = (RuleCall)cAlternatives.eContents().get(7);
-		private final RuleCall cTRAITParserRuleCall_8 = (RuleCall)cAlternatives.eContents().get(8);
+		private final Keyword cBondKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cExtentKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
+		private final RuleCall cEXTENSIVE_PROPERTYParserRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
+		private final RuleCall cINTENSIVE_PROPERTYParserRuleCall_7 = (RuleCall)cAlternatives.eContents().get(7);
+		private final RuleCall cAGENT_TYPEParserRuleCall_8 = (RuleCall)cAlternatives.eContents().get(8);
+		private final RuleCall cTRAITParserRuleCall_9 = (RuleCall)cAlternatives.eContents().get(9);
 		
 		//DECLARABLE_TYPE:
-		//	'class' | 'quantity' | 'configuration' | 'relationship' | 'extent' | EXTENSIVE_PROPERTY | INTENSIVE_PROPERTY |
-		//	AGENT_TYPE | TRAIT;
+		//	'class' | 'quantity' | 'configuration' | 'relationship' | 'bond' | 'extent' | EXTENSIVE_PROPERTY | INTENSIVE_PROPERTY
+		//	| AGENT_TYPE | TRAIT;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'class' | 'quantity' | 'configuration' | 'relationship' | 'extent' | EXTENSIVE_PROPERTY | INTENSIVE_PROPERTY |
+		//'class' | 'quantity' | 'configuration' | 'relationship' | 'bond' | 'extent' | EXTENSIVE_PROPERTY | INTENSIVE_PROPERTY |
 		//AGENT_TYPE | TRAIT
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
@@ -7586,20 +7578,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'relationship'
 		public Keyword getRelationshipKeyword_3() { return cRelationshipKeyword_3; }
 		
+		//'bond'
+		public Keyword getBondKeyword_4() { return cBondKeyword_4; }
+		
 		//'extent'
-		public Keyword getExtentKeyword_4() { return cExtentKeyword_4; }
+		public Keyword getExtentKeyword_5() { return cExtentKeyword_5; }
 		
 		//EXTENSIVE_PROPERTY
-		public RuleCall getEXTENSIVE_PROPERTYParserRuleCall_5() { return cEXTENSIVE_PROPERTYParserRuleCall_5; }
+		public RuleCall getEXTENSIVE_PROPERTYParserRuleCall_6() { return cEXTENSIVE_PROPERTYParserRuleCall_6; }
 		
 		//INTENSIVE_PROPERTY
-		public RuleCall getINTENSIVE_PROPERTYParserRuleCall_6() { return cINTENSIVE_PROPERTYParserRuleCall_6; }
+		public RuleCall getINTENSIVE_PROPERTYParserRuleCall_7() { return cINTENSIVE_PROPERTYParserRuleCall_7; }
 		
 		//AGENT_TYPE
-		public RuleCall getAGENT_TYPEParserRuleCall_7() { return cAGENT_TYPEParserRuleCall_7; }
+		public RuleCall getAGENT_TYPEParserRuleCall_8() { return cAGENT_TYPEParserRuleCall_8; }
 		
 		//TRAIT
-		public RuleCall getTRAITParserRuleCall_8() { return cTRAITParserRuleCall_8; }
+		public RuleCall getTRAITParserRuleCall_9() { return cTRAITParserRuleCall_9; }
 	}
 	public class TRAITElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.TRAIT");
@@ -7775,28 +7770,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.PROPERTY_TYPE");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cFunctionalKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cBidirectionalKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
-		private final Keyword cUnidirectionalKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
-		private final Keyword cStructuralKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cStructuralKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
 		//PROPERTY_TYPE:
-		//	'functional' | 'bidirectional' | 'unidirectional' | 'structural';
+		//	'functional' | 'structural';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'functional' | 'bidirectional' | 'unidirectional' | 'structural'
+		//'functional' | 'structural'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//'functional'
 		public Keyword getFunctionalKeyword_0() { return cFunctionalKeyword_0; }
 		
-		//'bidirectional'
-		public Keyword getBidirectionalKeyword_1() { return cBidirectionalKeyword_1; }
-		
-		//'unidirectional'
-		public Keyword getUnidirectionalKeyword_2() { return cUnidirectionalKeyword_2; }
-		
 		//'structural'
-		public Keyword getStructuralKeyword_3() { return cStructuralKeyword_3; }
+		public Keyword getStructuralKeyword_1() { return cStructuralKeyword_1; }
 	}
 	public class SimpleObservableSemanticsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.SimpleObservableSemantics");
@@ -8988,13 +8975,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		return getClassifierRHSWithIdAccess().getRule();
 	}
 	
-	////LookupTable:
-	//
-	////	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
-	//
-	//////	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
-	// //;
-	// Urn:
+	//Urn:
 	//	name=(UrnId | STRING | LocalFilePath);
 	public UrnElements getUrnAccess() {
 		return pUrn;
@@ -9025,10 +9006,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		return getTableAccess().getRule();
 	}
 	
-	////	'(' ((args+=LOWERCASE_ID (',' args+=LOWERCASE_ID)*) | (expr+=EXPR (expr+=EXPR)*)) ')' ':' elements+=TableClassifier
-	//
-	////	(=> ',' elements+=TableClassifier)*;
-	// TableRow:
+	//TableRow:
 	//	elements+=TableClassifier ('|' elements+=TableClassifier)*;
 	public TableRowElements getTableRowAccess() {
 		return pTableRow;
@@ -9711,8 +9689,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//DECLARABLE_TYPE:
-	//	'class' | 'quantity' | 'configuration' | 'relationship' | 'extent' | EXTENSIVE_PROPERTY | INTENSIVE_PROPERTY |
-	//	AGENT_TYPE | TRAIT;
+	//	'class' | 'quantity' | 'configuration' | 'relationship' | 'bond' | 'extent' | EXTENSIVE_PROPERTY | INTENSIVE_PROPERTY
+	//	| AGENT_TYPE | TRAIT;
 	public DECLARABLE_TYPEElements getDECLARABLE_TYPEAccess() {
 		return pDECLARABLE_TYPE;
 	}
@@ -9763,7 +9741,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//PROPERTY_TYPE:
-	//	'functional' | 'bidirectional' | 'unidirectional' | 'structural';
+	//	'functional' | 'structural';
 	public PROPERTY_TYPEElements getPROPERTY_TYPEAccess() {
 		return pPROPERTY_TYPE;
 	}

@@ -1166,8 +1166,6 @@ class KimValidator extends AbstractKimValidator {
 					type.add(switch (specifier) {
 						case "functional": Type.FUNCTIONAL
 						case "structural": Type.STRUCTURAL
-						case "unidirectional": Type.UNIDIRECTIONAL
-						case "bidirectional": Type.BIDIRECTIONAL
 					})
 				}
 				i++

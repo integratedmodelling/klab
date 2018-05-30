@@ -21,5 +21,5 @@ model geography:Elevation by im:Level
 		< 500  | geography:Elevation     | im:Low,
 		< 1500 | geography:Slope         | im:Moderate,
 		   *   | infrastructure:Road     | im:High,
-		   #   | infrastructure:Building | agriculture:Manure physical:DelimitedBody; // piece of shit
+		   #   | infrastructure:Building | agriculture:Manure physical:DelimitedBody; // a "piece of shit"
 		

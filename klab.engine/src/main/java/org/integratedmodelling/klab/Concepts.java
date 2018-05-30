@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -232,6 +234,23 @@ public enum Concepts implements IConceptService {
     return -1;
   }
 
+  /**
+   * Utility to check if a collection of concepts contains at least a concept of the
+   * passed type.
+   *
+   * @param concepts
+   * @param type
+   * @return
+   */
+  public boolean is(Collection<IConcept> concepts, Type type) {
+	  for (IConcept concept : concepts) {
+		  if (concept.is(type)) {
+			  return true;
+		  }
+	  }
+	  return false;
+  }
+  
   @Override
   public int compareSpecificity(IConcept c1, IConcept c2, boolean useBaseTrait) {
 

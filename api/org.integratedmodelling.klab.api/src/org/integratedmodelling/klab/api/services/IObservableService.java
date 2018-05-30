@@ -595,11 +595,41 @@ public interface IObservableService {
 	 */
 	Type getObservableType(IObservable observable);
 
+	/**
+	 * Return the asserted source of the relationship, assuming it is unique. If it
+	 * is not unique, the result is arbitrary among the possible sources.
+	 * 
+	 * @param relationship
+	 *            a relationship concept
+	 * @return the source. May be null in abstract relationships.
+	 */
 	IConcept getRelationshipSource(IConcept relationship);
 
+	/**
+	 * Return all the asserted sources of the relationship.
+	 * 
+	 * @param relationship
+	 *            a relationship concept
+	 * @return the sources. May be empty in abstract relationships.
+	 */
 	Collection<IConcept> getRelationshipSources(IConcept relationship);
 
+	/**
+	 * Return the asserted target of the relationship, assuming it is unique. If it
+	 * is not unique, the result is arbitrary among the possible targets.
+	 * 
+	 * @param relationship
+	 *            a relationship concept
+	 * @return the target. May be null in abstract relationships.
+	 */
 	IConcept getRelationshipTarget(IConcept relationship);
 
+	/**
+	 * Return all the asserted targets of the relationship.
+	 * 
+	 * @param relationship
+	 *            a relationship concept
+	 * @return the targets. May be empty in abstract relationships.
+	 */
 	Collection<IConcept> getRelationshipTargets(IConcept relationship);
 }

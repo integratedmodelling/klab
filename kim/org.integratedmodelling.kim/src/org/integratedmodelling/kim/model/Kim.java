@@ -44,7 +44,6 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -683,7 +682,9 @@ public enum Kim {
 		case "event":
 			return EnumSet.of(Type.EVENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "relationship":
-			return EnumSet.of(Type.RELATIONSHIP, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
+			return EnumSet.of(Type.RELATIONSHIP, Type.UNIDIRECTIONAL, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
+		case "bond":
+			return EnumSet.of(Type.RELATIONSHIP, Type.BIDIRECTIONAL, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "configuration":
 			return EnumSet.of(Type.CONFIGURATION);
 		case "extent":

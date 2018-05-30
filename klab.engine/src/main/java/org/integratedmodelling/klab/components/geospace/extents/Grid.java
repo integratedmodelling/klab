@@ -546,12 +546,12 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public int getDimensionality() {
-			return 0;
+			return 2;
 		}
 
 		@Override
 		public long[] shape() {
-			return new long[] { 1 };
+			return new long[] { 1, 1 };
 		}
 
 		@Override

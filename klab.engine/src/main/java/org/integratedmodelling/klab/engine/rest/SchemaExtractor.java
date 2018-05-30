@@ -111,11 +111,18 @@ public class SchemaExtractor {
         String ret = "{\n";
         try {
             Map<Class<?>, JsonSchema> schema = extractResourceSchema(packageId);
-            int count = schema.size();
+            List<Class<?>> classes = getSortedClasses(packageId);
+            Map<Class<?>, JsonSchema> retained = new HashMap<>();
+            for (Class<?> cls : classes) {
+            	if (schema.get(cls) != null) {
+            		retained.put(cls, schema.get(cls));
+            	}
+            }
+            int count = retained.size();
             int n = 0;
-            for (Class<?> cls : getSortedClasses(packageId)) {
+            for (Class<?> cls : retained.keySet()) {
                 ret += "   \"" + Path.getLast(cls.getCanonicalName(), '.') + "\" : "
-                        + mapper.writeValueAsString(schema.get(cls)) + (n < (count - 1) ? "," : "") + "\n";
+                        + mapper.writeValueAsString(retained.get(cls)) + (n < (count - 1)? "," : "") + "\n";
                 n++;
             }
         } catch (Throwable e) {

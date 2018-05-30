@@ -84,11 +84,6 @@ ClassifierRHSWithId returns ClassifierRHS:
 	nodata='unknown' |
 	star?='*';	
 	
-//LookupTable:
-//	'(' args+=(LOWERCASE_ID | '?') (',' args+=(LOWERCASE_ID | '?'))* ')' 'into' ('table' table=Table | ref=LOWERCASE_ID) 
-////	|  (id=LOWERCASE_ID | expression=EXPR) 'into' function=Function
-//;
-
 Urn:
 	// String used when there are strange chars or keywords in the URN.
 	name=(UrnId|STRING|LocalFilePath)
@@ -101,8 +96,6 @@ LookupTable: {LookupTable}
 
 Table:
 	rows+=TableRow (',' rows+=TableRow)*;
-//	'(' ((args+=LOWERCASE_ID (',' args+=LOWERCASE_ID)*) | (expr+=EXPR (expr+=EXPR)*)) ')' ':' elements+=TableClassifier
-//	(=> ',' elements+=TableClassifier)*;
 
 TableRow:
 	elements+=TableClassifier ('|' elements+=TableClassifier)*
@@ -715,6 +708,7 @@ DECLARABLE_TYPE:
 	'quantity' |
 	'configuration' |
 	'relationship' |
+	'bond' |
 	'extent' |
 	EXTENSIVE_PROPERTY |
 	INTENSIVE_PROPERTY |
@@ -758,8 +752,6 @@ AGENT_TYPE:
 	'event';
 PROPERTY_TYPE:
 	'functional' |
-	'bidirectional' |
-	'unidirectional' |
 	'structural';
 	
 terminal ANNOTATION_ID:

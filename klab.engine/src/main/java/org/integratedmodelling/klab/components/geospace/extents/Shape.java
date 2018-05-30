@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.xtext.util.Arrays;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -31,11 +32,13 @@ import org.integratedmodelling.klab.scale.AbstractExtent;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Lineal;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Polygonal;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
@@ -372,7 +375,6 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IGeometry.Dimension.Type getType() {
-		// TODO Auto-generated method stub
 		return IGeometry.Dimension.Type.SPACE;
 	}
 
@@ -383,13 +385,19 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public int getDimensionality() {
-		return 0;
+		int ret = 0;
+		if (Arrays.contains(geometry.getClass().getInterfaces(), Lineal.class)) {
+			ret = 1;
+		} else if (Arrays.contains(geometry.getClass().getInterfaces(), Polygonal.class)) {
+			ret = 2;
+		}
+		return ret;
 	}
 
 	@Override
 	public long[] getDimensionOffsets(long linearOffset) {
 		if (linearOffset != 0) {
-			throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+			throw new IllegalArgumentException("shape extents don't use offset addressing");
 		}
 		return new long[] { 0 };
 	}
@@ -397,7 +405,7 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public long getOffset(long[] dimOffsets) {
 		if (dimOffsets.length != 1 && dimOffsets[0] != 0) {
-			throw new IllegalArgumentException("0-dimensional extents don't use offset addressing");
+			throw new IllegalArgumentException("shape extents don't use offset addressing");
 		}
 		return 0;
 	}
@@ -408,7 +416,12 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public long[] shape() {
-		return new long[] { 1 };
+		if (getDimensionality() == 2) {
+			return new long[] { 1, 1 };
+		} else if (getDimensionality() == 1) {
+			return new long[] { 1 };
+		}
+		return new long[] {};
 	}
 
 	@Override
@@ -492,7 +505,8 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public String encode() {
-		return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + "," + getEnvelope().encode() + ",proj=" + getProjection().getCode() + "}";
+		return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + "," + getEnvelope().encode() + ",proj="
+				+ getProjection().getCode() + "}";
 	}
 
 	@Override

@@ -13146,51 +13146,57 @@ ruleDECLARABLE_TYPE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
 			newLeafNode(kw, grammarAccess.getDECLARABLE_TYPEAccess().getRelationshipKeyword_3());
 		}
 		    |
+		kw='bond'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getDECLARABLE_TYPEAccess().getBondKeyword_4());
+		}
+		    |
 		kw='extent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getDECLARABLE_TYPEAccess().getExtentKeyword_4());
+			newLeafNode(kw, grammarAccess.getDECLARABLE_TYPEAccess().getExtentKeyword_5());
 		}
 		    |
 		{
-			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getEXTENSIVE_PROPERTYParserRuleCall_5());
+			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getEXTENSIVE_PROPERTYParserRuleCall_6());
 		}
-		this_EXTENSIVE_PROPERTY_5=ruleEXTENSIVE_PROPERTY
+		this_EXTENSIVE_PROPERTY_6=ruleEXTENSIVE_PROPERTY
 		{
-			$current.merge(this_EXTENSIVE_PROPERTY_5);
+			$current.merge(this_EXTENSIVE_PROPERTY_6);
 		}
 		{
 			afterParserOrEnumRuleCall();
 		}
 		    |
 		{
-			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getINTENSIVE_PROPERTYParserRuleCall_6());
+			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getINTENSIVE_PROPERTYParserRuleCall_7());
 		}
-		this_INTENSIVE_PROPERTY_6=ruleINTENSIVE_PROPERTY
+		this_INTENSIVE_PROPERTY_7=ruleINTENSIVE_PROPERTY
 		{
-			$current.merge(this_INTENSIVE_PROPERTY_6);
-		}
-		{
-			afterParserOrEnumRuleCall();
-		}
-		    |
-		{
-			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getAGENT_TYPEParserRuleCall_7());
-		}
-		this_AGENT_TYPE_7=ruleAGENT_TYPE
-		{
-			$current.merge(this_AGENT_TYPE_7);
+			$current.merge(this_INTENSIVE_PROPERTY_7);
 		}
 		{
 			afterParserOrEnumRuleCall();
 		}
 		    |
 		{
-			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getTRAITParserRuleCall_8());
+			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getAGENT_TYPEParserRuleCall_8());
 		}
-		this_TRAIT_8=ruleTRAIT
+		this_AGENT_TYPE_8=ruleAGENT_TYPE
 		{
-			$current.merge(this_TRAIT_8);
+			$current.merge(this_AGENT_TYPE_8);
+		}
+		{
+			afterParserOrEnumRuleCall();
+		}
+		    |
+		{
+			newCompositeNode(grammarAccess.getDECLARABLE_TYPEAccess().getTRAITParserRuleCall_9());
+		}
+		this_TRAIT_9=ruleTRAIT
+		{
+			$current.merge(this_TRAIT_9);
 		}
 		{
 			afterParserOrEnumRuleCall();
@@ -13478,22 +13484,10 @@ rulePROPERTY_TYPE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleT
 			newLeafNode(kw, grammarAccess.getPROPERTY_TYPEAccess().getFunctionalKeyword_0());
 		}
 		    |
-		kw='bidirectional'
-		{
-			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getPROPERTY_TYPEAccess().getBidirectionalKeyword_1());
-		}
-		    |
-		kw='unidirectional'
-		{
-			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getPROPERTY_TYPEAccess().getUnidirectionalKeyword_2());
-		}
-		    |
 		kw='structural'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getPROPERTY_TYPEAccess().getStructuralKeyword_3());
+			newLeafNode(kw, grammarAccess.getPROPERTY_TYPEAccess().getStructuralKeyword_1());
 		}
 	)
 ;

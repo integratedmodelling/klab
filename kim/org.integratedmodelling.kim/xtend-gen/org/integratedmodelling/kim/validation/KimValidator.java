@@ -1541,12 +1541,6 @@ public class KimValidator extends AbstractKimValidator {
                 case "structural":
                   _switchResult_1 = IKimConcept.Type.STRUCTURAL;
                   break;
-                case "unidirectional":
-                  _switchResult_1 = IKimConcept.Type.UNIDIRECTIONAL;
-                  break;
-                case "bidirectional":
-                  _switchResult_1 = IKimConcept.Type.BIDIRECTIONAL;
-                  break;
               }
             }
             type.add(_switchResult_1);

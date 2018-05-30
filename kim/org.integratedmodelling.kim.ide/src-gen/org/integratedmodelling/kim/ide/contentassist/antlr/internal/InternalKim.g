@@ -5522,33 +5522,39 @@ rule__DECLARABLE_TYPE__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getExtentKeyword_4()); }
+		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getBondKeyword_4()); }
+		'bond'
+		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getBondKeyword_4()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getExtentKeyword_5()); }
 		'extent'
-		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getExtentKeyword_4()); }
+		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getExtentKeyword_5()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getEXTENSIVE_PROPERTYParserRuleCall_5()); }
+		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getEXTENSIVE_PROPERTYParserRuleCall_6()); }
 		ruleEXTENSIVE_PROPERTY
-		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getEXTENSIVE_PROPERTYParserRuleCall_5()); }
+		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getEXTENSIVE_PROPERTYParserRuleCall_6()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getINTENSIVE_PROPERTYParserRuleCall_6()); }
+		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getINTENSIVE_PROPERTYParserRuleCall_7()); }
 		ruleINTENSIVE_PROPERTY
-		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getINTENSIVE_PROPERTYParserRuleCall_6()); }
+		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getINTENSIVE_PROPERTYParserRuleCall_7()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getAGENT_TYPEParserRuleCall_7()); }
+		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getAGENT_TYPEParserRuleCall_8()); }
 		ruleAGENT_TYPE
-		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getAGENT_TYPEParserRuleCall_7()); }
+		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getAGENT_TYPEParserRuleCall_8()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getTRAITParserRuleCall_8()); }
+		{ before(grammarAccess.getDECLARABLE_TYPEAccess().getTRAITParserRuleCall_9()); }
 		ruleTRAIT
-		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getTRAITParserRuleCall_8()); }
+		{ after(grammarAccess.getDECLARABLE_TYPEAccess().getTRAITParserRuleCall_9()); }
 	)
 ;
 finally {
@@ -5789,21 +5795,9 @@ rule__PROPERTY_TYPE__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getPROPERTY_TYPEAccess().getBidirectionalKeyword_1()); }
-		'bidirectional'
-		{ after(grammarAccess.getPROPERTY_TYPEAccess().getBidirectionalKeyword_1()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getPROPERTY_TYPEAccess().getUnidirectionalKeyword_2()); }
-		'unidirectional'
-		{ after(grammarAccess.getPROPERTY_TYPEAccess().getUnidirectionalKeyword_2()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getPROPERTY_TYPEAccess().getStructuralKeyword_3()); }
+		{ before(grammarAccess.getPROPERTY_TYPEAccess().getStructuralKeyword_1()); }
 		'structural'
-		{ after(grammarAccess.getPROPERTY_TYPEAccess().getStructuralKeyword_3()); }
+		{ after(grammarAccess.getPROPERTY_TYPEAccess().getStructuralKeyword_1()); }
 	)
 ;
 finally {
