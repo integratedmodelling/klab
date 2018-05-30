@@ -405,6 +405,12 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
+            
+            IConcept ret = ontology.getConcept(conceptId);
+            /*
+             * distance is inherent to the thing that's present.
+             */
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
 
         return ontology.getConcept(conceptId);
@@ -497,7 +503,7 @@ public class ObservableBuilder implements Builder {
             IConcept ret = ontology.getConcept(conceptId);
 
             /*
-             * probability is inherent to the event that's possible.
+             * occurrence is inherent to the event that's possible.
              */
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
         }
@@ -541,6 +547,12 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
+            
+            IConcept ret = ontology.getConcept(conceptId);
+            /*
+             * observability is inherent to the thing that's present.
+             */
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
 
         return ontology.getConcept(conceptId);
@@ -626,7 +638,14 @@ public class ObservableBuilder implements Builder {
                         .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
+            /*
+             * uncertainty is inherent to the thing that's present.
+             */
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
+
+
 
         return ontology.getConcept(conceptId);
     }
@@ -665,6 +684,12 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
+            
+            IConcept ret = ontology.getConcept(conceptId);
+            /*
+             * proportion is inherent to the thing that's present.
+             */
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
 
         return ontology.getConcept(conceptId);
@@ -751,6 +776,13 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             concept.getOntology().define(ax);
+
+            IConcept ret = ontology.getConcept(conceptId);
+            
+            /*
+             * uncertainty is inherent to the thing that's present.
+             */
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
 
         return ontology.getConcept(conceptId);

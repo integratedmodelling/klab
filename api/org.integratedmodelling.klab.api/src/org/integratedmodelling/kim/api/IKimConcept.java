@@ -318,6 +318,14 @@ public interface IKimConcept extends IKimStatement {
           Type.IDENTITY, Type.ROLE, Type.ASSESSMENT);
 
   /**
+   * Qualities that are naturally inherent and should not be allowed to have explicit inherency
+   * but just context.
+   */
+  public static final EnumSet<Type> INHERENT_QUALITIES         =
+	      EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE,
+	          Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY);
+  
+  /**
    * All quality type bits sets (not QUALITY itself). Each quality AND this must yield a set of size
    * 1.
    */
