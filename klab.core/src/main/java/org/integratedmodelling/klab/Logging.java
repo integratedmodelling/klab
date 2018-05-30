@@ -83,7 +83,7 @@ public enum Logging implements ILoggingService {
 			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning, payload));
 		}
 
-		if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
+		if (Configuration.INSTANCE.getLoggingLevel().intValue() <= Level.WARNING.intValue()) {
 
 			if (logger != null) {
 				logger.warn(payload);
@@ -103,7 +103,7 @@ public enum Logging implements ILoggingService {
 			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
 		}
 
-		if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
+		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
 			if (logger != null) {
 				logger.error(payload);
             } else if (errorWriter != null) {
@@ -123,7 +123,7 @@ public enum Logging implements ILoggingService {
 			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Debug, payload));
 		}
 
-		if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
+		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.FINE.intValue()) {
 
 			if (logger != null) {
 				logger.debug(payload);
