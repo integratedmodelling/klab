@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getLookupNamespace <em>Lookup Namespace</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getBlacklistNamespace <em>Blacklist Namespace</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getWeights <em>Weights</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getDocumentation <em>Documentation</em>}</li>
  * </ul>
@@ -415,6 +416,32 @@ public interface Namespace extends EObject
    * @generated
    */
   void setWeights(Metadata value);
+
+  /**
+   * Returns the value of the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Parameters</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Parameters</em>' containment reference.
+   * @see #setParameters(Metadata)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getNamespace_Parameters()
+   * @model containment="true"
+   * @generated
+   */
+  Metadata getParameters();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Namespace#getParameters <em>Parameters</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Parameters</em>' containment reference.
+   * @see #getParameters()
+   * @generated
+   */
+  void setParameters(Metadata value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.

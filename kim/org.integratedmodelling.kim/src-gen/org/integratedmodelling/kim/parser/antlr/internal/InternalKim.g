@@ -4593,24 +4593,24 @@ ruleNamespace returns [EObject current=null]
 			{
 				newLeafNode(otherlv_41, grammarAccess.getNamespaceAccess().getWithKeyword_6_0());
 			}
-			otherlv_42='metadata'
+			otherlv_42='parameters'
 			{
-				newLeafNode(otherlv_42, grammarAccess.getNamespaceAccess().getMetadataKeyword_6_1());
+				newLeafNode(otherlv_42, grammarAccess.getNamespaceAccess().getParametersKeyword_6_1());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getNamespaceAccess().getMetadataMetadataParserRuleCall_6_2_0());
+						newCompositeNode(grammarAccess.getNamespaceAccess().getParametersMetadataParserRuleCall_6_2_0());
 					}
-					lv_metadata_43_0=ruleMetadata
+					lv_parameters_43_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
 						}
 						set(
 							$current,
-							"metadata",
-							lv_metadata_43_0,
+							"parameters",
+							lv_parameters_43_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
@@ -4622,16 +4622,45 @@ ruleNamespace returns [EObject current=null]
 			{
 				newLeafNode(otherlv_44, grammarAccess.getNamespaceAccess().getWithKeyword_7_0());
 			}
-			otherlv_45='documentation'
+			otherlv_45='metadata'
 			{
-				newLeafNode(otherlv_45, grammarAccess.getNamespaceAccess().getDocumentationKeyword_7_1());
+				newLeafNode(otherlv_45, grammarAccess.getNamespaceAccess().getMetadataKeyword_7_1());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getNamespaceAccess().getDocumentationMetadataParserRuleCall_7_2_0());
+						newCompositeNode(grammarAccess.getNamespaceAccess().getMetadataMetadataParserRuleCall_7_2_0());
 					}
-					lv_documentation_46_0=ruleMetadata
+					lv_metadata_46_0=ruleMetadata
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
+						}
+						set(
+							$current,
+							"metadata",
+							lv_metadata_46_0,
+							"org.integratedmodelling.kim.Kim.Metadata");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_47='with'
+			{
+				newLeafNode(otherlv_47, grammarAccess.getNamespaceAccess().getWithKeyword_8_0());
+			}
+			otherlv_48='documentation'
+			{
+				newLeafNode(otherlv_48, grammarAccess.getNamespaceAccess().getDocumentationKeyword_8_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getNamespaceAccess().getDocumentationMetadataParserRuleCall_8_2_0());
+					}
+					lv_documentation_49_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4639,16 +4668,16 @@ ruleNamespace returns [EObject current=null]
 						set(
 							$current,
 							"documentation",
-							lv_documentation_46_0,
+							lv_documentation_49_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)?
-		otherlv_47=';'
+		otherlv_50=';'
 		{
-			newLeafNode(otherlv_47, grammarAccess.getNamespaceAccess().getSemicolonKeyword_8());
+			newLeafNode(otherlv_50, grammarAccess.getNamespaceAccess().getSemicolonKeyword_9());
 		}
 	)
 ;

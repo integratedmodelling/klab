@@ -274,6 +274,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getNamespaceAccess().getGroup_5_6_2(), "rule__Namespace__Group_5_6_2__0");
 					put(grammarAccess.getNamespaceAccess().getGroup_6(), "rule__Namespace__Group_6__0");
 					put(grammarAccess.getNamespaceAccess().getGroup_7(), "rule__Namespace__Group_7__0");
+					put(grammarAccess.getNamespaceAccess().getGroup_8(), "rule__Namespace__Group_8__0");
 					put(grammarAccess.getOwlImportAccess().getGroup(), "rule__OwlImport__Group__0");
 					put(grammarAccess.getOwlImportAccess().getGroup_1(), "rule__OwlImport__Group_1__0");
 					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
@@ -653,8 +654,9 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getNamespaceAccess().getLookupNamespaceAssignment_5_6_0_1_1(), "rule__Namespace__LookupNamespaceAssignment_5_6_0_1_1");
 					put(grammarAccess.getNamespaceAccess().getBlacklistNamespaceAssignment_5_6_1_1(), "rule__Namespace__BlacklistNamespaceAssignment_5_6_1_1");
 					put(grammarAccess.getNamespaceAccess().getWeightsAssignment_5_6_2_1(), "rule__Namespace__WeightsAssignment_5_6_2_1");
-					put(grammarAccess.getNamespaceAccess().getMetadataAssignment_6_2(), "rule__Namespace__MetadataAssignment_6_2");
-					put(grammarAccess.getNamespaceAccess().getDocumentationAssignment_7_2(), "rule__Namespace__DocumentationAssignment_7_2");
+					put(grammarAccess.getNamespaceAccess().getParametersAssignment_6_2(), "rule__Namespace__ParametersAssignment_6_2");
+					put(grammarAccess.getNamespaceAccess().getMetadataAssignment_7_2(), "rule__Namespace__MetadataAssignment_7_2");
+					put(grammarAccess.getNamespaceAccess().getDocumentationAssignment_8_2(), "rule__Namespace__DocumentationAssignment_8_2");
 					put(grammarAccess.getOwlImportAccess().getNameAssignment_0(), "rule__OwlImport__NameAssignment_0");
 					put(grammarAccess.getOwlImportAccess().getPrefixAssignment_1_1(), "rule__OwlImport__PrefixAssignment_1_1");
 					put(grammarAccess.getImportAccess().getImportsAssignment_0_0_0(), "rule__Import__ImportsAssignment_0_0_0");

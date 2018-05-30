@@ -1,4 +1,5 @@
-worldview im;
+worldview im
+	with parameters {};
 
 @test(
 	name = "tests.core.instances-resolved-1",

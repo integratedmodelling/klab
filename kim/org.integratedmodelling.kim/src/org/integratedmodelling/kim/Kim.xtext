@@ -204,6 +204,7 @@ Namespace:
 		('version' version=VersionNumber)? & 
 		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?
 	)
+	('with' 'parameters' parameters=Metadata)? 
 	('with' 'metadata' metadata=Metadata)? 
 	('with' 'documentation' documentation=Metadata)? 
 	';';	

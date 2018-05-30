@@ -1843,7 +1843,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getNamespace_Metadata()
+  public EReference getNamespace_Parameters()
   {
     return (EReference)namespaceEClass.getEStructuralFeatures().get(17);
   }
@@ -1853,9 +1853,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getNamespace_Documentation()
+  public EReference getNamespace_Metadata()
   {
     return (EReference)namespaceEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getNamespace_Documentation()
+  {
+    return (EReference)namespaceEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -4508,6 +4518,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(namespaceEClass, NAMESPACE__LOOKUP_NAMESPACE);
     createEAttribute(namespaceEClass, NAMESPACE__BLACKLIST_NAMESPACE);
     createEReference(namespaceEClass, NAMESPACE__WEIGHTS);
+    createEReference(namespaceEClass, NAMESPACE__PARAMETERS);
     createEReference(namespaceEClass, NAMESPACE__METADATA);
     createEReference(namespaceEClass, NAMESPACE__DOCUMENTATION);
 
@@ -4976,6 +4987,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getNamespace_LookupNamespace(), ecorePackage.getEString(), "lookupNamespace", null, 0, -1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNamespace_BlacklistNamespace(), ecorePackage.getEString(), "blacklistNamespace", null, 0, -1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getNamespace_Weights(), this.getMetadata(), null, "weights", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getNamespace_Parameters(), this.getMetadata(), null, "parameters", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getNamespace_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getNamespace_Documentation(), this.getMetadata(), null, "documentation", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

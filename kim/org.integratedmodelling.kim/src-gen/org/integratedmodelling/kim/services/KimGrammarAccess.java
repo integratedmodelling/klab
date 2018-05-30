@@ -2365,15 +2365,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cWeightsMetadataParserRuleCall_5_6_2_1_0 = (RuleCall)cWeightsAssignment_5_6_2_1.eContents().get(0);
 		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
 		private final Keyword cWithKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
-		private final Keyword cMetadataKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
-		private final Assignment cMetadataAssignment_6_2 = (Assignment)cGroup_6.eContents().get(2);
-		private final RuleCall cMetadataMetadataParserRuleCall_6_2_0 = (RuleCall)cMetadataAssignment_6_2.eContents().get(0);
+		private final Keyword cParametersKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
+		private final Assignment cParametersAssignment_6_2 = (Assignment)cGroup_6.eContents().get(2);
+		private final RuleCall cParametersMetadataParserRuleCall_6_2_0 = (RuleCall)cParametersAssignment_6_2.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cWithKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
-		private final Keyword cDocumentationKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
-		private final Assignment cDocumentationAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
-		private final RuleCall cDocumentationMetadataParserRuleCall_7_2_0 = (RuleCall)cDocumentationAssignment_7_2.eContents().get(0);
-		private final Keyword cSemicolonKeyword_8 = (Keyword)cGroup.eContents().get(8);
+		private final Keyword cMetadataKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
+		private final Assignment cMetadataAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
+		private final RuleCall cMetadataMetadataParserRuleCall_7_2_0 = (RuleCall)cMetadataAssignment_7_2.eContents().get(0);
+		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
+		private final Keyword cWithKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
+		private final Keyword cDocumentationKeyword_8_1 = (Keyword)cGroup_8.eContents().get(1);
+		private final Assignment cDocumentationAssignment_8_2 = (Assignment)cGroup_8.eContents().get(2);
+		private final RuleCall cDocumentationMetadataParserRuleCall_8_2_0 = (RuleCall)cDocumentationAssignment_8_2.eContents().get(0);
+		private final Keyword cSemicolonKeyword_9 = (Keyword)cGroup.eContents().get(9);
 		
 		///*
 		// * Namespace - entry point of all files. Only interactive session may start without this statement.
@@ -2387,7 +2392,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	coverage+=Function)*)? & ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with'
 		//	disjointNamespaces+=PathName (',' disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve'
 		//	('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
-		//	('with' 'metadata' metadata=Metadata)? ('with' 'documentation' documentation=Metadata)? ';';
+		//	('with' 'parameters' parameters=Metadata)? ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
+		//	documentation=Metadata)? ';';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//annotations+=Annotation* (private?='private'? & inactive?='void'?) ('namespace' | scenario?='scenario' |
@@ -2396,7 +2402,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//coverage+=Function)*)? & ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with'
 		//disjointNamespaces+=PathName (',' disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve'
 		//('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
-		//('with' 'metadata' metadata=Metadata)? ('with' 'documentation' documentation=Metadata)? ';'
+		//('with' 'parameters' parameters=Metadata)? ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
+		//documentation=Metadata)? ';'
 		public Group getGroup() { return cGroup; }
 		
 		//annotations+=Annotation*
@@ -2638,38 +2645,53 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Metadata
 		public RuleCall getWeightsMetadataParserRuleCall_5_6_2_1_0() { return cWeightsMetadataParserRuleCall_5_6_2_1_0; }
 		
-		//('with' 'metadata' metadata=Metadata)?
+		//('with' 'parameters' parameters=Metadata)?
 		public Group getGroup_6() { return cGroup_6; }
 		
 		//'with'
 		public Keyword getWithKeyword_6_0() { return cWithKeyword_6_0; }
 		
-		//'metadata'
-		public Keyword getMetadataKeyword_6_1() { return cMetadataKeyword_6_1; }
+		//'parameters'
+		public Keyword getParametersKeyword_6_1() { return cParametersKeyword_6_1; }
 		
-		//metadata=Metadata
-		public Assignment getMetadataAssignment_6_2() { return cMetadataAssignment_6_2; }
+		//parameters=Metadata
+		public Assignment getParametersAssignment_6_2() { return cParametersAssignment_6_2; }
 		
 		//Metadata
-		public RuleCall getMetadataMetadataParserRuleCall_6_2_0() { return cMetadataMetadataParserRuleCall_6_2_0; }
+		public RuleCall getParametersMetadataParserRuleCall_6_2_0() { return cParametersMetadataParserRuleCall_6_2_0; }
 		
-		//('with' 'documentation' documentation=Metadata)?
+		//('with' 'metadata' metadata=Metadata)?
 		public Group getGroup_7() { return cGroup_7; }
 		
 		//'with'
 		public Keyword getWithKeyword_7_0() { return cWithKeyword_7_0; }
 		
-		//'documentation'
-		public Keyword getDocumentationKeyword_7_1() { return cDocumentationKeyword_7_1; }
+		//'metadata'
+		public Keyword getMetadataKeyword_7_1() { return cMetadataKeyword_7_1; }
 		
-		//documentation=Metadata
-		public Assignment getDocumentationAssignment_7_2() { return cDocumentationAssignment_7_2; }
+		//metadata=Metadata
+		public Assignment getMetadataAssignment_7_2() { return cMetadataAssignment_7_2; }
 		
 		//Metadata
-		public RuleCall getDocumentationMetadataParserRuleCall_7_2_0() { return cDocumentationMetadataParserRuleCall_7_2_0; }
+		public RuleCall getMetadataMetadataParserRuleCall_7_2_0() { return cMetadataMetadataParserRuleCall_7_2_0; }
+		
+		//('with' 'documentation' documentation=Metadata)?
+		public Group getGroup_8() { return cGroup_8; }
+		
+		//'with'
+		public Keyword getWithKeyword_8_0() { return cWithKeyword_8_0; }
+		
+		//'documentation'
+		public Keyword getDocumentationKeyword_8_1() { return cDocumentationKeyword_8_1; }
+		
+		//documentation=Metadata
+		public Assignment getDocumentationAssignment_8_2() { return cDocumentationAssignment_8_2; }
+		
+		//Metadata
+		public RuleCall getDocumentationMetadataParserRuleCall_8_2_0() { return cDocumentationMetadataParserRuleCall_8_2_0; }
 		
 		//';'
-		public Keyword getSemicolonKeyword_8() { return cSemicolonKeyword_8; }
+		public Keyword getSemicolonKeyword_9() { return cSemicolonKeyword_9; }
 	}
 	public class OwlImportElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.OwlImport");
@@ -9133,7 +9155,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	coverage+=Function)*)? & ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with'
 	//	disjointNamespaces+=PathName (',' disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve'
 	//	('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
-	//	('with' 'metadata' metadata=Metadata)? ('with' 'documentation' documentation=Metadata)? ';';
+	//	('with' 'parameters' parameters=Metadata)? ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
+	//	documentation=Metadata)? ';';
 	public NamespaceElements getNamespaceAccess() {
 		return pNamespace;
 	}

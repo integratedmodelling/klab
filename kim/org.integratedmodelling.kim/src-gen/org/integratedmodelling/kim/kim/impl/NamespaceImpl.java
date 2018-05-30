@@ -55,6 +55,7 @@ import org.integratedmodelling.kim.kim.OwlImport;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getLookupNamespace <em>Lookup Namespace</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getBlacklistNamespace <em>Blacklist Namespace</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getWeights <em>Weights</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getDocumentation <em>Documentation</em>}</li>
  * </ul>
@@ -312,6 +313,16 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @ordered
    */
   protected Metadata weights;
+
+  /**
+   * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getParameters()
+   * @generated
+   * @ordered
+   */
+  protected Metadata parameters;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -737,6 +748,54 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * <!-- end-user-doc -->
    * @generated
    */
+  public Metadata getParameters()
+  {
+    return parameters;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetParameters(Metadata newParameters, NotificationChain msgs)
+  {
+    Metadata oldParameters = parameters;
+    parameters = newParameters;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.NAMESPACE__PARAMETERS, oldParameters, newParameters);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setParameters(Metadata newParameters)
+  {
+    if (newParameters != parameters)
+    {
+      NotificationChain msgs = null;
+      if (parameters != null)
+        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.NAMESPACE__PARAMETERS, null, msgs);
+      if (newParameters != null)
+        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.NAMESPACE__PARAMETERS, null, msgs);
+      msgs = basicSetParameters(newParameters, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.NAMESPACE__PARAMETERS, newParameters, newParameters));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Metadata getMetadata()
   {
     return metadata;
@@ -850,6 +909,8 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
         return basicSetDomainConcept(null, msgs);
       case KimPackage.NAMESPACE__WEIGHTS:
         return basicSetWeights(null, msgs);
+      case KimPackage.NAMESPACE__PARAMETERS:
+        return basicSetParameters(null, msgs);
       case KimPackage.NAMESPACE__METADATA:
         return basicSetMetadata(null, msgs);
       case KimPackage.NAMESPACE__DOCUMENTATION:
@@ -902,6 +963,8 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
         return getBlacklistNamespace();
       case KimPackage.NAMESPACE__WEIGHTS:
         return getWeights();
+      case KimPackage.NAMESPACE__PARAMETERS:
+        return getParameters();
       case KimPackage.NAMESPACE__METADATA:
         return getMetadata();
       case KimPackage.NAMESPACE__DOCUMENTATION:
@@ -979,6 +1042,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
       case KimPackage.NAMESPACE__WEIGHTS:
         setWeights((Metadata)newValue);
         return;
+      case KimPackage.NAMESPACE__PARAMETERS:
+        setParameters((Metadata)newValue);
+        return;
       case KimPackage.NAMESPACE__METADATA:
         setMetadata((Metadata)newValue);
         return;
@@ -1050,6 +1116,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
       case KimPackage.NAMESPACE__WEIGHTS:
         setWeights((Metadata)null);
         return;
+      case KimPackage.NAMESPACE__PARAMETERS:
+        setParameters((Metadata)null);
+        return;
       case KimPackage.NAMESPACE__METADATA:
         setMetadata((Metadata)null);
         return;
@@ -1104,6 +1173,8 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
         return blacklistNamespace != null && !blacklistNamespace.isEmpty();
       case KimPackage.NAMESPACE__WEIGHTS:
         return weights != null;
+      case KimPackage.NAMESPACE__PARAMETERS:
+        return parameters != null;
       case KimPackage.NAMESPACE__METADATA:
         return metadata != null;
       case KimPackage.NAMESPACE__DOCUMENTATION:

@@ -251,6 +251,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     blacklistNamespace+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     blacklistNamespace+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     blacklistNamespace+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     blacklistNamespace+=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     coverage+=Function (ambiguity) ';' (rule end)
 	 *     coverage+=Function (ambiguity) 'covering' coverage+=Function
 	 *     coverage+=Function (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -262,6 +263,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     coverage+=Function (ambiguity) 'version' version=VersionNumber
 	 *     coverage+=Function (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     coverage+=Function (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     coverage+=Function (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     disjointNamespaces+=PathName ',' (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'covering' coverage+=Function
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -273,6 +275,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'version' version=VersionNumber
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     disjointNamespaces+=PathName ',' (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     disjointNamespaces+=PathName (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName (ambiguity) 'covering' coverage+=Function
 	 *     disjointNamespaces+=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -284,6 +287,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     disjointNamespaces+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     disjointNamespaces+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     disjointNamespaces+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     disjointNamespaces+=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     docstring=STRING (ambiguity) ';' (rule end)
 	 *     docstring=STRING (ambiguity) 'covering' coverage+=Function
 	 *     docstring=STRING (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -295,6 +299,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     docstring=STRING (ambiguity) 'version' version=VersionNumber
 	 *     docstring=STRING (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     docstring=STRING (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     docstring=STRING (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     domainConcept=Concept (ambiguity) ';' (rule end)
 	 *     domainConcept=Concept (ambiguity) 'covering' coverage+=Function
 	 *     domainConcept=Concept (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -306,6 +311,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     domainConcept=Concept (ambiguity) 'version' version=VersionNumber
 	 *     domainConcept=Concept (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     domainConcept=Concept (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     domainConcept=Concept (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     imported+=Import (ambiguity) ';' (rule end)
 	 *     imported+=Import (ambiguity) 'covering' coverage+=Function
 	 *     imported+=Import (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -317,6 +323,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     imported+=Import (ambiguity) 'version' version=VersionNumber
 	 *     imported+=Import (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     imported+=Import (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     imported+=Import (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     lookupNamespace+=PathName (ambiguity) ';' (rule end)
 	 *     lookupNamespace+=PathName (ambiguity) 'covering' coverage+=Function
 	 *     lookupNamespace+=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -328,6 +335,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     lookupNamespace+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     lookupNamespace+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     lookupNamespace+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     lookupNamespace+=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     name=PathName (ambiguity) ';' (rule end)
 	 *     name=PathName (ambiguity) 'covering' coverage+=Function
 	 *     name=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -339,6 +347,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
 	 *     name=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     name=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     name=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     owlImports+=OwlImport (ambiguity) ';' (rule end)
 	 *     owlImports+=OwlImport (ambiguity) 'covering' coverage+=Function
 	 *     owlImports+=OwlImport (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -350,6 +359,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     owlImports+=OwlImport (ambiguity) 'version' version=VersionNumber
 	 *     owlImports+=OwlImport (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     owlImports+=OwlImport (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     owlImports+=OwlImport (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     rootDomain?='root' (ambiguity) ';' (rule end)
 	 *     rootDomain?='root' (ambiguity) 'covering' coverage+=Function
 	 *     rootDomain?='root' (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -361,6 +371,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     rootDomain?='root' (ambiguity) 'version' version=VersionNumber
 	 *     rootDomain?='root' (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     rootDomain?='root' (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     rootDomain?='root' (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     version=VersionNumber (ambiguity) ';' (rule end)
 	 *     version=VersionNumber (ambiguity) 'covering' coverage+=Function
 	 *     version=VersionNumber (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -372,6 +383,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
 	 *     version=VersionNumber (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     version=VersionNumber (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     version=VersionNumber (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     weights=Metadata (ambiguity) ';' (rule end)
 	 *     weights=Metadata (ambiguity) 'covering' coverage+=Function
 	 *     weights=Metadata (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -383,6 +395,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     weights=Metadata (ambiguity) 'version' version=VersionNumber
 	 *     weights=Metadata (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     weights=Metadata (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     weights=Metadata (ambiguity) 'with' 'parameters' parameters=Metadata
 	 */
 	protected void emit_Namespace___OutsideKeyword_5_6_1_0_q___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__q__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

@@ -131,6 +131,10 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
     }
+    if (((namespace.getParameters() != null) && (!namespace.isScenario()))) {
+      this.error("Parameter specifications are only allowed in scenarios", namespace, 
+        KimPackage.Literals.NAMESPACE__PARAMETERS);
+    }
   }
   
   @Check

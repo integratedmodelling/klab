@@ -97,6 +97,10 @@ class KimValidator extends AbstractKimValidator {
 					namespace, KimPackage.Literals.NAMESPACE__NAME, BAD_NAMESPACE_ID)
 			}
 		}
+		if (namespace.parameters !== null && !namespace.isScenario) {
+			error("Parameter specifications are only allowed in scenarios", namespace,
+				KimPackage.Literals.NAMESPACE__PARAMETERS)
+		}
 	}
 
 	@Check
