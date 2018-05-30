@@ -19,12 +19,14 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+// import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+// import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
+import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 
 /**
  * Helper class that extracts the JSON schema from all the beans in this package and subpackages.
@@ -36,7 +38,7 @@ public class SchemaExtractor {
 
     private static ObjectMapper mapper = new ObjectMapper();
     private static JsonSchemaGenerator schemaGen;
-    private static Map<String, Map<Class<?>, JsonSchema>> schemata = new HashMap<>();
+    private static Map<String, Map<Class<?>, JsonNode>> schemata = new HashMap<>();
 
     static {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -52,7 +54,7 @@ public class SchemaExtractor {
     public static List<Class<?>> getSortedClasses(String packageId) {
 
         List<Class<?>> ret = new ArrayList<>();
-        Map<Class<?>, JsonSchema> schema = extractResourceSchema(packageId);
+        Map<Class<?>, JsonNode> schema = extractResourceSchema(packageId);
         Graph<Class<?>, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         for (Class<?> cls : schema.keySet()) {
 
@@ -110,9 +112,9 @@ public class SchemaExtractor {
     public static String getSchemata(String packageId) {
         String ret = "{\n";
         try {
-            Map<Class<?>, JsonSchema> schema = extractResourceSchema(packageId);
+            Map<Class<?>, JsonNode> schema = extractResourceSchema(packageId);
             List<Class<?>> classes = getSortedClasses(packageId);
-            Map<Class<?>, JsonSchema> retained = new HashMap<>();
+            Map<Class<?>, JsonNode> retained = new HashMap<>();
             for (Class<?> cls : classes) {
             	if (schema.get(cls) != null) {
             		retained.put(cls, schema.get(cls));
@@ -131,17 +133,17 @@ public class SchemaExtractor {
         return ret + "\n}";
     }
 
-    public static Map<Class<?>, JsonSchema> extractResourceSchema(String packageId) {
+    public static Map<Class<?>, JsonNode> extractResourceSchema(String packageId) {
 
         if (schemata.get(packageId) == null) {
-            Map<Class<?>, JsonSchema> ret = new HashMap<>();
+            Map<Class<?>, JsonNode> ret = new HashMap<>();
             for (Class<?> cls : scanPackage(packageId)) {
                 if (!cls.getCanonicalName().endsWith("package-info")) {
-                    try {
-                        ret.put(cls, schemaGen.generateSchema(cls));
-                    } catch (JsonMappingException e) {
-                        throw new KlabInternalErrorException(e);
-                    }
+                    // try {
+                        ret.put(cls, schemaGen.generateJsonSchema(cls));
+                    // } catch (JsonMappingException e) {
+                    //    throw new KlabInternalErrorException(e);
+                    // }
                 }
             }
             schemata.put(packageId, ret);
@@ -172,7 +174,7 @@ public class SchemaExtractor {
             return getSchemaIds(restResourcesPackageId);
         }
         try {
-            Map<Class<?>, JsonSchema> schemata = extractResourceSchema(restResourcesPackageId);
+            Map<Class<?>, JsonNode> schemata = extractResourceSchema(restResourcesPackageId);
             Class<?> key = null;
             for (Class<?> k : schemata.keySet()) {
                 if (k.getCanonicalName().endsWith("." + resourceId)) {
