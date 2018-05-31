@@ -449,8 +449,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMapEntryAccess().getGroup(), "rule__MapEntry__Group__0");
 					put(grammarAccess.getDocSelectorAccess().getGroup_1(), "rule__DocSelector__Group_1__0");
 					put(grammarAccess.getKeyValuePairAccess().getGroup(), "rule__KeyValuePair__Group__0");
-					put(grammarAccess.getParameterListAccess().getGroup_1(), "rule__ParameterList__Group_1__0");
-					put(grammarAccess.getParameterListAccess().getGroup_1_1(), "rule__ParameterList__Group_1_1__0");
+					put(grammarAccess.getParameterListAccess().getGroup_0(), "rule__ParameterList__Group_0__0");
+					put(grammarAccess.getParameterListAccess().getGroup_0_1(), "rule__ParameterList__Group_0_1__0");
 					put(grammarAccess.getFunctionAccess().getGroup(), "rule__Function__Group__0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getGroup(), "rule__SimpleObservableSemantics__Group__0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getGroup_1_0(), "rule__SimpleObservableSemantics__Group_1_0__0");
@@ -916,9 +916,9 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getKeyValuePairAccess().getNameAssignment_0(), "rule__KeyValuePair__NameAssignment_0");
 					put(grammarAccess.getKeyValuePairAccess().getInteractiveAssignment_1_0(), "rule__KeyValuePair__InteractiveAssignment_1_0");
 					put(grammarAccess.getKeyValuePairAccess().getValueAssignment_2(), "rule__KeyValuePair__ValueAssignment_2");
-					put(grammarAccess.getParameterListAccess().getSingleValueAssignment_0(), "rule__ParameterList__SingleValueAssignment_0");
-					put(grammarAccess.getParameterListAccess().getPairsAssignment_1_0(), "rule__ParameterList__PairsAssignment_1_0");
-					put(grammarAccess.getParameterListAccess().getPairsAssignment_1_1_1(), "rule__ParameterList__PairsAssignment_1_1_1");
+					put(grammarAccess.getParameterListAccess().getPairsAssignment_0_0(), "rule__ParameterList__PairsAssignment_0_0");
+					put(grammarAccess.getParameterListAccess().getPairsAssignment_0_1_1(), "rule__ParameterList__PairsAssignment_0_1_1");
+					put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1(), "rule__ParameterList__SingleValueAssignment_1");
 					put(grammarAccess.getValueWithConceptAccess().getConceptAssignment_0(), "rule__ValueWithConcept__ConceptAssignment_0");
 					put(grammarAccess.getValueWithConceptAccess().getLiteralAssignment_1(), "rule__ValueWithConcept__LiteralAssignment_1");
 					put(grammarAccess.getValueWithConceptAccess().getExprAssignment_2(), "rule__ValueWithConcept__ExprAssignment_2");

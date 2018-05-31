@@ -33,24 +33,14 @@ import org.integratedmodelling.kim.kim.Value;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ParameterListImpl#getSingleValue <em>Single Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ParameterListImpl#getPairs <em>Pairs</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ParameterListImpl#getSingleValue <em>Single Value</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ParameterListImpl extends MinimalEObjectImpl.Container implements ParameterList
 {
-  /**
-   * The cached value of the '{@link #getSingleValue() <em>Single Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getSingleValue()
-   * @generated
-   * @ordered
-   */
-  protected Value singleValue;
-
   /**
    * The cached value of the '{@link #getPairs() <em>Pairs</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -60,6 +50,16 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
    * @ordered
    */
   protected EList<KeyValuePair> pairs;
+
+  /**
+   * The cached value of the '{@link #getSingleValue() <em>Single Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSingleValue()
+   * @generated
+   * @ordered
+   */
+  protected Value singleValue;
 
   /**
    * <!-- begin-user-doc -->
@@ -80,6 +80,20 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.PARAMETER_LIST;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<KeyValuePair> getPairs()
+  {
+    if (pairs == null)
+    {
+      pairs = new EObjectContainmentEList<KeyValuePair>(KeyValuePair.class, this, KimPackage.PARAMETER_LIST__PAIRS);
+    }
+    return pairs;
   }
 
   /**
@@ -135,29 +149,15 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<KeyValuePair> getPairs()
-  {
-    if (pairs == null)
-    {
-      pairs = new EObjectContainmentEList<KeyValuePair>(KeyValuePair.class, this, KimPackage.PARAMETER_LIST__PAIRS);
-    }
-    return pairs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
-      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
-        return basicSetSingleValue(null, msgs);
       case KimPackage.PARAMETER_LIST__PAIRS:
         return ((InternalEList<?>)getPairs()).basicRemove(otherEnd, msgs);
+      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
+        return basicSetSingleValue(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -172,10 +172,10 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
   {
     switch (featureID)
     {
-      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
-        return getSingleValue();
       case KimPackage.PARAMETER_LIST__PAIRS:
         return getPairs();
+      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
+        return getSingleValue();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -191,12 +191,12 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
   {
     switch (featureID)
     {
-      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
-        setSingleValue((Value)newValue);
-        return;
       case KimPackage.PARAMETER_LIST__PAIRS:
         getPairs().clear();
         getPairs().addAll((Collection<? extends KeyValuePair>)newValue);
+        return;
+      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
+        setSingleValue((Value)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -212,11 +212,11 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
   {
     switch (featureID)
     {
-      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
-        setSingleValue((Value)null);
-        return;
       case KimPackage.PARAMETER_LIST__PAIRS:
         getPairs().clear();
+        return;
+      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
+        setSingleValue((Value)null);
         return;
     }
     super.eUnset(featureID);
@@ -232,10 +232,10 @@ public class ParameterListImpl extends MinimalEObjectImpl.Container implements P
   {
     switch (featureID)
     {
-      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
-        return singleValue != null;
       case KimPackage.PARAMETER_LIST__PAIRS:
         return pairs != null && !pairs.isEmpty();
+      case KimPackage.PARAMETER_LIST__SINGLE_VALUE:
+        return singleValue != null;
     }
     return super.eIsSet(featureID);
   }

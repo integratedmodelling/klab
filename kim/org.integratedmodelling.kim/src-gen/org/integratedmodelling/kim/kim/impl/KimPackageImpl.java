@@ -3903,7 +3903,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getParameterList_SingleValue()
+  public EReference getParameterList_Pairs()
   {
     return (EReference)parameterListEClass.getEStructuralFeatures().get(0);
   }
@@ -3913,7 +3913,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getParameterList_Pairs()
+  public EReference getParameterList_SingleValue()
   {
     return (EReference)parameterListEClass.getEStructuralFeatures().get(1);
   }
@@ -4750,8 +4750,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(keyValuePairEClass, KEY_VALUE_PAIR__VALUE);
 
     parameterListEClass = createEClass(PARAMETER_LIST);
-    createEReference(parameterListEClass, PARAMETER_LIST__SINGLE_VALUE);
     createEReference(parameterListEClass, PARAMETER_LIST__PAIRS);
+    createEReference(parameterListEClass, PARAMETER_LIST__SINGLE_VALUE);
 
     valueEClass = createEClass(VALUE);
     createEReference(valueEClass, VALUE__CONCEPT);
@@ -5219,8 +5219,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getKeyValuePair_Value(), this.getValue(), null, "value", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(parameterListEClass, ParameterList.class, "ParameterList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getParameterList_SingleValue(), this.getValue(), null, "singleValue", null, 0, 1, ParameterList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getParameterList_Pairs(), this.getKeyValuePair(), null, "pairs", null, 0, -1, ParameterList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getParameterList_SingleValue(), this.getValue(), null, "singleValue", null, 0, 1, ParameterList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getValue_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

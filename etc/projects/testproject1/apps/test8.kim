@@ -22,4 +22,7 @@ model earth:Mountain
 	observing geography:Elevation in ft;
 
 model geography:Elevation in m
-	using gis.terrain(roughness = 0.88, range = 0 to 3500);
+	using gis.terrain(roughness = 0.88, range = 0 to 3500)
+	with metadata {
+		gis 330.0
+	};

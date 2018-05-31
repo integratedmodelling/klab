@@ -611,7 +611,7 @@ LiteralOrIdOrComma returns Literal:
 	 from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
 
 Metadata:
-	{Metadata} '{' (ids+=(LOWERCASE_ID | PropertyId) values+=(LiteralOrID | Metadata | List))* '}';
+	{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
 
 Documentation:
 	{Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
@@ -635,11 +635,12 @@ DocSelector:
 ;
 
 KeyValuePair:
-	name=(LOWERCASE_ID|PathName) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
+	name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
 
 ParameterList:
-	singleValue=Value |
-	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* |
+	singleValue=Value 
+;
 
 ValueWithConcept returns Value:
 	concept=ConceptDeclaration |

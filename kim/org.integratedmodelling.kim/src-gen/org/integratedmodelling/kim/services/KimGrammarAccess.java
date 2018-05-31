@@ -6900,8 +6900,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Assignment cIdsAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
 		private final Alternatives cIdsAlternatives_2_0_0 = (Alternatives)cIdsAssignment_2_0.eContents().get(0);
-		private final RuleCall cIdsLOWERCASE_IDTerminalRuleCall_2_0_0_0 = (RuleCall)cIdsAlternatives_2_0_0.eContents().get(0);
-		private final RuleCall cIdsPropertyIdParserRuleCall_2_0_0_1 = (RuleCall)cIdsAlternatives_2_0_0.eContents().get(1);
+		private final RuleCall cIdsPathNameParserRuleCall_2_0_0_0 = (RuleCall)cIdsAlternatives_2_0_0.eContents().get(0);
+		private final RuleCall cIdsLOWERCASE_IDTerminalRuleCall_2_0_0_1 = (RuleCall)cIdsAlternatives_2_0_0.eContents().get(1);
+		private final RuleCall cIdsPropertyIdParserRuleCall_2_0_0_2 = (RuleCall)cIdsAlternatives_2_0_0.eContents().get(2);
+		private final RuleCall cIdsSTRINGTerminalRuleCall_2_0_0_3 = (RuleCall)cIdsAlternatives_2_0_0.eContents().get(3);
 		private final Assignment cValuesAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
 		private final Alternatives cValuesAlternatives_2_1_0 = (Alternatives)cValuesAssignment_2_1.eContents().get(0);
 		private final RuleCall cValuesLiteralOrIDParserRuleCall_2_1_0_0 = (RuleCall)cValuesAlternatives_2_1_0.eContents().get(0);
@@ -6910,10 +6912,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//Metadata:
-		//	{Metadata} '{' (ids+=(LOWERCASE_ID | PropertyId) values+=(LiteralOrID | Metadata | List))* '}';
+		//	{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Metadata} '{' (ids+=(LOWERCASE_ID | PropertyId) values+=(LiteralOrID | Metadata | List))* '}'
+		//{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}'
 		public Group getGroup() { return cGroup; }
 		
 		//{Metadata}
@@ -6922,20 +6924,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
 		
-		//(ids+=(LOWERCASE_ID | PropertyId) values+=(LiteralOrID | Metadata | List))*
+		//(ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))*
 		public Group getGroup_2() { return cGroup_2; }
 		
-		//ids+=(LOWERCASE_ID | PropertyId)
+		//ids+=(PathName | LOWERCASE_ID | PropertyId | STRING)
 		public Assignment getIdsAssignment_2_0() { return cIdsAssignment_2_0; }
 		
-		//(LOWERCASE_ID | PropertyId)
+		//(PathName | LOWERCASE_ID | PropertyId | STRING)
 		public Alternatives getIdsAlternatives_2_0_0() { return cIdsAlternatives_2_0_0; }
 		
+		//PathName
+		public RuleCall getIdsPathNameParserRuleCall_2_0_0_0() { return cIdsPathNameParserRuleCall_2_0_0_0; }
+		
 		//LOWERCASE_ID
-		public RuleCall getIdsLOWERCASE_IDTerminalRuleCall_2_0_0_0() { return cIdsLOWERCASE_IDTerminalRuleCall_2_0_0_0; }
+		public RuleCall getIdsLOWERCASE_IDTerminalRuleCall_2_0_0_1() { return cIdsLOWERCASE_IDTerminalRuleCall_2_0_0_1; }
 		
 		//PropertyId
-		public RuleCall getIdsPropertyIdParserRuleCall_2_0_0_1() { return cIdsPropertyIdParserRuleCall_2_0_0_1; }
+		public RuleCall getIdsPropertyIdParserRuleCall_2_0_0_2() { return cIdsPropertyIdParserRuleCall_2_0_0_2; }
+		
+		//STRING
+		public RuleCall getIdsSTRINGTerminalRuleCall_2_0_0_3() { return cIdsSTRINGTerminalRuleCall_2_0_0_3; }
 		
 		//values+=(LiteralOrID | Metadata | List)
 		public Assignment getValuesAssignment_2_1() { return cValuesAssignment_2_1; }
@@ -7155,8 +7163,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cNameAlternatives_0_0.eContents().get(0);
-		private final RuleCall cNamePathNameParserRuleCall_0_0_1 = (RuleCall)cNameAlternatives_0_0.eContents().get(1);
+		private final RuleCall cNamePathNameParserRuleCall_0_0_0 = (RuleCall)cNameAlternatives_0_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cNameAlternatives_0_0.eContents().get(1);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Assignment cInteractiveAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
 		private final Keyword cInteractiveQuestionMarkEqualsSignKeyword_1_0_0 = (Keyword)cInteractiveAssignment_1_0.eContents().get(0);
@@ -7165,23 +7173,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueValueWithIdAndConceptParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//KeyValuePair:
-		//	name=(LOWERCASE_ID | PathName) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
+		//	name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=(LOWERCASE_ID | PathName) (interactive?='?=' | '=') value=ValueWithIdAndConcept
+		//name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept
 		public Group getGroup() { return cGroup; }
 		
-		//name=(LOWERCASE_ID | PathName)
+		//name=(PathName | LOWERCASE_ID)
 		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
-		//(LOWERCASE_ID | PathName)
+		//(PathName | LOWERCASE_ID)
 		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
 		
-		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_0_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_0_0_0; }
-		
 		//PathName
-		public RuleCall getNamePathNameParserRuleCall_0_0_1() { return cNamePathNameParserRuleCall_0_0_1; }
+		public RuleCall getNamePathNameParserRuleCall_0_0_0() { return cNamePathNameParserRuleCall_0_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_0_0_1() { return cNameLOWERCASE_IDTerminalRuleCall_0_0_1; }
 		
 		//interactive?='?=' | '='
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
@@ -7204,49 +7212,49 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	public class ParameterListElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ParameterList");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cSingleValueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cSingleValueValueParserRuleCall_0_0 = (RuleCall)cSingleValueAssignment_0.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Assignment cPairsAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final RuleCall cPairsKeyValuePairParserRuleCall_1_0_0 = (RuleCall)cPairsAssignment_1_0.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
-		private final Keyword cCommaKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
-		private final Assignment cPairsAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cPairsKeyValuePairParserRuleCall_1_1_1_0 = (RuleCall)cPairsAssignment_1_1_1.eContents().get(0);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Assignment cPairsAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cPairsKeyValuePairParserRuleCall_0_0_0 = (RuleCall)cPairsAssignment_0_0.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
+		private final Keyword cCommaKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
+		private final Assignment cPairsAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
+		private final RuleCall cPairsKeyValuePairParserRuleCall_0_1_1_0 = (RuleCall)cPairsAssignment_0_1_1.eContents().get(0);
+		private final Assignment cSingleValueAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cSingleValueValueParserRuleCall_1_0 = (RuleCall)cSingleValueAssignment_1.eContents().get(0);
 		
 		//ParameterList:
-		//	singleValue=Value | pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+		//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//singleValue=Value | pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*
+		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue=Value
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//singleValue=Value
-		public Assignment getSingleValueAssignment_0() { return cSingleValueAssignment_0; }
-		
-		//Value
-		public RuleCall getSingleValueValueParserRuleCall_0_0() { return cSingleValueValueParserRuleCall_0_0; }
-		
 		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_0() { return cGroup_0; }
 		
 		//pairs+=KeyValuePair
-		public Assignment getPairsAssignment_1_0() { return cPairsAssignment_1_0; }
+		public Assignment getPairsAssignment_0_0() { return cPairsAssignment_0_0; }
 		
 		//KeyValuePair
-		public RuleCall getPairsKeyValuePairParserRuleCall_1_0_0() { return cPairsKeyValuePairParserRuleCall_1_0_0; }
+		public RuleCall getPairsKeyValuePairParserRuleCall_0_0_0() { return cPairsKeyValuePairParserRuleCall_0_0_0; }
 		
 		//(=> ',' pairs+=KeyValuePair)*
-		public Group getGroup_1_1() { return cGroup_1_1; }
+		public Group getGroup_0_1() { return cGroup_0_1; }
 		
 		//=> ','
-		public Keyword getCommaKeyword_1_1_0() { return cCommaKeyword_1_1_0; }
+		public Keyword getCommaKeyword_0_1_0() { return cCommaKeyword_0_1_0; }
 		
 		//pairs+=KeyValuePair
-		public Assignment getPairsAssignment_1_1_1() { return cPairsAssignment_1_1_1; }
+		public Assignment getPairsAssignment_0_1_1() { return cPairsAssignment_0_1_1; }
 		
 		//KeyValuePair
-		public RuleCall getPairsKeyValuePairParserRuleCall_1_1_1_0() { return cPairsKeyValuePairParserRuleCall_1_1_1_0; }
+		public RuleCall getPairsKeyValuePairParserRuleCall_0_1_1_0() { return cPairsKeyValuePairParserRuleCall_0_1_1_0; }
+		
+		//singleValue=Value
+		public Assignment getSingleValueAssignment_1() { return cSingleValueAssignment_1; }
+		
+		//Value
+		public RuleCall getSingleValueValueParserRuleCall_1_0() { return cSingleValueValueParserRuleCall_1_0; }
 	}
 	public class ValueWithConceptElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueWithConcept");
@@ -9562,7 +9570,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Metadata:
-	//	{Metadata} '{' (ids+=(LOWERCASE_ID | PropertyId) values+=(LiteralOrID | Metadata | List))* '}';
+	//	{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
 	public MetadataElements getMetadataAccess() {
 		return pMetadata;
 	}
@@ -9613,7 +9621,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	name=(LOWERCASE_ID | PathName) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
+	//	name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}
@@ -9623,7 +9631,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ParameterList:
-	//	singleValue=Value | pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
+	//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue=Value;
 	public ParameterListElements getParameterListAccess() {
 		return pParameterList;
 	}

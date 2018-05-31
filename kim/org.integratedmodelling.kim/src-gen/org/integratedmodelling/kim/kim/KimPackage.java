@@ -3542,22 +3542,22 @@ public interface KimPackage extends EPackage
   int PARAMETER_LIST = 43;
 
   /**
-   * The feature id for the '<em><b>Single Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PARAMETER_LIST__SINGLE_VALUE = 0;
-
-  /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PARAMETER_LIST__PAIRS = 1;
+  int PARAMETER_LIST__PAIRS = 0;
+
+  /**
+   * The feature id for the '<em><b>Single Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PARAMETER_LIST__SINGLE_VALUE = 1;
 
   /**
    * The number of structural features of the '<em>Parameter List</em>' class.
@@ -7705,17 +7705,6 @@ public interface KimPackage extends EPackage
   EClass getParameterList();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ParameterList#getSingleValue <em>Single Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Single Value</em>'.
-   * @see org.integratedmodelling.kim.kim.ParameterList#getSingleValue()
-   * @see #getParameterList()
-   * @generated
-   */
-  EReference getParameterList_SingleValue();
-
-  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ParameterList#getPairs <em>Pairs</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7725,6 +7714,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getParameterList_Pairs();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ParameterList#getSingleValue <em>Single Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Single Value</em>'.
+   * @see org.integratedmodelling.kim.kim.ParameterList#getSingleValue()
+   * @see #getParameterList()
+   * @generated
+   */
+  EReference getParameterList_SingleValue();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Value <em>Value</em>}'.
@@ -11003,20 +11003,20 @@ public interface KimPackage extends EPackage
     EClass PARAMETER_LIST = eINSTANCE.getParameterList();
 
     /**
-     * The meta object literal for the '<em><b>Single Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference PARAMETER_LIST__SINGLE_VALUE = eINSTANCE.getParameterList_SingleValue();
-
-    /**
      * The meta object literal for the '<em><b>Pairs</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference PARAMETER_LIST__PAIRS = eINSTANCE.getParameterList_Pairs();
+
+    /**
+     * The meta object literal for the '<em><b>Single Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PARAMETER_LIST__SINGLE_VALUE = eINSTANCE.getParameterList_SingleValue();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ValueImpl <em>Value</em>}' class.

@@ -17,8 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.ParameterList#getSingleValue <em>Single Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ParameterList#getPairs <em>Pairs</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ParameterList#getSingleValue <em>Single Value</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getParameterList()
@@ -27,6 +27,22 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ParameterList extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Pairs</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.KeyValuePair}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Pairs</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Pairs</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getParameterList_Pairs()
+   * @model containment="true"
+   * @generated
+   */
+  EList<KeyValuePair> getPairs();
+
   /**
    * Returns the value of the '<em><b>Single Value</b></em>' containment reference.
    * <!-- begin-user-doc -->
@@ -52,21 +68,5 @@ public interface ParameterList extends EObject
    * @generated
    */
   void setSingleValue(Value value);
-
-  /**
-   * Returns the value of the '<em><b>Pairs</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.KeyValuePair}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Pairs</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Pairs</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getParameterList_Pairs()
-   * @model containment="true"
-   * @generated
-   */
-  EList<KeyValuePair> getPairs();
 
 } // ParameterList
