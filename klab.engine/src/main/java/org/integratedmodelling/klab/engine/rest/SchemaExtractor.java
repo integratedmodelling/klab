@@ -17,12 +17,10 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-// import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-// import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
@@ -138,11 +136,12 @@ public class SchemaExtractor {
             Map<Class<?>, JsonNode> ret = new HashMap<>();
             for (Class<?> cls : scanPackage(packageId)) {
                 if (!cls.getCanonicalName().endsWith("package-info")) {
-                    // try {
+                    try {
                         ret.put(cls, schemaGen.generateJsonSchema(cls));
-                    // } catch (JsonMappingException e) {
-                    //    throw new KlabInternalErrorException(e);
-                    // }
+                    } catch (Exception e) {
+                    	// it seems that generateJsonSchema throw a generic java.lang.Exception
+                        throw new KlabInternalErrorException(e);
+                    }
                 }
             }
             schemata.put(packageId, ret);
