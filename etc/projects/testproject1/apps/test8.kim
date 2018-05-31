@@ -1,5 +1,4 @@
-worldview im
-	with parameters {};
+worldview im;
 
 @test(
 	name = "tests.core.instances-resolved-1",
@@ -14,8 +13,7 @@ observe earth:Terrestrial earth:Region named tanzania-grr
 model each earth:Mountain
 	observing geography:Elevation in m
 	using gis.features.extract(
-		select = "elevation > 3000",
-		concy = im:Normalized earth:Region
+		select = "elevation > 3000"	
 	)
 	// should be able to add over space( grid = 30m ) <-- to combine scale within each instance
 ;

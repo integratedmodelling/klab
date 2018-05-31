@@ -410,18 +410,24 @@ public enum Kim {
 			}
 			return id;
 		} else if (value.getList() != null) {
-			List<Object> ret = new ArrayList<>();
-			for (Value val : value.getList().getContents()) {
-				if (!(val.getLiteral() != null && val.getLiteral().isComma())) {
-					ret.add(parseValue(val, namespace));
-				}
-			}
-			return ret;
+			return parseList(value.getList(), namespace);
 		} else if (value.getMap() != null) {
 			// return parseMap(value.getMap(), namespace);
+		} else if (value.getTable() != null) {
+			// return parseTable(value.getTable(), namespace);
 		}
 
 		return null;
+	}
+
+	public List<?> parseList(org.integratedmodelling.kim.kim.List list, IKimNamespace namespace) {
+		List<Object> ret = new ArrayList<>();
+		for (Value val : list.getContents()) {
+			if (!(val.getLiteral() != null && val.getLiteral().isComma())) {
+				ret.add(parseValue(val, namespace));
+			}
+		}
+		return ret;
 	}
 
 	public KimWorkspace loadWorkspace(String workspaceUri, Collection<File> projectRoots) {

@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.rest.client.Client;
+import org.integratedmodelling.klab.communication.client.Client;
 
 public class Node implements INodeIdentity {
 
