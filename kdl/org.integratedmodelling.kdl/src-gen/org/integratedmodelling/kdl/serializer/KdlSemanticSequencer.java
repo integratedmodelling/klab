@@ -154,6 +154,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (
 	 *         (
 	 *             (exported?='export' | (optional?='optional'? imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
+	 *             parameter?='parameter'? 
 	 *             type=ACTOR 
 	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
 	 *             (targets+=TARGET targets+=TARGET*)? 
@@ -176,7 +177,8 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             (enumValues+=UPPERCASE_ID enumValues+=UPPERCASE_ID*)? 
 	 *             docstring=STRING 
 	 *             default=Value? 
-	 *             body=DataflowBody?
+	 *             body=DataflowBody? 
+	 *             (rangeMin=Number | rangeMax=Number | (rangeMin=Number rangeMax=Number))?
 	 *         )
 	 *     )
 	 */

@@ -40,6 +40,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getArity <em>Arity</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isMinimum <em>Minimum</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getTargets <em>Targets</em>}</li>
@@ -47,9 +48,10 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getCoverage <em>Coverage</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getEnumValues <em>Enum Values</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getDefault <em>Default</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getRangeMin <em>Range Min</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getRangeMax <em>Range Max</em>}</li>
  * </ul>
  *
  * @generated
@@ -177,6 +179,26 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected boolean minimum = MINIMUM_EDEFAULT;
 
   /**
+   * The default value of the '{@link #isParameter() <em>Parameter</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isParameter()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PARAMETER_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isParameter() <em>Parameter</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isParameter()
+   * @generated
+   * @ordered
+   */
+  protected boolean parameter = PARAMETER_EDEFAULT;
+
+  /**
    * The default value of the '{@link #getType() <em>Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -287,26 +309,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected EList<Function> coverage;
 
   /**
-   * The default value of the '{@link #isParameter() <em>Parameter</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isParameter()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean PARAMETER_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isParameter() <em>Parameter</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isParameter()
-   * @generated
-   * @ordered
-   */
-  protected boolean parameter = PARAMETER_EDEFAULT;
-
-  /**
    * The cached value of the '{@link #getEnumValues() <em>Enum Values</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -325,6 +327,26 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected Value default_;
+
+  /**
+   * The cached value of the '{@link #getRangeMin() <em>Range Min</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRangeMin()
+   * @generated
+   * @ordered
+   */
+  protected org.integratedmodelling.kdl.kdl.Number rangeMin;
+
+  /**
+   * The cached value of the '{@link #getRangeMax() <em>Range Max</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRangeMax()
+   * @generated
+   * @ordered
+   */
+  protected org.integratedmodelling.kdl.kdl.Number rangeMax;
 
   /**
    * <!-- begin-user-doc -->
@@ -483,6 +505,29 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     minimum = newMinimum;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__MINIMUM, oldMinimum, minimum));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isParameter()
+  {
+    return parameter;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setParameter(boolean newParameter)
+  {
+    boolean oldParameter = parameter;
+    parameter = newParameter;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__PARAMETER, oldParameter, parameter));
   }
 
   /**
@@ -658,29 +703,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isParameter()
-  {
-    return parameter;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setParameter(boolean newParameter)
-  {
-    boolean oldParameter = parameter;
-    parameter = newParameter;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__PARAMETER, oldParameter, parameter));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<String> getEnumValues()
   {
     if (enumValues == null)
@@ -743,6 +765,102 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  public org.integratedmodelling.kdl.kdl.Number getRangeMin()
+  {
+    return rangeMin;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetRangeMin(org.integratedmodelling.kdl.kdl.Number newRangeMin, NotificationChain msgs)
+  {
+    org.integratedmodelling.kdl.kdl.Number oldRangeMin = rangeMin;
+    rangeMin = newRangeMin;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__RANGE_MIN, oldRangeMin, newRangeMin);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRangeMin(org.integratedmodelling.kdl.kdl.Number newRangeMin)
+  {
+    if (newRangeMin != rangeMin)
+    {
+      NotificationChain msgs = null;
+      if (rangeMin != null)
+        msgs = ((InternalEObject)rangeMin).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ACTOR_DEFINITION__RANGE_MIN, null, msgs);
+      if (newRangeMin != null)
+        msgs = ((InternalEObject)newRangeMin).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ACTOR_DEFINITION__RANGE_MIN, null, msgs);
+      msgs = basicSetRangeMin(newRangeMin, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__RANGE_MIN, newRangeMin, newRangeMin));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public org.integratedmodelling.kdl.kdl.Number getRangeMax()
+  {
+    return rangeMax;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetRangeMax(org.integratedmodelling.kdl.kdl.Number newRangeMax, NotificationChain msgs)
+  {
+    org.integratedmodelling.kdl.kdl.Number oldRangeMax = rangeMax;
+    rangeMax = newRangeMax;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__RANGE_MAX, oldRangeMax, newRangeMax);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRangeMax(org.integratedmodelling.kdl.kdl.Number newRangeMax)
+  {
+    if (newRangeMax != rangeMax)
+    {
+      NotificationChain msgs = null;
+      if (rangeMax != null)
+        msgs = ((InternalEObject)rangeMax).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ACTOR_DEFINITION__RANGE_MAX, null, msgs);
+      if (newRangeMax != null)
+        msgs = ((InternalEObject)newRangeMax).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ACTOR_DEFINITION__RANGE_MAX, null, msgs);
+      msgs = basicSetRangeMax(newRangeMax, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__RANGE_MAX, newRangeMax, newRangeMax));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -754,6 +872,10 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return ((InternalEList<?>)getCoverage()).basicRemove(otherEnd, msgs);
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         return basicSetDefault(null, msgs);
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
+        return basicSetRangeMin(null, msgs);
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MAX:
+        return basicSetRangeMax(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -780,6 +902,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return getArity();
       case KdlPackage.ACTOR_DEFINITION__MINIMUM:
         return isMinimum();
+      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
+        return isParameter();
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         return getType();
       case KdlPackage.ACTOR_DEFINITION__NAME:
@@ -794,12 +918,14 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return getLocalName();
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:
         return getCoverage();
-      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
-        return isParameter();
       case KdlPackage.ACTOR_DEFINITION__ENUM_VALUES:
         return getEnumValues();
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         return getDefault();
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
+        return getRangeMin();
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MAX:
+        return getRangeMax();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -833,6 +959,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__MINIMUM:
         setMinimum((Boolean)newValue);
         return;
+      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
+        setParameter((Boolean)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         setType((String)newValue);
         return;
@@ -856,15 +985,18 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         getCoverage().clear();
         getCoverage().addAll((Collection<? extends Function>)newValue);
         return;
-      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
-        setParameter((Boolean)newValue);
-        return;
       case KdlPackage.ACTOR_DEFINITION__ENUM_VALUES:
         getEnumValues().clear();
         getEnumValues().addAll((Collection<? extends String>)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         setDefault((Value)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
+        setRangeMin((org.integratedmodelling.kdl.kdl.Number)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MAX:
+        setRangeMax((org.integratedmodelling.kdl.kdl.Number)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -898,6 +1030,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__MINIMUM:
         setMinimum(MINIMUM_EDEFAULT);
         return;
+      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
+        setParameter(PARAMETER_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         setType(TYPE_EDEFAULT);
         return;
@@ -919,14 +1054,17 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:
         getCoverage().clear();
         return;
-      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
-        setParameter(PARAMETER_EDEFAULT);
-        return;
       case KdlPackage.ACTOR_DEFINITION__ENUM_VALUES:
         getEnumValues().clear();
         return;
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         setDefault((Value)null);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
+        setRangeMin((org.integratedmodelling.kdl.kdl.Number)null);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MAX:
+        setRangeMax((org.integratedmodelling.kdl.kdl.Number)null);
         return;
     }
     super.eUnset(featureID);
@@ -954,6 +1092,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return arity != ARITY_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__MINIMUM:
         return minimum != MINIMUM_EDEFAULT;
+      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
+        return parameter != PARAMETER_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
       case KdlPackage.ACTOR_DEFINITION__NAME:
@@ -968,12 +1108,14 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return LOCAL_NAME_EDEFAULT == null ? localName != null : !LOCAL_NAME_EDEFAULT.equals(localName);
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:
         return coverage != null && !coverage.isEmpty();
-      case KdlPackage.ACTOR_DEFINITION__PARAMETER:
-        return parameter != PARAMETER_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__ENUM_VALUES:
         return enumValues != null && !enumValues.isEmpty();
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         return default_ != null;
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
+        return rangeMin != null;
+      case KdlPackage.ACTOR_DEFINITION__RANGE_MAX:
+        return rangeMax != null;
     }
     return super.eIsSet(featureID);
   }
@@ -1001,6 +1143,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(arity);
     result.append(", minimum: ");
     result.append(minimum);
+    result.append(", parameter: ");
+    result.append(parameter);
     result.append(", type: ");
     result.append(type);
     result.append(", name: ");
@@ -1011,8 +1155,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(docstring);
     result.append(", localName: ");
     result.append(localName);
-    result.append(", parameter: ");
-    result.append(parameter);
     result.append(", enumValues: ");
     result.append(enumValues);
     result.append(')');

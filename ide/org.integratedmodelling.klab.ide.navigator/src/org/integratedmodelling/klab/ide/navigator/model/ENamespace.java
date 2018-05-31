@@ -1,0 +1,58 @@
+package org.integratedmodelling.klab.ide.navigator.model;
+
+import java.util.List;
+import java.util.Map;
+
+import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.klab.utils.Pair;
+
+public class ENamespace extends EKimObject implements IKimNamespace {
+
+	private static final long serialVersionUID = 7664920082549474716L;
+
+	IKimNamespace delegate;
+
+	ENamespace(IKimNamespace statement) {
+		super(statement);
+		this.delegate = statement;
+	}
+	
+	public String getName() {
+		return delegate.getName();
+	}
+
+	public boolean isPrivate() {
+		return delegate.isPrivate();
+	}
+	
+	public List<IKimNamespace> getImported() {
+		return delegate.getImported();
+	}
+
+	public long getTimestamp() {
+		return delegate.getTimestamp();
+	}
+
+	public IKimProject getProject() {
+		return delegate.getProject();
+	}
+	
+	public List<Pair<String, String>> getOwlImports() {
+		return delegate.getOwlImports();
+	}
+
+	public Map<String, Object> getSymbolTable() {
+		return delegate.getSymbolTable();
+	}
+
+	public boolean isInactive() {
+		return delegate.isInactive();
+	}
+
+	public boolean isScenario() {
+		return delegate.isScenario();
+	}
+
+
+}

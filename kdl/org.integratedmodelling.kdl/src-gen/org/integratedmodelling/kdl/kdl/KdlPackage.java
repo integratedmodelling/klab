@@ -259,13 +259,22 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__MINIMUM = 5;
 
   /**
+   * The feature id for the '<em><b>Parameter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__PARAMETER = 6;
+
+  /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__TYPE = 6;
+  int ACTOR_DEFINITION__TYPE = 7;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -274,7 +283,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__NAME = 7;
+  int ACTOR_DEFINITION__NAME = 8;
 
   /**
    * The feature id for the '<em><b>Targets</b></em>' attribute list.
@@ -283,7 +292,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__TARGETS = 8;
+  int ACTOR_DEFINITION__TARGETS = 9;
 
   /**
    * The feature id for the '<em><b>Docstring</b></em>' attribute.
@@ -292,7 +301,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__DOCSTRING = 9;
+  int ACTOR_DEFINITION__DOCSTRING = 10;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -301,7 +310,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__BODY = 10;
+  int ACTOR_DEFINITION__BODY = 11;
 
   /**
    * The feature id for the '<em><b>Local Name</b></em>' attribute.
@@ -310,7 +319,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__LOCAL_NAME = 11;
+  int ACTOR_DEFINITION__LOCAL_NAME = 12;
 
   /**
    * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
@@ -319,16 +328,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__COVERAGE = 12;
-
-  /**
-   * The feature id for the '<em><b>Parameter</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__PARAMETER = 13;
+  int ACTOR_DEFINITION__COVERAGE = 13;
 
   /**
    * The feature id for the '<em><b>Enum Values</b></em>' attribute list.
@@ -349,13 +349,31 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__DEFAULT = 15;
 
   /**
+   * The feature id for the '<em><b>Range Min</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__RANGE_MIN = 16;
+
+  /**
+   * The feature id for the '<em><b>Range Max</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__RANGE_MAX = 17;
+
+  /**
    * The number of structural features of the '<em>Actor Definition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION_FEATURE_COUNT = 16;
+  int ACTOR_DEFINITION_FEATURE_COUNT = 18;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl <em>Dataflow Body</em>}' class.
@@ -2042,6 +2060,17 @@ public interface KdlPackage extends EPackage
   EAttribute getActorDefinition_Minimum();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Parameter</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EAttribute getActorDefinition_Parameter();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2119,17 +2148,6 @@ public interface KdlPackage extends EPackage
   EReference getActorDefinition_Coverage();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Parameter</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EAttribute getActorDefinition_Parameter();
-
-  /**
    * Returns the meta object for the attribute list '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2150,6 +2168,28 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EReference getActorDefinition_Default();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Range Min</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EReference getActorDefinition_RangeMin();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Range Max</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EReference getActorDefinition_RangeMax();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.DataflowBody <em>Dataflow Body</em>}'.
@@ -3831,6 +3871,14 @@ public interface KdlPackage extends EPackage
     EAttribute ACTOR_DEFINITION__MINIMUM = eINSTANCE.getActorDefinition_Minimum();
 
     /**
+     * The meta object literal for the '<em><b>Parameter</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTOR_DEFINITION__PARAMETER = eINSTANCE.getActorDefinition_Parameter();
+
+    /**
      * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3887,14 +3935,6 @@ public interface KdlPackage extends EPackage
     EReference ACTOR_DEFINITION__COVERAGE = eINSTANCE.getActorDefinition_Coverage();
 
     /**
-     * The meta object literal for the '<em><b>Parameter</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTOR_DEFINITION__PARAMETER = eINSTANCE.getActorDefinition_Parameter();
-
-    /**
      * The meta object literal for the '<em><b>Enum Values</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3909,6 +3949,22 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EReference ACTOR_DEFINITION__DEFAULT = eINSTANCE.getActorDefinition_Default();
+
+    /**
+     * The meta object literal for the '<em><b>Range Min</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_DEFINITION__RANGE_MIN = eINSTANCE.getActorDefinition_RangeMin();
+
+    /**
+     * The meta object literal for the '<em><b>Range Max</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_DEFINITION__RANGE_MAX = eINSTANCE.getActorDefinition_RangeMax();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl <em>Dataflow Body</em>}' class.

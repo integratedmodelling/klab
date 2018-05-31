@@ -50,13 +50,50 @@
                      value="org.eclipse.core.resources.IFile">
                </instanceof>
                <instanceof
+                     value="org.eclipse.core.resources.IFolder">
+               </instanceof>
+               <instanceof
                      value="org.eclipse.core.resources.IProject">
                </instanceof>
                <instanceof
-                     value="org.integratedmodelling.kim.api.IKimStatement">
+                     value="org.integratedmodelling.kim.api.IKimNamespace">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimModel">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimObserver">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimConceptStatement">
                </instanceof>
             </or>
          </triggerPoints>
-      </navigatorContent>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IFolder">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimNamespace">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimModel">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimObserver">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimConceptStatement">
+               </instanceof>
+            </or>
+         </possibleChildren>     
+		</navigatorContent>
    </extension>
 </plugin>

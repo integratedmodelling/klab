@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getArity <em>Arity</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMinimum <em>Minimum</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
@@ -29,9 +30,10 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition()
@@ -197,6 +199,32 @@ public interface ActorDefinition extends EObject
   void setMinimum(boolean value);
 
   /**
+   * Returns the value of the '<em><b>Parameter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Parameter</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Parameter</em>' attribute.
+   * @see #setParameter(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Parameter()
+   * @model
+   * @generated
+   */
+  boolean isParameter();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Parameter</em>' attribute.
+   * @see #isParameter()
+   * @generated
+   */
+  void setParameter(boolean value);
+
+  /**
    * Returns the value of the '<em><b>Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -359,32 +387,6 @@ public interface ActorDefinition extends EObject
   EList<Function> getCoverage();
 
   /**
-   * Returns the value of the '<em><b>Parameter</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Parameter</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Parameter</em>' attribute.
-   * @see #setParameter(boolean)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Parameter()
-   * @model
-   * @generated
-   */
-  boolean isParameter();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Parameter</em>' attribute.
-   * @see #isParameter()
-   * @generated
-   */
-  void setParameter(boolean value);
-
-  /**
    * Returns the value of the '<em><b>Enum Values</b></em>' attribute list.
    * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
@@ -425,5 +427,57 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setDefault(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Range Min</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Range Min</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Range Min</em>' containment reference.
+   * @see #setRangeMin(org.integratedmodelling.kdl.kdl.Number)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_RangeMin()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kdl.kdl.Number getRangeMin();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Range Min</em>' containment reference.
+   * @see #getRangeMin()
+   * @generated
+   */
+  void setRangeMin(org.integratedmodelling.kdl.kdl.Number value);
+
+  /**
+   * Returns the value of the '<em><b>Range Max</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Range Max</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Range Max</em>' containment reference.
+   * @see #setRangeMax(org.integratedmodelling.kdl.kdl.Number)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_RangeMax()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kdl.kdl.Number getRangeMax();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Range Max</em>' containment reference.
+   * @see #getRangeMax()
+   * @generated
+   */
+  void setRangeMax(org.integratedmodelling.kdl.kdl.Number value);
 
 } // ActorDefinition

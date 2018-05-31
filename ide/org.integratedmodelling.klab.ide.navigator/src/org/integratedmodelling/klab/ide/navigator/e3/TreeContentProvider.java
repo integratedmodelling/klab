@@ -11,6 +11,8 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
+import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 
 public class TreeContentProvider extends WorkbenchContentProvider {
 
@@ -33,24 +35,24 @@ public class TreeContentProvider extends WorkbenchContentProvider {
             return ((IWorkspaceRoot) parent).getProjects();
         } else if (parent instanceof IProject) {
             return getNamespaces(((IProject) parent).getName());
-        } else if (parent instanceof IKimNamespace) {
-            return ((IKimNamespace)parent).getChildren().toArray();
-        }
+        } else if (parent instanceof EKimObject) {
+            return ((EKimObject)parent).getEChildren().toArray();
+        } 
         return new Object[] {};
     }
 
     private Object[] getNamespaces(String name) {
         IKimProject project = Kim.INSTANCE.getProject(name, wsRoot);
-        return project == null ? new Object[] {} : project.getNamespaces().toArray();
+        return project == null ? new Object[] {} : EKimObject.adapt(project.getNamespaces()).toArray();
     }
 
     public Object getParent(Object element) {
         if (element instanceof IProject) {
             return ResourcesPlugin.getWorkspace().getRoot();
-        } else if (element instanceof IKimNamespace) {
+        } else if (element instanceof ENamespace) {
             return ResourcesPlugin.getWorkspace().getRoot().getProject(((IKimNamespace) element).getName());
-        } else if (element instanceof IKimStatement) {
-            return ((IKimStatement)element).getParent();
+        } else if (element instanceof EKimObject) {
+            return ((EKimObject)element).getEParent();
         }
         return null;
     }

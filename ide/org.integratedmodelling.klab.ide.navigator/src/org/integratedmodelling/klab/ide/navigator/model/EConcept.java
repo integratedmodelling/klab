@@ -1,0 +1,146 @@
+package org.integratedmodelling.klab.ide.navigator.model;
+
+import java.util.EnumSet;
+import java.util.List;
+
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimConcept.Visitor;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimRestriction;
+import org.integratedmodelling.klab.utils.Pair;
+
+public class EConcept extends EKimObject implements IKimConceptStatement {
+	
+	EConcept(IKimConceptStatement statement) {
+		super(statement);
+		this.delegate = statement;
+	}
+
+	private static final long serialVersionUID = 7550076726614724351L;
+	
+	IKimConceptStatement delegate;
+	
+	public EnumSet<Type> getType() {
+		return delegate.getType();
+	}
+
+	public String getUpperConceptDefined() {
+		return delegate.getUpperConceptDefined();
+	}
+
+	public String getAuthority() {
+		return delegate.getAuthority();
+	}
+
+	public String getAuthorityTerm() {
+		return delegate.getAuthorityTerm();
+	}
+
+	public String getAuthorityDefined() {
+		return delegate.getAuthorityDefined();
+	}
+
+	public String getAuthorityRequired() {
+		return delegate.getAuthorityRequired();
+	}
+
+	public List<IKimConcept> getQualitiesAffected() {
+		return delegate.getQualitiesAffected();
+	}
+
+	public List<IKimConcept> getCountablesCreated() {
+		return delegate.getCountablesCreated();
+	}
+
+	public List<IKimConcept> getConstituentParticipants() {
+		return delegate.getConstituentParticipants();
+	}
+
+	public List<IKimConcept> getPartParticipants() {
+		return delegate.getPartParticipants();
+	}
+
+	public List<IKimConcept> getTraitsConferred() {
+		return delegate.getTraitsConferred();
+	}
+
+	public List<IKimConcept> getTraitsInherited() {
+		return delegate.getTraitsInherited();
+	}
+
+	public List<IKimConcept> getRequiredExtents() {
+		return delegate.getRequiredExtents();
+	}
+
+	public List<IKimConcept> getRequiredRealms() {
+		return delegate.getRequiredRealms();
+	}
+
+	public List<IKimConcept> getRequiredAttributes() {
+		return delegate.getRequiredAttributes();
+	}
+
+	public List<IKimConcept> getRequiredIdentities() {
+		return delegate.getRequiredIdentities();
+	}
+
+	public List<IKimConcept> getExposedTraits() {
+		return delegate.getExposedTraits();
+	}
+
+	public List<IKimRestriction> getRestrictions() {
+		return delegate.getRestrictions();
+	}
+
+	public boolean isAlias() {
+		return delegate.isAlias();
+	}
+
+	public boolean isAbstract() {
+		return delegate.isAbstract();
+	}
+
+	public String getNamespace() {
+		return delegate.getNamespace();
+	}
+
+	public String getName() {
+		return delegate.getName();
+	}
+
+	public boolean isMacro() {
+		return delegate.isMacro();
+	}
+
+	public List<Pair<IKimConcept, DescriptionType>> getObservablesDescribed() {
+		return delegate.getObservablesDescribed();
+	}
+
+	public void visitDeclarations(Visitor visitor) {
+		delegate.visitDeclarations(visitor);
+	}
+
+	public List<IKimObservable> getTraitsExposed() {
+		return delegate.getTraitsExposed();
+	}
+
+	public boolean isDefiningExposedTraits() {
+		return delegate.isDefiningExposedTraits();
+	}
+
+	public List<IKimConcept> getConfigurationParticipants() {
+		return delegate.getConfigurationParticipants();
+	}
+
+	public List<ApplicableConcept> getSubjectsLinked() {
+		return delegate.getSubjectsLinked();
+	}
+
+	public List<ApplicableConcept> getAppliesTo() {
+		return delegate.getAppliesTo();
+	}
+
+
+}
