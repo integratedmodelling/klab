@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.utils.Utils;
 
 import com.google.inject.Injector;
 
-public class KimWorkspace extends KimScope implements IKimWorkspace {
+public class KimWorkspace implements IKimWorkspace {
 
 	private static final long serialVersionUID = -6601950097333987803L;
 
@@ -366,12 +366,12 @@ public class KimWorkspace extends KimScope implements IKimWorkspace {
 		return null;
 	}
 
-	@Override
+//	@Override
 	protected String getStringRepresentation(int offset) {
 		return null;
 	}
 
-	@Override
+//	@Override
 	public String getLocationDescriptor() {
 		return root.toString();
 	}

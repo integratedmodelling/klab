@@ -1,8 +1,14 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
@@ -13,7 +19,9 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 
-public abstract class EKimObject implements IAdaptable {
+public abstract class EKimObject implements IKimStatement, IAdaptable {
+
+	private static final long serialVersionUID = -3445237513834410884L;
 
 	IKimStatement delegate_;
 
@@ -21,11 +29,41 @@ public abstract class EKimObject implements IAdaptable {
 		this.delegate_ = statement;
 	}
 
+	public static IFile getNamespaceIFile(IKimNamespace namespace) {
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(namespace.getName());
+
+		// if (namespace != null && namespace.getURI().toString().contains("META-INF")
+		// && namespace.getURI().toString().contains("knowledge.kim")) {
+		// return project.getFile("/META-INF/knowledge.kim");
+		// }
+
+		/*
+		 * happens when just deleted
+		 */
+		// if (namespace == null/* || namespace.getURI() == null*/) {
+		// return null;
+		// }
+
+		String rpath = namespace.getName().replace('.', '/') + ".kim";
+		rpath = namespace.getProject().getRoot() + "/src/" + rpath;
+		return project.getFile(rpath);
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		// TODO Auto-generated method stub
-		System.out.println("this fuck is trying to adapt me, a " + getClass().getCanonicalName() + ", to a "
-				+ adapter.getCanonicalName());
+		if (!(this instanceof ENamespace) && IMarker.class.isAssignableFrom(adapter)) {
+			// return (T)getNamespaceIFile(((ENamespace)this).delegate);
+		}
+
+		if (IFile.class.isAssignableFrom(adapter)) {
+			if (this instanceof ENamespace) {
+				return (T) getNamespaceIFile(((ENamespace) this).delegate);
+			} else {
+			}
+		}
 		return null;
 	}
 
@@ -93,6 +131,11 @@ public abstract class EKimObject implements IAdaptable {
 
 	public IKimStatement getParent() {
 		return delegate_.getParent();
+	}
+
+	@Override
+	public URI getURI() {
+		return delegate_.getURI();
 	}
 
 	public static List<ENamespace> adapt(List<IKimNamespace> namespaces) {

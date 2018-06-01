@@ -1,5 +1,6 @@
 package org.integratedmodelling.kim.model;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -334,4 +335,9 @@ public class KimMacro implements IKimMacro {
     public IKimStatement getParent() {
         return delegate.getParent();
     }
+
+	@Override
+	public URI getURI() {
+		return delegate.getURI();
+	}
 }

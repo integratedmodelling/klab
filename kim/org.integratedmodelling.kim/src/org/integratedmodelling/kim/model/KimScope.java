@@ -2,7 +2,7 @@ package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.emf.common.util.URI;
+
 import org.integratedmodelling.kim.api.IKimScope;
 
 public abstract class KimScope implements IKimScope {
@@ -17,8 +17,8 @@ public abstract class KimScope implements IKimScope {
 		return children;
 	}
 
-	public URI getURI() {
-		return uri;
+	public java.net.URI getURI() {
+		return null; //uri;
 	}
 	
     public void dump() {

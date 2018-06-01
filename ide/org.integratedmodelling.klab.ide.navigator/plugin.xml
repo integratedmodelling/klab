@@ -27,10 +27,8 @@
             <contentExtension
                   pattern="org.integratedmodelling.klab.ide.navigator.navigatorContent1">
             </contentExtension>
-         </includes>
-      </viewerContentBinding>
-      <viewerContentBinding
-            viewerId="org.integratedmodelling.thinkcap.ide.navigator">
+		    <contentExtension pattern="org.integratedmodelling.klab.ide.navigator.linkHelper1"/>
+            </includes>
       </viewerContentBinding>
    </extension>
    <extension
@@ -95,5 +93,38 @@
             </or>
          </possibleChildren>     
 		</navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.linkHelper">
+      <linkHelper
+            class="org.integratedmodelling.klab.ide.navigator.e3.LinkHelper"
+            id="org.integratedmodelling.klab.ide.navigator.linkHelper1">
+         <editorInputEnablement>
+            <or>
+               <instanceof
+                     value="org.eclipse.ui.IFileEditorInput">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.emf.ecore.EObject">
+               </instanceof>
+            </or>
+         </editorInputEnablement>
+         <selectionEnablement>
+           <or>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimNamespace">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimModel">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimObserver">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.kim.api.IKimConceptStatement">
+               </instanceof>
+            </or>
+         </selectionEnablement>
+      </linkHelper>
    </extension>
 </plugin>

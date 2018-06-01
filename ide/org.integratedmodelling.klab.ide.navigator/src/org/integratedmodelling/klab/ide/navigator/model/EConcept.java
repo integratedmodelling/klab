@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -141,6 +142,5 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
 	public List<ApplicableConcept> getAppliesTo() {
 		return delegate.getAppliesTo();
 	}
-
 
 }
