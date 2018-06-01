@@ -10,8 +10,6 @@ public interface IKimProject {
     static final String KLAB_CONFIGURATION_DEFINED_WORLDVIEW_ID = "klab.defined.worldview";
     static final String KLAB_CONFIGURATION_WORLDVIEW_ID         = "klab.worldview";
 
-//    String getNamespaceIdFor(EObject o);
-
     String getDefinedWorldview();
 
     List<File> getSourceFiles();

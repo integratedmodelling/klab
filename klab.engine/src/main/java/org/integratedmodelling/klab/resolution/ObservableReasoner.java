@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.owl.Observable;
  * resolution (for instantiation or resolution) and context. When iterated,
  * returns the original observable when appropriate, then, upon request it
  * produces all the others lazily.
- * 
+ * <p>
  * It can also be used to infer all the actual dependencies of a model, based on
  * the model's stated ones and on its semantics, taking into account roles,
  * abstract status, relationship endpoints etc.

@@ -22,6 +22,16 @@ public class Activator extends AbstractUIPlugin {
 
 		super.start(context);
 
+		// TODO this is a caret listener for the k.IM editors - somehow the 
+//		workbenchWindow.getActivePage().addPartListener(new PartListener() {
+//		    public void partOpened(IWorkbenchPartReference partRef) {
+//		        //Check if this is an editor and its input is what I need
+//		        AbstractTextEditor e =
+//		            (AbstractTextEditor)((IEditorReference) partRef).getEditor(false);
+//		        ((StyledText)e.getAdapter(Control.class)).addCaretListener(l);
+//		    }
+//		});
+		
 		plugin = this;
 
 		URI uri = ResourcesPlugin.getWorkspace().getRoot().getLocationURI();

@@ -38,7 +38,8 @@
             contentProvider="org.integratedmodelling.klab.ide.navigator.e3.TreeContentProvider"
             id="org.integratedmodelling.klab.ide.navigator.navigatorContent1"
             labelProvider="org.integratedmodelling.klab.ide.navigator.e3.ViewerLabelProvider"
-            name="k.LAB model">
+            name="k.LAB model"
+            sortOnly="false">
          <triggerPoints>
             <or>
                <instanceof

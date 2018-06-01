@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -17,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -46,6 +48,12 @@ public class Observable extends Concept implements IObservable {
 	private ObservationType observationType;
 	private boolean optional;
 	private boolean generic;
+	
+	/*
+	 * If these are here, this observable is an alternative for 
+	 * another, and the computations are required to transform it into it.
+	 */
+	transient private List<IComputable> computations;
 
 	/**
 	 * This and the next support situations in which the observable contains a

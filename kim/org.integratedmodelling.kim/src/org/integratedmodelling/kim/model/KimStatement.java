@@ -32,7 +32,6 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected String deprecation = null;
     protected String sourceCode = null;
     protected IKimStatement parent = null;
-    // ACHTUNG if these are added to, ensure that the copy constructor is updated.
 
     public KimStatement() {
     }
@@ -59,27 +58,6 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     public IKimStatement getParent() {
         return parent;
     }
-
-    //  /**
-    //   * Copy constructor. Shallow copy only as it's expected to build substitutes with full k.LAB
-    //   * semantics for contextualization.
-    //   * 
-    //   * KEEP UPDATED WHEN FIELDS CHANGE.
-    //   * 
-    //   * @param model
-    //   */
-    //  protected KimStatement(KimStatement statement) {
-    //    this.firstLine = statement.firstLine;
-    //    this.lastLine = statement.lastLine;
-    //    this.firstCharOffset = statement.firstCharOffset;
-    //    this.lastCharOffset = statement.lastCharOffset;
-    //    this.annotations = statement.annotations;
-    //    this.metadata = statement.metadata;
-    //    this.documentationMetadata = statement.documentationMetadata;
-    //    this.deprecated = statement.deprecated;
-    //    this.deprecation = statement.deprecation;
-    //    this.resource = statement.resource;
-    //  }
 
     @Override
     public String toString() {
