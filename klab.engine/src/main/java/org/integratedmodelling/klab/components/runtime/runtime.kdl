@@ -75,3 +75,31 @@ contextualizer instantiate
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator
 
 }
+
+contextualizer distance
+	"Return a dereifying resolver turning a countable artifact into a spatial distance coverage"
+{
+	
+	text unit
+		"The length unit in which we want the distance"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver
+
+}
+
+contextualizer presence
+	"Return a dereifying resolver turning a countable artifact into a presence coverage"
+{
+	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver
+
+}
+
+contextualizer density
+	"Return a dereifying resolver turning a countable artifact into a density coverage"
+{
+	
+	text unit
+		"The areal or volume unit on which we want the density distributed"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver
+}

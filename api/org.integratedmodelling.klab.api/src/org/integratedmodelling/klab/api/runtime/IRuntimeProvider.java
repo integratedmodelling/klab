@@ -15,9 +15,11 @@
  */
 package org.integratedmodelling.klab.api.runtime;
 
+import java.util.List;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -92,8 +94,8 @@ public interface IRuntimeProvider {
 	 * @param resource
 	 *            a {@link org.integratedmodelling.kim.api.IComputableResource}
 	 *            object.
-	 * @param actuator 
-	 * 			  the actuator providing the context for the computation.
+	 * @param actuator
+	 *            the actuator providing the context for the computation.
 	 * 
 	 * @return the service call encoding the resource
 	 */
@@ -146,21 +148,23 @@ public interface IRuntimeProvider {
 	 */
 	IObservation createEmptyObservation(IObservable observable, IScale scale);
 
-	// /**
-	// * Return the computable that will merge the artifacts produced by the passed
-	// models, each
-	// * indicated by the model ID it is paired with. Normally a service call
-	// implemented in the runtime
-	// * provider.
-	// *
-	// * @param observable the observable corresponding to the artifact produced and
-	// passed
-	// * @param modelIds the IDs that will identify the artifacts when the function
-	// is called.
-	// * @return a computable that will merge artifacts over their different
-	// coverages.
-	// */
-	// IComputableResource getMergeArtifactServiceCall(IObservable observable,
-	// List<String> modelIds);
+	/**
+	 * If the runtime provides a computation that can turn the passed artifact type
+	 * into the desired observation, return it. Otherwise return {@code null}. This
+	 * is used for indirect computations: the usual requests from the default
+	 * resolver are {@link Type#COUNTABLE} to {@link Type#DISTANCE},
+	 * {@link Type#PRESENCE} and {@link Type#NUMEROSITY} when the context of
+	 * computation is compatible with their resolution.
+	 * 
+	 * @param availableType
+	 *            the type of the alternative observable we have
+	 * @param desiredObservation
+	 *            the type of the observable we want to obtain
+	 * @return null (not an empty list) if this computation cannot be done;
+	 *         otherwise the list of needed computations, possibly empty. The empty
+	 *         list will be interpreted as "no computation needed", not as "no
+	 *         strategy found".
+	 */
+	List<IComputableResource> getComputation(IObservable availableType, IObservable desiredObservation);
 
 }

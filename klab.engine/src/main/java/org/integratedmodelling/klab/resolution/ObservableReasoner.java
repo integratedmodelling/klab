@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -13,15 +15,17 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 
 /**
  * An observable reasoner implements all context-dependent inferences on
  * observables (those that are context-independent are available through the
  * configured {@link IObservableService}). It can produce all the model
  * observables that can resolve a stated one, taking into account mode of
- * resolution (for instantiation or resolution) and context. When iterated,
- * returns the original observable when appropriate, then, upon request it
- * produces all the others lazily.
+ * resolution (for instantiation or resolution) and context, along with the
+ * recipe on how to observe them and transform the resulting artifact if
+ * necessary. When iterated, returns the original observable when appropriate,
+ * then, upon request, produces all the other candidates.
  * <p>
  * It can also be used to infer all the actual dependencies of a model, based on
  * the model's stated ones and on its semantics, taking into account roles,
@@ -30,18 +34,53 @@ import org.integratedmodelling.klab.owl.Observable;
  * @author ferdinando.villa
  *
  */
-public class ObservableReasoner implements Iterable<Observable> {
+public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 	private ResolutionScope scope;
 	private Mode mode;
-	private List<Observable> alternatives = new ArrayList<>();
+	private List<CandidateObservable> alternatives = new ArrayList<>();
 	private boolean alternativesComputed = false;
+
+	/**
+	 * Each candidate observable comes with an observable, a mode of observation and
+	 * a set of computations to adapt it to the target observation.
+	 */
+	public static class CandidateObservable {
+
+		/**
+		 * The observable that satisfies this request
+		 */
+		public Observable observable;
+
+		/**
+		 * The mode in which the observable should be observed
+		 */
+		public Mode mode;
+
+		/**
+		 * Any necessary computation to apply to the resulting artifact to produce the
+		 * requested observation
+		 */
+		public List<IComputableResource> computation = new ArrayList<>();
+
+		CandidateObservable(Observable original, Mode mode) {
+			this.observable = original;
+			this.mode = mode;
+		}
+
+		CandidateObservable(Observable original, Mode mode, List<IComputableResource> computables) {
+			this.observable = original;
+			this.mode = mode;
+			this.computation.addAll(computables);
+		}
+
+	}
 
 	// the two below are only used when inferring the actual dependencies in a model
 	private Model model;
 	private Observable observable;
 
-	class It implements Iterator<Observable> {
+	class It implements Iterator<CandidateObservable> {
 
 		int idx = 0;
 
@@ -51,8 +90,8 @@ public class ObservableReasoner implements Iterable<Observable> {
 		}
 
 		@Override
-		public Observable next() {
-			Observable ret = alternatives.get(idx);
+		public CandidateObservable next() {
+			CandidateObservable ret = alternatives.get(idx);
 			idx++;
 			return ret;
 		}
@@ -66,7 +105,7 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 * @param model
 	 * @param observable
 	 */
-	public ObservableReasoner(Model model, Observable observable) {
+	public ObservableReasoner(Model model, Observable observable, ResolutionScope scope) {
 		this.model = model;
 		this.observable = observable;
 	}
@@ -78,9 +117,10 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 * @param original
 	 * @param mode
 	 */
-	public ObservableReasoner(Observable original, Mode mode) {
-		this.alternatives.add(original);
+	public ObservableReasoner(Observable original, Mode mode, ResolutionScope scope) {
+		this.alternatives.add(new CandidateObservable(original, mode));
 		this.mode = mode;
+		this.scope = scope;
 	}
 
 	/**
@@ -91,13 +131,13 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 * @param scope
 	 */
 	public ObservableReasoner(Observable original, ResolutionScope scope) {
-		this.alternatives.add(original);
+		this.alternatives.add(new CandidateObservable(original, scope.getMode()));
 		this.scope = scope;
 		this.mode = scope.getMode();
 	}
 
 	@Override
-	public Iterator<Observable> iterator() {
+	public Iterator<CandidateObservable> iterator() {
 		return new It();
 	}
 
@@ -108,12 +148,12 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 * @return all alternatives, including the original when it can be observed
 	 *         directly.
 	 */
-	public List<Observable> getObservables() {
+	public List<CandidateObservable> getObservables() {
 		if (!this.alternativesComputed) {
 			if (this.model != null) {
 				alternatives.addAll(inferModelDependencies(this.model));
 			} else {
-				alternatives.addAll(inferAlternativeObservables(this.alternatives.get(0)));
+				alternatives.addAll(inferAlternativeObservables(this.alternatives.get(0).observable));
 			}
 			this.alternativesComputed = true;
 		}
@@ -128,7 +168,7 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 *        alternatives do not apply (model dependency resolution).
 	 * @return a list of alternative observables, possibly empty.
 	 */
-	public List<Observable> getAlternatives() {
+	public List<CandidateObservable> getAlternatives() {
 		if (model != null) {
 			throw new IllegalStateException(
 					"ObservableReasoner: getAlternatives() called when alternatives are not computed.");
@@ -142,24 +182,33 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 * -----------------------------------------------------------------------------
 	 */
 
-	private List<Observable> inferAlternativeObservables(Observable observable) {
-		List<Observable> ret = new ArrayList<>();
+	private List<CandidateObservable> inferAlternativeObservables(Observable observable) {
+
+		List<CandidateObservable> ret = new ArrayList<>();
+
 		if (observable.is(Type.PRESENCE)) {
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
 			if (inherent != null) {
-				// TODO observable should contain a list of computations to adapt to the original after it's observed
-				ret.add(Observable.promote(inherent));
+				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
+						.getComputation(Observable.promote(inherent), observable);
+				if (dereificator != null) {
+					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
+				}
 			}
 		} else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
 				&& observable.is(Type.DISTANCE) || observable.is(Type.NUMEROSITY)) {
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
 			if (inherent != null) {
-				// TODO observable should contain a list of computations to adapt to the original after it's observed
-				ret.add(Observable.promote(inherent));
+				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
+						.getComputation(Observable.promote(inherent), observable);
+				if (dereificator != null) {
+					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
+				}
 			}
 		} else if (observable.is(Type.RATIO)) {
 			// TODO
 		}
+
 		return ret;
 	}
 
@@ -169,9 +218,9 @@ public class ObservableReasoner implements Iterable<Observable> {
 	 * -----------------------------------------------------------------------------
 	 */
 
-	private List<Observable> inferModelDependencies(Model model) {
+	private List<CandidateObservable> inferModelDependencies(Model model) {
 
-		List<Observable> ret = selectApplicableDependencies(model.getDependencies(), scope);
+		List<CandidateObservable> ret = selectApplicableDependencies(model.getDependencies(), scope);
 
 		//
 		// /**
@@ -335,8 +384,9 @@ public class ObservableReasoner implements Iterable<Observable> {
 	// return false;
 	// }
 
-	private List<Observable> selectApplicableDependencies(List<IObservable> dependencies, IResolutionScope context) {
-		List<Observable> ret = new ArrayList<>();
+	private List<CandidateObservable> selectApplicableDependencies(List<IObservable> dependencies,
+			IResolutionScope context) {
+		List<CandidateObservable> ret = new ArrayList<>();
 		for (IObservable dep : dependencies) {
 			// if (!((KIMDependency) dep).resolutionContext.isEmpty()) {
 			// boolean ok = true;
@@ -350,7 +400,8 @@ public class ObservableReasoner implements Iterable<Observable> {
 			// continue;
 			// }
 			// }
-			ret.add((Observable) dep);
+			ret.add(new CandidateObservable((Observable) dep,
+					dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
 		}
 		return ret;
 	}

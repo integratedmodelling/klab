@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
@@ -236,7 +235,7 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public List<IComputable> getResources() {
+	public List<IComputableResource> getResources() {
 		return getDelegate().getResources();
 	}
 

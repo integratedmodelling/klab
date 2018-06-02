@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.documentation.Documentation;
@@ -309,7 +308,7 @@ public class Model extends KimObject implements IModel {
   }
 
   @Override
-  public List<IComputable> getResources() {
+  public List<IComputableResource> getResources() {
     // TODO Auto-generated method stub
     return null;
   }

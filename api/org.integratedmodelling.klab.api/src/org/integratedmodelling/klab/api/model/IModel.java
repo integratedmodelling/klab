@@ -18,6 +18,8 @@ package org.integratedmodelling.klab.api.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -64,7 +66,7 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
    *
    * @return the resources that this model provides semantics for. Possibly empty, never null.
    */
-  List<IComputable> getResources();
+  List<IComputableResource> getResources();
 
   /**
    * The asserted semantics for any observation needed in order to produce observations of the

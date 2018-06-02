@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -329,5 +330,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		// actor and register with the actor
 
 		return ret;
+	}
+
+	@Override
+	public List<IComputableResource> getComputation(IObservable availableType, IObservable desiredObservation) {
+
+		return null;
 	}
 }

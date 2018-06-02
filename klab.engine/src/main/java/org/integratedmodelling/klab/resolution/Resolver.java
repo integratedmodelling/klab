@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.resolution;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
@@ -27,6 +28,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.rest.temp.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -240,10 +242,12 @@ public enum Resolver {
 			if (ret.getCoverage().isEmpty()) {
 
 				ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
-				for (Iterator<Observable> it = reasoner.iterator(); it.hasNext();) {
-					Observable candidate = it.next();
+				for (Iterator<CandidateObservable> it = reasoner.iterator(); it.hasNext();) {
+					CandidateObservable candidate = it.next();
 					try {
-						for (IRankedModel model : Models.INSTANCE.resolve(candidate, ret)) {
+						// TODO if candidate switches to object, must switch to instantiation
+						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observable,
+								ret.getChildScope(candidate.observable, candidate.mode))) {
 							ResolutionScope mscope = resolve((RankedModel) model, ret);
 							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
 								ret.link(mscope);
@@ -288,9 +292,9 @@ public enum Resolver {
 
 		ResolutionScope ret = parentScope.getChildScope(model);
 		// use the reasoner to infer any missing dependency from the semantics
-		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable());
-		for (Observable observable : reasoner.getObservables()) {
-			ret.and(resolve(observable, ret, observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
+		for (CandidateObservable observable : reasoner.getObservables()) {
+			ret.and(resolve(observable.observable, ret, observable.mode));
 			if (ret.getCoverage().isEmpty()) {
 				break;
 			}

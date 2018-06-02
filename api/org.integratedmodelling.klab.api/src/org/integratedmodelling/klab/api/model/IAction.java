@@ -20,7 +20,7 @@ import org.integratedmodelling.kim.api.IKimAction.Type;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 
 /**
- * Action execution is deferred to dataflow through their {@link org.integratedmodelling.klab.api.resolution.IComputable} identity.
+ * Action execution is deferred to dataflow through their {@link org.integratedmodelling.klab.api.resolution.IComputableResource} identity.
  *
  * @author ferdinando.villa
  * @version $Id: $Id

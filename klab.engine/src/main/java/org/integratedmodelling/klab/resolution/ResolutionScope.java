@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -639,9 +640,9 @@ public class ResolutionScope implements IResolutionScope {
 			}
 		}
 		if (allowIndirectObservation) {
-			ObservableReasoner reasoner = new ObservableReasoner(observable, mode);
-			for (Observable indirect : reasoner.getAlternatives()) {
-				ResolutionScope alternative = getObservable(indirect, mode, true);
+			ObservableReasoner reasoner = new ObservableReasoner(observable, mode, this);
+			for (CandidateObservable indirect : reasoner.getAlternatives()) {
+				ResolutionScope alternative = getObservable(indirect.observable, indirect.mode, true);
 				if (alternative != null) {
 					return alternative;
 				}
