@@ -19,13 +19,14 @@ import org.integratedmodelling.kim.kim.ComputableValue;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 
 	private static final long serialVersionUID = -5104679843126238555L;
 
-	private String target;
+	private IObservable target;
 	private String language;
 	private Object literal;
 	private KimServiceCall serviceCall;
@@ -40,11 +41,16 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, Type>> requiredResourceNames = new ArrayList<>();
+	private String targetId;
 
-	public void setTarget(String target) {
+	public void setTarget(IObservable target) {
 		this.target = target;
 	}
-
+	
+	public void setTargetId(String targetId) {
+		this.targetId = targetId;
+	}
+	
 	public void setLanguage(String language) {
 		this.language = language;
 	}
@@ -156,7 +162,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (statement.getExecValue() != null) {
 			setFromValue(statement.getExecValue());
 		}
-		this.target = statement.getTarget();
+		this.targetId = statement.getTarget();
 	}
 
 	private void setFromValue(ComputableValue value) {
@@ -186,10 +192,15 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	@Override
-	public String getTarget() {
+	public IObservable getTarget() {
 		return this.target;
 	}
 
+	// used in mediations only
+	public String getMediationTargetId() {
+		return this.targetId;
+	}
+	
 	@Override
 	public String getLanguage() {
 		return this.language;

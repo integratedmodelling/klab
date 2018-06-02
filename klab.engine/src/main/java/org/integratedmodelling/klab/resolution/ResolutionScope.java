@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -46,17 +47,27 @@ public class ResolutionScope implements IResolutionScope {
 	public class Link {
 
 		ResolutionScope target;
+		List<IComputableResource> computation;
 
 		Link(ResolutionScope target) {
 			this.target = target;
 		}
 
+		Link(ResolutionScope target, List<IComputableResource> computation) {
+			this.target = target;
+			this.computation = computation;
+		}
+		
 		public ResolutionScope getSource() {
 			return ResolutionScope.this;
 		}
 
 		public ResolutionScope getTarget() {
 			return target;
+		}
+		
+		public List<IComputableResource> getComputation() {
+			return computation;
 		}
 
 		@Override
@@ -431,10 +442,11 @@ public class ResolutionScope implements IResolutionScope {
 	 * needed coverage.
 	 * 
 	 * @param childScope
+	 * @param computation 
 	 */
-	void link(ResolutionScope childScope) {
+	void link(ResolutionScope childScope, List<IComputableResource> computation) {
 		links.addAll(childScope.links);
-		links.add(new Link(childScope));
+		links.add(new Link(childScope, computation));
 	}
 
 	/**

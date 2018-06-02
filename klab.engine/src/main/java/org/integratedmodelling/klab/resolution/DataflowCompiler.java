@@ -12,14 +12,15 @@ import java.util.Set;
 import org.integratedmodelling.kdl.api.IKdlActuator.Type;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -34,7 +35,7 @@ import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-public class DataflowBuilder {
+public class DataflowCompiler {
 
 	private String name;
 	private DirectObservation context;
@@ -51,25 +52,30 @@ public class DataflowBuilder {
 
 		Coverage coverage;
 
-		ResolutionEdge(Coverage coverage) {
+		// if not null, the computation will adapt the source to the target and they may
+		// be of incompatible types.
+		List<IComputableResource> indirectAdapters;
+
+		ResolutionEdge(Coverage coverage, List<IComputableResource> indirectAdapters) {
 			this.coverage = coverage;
+			this.indirectAdapters = indirectAdapters;
 		}
 
 		ResolutionEdge() {
 		}
 
 		public String toString() {
-			return "resolves" + (coverage.isEmpty() ? "" : " partially");
+			return "resolves" + (indirectAdapters == null ? "" : " indirectly");
 		}
 	}
 
-	public DataflowBuilder(String name, IResolutionScope scope) {
+	public DataflowCompiler(String name, IResolutionScope scope) {
 		this.name = name;
 		this.scope = scope;
 		this.context = (DirectObservation) scope.getContext();
 	}
 
-	public Dataflow build(IMonitor monitor) {
+	public Dataflow compile(IMonitor monitor) {
 
 		if (System.getProperty("visualize", "false").equals("true") && resolutionGraph.vertexSet().size() > 1) {
 			Graphs.show(resolutionGraph, "Resolution graph");
@@ -149,6 +155,8 @@ public class DataflowBuilder {
 		int useCount;
 		// this is null unless the model covers only a part of the context
 		Coverage coverage;
+		// this is null unless the model resolves the observable indirectly
+		List<IComputableResource> indirectAdapters;
 
 		public ModelD(Model model) {
 			this.model = model;
@@ -171,7 +179,7 @@ public class DataflowBuilder {
 	 * will compute an actuator (a true one the first use, a reference afterwards).
 	 * 
 	 * If there is more than one model, they will have to be computed individually
-	 * in their own scale and merged before any other computations are called.
+	 * in their own scale and merged before any other indirectAdapters are called.
 	 * 
 	 * The final actuator hierarchy is built by calling
 	 * {@link #getActuatorTree(IMonitor)} on the root node.
@@ -240,8 +248,9 @@ public class DataflowBuilder {
 
 			if (models.size() == 1) {
 
-				Model theModel = models.iterator().next().model;
-				defineActuator(ret, theModel.getLocalNameFor(observable), theModel, generated);
+				ModelD theModel = models.iterator().next();
+				defineActuator(ret, theModel.model.getLocalNameFor(observable), theModel.model,
+						theModel.indirectAdapters, generated);
 
 			} else if (models.size() > 1) {
 
@@ -258,14 +267,15 @@ public class DataflowBuilder {
 						partial.setPriority(((RankedModel) modelDesc.model).getPriority());
 						index = ((RankedModel) modelDesc.model).getPriority();
 					}
-					// rename and set the target name as partitioned. Number is the priority if known.
+					// rename and set the target name as partitioned. Number is the priority if
+					// known.
 					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
 					partial.setPartitionedTarget(modelDesc.model.getLocalNameFor(observable));
 
 					partial.setType(ret.getType());
 					partial.setObservable(observable);
 					partial.setDefinesScale(true);
-					defineActuator(partial, name, modelDesc.model, generated);
+					defineActuator(partial, name, modelDesc.model, modelDesc.indirectAdapters, generated);
 					partial.setCoverage(modelDesc.coverage);
 
 					modelIds.add(name);
@@ -277,7 +287,8 @@ public class DataflowBuilder {
 			return ret;
 		}
 
-		private void defineActuator(Actuator ret, String name, Model model, Set<Model> generated) {
+		private void defineActuator(Actuator ret, String name, Model model, List<IComputableResource> indirectAdapters,
+				Set<Model> generated) {
 
 			ret.setName(name);
 
@@ -285,6 +296,17 @@ public class DataflowBuilder {
 				generated.add(model);
 				for (IComputableResource resource : model.getComputation(ITime.INITIALIZATION)) {
 					ret.addComputation(resource);
+					if (indirectAdapters != null && resource.getTarget() == null) {
+						/*
+						 * redirect the computation to compute the indirect target artifact
+						 */
+						((ComputableResource) resource).setTarget(model.getObservables().get(0));
+					}
+				}
+				if (indirectAdapters != null) {
+					for (IComputableResource adapter : indirectAdapters) {
+						ret.addComputation(adapter);
+					}
 				}
 				ret.getAnnotations().addAll(model.getAnnotations());
 			} else {
@@ -350,7 +372,7 @@ public class DataflowBuilder {
 			Collections.sort(ret, new Comparator<Node>() {
 
 				@Override
-				public int compare(DataflowBuilder.Node o1, DataflowBuilder.Node o2) {
+				public int compare(DataflowCompiler.Node o1, DataflowCompiler.Node o2) {
 					if (o2.models.isEmpty() && o1.models.isEmpty()) {
 						return 0;
 					}
@@ -397,13 +419,20 @@ public class DataflowBuilder {
 
 			Model model = (Model) graph.getEdgeSource(d);
 
-			observableCatalog.put(ret.observable.getLocalName(), model.getCompatibleOutput(ret.observable));
+			Observable compatibleOutput = model.getCompatibleOutput(ret.observable);
+			if (compatibleOutput == null) {
+				// only happens when the observable is resolved indirectly
+				compatibleOutput = ret.observable;
+			}
+			observableCatalog.put(ret.observable.getLocalName(), compatibleOutput);
 
 			ModelD md = compileModel(model);
 			for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
 				ret.children.add(compileActuator(graph.getEdgeSource(o), graph, o.coverage == null ? scale : o.coverage,
 						monitor));
 			}
+
+			md.indirectAdapters = d.indirectAdapters;
 
 			if (hasPartials) {
 				try {
@@ -429,10 +458,22 @@ public class DataflowBuilder {
 		return ret;
 	}
 
-	public DataflowBuilder withResolution(IResolvable source, IResolvable target, ICoverage coverage) {
+	/**
+	 * 
+	 * @param source
+	 * @param target
+	 * @param coverage
+	 * @param indirectAdapters
+	 *            if not empty, the source is the result of an alternative
+	 *            resolution of the target observable and its type will be
+	 *            translated into the target's by the computation.
+	 * @return the compiler itself
+	 */
+	public DataflowCompiler withResolution(IResolvable source, IResolvable target, ICoverage coverage,
+			List<IComputableResource> computations) {
 		resolutionGraph.addVertex(source);
 		resolutionGraph.addVertex(target);
-		resolutionGraph.addEdge(source, target, new ResolutionEdge((Coverage) coverage));
+		resolutionGraph.addEdge(source, target, new ResolutionEdge((Coverage) coverage, computations));
 		return this;
 	}
 
@@ -446,7 +487,7 @@ public class DataflowBuilder {
 		return ret;
 	}
 
-	public DataflowBuilder withResolvable(IResolvable resolvable) {
+	public DataflowCompiler withResolvable(IResolvable resolvable) {
 		resolutionGraph.addVertex(resolvable);
 		return this;
 	}

@@ -43,7 +43,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 	/**
 	 * Each candidate observable comes with an observable, a mode of observation and
-	 * a set of computations to adapt it to the target observation.
+	 * a set of indirectAdapters to adapt it to the target observation.
 	 */
 	public static class CandidateObservable {
 
@@ -61,7 +61,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * Any necessary computation to apply to the resulting artifact to produce the
 		 * requested observation
 		 */
-		public List<IComputableResource> computation = new ArrayList<>();
+		public List<IComputableResource> computation;
 
 		CandidateObservable(Observable original, Mode mode) {
 			this.observable = original;
@@ -71,7 +71,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		CandidateObservable(Observable original, Mode mode, List<IComputableResource> computables) {
 			this.observable = original;
 			this.mode = mode;
-			this.computation.addAll(computables);
+			this.computation = computables;
 		}
 
 	}

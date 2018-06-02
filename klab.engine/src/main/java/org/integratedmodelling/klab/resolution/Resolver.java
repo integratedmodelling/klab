@@ -233,7 +233,7 @@ public enum Resolver {
 			// observable comes complete with model, semantic or not
 			ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
 			if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
-				ret.link(mscope);
+				ret.link(mscope, null);
 			}
 
 		} else {
@@ -250,7 +250,7 @@ public enum Resolver {
 								ret.getChildScope(candidate.observable, candidate.mode))) {
 							ResolutionScope mscope = resolve((RankedModel) model, ret);
 							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
-								ret.link(mscope);
+								ret.link(mscope, candidate.computation);
 							}
 							if (ret.getCoverage().isComplete()) {
 								break;

@@ -32,6 +32,7 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 
 public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
     IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
+    ret.getParameters().put("artifact", availableType.getLocalName());
     if (desiredObservation.getUnit() != null) {
     	ret.getParameters().put("unit", desiredObservation.getUnit().toString());
     }

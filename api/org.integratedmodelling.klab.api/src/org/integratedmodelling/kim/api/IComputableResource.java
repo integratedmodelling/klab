@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -29,11 +30,25 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IComputableResource {
 
 	/**
-	 * The target of this computation; null if the target is the main observable.
+	 * The target observable for this computation; null if the target is the main
+	 * observable in the correspondent actuator. Otherwise the computation affects
+	 * other artifacts, as in the case of internal dependencies due to indirect
+	 * observables being used in subsequent computation to produce the main one.
 	 * 
 	 * @return the target name
 	 */
-	String getTarget();
+	IObservable getTarget();
+
+	/**
+	 * The target artifact ID when this computation is a mediation. In this case the
+	 * computation means "send this artifact through this mediator". 
+	 * <p>
+	 * This may be merged with getTarget() at some point as the use cases for it are
+	 * similar.
+	 * 
+	 * @return the mediation target ID.
+	 */
+	String getMediationTargetId();
 
 	/**
 	 * Each computation may use a different language. Null means the default

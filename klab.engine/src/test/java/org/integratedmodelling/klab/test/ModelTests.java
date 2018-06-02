@@ -82,7 +82,6 @@ public class ModelTests {
 	}
 	
 	@Test
-	@Ignore("not supported yet")
 	public void indirectDistanceComputation() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test10.kim")).get();
 	}
@@ -90,10 +89,5 @@ public class ModelTests {
 	@Test
 	public void simpleNonsemanticModel() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test11.kim")).get();
-	}
-	
-	@Test
-	public void indirectDistanceSimple() throws Exception {
-		engine.run(getClass().getClassLoader().getResource("kim/test12.kim")).get();
 	}
 }

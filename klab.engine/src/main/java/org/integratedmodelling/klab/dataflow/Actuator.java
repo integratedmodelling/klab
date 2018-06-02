@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -65,7 +66,7 @@ public class Actuator implements IActuator {
 	}
 
 	public void addMediation(IComputableResource resource, Actuator target) {
-		((ComputableResource) resource).setTarget(target.getAlias() == null ? target.getName() : target.getAlias());
+		((ComputableResource) resource).setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
 		((ComputableResource) resource).setMediation(true);
 		computedResources.add(resource);
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
@@ -169,36 +170,62 @@ public class Actuator implements IActuator {
 			computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
 		}
 
-		/*
-		 * Initial target will be null if the actuator is for an instantiator. We take
-		 * it from the context as setupContext() may have swapped it for a rescaling
-		 * mediator.
-		 */
-		IArtifact ret = ctx.getTargetArtifact();
+		IArtifact ret = target;
 
 		/*
-		 * run the contextualization strategy with the localized context
+		 * run the contextualization strategy with the localized context. Each
+		 * contextualizer may produce/require something else than the actuator's target;
+		 * we use the context's artifact table to keep track.
 		 */
 		for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
-			ret = runContextualizer(contextualizer.getFirst(), contextualizer.getSecond(), ret, ctx, ctx.getScale());
+
+			/*
+			 * FIXME: this keeps reusing the same ctx, which is probably wrong as it holds
+			 * parameters from all computations (although they're overwritten so it's only
+			 * a problem if one uses defaults that a previous one provides with a different
+			 * meaning).
+			 */
+
+			IObservable indirectTarget = contextualizer.getSecond().getTarget();
+
+			/*
+			 * Initial target will be null if the actuator is for an instantiator. We take
+			 * it from the context as setupContext() may have swapped it for a rescaling
+			 * mediator.
+			 */
+			IArtifact targetArtifact = indirectTarget == null ? target : ctx.getArtifact(indirectTarget.getLocalName());
+
+			/*
+			 * run the contextualizer on its target. This may get a null and instantiate a
+			 * new target artifact.
+			 * 
+			 * FIXME parameters are kept from previous contextualizers in ctx
+			 */
+			targetArtifact = runContextualizer(contextualizer.getFirst(),
+					indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
+					targetArtifact, ctx, ctx.getScale());
+
+			/*
+			 * if we have produced the artifact (through an instantiator), set it in the
+			 * context.
+			 */
+			if (indirectTarget == null) {
+				ret = targetArtifact;
+			} else {
+				ctx.setData(indirectTarget.getLocalName(), targetArtifact);
+			}
+
 		}
 
-		// this should never happen as even empty instantiations produce the empty
-		// artifact
-		assert (ret != null);
-
-		// also add the empty artifact to the provenance. TODO this needs to store the
-		// full causal
-		// chain.
-		ctx.getProvenance().addArtifact(ret);
-
-		/*
-		 * if we have produced the artifact (through an instantiator), set it in the
-		 * context.
-		 */
+		// FIXME the original context does not get the indirect artifacts
 		if (runtimeContext.getTargetArtifact() == null) {
-			((IRuntimeContext)runtimeContext).setTarget(ret);
+			((IRuntimeContext) runtimeContext).setTarget(ret);
 		}
+
+		// add any artifact, including the empty artifact, to the provenance. FIXME the
+		// provenance doesn't get the indirect artifacts. This
+		// needs to store the full causal chain and any indirect observations.
+		ctx.getProvenance().addArtifact(ret);
 
 		/*
 		 * when computation is finished, pass all annotations from the models to the
@@ -212,8 +239,9 @@ public class Actuator implements IActuator {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IArtifact runContextualizer(IContextualizer contextualizer, IComputableResource resource, IArtifact ret,
-			IRuntimeContext ctx, IScale scale) throws KlabException {
+	private IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
+			IComputableResource resource, IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
+
 		if (contextualizer instanceof IStateResolver) {
 			/*
 			 * pass the distributed computation to the runtime provider for possible
@@ -228,7 +256,7 @@ public class Actuator implements IActuator {
 		} else if (contextualizer instanceof IResolver) {
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, resource));
 		} else if (contextualizer instanceof IInstantiator) {
-			for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(this.observable,
+			for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(observable,
 					addParameters(ctx, resource))) {
 				if (ret == null) {
 					ret = object;
@@ -239,7 +267,7 @@ public class Actuator implements IActuator {
 			if (ret == null) {
 				// return an empty observation for this observable, so we know we made the
 				// observation.
-				ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(this.observable, ctx.getScale());
+				ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(observable, ctx.getScale());
 			}
 		}
 
@@ -300,15 +328,18 @@ public class Actuator implements IActuator {
 				 * scan mediations and apply them as needed
 				 */
 				for (Pair<IContextualizer, IComputableResource> mediator : mediation) {
-					String targetArtifactId = mediator.getSecond().getTarget();
+
+					String targetArtifactId = mediator.getSecond().getMediationTargetId() == null ? null
+							: mediator.getSecond().getMediationTargetId();
+
 					if (targetArtifactId.equals(input.getAlias())) {
 						IArtifact artifact = ret.getArtifact(targetArtifactId);
 						/*
 						 * TODO (I think): if we have own coverage, must reinterpret the artifact
 						 * through the new scale.
 						 */
-						IArtifact mediated = runContextualizer(mediator.getFirst(), mediator.getSecond(), artifact, ret,
-								ret.getScale());
+						IArtifact mediated = runContextualizer(mediator.getFirst(), this.observable,
+								mediator.getSecond(), artifact, ret, ret.getScale());
 						ret.setData(targetArtifactId, mediated);
 					}
 				}
@@ -365,8 +396,8 @@ public class Actuator implements IActuator {
 			int nout = 0;
 			for (int i = 0; i < mediationStrategy.size(); i++) {
 				ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
-						+ (mediationStrategy.get(i).getSecond().getTarget() == null ? ""
-								: (mediationStrategy.get(i).getSecond().getTarget() + " >> "))
+						+ (mediationStrategy.get(i).getSecond().getMediationTargetId() == null ? ""
+								: (mediationStrategy.get(i).getSecond().getMediationTargetId() + " >> "))
 						+ mediationStrategy.get(i).getFirst().getSourceCode()
 						+ (nout < mediationStrategy.size() - 1 || computationStrategy.size() > 0 ? "," : "") + "\n";
 				nout++;
@@ -375,7 +406,7 @@ public class Actuator implements IActuator {
 				ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
 						+ computationStrategy.get(i).getFirst().getSourceCode()
 						+ (computationStrategy.get(i).getSecond().getTarget() == null ? ""
-								: (" as " + computationStrategy.get(i).getSecond().getTarget()))
+								: (" as " + computationStrategy.get(i).getSecond().getTarget().getLocalName()))
 						+ (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
 				nout++;
 			}
@@ -477,12 +508,14 @@ public class Actuator implements IActuator {
 	}
 
 	public boolean isStorageScalar(IScale scale) {
-		// TODO inspect the computations and check if we have any local modifications
+		// TODO inspect the indirectAdapters and check if we have any local
+		// modifications
 		return scale.size() == 1;
 	}
 
 	public boolean isStorageDynamic(IScale scale) {
-		// TODO inspect the computations and the observable semantics; check if we have
+		// TODO inspect the indirectAdapters and the observable semantics; check if we
+		// have
 		// any temporal
 		// modifications
 		return scale.isTemporallyDistributed();

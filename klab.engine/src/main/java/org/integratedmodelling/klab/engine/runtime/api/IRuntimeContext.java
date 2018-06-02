@@ -93,7 +93,7 @@ public interface IRuntimeContext extends IComputationContext {
     void setTarget(IArtifact target);
 
     /**
-     * The API must be able to reset the geometry for downstream computations.
+     * The API must be able to reset the geometry for downstream indirectAdapters.
      * 
      * @param geometry
      */

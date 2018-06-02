@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.scale.Scale;
  * <p>
  * A matching implementation may be provided to run non-semantic workflows in semantically unaware
  * computation engines, or a translator could be used to provide commodity semantics to use this one
- * so that k.LAB servers can serve computations through URNs.
+ * so that k.LAB servers can serve indirectAdapters through URNs.
  * <p>
  * 
  * @author Ferd

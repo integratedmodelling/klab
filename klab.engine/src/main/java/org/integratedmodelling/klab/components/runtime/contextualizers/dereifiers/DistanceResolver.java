@@ -33,6 +33,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 
 	public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
+	    ret.getParameters().put("artifact", availableType.getLocalName());
 		ret.getParameters().put("unit", desiredObservation.getUnit().toString());
 		return ret;
 	}

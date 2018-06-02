@@ -32,7 +32,9 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
-		return KimServiceCall.create(FUNCTION_ID);
+		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
+	    ret.getParameters().put("artifact", availableType.getLocalName());
+	    return ret;
 	}
 
 	@Override

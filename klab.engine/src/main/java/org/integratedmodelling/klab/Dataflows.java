@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.resolution.DataflowBuilder;
+import org.integratedmodelling.klab.resolution.DataflowCompiler;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.utils.xtext.DataflowInjectorProvider;
@@ -80,7 +80,7 @@ public enum Dataflows implements IDataflowService {
     public Dataflow compile(String name, IResolutionScope scope)
         throws KlabException {
 
-      DataflowBuilder builder = new DataflowBuilder(name, scope);
+      DataflowCompiler builder = new DataflowCompiler(name, scope);
 
       if (((ResolutionScope)scope).getObserver() != null) {
         builder = builder.withResolvable(((ResolutionScope)scope).getObserver());
@@ -88,10 +88,10 @@ public enum Dataflows implements IDataflowService {
 
       for (Link link : ((ResolutionScope)scope).getLinks()) {
         builder = builder.withResolution(link.getTarget().getResolvable(),
-            link.getSource().getResolvable(), link.getTarget().getCoverage());
+            link.getSource().getResolvable(), link.getTarget().getCoverage(), link.getComputation());
       }
 
-      return builder.build(scope.getMonitor());
+      return builder.compile(scope.getMonitor());
     }
 
     /**

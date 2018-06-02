@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
@@ -37,6 +39,9 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Expressio
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
@@ -67,8 +72,8 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * This component provides the default dataflow execution runtime and the
  * associated services. Simply dispatches a topologically sorted computation to
  * a threadpool executor. The JGraphT-based topological order built does not
- * account for possible parallel actuators, which it should. 
- * Use Coffman–Graham algorithm when practical.
+ * account for possible parallel actuators, which it should. Use Coffman–Graham
+ * algorithm when practical.
  * <p>
  * The initialization dataflow will build simple objects (essentially
  * storage-only observations) when the context is not temporal. If the context
@@ -319,8 +324,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
 				runtimeContext);
-		
-		// TODO semantic of the relationship may define whether we want a directed or undirected edge.
+
+		// TODO semantic of the relationship may define whether we want a directed or
+		// undirected edge.
 		runtimeContext.network.addEdge(ret,
 				new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget),
 				observable.is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
@@ -334,6 +340,19 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public List<IComputableResource> getComputation(IObservable availableType, IObservable desiredObservation) {
+
+		if (availableType.is(Type.COUNTABLE)) {
+			if (desiredObservation.is(Type.DISTANCE)) {
+				return Collections.singletonList(
+						new ComputableResource(DistanceResolver.getServiceCall(availableType, desiredObservation)));
+			} else if (desiredObservation.is(Type.PRESENCE)) {
+				return Collections.singletonList(
+						new ComputableResource(PresenceResolver.getServiceCall(availableType, desiredObservation)));
+			} else if (desiredObservation.is(Type.NUMEROSITY)) {
+				return Collections.singletonList(
+						new ComputableResource(DensityResolver.getServiceCall(availableType, desiredObservation)));
+			}
+		}
 
 		return null;
 	}

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -27,7 +29,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -164,7 +165,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
 		return network.getInEdges(observation);
 	}
-	
+
 	@Override
 	public ISubject getSourceSubject(IRelationship relationship) {
 		return network.getSource(relationship);
@@ -174,7 +175,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	public ISubject getTargetSubject(IRelationship relationship) {
 		return network.getDest(relationship);
 	}
-
 
 	@Override
 	public void exportNetwork(String outFile) {
@@ -317,7 +317,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		 * with the preloaded cache.
 		 */
 		this.resolutionScope.preloadResolvers(observable);
-		ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, (Subject)source, (Subject)target, scale);
+		ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, (Subject) source, (Subject) target,
+				scale);
 
 		if (scope.getCoverage().isRelevant()) {
 			Dataflow dataflow = Dataflows.INSTANCE
@@ -481,19 +482,37 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	 */
 	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope) {
 
-		IArtifact observation = this.catalog.get(actuator.getName());
+		Map<String, Observable> targetObservables = new HashMap<>();
 
-		if (observation == null && (!actuator.getObservable().is(Type.COUNTABLE) || scope.getMode() == Mode.RESOLUTION)
+		if (this.catalog.get(actuator.getName()) == null
+				&& (!actuator.getObservable().is(Type.COUNTABLE) || scope.getMode() == Mode.RESOLUTION)
 				&& !actuator.computesRescaledState()) {
+			targetObservables.put(actuator.getName(), actuator.getObservable());
+		}
+
+		/*
+		 * add any target of indirect computations
+		 */
+		for (IComputableResource computation : actuator.getComputation()) {
+			if (computation.getTarget() != null && !computation.getTarget().is(Type.COUNTABLE)
+					&& this.catalog.get(computation.getTarget().getLocalName()) == null) {
+				targetObservables.put(computation.getTarget().getLocalName(), (Observable)computation.getTarget());
+			}
+		}
+
+		for (String name : targetObservables.keySet()) {
+
+			Observable observable = targetObservables.get(name);
+			IObservation observation = null;
 
 			if (actuator.getObservable().is(Type.RELATIONSHIP)) {
-				observation = DefaultRuntimeProvider.createRelationship(((Actuator) actuator).getObservable(), scale,
+				observation = DefaultRuntimeProvider.createRelationship(observable, scale,
 						scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
 			} else {
-				observation = DefaultRuntimeProvider.createObservation(((Actuator) actuator).getObservable(), scale,
-						this);
+				observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 			}
-			this.catalog.put(actuator.getName(), observation);
+
+			this.catalog.put(name, observation);
 			this.structure.addVertex(observation);
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
@@ -503,7 +522,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			}
 		}
 
-		return observation;
+		return this.catalog.get(actuator.getName());
 
 	}
 
