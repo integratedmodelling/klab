@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -531,6 +532,21 @@ public class Shape extends AbstractExtent implements IShape {
 		args.add("shape");
 		args.add(toString());
 		return new KimServiceCall("space", args.toArray());
+	}
+
+	@Override
+	public IShape getBoundary() {
+		return create(geometry.getBoundary(), projection);
+	}
+
+	@Override
+	public Collection<IShape> getHoles() {
+		List<IShape> ret = new ArrayList<>();
+		if (geometry instanceof Polygonal) {
+			// scan all polygons in multipolygon, one in polygon
+			// add all interior rings in each as a new shape
+		}
+		return ret;
 	}
 
 }

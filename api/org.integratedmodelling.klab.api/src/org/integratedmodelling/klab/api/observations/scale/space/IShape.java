@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.space;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -93,5 +95,17 @@ public interface IShape extends IReferenced, ISpace {
      * @return the union
      */
     IShape union(IShape other);
+    
+    /**
+     * Get the boundary for a polygon, the shape itself for points and lines.
+     * @return the boundary
+     */
+    IShape getBoundary();
+
+    /**
+     * Get the interior holes for a polygon, the empty collection for points and lines.
+     * @return the holes
+     */
+    Collection<IShape> getHoles();
 
 }

@@ -5,7 +5,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -96,6 +99,13 @@ public class Rasterizer<T> {
 		graphics.setComposite(AlphaComposite.Src);
 	}
 
+	
+	public Collection<Coordinate> getCoordinates(IShape shape) {
+		Set<Coordinate> ret = new HashSet<>();
+		// TODO use a separate bitset and image to rasterize on
+		return ret;
+	}
+	
 	/**
 	 * Rasterize a single shape. Call as many times as necessary.
 	 * 
