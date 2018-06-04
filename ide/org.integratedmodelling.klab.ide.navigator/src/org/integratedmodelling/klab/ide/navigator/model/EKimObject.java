@@ -33,19 +33,6 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(namespace.getName());
-
-		// if (namespace != null && namespace.getURI().toString().contains("META-INF")
-		// && namespace.getURI().toString().contains("knowledge.kim")) {
-		// return project.getFile("/META-INF/knowledge.kim");
-		// }
-
-		/*
-		 * happens when just deleted
-		 */
-		// if (namespace == null/* || namespace.getURI() == null*/) {
-		// return null;
-		// }
-
 		String rpath = namespace.getName().replace('.', '/') + ".kim";
 		rpath = namespace.getProject().getRoot() + "/src/" + rpath;
 		return project.getFile(rpath);
