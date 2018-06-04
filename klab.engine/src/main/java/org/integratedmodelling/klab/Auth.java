@@ -85,7 +85,7 @@ public enum Auth implements IAuthenticationService {
     public <T extends IIdentity> T getIdentity(String id, Class<T> type) {
         // TODO Auto-generated method stub
         IIdentity ret = identities.get(id);
-        return type.isAssignableFrom(ret.getClass()) ? (T)ret : null;
+        return ret != null && type.isAssignableFrom(ret.getClass()) ? (T)ret : null;
     }
     
     /**

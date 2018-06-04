@@ -193,7 +193,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 	@Override
 	public void post(IMessage message) {
-		webSocket.convertAndSend("/message/" + message.getIdentity(), message);
+		webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
 	}
 
 	@Override

@@ -94,7 +94,7 @@ public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer
     @Override
     public void configureMessageBroker(MessageBrokerRegistry configurer) {
         // Prefix for messages FROM server TO client
-        configurer.enableSimpleBroker("/message");
+        configurer.enableSimpleBroker(API.MESSAGE);
         // Prefix for messages FROM client TO server, sent to /klab/message: : 
         configurer.setApplicationDestinationPrefixes("/klab");
     }
