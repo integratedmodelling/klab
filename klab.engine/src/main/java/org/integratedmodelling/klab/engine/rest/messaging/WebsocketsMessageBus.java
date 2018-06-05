@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 
@@ -21,10 +22,8 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
-import org.integratedmodelling.klab.engine.rest.client.StompMessageBus;
 import org.integratedmodelling.klab.engine.rest.messaging.WebsocketsMessageBus.ReceiverDescription.MethodDescriptor;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.monitoring.SubscriberRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -35,6 +34,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class WebsocketsMessageBus implements IMessageBus {
 
+	static public String URL = "ws://localhost:8283/modeler/message";
+	
 	class ReceiverDescription {
 
 		public ReceiverDescription(Class<? extends IIdentity> cls) {
@@ -104,8 +105,8 @@ public class WebsocketsMessageBus implements IMessageBus {
 	}
 
 	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
-	private SubscriberRegistry registry = new SubscriberRegistry();
-	private Map<String, Receiver> responders = Collections.synchronizedMap(new HashMap<>());
+//	private SubscriberRegistry registry = new SubscriberRegistry();
+	private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -115,7 +116,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 	@PostConstruct
 	public void publishMessageBus() {
-		Logging.INSTANCE.info("Setting up message bus on " + StompMessageBus.URL);
+		Logging.INSTANCE.info("Setting up message bus on " + URL);
 		Klab.INSTANCE.setMessageBus(this);
 
 	}
@@ -132,9 +133,9 @@ public class WebsocketsMessageBus implements IMessageBus {
 //		System.out.println(JsonUtils.printAsJson(message));
 
 		if (message.getInResponseTo() != null) {
-			Receiver responder = responders.remove(message.getInResponseTo());
+			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
 			if (responder != null) {
-				responder.receive(message);
+				responder.accept(message);
 				return;
 			}
 		}
@@ -149,13 +150,13 @@ public class WebsocketsMessageBus implements IMessageBus {
 			dispatchMessage(message, identity);
 		}
 
-		for (Receiver receiver : registry.getSubscribers(message)) {
-			IMessage response = receiver.receive(message);
-			if (response != null) {
-				((Message) response).setInResponseTo(message.getId());
-				post(response);
-			}
-		}
+//		for (Receiver receiver : registry.getSubscribers(message)) {
+//			IMessage response = receiver.receive(message);
+//			if (response != null) {
+//				((Message) response).setInResponseTo(message.getId());
+//				post(response);
+//			}
+//		}
 	}
 
 	private void dispatchMessage(Message message, IIdentity identity) {
@@ -197,18 +198,18 @@ public class WebsocketsMessageBus implements IMessageBus {
 	}
 
 	@Override
-	public void post(IMessage message, Receiver responder) {
+	public void post(IMessage message, Consumer<IMessage> responder) {
 		responders.put(((Message) message).getId(), responder);
 		post(message);
 	}
 
-	@Override
-	public void subscribe(Receiver receiver, Object... filters) {
-		registry.subscribe(receiver, filters);
-	}
-
-	@Override
-	public void unsubscribe(Receiver receiver, Object... filters) {
-		registry.unsubscribe(receiver, filters);
-	}
+//	@Override
+//	public void subscribe(Receiver receiver, Object... filters) {
+//		registry.subscribe(receiver, filters);
+//	}
+//
+//	@Override
+//	public void unsubscribe(Receiver receiver, Object... filters) {
+//		registry.unsubscribe(receiver, filters);
+//	}
 }

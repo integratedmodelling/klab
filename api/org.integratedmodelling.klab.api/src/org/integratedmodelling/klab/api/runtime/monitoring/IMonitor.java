@@ -15,11 +15,13 @@
  */
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
+import javax.sound.midi.Receiver;
+
+import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus.Receiver;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 
 /**

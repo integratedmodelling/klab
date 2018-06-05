@@ -69,15 +69,15 @@ public class ObservationReference {
 	private ValueType valueType;
 	private Set<GeometryType> geometryTypes = new HashSet<>();
 	private String literalValue;
-	private List<ObservationReference> children = new ArrayList<>();
+	private List<ObservationReference> siblings = new ArrayList<>();
 	private List<String> traits = new ArrayList<>();
 	
 	/**
-	 * The observation may have more children than are found in the 
-	 * children list. This contains the number of children so it can
+	 * The observation may have more sibling than are found in the 
+	 * sibling list. This contains the number of children so it can
 	 * be reported and lazy calls for the full list are possible.
 	 */
-	private int childrenCount;
+	private int siblingCount;
 
 	/**
 	 * All roles adopted by this observation, either through the semantics or by
@@ -154,12 +154,12 @@ public class ObservationReference {
 		this.literalValue = literalValue;
 	}
 
-	public List<ObservationReference> getChildren() {
-		return children;
+	public List<ObservationReference> getSiblings() {
+		return siblings;
 	}
 
-	public void setChildren(List<ObservationReference> children) {
-		this.children = children;
+	public void setChildren(List<ObservationReference> siblings) {
+		this.siblings = siblings;
 	}
 
 	public String getParentId() {
@@ -258,12 +258,12 @@ public class ObservationReference {
 		this.shapeType = shapeType;
 	}
 
-	public int getChildrenCount() {
-		return childrenCount;
+	public int getSiblingCount() {
+		return siblingCount;
 	}
 
-	public void setChildrenCount(int childrenCount) {
-		this.childrenCount = childrenCount;
+	public void setSiblingCount(int siblingCount) {
+		this.siblingCount = siblingCount;
 	}
 
 	public void setUrn(String urn) {
