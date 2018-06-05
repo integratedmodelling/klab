@@ -18,84 +18,107 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class Script implements IScript {
 
-  URL                scriptUrl;
-  FutureTask<Object> delegate;
-  IMonitor           monitor;
-  Session            session;
-  String token = NameGenerator.shortUUID();
+	URL scriptUrl;
+	FutureTask<Object> delegate;
+	IMonitor monitor;
+	Session session;
+	String token = NameGenerator.shortUUID();
 
-  public Script(Engine engine, URL resource) {
+	public Script(Session session, URL resource) {
 
-    this.scriptUrl = resource;
-    delegate = new FutureTask<Object>(new Callable<Object>() {
+		this.scriptUrl = resource;
+		final Engine engine = session.getParentIdentity(Engine.class);
+		delegate = new FutureTask<Object>(new Callable<Object>() {
 
-      @Override
-      public Object call() throws Exception {
+			@Override
+			public Object call() throws Exception {
 
-        Object ret = null;
-        try (Session session = engine.createSession()) {
-          Script.this.session = session;
-          Script.this.monitor = (session.getMonitor()).get(Script.this);
-          /* ret = */ Models.INSTANCE.load(resource, monitor);
-        } catch (Exception e) {
-          throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
-        }
-        return ret;
-      }
-    });
+				Object ret = null;
+				try {
+					Script.this.session = session;
+					Script.this.monitor = (session.getMonitor()).get(Script.this);
+					/* ret = */ Models.INSTANCE.load(resource, monitor);
+				} catch (Exception e) {
+					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+				}
+				return ret;
+			}
+		});
 
-    engine.getScriptExecutor().execute(delegate);
-  }
+		engine.getScriptExecutor().execute(delegate);
+	}
 
-  @Override
-  public String getId() {
-    return token;
-  }
+	public Script(Engine engine, URL resource) {
 
-  @Override
-  public boolean is(Type type) {
-    return type == Type.SCRIPT;
-  }
+		this.scriptUrl = resource;
+		delegate = new FutureTask<Object>(new Callable<Object>() {
 
-  @Override
-  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-    return IIdentity.findParent(this, type);
-  }
+			@Override
+			public Object call() throws Exception {
 
-  @Override
-  public boolean cancel(boolean mayInterruptIfRunning) {
-    return delegate.cancel(mayInterruptIfRunning);
-  }
+				Object ret = null;
+				try (Session session = engine.createSession()) {
+					Script.this.session = session;
+					Script.this.monitor = (session.getMonitor()).get(Script.this);
+					/* ret = */ Models.INSTANCE.load(resource, monitor);
+				} catch (Exception e) {
+					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+				}
+				return ret;
+			}
+		});
 
-  @Override
-  public boolean isCancelled() {
-    return delegate.isCancelled();
-  }
+		engine.getScriptExecutor().execute(delegate);
+	}
 
-  @Override
-  public boolean isDone() {
-    return delegate.isDone();
-  }
+	@Override
+	public String getId() {
+		return token;
+	}
 
-  @Override
-  public Object get() throws InterruptedException, ExecutionException {
-    return delegate.get();
-  }
+	@Override
+	public boolean is(Type type) {
+		return type == Type.SCRIPT;
+	}
 
-  @Override
-  public Object get(long timeout, TimeUnit unit)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    return delegate.get(timeout, unit);
-  }
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		return IIdentity.findParent(this, type);
+	}
 
-  @Override
-  public IEngineSessionIdentity getParentIdentity() {
-    return session;
-  }
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		return delegate.cancel(mayInterruptIfRunning);
+	}
 
-  @Override
-  public IMonitor getMonitor() {
-    return monitor;
-  }
+	@Override
+	public boolean isCancelled() {
+		return delegate.isCancelled();
+	}
+
+	@Override
+	public boolean isDone() {
+		return delegate.isDone();
+	}
+
+	@Override
+	public Object get() throws InterruptedException, ExecutionException {
+		return delegate.get();
+	}
+
+	@Override
+	public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		return delegate.get(timeout, unit);
+	}
+
+	@Override
+	public IEngineSessionIdentity getParentIdentity() {
+		return session;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
 
 }

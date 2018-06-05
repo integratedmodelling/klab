@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -18,8 +19,11 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
@@ -30,114 +34,139 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  */
 public class ObserveInContextTask implements ITask<IObservation> {
 
-  Monitor                  monitor;
-  Subject                  context;
-  FutureTask<IObservation> delegate;
-  Session                  session;
-  String                   token           = "t" + NameGenerator.shortUUID();
-  String[]                 scenarios;
-  String                   taskDescription =
-      "<uninitialized contextual observation task " + token + ">";
+	Monitor monitor;
+	Subject context;
+	FutureTask<IObservation> delegate;
+	Session session;
+	String token = "t" + NameGenerator.shortUUID();
+	String[] scenarios;
+	String taskDescription = "<uninitialized contextual observation task " + token + ">";
 
-  public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
+	private TaskReference descriptor;
 
-    this.context = context;
-    this.monitor = context.getMonitor().get(this);
-    this.session = context.getParentIdentity(Session.class);
-    this.taskDescription =
-        "<task " + token + ": observation of " + urn + " within " + context + ">";
+	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
 
-    session.touch();
-    
-    delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this) {
+		this.context = context;
+		this.monitor = context.getMonitor().get(this);
+		this.session = context.getParentIdentity(Session.class);
+		this.taskDescription = "<task " + token + ": observation of " + urn + " within " + context + ">";
 
-      @Override
-      public IObservation run() throws Exception {
+		this.descriptor = new TaskReference();
+		this.descriptor.setId(token);
+		this.descriptor.setDescription(this.taskDescription);
 
-        // TODO put all this logics in the resolver, call it from within Observations and use that here.
-        IObservation ret = null;
-        
-        /*
-         * obtain the resolvable object corresponding to the URN - either a concept or a model
-         */
-        IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
+		session.touch();
 
-        if (resolvable == null) {
-        	throw new IllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
-        }
+		delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this) {
 
-        /*
-         * resolve and run
-         */
-        ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
-            ResolutionScope.create(context, monitor, scenarios));
-        if (scope.getCoverage().isRelevant()) {
-          Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token, scope);
-          System.out.println(dataflow.getKdlCode());
-          // make a copy of the coverage so that we ensure it's a scale, behaving properly at merge.
-          return (IObservation)dataflow.run(scope.getCoverage().copy(), monitor);
-        }
+			@Override
+			public IObservation run() throws Exception {
 
-        return ret;
-      }
-    });
+				IObservation ret = null;
 
-    context.getParentIdentity(Engine.class).getTaskExecutor().execute(delegate);
-  }
+				try {
 
-  public String toString() {
-    return taskDescription;
-  }
+					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+							IMessage.Type.TaskStarted, ObserveInContextTask.this.descriptor));
 
-  @Override
-  public String getId() {
-    return token;
-  }
+					/*
+					 * obtain the resolvable object corresponding to the URN - either a concept or a
+					 * model
+					 */
+					IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
 
-  @Override
-  public boolean is(Type type) {
-    return type == Type.TASK;
-  }
+					if (resolvable == null) {
+						throw new IllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
+					}
 
-  @Override
-  public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-    return IIdentity.findParent(this, type);
-  }
+					/*
+					 * resolve and run
+					 */
+					ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
+							ResolutionScope.create(context, monitor, scenarios));
+					if (scope.getCoverage().isRelevant()) {
+						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
+								scope);
 
-  @Override
-  public IEngineSessionIdentity getParentIdentity() {
-    return session;
-  }
+						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode())));
 
-  @Override
-  public IMonitor getMonitor() {
-    return monitor;
-  }
+						// make a copy of the coverage so that we ensure it's a scale, behaving properly
+						// at merge.
+						ret = (IObservation) dataflow.run(scope.getCoverage().copy(), monitor);
+					}
 
-  @Override
-  public boolean cancel(boolean mayInterruptIfRunning) {
-    return delegate.cancel(mayInterruptIfRunning);
-  }
+					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+							IMessage.Type.TaskFinished, ObserveInContextTask.this.descriptor));
 
-  @Override
-  public boolean isCancelled() {
-    return delegate.isCancelled();
-  }
+				} catch (Throwable e) {
 
-  @Override
-  public boolean isDone() {
-    return delegate.isDone();
-  }
+					ObserveInContextTask.this.descriptor.setError(e.getLocalizedMessage());
+					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+							IMessage.Type.TaskAborted, ObserveInContextTask.this.descriptor));
+					throw e;
+				}
 
-  @Override
-  public IObservation get() throws InterruptedException, ExecutionException {
-    return delegate.get();
-  }
+				return ret;
+			}
+		});
 
-  @Override
-  public IObservation get(long timeout, TimeUnit unit)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    return delegate.get(timeout, unit);
-  }
+		context.getParentIdentity(Engine.class).getTaskExecutor().execute(delegate);
+	}
+
+	public String toString() {
+		return taskDescription;
+	}
+
+	@Override
+	public String getId() {
+		return token;
+	}
+
+	@Override
+	public boolean is(Type type) {
+		return type == Type.TASK;
+	}
+
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		return IIdentity.findParent(this, type);
+	}
+
+	@Override
+	public IEngineSessionIdentity getParentIdentity() {
+		return session;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
+
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		return delegate.cancel(mayInterruptIfRunning);
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return delegate.isCancelled();
+	}
+
+	@Override
+	public boolean isDone() {
+		return delegate.isDone();
+	}
+
+	@Override
+	public IObservation get() throws InterruptedException, ExecutionException {
+		return delegate.get();
+	}
+
+	@Override
+	public IObservation get(long timeout, TimeUnit unit)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		return delegate.get(timeout, unit);
+	}
 
 }

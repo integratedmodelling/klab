@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.Engine;
@@ -173,6 +175,16 @@ public class Session implements ISession, UserDetails {
 		// TODO change to monitor.debug
 		System.out.println("setting ROI = " + extent);
 		this.regionOfInterest = extent;
+	}
+
+	@Override
+	public IScript run(URL url) throws KlabException {
+		IScript ret = null;
+		if (url.toString().endsWith(".kim")) {
+			return new Script(this, url);
+		}
+		return ret;
+
 	}
 
 }

@@ -69,7 +69,12 @@ public interface IMessage {
 		/*
 		 * Observation lifecycle
 		 */
-		NewObservation, ModifiedObservation
+		NewObservation, ModifiedObservation,
+		
+		/*
+		 * Task lifecycle
+		 */
+		TaskStarted, TaskFinished, TaskAborted, DataflowCompiled
 		
 	}
 

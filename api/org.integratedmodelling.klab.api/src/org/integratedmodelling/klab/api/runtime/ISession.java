@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.io.Closeable;
+import java.net.URL;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
@@ -68,6 +69,17 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
 	Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
+
+	/**
+	 * Run the content of a URL as a script, returning the future that will compute
+	 * its result (often null). The {@link IEngine} has a similar function that
+	 * automatically opens a new session.
+	 * 
+	 * @param url
+	 * @return the running script
+	 * @throws KlabException
+	 */
+	IScript run(URL url) throws KlabException;
 
 	/**
 	 * The geometry of interest depends on user actions and starts empty. As the

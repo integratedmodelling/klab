@@ -65,6 +65,7 @@ public class ObservationReference {
 	private IShape.Type shapeType = IShape.Type.EMPTY;
 	private String id;
 	private String label;
+	private String observable;
 	private ValueType valueType;
 	private Set<GeometryType> geometryTypes = new HashSet<>();
 	private String literalValue;
@@ -123,6 +124,11 @@ public class ObservationReference {
 	 * beginning of initialization transition before transitions are started.
 	 */
 	private long contextTime = -1;
+	
+	/**
+	 * Full URN of the observation. 
+	 */
+	private String urn;
 
 	public String getId() {
 		return id;
@@ -258,6 +264,22 @@ public class ObservationReference {
 
 	public void setChildrenCount(int childrenCount) {
 		this.childrenCount = childrenCount;
+	}
+
+	public void setUrn(String urn) {
+		this.urn = urn;
+	}
+
+	public String getUrn() {
+		return this.urn;
+	}
+
+	public String getObservable() {
+		return observable;
+	}
+
+	public void setObservable(String observable) {
+		this.observable = observable;
 	}
 
 }

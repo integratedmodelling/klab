@@ -9,7 +9,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.reflections.Reflections;
@@ -33,16 +32,16 @@ public class Run implements ICommand {
 				}
 				return "Available demos:\n" + ret;
 			} else {
+				String ret = "";
 				for (int i = 1; i < arguments.size(); i++) {
 					String arg = arguments.get(i).toString();
 					if (!arg.endsWith(".kim")) {
 						arg += ".kim";
 					}
 					URL url = getClass().getClassLoader().getResource("kim.demos/" + arg);
-					Engine engine = session.getParentIdentity(Engine.class);
-					session.getMonitor().info(url + " -> " + engine.run(url).get());
+					ret += (ret.isEmpty() ? "" : "\n") + url + " -> " + session.run(url).get();
 				}
-				return null;
+				return ret;
 			}
 		}
 
@@ -59,8 +58,7 @@ public class Run implements ICommand {
 				}
 			}
 			if (url != null) {
-				Engine engine = session.getParentIdentity(Engine.class);
-				session.getMonitor().info(url + " -> " + engine.run(url).get());
+				return url + " -> " + session.run(url).get();
 			}
 		}
 		return null;

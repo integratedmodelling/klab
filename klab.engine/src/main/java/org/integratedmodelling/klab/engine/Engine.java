@@ -143,7 +143,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 				if (bus != null) {
 					if (o.length == 1 && o[0] instanceof IMessage) {
 						bus.post((IMessage) o[0]);
-					} if (o.length == 1 && o[0] instanceof INotification) {
+					} else if (o.length == 1 && o[0] instanceof INotification) {
 						bus.post(Message.create((INotification) o[0], this.identity.getId()));
 					} else {
 						bus.post(Message.create(this.identity.getId(), o));
@@ -580,17 +580,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public IScript run(URL resource) throws KlabException {
 
 		IScript ret = null;
-
-		/*
-		 * 'script' can be .kim (test namespace) or .ks (host language script)
-		 */
 		if (resource.toString().endsWith(".kim")) {
-
-			// TODO this must create a task and a script in it.
 			Logging.INSTANCE.info("running namespace " + resource);
 			return new Script(this, resource);
 		}
-
 		return ret;
 	}
 
