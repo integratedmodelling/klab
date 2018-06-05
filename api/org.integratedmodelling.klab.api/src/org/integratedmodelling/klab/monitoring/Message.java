@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Path;
 
 /**
  * Typed message with potential payload to be transferred through a message bus.
@@ -64,7 +65,7 @@ public class Message implements IMessage, Serializable {
 			} else {
 				if (ret.payload == null) {
 					ret.payload = ob;
-					ret.payloadClass = ob.getClass().getCanonicalName();
+					ret.payloadClass = Path.getLast(ob.getClass().getCanonicalName(), '.');
 				} else {
 					throw new IllegalArgumentException("payload already set: too many arguments");
 				}
