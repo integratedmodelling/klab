@@ -16,7 +16,9 @@ void help
 }
 
 void run
-	"Run scripts from a file or URL."
+	"Run scripts from a file or URL. If the first argument is 'demo', the
+     command will run the named demos after it, or list all available demos
+     if no other argument is passed."
 {
 	class org.integratedmodelling.klab.clitool.console.commands.Run
 }

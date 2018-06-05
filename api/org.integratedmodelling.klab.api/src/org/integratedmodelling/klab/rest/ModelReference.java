@@ -30,11 +30,13 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  * model (for example to resolve an inherent quality through dereification) is
  * stored and handled separately to simplify kbox query.
  * <p>
- * Because Jackson insists on serializing transient fields as a default, ensure
- * that any object mapper used is configured with
+ * Because Jackson insists that serializing transient fields as a default is a
+ * good thing, ensure that any object mapper used is configured with
+ * 
  * <pre>
- *   mapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
+ * mapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
  * </pre>
+ * 
  * before use.
  * 
  * @author Ferd

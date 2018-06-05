@@ -64,8 +64,13 @@ public interface IMessage {
 		/*
 		 * Notification-class types
 		 */
-		Debug, Info, Warning, Error
-		// TODO k.LAB specific types
+		Debug, Info, Warning, Error,
+		
+		/*
+		 * Observation lifecycle
+		 */
+		NewObservation, ModifiedObservation
+		
 	}
 
 	/**
