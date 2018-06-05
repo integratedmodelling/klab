@@ -38,10 +38,12 @@ public enum CliRuntime {
     }
 
     public void initialize(IConsole console, IEngineStartupOptions options) {
+        console.disableInput();
         this.engine = Engine.start(options);
         this.session = engine.createSession();
         this.console = console;
         this.commandProcessor = new CommandProcessor(console, session.getMonitor());
+        console.enableInput();
         console.info("Session ID is " + this.session.getId(), null);
     }
 

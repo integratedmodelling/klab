@@ -236,4 +236,14 @@ public class TermConsole implements IConsole {
 		}
 	}
 
+	@Override
+	public void enableInput() {
+		terminal.console.setEnabled(true);
+	}
+
+	@Override
+	public void disableInput() {
+		terminal.console.setEnabled(false);
+	}
+
 }
