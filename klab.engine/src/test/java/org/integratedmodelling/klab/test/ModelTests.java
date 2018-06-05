@@ -3,15 +3,11 @@
  */
 package org.integratedmodelling.klab.test;
 
-import java.util.regex.Pattern;
-
 import org.integratedmodelling.klab.engine.Engine;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 
 /**
  * Runners for all the k.IM test cases in /kim.

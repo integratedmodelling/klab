@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
+import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.engine.runtime.Script;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -428,6 +429,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 				Logging.INSTANCE.error("could not load local workspace");
 				return false;
 			}
+			
+			/*
+			 * cache all resource schemata before anything asks for them
+			 */
+			SchemaExtractor.extractResourceSchema(Klab.REST_RESOURCES_PACKAGE_ID);
 
 			/*
 			 * run any init scripts from configuration

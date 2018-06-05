@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.rest.temp.ModelReference;
+import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -35,7 +35,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 
     ResolutionScope                     scope;
     ComparatorChain                     comparator         = null;
-    HashMap<ModelReference, Map<String, Object>> ranks              = new HashMap<>();
+    HashMap<ModelReference, Map<String, Double>> ranks              = new HashMap<>();
     HashMap<ModelReference, double[]>            idxss              = new HashMap<>();
 
     List<String>                        orderedCriteria      = new ArrayList<>();
@@ -95,7 +95,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         return comparator.compare(getRanks(o1), getRanks(o2));
     }
 
-    public Map<String, Object> getRanks(ModelReference md) {
+    public Map<String, Double> getRanks(ModelReference md) {
 
         if (ranks.get(md) == null) {
             ranks.put((ModelReference) md, computeCriteria(md, scope));
@@ -219,9 +219,9 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
     }
 
     @Override
-    public Map<String, Object> computeCriteria(ModelReference model, IResolutionScope context) {
+    public Map<String, Double> computeCriteria(ModelReference model, IResolutionScope context) {
 
-        Map<String, Object> ret = new HashMap<>();
+        Map<String, Double> ret = new HashMap<>();
 
         for (String cr : orderedCriteria) {
 
@@ -232,10 +232,10 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             }
         }
 
-        ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
-        ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
-        ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
-        ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
+//        ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
+//        ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
+//        ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
+//        ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
 
         ranks.put((ModelReference) model, ret);
 
@@ -250,7 +250,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
     private double computeCustomAggregation(String def, ModelReference model, IResolutionScope context) {
         String[] ddef = def.split(",");
         ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
-        Map<String, Object> dt = getRanks(model);
+        Map<String, Double> dt = getRanks(model);
         for (String cr : ddef) {
             vals.add(new Pair<>(dt.containsKey(cr) ? ((Number) (dt.get(cr))).intValue()
                     : 50, 100));
@@ -504,7 +504,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         for (String s : subjectiveCriteria) {
 
             int val = (model.getMetadata() != null && model.getMetadata().containsKey(s))
-                    ? ((Number) model.getMetadata().get(s)).intValue() : 50;
+                    ? Integer.parseInt(model.getMetadata().get(s)) : 50;
             int wei = 100;
             if (nm != null && nm.get(s) != null) {
                 wei = context.getResolutionNamespace().getResolutionCriteria().get(s, Integer.class);

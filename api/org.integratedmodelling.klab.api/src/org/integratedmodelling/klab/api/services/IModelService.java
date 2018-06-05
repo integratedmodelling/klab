@@ -70,7 +70,7 @@ public interface IModelService {
      * 
      * @return the individual ranks.
      */
-    Map<String, Object> getRanks();
+    Map<String, Double> getRanks();
     
     /**
      * A 0+ integer that reflects the prioritizer's assessment of the ranks in the

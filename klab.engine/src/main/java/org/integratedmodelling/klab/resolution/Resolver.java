@@ -29,7 +29,7 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
-import org.integratedmodelling.klab.rest.temp.ModelReference;
+import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**

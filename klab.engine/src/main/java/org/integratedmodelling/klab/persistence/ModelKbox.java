@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.model.Model;
@@ -37,8 +36,8 @@ import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.rest.temp.ModelReference;
-import org.integratedmodelling.klab.rest.temp.ModelReference.Mediation;
+import org.integratedmodelling.klab.rest.ModelReference;
+import org.integratedmodelling.klab.rest.ModelReference.Mediation;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
@@ -658,9 +657,17 @@ public class ModelKbox extends ObservableKbox {
 			m.setPrimaryObservable(first);
 			first = false;
 
-			m.setMetadata((Metadata) model.getMetadata());
+			m.setMetadata(translateMetadata(model.getMetadata()));
 
 			ret.add(m);
+		}
+		return ret;
+	}
+
+	private static Map<String, String> translateMetadata(IMetadata metadata) {
+		Map<String, String> ret = new HashMap<>();
+		for (String key : metadata.keySet()) {
+			ret.put(key, metadata.get(key) == null ? "null" : metadata.get(key).toString());
 		}
 		return ret;
 	}

@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.rest.temp.ModelReference;
+import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtils;
 
@@ -33,12 +33,12 @@ public class RankedModel extends Model implements IRankedModel {
 
 	String modelUrn;
 	Model delegate;
-	Map<String, Object> ranks;
+	Map<String, Double> ranks;
 	int priority = 0;
 
 	private transient ModelReference modelData;
 
-	public RankedModel(ModelReference model, Map<String, Object> ranks, int priority) {
+	public RankedModel(ModelReference model, Map<String, Double> ranks, int priority) {
 		this.modelUrn = model.getUrn();
 		this.modelData = model;
 		this.ranks = ranks;
@@ -215,7 +215,7 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public Map<String, Object> getRanks() {
+	public Map<String, Double> getRanks() {
 		return ranks;
 	}
 

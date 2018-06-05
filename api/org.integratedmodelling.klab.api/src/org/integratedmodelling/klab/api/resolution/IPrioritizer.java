@@ -110,7 +110,7 @@ public interface IPrioritizer<T> extends Comparator<T> {
      * @param context a {@link org.integratedmodelling.klab.api.resolution.IResolutionScope} object.
      * @return the criteria values for model in context
      */
-    Map<String, Object> computeCriteria(T model, IResolutionScope context);
+    Map<String, Double> computeCriteria(T model, IResolutionScope context);
 
     /**
      * Get the computed ranks for the passed object, or null if they were not
@@ -119,7 +119,7 @@ public interface IPrioritizer<T> extends Comparator<T> {
      * @param md a T object.
      * @return ranks from object, if any
      */
-    Map<String, Object> getRanks(T md);
+    Map<String, Double> getRanks(T md);
 
     /**
      * List the keys of each criterion in the chosen ranking strategy, in order of

@@ -11,7 +11,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
  * rights reserved.
  */
-package org.integratedmodelling.klab.rest.temp;
+package org.integratedmodelling.klab.rest;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,16 +23,20 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-// TODO: Auto-generated Javadoc
 /**
  * Model metadata, describing enough about an existing model to rank it for
  * resolution. Provides a proxy for storage in a model kbox and the bean for
  * network transfer in remote resolutions. Each possible incarnation of the same
  * model (for example to resolve an inherent quality through dereification) is
  * stored and handled separately to simplify kbox query.
- *
+ * <p>
+ * Because Jackson insists on serializing transient fields as a default, ensure
+ * that any object mapper used is configured with
+ * <pre>
+ *   mapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
+ * </pre>
+ * before use.
+ * 
  * @author Ferd
  * @version $Id: $Id
  */
@@ -91,24 +95,21 @@ public class ModelReference {
 	private String dereifyingAttribute;
 	private String observable;
 	private String observationType;
-	private Map<String, Object> metadata;
+	private Map<String, String> metadata;
 	private Mediation mediation = Mediation.NONE;
 	private long timeStart = -1;
 	private long timeEnd = -1;
 	private Set<String> neededCapabilities = new HashSet<>();
-	private Map<String, Object> ranks;
+	private Map<String, Double> ranks;
 	private boolean abstractObservable;
 	private int minSpatialScaleFactor = ISpace.MIN_SCALE_RANK;
 	private int maxSpatialScaleFactor = ISpace.MAX_SCALE_RANK;
 	private int minTimeScaleFactor = ITime.MIN_SCALE_RANK;
 	private int maxTimeScaleFactor = ITime.MAX_SCALE_RANK;
 	private int priority = 0;
-	
-	@JsonIgnore
-	transient private IConcept observableConcept;
 
-	@JsonIgnore
-	transient IShape shape;
+	transient private IConcept observableConcept;
+	transient private IShape shape;
 
 	/**
 	 * Copy.
@@ -579,7 +580,7 @@ public class ModelReference {
 	 *
 	 * @return the metadata
 	 */
-	public Map<String, Object> getMetadata() {
+	public Map<String, String> getMetadata() {
 		return metadata;
 	}
 
@@ -589,7 +590,7 @@ public class ModelReference {
 	 * @param metadata
 	 *            the new metadata
 	 */
-	public void setMetadata(Map<String, Object> metadata) {
+	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 	}
 
@@ -674,7 +675,7 @@ public class ModelReference {
 	 *
 	 * @return the ranks
 	 */
-	public Map<String, Object> getRanks() {
+	public Map<String, Double> getRanks() {
 		return ranks;
 	}
 
@@ -684,7 +685,7 @@ public class ModelReference {
 	 * @param ranks
 	 *            the ranks
 	 */
-	public void setRanks(Map<String, Object> ranks) {
+	public void setRanks(Map<String, Double> ranks) {
 		this.ranks = ranks;
 	}
 

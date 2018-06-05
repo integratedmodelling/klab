@@ -382,11 +382,11 @@ public abstract class ObservableKbox extends H2Kbox {
     return o == null ? "" : o.toString();
   }
 
-  protected Metadata getMetadataFor(long oid) throws KlabException {
+  protected Map<String,String> getMetadataFor(long oid) throws KlabException {
 
     class Handler extends SQL.SimpleResultHandler {
 
-      Metadata ret = null;
+      Map<String,String> ret = null;
 
       @Override
       public void onRow(ResultSet rs) {
@@ -396,9 +396,9 @@ public abstract class ObservableKbox extends H2Kbox {
 
           if (key != null && value != null) {
             if (ret == null) {
-              ret = new Metadata();
+              ret = new HashMap<>();
             }
-            ret.put(key, value);
+            ret.put(key, value.toString());
           }
 
         } catch (SQLException e) {
@@ -417,7 +417,7 @@ public abstract class ObservableKbox extends H2Kbox {
     database.execute("DELETE FROM metadata WHERE fid = " + oid);
   }
 
-  protected void storeMetadataFor(long oid, Map<String, Object> metadata) {
+  protected void storeMetadataFor(long oid, Map<String, String> metadata) {
 
     for (String s : metadata.keySet()) {
 

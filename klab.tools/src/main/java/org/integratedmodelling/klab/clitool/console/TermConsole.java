@@ -42,39 +42,6 @@ public class TermConsole implements IConsole {
 
 	DragonConsoleFrame terminal;
 
-	// class SessionListener implements ISession.Listener {
-	//
-	// @Override
-	// public void contextEvent(IContext context, boolean isNew) {
-	// if (isNew) {
-	// client.getMonitor().info("New context available: " + context
-	// + ": set as current", Messages.INFOCLASS_NEW_RESOURCE_AVAILABLE);
-	// Environment.get().setContext(context);
-	// } else {
-	// client.getMonitor()
-	// .info("Current context modified: " + context,
-	// Messages.INFOCLASS_RESOURCE_MODIFIED);
-	// }
-	// if (((ClientSession) context.getSession()).hasViewer()) {
-	// ((ClientSession) context.getSession()).getViewer().show(context);
-	// }
-	// }
-	//
-	// @Override
-	// public void taskEvent(ITask task, boolean isNew) {
-	// if (task.getStatus() == Status.ERROR) {
-	// client.getMonitor().error("error in task: " + task.getDescription());
-	// } else if (task.getStatus() == Status.RUNNING) {
-	// client.getMonitor().info("task started: " + task.getDescription(),
-	// Messages.TASK_STARTED);
-	// } else
-	// if (task.getStatus() == Status.FINISHED) {
-	// client.getMonitor().info("task finished: " + task.getDescription(),
-	// Messages.TASK_FINISHED);
-	// }
-	// }
-	// }
-
 	@Override
 	public void grabCommandLine(String prompt, String endCommand, CommandListener listener) {
 		terminal.console.grabCommandLine(prompt, endCommand, listener);
@@ -132,45 +99,6 @@ public class TermConsole implements IConsole {
 
 	public void start(CliStartupOptions options) throws Exception {
 
-		// KLAB.CONFIG = new Configuration(true);
-		//
-		// String certfile = System.getProperty(IConfiguration.CERTFILE_PROPERTY);
-		// if (certfile == null) {
-		// certfile = KLAB.CONFIG.getDataPath() + File.separator +
-		// ICertificate.DEFAULT_CERTIFICATE_FILENAME;
-		// }
-		//
-		// File cert = new File(certfile);
-		// if (!cert.exists()) {
-		// throw new KlabIOException("IM certificate not found: " + certfile);
-		// }
-		//
-		// client = new ModelingClient(cert, new Monitor());
-		//
-		// client.addListener(new IModelingEngine.Listener() {
-		//
-		// @Override
-		// public void sessionOpened(ISession session) {
-		// session.addListener(new SessionListener());
-		// }
-		//
-		// @Override
-		// public void sessionClosed(ISession session) {
-		// }
-		//
-		// @Override
-		// public void engineLocked() {
-		// }
-		//
-		// @Override
-		// public void engineUnlocked() {
-		// }
-		//
-		// @Override
-		// public void engineUserAuthenticated(IUser user) {
-		// }
-		// });
-
 		try {
 			javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 				@Override
@@ -198,42 +126,8 @@ public class TermConsole implements IConsole {
 					new Thread() {
 						@Override
 						public void run() {
-
 							CliRuntime.INSTANCE.initialize(TermConsole.this, options);
 							terminal.console.setCommandProcessor(CliRuntime.INSTANCE.getCommandProcessor());
-
-							// client.addListener(new IModelingEngine.Listener() {
-							//
-							// @Override
-							// public void sessionOpened(ISession session) {
-							// IViewer viewer = ((ClientSession) session).getViewer();
-							// if (viewer instanceof WebViewer) {
-							// ((WebViewer) viewer).start();
-							// }
-							// }
-							//
-							// @Override
-							// public void sessionClosed(ISession session) {}
-							//
-							// @Override
-							// public void engineLocked() {
-							// // if (workspaceCleared) {
-							// // _this.info("remote workspace cleared", null);
-							// // }
-							// }
-							//
-							// @Override
-							// public void engineUnlocked() {
-							// // TODO Auto-generated method stub
-							//
-							// }
-							//
-							// @Override
-							// public void engineUserAuthenticated(IUser user) {
-							// // TODO Auto-generated method stub
-							//
-							// }
-							// });
 						}
 					}.start();
 				}
@@ -266,7 +160,7 @@ public class TermConsole implements IConsole {
 		} else {
 			e = e.toString();
 		}
-		terminal.console.append("&R-" + e + "\n");
+		terminal.console.append("&r-" + e + "\n");
 	}
 
 	@Override

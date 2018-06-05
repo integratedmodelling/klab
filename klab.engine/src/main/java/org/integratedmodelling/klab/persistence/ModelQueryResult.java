@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.resolution.RankedModel;
-import org.integratedmodelling.klab.rest.temp.ModelReference;
+import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
@@ -191,7 +191,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
 		ret += filler + StringUtils.rightPad(n + ".", 4) + md.getName() + " ["
 				+ (md.getServerId() == null ? "local" : md.getServerId()) + "]\n";
-		Map<String, Object> ranks = comparator.getRanks(md);
+		Map<String, Double> ranks = comparator.getRanks(md);
 		for (String s : comparator.listCriteria()) {
 			ret += filler + "  " + StringUtils.rightPad(s, 25) + " " + ranks.get(s) + "\n";
 		}
