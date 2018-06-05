@@ -350,7 +350,10 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cParameterAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final Keyword cParameterInputKeyword_1_1_0 = (Keyword)cParameterAssignment_1_1.eContents().get(0);
 		private final Assignment cNameAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
+		private final Alternatives cNameAlternatives_1_2_0 = (Alternatives)cNameAssignment_1_2.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_1_2_0_0 = (RuleCall)cNameAlternatives_1_2_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_DASHIDTerminalRuleCall_1_2_0_1 = (RuleCall)cNameAlternatives_1_2_0.eContents().get(1);
+		private final RuleCall cNameSTRINGTerminalRuleCall_1_2_0_2 = (RuleCall)cNameAlternatives_1_2_0.eContents().get(2);
 		private final Group cGroup_1_3 = (Group)cGroup_1.eContents().get(3);
 		private final Keyword cValuesKeyword_1_3_0 = (Keyword)cGroup_1_3.eContents().get(0);
 		private final Assignment cEnumValuesAssignment_1_3_1 = (Assignment)cGroup_1_3.eContents().get(1);
@@ -399,9 +402,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 		//	targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 		//	coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
-		//	| 'enum')) parameter?='input' name=LOWERCASE_ID ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-		//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
-		//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
+		//	| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+		//	enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
+		//	rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
@@ -412,9 +415,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 		//targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 		//coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
-		//| 'enum')) parameter?='input' name=LOWERCASE_ID ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-		//docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
-		//rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?
+		//| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+		//enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
+		//rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
@@ -590,10 +593,10 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//Function
 		public RuleCall getCoverageFunctionParserRuleCall_0_8_2_1_0() { return cCoverageFunctionParserRuleCall_0_8_2_1_0; }
 		
-		//(optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=LOWERCASE_ID
-		//('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{'
-		//body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
-		//rangeMax=Number)?
+		//(optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=(LOWERCASE_ID |
+		//LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)? docstring=STRING
+		//('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum' rangeMax=Number |
+		//'range' rangeMin=Number 'to' rangeMax=Number)?
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
@@ -634,11 +637,20 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'input'
 		public Keyword getParameterInputKeyword_1_1_0() { return cParameterInputKeyword_1_1_0; }
 		
-		//name=LOWERCASE_ID
+		//name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
 		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
 		
+		//(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
+		public Alternatives getNameAlternatives_1_2_0() { return cNameAlternatives_1_2_0; }
+		
 		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_1_2_0() { return cNameLOWERCASE_IDTerminalRuleCall_1_2_0; }
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_1_2_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_1_2_0_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getNameLOWERCASE_DASHIDTerminalRuleCall_1_2_0_1() { return cNameLOWERCASE_DASHIDTerminalRuleCall_1_2_0_1; }
+		
+		//STRING
+		public RuleCall getNameSTRINGTerminalRuleCall_1_2_0_2() { return cNameSTRINGTerminalRuleCall_1_2_0_2; }
 		
 		//('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
 		public Group getGroup_1_3() { return cGroup_1_3; }
@@ -3681,9 +3693,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 	//	targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 	//	coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
-	//	| 'enum')) parameter?='input' name=LOWERCASE_ID ('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-	//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
-	//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
+	//	| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+	//	enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
+	//	rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}

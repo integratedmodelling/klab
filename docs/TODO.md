@@ -13,17 +13,18 @@
 
 - Functional adapters for classifications and k.IM syntax for map literals
 - Functional adapters for lookup tables and k.IM syntax for table literals
-- Improve lookup table k.IM declaration (mapping to table collection)
+- [DONE] Improve lookup table k.IM declaration (mapping to table collection)
 - [IN PROGRESS] Websockets Messaging API: streamline, complete (JSON RPC inspired - no need to comply)
 - [DONE] Build test cases for non-semantic models
 - Build test cases for non-semantic model libraries
+- [IN PROGRESS] Build test cases for semantic multiple contextualizers with internal references
 - Build test cases for non-semantic multiple contextualizers with internal references
 - Recover and test "define" functionalities and imports, including in function arguments 
     
 ### Resolution
 
 - [DONE] Rescaling mediators; get test5 working
-- Relationship instantiator and resolver: test cases
+- [IN PROGRESS] Relationship instantiator and resolver: test cases
 - Smart resolution of sub-object qualities: use ranking system with scale constraints (i.e. 
   produce Model metadata from states, search there first, if something > x% don't use the network, configure 
   X)
