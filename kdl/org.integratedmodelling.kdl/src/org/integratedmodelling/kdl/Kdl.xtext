@@ -34,7 +34,7 @@ ActorDefinition:
 	('over' coverage+=Function (',' coverage+=Function)*)? |
 
 	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
-	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=LOWERCASE_ID
+	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
 	// enum values, only for enum type
 	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
 	(docstring=STRING)

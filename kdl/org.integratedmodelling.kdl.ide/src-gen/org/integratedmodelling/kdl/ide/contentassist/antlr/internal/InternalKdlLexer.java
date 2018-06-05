@@ -2336,11 +2336,11 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15532:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKdl.g:15532:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKdl.g:15559:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKdl.g:15559:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             matchRange('a','z'); 
-            // InternalKdl.g:15532:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKdl.g:15559:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop1:
             do {
                 int alt1=2;
@@ -2389,11 +2389,11 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_DASHID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15534:23: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )* )
-            // InternalKdl.g:15534:25: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )*
+            // InternalKdl.g:15561:23: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )* )
+            // InternalKdl.g:15561:25: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )*
             {
             matchRange('a','z'); 
-            // InternalKdl.g:15534:34: ( 'a' .. 'z' | '0' .. '9' | '-' )*
+            // InternalKdl.g:15561:34: ( 'a' .. 'z' | '0' .. '9' | '-' )*
             loop2:
             do {
                 int alt2=2;
@@ -2442,10 +2442,10 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_SHAPE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15536:12: ( ( '#' | ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+ ) )
-            // InternalKdl.g:15536:14: ( '#' | ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+ )
+            // InternalKdl.g:15563:12: ( ( '#' | ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+ ) )
+            // InternalKdl.g:15563:14: ( '#' | ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+ )
             {
-            // InternalKdl.g:15536:14: ( '#' | ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+ )
+            // InternalKdl.g:15563:14: ( '#' | ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+ )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -2469,16 +2469,16 @@ public class InternalKdlLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // InternalKdl.g:15536:15: '#'
+                    // InternalKdl.g:15563:15: '#'
                     {
                     match('#'); 
 
                     }
                     break;
                 case 2 :
-                    // InternalKdl.g:15536:19: ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+
+                    // InternalKdl.g:15563:19: ( '#' )? ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+
                     {
-                    // InternalKdl.g:15536:19: ( '#' )?
+                    // InternalKdl.g:15563:19: ( '#' )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -2487,7 +2487,7 @@ public class InternalKdlLexer extends Lexer {
                     }
                     switch (alt3) {
                         case 1 :
-                            // InternalKdl.g:15536:19: '#'
+                            // InternalKdl.g:15563:19: '#'
                             {
                             match('#'); 
 
@@ -2496,7 +2496,7 @@ public class InternalKdlLexer extends Lexer {
 
                     }
 
-                    // InternalKdl.g:15536:24: ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+
+                    // InternalKdl.g:15563:24: ( 'A' .. 'z' ( '.' | '0' .. '3' ) )+
                     int cnt4=0;
                     loop4:
                     do {
@@ -2510,7 +2510,7 @@ public class InternalKdlLexer extends Lexer {
 
                         switch (alt4) {
                     	case 1 :
-                    	    // InternalKdl.g:15536:25: 'A' .. 'z' ( '.' | '0' .. '3' )
+                    	    // InternalKdl.g:15563:25: 'A' .. 'z' ( '.' | '0' .. '3' )
                     	    {
                     	    matchRange('A','z'); 
                     	    if ( input.LA(1)=='.'||(input.LA(1)>='0' && input.LA(1)<='3') ) {
@@ -2557,11 +2557,11 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_UPPERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15538:19: ( 'A' .. 'Z' ( 'A' .. 'Z' )* )
-            // InternalKdl.g:15538:21: 'A' .. 'Z' ( 'A' .. 'Z' )*
+            // InternalKdl.g:15565:19: ( 'A' .. 'Z' ( 'A' .. 'Z' )* )
+            // InternalKdl.g:15565:21: 'A' .. 'Z' ( 'A' .. 'Z' )*
             {
             matchRange('A','Z'); 
-            // InternalKdl.g:15538:30: ( 'A' .. 'Z' )*
+            // InternalKdl.g:15565:30: ( 'A' .. 'Z' )*
             loop6:
             do {
                 int alt6=2;
@@ -2574,7 +2574,7 @@ public class InternalKdlLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // InternalKdl.g:15538:31: 'A' .. 'Z'
+            	    // InternalKdl.g:15565:31: 'A' .. 'Z'
             	    {
             	    matchRange('A','Z'); 
 
@@ -2602,11 +2602,11 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_UPPERCASE_PATH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15540:21: ( RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )* )
-            // InternalKdl.g:15540:23: RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )*
+            // InternalKdl.g:15567:21: ( RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )* )
+            // InternalKdl.g:15567:23: RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )*
             {
             mRULE_UPPERCASE_ID(); 
-            // InternalKdl.g:15540:41: ( '.' RULE_UPPERCASE_ID )*
+            // InternalKdl.g:15567:41: ( '.' RULE_UPPERCASE_ID )*
             loop7:
             do {
                 int alt7=2;
@@ -2619,7 +2619,7 @@ public class InternalKdlLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // InternalKdl.g:15540:42: '.' RULE_UPPERCASE_ID
+            	    // InternalKdl.g:15567:42: '.' RULE_UPPERCASE_ID
             	    {
             	    match('.'); 
             	    mRULE_UPPERCASE_ID(); 
@@ -2648,11 +2648,11 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_CAMELCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15542:19: ( 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )* )
-            // InternalKdl.g:15542:21: 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKdl.g:15569:19: ( 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )* )
+            // InternalKdl.g:15569:21: 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )*
             {
             matchRange('A','Z'); 
-            // InternalKdl.g:15542:30: ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKdl.g:15569:30: ( 'A' .. 'z' | '0' .. '9' )*
             loop8:
             do {
                 int alt8=2;
@@ -2701,10 +2701,10 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15544:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalKdl.g:15544:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKdl.g:15571:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalKdl.g:15571:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalKdl.g:15544:11: ( '^' )?
+            // InternalKdl.g:15571:11: ( '^' )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -2713,7 +2713,7 @@ public class InternalKdlLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // InternalKdl.g:15544:11: '^'
+                    // InternalKdl.g:15571:11: '^'
                     {
                     match('^'); 
 
@@ -2731,7 +2731,7 @@ public class InternalKdlLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalKdl.g:15544:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKdl.g:15571:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop10:
             do {
                 int alt10=2;
@@ -2780,10 +2780,10 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15546:10: ( ( '0' .. '9' )+ )
-            // InternalKdl.g:15546:12: ( '0' .. '9' )+
+            // InternalKdl.g:15573:10: ( ( '0' .. '9' )+ )
+            // InternalKdl.g:15573:12: ( '0' .. '9' )+
             {
-            // InternalKdl.g:15546:12: ( '0' .. '9' )+
+            // InternalKdl.g:15573:12: ( '0' .. '9' )+
             int cnt11=0;
             loop11:
             do {
@@ -2797,7 +2797,7 @@ public class InternalKdlLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // InternalKdl.g:15546:13: '0' .. '9'
+            	    // InternalKdl.g:15573:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2829,10 +2829,10 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15548:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalKdl.g:15548:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKdl.g:15575:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalKdl.g:15575:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalKdl.g:15548:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKdl.g:15575:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -2850,10 +2850,10 @@ public class InternalKdlLexer extends Lexer {
             }
             switch (alt14) {
                 case 1 :
-                    // InternalKdl.g:15548:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalKdl.g:15575:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalKdl.g:15548:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalKdl.g:15575:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop12:
                     do {
                         int alt12=3;
@@ -2869,7 +2869,7 @@ public class InternalKdlLexer extends Lexer {
 
                         switch (alt12) {
                     	case 1 :
-                    	    // InternalKdl.g:15548:21: '\\\\' .
+                    	    // InternalKdl.g:15575:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2877,7 +2877,7 @@ public class InternalKdlLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKdl.g:15548:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalKdl.g:15575:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2902,10 +2902,10 @@ public class InternalKdlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalKdl.g:15548:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalKdl.g:15575:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalKdl.g:15548:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalKdl.g:15575:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop13:
                     do {
                         int alt13=3;
@@ -2921,7 +2921,7 @@ public class InternalKdlLexer extends Lexer {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // InternalKdl.g:15548:54: '\\\\' .
+                    	    // InternalKdl.g:15575:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2929,7 +2929,7 @@ public class InternalKdlLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKdl.g:15548:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalKdl.g:15575:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2972,12 +2972,12 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15550:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalKdl.g:15550:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalKdl.g:15577:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalKdl.g:15577:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalKdl.g:15550:24: ( options {greedy=false; } : . )*
+            // InternalKdl.g:15577:24: ( options {greedy=false; } : . )*
             loop15:
             do {
                 int alt15=2;
@@ -3002,7 +3002,7 @@ public class InternalKdlLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // InternalKdl.g:15550:52: .
+            	    // InternalKdl.g:15577:52: .
             	    {
             	    matchAny(); 
 
@@ -3032,12 +3032,12 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15552:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalKdl.g:15552:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalKdl.g:15579:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalKdl.g:15579:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalKdl.g:15552:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalKdl.g:15579:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop16:
             do {
                 int alt16=2;
@@ -3050,7 +3050,7 @@ public class InternalKdlLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // InternalKdl.g:15552:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalKdl.g:15579:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -3070,7 +3070,7 @@ public class InternalKdlLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalKdl.g:15552:40: ( ( '\\r' )? '\\n' )?
+            // InternalKdl.g:15579:40: ( ( '\\r' )? '\\n' )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -3079,9 +3079,9 @@ public class InternalKdlLexer extends Lexer {
             }
             switch (alt18) {
                 case 1 :
-                    // InternalKdl.g:15552:41: ( '\\r' )? '\\n'
+                    // InternalKdl.g:15579:41: ( '\\r' )? '\\n'
                     {
-                    // InternalKdl.g:15552:41: ( '\\r' )?
+                    // InternalKdl.g:15579:41: ( '\\r' )?
                     int alt17=2;
                     int LA17_0 = input.LA(1);
 
@@ -3090,7 +3090,7 @@ public class InternalKdlLexer extends Lexer {
                     }
                     switch (alt17) {
                         case 1 :
-                            // InternalKdl.g:15552:41: '\\r'
+                            // InternalKdl.g:15579:41: '\\r'
                             {
                             match('\r'); 
 
@@ -3122,10 +3122,10 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15554:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalKdl.g:15554:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKdl.g:15581:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalKdl.g:15581:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalKdl.g:15554:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKdl.g:15581:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt19=0;
             loop19:
             do {
@@ -3179,8 +3179,8 @@ public class InternalKdlLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKdl.g:15556:16: ( . )
-            // InternalKdl.g:15556:18: .
+            // InternalKdl.g:15583:16: ( . )
+            // InternalKdl.g:15583:18: .
             {
             matchAny(); 
 

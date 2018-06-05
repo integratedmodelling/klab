@@ -1048,20 +1048,52 @@ ruleActorDefinition returns [EObject current=null]
 			)
 			(
 				(
-					lv_name_26_0=RULE_LOWERCASE_ID
-					{
-						newLeafNode(lv_name_26_0, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_IDTerminalRuleCall_1_2_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getActorDefinitionRule());
+					(
+						lv_name_26_1=RULE_LOWERCASE_ID
+						{
+							newLeafNode(lv_name_26_1, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_IDTerminalRuleCall_1_2_0_0());
 						}
-						setWithLastConsumed(
-							$current,
-							"name",
-							lv_name_26_0,
-							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActorDefinitionRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"name",
+								lv_name_26_1,
+								"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+						}
+						    |
+						lv_name_26_2=RULE_LOWERCASE_DASHID
+						{
+							newLeafNode(lv_name_26_2, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_1_2_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActorDefinitionRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"name",
+								lv_name_26_2,
+								"org.integratedmodelling.kdl.Kdl.LOWERCASE_DASHID");
+						}
+						    |
+						lv_name_26_3=RULE_STRING
+						{
+							newLeafNode(lv_name_26_3, grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_1_2_0_2());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActorDefinitionRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"name",
+								lv_name_26_3,
+								"org.eclipse.xtext.common.Terminals.STRING");
+						}
+					)
 				)
 			)
 			(
