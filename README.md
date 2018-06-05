@@ -27,6 +27,7 @@ software components:
     - support for temporal extents
     - configurable runtime for local, enhanced local (GPU and virtual memory) and 
       distributed computation;
+    - Groovy-based agent modeling language bindings
     - support for machine learning through WEKA integration
     - support for calibration and data assimilation through OpenDA integration
     - REST API and UI for web-based modeling and administration
