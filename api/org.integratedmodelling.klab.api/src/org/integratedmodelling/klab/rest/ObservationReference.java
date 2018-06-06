@@ -53,14 +53,14 @@ public class ObservationReference {
 		 * Observation is distributed in time. It may or may not be located in space, in
 		 * which case {@link ObservationReference#getGeometryTypes()} will contain also
 		 * the spatial type). An observation may be a scalar at initialization and be
-		 * turned into a timeseries after time transitions. The value type is never
-		 * void if this is returned.
+		 * turned into a timeseries after time transitions. The value type is never void
+		 * if this is returned.
 		 */
 		TIMESERIES,
 
 		/**
-		 * One possible "other" representations for derived products to be
-		 * defined later. No worries about this now, for later use.
+		 * One possible "other" representations for derived products to be defined
+		 * later. No worries about this now, for later use.
 		 */
 		PROPORTIONS
 	}
@@ -85,6 +85,19 @@ public class ObservationReference {
 	 * the full list are possible.
 	 */
 	private int siblingCount;
+
+	/**
+	 * If this observation is part of a group with >1 siblings, this will be set to
+	 * a unique ID for the group so that the siblings with the same ID can be
+	 * matched and a folder created.
+	 */
+	private String folderId;
+
+	/**
+	 * If this observation is part of a group with >1 siblings, each sibling will
+	 * have the display label of the folder that should contain them.
+	 */
+	private String folderLabel;
 
 	/**
 	 * All roles adopted by this observation, either through the semantics or by
@@ -282,8 +295,8 @@ public class ObservationReference {
 	}
 
 	/**
-	 * If {@link #getShapeType()} returns anything other than VOID, this will return a 
-	 * string-codified shape (WKT or WKB).
+	 * If {@link #getShapeType()} returns anything other than VOID, this will return
+	 * a string-codified shape (WKT or WKB).
 	 * 
 	 * @return the codified shape
 	 */
@@ -293,6 +306,22 @@ public class ObservationReference {
 
 	public void setEncodedShape(String encodedShape) {
 		this.encodedShape = encodedShape;
+	}
+
+	public String getFolderId() {
+		return folderId;
+	}
+
+	public void setFolderId(String folderId) {
+		this.folderId = folderId;
+	}
+
+	public String getFolderLabel() {
+		return folderLabel;
+	}
+
+	public void setFolderLabel(String folderLabel) {
+		this.folderLabel = folderLabel;
 	}
 
 }
