@@ -72,7 +72,7 @@ public enum Resolver {
 		if (scope.getCoverage().isRelevant()) {
 			return Dataflows.INSTANCE.compile(taskId, scope);
 		}
-		return Dataflow.empty(monitor);
+		return Dataflow.empty();
 	}
 
 	/**
@@ -92,7 +92,7 @@ public enum Resolver {
 		IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
 		String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
 		if (resolvable == null) {
-			return Dataflow.empty(monitor);
+			return Dataflow.empty();
 		}
 
 		/*
@@ -104,7 +104,7 @@ public enum Resolver {
 			return Dataflows.INSTANCE.compile(taskId, scope);
 		}
 
-		return Dataflow.empty(monitor);
+		return Dataflow.empty();
 	}
 
 	/**

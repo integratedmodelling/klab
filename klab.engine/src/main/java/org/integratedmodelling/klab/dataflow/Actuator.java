@@ -22,18 +22,24 @@ import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -47,7 +53,6 @@ public class Actuator implements IActuator {
 	protected Coverage coverage;
 	private IKdlActuator.Type type;
 	List<IActuator> actuators = new ArrayList<>();
-	IMonitor monitor;
 	Date creationTime = new Date();
 	private boolean createsObservation;
 	private boolean reference;
@@ -101,9 +106,9 @@ public class Actuator implements IActuator {
 		return name;
 	}
 
-	public Actuator(IMonitor monitor) {
-		this.monitor = monitor;
-	}
+//	public Actuator(IMonitor monitor) {
+////		this.monitor = monitor;
+//	}
 
 	@Override
 	public List<IActuator> getActuators() {
@@ -181,8 +186,8 @@ public class Actuator implements IActuator {
 
 			/*
 			 * FIXME: this keeps reusing the same ctx, which is probably wrong as it holds
-			 * parameters from all computations (although they're overwritten so it's only
-			 * a problem if one uses defaults that a previous one provides with a different
+			 * parameters from all computations (although they're overwritten so it's only a
+			 * problem if one uses defaults that a previous one provides with a different
 			 * meaning).
 			 */
 
@@ -214,7 +219,6 @@ public class Actuator implements IActuator {
 			} else {
 				ctx.setData(indirectTarget.getLocalName(), targetArtifact);
 			}
-
 		}
 
 		// FIXME the original context does not get the indirect artifacts
@@ -226,6 +230,18 @@ public class Actuator implements IActuator {
 		// provenance doesn't get the indirect artifacts. This
 		// needs to store the full causal chain and any indirect observations.
 		ctx.getProvenance().addArtifact(ret);
+
+		if (Klab.INSTANCE.getMessageBus() != null
+				&& !ctx.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
+			/*
+			 * Send the result to the session's channel, only for primary observations.
+			 * TODO ensure that @probe annotations are honored and send the remaining 
+			 * artifacts if so.
+			 */
+			ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+					IMessage.Type.NewObservation, createArtifactDescriptor(ret, ctx)));
+		}
 
 		/*
 		 * when computation is finished, pass all annotations from the models to the
@@ -348,6 +364,21 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
+	private ObservationReference createArtifactDescriptor(IArtifact artifact, IRuntimeContext context) {
+
+		ObservationReference ret = new ObservationReference();
+		Observation observation = (Observation) artifact;
+
+		ret.setId(observation.getId());
+		ret.setUrn(observation.getUrn());
+		ret.setParentId(context.getContextObservation() == null ? null : context.getContextObservation().getId());
+		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
+				: observation.getObservable().getLocalName());
+		ret.setObservable(observation.getObservable().getType().getDefinition());
+
+		return ret;
+	}
+
 	public String toString() {
 		return "<" + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "")
 				+ " [" + (computationStrategy.size() + mediationStrategy.size()) + "]>";
@@ -437,8 +468,8 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	public static Actuator create(IMonitor monitor) {
-		return new Actuator(monitor);
+	public static Actuator create() {
+		return new Actuator();
 	}
 
 	public String getAlias() {

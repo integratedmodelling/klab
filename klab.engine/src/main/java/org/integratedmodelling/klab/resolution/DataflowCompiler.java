@@ -81,7 +81,7 @@ public class DataflowCompiler {
 			Graphs.show(resolutionGraph, "Resolution graph");
 		}
 
-		Dataflow ret = new Dataflow(monitor);
+		Dataflow ret = new Dataflow();
 		ret.setName(this.name);
 		ret.setContext(this.context);
 		ret.setResolutionScope(scope);
@@ -134,7 +134,7 @@ public class DataflowCompiler {
 		if (ret.getActuators().isEmpty() && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.SUBJECT)
 				&& scope.getMode() == Mode.RESOLUTION) {
 
-			Actuator actuator = Actuator.create(monitor);
+			Actuator actuator = Actuator.create();
 			actuator.setObservable(((ResolutionScope) scope).getObservable());
 			actuator.setCreateObservation(true);
 			actuator.setType(Type.OBJECT);
@@ -214,7 +214,7 @@ public class DataflowCompiler {
 			/*
 			 * create the original actuator
 			 */
-			Actuator ret = Actuator.create(monitor);
+			Actuator ret = Actuator.create();
 
 			ret.setObservable(observable);
 			ret.setDefinesScale(definesScale);
@@ -261,7 +261,7 @@ public class DataflowCompiler {
 				List<String> modelIds = new ArrayList<>();
 				for (ModelD modelDesc : models) {
 
-					Actuator partial = Actuator.create(monitor);
+					Actuator partial = Actuator.create();
 					int index = i++;
 					if (modelDesc.model instanceof RankedModel) {
 						partial.setPriority(((RankedModel) modelDesc.model).getPriority());

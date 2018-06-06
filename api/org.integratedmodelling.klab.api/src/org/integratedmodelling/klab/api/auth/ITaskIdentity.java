@@ -26,7 +26,4 @@ public interface ITaskIdentity extends IRuntimeIdentity {
     /** Constant <code>type</code> */
     Type type = Type.TASK;
     
-    /** {@inheritDoc} */
-    @Override
-    IEngineSessionIdentity getParentIdentity();
 }

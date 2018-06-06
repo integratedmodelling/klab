@@ -8,23 +8,20 @@ import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.TaskReference;
-import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * A ITask that creates one or more Observations within a context subject.
@@ -32,18 +29,19 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  * @author ferdinando.villa
  *
  */
-public class ObserveInContextTask implements ITask<IObservation> {
+public class ObserveInContextTask extends AbstractTask<IObservation> {
 
-	Monitor monitor;
-	Subject context;
 	FutureTask<IObservation> delegate;
-	Session session;
-	String token = "t" + NameGenerator.shortUUID();
-	String[] scenarios;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
-
 	private TaskReference descriptor;
 
+	public ObserveInContextTask(ObserveInContextTask parent) {
+		super(parent);
+		this.delegate = parent.delegate;
+		this.taskDescription = parent.taskDescription;
+		this.descriptor = parent.descriptor;
+	}
+	
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
 
 		this.context = context;
@@ -53,6 +51,7 @@ public class ObserveInContextTask implements ITask<IObservation> {
 
 		this.descriptor = new TaskReference();
 		this.descriptor.setId(token);
+		this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
 		this.descriptor.setDescription(this.taskDescription);
 
 		session.touch();
@@ -134,8 +133,8 @@ public class ObserveInContextTask implements ITask<IObservation> {
 	}
 
 	@Override
-	public IEngineSessionIdentity getParentIdentity() {
-		return session;
+	public IIdentity getParentIdentity() {
+		return parentTask == null ? session : parentTask;
 	}
 
 	@Override
@@ -168,5 +167,11 @@ public class ObserveInContextTask implements ITask<IObservation> {
 			throws InterruptedException, ExecutionException, TimeoutException {
 		return delegate.get(timeout, unit);
 	}
+	
+	@Override
+	public ITaskTree<IObservation> createChild() {
+		return new ObserveInContextTask(this);
+	}
+
 
 }

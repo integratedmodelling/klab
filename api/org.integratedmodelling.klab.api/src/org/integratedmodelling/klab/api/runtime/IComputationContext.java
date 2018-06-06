@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -302,5 +303,13 @@ public interface IComputationContext extends IParameters {
 	 * @return a subject, never null
 	 */
 	ISubject getTargetSubject(IRelationship relationship);
+
+	/**
+	 * The context observation we are being computed into. Null if the context is 
+	 * for the computation of the root observation.
+	 * 
+	 * @return the context observation or null
+	 */
+	IDirectObservation getContextObservation();
 
 }

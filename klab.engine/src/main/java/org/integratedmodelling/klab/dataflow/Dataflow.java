@@ -6,25 +6,19 @@ import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.provenance.Artifact;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**
@@ -43,10 +37,6 @@ import org.integratedmodelling.klab.scale.Scale;
  *
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
-
-	public Dataflow(IMonitor monitor) {
-		super(monitor);
-	}
 
 	String description;
 	private DirectObservation context;
@@ -82,31 +72,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			}
 		}
 
-		if (ret != null && Klab.INSTANCE.getMessageBus() != null) {
-			
-			/*
-			 * Send the result to the session's channel.
-			 */
-			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-					IMessage.Type.NewObservation, createArtifactDescriptor(ret)));
-		}
-
-		return ret;
-	}
-
-	private ObservationReference createArtifactDescriptor(IArtifact artifact) {
-
-		ObservationReference ret = new ObservationReference();
-		Observation observation = (Observation) artifact;
-
-		ret.setId(observation.getId());
-		ret.setUrn(observation.getUrn());
-		ret.setParentId(context == null ? null : context.getId());
-		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-				: observation.getObservable().getLocalName());
-		ret.setObservable(observation.getObservable().getType().getDefinition());
-		
 		return ret;
 	}
 
@@ -183,8 +148,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.scope = scope;
 	}
 
-	public static IDataflow<IArtifact> empty(IMonitor monitor) {
-		return new Dataflow(monitor);
+	public static IDataflow<IArtifact> empty() {
+		return new Dataflow();
 	}
 
 	@Override

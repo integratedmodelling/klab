@@ -27,14 +27,17 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -242,28 +245,6 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.put(name, value);
 	}
 
-	// @Override
-	// public IArtifact getTargetArtifact(IActuator actuator) {
-	//
-	// IArtifact ret = catalog.get(actuator.getName());
-	//
-	// // /**
-	// // * If we don't have a target and the actuator needs storage (i.e. it's a
-	// // quality
-	// // * or anything that must be instantiated automatically), create the storage
-	// // but
-	// // * do not add it to the provenance and structure.
-	// // */
-	// // if (ret == null && !((Actuator)
-	// actuator).getObservable().is(Type.COUNTABLE))
-	// // {
-	// // ret = DefaultRuntimeProvider.createObservation((Actuator) actuator, this);
-	// // catalog.put(actuator.getName(), ret);
-	// // }
-	//
-	// return ret;
-	// }
-
 	@Override
 	public IMonitor getMonitor() {
 		return monitor;
@@ -291,9 +272,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, Mode.RESOLUTION, scale);
 
 		if (scope.getCoverage().isRelevant()) {
+
+			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+			ITaskTree<?> subtask = ((ITaskTree<?>)monitor.getIdentity()).createChild();
+
 			Dataflow dataflow = Dataflows.INSTANCE
-					.compile("local:task:" /* wazzafuck + session.getToken() + ":" + token */, scope);
-			ret = (ICountableObservation) dataflow.run(scale, monitor);
+					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope);
+			ret = (ICountableObservation) dataflow.run(scale, ((Monitor)monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -321,9 +306,14 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 				scale);
 
 		if (scope.getCoverage().isRelevant()) {
+
+			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+			ITaskTree<?> subtask = ((ITaskTree<?>)monitor.getIdentity()).createChild();
+
 			Dataflow dataflow = Dataflows.INSTANCE
-					.compile("local:task:" /* wazzafuck + session.getToken() + ":" + token */, scope);
-			ret = (IRelationship) dataflow.run(scale, monitor);
+					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope);
+			
+			ret = (IRelationship) dataflow.run(scale, ((Monitor)monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -524,6 +514,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
 		return this.catalog.get(actuator.getName());
 
+	}
+
+	@Override
+	public IDirectObservation getContextObservation() {
+		return resolutionScope.getContext();
 	}
 
 }

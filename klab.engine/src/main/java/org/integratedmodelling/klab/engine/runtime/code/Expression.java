@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -147,6 +148,12 @@ public abstract class Expression implements IExpression {
 
 	@Override
 	public ISubject getTargetSubject(IRelationship relationship) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDirectObservation getContextObservation() {
 		// TODO Auto-generated method stub
 		return null;
 	}

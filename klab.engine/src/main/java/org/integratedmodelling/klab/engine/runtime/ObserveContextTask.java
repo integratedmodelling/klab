@@ -7,22 +7,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.TaskReference;
-import org.integratedmodelling.klab.utils.NameGenerator;
 
 /**
  * A ITask that creates a root subject within a Session.
@@ -30,17 +27,21 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  * @author ferdinando.villa
  *
  */
-public class ObserveContextTask implements ITask<ISubject> {
+public class ObserveContextTask extends AbstractTask<ISubject> {
 
-	Monitor monitor;
 	FutureTask<ISubject> delegate;
-	String token = "t" + NameGenerator.shortUUID();
-	Session session;
 	String taskDescription = "<uninitialized observation task " + token + ">";
 	private TaskReference descriptor;
 
+	public ObserveContextTask(ObserveContextTask parent) {
+		super(parent);
+		this.delegate = parent.delegate;
+		this.taskDescription = parent.taskDescription;
+		this.descriptor = parent.descriptor;
+	}
+	
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
-
+		
 		Engine engine = session.getParentIdentity(Engine.class);
 		try {
 
@@ -50,6 +51,7 @@ public class ObserveContextTask implements ITask<ISubject> {
 
 			this.descriptor = new TaskReference();
 			this.descriptor.setId(token);
+			this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
 			this.descriptor.setDescription(this.taskDescription);
 
 			session.touch();
@@ -128,8 +130,8 @@ public class ObserveContextTask implements ITask<ISubject> {
 	}
 
 	@Override
-	public IEngineSessionIdentity getParentIdentity() {
-		return session;
+	public IIdentity getParentIdentity() {
+		return parentTask == null ? session : parentTask;
 	}
 
 	@Override
@@ -162,4 +164,9 @@ public class ObserveContextTask implements ITask<ISubject> {
 		return delegate.get(timeout, unit);
 	}
 
+	@Override
+	public ITaskTree<ISubject> createChild() {
+		return new ObserveContextTask(this);
+	}
+	
 }
