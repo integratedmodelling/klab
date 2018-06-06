@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -106,9 +107,9 @@ public class Actuator implements IActuator {
 		return name;
 	}
 
-//	public Actuator(IMonitor monitor) {
-////		this.monitor = monitor;
-//	}
+	// public Actuator(IMonitor monitor) {
+	//// this.monitor = monitor;
+	// }
 
 	@Override
 	public List<IActuator> getActuators() {
@@ -234,9 +235,9 @@ public class Actuator implements IActuator {
 		if (Klab.INSTANCE.getMessageBus() != null
 				&& !ctx.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
 			/*
-			 * Send the result to the session's channel, only for primary observations.
-			 * TODO ensure that @probe annotations are honored and send the remaining 
-			 * artifacts if so.
+			 * Send the result to the session's channel, only for primary observations. TODO
+			 * ensure that @probe annotations are honored and send the remaining artifacts
+			 * if so.
 			 */
 			ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
@@ -375,6 +376,12 @@ public class Actuator implements IActuator {
 		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 				: observation.getObservable().getLocalName());
 		ret.setObservable(observation.getObservable().getType().getDefinition());
+		ret.setSiblingCount(artifact.groupSize());
+
+		ISpace space = ((IScale) artifact.getGeometry()).getSpace();
+		ITime time = ((IScale) artifact.getGeometry()).getTime();
+
+		// TODO fill in spatio/temporal info and mode of visualization
 
 		return ret;
 	}
