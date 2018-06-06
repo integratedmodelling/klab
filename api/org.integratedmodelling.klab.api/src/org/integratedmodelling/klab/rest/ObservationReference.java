@@ -11,19 +11,19 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 public class ObservationReference {
 
 	/**
-	 * The value of this enum defines the type of values this
-	 * observation contains. Agents have value type VOID.
+	 * The value of this enum defines the type of values this observation contains.
+	 * All non-quality observations have value type VOID.
 	 * 
 	 * @author ferdinando.villa
 	 *
 	 */
 	public enum ValueType {
-		VOID, NUMBER, BOOLEAN, CATEGORY
+		VOID, NUMBER, BOOLEAN, CATEGORY, DISTRIBUTION
 	}
 
 	/**
-	 * The value of this enum determines the way the observation should
-	 * be visualized.
+	 * The value of this enum determines the way the observation should be
+	 * visualized.
 	 * 
 	 * @author ferdinando.villa
 	 *
@@ -31,30 +31,36 @@ public class ObservationReference {
 	public enum GeometryType {
 
 		/**
-		 * A grid raster map
+		 * A grid raster map with a number, boolean or category value type.
 		 */
 		RASTER,
 
 		/**
-		 * A single shape
+		 * A single shape, of type determined by
+		 * {@link ObservationReference#getShapeType()}. May be providing spatial context
+		 * for a timeseries or other value, so not necessarily void.
 		 */
 		SHAPE,
+
 		/**
-		 * A scalar value (in this case, {@link ObservationReference#getLiteralValue()}
-		 * returns a string representation of the scalar value).
+		 * A scalar value with no temporal or spatial representation. In this case,
+		 * {@link ObservationReference#getLiteralValue()} returns a string
+		 * representation of the scalar value.
 		 */
 		SCALAR,
 
 		/**
-		 * Observation is distributed in time and not in space (although it may be
-		 * located in space). An observation may be a scalar at initialization and be
-		 * turned into a timeseries after time transitions.
+		 * Observation is distributed in time. It may or may not be located in space, in
+		 * which case {@link ObservationReference#getGeometryTypes()} will contain also
+		 * the spatial type). An observation may be a scalar at initialization and be
+		 * turned into a timeseries after time transitions. The value type is never
+		 * void if this is returned.
 		 */
 		TIMESERIES,
 
 		/**
-		 * One of some possible "other" representations for derived products to be
-		 * defined later.
+		 * One possible "other" representations for derived products to be
+		 * defined later. No worries about this now, for later use.
 		 */
 		PROPORTIONS
 	}
@@ -63,19 +69,20 @@ public class ObservationReference {
 	 * This is set only when the geometry types contain SHAPE.
 	 */
 	private IShape.Type shapeType = IShape.Type.EMPTY;
+	private String encodedShape;
 	private String id;
 	private String label;
 	private String observable;
 	private ValueType valueType;
 	private Set<GeometryType> geometryTypes = new HashSet<>();
 	private String literalValue;
-	private List<ObservationReference> siblings = new ArrayList<>();
+	// private List<ObservationReference> siblings = new ArrayList<>();
 	private List<String> traits = new ArrayList<>();
-	
+
 	/**
-	 * The observation may have more sibling than are found in the 
-	 * sibling list. This contains the number of children so it can
-	 * be reported and lazy calls for the full list are possible.
+	 * The observation may have more sibling than are found in the sibling list.
+	 * This contains the number of children so it can be reported and lazy calls for
+	 * the full list are possible.
 	 */
 	private int siblingCount;
 
@@ -102,8 +109,8 @@ public class ObservationReference {
 	private List<Connection> structure = new ArrayList<>();
 
 	/**
-	 * When the observation has multiple values, this is set to the percentage
-	 * of those that are no-data. 
+	 * When the observation has multiple values, this is set to the percentage of
+	 * those that are no-data.
 	 */
 	private double nodataPercentage;
 
@@ -124,9 +131,9 @@ public class ObservationReference {
 	 * beginning of initialization transition before transitions are started.
 	 */
 	private long contextTime = -1;
-	
+
 	/**
-	 * Full URN of the observation. 
+	 * Full URN of the observation.
 	 */
 	private String urn;
 
@@ -154,13 +161,13 @@ public class ObservationReference {
 		this.literalValue = literalValue;
 	}
 
-	public List<ObservationReference> getSiblings() {
-		return siblings;
-	}
-
-	public void setChildren(List<ObservationReference> siblings) {
-		this.siblings = siblings;
-	}
+	// public List<ObservationReference> getSiblings() {
+	// return siblings;
+	// }
+	//
+	// public void setChildren(List<ObservationReference> siblings) {
+	// this.siblings = siblings;
+	// }
 
 	public String getParentId() {
 		return parentId;
@@ -280,6 +287,20 @@ public class ObservationReference {
 
 	public void setObservable(String observable) {
 		this.observable = observable;
+	}
+
+	/**
+	 * If {@link #getShapeType()} returns anything other than VOID, this will return a 
+	 * string-codified shape (WKT or WKB).
+	 * 
+	 * @return the codified shape
+	 */
+	public String getEncodedShape() {
+		return encodedShape;
+	}
+
+	public void setEncodedShape(String encodedShape) {
+		this.encodedShape = encodedShape;
 	}
 
 }

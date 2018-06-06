@@ -41,9 +41,11 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+import org.nd4j.linalg.api.shape.Shape;
 
 public class Actuator implements IActuator {
 
@@ -381,8 +383,21 @@ public class Actuator implements IActuator {
 		ISpace space = ((IScale) artifact.getGeometry()).getSpace();
 		ITime time = ((IScale) artifact.getGeometry()).getTime();
 
-		// TODO fill in spatio/temporal info and mode of visualization
-
+		// fill in spatio/temporal info and mode of visualization
+		if (space != null) {
+			ret.setShapeType(space.getShape().getGeometryType());
+			ret.setEncodedShape(space.getShape().toString());
+			GeometryType gtype = GeometryType.SHAPE;
+			if (artifact instanceof IState && space.isRegular() && space.size() > 1) {
+				gtype = GeometryType.RASTER;
+			}
+			ret.getGeometryTypes().add(gtype);
+		}
+		
+		if (time != null) {
+			// TODO
+		}
+		
 		return ret;
 	}
 
