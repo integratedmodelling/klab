@@ -161,14 +161,6 @@ public class ObservationReference {
 		this.literalValue = literalValue;
 	}
 
-	// public List<ObservationReference> getSiblings() {
-	// return siblings;
-	// }
-	//
-	// public void setChildren(List<ObservationReference> siblings) {
-	// this.siblings = siblings;
-	// }
-
 	public String getParentId() {
 		return parentId;
 	}

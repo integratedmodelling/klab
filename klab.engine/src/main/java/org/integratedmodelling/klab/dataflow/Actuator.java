@@ -45,7 +45,6 @@ import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.nd4j.linalg.api.shape.Shape;
 
 public class Actuator implements IActuator {
 
@@ -374,7 +373,9 @@ public class Actuator implements IActuator {
 
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
-		ret.setParentId(context.getContextObservation() == null ? null : context.getContextObservation().getId());
+		ret.setParentId(context.getContextObservation() == null
+				|| context.getContextObservation().getId().equals(observation.getId()) ? null
+						: context.getContextObservation().getId());
 		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 				: observation.getObservable().getLocalName());
 		ret.setObservable(observation.getObservable().getType().getDefinition());
@@ -393,11 +394,11 @@ public class Actuator implements IActuator {
 			}
 			ret.getGeometryTypes().add(gtype);
 		}
-		
+
 		if (time != null) {
 			// TODO
 		}
-		
+
 		return ret;
 	}
 
