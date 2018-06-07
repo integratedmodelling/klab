@@ -13,8 +13,10 @@ public class Histogram {
     long                     nodataCount     = 0;
     double                   aggregatedMean  = 0;
     double                   aggregatedTotal = Double.NaN;
+    
     HashMap<String, Integer> occurrences;
-	public String getDescription() {
+	
+    public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {

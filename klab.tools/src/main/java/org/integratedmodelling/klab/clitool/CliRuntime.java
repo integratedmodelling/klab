@@ -43,15 +43,15 @@ public enum CliRuntime {
         this.session = engine.createSession();
         this.console = console;
         this.commandProcessor = new CommandProcessor(console, session.getMonitor());
-        console.enableInput();
-        console.info("Session ID is " + this.session.getId(), null);
+        
+        console.echo("Session established: ID is " + this.session.getId());
     }
 
-    public void startNetwork(Runnable callback) {
+    public boolean startNetwork(Runnable callback) {
         if (modeler == null) {
             modeler = new Modeler(engine);
         }
-        modeler.startNetworkServices(callback);
+        return modeler.startNetworkServices(callback);
     }
 
     

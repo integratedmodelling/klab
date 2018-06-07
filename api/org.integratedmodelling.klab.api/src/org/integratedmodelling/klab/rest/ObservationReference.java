@@ -59,6 +59,14 @@ public class ObservationReference {
 		TIMESERIES,
 
 		/**
+		 * Observation is a structure of relationships connecting subjects.
+		 * {@link ObservationReference#getStructure()} will return all connections. The
+		 * spatial and temporal character of the observations linked and linking will
+		 * determine the best way of displaying the connections.
+		 */
+		NETWORK,
+
+		/**
 		 * One possible "other" representations for derived products to be defined
 		 * later. No worries about this now, for later use.
 		 */
@@ -114,6 +122,13 @@ public class ObservationReference {
 	 * ID of parent observation. Not null only in root observation.
 	 */
 	private String parentId;
+
+	/**
+	 * Child observations. This may be empty despite the existence of children, or
+	 * only partially filled, according to the type of call that generated the
+	 * object.
+	 */
+	private List<ObservationReference> children = new ArrayList<>();
 
 	/**
 	 * Structure pertaining to the observation in case the observation is a network
@@ -322,6 +337,14 @@ public class ObservationReference {
 
 	public void setFolderLabel(String folderLabel) {
 		this.folderLabel = folderLabel;
+	}
+
+	public List<ObservationReference> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<ObservationReference> children) {
+		this.children = children;
 	}
 
 }

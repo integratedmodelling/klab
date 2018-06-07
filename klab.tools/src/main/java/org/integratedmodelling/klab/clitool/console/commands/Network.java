@@ -16,13 +16,15 @@ public class Network implements ICommand {
 		if (((List<?>) call.getParameters().get("arguments")).size() > 0) {
 			String arg = ((List<?>) call.getParameters().get("arguments")).get(0).toString();
 			if ("on".equals(arg)) {
-				CliRuntime.INSTANCE
+				if (!CliRuntime.INSTANCE
 						.startNetwork(
 								call.getParameters().get("browser", false)
 										? () -> BrowserUtils
 												.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
 														+ CliRuntime.INSTANCE.getSession().getId() + "&mode=ide&test_tree=true")
-										: null);
+										: null)) {
+					session.getMonitor().error("Please wait until engine is active");
+				}
 			} else if ("off".equals(arg)) {
 				CliRuntime.INSTANCE.stopNetwork();
 			} else {

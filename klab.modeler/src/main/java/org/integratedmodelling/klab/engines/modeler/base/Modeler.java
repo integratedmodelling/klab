@@ -55,23 +55,24 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	 * callback function to be specified, which is invoked after the network 
 	 * services are up.
 	 */
-	public void startNetworkServices(Runnable callback) {
+	public boolean startNetworkServices(Runnable callback) {
 		Modeler.callback = callback;
-		startNetworkServices();
+		return startNetworkServices();
 	}
 
 	/**
 	 * Start network services. Call if constructed with a previously started engine;
 	 * won't do anything if run() was called before.
 	 */
-	public void startNetworkServices() {
+	public boolean startNetworkServices() {
 		if (engine == null) {
-			throw new KlabInternalErrorException("engine is null: cannot start network services");
+			return false;
 		}
 		if (!networkServicesStarted) {
 			this.context = SpringApplication.run(Modeler.class, new String[] {});
 			networkServicesStarted = true;
 		}
+		return networkServicesStarted;
 	}
 
 	public void run(String[] args) {
