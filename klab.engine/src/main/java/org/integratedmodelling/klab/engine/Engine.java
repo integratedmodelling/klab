@@ -429,7 +429,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 				Logging.INSTANCE.error("could not load local workspace");
 				return false;
 			}
-			
+
 			/*
 			 * cache all resource schemata before anything asks for them
 			 */
@@ -451,14 +451,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * Schedule the session reaper
 			 */
-			this.sessionClosingTask = scheduler.scheduleAtFixedRate(new Runnable() {
-
-				@Override
-				public void run() {
-					closeExpiredSessions();
-				}
-
-			}, 10, sessionCheckMinutes, TimeUnit.MINUTES);
+			this.sessionClosingTask = scheduler.scheduleAtFixedRate(() -> closeExpiredSessions(), 10,
+					sessionCheckMinutes, TimeUnit.MINUTES);
 
 			/*
 			 * After the engine has successfully booted, it becomes the root identity and is

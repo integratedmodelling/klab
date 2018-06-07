@@ -16,3 +16,29 @@ model 100 as geography:Elevation in m
 model geography:Elevation in m
 	using gis.terrain()
 	over space(shape="EPSG:4326 POLYGON((33.796 -8.00, 35.946 -8.00, 35.946 -9.41, 33.796 -9.41, 33.796 -8.00))");
+	
+model hydrology:SurfaceWaterFlow
+	observing
+		geography:Elevation named dem,
+		earth:PrecipitationVolume in mm named precipitation,
+		im:Minimum earth:AtmosphericTemperature named mintemp,
+		im:Maximum earth:AtmosphericTemperature named maxtemp
+	using hydrology.sphy(
+		canopy.storage = 22,
+		roots.watercontent = 21,
+		roots.capillaryrise = 21,
+		roots.drainage = 21,
+		groundwater.recharge = 21.2,
+		groundwater.baseflow = 90.22,
+		groundwater.storage = 22.2,
+		groundwater.level = 122.2,
+		subsoil.watercontent = 222,
+		subsoil.drainage = 23,
+		subsoil.seepage = 211,
+		snow.storage = 221,
+		snow.waterstorage = 222,
+		snow.glacierstorage = 2,
+		glacier.fraction = 0,
+		glacier.depth = 22,
+		glacier.totarea = 22
+	);

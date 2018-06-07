@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import org.integratedmodelling.klab.api.data.Aggregation;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -21,11 +22,14 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 
 public enum Observations implements IObservationService {
 
 	INSTANCE;
+
+	private static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
 
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
@@ -50,6 +54,34 @@ public enum Observations implements IObservationService {
 	@Override
 	public IState getStateView(IState state, IScale scale, IComputationContext context) {
 		return new RescalingState(state, (Scale) scale, (IRuntimeContext) context);
+	}
+
+	/**
+	 * Return the summary for the data in a state, computing it if necessary.
+	 * 
+	 * @param state
+	 *            a state
+	 * @param locator
+	 *            the subsetting locator for the wanted data, or null if global
+	 *            summaries are required.
+	 * @return the state summary
+	 */
+	public StateSummary getStateSummary(IState state, ILocator locator) {
+
+		if (state.getMetadata().containsKey(STATE_SUMMARY_METADATA_KEY + locator)) {
+			return state.getMetadata().get(STATE_SUMMARY_METADATA_KEY, StateSummary.class);
+		}
+
+		StateSummary ret = computeStateSummary(state, locator);
+
+		state.getMetadata().put(STATE_SUMMARY_METADATA_KEY + locator, ret);
+
+		return ret;
+	}
+
+	private StateSummary computeStateSummary(IState state, ILocator locator) {
+		StateSummary ret = new StateSummary();
+		return ret;
 	}
 
 	/*

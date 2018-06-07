@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -86,6 +88,7 @@ public class ObservationReference {
 	private String literalValue;
 	// private List<ObservationReference> siblings = new ArrayList<>();
 	private List<String> traits = new ArrayList<>();
+	private Map<String, String> metadata = new HashMap<>();
 
 	/**
 	 * The observation may have more sibling than are found in the sibling list.
@@ -345,6 +348,14 @@ public class ObservationReference {
 
 	public void setChildren(List<ObservationReference> children) {
 		this.children = children;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 
 }

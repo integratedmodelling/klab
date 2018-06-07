@@ -3,10 +3,14 @@ package org.integratedmodelling.klab.engine.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Resources;
@@ -19,6 +23,7 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -51,6 +56,17 @@ public class Session implements ISession, UserDetails {
 	Set<GrantedAuthority> authorities = new HashSet<>();
 	long lastActivity = System.currentTimeMillis();
 	SpatialExtent regionOfInterest = null;
+
+	/**
+	 * A scheduler to periodically collect observation and task garbage
+	 */
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+	/*
+	 * These hold observations and tasks created in this session.
+	 */
+	Map<String, ITask<?>> tasks = new HashMap<>();
+	Map<String, IIdentity> observations = new HashMap<>();
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -156,7 +172,7 @@ public class Session implements ISession, UserDetails {
 
 	@Override
 	public IGeometry getRegionOfInterest() {
-		
+
 		if (regionOfInterest == null) {
 			return Geometry.empty();
 		}

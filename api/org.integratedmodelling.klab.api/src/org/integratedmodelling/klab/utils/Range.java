@@ -307,7 +307,7 @@ public class Range implements IValueMediator {
 	 * Normalize the passed value to this range, which must include it.
 	 * 
 	 * @param value
-	 * @return the normalized value
+	 * @return the normalized value (0-1)
 	 */
 	public double normalize(double value) {
 

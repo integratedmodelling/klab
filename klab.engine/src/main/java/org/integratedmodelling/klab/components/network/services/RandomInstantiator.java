@@ -12,8 +12,29 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
+
 public class RandomInstantiator implements IExpression, IInstantiator {
 
+// From Unai for directed network:
+//	# %% random network directed
+//
+//	# %% parameters
+//	# n is the number of nodes
+//	# k is the average out degree of the network
+//
+//	# %% result
+//	# a is a list of lists containing the output connections of each node
+//
+//	# %% observation
+//	# no self-connections allowed
+//
+//	a=[]
+//	for i in range(n):
+//	    a.append([])
+//	    for j in range(n):
+//	        if int(random.random()+k/(n-1))==1 and i!=j:
+//	            a[i].append(j)
+	
 	public RandomInstantiator() {/* to instantiate as expression - do not remove (or use) */}
 	
 	public RandomInstantiator(IParameters parameters, IComputationContext context) {
