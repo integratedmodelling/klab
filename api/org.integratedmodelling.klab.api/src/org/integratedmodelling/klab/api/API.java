@@ -382,12 +382,35 @@ public interface API {
             }
 
             /**
-             * Endpoints to retrieve data and visualizations from "live" observations in context.
+             * Endpoints to retrieve data and visualizations from "live" observations in context. All GET, all
+             * require session authentication.
              * 
              * @author ferdinando.villa
              *
              */
             public interface VIEW {
+            	
+                public static final String P_OBSERVATION = "{observation}";
+
+                /**
+                 * Get the observation structure and description
+                 */
+                public static final String DESCRIBE_OBSERVATION = "/engine/session/view/describe/" + P_OBSERVATION;
+                
+                /**
+                 * Get a summary of the observation state, either globally or at location (through a parameter)
+                 */
+                public static final String SUMMARIZE_OBSERVATION = "/engine/session/view/summary/" + P_OBSERVATION;
+                
+                /**
+                 * Get one or more siblings of an artifact, potentially with offsets and number
+                 */
+                public static final String GET_SIBLINGS_OBSERVATION = "/engine/session/view/siblings/" + P_OBSERVATION;
+                
+                /**
+                 * Get the data for a state in directly useable form, as values or images
+                 */
+                public static final String GET_DATA_OBSERVATION = "/engine/session/view/data/" + P_OBSERVATION;
 
             }
         }
