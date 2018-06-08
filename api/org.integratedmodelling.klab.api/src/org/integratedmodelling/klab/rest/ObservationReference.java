@@ -135,6 +135,13 @@ public class ObservationReference {
 	private List<ObservationReference> children = new ArrayList<>();
 
 	/**
+	 * Sibling observations. This may be empty despite the existence of siblings, or
+	 * only partially filled, according to the type of call that generated the
+	 * object.
+	 */
+	private List<ObservationReference> siblings = new ArrayList<>();
+
+	/**
 	 * Structure pertaining to the observation in case the observation is a network
 	 * configuration.
 	 */
@@ -365,6 +372,14 @@ public class ObservationReference {
 
 	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
+	}
+
+	public List<ObservationReference> getSiblings() {
+		return siblings;
+	}
+
+	public void setSiblings(List<ObservationReference> siblings) {
+		this.siblings = siblings;
 	}
 
 }
