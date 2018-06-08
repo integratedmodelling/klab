@@ -126,8 +126,19 @@ public enum Observations implements IObservationService {
 
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
+			
 			ret.setShapeType(space.getShape().getGeometryType());
-			ret.setEncodedShape(space.getShape().toString());
+			
+			String shape = space.getShape().toString();
+			String pcode = null;
+			if (shape.startsWith("EPSG:") || shape.startsWith("urn:")) {
+				int n = shape.indexOf(' ');
+				pcode = shape.substring(0, n);
+				shape = shape.substring(n + 1);
+			}
+			ret.setEncodedShape(shape);
+			ret.setSpatialProjection(pcode);
+			
 			GeometryType gtype = GeometryType.SHAPE;
 			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
 				gtype = GeometryType.RASTER;

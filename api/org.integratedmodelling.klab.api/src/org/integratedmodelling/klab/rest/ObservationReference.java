@@ -80,6 +80,7 @@ public class ObservationReference {
 	 */
 	private IShape.Type shapeType = IShape.Type.EMPTY;
 	private String encodedShape;
+	private String spatialProjection;
 	private String id;
 	private String label;
 	private String observable;
@@ -320,6 +321,14 @@ public class ObservationReference {
 	 */
 	public String getEncodedShape() {
 		return encodedShape;
+	}
+
+	public String getSpatialProjection() {
+		return spatialProjection;
+	}
+
+	public void setSpatialProjection(String spatialProjection) {
+		this.spatialProjection = spatialProjection;
 	}
 
 	public void setEncodedShape(String encodedShape) {
