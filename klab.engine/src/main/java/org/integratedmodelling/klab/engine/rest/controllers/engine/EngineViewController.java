@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.rest.controllers.engine;
 
 import java.security.Principal;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,6 +10,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -34,26 +36,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class EngineViewController {
 
 	/**
-	 * Get the observation structure and description
+	 * Get the observation structure and description. This ignores siblings (which
+	 * will always be an empty array) and allows retrieving children at arbitrary
+	 * levels. Default child level is "all children".
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) String childCount) {
+			@RequestParam(required = false) Integer childLevel) {
 
 		ISession session = getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
-		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext());
+		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(),
+				childLevel == null ? -1 : childLevel);
 	}
 
 	/**
 	 * Get a summary of the observation state, either globally or at location
-	 * (through a parameter)
+	 * through an optional locator parameter.
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.SUMMARIZE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public StateSummary summarizeObservation(Principal principal, @PathVariable String observation) {
+	public StateSummary summarizeObservation(Principal principal, @PathVariable String observation,
+			@RequestParam(required = false) String locator) {
 
 		ISession session = getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -62,23 +68,61 @@ public class EngineViewController {
 			throw new IllegalArgumentException("cannot summarize an observation that is not a state");
 		}
 
-		return null;
+		StateSummary summary = new StateSummary();
+
+		// TODO
+
+		return summary;
 	}
 
 	/**
-	 * Get one or more siblings of an artifact, potentially with offsets and number. The response will contain
-	 * the first sibling requested containing all the others as siblings.
+	 * Get one or more siblings of an artifact, potentially with offsets and number.
+	 * The response will contain the first sibling requested containing all the
+	 * others as siblings. The optional childLevel parameter defines the level of
+	 * the children representation in each sibling. If the sibling count is 1
+	 * (default) the observation will return either the original observation or its
+	 * sibling at the offset.
 	 */
-	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_SIBLINGS_OBSERVATION, params = { "offset",
-			"count" }, method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_SIBLINGS_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ObservationReference getObservationSiblings(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) String offset, @RequestParam(required = false) String count) {
+			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
+			@RequestParam(required = false) Integer childLevel) {
 
 		ISession session = getSession(principal);
 		IObservation obs = session.getObservation(observation);
-		
-		return null;
+
+		ObservationReference ret = null;
+
+		if (offset != null || count != null) {
+			if (offset == null) {
+				offset = 0;
+			}
+			if (count == null) {
+				count = 1;
+			}
+
+			int nc = 0;
+			Iterator<IArtifact> it = obs.iterator();
+			for (int i = 0; i < obs.groupSize(); i++) {
+				IArtifact artifact = it.next();
+				if (i >= offset) {
+					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
+							obs.getContext(), childLevel == null ? -1 : childLevel);
+					if (ret == null) {
+						ret = ref;
+					} else {
+						ret.getSiblings().add(ref);
+					}
+					nc++;
+				}
+				if (nc >= count) {
+					break;
+				}
+			}
+		}
+
+		return ret;
 	}
 
 	/**

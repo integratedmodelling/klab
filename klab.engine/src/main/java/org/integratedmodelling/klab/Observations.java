@@ -108,11 +108,12 @@ public enum Observations implements IObservationService {
 		}
 		return ret;
 	}
-	
-	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent) {
+
+	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
+			int childLevel) {
 
 		ObservationReference ret = new ObservationReference();
-	
+
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
@@ -126,9 +127,9 @@ public enum Observations implements IObservationService {
 
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
-			
+
 			ret.setShapeType(space.getShape().getGeometryType());
-			
+
 			String shape = space.getShape().toString();
 			String pcode = null;
 			if (shape.startsWith("EPSG:") || shape.startsWith("urn:")) {
@@ -138,7 +139,7 @@ public enum Observations implements IObservationService {
 			}
 			ret.setEncodedShape(shape);
 			ret.setSpatialProjection(pcode);
-			
+
 			GeometryType gtype = GeometryType.SHAPE;
 			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
 				gtype = GeometryType.RASTER;
@@ -148,6 +149,13 @@ public enum Observations implements IObservationService {
 
 		if (time != null) {
 			// TODO
+		}
+
+		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
+			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
+				ret.getChildren()
+						.add(createArtifactDescriptor(child, observation, childLevel > 0 ? childLevel-- : childLevel));
+			}
 		}
 
 		return ret;

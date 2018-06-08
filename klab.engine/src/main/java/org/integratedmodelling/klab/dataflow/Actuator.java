@@ -231,15 +231,17 @@ public class Actuator implements IActuator {
 
 		if (Klab.INSTANCE.getMessageBus() != null
 				&& !ctx.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
+			
 			/*
-			 * Send the result to the session's channel, only for primary observations. TODO
-			 * ensure that @probe annotations are honored and send the remaining artifacts
-			 * if so.
+			 * Send the result to the session's channel, only for primary observations and
+			 * with no children. TODO ensure that @probe annotations are honored: send
+			 * the probed artifacts, and ensure they're not sent if not probed.
 			 */
 			ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
-			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-					IMessage.Type.NewObservation,
-					Observations.INSTANCE.createArtifactDescriptor((IObservation) ret, ctx.getContextObservation())));
+			session.getMonitor()
+					.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+							IMessage.Type.NewObservation, Observations.INSTANCE
+									.createArtifactDescriptor((IObservation) ret, ctx.getContextObservation(), 0)));
 		}
 
 		/*

@@ -70,7 +70,7 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
    * @return the context for the observation, if any.
    */
   IDirectObservation getContext();
-
+  
   /**
    * True if our scale has an observation of space with more than one state value.
    *

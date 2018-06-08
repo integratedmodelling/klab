@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.observations;
 
 import java.util.Collection;
+
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 
 /**
@@ -26,18 +27,22 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
  */
 public abstract interface IDirectObservation extends IObservation, IObjectArtifact {
 
-  /**
-   * <p>getName.</p>
-   *
-   * @return a {@link java.lang.String} object.
-   */
-  String getName();
+	/**
+	 * <p>
+	 * getName.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getName();
 
-  /**
-   * <p>getStates.</p>
-   *
-   * @return a {@link java.util.Collection} object.
-   */
-  Collection<IState> getStates();
+	/**
+	 * <p>
+	 * getStates.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Collection} object.
+	 */
+	Collection<IState> getStates();
 
 }
