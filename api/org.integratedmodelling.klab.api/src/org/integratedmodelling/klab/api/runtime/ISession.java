@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -70,6 +71,37 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 */
 	Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
 
+
+	/**
+	 * Retrieve a live observation if available, or return null.
+	 * <p>
+	 * Live observations are part of active contexts and have "live" peers in the
+	 * engine. They should be available in sessions during their contextualization,
+	 * and possibly after that, for a time that depends on configuration and
+	 * possibly on settings relative to persistence and garbage collection.
+	 * Persisted observations should be available in all sessions belonging to the
+	 * user that persisted them.
+	 * <p>
+	 * Retrieving an observation at any level in the hierarchy should be a fast
+	 * operation, although observations may be many.
+	 * 
+	 * @param observationId
+	 * @return the observation, or null.
+	 */
+	IObservation getObservation(String observationId);
+
+	/**
+	 * Retrieve a task being executed.
+	 * <p>
+	 * Tasks should only be retrievable when they are being executed. The main
+	 * reasons to retrieve a task are checking its status and interrupting it. Tasks
+	 * should be disposed of after they end.
+	 * 
+	 * @param taskId
+	 * @return the task being executed, or null.
+	 */
+	<T extends Future<?>> T getTask(String taskId, Class<T> cls);
+	
 	/**
 	 * Run the content of a URL as a script, returning the future that will compute
 	 * its result (often null). The {@link IEngine} has a similar function that

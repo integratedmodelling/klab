@@ -248,4 +248,10 @@ public enum Configuration implements IConfigurationService {
 		// TODO tie to engine configuration property
 		return false;
 	}
+
+	@Override
+	public int getMaxLiveObservationContextsPerSession() {
+		// TODO tie to engine configuration property + live setting
+		return 10;
+	}
 }

@@ -286,8 +286,16 @@ public interface IConfigurationService {
 	 * use much more time and resources if the instances are many. The default is
 	 * false.
 	 * 
-	 * @return
+	 * @return true to force independent resolution of instances
 	 */
 	boolean resolveAllInstances();
+
+	/**
+	 * The maximum number of root contexts kept alive per session. Defaults at 
+	 * 10. 
+	 * 
+	 * @return the maximum number of live contexts
+	 */
+	int getMaxLiveObservationContextsPerSession();
 
 }

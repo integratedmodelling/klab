@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -65,6 +66,11 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 					try {
 
+						/*
+						 * register the task so it can be interrupted and inquired about
+						 */
+						session.registerTask(ObserveContextTask.this);
+						
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.TaskStarted, ObserveContextTask.this.descriptor));
 
@@ -81,10 +87,22 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 											IMessage.Type.DataflowCompiled,
 											new DataflowReference(token, dataflow.getKdlCode())));
 
-							// make a copy of the coverage so that we ensure it's a scale, behaving properly
-							// at merge.
+							/* make a copy of the coverage so that we ensure it's a scale, behaving properly
+							 * at merge.
+							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
 
+							/*
+							 * Register the observation context with the session. It will be disposed of 
+							 * and/or persisted by the session itself.
+							 */
+							session.registerObservationContext(((Observation)ret).getRuntimeContext());
+							
+							/*
+							 * Unregister the task
+							 */
+							session.unregisterTask(ObserveContextTask.this);
+							
 						}
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.TaskFinished, ObserveContextTask.this.descriptor));

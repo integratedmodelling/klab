@@ -24,7 +24,9 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -252,8 +254,8 @@ public interface IComputationContext extends IParameters {
 	 * @param observable
 	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *            object.
-	 * @param name	
-	 * 			  as direct observations, all relationships have a name
+	 * @param name
+	 *            as direct observations, all relationships have a name
 	 * @param scale
 	 *            a
 	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
@@ -305,11 +307,31 @@ public interface IComputationContext extends IParameters {
 	ISubject getTargetSubject(IRelationship relationship);
 
 	/**
-	 * The context observation we are being computed into. Null if the context is 
+	 * The context observation we are being computed into. Null if the context is
 	 * for the computation of the root observation.
 	 * 
 	 * @return the context observation or null
 	 */
 	IDirectObservation getContextObservation();
+
+	/**
+	 * Return the parent of the passed observation. The runtime context maintains
+	 * the structure graph.
+	 * 
+	 * @param observation
+	 * @return the parent, or null if root subject
+	 */
+	IDirectObservation getParentOf(IObservation observation);
+
+	/**
+	 * Return all children of the passed observation. The runtime context maintains
+	 * the structure graph.
+	 * 
+	 * @param observation
+	 *            an observation. {@link IState States} have no children but no
+	 *            error should be raised.
+	 * @return the parent, or an empty collection if no children
+	 */
+	Collection<IObservation> getChildrenOf(IObservation observation);
 
 }

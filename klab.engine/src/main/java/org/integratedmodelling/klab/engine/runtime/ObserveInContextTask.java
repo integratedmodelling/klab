@@ -65,6 +65,11 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 				try {
 
+					/*
+					 * register the task so it can be interrupted and inquired about
+					 */
+					session.registerTask(ObserveInContextTask.this);
+					
 					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 							IMessage.Type.TaskStarted, ObserveInContextTask.this.descriptor));
 
@@ -97,6 +102,11 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 							IMessage.Type.TaskFinished, ObserveInContextTask.this.descriptor));
+					
+					/*
+					 * Unregister the task
+					 */
+					session.unregisterTask(ObserveInContextTask.this);
 
 				} catch (Throwable e) {
 

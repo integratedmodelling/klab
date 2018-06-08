@@ -23,16 +23,14 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -40,8 +38,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.rest.ObservationReference;
-import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -242,7 +238,8 @@ public class Actuator implements IActuator {
 			 */
 			ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-					IMessage.Type.NewObservation, createArtifactDescriptor(ret, ctx)));
+					IMessage.Type.NewObservation,
+					Observations.INSTANCE.createArtifactDescriptor((IObservation) ret, ctx.getContextObservation())));
 		}
 
 		/*
@@ -363,42 +360,6 @@ public class Actuator implements IActuator {
 				}
 			}
 		}
-		return ret;
-	}
-
-	private ObservationReference createArtifactDescriptor(IArtifact artifact, IRuntimeContext context) {
-
-		ObservationReference ret = new ObservationReference();
-		Observation observation = (Observation) artifact;
-
-		ret.setId(observation.getId());
-		ret.setUrn(observation.getUrn());
-		ret.setParentId(context.getContextObservation() == null
-				|| context.getContextObservation().getId().equals(observation.getId()) ? null
-						: context.getContextObservation().getId());
-		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-				: observation.getObservable().getLocalName());
-		ret.setObservable(observation.getObservable().getType().getDefinition());
-		ret.setSiblingCount(artifact.groupSize());
-
-		ISpace space = ((IScale) artifact.getGeometry()).getSpace();
-		ITime time = ((IScale) artifact.getGeometry()).getTime();
-
-		// fill in spatio/temporal info and mode of visualization
-		if (space != null) {
-			ret.setShapeType(space.getShape().getGeometryType());
-			ret.setEncodedShape(space.getShape().toString());
-			GeometryType gtype = GeometryType.SHAPE;
-			if (artifact instanceof IState && space.isRegular() && space.size() > 1) {
-				gtype = GeometryType.RASTER;
-			}
-			ret.getGeometryTypes().add(gtype);
-		}
-
-		if (time != null) {
-			// TODO
-		}
-
 		return ret;
 	}
 

@@ -33,11 +33,21 @@ public class Script implements IScript {
 			@Override
 			public Object call() throws Exception {
 
+				/*
+				 * Unregister the task
+				 */
+				session.unregisterTask(Script.this);
+				
 				Object ret = null;
 				try {
 					Script.this.session = session;
 					Script.this.monitor = (session.getMonitor()).get(Script.this);
 					/* ret = */ Models.INSTANCE.load(resource, monitor);
+					/*
+					 * Unregister the task
+					 */
+					session.unregisterTask(Script.this);
+					
 				} catch (Exception e) {
 					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
 				}

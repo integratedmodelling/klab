@@ -79,6 +79,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	Map<String, IObservable> semantics;
 	IObservable targetSemantics;
 	String targetName;
+	ISubject rootSubject;
+	Map<String, IObservation> observations;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -86,6 +88,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	public RuntimeContext(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
 		this.catalog = new HashMap<>();
+		this.observations = new HashMap<>();
 		this.network = new DirectedSparseMultigraph<>();
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		this.provenance = new Provenance();
@@ -142,6 +145,8 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		this.resolutionScope = context.resolutionScope;
 		this.targetSemantics = context.targetSemantics;
 		this.targetName = context.targetName;
+		this.rootSubject = context.rootSubject;
+		this.observations = context.observations;
 	}
 
 	@Override
@@ -167,6 +172,22 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	@Override
 	public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
 		return network.getInEdges(observation);
+	}
+
+	@Override
+	public IDirectObservation getParentOf(IObservation observation) {
+		for (DefaultEdge edge : this.structure.outgoingEdgesOf(observation)) {
+			IArtifact source = this.structure.getEdgeTarget(edge);
+			if (source instanceof IDirectObservation) {
+				return (IDirectObservation) source;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Collection<IObservation> getChildrenOf(IObservation observation) {
+		return getChildren(observation, IObservation.class);
 	}
 
 	@Override
@@ -274,11 +295,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		if (scope.getCoverage().isRelevant()) {
 
 			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-			ITaskTree<?> subtask = ((ITaskTree<?>)monitor.getIdentity()).createChild();
+			ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
-			Dataflow dataflow = Dataflows.INSTANCE
-					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope);
-			ret = (ICountableObservation) dataflow.run(scale, ((Monitor)monitor).get(subtask));
+			Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
+					scope);
+			ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -308,12 +329,12 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		if (scope.getCoverage().isRelevant()) {
 
 			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-			ITaskTree<?> subtask = ((ITaskTree<?>)monitor.getIdentity()).createChild();
+			ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
-			Dataflow dataflow = Dataflows.INSTANCE
-					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope);
-			
-			ret = (IRelationship) dataflow.run(scale, ((Monitor)monitor).get(subtask));
+			Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
+					scope);
+
+			ret = (IRelationship) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -349,12 +370,13 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			ret.semantics.put(id, ((Actuator) a).getObservable());
 		}
 
+		// save existing target
 		ret.target = ret.createTarget((Actuator) actuator, scale, scope);
 		if (ret.target != null && this.target != null) {
 			ret.outputs.add(actuator.getName());
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
-		}
+		} 
 
 		return ret;
 	}
@@ -464,8 +486,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 
 	/**
 	 * Pre-fill the artifact catalog with the artifact relevant to the passed
-	 * actuator and scope. Called on the ROOT artifact before any computation takes
-	 * place, passing all the actuators - must NOT change any local state.
+	 * actuator and scope.
 	 * 
 	 * @param actuator
 	 * @param scope
@@ -486,7 +507,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		for (IComputableResource computation : actuator.getComputation()) {
 			if (computation.getTarget() != null && !computation.getTarget().is(Type.COUNTABLE)
 					&& this.catalog.get(computation.getTarget().getLocalName()) == null) {
-				targetObservables.put(computation.getTarget().getLocalName(), (Observable)computation.getTarget());
+				targetObservables.put(computation.getTarget().getLocalName(), (Observable) computation.getTarget());
 			}
 		}
 
@@ -502,23 +523,40 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 				observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 			}
 
+			/*
+			 * register the obs and potentially the root subject
+			 */
+			this.observations.put(observation.getId(), observation);
+			if (this.rootSubject == null && observation instanceof ISubject) {
+				this.rootSubject = (ISubject) observation;
+			}
+
 			this.catalog.put(name, observation);
 			this.structure.addVertex(observation);
+			if (scope.getContext() != null) {
+				this.structure.addEdge(observation, scope.getContext());
+			}
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
-				if (parent != null && parent.target instanceof ISubject) {
-					this.structure.addEdge((ISubject) observation, (ISubject) parent.target);
-				}
 			}
 		}
 
 		return this.catalog.get(actuator.getName());
-
 	}
 
 	@Override
 	public IDirectObservation getContextObservation() {
 		return resolutionScope.getContext();
+	}
+
+	@Override
+	public ISubject getRootSubject() {
+		return rootSubject;
+	}
+
+	@Override
+	public IObservation getObservation(String observationId) {
+		return observations.get(observationId);
 	}
 
 }

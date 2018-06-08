@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.engine.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,9 +12,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -20,6 +25,7 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -27,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Observer;
@@ -63,10 +70,16 @@ public class Session implements ISession, UserDetails {
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	/*
-	 * These hold observations and tasks created in this session.
+	 * Tasks created in this session, managed as task/script start and end. Content
+	 * may be a IScript or a ITask.
 	 */
-	Map<String, ITask<?>> tasks = new HashMap<>();
-	Map<String, IIdentity> observations = new HashMap<>();
+	Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * The contexts for all root observations built in this session, up to the
+	 * configured number, most recent first.
+	 */
+	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -200,7 +213,64 @@ public class Session implements ISession, UserDetails {
 			return new Script(this, url);
 		}
 		return ret;
+	}
 
+	@Override
+	public IObservation getObservation(String observationId) {
+		// start at the most recent
+		for (IRuntimeContext context : observationContexts) {
+			IObservation ret = context.getObservation(observationId);
+			if (ret != null) {
+				return ret;
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Future<?>> T getTask(String taskId, Class<T> cls) {
+		return (T)tasks.get(taskId);
+	}
+
+	/**
+	 * Register a task. It may be a ITask or a IScript, which only have the Future
+	 * identity in common.
+	 * 
+	 * @param task
+	 */
+	public void registerTask(Future<?> task) {
+		String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
+		this.tasks.put(id, task);
+	}
+
+	/**
+	 * Register a task. It may be a ITask or a IScript, which only have the Future
+	 * identity in common.
+	 * 
+	 * @param task
+	 */
+	public void unregisterTask(Future<?> task) {
+		this.tasks.remove(task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId());
+	}
+
+	/**
+	 * Register the runtime context of a new observation. If needed, dispose of the oldest
+	 * observation made.
+	 * 
+	 * @param runtimeContext
+	 */
+	public void registerObservationContext(IRuntimeContext runtimeContext) {
+		if (!observationContexts.offerFirst(runtimeContext)) {
+			disposeObservation(observationContexts.pollLast());
+			observationContexts.addFirst(runtimeContext);
+		}
+	}
+
+	private void disposeObservation(IRuntimeContext context) {
+		// TODO dispose of the observation
+		// TODO send a notification through the session monitor that the obs is now out of scope.
+		Logging.INSTANCE.warn("Disposing of observation " + context.getRootSubject() + ": TODO");
 	}
 
 }
