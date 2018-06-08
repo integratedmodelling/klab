@@ -108,7 +108,7 @@ public class EngineViewController {
 				IArtifact artifact = it.next();
 				if (i >= offset) {
 					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
-							obs.getContext(), childLevel == null ? -1 : childLevel);
+							obs.getContext(), childLevel == null ? 0 : childLevel);
 					if (ret == null) {
 						ret = ref;
 					} else {
@@ -116,7 +116,7 @@ public class EngineViewController {
 					}
 					nc++;
 				}
-				if (nc >= count) {
+				if (count > 0 && nc >= count) {
 					break;
 				}
 			}
