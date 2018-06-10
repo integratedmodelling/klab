@@ -584,8 +584,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public IScaleMediator getMediator(IExtent extent) {
-			// TODO Auto-generated method stub
-			return null;
+			return getShape().getMediator(extent);
 		}
 
 		@Override

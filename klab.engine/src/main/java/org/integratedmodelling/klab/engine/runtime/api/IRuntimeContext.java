@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.jgrapht.Graph;
 
 /**
  * This API extends {@link IComputationContext} to add setters and other
@@ -56,7 +57,8 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param target
 	 * @param scope
 	 * @param monitor
-	 * @param context the context for the resolution
+	 * @param context
+	 *            the context for the resolution
 	 * 
 	 * @return the child context that will resolve the target
 	 */
@@ -141,6 +143,13 @@ public interface IRuntimeContext extends IComputationContext {
 	 */
 	@Override
 	Provenance getProvenance();
+	
+	/**
+	 * Return the context structure (all father-child relationships) as a JGraphT graph.
+	 * 
+	 * @return the structure
+	 */
+	Graph<? extends IArtifact, ?> getStructure();
 
 	/**
 	 * Return all the children of an artifact in the structural graph that match a
@@ -151,5 +160,18 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @return the set of all children of class cls
 	 */
 	<T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
+
+	/**
+	 * Build the link between a parent and a child artifact. Should only be used in
+	 * the few cases when observations are created by hand, using pre-built
+	 * instances such as rescaling states, instead of through
+	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
+	 * or
+	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
+	 * 
+	 * @param parent
+	 * @param child
+	 */
+	void link(IArtifact parent, IArtifact child);
 
 }

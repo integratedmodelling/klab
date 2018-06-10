@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
@@ -501,6 +502,16 @@ public class Observable extends Concept implements IObservable {
 			this.resolvedModel = (IModel) model;
 		}
 		return this.resolvedModel;
+	}
+
+	@Override
+	public IConcept getContext() {
+		return Observables.INSTANCE.getContextType(getType());
+	}
+
+	@Override
+	public IConcept getInherentType() {
+		return Observables.INSTANCE.getInherentType(getType());
 	}
 
 }

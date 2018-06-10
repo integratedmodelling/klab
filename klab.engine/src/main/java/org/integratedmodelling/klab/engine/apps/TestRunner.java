@@ -127,7 +127,8 @@ public class TestRunner implements Annotations.Handler {
 								}
 
 								display.show();
-								if (visualize) {
+								if (visualize && (System.getProperty("waitForKey") == null
+										|| !System.getProperty("waitForKey").equals("false"))) {
 									// block to see the display
 									System.out.print("Press a key to continue...");
 									System.in.read();

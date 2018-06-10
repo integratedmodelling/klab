@@ -81,6 +81,11 @@ public class Rasterizer<T> {
 	private long maxId = 0;
 
 	private Graphics2D graphics;
+
+	// this is used only for the getCoordinates() operation
+	private BufferedImage coordinateRaster = null;
+	private Graphics2D coordinateGraphics;
+
 	private GeometryFactory geoFactory = new GeometryFactory();
 
 	/**
@@ -99,13 +104,50 @@ public class Rasterizer<T> {
 		graphics.setComposite(AlphaComposite.Src);
 	}
 
-	
+	/**
+	 * Return the world coordinates of all points covered by the passed shape. Each
+	 * call is independent and won't affect the state of the rasterizer that is set
+	 * with {@link #add(IShape, Function)}. An internal binary buffer is created on
+	 * demand and cleared at every subsequent call.
+	 * 
+	 * @param shape
+	 * @return
+	 */
 	public Collection<Coordinate> getCoordinates(IShape shape) {
+
 		Set<Coordinate> ret = new HashSet<>();
-		// TODO use a separate bitset and image to rasterize on
+		if (coordinateRaster == null) {
+			this.coordinateRaster = new BufferedImage((int) extent.getXCells(), (int) extent.getYCells(),
+					BufferedImage.TYPE_BYTE_BINARY);
+			this.coordinateRaster.setAccelerationPriority(1.0f);
+			this.coordinateGraphics = this.raster.createGraphics();
+			this.coordinateGraphics.setPaintMode();
+		} else {
+			this.coordinateGraphics.setColor(new Color(0, 0, 0));
+			this.coordinateGraphics.fillRect(0, 0, (int) extent.getXCells(), (int) extent.getYCells());
+		}
+
+		Geometry geometry = ((Shape) shape).getJTSGeometry();
+		Color valueColor = new Color(255, 255, 255);
+		Color holeColor = new Color(0, 0, 0);
+
+		draw(geometry, valueColor, holeColor);
+
+		int[] xy = new int[2];
+		for (int x = 0; x < this.raster.getWidth(); x++) {
+			for (int y = 0; y < this.raster.getHeight(); y++) {
+				xy[0] = x;
+				xy[1] = y;
+				if (raster.getRGB(x, y) == valueColor.getRGB()) {
+					double[] wxy = extent.getWorldCoordinatesAt(xy[0], xy[1]);
+					ret.add(new Coordinate(wxy[0], wxy[1]));
+				}
+			}
+		}
+
 		return ret;
 	}
-	
+
 	/**
 	 * Rasterize a single shape. Call as many times as necessary.
 	 * 
@@ -123,6 +165,16 @@ public class Rasterizer<T> {
 		T value = encoder.apply(shape);
 		Geometry geometry = ((Shape) shape).getJTSGeometry();
 
+		int rgbVal = floatBitsToInt(encodeToFloat(value));
+		int holeVal = floatBitsToInt(Float.NaN);
+		Color valueColor = new Color(rgbVal, true);
+		Color holeColor = new Color(holeVal, true);
+
+		draw(geometry, valueColor, holeColor);
+	}
+
+	private void draw(Geometry geometry, Color valueColor, Color holeColor) {
+
 		if (geometry.intersects(((Grid) extent).getShape().getJTSGeometry())) {
 
 			if (geometry.getClass().equals(MultiPolygon.class) || geometry.getClass().equals(Polygon.class)) {
@@ -131,25 +183,25 @@ public class Rasterizer<T> {
 					Polygon poly = (Polygon) geometry.getGeometryN(i);
 					LinearRing lr = geoFactory.createLinearRing(poly.getExteriorRing().getCoordinates());
 					Polygon part = geoFactory.createPolygon(lr, null);
-					drawGeometry(part, false, value);
+					drawGeometry(part, valueColor);
 					for (int j = 0; j < poly.getNumInteriorRing(); j++) {
 						lr = geoFactory.createLinearRing(poly.getInteriorRingN(j).getCoordinates());
 						part = geoFactory.createPolygon(lr, null);
-						drawGeometry(part, true, value);
+						drawGeometry(part, holeColor);
 					}
 				}
 			} else if (geometry.getClass().equals(MultiLineString.class)) {
 				MultiLineString mp = (MultiLineString) geometry;
 				for (int n = 0; n < mp.getNumGeometries(); n++) {
-					drawGeometry(mp.getGeometryN(n), false, value);
+					drawGeometry(mp.getGeometryN(n), valueColor);
 				}
 			} else if (geometry.getClass().equals(MultiPoint.class)) {
 				MultiPoint mp = (MultiPoint) geometry;
 				for (int n = 0; n < mp.getNumGeometries(); n++) {
-					drawGeometry(mp.getGeometryN(n), false, value);
+					drawGeometry(mp.getGeometryN(n), valueColor);
 				}
 			} else {
-				drawGeometry(geometry, false, value);
+				drawGeometry(geometry, valueColor);
 			}
 		}
 	}
@@ -250,12 +302,9 @@ public class Rasterizer<T> {
 	private int[] coordGridX = new int[3500];
 	private int[] coordGridY = new int[3500];
 
-	private void drawGeometry(Geometry geometry, boolean isHole, T value) {
+	private void drawGeometry(Geometry geometry, Color color) {
 
 		Coordinate[] coords = geometry.getCoordinates();
-
-		int rgbVal = floatBitsToInt(isHole ? Float.NaN : encodeToFloat(value));
-		graphics.setColor(new Color(rgbVal, true));
 
 		// enlarge if needed
 		if (coords.length > coordGridX.length) {

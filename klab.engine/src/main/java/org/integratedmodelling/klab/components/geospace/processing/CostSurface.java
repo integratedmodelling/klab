@@ -8,7 +8,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * 
@@ -17,7 +16,6 @@ public class CostSurface {
 
 	private IGrid extent;
 	private IState cost;
-	private GeometryFactory geoFactory = new GeometryFactory();
 	private Rasterizer<Boolean> rasterizer;
 	Set<Coordinate> startingPoints = new HashSet<>();
 
@@ -40,7 +38,7 @@ public class CostSurface {
 	public CostSurface withStart(IShape shape) {
 		startingPoints.addAll(rasterizer.getCoordinates(shape.getBoundary()));
 		for (IShape hole : shape.getHoles()) {
-			startingPoints.addAll(rasterizer.getCoordinates(shape.getBoundary()));
+			startingPoints.addAll(rasterizer.getCoordinates(hole.getBoundary()));
 		}
 		rasterizer.add(shape, null);
 		return this;

@@ -124,7 +124,21 @@ public interface IObservable extends IConcept, IResolvable {
    * @return the currency, if any was specified.
    */
   ICurrency getCurrency();
+  
+  /**
+   * The context type.
+   * @return the context type
+   */
+  IConcept getContext();
+  
+  /**
+   * The inherent type.
+   * @return the inherent type
+   */
+  IConcept getInherentType();
 
+  // TODO other predicates
+  
   /**
    * If the observable was defined with an inline value (e.g. '10 as Concept'), report the POD value
    * here.

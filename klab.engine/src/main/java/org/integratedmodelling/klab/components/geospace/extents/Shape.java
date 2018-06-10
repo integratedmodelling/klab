@@ -26,6 +26,9 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
@@ -512,8 +515,14 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public IScaleMediator getMediator(IExtent extent) {
-		// TODO Auto-generated method stub
-		return null;
+		ISpace other = (ISpace)extent;
+		if (other instanceof Space && ((Space) other).getGrid().isPresent()) {
+			return new ShapeToGrid(this, (Grid)((Space) other).getGrid().get());
+		} else if (other instanceof Space && ((Space) other).getTessellation().isPresent()) {
+			return new ShapeToFeatures(this, ((Space) other).getTessellation().get());
+		} else {
+			return new ShapeToShape(this, (Shape)other.getShape());
+		}
 	}
 
 	@Override

@@ -79,7 +79,8 @@ public class Session implements ISession, UserDetails {
 	 * The contexts for all root observations built in this session, up to the
 	 * configured number, most recent first.
 	 */
-	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
+	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(
+			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -230,7 +231,7 @@ public class Session implements ISession, UserDetails {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Future<?>> T getTask(String taskId, Class<T> cls) {
-		return (T)tasks.get(taskId);
+		return (T) tasks.get(taskId);
 	}
 
 	/**
@@ -255,21 +256,26 @@ public class Session implements ISession, UserDetails {
 	}
 
 	/**
-	 * Register the runtime context of a new observation. If needed, dispose of the oldest
-	 * observation made.
+	 * Register the runtime context of a new observation. If needed, dispose of the
+	 * oldest observation made.
 	 * 
 	 * @param runtimeContext
 	 */
 	public void registerObservationContext(IRuntimeContext runtimeContext) {
+		
 		if (!observationContexts.offerFirst(runtimeContext)) {
 			disposeObservation(observationContexts.pollLast());
 			observationContexts.addFirst(runtimeContext);
 		}
+		// this is for human watchers, everything else is done by the runtime
+		monitor.info("new context registered with ID " + runtimeContext.getRootSubject().getId() + " for "
+				+ runtimeContext.getRootSubject());
 	}
 
 	private void disposeObservation(IRuntimeContext context) {
 		// TODO dispose of the observation
-		// TODO send a notification through the session monitor that the obs is now out of scope.
+		// TODO send a notification through the session monitor that the obs is now out
+		// of scope.
 		Logging.INSTANCE.warn("Disposing of observation " + context.getRootSubject() + ": TODO");
 	}
 

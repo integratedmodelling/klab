@@ -25,7 +25,13 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToShape;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
@@ -595,8 +601,31 @@ public class Space extends Extent implements ISpace {
 
 		ISpace other = (ISpace) extent;
 
-		if (grid != null && other instanceof Space && ((Space) other).grid != null) {
-			return new GridToGrid(grid, ((Space) other).grid);
+		if (grid != null) {
+			if (other instanceof Space && ((Space) other).grid != null) {
+				return new GridToGrid(grid, ((Space) other).grid);
+			} else if (other instanceof Space && ((Space) other).features != null) {
+				return new GridToFeatures(grid, ((Space)other).features);
+			} else {
+				return new GridToShape(grid, (Shape)other.getShape());
+			}
+			
+		} else if (features != null) {
+			if (other instanceof Space && ((Space) other).grid != null) {
+
+			} else if (features != null && other instanceof Shape) {
+
+			} else {
+				return new FeaturesToShape(features, (Shape)other.getShape());
+			}
+		} else {
+			if (other instanceof Space && ((Space) other).grid != null) {
+				return new ShapeToGrid(getShape(), ((Space) other).grid);
+			} else if (other instanceof Space && ((Space) other).features != null) {
+				return new ShapeToFeatures(getShape(), ((Space) other).features);
+			} else {
+				return new ShapeToShape(getShape(), (Shape)other.getShape());
+			}
 		}
 
 		/*

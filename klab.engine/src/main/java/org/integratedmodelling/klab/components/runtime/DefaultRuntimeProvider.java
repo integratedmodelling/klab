@@ -130,13 +130,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				return runtimeContext.getTargetArtifact();
 			}
 		});
-
 	}
 
 	private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
 		DefaultDirectedGraph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
 		insertActuator(actuator, ret, new HashMap<>());
-		if (System.getProperty("visualize", "false").equals("true") && ret.vertexSet().size() > 1) {
+		if (!System.getProperty("visualize", "false").equals("false") && ret.vertexSet().size() > 1) {
 			Graphs.show(ret, "Actuator dependencies");
 		}
 		return ret;

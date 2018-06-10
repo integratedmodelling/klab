@@ -23,7 +23,6 @@ public abstract class DirectObservation extends Observation implements IDirectOb
         return name;
     }
     
-    
     @Override
     public Collection<IState> getStates() {
       return getRuntimeContext().getChildren(this, IState.class);

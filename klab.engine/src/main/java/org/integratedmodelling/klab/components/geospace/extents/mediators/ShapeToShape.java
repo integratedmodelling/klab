@@ -3,11 +3,16 @@ package org.integratedmodelling.klab.components.geospace.extents.mediators;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ShapeToShape implements IScaleMediator {
 
-    @Override
+    public ShapeToShape(Shape shape, Shape shape2) {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
     public boolean isConformant() {
         // TODO Auto-generated method stub
         return false;

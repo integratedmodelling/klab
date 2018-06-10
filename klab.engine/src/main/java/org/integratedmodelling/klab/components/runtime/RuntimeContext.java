@@ -376,7 +376,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 			ret.outputs.add(actuator.getName());
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
-		} 
+		}
 
 		return ret;
 	}
@@ -484,6 +484,12 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		return targetSemantics;
 	}
 
+	@Override
+	public void link(IArtifact parent, IArtifact child) {
+		this.structure.addVertex(child);
+		this.structure.addEdge(child, parent);
+	}
+
 	/**
 	 * Pre-fill the artifact catalog with the artifact relevant to the passed
 	 * actuator and scope.
@@ -557,6 +563,11 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	@Override
 	public IObservation getObservation(String observationId) {
 		return observations.get(observationId);
+	}
+
+	@Override
+	public Graph<? extends IArtifact, ?> getStructure() {
+		return structure;
 	}
 
 }

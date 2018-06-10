@@ -11,7 +11,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
+<!-- 				<plugin>
 					<artifactId>kotlin-maven-plugin</artifactId>
 					<groupId>org.jetbrains.kotlin</groupId>
 					<version>${kotlin.version}</version>
@@ -40,7 +40,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				<plugin>
+ -->				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
@@ -116,18 +116,17 @@
 			<version>5.0.5.RELEASE</version>
 		</dependency>
 
-		<!-- Kotlin support -->
+		<!-- Kotlin support
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib</artifactId>
 			<version>${kotlin.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
 			<version>2.9.5</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- JSON schema extraction -->
 		<dependency>

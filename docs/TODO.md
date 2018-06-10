@@ -25,10 +25,8 @@
 
 - [DONE] Rescaling mediators; get test5 working
 - [IN PROGRESS] Relationship instantiator and resolver: test cases
-- Smart resolution of sub-object qualities: use ranking system with scale constraints (i.e. 
-  produce Model metadata from states, search there first, if something > x% don't use the network, configure 
-  X)
-- [DONE] Cache resolvers at instantiation
+- [DONE] Smart resolution of sub-scale observations: Cache resolvers at instantiation
+- [IN PROGRESS] automatically assign quality values for compatible sub-scale instances
 - Interactive resolution workflow (implement and test in both CLI and Eclipse)
 - Distributing observations ('by' <subject>) and aggregation by trait
 
@@ -39,7 +37,7 @@
 
 ### Resource API and URN handling
 
-- Local storage lifecycle
+- [DONE] Local storage lifecycle
 - Publishing and encoding
 - Implement and test basic adapters:
   - [DONE] WCS
@@ -54,7 +52,8 @@
 
 - Missing GIS stuff: 
   - [DONE] rasterizer
-  - distance
+  - distance/cost surfaces
+  - viewshed
   - spatial indexing
   - routing through features
   - routing through cost terrains
@@ -81,14 +80,16 @@
 
 ### REST interface
 
-- [IN PROGRESS] API: use RAML as source of truth
+- [IN PROGRESS] API: use RAML as sole source of truth
     - Maven generation -> API constants etc
 - Basic workflow to enable observations:
     - Observe context and in context
-    - Context structure
-    - Get data and maps for obs
+    - [IN PROGRESS] Context structure
+    - [IN PROGRESS] Get data and maps for obs
 
 ### Debugger
+
+- Design
 
 ### Calibration
 

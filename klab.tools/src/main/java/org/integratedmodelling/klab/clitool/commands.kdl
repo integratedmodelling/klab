@@ -20,6 +20,10 @@ void run
      command will run the named demos after it, or list all available demos
      if no other argument is passed."
 {
+	optional input visualize
+		"Visualize outputs using debug tools"
+		default false
+		 
 	class org.integratedmodelling.klab.clitool.console.commands.Run
 }
 

@@ -9,9 +9,9 @@
 	</parent>
 	<artifactId>klab.core</artifactId>
 
-	<properties>
+<!-- 	<properties>
 		<kotlin.version>1.2.40</kotlin.version>
-	</properties>
+	</properties> -->
 
 	<build>
 		<pluginManagement>
