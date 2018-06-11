@@ -1,11 +1,14 @@
 package org.integratedmodelling.klab.data.storage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
@@ -36,12 +39,18 @@ public class RescalingState extends Observation implements IState {
 	List<IScaleMediator> mediatorsFrom = null;
 	List<IScaleMediator> mediatorsTo = null;
 	boolean conformant = false;
-
+	private ObservationType observationType;
+	boolean redistribute = false;
+	
 	public RescalingState(IState state, Scale newScale, IRuntimeContext context) {
 		super(new Observable((Observable) state.getObservable()), newScale, context);
 		this.delegate = state;
 		this.newScale = newScale;
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
+		this.observationType = state.getObservable().getObservationType();
+		// TODO check if we need to sum in aggregation. Depends on the observable and on
+		// the relationship between the extents (e.g spatially distributed vs. not)
+		// this.redistribute = ...
 	}
 
 	public Object get(ILocator index) {
@@ -88,8 +97,6 @@ public class RescalingState extends Observation implements IState {
 
 	public long set(ILocator index, Object value) {
 
-		long ret = 0;
-
 		if (mediatorsTo == null) {
 			mediatorsTo = getMediators(this.newScale, (Scale) this.delegate.getScale());
 		}
@@ -102,7 +109,8 @@ public class RescalingState extends Observation implements IState {
 			for (int i = 0; i < mediatorsTo.size(); i++) {
 				offsets[i] = mediatorsTo.get(i).mapConformant(offsets[i]);
 			}
-			ret = delegate.set(originalGeometry.locate(offsets), value);
+
+			delegate.set(originalGeometry.locate(offsets), value);
 
 		} else {
 			map(index, mediatorsTo, value);
@@ -119,9 +127,9 @@ public class RescalingState extends Observation implements IState {
 
 		Propagator propagator = new Propagator();
 		for (int i = 0; i < mediators.size(); i++) {
-			// for (Pair<Long, Double> val :
-			// mediator.map(delegate.getScale().getOffset(locator))) {
-			// }
+			for (Pair<Long, Double> mapped : mediators.get(i).map(newScale.getOffset(locator))) {
+				propagator.add(i, mapped.getFirst(), mapped.getSecond());
+			}
 		}
 		propagator.propagate(value);
 	}
@@ -130,9 +138,9 @@ public class RescalingState extends Observation implements IState {
 
 		Aggregator aggregator = new Aggregator();
 		for (int i = 0; i < mediators.size(); i++) {
-			// for (Pair<Long, Double> val :
-			// mediators.get(i).map(delegate.getScale().getOffset(locator))) {
-			// }
+			for (Pair<Long, Double> mapped : mediators.get(i).map(newScale.getOffset(locator))) {
+				aggregator.add(i, mapped.getFirst(), mapped.getSecond());
+			}
 		}
 		return aggregator.aggregate();
 
@@ -155,41 +163,48 @@ public class RescalingState extends Observation implements IState {
 	 * @param data
 	 * @return
 	 */
-	Iterator<Pair<long[], Double>> cartesianProductIterator(List<List<ExtentLocation>> data) {
+	class CartesianProductIterator implements Iterator<Pair<long[], Double>> {
 
-		long[] sizes = new long[data.size()];
-		for (int i = 0; i < data.size(); i++) {
-			sizes[i] = data.get(i).size();
-		}
+		List<List<ExtentLocation>> data;
+		long[] ret;
 		final MultidimensionalCursor cursor = new MultidimensionalCursor();
-		cursor.defineDimensions(sizes);
 
-		return new Iterator<Pair<long[], Double>>() {
+		long current = 0;
 
-			long current = 0;
-			long[] ret = new long[data.size()];
+		CartesianProductIterator(List<List<ExtentLocation>> data) {
+			this.data = data;
+			this.ret = new long[data.size()];
+			long[] sizes = new long[data.size()];
+			for (int i = 0; i < data.size(); i++) {
+				sizes[i] = data.get(i).size();
+			}
+			this.cursor.defineDimensions(sizes);
+		}
 
-			@Override
-			public boolean hasNext() {
-				return current < (cursor.getMultiplicity() - 1);
+		public long size() {
+			return cursor.getMultiplicity();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return current < (cursor.getMultiplicity() - 1);
+		}
+
+		@Override
+		public Pair<long[], Double> next() {
+
+			long[] offsets = cursor.getElementIndexes(current);
+			double weight = 1.0;
+
+			for (int i = 0; i < offsets.length; i++) {
+				ret[i] = data.get(i).get((int) offsets[i]).offset;
+				weight *= data.get(i).get((int) offsets[i]).weight;
 			}
 
-			@Override
-			public Pair<long[], Double> next() {
-
-				long[] offsets = cursor.getElementIndexes(current);
-				double weight = 1.0;
-
-				for (int i = 0; i < offsets.length; i++) {
-					ret[i] = data.get(i).get((int) offsets[i]).offset;
-					weight *= data.get(i).get((int) offsets[i]).weight;
-				}
-
-				current++;
-				return new Pair<>(ret, weight);
-			}
-		};
-	}
+			current++;
+			return new Pair<>(ret, weight);
+		}
+	};
 
 	/*
 	 * Aggregate contents of original state at the cartesian product of the
@@ -199,6 +214,11 @@ public class RescalingState extends Observation implements IState {
 
 		List<List<ExtentLocation>> locations = new ArrayList<>();
 
+		double sum;
+		Map<Object, Integer> dominance = new HashMap<>();
+		int nodata = 0;
+		int count = 0;
+
 		Aggregator() {
 			for (int i = 0; i < delegate.getScale().getExtentCount(); i++) {
 				locations.add(new ArrayList<>());
@@ -207,13 +227,66 @@ public class RescalingState extends Observation implements IState {
 
 		Object aggregate() {
 
-			for (Iterator<Pair<long[], Double>> it = cartesianProductIterator(locations); it.hasNext();) {
+			for (CartesianProductIterator it = new CartesianProductIterator(locations); it.hasNext();) {
 				Pair<long[], Double> index = it.next();
 				if (index.getSecond() > 0) {
-
+					addValue(delegate.get(originalGeometry.locate(index.getFirst())), index.getSecond());
 				}
 			}
-			return null;
+			return computeAggregation();
+		}
+
+		private Object computeAggregation() {
+			
+			Object ret = null;
+			
+			switch (observationType) {
+			case CLASSIFICATION:
+			case VERIFICATION:
+				// TODO handle weight
+				int cur = 0;
+				for (Object o : dominance.keySet()) {
+					;
+					if (ret == null || dominance.get(o) > cur) {
+						ret = o;
+						cur = dominance.get(o);
+					}
+				}
+				break;
+			case QUANTIFICATION:
+				// TODO handle weight
+				ret = redistribute ? sum : sum/count;
+				break;
+			default:
+				break;
+			}
+			
+			return ret;
+		}
+
+		private void addValue(Object object, Double weight) {
+
+			if (object == null || (object instanceof Number && Double.isNaN(((Number) object).doubleValue()))) {
+				nodata++;
+				return;
+			}
+
+			switch (observationType) {
+			case CLASSIFICATION:
+			case VERIFICATION:
+				// TODO handle weight
+				Integer n = dominance.get(object);
+				dominance.put(object, n == null ? 1 : n++);
+				break;
+			case QUANTIFICATION:
+				// TODO handle weight
+				sum += ((Number) object).doubleValue();
+				break;
+			default:
+				return;
+			}
+
+			count++;
 		}
 
 		public void add(int dimension, long offset, Double weight) {
@@ -236,12 +309,16 @@ public class RescalingState extends Observation implements IState {
 		}
 
 		void propagate(Object value) {
-			for (Iterator<Pair<long[], Double>> it = cartesianProductIterator(locations); it.hasNext();) {
+			for (CartesianProductIterator it = new CartesianProductIterator(locations); it.hasNext();) {
 				Pair<long[], Double> index = it.next();
 				if (index.getSecond() > 0) {
-
+					propagateValue(value, originalGeometry.locate(index.getFirst()), index.getSecond(), it.size());
 				}
 			}
+		}
+
+		private void propagateValue(Object value, ILocator locator, double weight, long valueCount) {
+			// TODO propagate the n-th part of the value
 		}
 
 		public void add(int dimension, long offset, Double weight) {

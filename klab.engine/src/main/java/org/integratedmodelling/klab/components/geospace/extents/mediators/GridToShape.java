@@ -1,16 +1,21 @@
 package org.integratedmodelling.klab.components.geospace.extents.mediators;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class GridToShape implements IScaleMediator {
 
+	private Subgrid subgrid;
+
 	public GridToShape(Grid grid, Shape shape) {
-		// TODO Auto-generated constructor stub
+		this.subgrid = Subgrid.create(grid, shape);
 	}
 
 	@Override
@@ -25,8 +30,13 @@ public class GridToShape implements IScaleMediator {
 
 	@Override
 	public Collection<Pair<Long, Double>> map(long originalOffset) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Pair<Long, Double>> ret = new ArrayList<>();
+		for (Cell cell : subgrid) {
+			Cell originalCell = subgrid.getOriginalCell(cell);
+			ret.add(new Pair<>(originalCell.getOffsetInGrid(), 1.0));
+		}
+		return ret;
 	}
 
 }
