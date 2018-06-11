@@ -128,6 +128,7 @@ public interface IGrid extends Iterable<Cell> {
 
 		/**
 		 * Check status of cell
+		 * 
 		 * @param x
 		 * @param y
 		 * @return true if cell at x,y is active
@@ -136,6 +137,7 @@ public interface IGrid extends Iterable<Cell> {
 
 		/**
 		 * Activate the cell at x, y
+		 * 
 		 * @param x
 		 * @param y
 		 */
@@ -143,6 +145,7 @@ public interface IGrid extends Iterable<Cell> {
 
 		/**
 		 * Deactivate the cell at x,y
+		 * 
 		 * @param x
 		 * @param y
 		 */
@@ -150,14 +153,16 @@ public interface IGrid extends Iterable<Cell> {
 
 		/**
 		 * Total active cells
+		 * 
 		 * @return number of active cells
 		 */
 		long totalActiveCells();
 
 		/**
 		 * Next active cell from passed offset
+		 * 
 		 * @param fromOffset
-		 * @return the next active offset using the natural ordering
+		 * @return the next active offset using the natural ordering, or -1
 		 */
 		long nextActiveOffset(long fromOffset);
 
@@ -218,7 +223,8 @@ public interface IGrid extends Iterable<Cell> {
 	/**
 	 * Return the cell area in a SI unit for area (compatible with square meters).
 	 * 
-	 * @param unit area unit.
+	 * @param unit
+	 *            area unit.
 	 *
 	 * @return the cell area
 	 */

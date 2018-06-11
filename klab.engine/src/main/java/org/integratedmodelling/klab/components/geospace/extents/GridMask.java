@@ -18,6 +18,7 @@ public class GridMask extends BitSet implements IGrid.Mask {
 		Rasterizer<Boolean> rasterizer = new Rasterizer<>(grid);
 		rasterizer.add(shape, (s) -> true);
 		rasterizer.finish((b, xy) -> set((int)grid.getOffset(xy[0], xy[1])));
+		System.out.println("Mask has " + cardinality() + " out of " + grid.getCellCount());
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class GridMask extends BitSet implements IGrid.Mask {
 
 	@Override
 	public long nextActiveOffset(long fromOffset) {
-		return nextSetBit((int) fromOffset);
+		return nextSetBit((int) fromOffset + 1);
 	}
 
 	@Override

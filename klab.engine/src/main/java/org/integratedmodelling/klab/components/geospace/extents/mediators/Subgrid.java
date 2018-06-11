@@ -88,10 +88,10 @@ public class Subgrid extends Grid {
 		long nx = (long) Math.round(dx / grid.getCellWidth());
 		long ny = (long) Math.round(dy / grid.getCellHeight());
 
-		long xofs = (long) ((gxmin - grid.getWest()) / grid.getCellWidth());
-		long yofs = (long) ((gymin - grid.getSouth()) / grid.getCellHeight());
+		long xofs = (long)Math.round((gxmin - grid.getWest()) / grid.getCellWidth());
+		long yofs = (long)Math.round((gymin - grid.getSouth()) / grid.getCellHeight());
 
-		return new Subgrid(Grid.create(gxmin, gymin, gxmax, gymax, nx, ny, (Projection) grid.getProjection()), grid, xofs, yofs);
+		return new Subgrid(Grid.create(gxmin, gymin, gxmax, gymax, nx, ny, (Projection) grid.getProjection()), grid, xofs, yofs, shape);
 	}
 
 	/**
@@ -132,12 +132,13 @@ public class Subgrid extends Grid {
 	long xofs = 0;
 	long yofs = 0;
 
-	Subgrid(Grid grid, Grid originalGrid, long xofs, long yofs) {
+	Subgrid(Grid grid, Grid originalGrid, long xofs, long yofs, Shape shape) {
 		this.grid = grid;
 		this.ogrid = originalGrid;
 		this.xofs = xofs;
 		this.yofs = yofs;
 		this.projection = (Projection) originalGrid.getProjection();
+		this.mask = createMask(shape);
 	}
 
 	@Override
@@ -225,8 +226,8 @@ public class Subgrid extends Grid {
 	}
 
 	public Cell getOriginalCell(Cell cell) {
-		// TODO check why we need to invert the Y dimension where getOriginalOffset works as is below.
-		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - cell.getY() - 1));
+		// TODO check why we need to adjust and invert where getOriginalOffset works as is below.
+		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - (getYCells() - cell.getY() - 1) - 1);
 	}
 
 	public long getOriginalOffset(long offset) {

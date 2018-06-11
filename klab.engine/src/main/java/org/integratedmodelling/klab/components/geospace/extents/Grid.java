@@ -179,7 +179,7 @@ public class Grid extends Area implements IGrid {
 	/*
 	 * Make a trivial mask unless the shape differs from its envelope
 	 */
-	private Mask createMask(Shape shape) {
+	protected Mask createMask(Shape shape) {
 		return shape.equals(shape.getEnvelope().asShape()) ? new FullMask(shape) : new GridMask(this, shape);
 	}
 
@@ -610,7 +610,7 @@ public class Grid extends Area implements IGrid {
 	double cellHeight = 0.0;
 	double xOrigin = 0.0;
 	double yOrigin = 0.0;
-	Mask mask = null;
+	protected Mask mask = null;
 
 	/*
 	 * only set in a subgrid of the grid having the parent ID.
@@ -632,13 +632,17 @@ public class Grid extends Area implements IGrid {
 
 			@Override
 			public boolean hasNext() {
-				return n < getCellCount();
+				if (mask == null) return n < getCellCount();
+				long ofs = mask.nextActiveOffset(n);
+				return ofs >= 0;
 			}
 
 			@Override
 			public Cell next() {
-				// TODO move to next ACTIVE cell
-				return getCell(n++);
+				if (mask == null)
+					return getCell(n++);
+				n = mask.nextActiveOffset(n);
+				return getCell(n);
 			}
 
 			@Override

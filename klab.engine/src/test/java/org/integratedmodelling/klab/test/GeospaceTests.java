@@ -115,6 +115,7 @@ public class GeospaceTests {
 
 		Grid grid = (Grid) ((Space) tzScale.getSpace()).getGrid().get();
 
+		// Just visual check for now
 		for (String shape : subshapes) {
 
 			Shape subshape = Shape.create(shape);
@@ -122,17 +123,28 @@ public class GeospaceTests {
 
 			if (System.getProperty("visualize", "false").equals("true")) {
 
+				
 				SpatialDisplay display = new SpatialDisplay(tzScale.getSpace());
 
+				display.add(grid.getShape(), "original context " + grid.getXCells() + "," + grid.getYCells());
+				
+				for (Cell cell : grid) {
+					display.add(cell.getShape(), "cell #" + cell.getOffsetInGrid() + "@" + cell.getX() + "," + cell.getY());
+					break;
+				}
+
 				display.add(subshape, "subshape");
+				display.add(subgrid.getShape(), "subgrid snapped extent");
+				
 				for (Cell cell : subgrid) {
-					display.add(subgrid.getOriginalCell(cell), "original");
+					display.add(subgrid.getOriginalCell(cell), "original covered cell");
 				}
 
 				display.show();
 				// block to see the display
 				System.out.print("Press a key to continue...");
 				System.in.read();
+				System.out.println();
 			}
 
 		}
