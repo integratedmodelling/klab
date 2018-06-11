@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -96,7 +97,8 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		List<IState> inheritedStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
-
+		StateSummary stateSummary = null;
+		
 		// TODO
 		double selectFraction = Double.NaN;
 		// TODO
@@ -130,7 +132,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 		for (IState sourceState : sourceStates) {
 			/*
-			 * if the semantics is compatible, the instance inherits the state.
+			 * if the semantics is compatible with the quality's context, the instance inherits a view of each state.
 			 */
 			IConcept scontext = sourceState.getObservable().getContext();
 			// the first condition should never happen
@@ -151,9 +153,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}
 			// TODO
-			// limits = VisualizationFactory.getBoundaries(fractionState,
-			// scale.getIndex(transition),
-			// false);
+//			StateSummary stateSummary = Observations.INSTANCE.getStateSummary(fractionState, )
 		}
 
 		// build mask
@@ -175,9 +175,9 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 					double perc = 0;
 					if (topFraction) {
-						perc = (limits.getUpperBound() - d) / limits.getWidth();
+						perc = (stateSummary.getRange().get(1) - d) / (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
 					} else {
-						perc = (d - limits.getLowerBound()) / limits.getWidth();
+						perc = (d - stateSummary.getRange().get(0)) / (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
 					}
 					o = perc <= selectFraction;
 				}
@@ -228,6 +228,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 				for (IState inherited : inheritedStates) {
 					IState stateView = Observations.INSTANCE.getStateView(inherited, instanceScale, context);
 					((IRuntimeContext) context).link(instance, stateView);
+//					System.out.println("Average elevation = " + stateView.get(instanceScale.getLocator(0)));
 				}
 
 				ret.add(instance);

@@ -225,7 +225,8 @@ public class Subgrid extends Grid {
 	}
 
 	public Cell getOriginalCell(Cell cell) {
-		return ogrid.getCell(cell.getX() + xofs, cell.getY() + yofs);
+		// TODO check why we need to invert the Y dimension where getOriginalOffset works as is below.
+		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - 1 - (getYCells() - cell.getY() - 1));
 	}
 
 	public long getOriginalOffset(long offset) {
