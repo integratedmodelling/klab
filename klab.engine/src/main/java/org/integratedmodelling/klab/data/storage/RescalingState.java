@@ -36,12 +36,11 @@ public class RescalingState extends Observation implements IState {
 	Scale newScale;
 	Geometry originalGeometry;
 
-	List<IScaleMediator> mediatorsFrom = null;
-	List<IScaleMediator> mediatorsTo = null;
+	List<IScaleMediator> mediators = null;
 	boolean conformant = false;
 	private ObservationType observationType;
 	boolean redistribute = false;
-	
+
 	public RescalingState(IState state, Scale newScale, IRuntimeContext context) {
 		super(new Observable((Observable) state.getObservable()), newScale, context);
 		this.delegate = state;
@@ -55,21 +54,21 @@ public class RescalingState extends Observation implements IState {
 
 	public Object get(ILocator index) {
 
-		if (mediatorsFrom == null) {
-			mediatorsFrom = getMediators((Scale) this.delegate.getScale(), this.newScale);
+		if (mediators == null) {
+			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
 		}
 
 		if (conformant) {
 
 			long offset = this.newScale.getOffset(index);
 			long[] offsets = this.newScale.getExtentIndex(offset);
-			for (int i = 0; i < mediatorsFrom.size(); i++) {
-				offsets[i] = mediatorsFrom.get(i).mapConformant(offsets[i]);
+			for (int i = 0; i < mediators.size(); i++) {
+				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
 			}
 			return delegate.get(originalGeometry.locate(offsets));
 		}
 
-		return reduce(index, mediatorsFrom);
+		return reduce(index, mediators);
 	}
 
 	private List<IScaleMediator> getMediators(Scale original, Scale target) {
@@ -97,8 +96,8 @@ public class RescalingState extends Observation implements IState {
 
 	public long set(ILocator index, Object value) {
 
-		if (mediatorsTo == null) {
-			mediatorsTo = getMediators(this.newScale, (Scale) this.delegate.getScale());
+		if (mediators == null) {
+			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
 		}
 
 		long offset = this.newScale.getOffset(index);
@@ -106,14 +105,14 @@ public class RescalingState extends Observation implements IState {
 		if (conformant) {
 
 			long[] offsets = this.newScale.getExtentIndex(offset);
-			for (int i = 0; i < mediatorsTo.size(); i++) {
-				offsets[i] = mediatorsTo.get(i).mapConformant(offsets[i]);
+			for (int i = 0; i < mediators.size(); i++) {
+				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
 			}
 
 			delegate.set(originalGeometry.locate(offsets), value);
 
 		} else {
-			map(index, mediatorsTo, value);
+			map(index, mediators, value);
 		}
 
 		return offset;
@@ -215,9 +214,9 @@ public class RescalingState extends Observation implements IState {
 		List<List<ExtentLocation>> locations = new ArrayList<>();
 
 		double sum;
-		Map<Object, Integer> dominance = new HashMap<>();
+		Map<Object, Double> dominance = new HashMap<>();
 		int nodata = 0;
-		int count = 0;
+		double count = 0;
 
 		Aggregator() {
 			for (int i = 0; i < delegate.getScale().getExtentCount(); i++) {
@@ -237,16 +236,15 @@ public class RescalingState extends Observation implements IState {
 		}
 
 		private Object computeAggregation() {
-			
+
 			Object ret = null;
-			
+
 			switch (observationType) {
 			case CLASSIFICATION:
 			case VERIFICATION:
 				// TODO handle weight
-				int cur = 0;
+				double cur = 0;
 				for (Object o : dominance.keySet()) {
-					;
 					if (ret == null || dominance.get(o) > cur) {
 						ret = o;
 						cur = dominance.get(o);
@@ -255,12 +253,12 @@ public class RescalingState extends Observation implements IState {
 				break;
 			case QUANTIFICATION:
 				// TODO handle weight
-				ret = redistribute ? sum : sum/count;
+				ret = redistribute ? sum : sum / count;
 				break;
 			default:
 				break;
 			}
-			
+
 			return ret;
 		}
 
@@ -274,19 +272,17 @@ public class RescalingState extends Observation implements IState {
 			switch (observationType) {
 			case CLASSIFICATION:
 			case VERIFICATION:
-				// TODO handle weight
-				Integer n = dominance.get(object);
-				dominance.put(object, n == null ? 1 : n++);
+				Double n = dominance.get(object);
+				dominance.put(object, n == null ? weight : n + weight);
 				break;
 			case QUANTIFICATION:
-				// TODO handle weight
-				sum += ((Number) object).doubleValue();
+				sum += ((Number) object).doubleValue() * weight;
+				count += weight;
 				break;
 			default:
 				return;
 			}
 
-			count++;
 		}
 
 		public void add(int dimension, long offset, Double weight) {

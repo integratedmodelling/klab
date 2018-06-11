@@ -138,7 +138,7 @@ public class Subgrid extends Grid {
 		this.xofs = xofs;
 		this.yofs = yofs;
 		this.projection = (Projection) originalGrid.getProjection();
-		this.mask = createMask(shape);
+		this.grid.createMask(shape);
 	}
 
 	@Override

@@ -304,6 +304,8 @@ public class Rasterizer<T> {
 
 	private void drawGeometry(Geometry geometry, Color color) {
 
+		graphics.setColor(color);
+		
 		Coordinate[] coords = geometry.getCoordinates();
 
 		// enlarge if needed

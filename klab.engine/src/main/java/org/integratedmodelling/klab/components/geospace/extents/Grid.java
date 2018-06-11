@@ -88,7 +88,8 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public long nextActiveOffset(long fromOffset) {
-			return delegate == null ? fromOffset + 1 : delegate.nextActiveOffset(fromOffset);
+			return delegate == null ? (fromOffset == Grid.this.getCellCount() ? -1 : fromOffset + 1)
+					: delegate.nextActiveOffset(fromOffset);
 		}
 
 		@Override
@@ -179,8 +180,9 @@ public class Grid extends Area implements IGrid {
 	/*
 	 * Make a trivial mask unless the shape differs from its envelope
 	 */
-	protected Mask createMask(Shape shape) {
-		return shape.equals(shape.getEnvelope().asShape()) ? new FullMask(shape) : new GridMask(this, shape);
+	public Mask createMask(Shape shape) {
+		return this.mask = getCellCount() < 36 || shape.equals(shape.getEnvelope().asShape()) ? new FullMask(shape)
+				: new GridMask(this, shape);
 	}
 
 	/**
@@ -632,7 +634,8 @@ public class Grid extends Area implements IGrid {
 
 			@Override
 			public boolean hasNext() {
-				if (mask == null) return n < getCellCount();
+				if (mask == null)
+					return n < getCellCount();
 				long ofs = mask.nextActiveOffset(n);
 				return ofs >= 0;
 			}
