@@ -229,7 +229,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 					IState stateView = Observations.INSTANCE.getStateView(inherited, instanceScale, context);
 					((IRuntimeContext) context).link(instance, stateView);
 					// TODO remove
-					System.out.println("value of shit is " + stateView.get(instanceScale.getLocator(0)));
+//					System.out.println("value of shit is " + stateView.get(instanceScale.getLocator(0)));
 				}
 
 				ret.add(instance);

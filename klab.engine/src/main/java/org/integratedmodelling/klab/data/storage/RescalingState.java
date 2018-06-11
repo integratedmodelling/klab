@@ -1,14 +1,13 @@
 package org.integratedmodelling.klab.data.storage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -16,13 +15,14 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * The state we wrap has the desired semantics but a different scale. We use
- * {@link IScaleMediator mediators} to remap value set and get. Mediators are
- * built as needed.
+ * {@link IScaleMediator mediators} to remap value setting and getting.
+ * Mediators are built as needed.
  * 
  * @author Ferd
  *
@@ -58,7 +58,6 @@ public class RescalingState extends Observation implements IState {
 				offsets[i] = mediatorsFrom.get(i).mapConformant(offsets[i]);
 			}
 			return delegate.get(originalGeometry.locate(offsets));
-
 		}
 
 		return reduce(index, mediatorsFrom);
@@ -116,31 +115,7 @@ public class RescalingState extends Observation implements IState {
 		return false;
 	}
 
-	class Aggregator {
-
-		Object aggregate() {
-			return null;
-		}
-
-		public void add(int dimension, long offset, Double weight) {
-			// TODO Auto-generated method stub
-
-		}
-	}
-
-	class Propagator {
-
-		Object propagate(Object value) {
-			return null;
-		}
-
-		public void add(int dimension, long offset, Double weight) {
-			// TODO Auto-generated method stub
-
-		}
-	}
-
-	private Object map(ILocator locator, List<IScaleMediator> mediators, Object value) {
+	private void map(ILocator locator, List<IScaleMediator> mediators, Object value) {
 
 		Propagator propagator = new Propagator();
 		for (int i = 0; i < mediators.size(); i++) {
@@ -148,8 +123,7 @@ public class RescalingState extends Observation implements IState {
 			// mediator.map(delegate.getScale().getOffset(locator))) {
 			// }
 		}
-		return propagator.propagate(value);
-
+		propagator.propagate(value);
 	}
 
 	private Object reduce(ILocator locator, List<IScaleMediator> mediators) {
@@ -162,6 +136,117 @@ public class RescalingState extends Observation implements IState {
 		}
 		return aggregator.aggregate();
 
+	}
+
+	static class ExtentLocation {
+		long offset;
+		double weight;
+
+		ExtentLocation(long offset, double weight) {
+			this.offset = offset;
+			this.weight = weight;
+		}
+	}
+
+	/**
+	 * Generate the scale-wide cartesian product of the touched extent offsets,
+	 * multiplying the individual weights.
+	 * 
+	 * @param data
+	 * @return
+	 */
+	Iterator<Pair<long[], Double>> cartesianProductIterator(List<List<ExtentLocation>> data) {
+
+		long[] sizes = new long[data.size()];
+		for (int i = 0; i < data.size(); i++) {
+			sizes[i] = data.get(i).size();
+		}
+		final MultidimensionalCursor cursor = new MultidimensionalCursor();
+		cursor.defineDimensions(sizes);
+
+		return new Iterator<Pair<long[], Double>>() {
+
+			long current = 0;
+			long[] ret = new long[data.size()];
+
+			@Override
+			public boolean hasNext() {
+				return current < (cursor.getMultiplicity() - 1);
+			}
+
+			@Override
+			public Pair<long[], Double> next() {
+
+				long[] offsets = cursor.getElementIndexes(current);
+				double weight = 1.0;
+
+				for (int i = 0; i < offsets.length; i++) {
+					ret[i] = data.get(i).get((int) offsets[i]).offset;
+					weight *= data.get(i).get((int) offsets[i]).weight;
+				}
+
+				current++;
+				return new Pair<>(ret, weight);
+			}
+		};
+	}
+
+	/*
+	 * Aggregate contents of original state at the cartesian product of the
+	 * collected dimensions.
+	 */
+	class Aggregator {
+
+		List<List<ExtentLocation>> locations = new ArrayList<>();
+
+		Aggregator() {
+			for (int i = 0; i < delegate.getScale().getExtentCount(); i++) {
+				locations.add(new ArrayList<>());
+			}
+		}
+
+		Object aggregate() {
+
+			for (Iterator<Pair<long[], Double>> it = cartesianProductIterator(locations); it.hasNext();) {
+				Pair<long[], Double> index = it.next();
+				if (index.getSecond() > 0) {
+
+				}
+			}
+			return null;
+		}
+
+		public void add(int dimension, long offset, Double weight) {
+			locations.get(dimension).add(new ExtentLocation(offset, weight));
+		}
+	}
+
+	/*
+	 * Propagate value to original state to the cartesian product of the collected
+	 * dimensions.
+	 */
+	class Propagator {
+
+		List<List<ExtentLocation>> locations = new ArrayList<>();
+
+		Propagator() {
+			for (int i = 0; i < delegate.getScale().getExtentCount(); i++) {
+				locations.add(new ArrayList<>());
+			}
+		}
+
+		void propagate(Object value) {
+			for (Iterator<Pair<long[], Double>> it = cartesianProductIterator(locations); it.hasNext();) {
+				Pair<long[], Double> index = it.next();
+				if (index.getSecond() > 0) {
+
+				}
+			}
+		}
+
+		public void add(int dimension, long offset, Double weight) {
+			locations.get(dimension).add(new ExtentLocation(offset, weight));
+		}
 	}
 
 	// Remaining functionality is delegated to original state
