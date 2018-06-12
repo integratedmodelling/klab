@@ -174,19 +174,6 @@ public interface IModel
 	 */
 	IMetadata getMetadata();
 
-	// /**
-	// * If there is a contextualizer clause ('using') and it is not used simply as
-	// an alias for a
-	// * primary resource (in which case it will be returned by {@link
-	// #getResource()}, return it here.
-	// * Having a resource here usually means a post-processing call,
-	// classification, lookup table or
-	// * URN.
-	// *
-	// * @return the post-processor resource, if any.
-	// */
-	// Optional<IResource> getContextualizerResource();
-
 	/**
 	 * If true, the model or the namespace containing it have been declared private,
 	 * and only models in the same namespace can use it for resolution.
@@ -194,5 +181,15 @@ public interface IModel
 	 * @return true if private
 	 */
 	boolean isPrivate();
+
+	/**
+	 * If true, the model is semantically and syntactically valid but has been
+	 * deactivated (voided) either explicitly by the user or by the validator after
+	 * finding unavailable resources, and will not be used, selected or validated
+	 * further.
+	 * 
+	 * @return true if inactive
+	 */
+	boolean isInactive();
 
 }

@@ -27,7 +27,13 @@ ModelStatement:
 ModelBodyStatement:
 	(instantiator?='each')? 
 		(
-			(urn=Urn | function=Function | number=Number | boolean=('true' | 'false') | concept=SimpleObservableSemantics)
+			(
+				(urns+=Urn (',' urns+=Urn)*) | 
+				function=Function | 
+				number=Number | 
+				boolean=('true' | 'false') | 
+				concept=SimpleObservableSemantics
+			)
 			 'as'
 		)? 
 		/*

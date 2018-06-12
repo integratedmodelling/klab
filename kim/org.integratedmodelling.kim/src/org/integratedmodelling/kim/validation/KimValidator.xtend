@@ -133,28 +133,29 @@ class KimValidator extends AbstractKimValidator {
 
 		var EObject mo = urn.eContainer?.eContainer;
 		var ModelStatement model = if(mo !== null && mo instanceof ModelStatement) mo as ModelStatement else null;
-
-		val UrnDescriptor ud = if(model.body.urn !== null) Kim.INSTANCE.getUrnDescriptor(model.body.urn.name) else null;
-		if (ud === null || ud.isDead || !ud.isAccessible) {
-			if (ud !== null) {
-				warning('URN ' + model.body.urn.name + (if (ud.isDead) {
-					' is not functional at the moment'
+		for (u : model.body.urns) {
+			val UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(u.name);
+			if (ud === null || ud.isDead || !ud.isAccessible) {
+				if (ud !== null) {
+					warning('URN ' + u.name + (if (ud.isDead) {
+						' is not functional at the moment'
+					} else {
+						' is not authorized for the current user'
+					}) + (if (model === null) {
+						''
+					} else {
+						': the containing model has been deactivated'
+					}), urn, null, PROBLEMATIC_URN)
 				} else {
-					' is not authorized for the current user'
-				}) + (if (model === null) {
-					''
-				} else {
-					': the containing model has been deactivated'
-				}), urn, null, PROBLEMATIC_URN)
-			} else {
-				warning('URN is undefined' + (if (model === null) {
-					''
-				} else {
-					': the containing model has been deactivated'
-				}), urn, null, PROBLEMATIC_URN)
-			}
-			if (model !== null) {
-				model.inactive = true;
+					warning('URN is undefined' + (if (model === null) {
+						''
+					} else {
+						': the containing model has been deactivated'
+					}), urn, null, PROBLEMATIC_URN)
+				}
+				if (model !== null) {
+					model.inactive = true;
+				}
 			}
 		}
 	}
@@ -354,9 +355,11 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				// data source - function or literal/remote URN
-				if (model.urn !== null) {
-					descriptor.resourceUrn = model.urn.name
-				} else if (model.function !== null) {
+				for (urn : model.urns) {
+					descriptor.resourceUrns.add(urn.name)
+				}
+				
+				if (model.function !== null) {
 					descriptor.resourceFunction = new KimServiceCall(model.function, descriptor)
 					for (notification : (descriptor.resourceFunction.get() as KimServiceCall).validateUsage(null)) {
 						notify(notification, model.function, KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION)

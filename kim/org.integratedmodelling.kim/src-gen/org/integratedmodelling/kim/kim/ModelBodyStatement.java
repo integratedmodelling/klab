@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isInstantiator <em>Instantiator</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getUrns <em>Urns</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getNumber <em>Number</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getBoolean <em>Boolean</em>}</li>
@@ -71,30 +71,20 @@ public interface ModelBodyStatement extends EObject
   void setInstantiator(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Urn</b></em>' containment reference.
+   * Returns the value of the '<em><b>Urns</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Urn}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Urn</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Urns</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Urn</em>' containment reference.
-   * @see #setUrn(Urn)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Urn()
+   * @return the value of the '<em>Urns</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Urns()
    * @model containment="true"
    * @generated
    */
-  Urn getUrn();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getUrn <em>Urn</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Urn</em>' containment reference.
-   * @see #getUrn()
-   * @generated
-   */
-  void setUrn(Urn value);
+  EList<Urn> getUrns();
 
   /**
    * Returns the value of the '<em><b>Function</b></em>' containment reference.

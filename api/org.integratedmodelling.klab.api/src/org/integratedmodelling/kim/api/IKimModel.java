@@ -22,7 +22,7 @@ public interface IKimModel extends IKimActiveStatement {
 
     Type getType();
 
-    Optional<String> getResourceUrn();
+    List<String> getResourceUrns();
 
     boolean isAssessmentModel();
 

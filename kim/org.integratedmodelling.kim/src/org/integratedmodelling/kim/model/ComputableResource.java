@@ -42,6 +42,18 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, Type>> requiredResourceNames = new ArrayList<>();
 	private String targetId;
+	
+	/**
+	 * If not empty, this is the first of a chain (which cannot be hierarchical). For now
+	 * this only happens with URNs.
+	 */
+	private List<ComputableResource> siblings = new ArrayList<>();
+	
+	/**
+	 * Slot to save a validated resource so that it won't need to be validated
+	 * twice. Shouldn't be serialized.
+	 */
+	private transient Object validatedResource;
 
 	public void setTarget(IObservable target) {
 		this.target = target;
@@ -292,4 +304,25 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public boolean isMediation() {
 		return this.mediation;
 	}
+
+	public Object getValidatedResource() {
+		return validatedResource;
+	}
+
+	public void setValidatedResource(Object validatedResource) {
+		this.validatedResource = validatedResource;
+	}
+
+	/**
+	 * Chain a new resource to the current one. Only happens with URNs so far.
+	 * @param validate
+	 */
+	public void chainResource(ComputableResource resource) {
+		siblings.add(resource);
+	}
+
+	public List<ComputableResource> getSiblings() {
+		return siblings;
+	}
+	
 }

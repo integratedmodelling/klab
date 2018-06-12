@@ -683,7 +683,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModelBodyStatement_Urn()
+  public EReference getModelBodyStatement_Urns()
   {
     return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(1);
   }
@@ -4388,7 +4388,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     modelBodyStatementEClass = createEClass(MODEL_BODY_STATEMENT);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__INSTANTIATOR);
-    createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__URN);
+    createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__URNS);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__FUNCTION);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__NUMBER);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__BOOLEAN);
@@ -4857,7 +4857,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(modelBodyStatementEClass, ModelBodyStatement.class, "ModelBodyStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getModelBodyStatement_Instantiator(), ecorePackage.getEBoolean(), "instantiator", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getModelBodyStatement_Urn(), this.getUrn(), null, "urn", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getModelBodyStatement_Urns(), this.getUrn(), null, "urns", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Function(), this.getFunction(), null, "function", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Number(), this.getNumber(), null, "number", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelBodyStatement_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

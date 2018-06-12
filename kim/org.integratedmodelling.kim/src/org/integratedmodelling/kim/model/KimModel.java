@@ -46,7 +46,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	// next four represent the datasource/inline value/URN given before 'as
 	// <observable>'. They are
 	// translated into the one IResource in IModel.
-	private String resourceUrn;
+	private List<String> resourceUrns = new ArrayList<>();
 	private IServiceCall resourceFunction;
 	private Object inlineValue;
 
@@ -173,12 +173,12 @@ public class KimModel extends KimStatement implements IKimModel {
 	}
 
 	@Override
-	public Optional<String> getResourceUrn() {
-		return this.resourceUrn == null ? Optional.empty() : Optional.of(this.resourceUrn);
+	public List<String> getResourceUrns() {
+		return this.resourceUrns;
 	}
 
-	public void setResourceUrn(String resourceUrn) {
-		this.resourceUrn = resourceUrn;
+	public void setResourceUrn(List<String> resourceUrn) {
+		this.resourceUrns = resourceUrn;
 	}
 
 	@Override

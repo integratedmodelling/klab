@@ -43,7 +43,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isInstantiator <em>Instantiator</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getUrns <em>Urns</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getNumber <em>Number</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getBoolean <em>Boolean</em>}</li>
@@ -88,14 +88,14 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
   protected boolean instantiator = INSTANTIATOR_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getUrn() <em>Urn</em>}' containment reference.
+   * The cached value of the '{@link #getUrns() <em>Urns</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getUrn()
+   * @see #getUrns()
    * @generated
    * @ordered
    */
-  protected Urn urn;
+  protected EList<Urn> urns;
 
   /**
    * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
@@ -366,47 +366,13 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public Urn getUrn()
+  public EList<Urn> getUrns()
   {
-    return urn;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetUrn(Urn newUrn, NotificationChain msgs)
-  {
-    Urn oldUrn = urn;
-    urn = newUrn;
-    if (eNotificationRequired())
+    if (urns == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__URN, oldUrn, newUrn);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      urns = new EObjectContainmentEList<Urn>(Urn.class, this, KimPackage.MODEL_BODY_STATEMENT__URNS);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setUrn(Urn newUrn)
-  {
-    if (newUrn != urn)
-    {
-      NotificationChain msgs = null;
-      if (urn != null)
-        msgs = ((InternalEObject)urn).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__URN, null, msgs);
-      if (newUrn != null)
-        msgs = ((InternalEObject)newUrn).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__URN, null, msgs);
-      msgs = basicSetUrn(newUrn, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__URN, newUrn, newUrn));
+    return urns;
   }
 
   /**
@@ -940,8 +906,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case KimPackage.MODEL_BODY_STATEMENT__URN:
-        return basicSetUrn(null, msgs);
+      case KimPackage.MODEL_BODY_STATEMENT__URNS:
+        return ((InternalEList<?>)getUrns()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
         return basicSetFunction(null, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
@@ -980,8 +946,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     {
       case KimPackage.MODEL_BODY_STATEMENT__INSTANTIATOR:
         return isInstantiator();
-      case KimPackage.MODEL_BODY_STATEMENT__URN:
-        return getUrn();
+      case KimPackage.MODEL_BODY_STATEMENT__URNS:
+        return getUrns();
       case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
         return getFunction();
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
@@ -1034,8 +1000,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__INSTANTIATOR:
         setInstantiator((Boolean)newValue);
         return;
-      case KimPackage.MODEL_BODY_STATEMENT__URN:
-        setUrn((Urn)newValue);
+      case KimPackage.MODEL_BODY_STATEMENT__URNS:
+        getUrns().clear();
+        getUrns().addAll((Collection<? extends Urn>)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
         setFunction((Function)newValue);
@@ -1110,8 +1077,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__INSTANTIATOR:
         setInstantiator(INSTANTIATOR_EDEFAULT);
         return;
-      case KimPackage.MODEL_BODY_STATEMENT__URN:
-        setUrn((Urn)null);
+      case KimPackage.MODEL_BODY_STATEMENT__URNS:
+        getUrns().clear();
         return;
       case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
         setFunction((Function)null);
@@ -1180,8 +1147,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     {
       case KimPackage.MODEL_BODY_STATEMENT__INSTANTIATOR:
         return instantiator != INSTANTIATOR_EDEFAULT;
-      case KimPackage.MODEL_BODY_STATEMENT__URN:
-        return urn != null;
+      case KimPackage.MODEL_BODY_STATEMENT__URNS:
+        return urns != null && !urns.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__FUNCTION:
         return function != null;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:

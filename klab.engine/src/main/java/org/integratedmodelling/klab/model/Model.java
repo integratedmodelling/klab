@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.ComputableResource;
@@ -68,7 +69,7 @@ public class Model extends KimObject implements IModel {
 		this.namespace = namespace;
 		this.isPrivate = model.isPrivate();
 		this.instantiator = model.isInstantiator();
-		this.inactive = model.isInactive();
+		this.setInactive(model.isInactive());
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
@@ -85,18 +86,44 @@ public class Model extends KimObject implements IModel {
 			dependencies.add(Observables.INSTANCE.declare(dependency, monitor));
 		}
 
-		if (model.getResourceUrn().isPresent()) {
-			this.resources.add(new ComputableResource(model.getResourceUrn().get()));
+		/*
+		 * TODO establish typechain for progressive checking until final action
+		 */
+
+		if (!model.getResourceUrns().isEmpty()) {
+			ComputableResource urnResource = validate(new ComputableResource(model.getResourceUrns().get(0)), monitor);
+			for (int i = 1; i < model.getResourceUrns().size(); i++) {
+				urnResource.chainResource(validate(new ComputableResource(model.getResourceUrns().get(i)), monitor));
+			}
+			this.resources.add(urnResource);
 		} else if (model.getResourceFunction().isPresent()) {
-			this.resources.add(new ComputableResource(model.getResourceFunction().get()));
+			this.resources.add(validate(new ComputableResource(model.getResourceFunction().get()), monitor));
 		} else if (model.getInlineValue().isPresent()) {
-			this.resources.add(new ComputableResource(model.getInlineValue()));
+			this.resources.add(validate(new ComputableResource(model.getInlineValue()), monitor));
 		}
 
-		this.resources.addAll(model.getContextualization());
+		/*
+		 * resources
+		 */
+		for (IComputableResource resource : model.getContextualization()) {
+			this.resources.add(validate((ComputableResource) resource, monitor));
+		}
 
-		// actions
+		/*
+		 * actions
+		 */
 		this.behavior = new Behavior(model.getBehavior(), this);
+
+		/*
+		 * validate all action
+		 */
+		for (IAction action : this.behavior) {
+			validateAction(action, monitor);
+		}
+
+		/*
+		 * TODO validate final output of typechain vs. observable and mode
+		 */
 
 		if (model.getMetadata() != null) {
 			setMetadata(new Metadata(model.getMetadata()));
@@ -108,6 +135,39 @@ public class Model extends KimObject implements IModel {
 		if (model.getDocumentationMetadata() != null) {
 			this.documentation = Optional.of(new Documentation(model.getDocumentationMetadata()));
 		}
+	}
+
+	/**
+	 * Validate URNs, tables, classifications, inline values against network,
+	 * observables etc. Called in sequence so it should maintain the chain of
+	 * processing and validate each step, until the final type that should be
+	 * validated by the upstream constructor.
+	 * <p>
+	 * Functions should validate all required parameters vs. outputs and
+	 * dependencies
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	private ComputableResource validate(ComputableResource resource, IMonitor monitor) {
+
+		// TODO Auto-generated method stub
+		if (resource.getClassification() != null) {
+
+		} else if (resource.getLookupTable() != null) {
+
+		}
+		return resource;
+	}
+
+	/**
+	 * 
+	 * @param action
+	 * @param monitor
+	 */
+	private void validateAction(IAction action, IMonitor monitor) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public String toString() {
@@ -213,10 +273,6 @@ public class Model extends KimObject implements IModel {
 		this.dependencies = dependencies;
 	}
 
-	// public void setResource(Optional<IResource> resource) {
-	// this.resource = resource;
-	// }
-
 	public void setDocumentation(Optional<IDocumentation> documentation) {
 		this.documentation = documentation;
 	}
@@ -318,6 +374,15 @@ public class Model extends KimObject implements IModel {
 	public List<IComputableResource> getResources() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isInactive() {
+		return inactive;
+	}
+
+	public void setInactive(boolean inactive) {
+		this.inactive = inactive;
 	}
 
 }

@@ -175,47 +175,44 @@ public class KimValidator extends AbstractKimValidator {
       _xifexpression = null;
     }
     ModelStatement model = _xifexpression;
-    Kim.UrnDescriptor _xifexpression_1 = null;
-    Urn _urn = model.getBody().getUrn();
-    boolean _tripleNotEquals = (_urn != null);
-    if (_tripleNotEquals) {
-      _xifexpression_1 = Kim.INSTANCE.getUrnDescriptor(model.getBody().getUrn().getName());
-    } else {
-      _xifexpression_1 = null;
-    }
-    final Kim.UrnDescriptor ud = _xifexpression_1;
-    if ((((ud == null) || ud.isDead()) || (!ud.isAccessible()))) {
-      if ((ud != null)) {
-        String _name = model.getBody().getUrn().getName();
-        String _plus = ("URN " + _name);
-        String _xifexpression_2 = null;
-        boolean _isDead = ud.isDead();
-        if (_isDead) {
-          _xifexpression_2 = " is not functional at the moment";
-        } else {
-          _xifexpression_2 = " is not authorized for the current user";
+    EList<Urn> _urns = model.getBody().getUrns();
+    for (final Urn u : _urns) {
+      {
+        final Kim.UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(u.getName());
+        if ((((ud == null) || ud.isDead()) || (!ud.isAccessible()))) {
+          if ((ud != null)) {
+            String _name = u.getName();
+            String _plus = ("URN " + _name);
+            String _xifexpression_1 = null;
+            boolean _isDead = ud.isDead();
+            if (_isDead) {
+              _xifexpression_1 = " is not functional at the moment";
+            } else {
+              _xifexpression_1 = " is not authorized for the current user";
+            }
+            String _plus_1 = (_plus + _xifexpression_1);
+            String _xifexpression_2 = null;
+            if ((model == null)) {
+              _xifexpression_2 = "";
+            } else {
+              _xifexpression_2 = ": the containing model has been deactivated";
+            }
+            String _plus_2 = (_plus_1 + _xifexpression_2);
+            this.warning(_plus_2, urn, null, KimValidator.PROBLEMATIC_URN);
+          } else {
+            String _xifexpression_3 = null;
+            if ((model == null)) {
+              _xifexpression_3 = "";
+            } else {
+              _xifexpression_3 = ": the containing model has been deactivated";
+            }
+            String _plus_3 = ("URN is undefined" + _xifexpression_3);
+            this.warning(_plus_3, urn, null, KimValidator.PROBLEMATIC_URN);
+          }
+          if ((model != null)) {
+            model.setInactive(true);
+          }
         }
-        String _plus_1 = (_plus + _xifexpression_2);
-        String _xifexpression_3 = null;
-        if ((model == null)) {
-          _xifexpression_3 = "";
-        } else {
-          _xifexpression_3 = ": the containing model has been deactivated";
-        }
-        String _plus_2 = (_plus_1 + _xifexpression_3);
-        this.warning(_plus_2, urn, null, KimValidator.PROBLEMATIC_URN);
-      } else {
-        String _xifexpression_4 = null;
-        if ((model == null)) {
-          _xifexpression_4 = "";
-        } else {
-          _xifexpression_4 = ": the containing model has been deactivated";
-        }
-        String _plus_3 = ("URN is undefined" + _xifexpression_4);
-        this.warning(_plus_3, urn, null, KimValidator.PROBLEMATIC_URN);
-      }
-      if ((model != null)) {
-        model.setInactive(true);
       }
     }
   }
@@ -439,33 +436,31 @@ public class KimValidator extends AbstractKimValidator {
               descriptor.setInterpreter(true);
               descriptor.setReinterpretingRole(interpretedRole.getMain());
             }
-            Urn _urn = model.getUrn();
-            boolean _tripleNotEquals_2 = (_urn != null);
+            EList<Urn> _urns = model.getUrns();
+            for (final Urn urn : _urns) {
+              descriptor.getResourceUrns().add(urn.getName());
+            }
+            Function _function = model.getFunction();
+            boolean _tripleNotEquals_2 = (_function != null);
             if (_tripleNotEquals_2) {
-              descriptor.setResourceUrn(model.getUrn().getName());
+              Function _function_1 = model.getFunction();
+              KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
+              descriptor.setResourceFunction(_kimServiceCall);
+              IServiceCall _get = descriptor.getResourceFunction().get();
+              List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
+              for (final KimNotification notification : _validateUsage) {
+                this.notify(notification, model.getFunction(), KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION);
+              }
             } else {
-              Function _function = model.getFunction();
-              boolean _tripleNotEquals_3 = (_function != null);
+              String _boolean = model.getBoolean();
+              boolean _tripleNotEquals_3 = (_boolean != null);
               if (_tripleNotEquals_3) {
-                Function _function_1 = model.getFunction();
-                KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
-                descriptor.setResourceFunction(_kimServiceCall);
-                IServiceCall _get = descriptor.getResourceFunction().get();
-                List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
-                for (final KimNotification notification : _validateUsage) {
-                  this.notify(notification, model.getFunction(), KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION);
-                }
+                descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
               } else {
-                String _boolean = model.getBoolean();
-                boolean _tripleNotEquals_4 = (_boolean != null);
+                org.integratedmodelling.kim.kim.Number _number = model.getNumber();
+                boolean _tripleNotEquals_4 = (_number != null);
                 if (_tripleNotEquals_4) {
-                  descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
-                } else {
-                  org.integratedmodelling.kim.kim.Number _number = model.getNumber();
-                  boolean _tripleNotEquals_5 = (_number != null);
-                  if (_tripleNotEquals_5) {
-                    descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
-                  }
+                  descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
                 }
               }
             }
@@ -512,8 +507,8 @@ public class KimValidator extends AbstractKimValidator {
               _contextualization.add(_computableResource);
             }
             Classification _classification_1 = model.getClassification();
-            boolean _tripleNotEquals_6 = (_classification_1 != null);
-            if (_tripleNotEquals_6) {
+            boolean _tripleNotEquals_5 = (_classification_1 != null);
+            if (_tripleNotEquals_5) {
               List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
               Classification _classification_2 = model.getClassification();
               boolean _isDiscretization = model.isDiscretization();
@@ -521,8 +516,8 @@ public class KimValidator extends AbstractKimValidator {
               _contextualization_1.add(_computableResource_1);
             }
             Table _lookupTable = model.getLookupTable();
-            boolean _tripleNotEquals_7 = (_lookupTable != null);
-            if (_tripleNotEquals_7) {
+            boolean _tripleNotEquals_6 = (_lookupTable != null);
+            if (_tripleNotEquals_6) {
               List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
               Table _lookupTable_1 = model.getLookupTable();
               EList<String> _lookupTableArgs = model.getLookupTableArgs();
@@ -530,24 +525,24 @@ public class KimValidator extends AbstractKimValidator {
               _contextualization_2.add(_computableResource_2);
             }
             String _lookupTableId = model.getLookupTableId();
-            boolean _tripleNotEquals_8 = (_lookupTableId != null);
-            if (_tripleNotEquals_8) {
+            boolean _tripleNotEquals_7 = (_lookupTableId != null);
+            if (_tripleNotEquals_7) {
               List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
               String _lookupTableId_1 = model.getLookupTableId();
               ComputableResource _computableResource_3 = new ComputableResource(descriptor, _lookupTableId_1);
               _contextualization_3.add(_computableResource_3);
             }
             String _name_1 = model.getName();
-            boolean _tripleNotEquals_9 = (_name_1 != null);
-            if (_tripleNotEquals_9) {
+            boolean _tripleNotEquals_8 = (_name_1 != null);
+            if (_tripleNotEquals_8) {
               descriptor.name = model.getName();
             } else {
               int _size_1 = descriptor.getObservables().size();
               boolean _greaterThan_1 = (_size_1 > 0);
               if (_greaterThan_1) {
                 String _formalName = descriptor.getObservables().get(0).getFormalName();
-                boolean _tripleNotEquals_10 = (_formalName != null);
-                if (_tripleNotEquals_10) {
+                boolean _tripleNotEquals_9 = (_formalName != null);
+                if (_tripleNotEquals_9) {
                   descriptor.name = observables.get(0).getFormalName();
                 } else {
                   String _xifexpression_5 = null;
@@ -577,15 +572,15 @@ public class KimValidator extends AbstractKimValidator {
               ((KimObservable) _get_2).setFormalName(descriptor.name);
             }
             Metadata _metadata = model.getMetadata();
-            boolean _tripleNotEquals_11 = (_metadata != null);
-            if (_tripleNotEquals_11) {
+            boolean _tripleNotEquals_10 = (_metadata != null);
+            if (_tripleNotEquals_10) {
               Metadata _metadata_1 = model.getMetadata();
               KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
               descriptor.setMetadata(_kimMetadata);
             }
             Documentation _documentation = model.getDocumentation();
-            boolean _tripleNotEquals_12 = (_documentation != null);
-            if (_tripleNotEquals_12) {
+            boolean _tripleNotEquals_11 = (_documentation != null);
+            if (_tripleNotEquals_11) {
             }
             int n = 0;
             List<IKimScope> _children = ns.getChildren();

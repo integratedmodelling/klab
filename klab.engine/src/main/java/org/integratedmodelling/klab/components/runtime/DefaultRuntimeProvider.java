@@ -198,6 +198,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			} catch (KlabValidationException e) {
 				throw new IllegalArgumentException(e);
 			}
+		} else if (resource.getClassification() != null) {
+			
 		}
 
 		// temp

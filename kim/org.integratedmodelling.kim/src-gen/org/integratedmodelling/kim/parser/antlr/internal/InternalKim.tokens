@@ -6,7 +6,7 @@
 ')'=37
 '*'=36
 '+'=226
-','=25
+','=22
 '-'=227
 '.'=90
 '/'=89
@@ -35,7 +35,7 @@
 'any'=93
 'applies'=165
 'area'=201
-'as'=24
+'as'=25
 'assess'=69
 'assessment'=123
 'at'=180
@@ -99,7 +99,7 @@
 'exposing'=147
 'extends'=92
 'extent'=174
-'false'=23
+'false'=24
 'float'=231
 'follows'=133
 'for'=101
@@ -195,7 +195,7 @@
 'thing'=215
 'to'=32
 'transition'=185
-'true'=22
+'true'=23
 'type'=125
 'uncertainty'=124
 'unknown'=47

@@ -4,7 +4,7 @@ worldview im;
 	name = "tests.core.instantiators-1",
 	description  = "Spatial instantiation through feature extraction",
 	observations = ("earth:Mountain")
-	// TODO assertions
+	// TODO assertions - also ensure all mountains have elevation ~3000+
 )
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");

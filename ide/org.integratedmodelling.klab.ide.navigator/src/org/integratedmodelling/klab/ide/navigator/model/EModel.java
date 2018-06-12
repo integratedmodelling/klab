@@ -45,8 +45,8 @@ public class EModel extends EKimObject implements IKimModel {
 		return delegate.getType();
 	}
 
-	public Optional<String> getResourceUrn() {
-		return delegate.getResourceUrn();
+	public List<String> getResourceUrns() {
+		return delegate.getResourceUrns();
 	}
 
 	public boolean isAssessmentModel() {

@@ -192,6 +192,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelStatementAccess().getGroup(), "rule__ModelStatement__Group__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup(), "rule__ModelBodyStatement__Group__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_1(), "rule__ModelBodyStatement__Group_1__0");
+					put(grammarAccess.getModelBodyStatementAccess().getGroup_1_0_0(), "rule__ModelBodyStatement__Group_1_0_0__0");
+					put(grammarAccess.getModelBodyStatementAccess().getGroup_1_0_0_1(), "rule__ModelBodyStatement__Group_1_0_0_1__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_2_1(), "rule__ModelBodyStatement__Group_2_1__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_2_1_1(), "rule__ModelBodyStatement__Group_2_1_1__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_3(), "rule__ModelBodyStatement__Group_3__0");
@@ -494,7 +496,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelStatementAccess().getModelAssignment_2(), "rule__ModelStatement__ModelAssignment_2");
 					put(grammarAccess.getModelStatementAccess().getBodyAssignment_3(), "rule__ModelStatement__BodyAssignment_3");
 					put(grammarAccess.getModelBodyStatementAccess().getInstantiatorAssignment_0(), "rule__ModelBodyStatement__InstantiatorAssignment_0");
-					put(grammarAccess.getModelBodyStatementAccess().getUrnAssignment_1_0_0(), "rule__ModelBodyStatement__UrnAssignment_1_0_0");
+					put(grammarAccess.getModelBodyStatementAccess().getUrnsAssignment_1_0_0_0(), "rule__ModelBodyStatement__UrnsAssignment_1_0_0_0");
+					put(grammarAccess.getModelBodyStatementAccess().getUrnsAssignment_1_0_0_1_1(), "rule__ModelBodyStatement__UrnsAssignment_1_0_0_1_1");
 					put(grammarAccess.getModelBodyStatementAccess().getFunctionAssignment_1_0_1(), "rule__ModelBodyStatement__FunctionAssignment_1_0_1");
 					put(grammarAccess.getModelBodyStatementAccess().getNumberAssignment_1_0_2(), "rule__ModelBodyStatement__NumberAssignment_1_0_2");
 					put(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_3(), "rule__ModelBodyStatement__BooleanAssignment_1_0_3");

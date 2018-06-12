@@ -12,7 +12,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.model.KimObject;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
@@ -25,6 +24,7 @@ public class Classifier implements IClassifier {
 	
 	Classifier(IKimClassifier statement) {
 		// TODO Auto-generated constructor stub
+		System.out.println("puchaca");
 	}
 
 	private ArrayList<Classifier> classifierMatches = null;

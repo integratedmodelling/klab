@@ -244,13 +244,13 @@ public interface KimPackage extends EPackage
   int MODEL_BODY_STATEMENT__INSTANTIATOR = 0;
 
   /**
-   * The feature id for the '<em><b>Urn</b></em>' containment reference.
+   * The feature id for the '<em><b>Urns</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__URN = 1;
+  int MODEL_BODY_STATEMENT__URNS = 1;
 
   /**
    * The feature id for the '<em><b>Function</b></em>' containment reference.
@@ -4203,15 +4203,15 @@ public interface KimPackage extends EPackage
   EAttribute getModelBodyStatement_Instantiator();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getUrn <em>Urn</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getUrns <em>Urns</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Urn</em>'.
-   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getUrn()
+   * @return the meta object for the containment reference list '<em>Urns</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getUrns()
    * @see #getModelBodyStatement()
    * @generated
    */
-  EReference getModelBodyStatement_Urn();
+  EReference getModelBodyStatement_Urns();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getFunction <em>Function</em>}'.
@@ -8347,12 +8347,12 @@ public interface KimPackage extends EPackage
     EAttribute MODEL_BODY_STATEMENT__INSTANTIATOR = eINSTANCE.getModelBodyStatement_Instantiator();
 
     /**
-     * The meta object literal for the '<em><b>Urn</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Urns</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference MODEL_BODY_STATEMENT__URN = eINSTANCE.getModelBodyStatement_Urn();
+    EReference MODEL_BODY_STATEMENT__URNS = eINSTANCE.getModelBodyStatement_Urns();
 
     /**
      * The meta object literal for the '<em><b>Function</b></em>' containment reference feature.

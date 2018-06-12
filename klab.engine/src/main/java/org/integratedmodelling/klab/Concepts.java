@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.owl.Concept;
+import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Property;
 
@@ -46,6 +48,11 @@ public enum Concepts implements IConceptService {
   @Override
   public Concept getConcept(String conceptId) {
     return OWL.INSTANCE.getConcept(conceptId);
+  }
+  
+  @Override
+  public IConcept declare(IKimConcept conceptDefinition) {
+	  return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Klab.INSTANCE.getRootMonitor());
   }
 
   @Override

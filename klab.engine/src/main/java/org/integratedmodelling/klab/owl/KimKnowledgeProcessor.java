@@ -272,7 +272,7 @@ public enum KimKnowledgeProcessor {
 		return ret;
 	}
 
-	private @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
+	public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
 		return declareInternal(concept, monitor);
 	}
 
