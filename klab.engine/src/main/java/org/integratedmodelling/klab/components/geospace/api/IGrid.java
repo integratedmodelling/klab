@@ -159,7 +159,8 @@ public interface IGrid extends Iterable<Cell> {
 		long totalActiveCells();
 
 		/**
-		 * Next active cell from passed offset
+		 * Next active cell at or above the passed offset, <strong>including</strong>
+		 * the passed offset.
 		 * 
 		 * @param fromOffset
 		 * @return the next active offset using the natural ordering, or -1

@@ -88,7 +88,8 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public long nextActiveOffset(long fromOffset) {
-			return delegate == null ? (fromOffset == Grid.this.getCellCount() ? -1 : fromOffset + 1)
+			return delegate == null 
+					? (fromOffset >= Grid.this.getCellCount() ? -1 : fromOffset)
 					: delegate.nextActiveOffset(fromOffset);
 		}
 
@@ -630,22 +631,24 @@ public class Grid extends Area implements IGrid {
 
 		return new Iterator<Cell>() {
 
-			long n = 0;
+			long n = mask == null ? 0 : mask.nextActiveOffset(0);
 
 			@Override
 			public boolean hasNext() {
-				if (mask == null)
+				if (mask == null) {
 					return n < getCellCount();
-				long ofs = mask.nextActiveOffset(n);
-				return ofs >= 0;
+				} 
+				return n >= 0;
 			}
 
 			@Override
 			public Cell next() {
-				if (mask == null)
+				if (mask == null) {
 					return getCell(n++);
-				n = mask.nextActiveOffset(n);
-				return getCell(n);
+				}
+				Cell ret = getCell(n);
+				n = mask.nextActiveOffset(n + 1);
+				return ret;
 			}
 
 			@Override

@@ -53,7 +53,7 @@ public class GridMask extends BitSet implements IGrid.Mask {
 
 	@Override
 	public long nextActiveOffset(long fromOffset) {
-		return nextSetBit((int) fromOffset + 1);
+		return nextSetBit((int) fromOffset);
 	}
 
 	@Override

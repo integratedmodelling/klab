@@ -122,7 +122,6 @@ public class GeospaceTests {
 			Subgrid subgrid = Subgrid.create(grid, subshape);
 
 			if (System.getProperty("visualize", "false").equals("true")) {
-
 				
 				SpatialDisplay display = new SpatialDisplay(tzScale.getSpace());
 
