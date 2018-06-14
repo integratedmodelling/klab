@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.data.classification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import org.hsqldb.StatementSchema;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
@@ -24,7 +24,7 @@ public class Classifier implements IClassifier {
 	private Classifier() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	Classifier(IKimClassifier statement) {
 
 		this.numberMatch = statement.getNumberMatch();
@@ -40,7 +40,8 @@ public class Classifier implements IClassifier {
 		if (statement.getConceptMatches() != null) {
 			this.conceptMatches = new ArrayList<>();
 			for (IKimConcept cstatement : statement.getConceptMatches()) {
-//				this.conceptMatches.add(Concepts.INSTANCE.declare(cstatement));
+				// TODO support collections
+				this.conceptMatches.add(Collections.singletonList(Concepts.INSTANCE.declare(cstatement)));
 			}
 		}
 		if (statement.getClassifierMatches() != null) {
@@ -49,7 +50,7 @@ public class Classifier implements IClassifier {
 				this.classifierMatches.add(new Classifier(cstatement));
 			}
 		}
-//		this.expressionMatch = statement.getExpressionMatch();
+		// this.expressionMatch = statement.getExpressionMatch();
 	}
 
 	private ArrayList<Classifier> classifierMatches = null;
@@ -439,7 +440,7 @@ public class Classifier implements IClassifier {
 		return null;
 	}
 
-	public static Object create(Object o) {
+	public static Classifier create(Object o) {
 		return new Classifier(o);
 	}
 }

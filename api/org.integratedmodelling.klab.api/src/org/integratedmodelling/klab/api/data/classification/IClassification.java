@@ -83,8 +83,9 @@ public interface IClassification extends Iterable<IClassifier> {
     /**
      * Classify to the numeric ranking of the concept instead of the concept.
      *
-     * @param o the o
+     * @param o the object to classify
+     * @param monitor a monitor
      * @return a numeric ranking - equivalent to calling getNumericCode(classify(o))
      */
-    public int classifyToIndex(Object o);
+    public int classifyToIndex(Object o, IMonitor monitor);
 }
