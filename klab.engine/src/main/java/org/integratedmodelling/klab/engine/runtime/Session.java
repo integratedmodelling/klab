@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -62,6 +64,9 @@ public class Session implements ISession, UserDetails {
 	boolean closed = false;
 	Set<GrantedAuthority> authorities = new HashSet<>();
 	long lastActivity = System.currentTimeMillis();
+	long creation = System.currentTimeMillis();
+	long lastJoin = System.currentTimeMillis();
+
 	SpatialExtent regionOfInterest = null;
 
 	/**
@@ -77,7 +82,7 @@ public class Session implements ISession, UserDetails {
 
 	/*
 	 * The contexts for all root observations built in this session, up to the
-	 * configured number, most recent first.
+	 * configured number, most recent first. Synchronized.
 	 */
 	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(
 			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
@@ -194,19 +199,6 @@ public class Session implements ISession, UserDetails {
 				regionOfInterest.getSouth(), regionOfInterest.getNorth());
 	}
 
-	/*
-	 * ------------------------------------------------------------------------
-	 * handlers for messages
-	 * ------------------------------------------------------------------------
-	 */
-
-	@MessageHandler
-	private void setRegionOfInterest(SpatialExtent extent) {
-		// TODO change to monitor.debug
-		System.out.println("setting ROI = " + extent);
-		this.regionOfInterest = extent;
-	}
-
 	@Override
 	public IScript run(URL url) throws KlabException {
 		IScript ret = null;
@@ -262,7 +254,7 @@ public class Session implements ISession, UserDetails {
 	 * @param runtimeContext
 	 */
 	public void registerObservationContext(IRuntimeContext runtimeContext) {
-		
+
 		if (!observationContexts.offerFirst(runtimeContext)) {
 			disposeObservation(observationContexts.pollLast());
 			observationContexts.addFirst(runtimeContext);
@@ -277,6 +269,38 @@ public class Session implements ISession, UserDetails {
 		// TODO send a notification through the session monitor that the obs is now out
 		// of scope.
 		Logging.INSTANCE.warn("Disposing of observation " + context.getRootSubject() + ": TODO");
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
+	 * handlers for messages
+	 * ------------------------------------------------------------------------
+	 */
+
+	@MessageHandler
+	private void setRegionOfInterest(SpatialExtent extent) {
+		// TODO change to monitor.debug
+		System.out.println("setting ROI = " + extent);
+		this.regionOfInterest = extent;
+	}
+
+	/*
+	 * REST communication
+	 */
+	public SessionReference getSessionReference() {
+
+		SessionReference ret = new SessionReference();
+
+		ret.setTimeEstablished(creation);
+		ret.setTimeLastJoined(lastJoin);
+		ret.setTimeRetrieved(System.currentTimeMillis());
+		ret.setTimeLastActivity(lastActivity);
+
+		for (IRuntimeContext ctx : observationContexts) {
+			ret.getRootObservations().put(ctx.getRootSubject().getId(),
+					Observations.INSTANCE.createArtifactDescriptor(ctx.getRootSubject(), null, 0));
+		}
+		return ret;
 	}
 
 }

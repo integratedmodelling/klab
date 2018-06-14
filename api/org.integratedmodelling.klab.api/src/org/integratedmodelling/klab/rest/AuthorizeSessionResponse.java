@@ -7,6 +7,8 @@ public class AuthorizeSessionResponse {
 	private long sessionStart;
 	private long sessionAge;
 	private long lastActivity;
+
+	
 	
 	public String getSessionId() {
 		return sessionId;

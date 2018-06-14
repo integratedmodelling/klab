@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,7 +44,7 @@ public class EngineViewController {
 	public ObservationReference describeObservation(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) Integer childLevel) {
 
-		ISession session = getSession(principal);
+		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
 		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(),
@@ -61,7 +60,7 @@ public class EngineViewController {
 	public StateSummary summarizeObservation(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) String locator) {
 
-		ISession session = getSession(principal);
+		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
 		if (!(obs instanceof IState)) {
@@ -89,7 +88,7 @@ public class EngineViewController {
 			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
 			@RequestParam(required = false) Integer childLevel) {
 
-		ISession session = getSession(principal);
+		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
 		ObservationReference ret = null;
@@ -137,7 +136,7 @@ public class EngineViewController {
 	public void getObservationData(Principal principal, @PathVariable String observation,
 			HttpServletResponse response) {
 
-		ISession session = getSession(principal);
+		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
 		// for an image:
@@ -146,14 +145,4 @@ public class EngineViewController {
 		// response.setContentType(MediaType.IMAGE_JPEG_VALUE);
 		// IOUtils.copy(in, response.getOutputStream());
 	}
-
-	private ISession getSession(Principal principal) {
-		if (principal instanceof PreAuthenticatedAuthenticationToken
-				|| !(((PreAuthenticatedAuthenticationToken) principal).getPrincipal() instanceof ISession)) {
-			return (ISession) ((PreAuthenticatedAuthenticationToken) principal).getPrincipal();
-		}
-		throw new IllegalStateException(
-				"request was not authenticated using a session token or did not use preauthentication");
-	}
-
 }
