@@ -96,7 +96,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public Builder startObject(String artifactName, String objectName, IScale scale) {
-		// TODO Auto-generated method stub
+
 		IObservable observable = ((IRuntimeContext) context).getSemantics(artifactName);
 		if (observable == null) {
 			throw new IllegalArgumentException(

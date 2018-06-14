@@ -4,17 +4,18 @@
 
 ### Validation
 
-- Filter and validate action types and URN geometry/type
+- [IN PROGRESS] Filter and validate action types and URN geometry/type
 - Semantic macros and missing operators
 - Connection to upper ontologies from within worldview
 - OWL processor testing and docs
 
 ### Basic modeling
 
-- Functional adapters for classifications and k.IM syntax for map literals
-- Functional adapters for lookup tables and k.IM syntax for table literals
+- [IN PROGRESS] Allow URN chains for resolving nodata and multiple instance sources
+- [IN PROGRESS] Functional adapters for classifications and k.IM syntax for map literals
+- [IN PROGRESS] Functional adapters for lookup tables and k.IM syntax for table literals
 - [DONE] Improve lookup table k.IM declaration (mapping to table collection)
-- [IN PROGRESS] Websockets Messaging API: streamline, complete (JSON RPC inspired - no need to comply)
+- [IN PROGRESS] Websockets Messaging API: streamline, complete
 - [DONE] Build test cases for non-semantic models
 - Build test cases for non-semantic model libraries
 - [IN PROGRESS] Build test cases for semantic multiple contextualizers with internal references
@@ -60,9 +61,8 @@
   - spatial network configurations 
 - Model artifacts
 - Attributes in instantiation (including proper provenance)
-- Multiple URNs in models (for filling holes in order of declaration)
 - Event subscription
-- Configuration detection
+- Configuration detection (may only need networks - others can be created at first use)
 - Reintegrate WEKA 
 - Reintegrate MCA
 

@@ -16,40 +16,42 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
-  public final static String FUNCTION_ID = "klab.runtime.resolve";
-  
-  private IResource resource;
-  
-  // don't remove - only used as expression
-  public UrnResolver() {}
-  
-  public UrnResolver(String urn) {
-    this.resource = Resources.INSTANCE.resolveResource(urn);
-    if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
-    	throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
-    }
-  }
+	public final static String FUNCTION_ID = "klab.runtime.resolve";
 
-  public static IServiceCall getServiceCall(String urn) {
-    return KimServiceCall.create(FUNCTION_ID, "urn", urn);
-  }
+	private IResource resource;
 
-  @Override
-  public IArtifact resolve(IArtifact observation, IComputationContext context) {
-    IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
-    return data.getArtifact();
-  }
+	// don't remove - only used as expression
+	public UrnResolver() {
+	}
 
-  @Override
-  public Object eval(IParameters parameters, IComputationContext context)
-      throws KlabException {
-    // TODO resolve URN, generate the appropriate contextualizer for type and geometry
-    return new UrnResolver(parameters.get("urn", String.class));
-  }
+	public UrnResolver(String urn) {
+		this.resource = Resources.INSTANCE.resolveResource(urn);
+		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
+		}
+	}
 
-  @Override
-  public IGeometry getGeometry() {
-    return resource.getGeometry();
-  }
+	public static IServiceCall getServiceCall(String urn) {
+		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
+	}
+
+	@Override
+	public IArtifact resolve(IArtifact observation, IComputationContext context) {
+		IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
+		return data.getArtifact();
+	}
+
+	@Override
+	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+		// TODO resolve URN, generate the appropriate contextualizer for type and
+		// geometry
+		// TODO support multiple URNs
+		return new UrnResolver(parameters.get("urn", String.class));
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		return resource.getGeometry();
+	}
 
 }

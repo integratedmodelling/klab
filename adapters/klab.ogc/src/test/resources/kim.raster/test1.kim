@@ -2,7 +2,7 @@ worldview im;
 
 @test(
 	name = "tests.core.utmproj",
-	description  = "Spatial data generation using a non-latlon projection",
+	description  = "Raster data from file resource using a non-latlon projection",
 	observations = ("geography:Slope"),
 	resources = ("local:anonymous:test:utah_landcover"),
 	assertions = (
