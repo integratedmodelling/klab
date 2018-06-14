@@ -333,6 +333,13 @@ public interface API {
             public static final String AUTHORIZE = "/engine/session/authorize";
 
             /**
+             * Get info on the authenticated session.
+             *
+             * GET
+             */
+            public static final String INFO = "/engine/session/info";
+            
+            /**
              * The Constant CLOSE.
              *
              * DELETE

@@ -88,7 +88,7 @@ public class ModelTests {
 	}
 	
 	@Test
-	@Ignore
+//	@Ignore
 	public void simpleClassification() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test12.kim")).get();
 	}

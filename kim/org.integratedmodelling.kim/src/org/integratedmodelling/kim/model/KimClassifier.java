@@ -120,12 +120,12 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
                 if (conceptMatches == null) {
                     conceptMatches = new ArrayList<>();
                 }
-                conceptMatches.add(new KimConcept(cdu, this));
+                conceptMatches.add(Kim.INSTANCE.declareConcept(cdu));
             }
 
         } else if (statement.getConcept() != null) {
         	
-        	conceptMatch = new KimConcept(statement.getConcept(), this);
+        	conceptMatch = Kim.INSTANCE.declareConcept(statement.getConcept());
         
         } else if (statement.getString() != null) {
         

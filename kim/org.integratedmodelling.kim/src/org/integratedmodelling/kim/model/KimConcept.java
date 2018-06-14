@@ -683,7 +683,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
     @Override
     public String getName() {
-        return name == null ? observable.getName() : name;
+        return name == null ? (observable == null ? null : observable.getName()) : name;
     }
 
     @Override

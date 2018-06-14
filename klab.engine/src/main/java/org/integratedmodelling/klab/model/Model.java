@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.ComputableResource;
@@ -22,6 +21,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.documentation.Documentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -153,9 +153,8 @@ public class Model extends KimObject implements IModel {
 
 		// TODO Auto-generated method stub
 		if (resource.getClassification() != null) {
-
+			resource.setValidatedResource(new Classification(resource.getClassification()));
 		} else if (resource.getLookupTable() != null) {
-
 		}
 		return resource;
 	}

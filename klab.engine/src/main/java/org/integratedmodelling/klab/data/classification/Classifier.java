@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import org.hsqldb.StatementSchema;
 import org.integratedmodelling.kim.api.IKimClassifier;
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -23,8 +26,30 @@ public class Classifier implements IClassifier {
 	}
 	
 	Classifier(IKimClassifier statement) {
-		// TODO Auto-generated constructor stub
-		System.out.println("puchaca");
+
+		this.numberMatch = statement.getNumberMatch();
+		this.anythingMatch = statement.isCatchAnything();
+		this.catchAll = statement.isCatchAll();
+		this.intervalMatch = statement.getIntervalMatch();
+		if (statement.getConceptMatch() != null) {
+			this.conceptMatch = Concepts.INSTANCE.declare(statement.getConceptMatch());
+		}
+		this.stringMatch = statement.getStringMatch();
+		this.booleanMatch = statement.getBooleanMatch() == null ? null : (statement.getBooleanMatch() ? 1 : 0);
+		this.negated = statement.isNegated();
+		if (statement.getConceptMatches() != null) {
+			this.conceptMatches = new ArrayList<>();
+			for (IKimConcept cstatement : statement.getConceptMatches()) {
+//				this.conceptMatches.add(Concepts.INSTANCE.declare(cstatement));
+			}
+		}
+		if (statement.getClassifierMatches() != null) {
+			this.classifierMatches = new ArrayList<>();
+			for (IKimClassifier cstatement : statement.getClassifierMatches()) {
+				this.classifierMatches.add(new Classifier(cstatement));
+			}
+		}
+//		this.expressionMatch = statement.getExpressionMatch();
 	}
 
 	private ArrayList<Classifier> classifierMatches = null;
@@ -381,7 +406,6 @@ public class Classifier implements IClassifier {
 	}
 
 	public String dumpCode() {
-
 		/*
 		 * TODO provisional
 		 */

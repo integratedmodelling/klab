@@ -22,7 +22,7 @@ public class Classification implements IClassification {
 	List<Pair<IConcept, IClassifier>> classifiers = new ArrayList<>();
 
 	public Classification(IKimClassification classification) {
-		System.out.println("hola");
+
 		this.discretization = classification.isDiscretization();
 		for (Pair<IKimConcept, IKimClassifier> classifier : classification) {
 			IConcept concept = Concepts.INSTANCE.declare(classifier.getFirst());
