@@ -145,4 +145,6 @@ public interface IKimConceptStatement extends IKimStatement {
 
 	List<ApplicableConcept> getAppliesTo();
 
+	String getDocstring();
+
 }

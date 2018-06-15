@@ -143,4 +143,9 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
 		return delegate.getAppliesTo();
 	}
 
+	@Override
+	public String getDocstring() {
+		return delegate.getDocstring();
+	}
+
 }

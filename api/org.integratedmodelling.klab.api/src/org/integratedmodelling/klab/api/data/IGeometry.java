@@ -292,8 +292,18 @@ public interface IGeometry extends Serializable, ILocator {
      * @return a valid offset for this locator, or -1 if mediation is needed.
      * @throws IllegalArgumentException if the locator type is not suitable for the receiver.
      */
-    public abstract long getOffset(ILocator index);
+    long getOffset(ILocator index);
 
+    /**
+     * Given a valid overall offset, return the correspondent offset in the passed dimension, or -1 if 
+     * the dimension isn't in the geometry.
+     * 
+     * @param globalOffset
+     * @param dimension
+     * @return the dimension-specific offset, or -1.
+     */
+    long getOffset(long globalOffset, Dimension.Type dimension);
+    
     /**
      * Get the shape of the requested dimension.
      * 

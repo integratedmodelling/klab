@@ -1117,4 +1117,9 @@ public class Scale implements IScale {
 		return asGeometry().getLocator(offset);
 	}
 
+	@Override
+	public long getOffset(long globalOffset, Type dimension) {
+		return asGeometry().getOffset(globalOffset, dimension);
+	}
+
 }

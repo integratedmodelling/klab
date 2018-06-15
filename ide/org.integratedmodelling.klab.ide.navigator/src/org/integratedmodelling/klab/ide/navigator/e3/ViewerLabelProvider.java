@@ -5,29 +5,30 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.ide.navigator.Activator;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 
 public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {
-    
-	public ViewerLabelProvider() {}
-	
-    WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
-    
+
+	public ViewerLabelProvider() {
+	}
+
+	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
+
 	public Image getImage(Object element) {
 		if (element instanceof IProject) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif");
-		}	
+		}
 		if (element instanceof IKimNamespace) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/namespace-checked.png");
 		}
 		if (element instanceof IKimConceptStatement) {
-			IKimConceptStatement concept = (IKimConceptStatement)element;
+			IKimConceptStatement concept = (IKimConceptStatement) element;
 			if (concept.getType().contains(Type.QUALITY)) {
 				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/quality.png");
 			}
@@ -61,30 +62,35 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		}
 		if (element instanceof IKimModel) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png");
-		}		
+		}
 		if (element instanceof IKimObserver) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/realm.png");
-		}	
+		}
 		return delegate.getImage(element);
 	}
+
 	public String getText(Object element) {
 		if (element instanceof IKimNamespace) {
-			return ((IKimNamespace)element).getName();
+			return ((IKimNamespace) element).getName();
 		}
 		if (element instanceof IKimConceptStatement) {
-			return ((IKimConceptStatement)element).getName();
+			return ((IKimConceptStatement) element).getName();
 		}
 		if (element instanceof IKimModel) {
-			return ((IKimModel)element).getName();
-		}		
+			return ((IKimModel) element).getName();
+		}
 		if (element instanceof IKimObserver) {
-			return ((IKimObserver)element).getName();
-		}	
+			return ((IKimObserver) element).getName();
+		}
 		return delegate.getText(element);
 	}
-    @Override
-    public String getDescription(Object anElement) {
-        // TODO Auto-generated method stub
-        return delegate.getText(anElement);
-    }
+
+	@Override
+	public String getDescription(Object element) {
+		if (element instanceof IKimConceptStatement) {
+			return ((IKimConceptStatement) element).getDocstring() == null ? ((IKimConceptStatement) element).getName()
+					: ((IKimConceptStatement) element).getDocstring();
+		}
+		return delegate.getText(element);
+	}
 }

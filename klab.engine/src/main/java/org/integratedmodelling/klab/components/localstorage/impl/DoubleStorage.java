@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class DoubleStorage extends Storage implements IDataArtifact {
 
-	// private LFloatArray data;
 	private double[] data;
 
 	public DoubleStorage(IGeometry scale) {
@@ -36,7 +35,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		double ret = data[(int) offset]; // data.apply(offset);
+		double ret = data[(int) offset];
 		return Double.isNaN(ret) ? null : (double) ret;
 	}
 

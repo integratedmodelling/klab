@@ -39,7 +39,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
@@ -220,7 +219,7 @@ public abstract class ObservableKbox extends H2Kbox {
    * @return the ID for the concept, or -1 if not seen before
    */
   public long getConceptId(IConcept c) {
-    Long ret = conceptHash.get(c.getDefinition());
+    Long ret = conceptHash.get(c.getType().getDefinition());
     return ret == null ? -1l : ret;
   }
 
@@ -320,7 +319,7 @@ public abstract class ObservableKbox extends H2Kbox {
 
     for (IConcept candidate : candidates) {
 
-      if (Observables.INSTANCE.isCompatible(candidate, observable, compatibility)) {
+      if (Observables.INSTANCE.isCompatible(candidate, observable.getType(), compatibility)) {
         // KLAB.info(" FOUND " + candidate + " = " + candidate.getDefinition());
         long id = getConceptId(candidate);
         if (id >= 0) {

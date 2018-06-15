@@ -138,6 +138,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	private boolean macro;
 	private String authority;
 	private String authorityTerm;
+	private String docstring;
 
 	/*
 	 * each parent is a list: if more than one, the parent is the union of the
@@ -222,6 +223,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 
 	public KimConceptStatement(ConceptStatementBody statement, IKimStatement parent) {
 		super(statement, parent);
+		this.setDocstring(statement.getDocstring());
 		// TODO Auto-generated constructor stub
 	}
 
@@ -525,6 +527,15 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 
 	public void setRoles(List<RoleDescriptor> roles) {
 		this.roles = roles;
+	}
+
+	@Override
+	public String getDocstring() {
+		return docstring;
+	}
+
+	public void setDocstring(String docstring) {
+		this.docstring = docstring;
 	}
 
 }

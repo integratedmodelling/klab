@@ -340,4 +340,9 @@ public class KimMacro implements IKimMacro {
 	public URI getURI() {
 		return delegate.getURI();
 	}
+
+	@Override
+	public String getDocstring() {
+		return delegate.getDocstring();
+	}
 }
