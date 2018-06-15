@@ -386,6 +386,8 @@ public interface API {
                 /** The Constant P_TASK. */
                 public static final String P_TASK = "{task}";
 
+                public static final String INTERRUPT = "/engine/session/task/interrupt/" + P_TASK;
+                
             }
 
             /**

@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -38,6 +39,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -231,10 +233,30 @@ public class Session implements ISession, UserDetails {
 	 * identity in common.
 	 * 
 	 * @param task
+	 * @param monitor2
 	 */
 	public void registerTask(Future<?> task) {
 		String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
 		this.tasks.put(id, task);
+	}
+
+	/**
+	 * Interrupt the passed task, notifying its monitor for computations to terminate gracefully. Return true if there was a task to interrupt and it was 
+	 * indeed canceled.
+	 * 
+	 * @param taskId
+	 * @return true if interruption was achieved
+	 */
+	public boolean interruptTask(String taskId, boolean forceInterruption) {
+		Future<?> task = this.tasks.get(taskId);
+		if (task != null) {
+			((Monitor)((IRuntimeIdentity)task).getMonitor()).interrupt();
+			if (task.cancel(forceInterruption)) {
+				unregisterTask(task);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -282,6 +304,11 @@ public class Session implements ISession, UserDetails {
 		// TODO change to monitor.debug
 		System.out.println("setting ROI = " + extent);
 		this.regionOfInterest = extent;
+	}
+
+	@MessageHandler
+	private void interruptTask(InterruptTask request) {
+		interruptTask(request.getTaskId(), request.isForceInterruption());
 	}
 
 	/*

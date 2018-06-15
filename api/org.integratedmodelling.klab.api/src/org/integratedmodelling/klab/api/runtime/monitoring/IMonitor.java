@@ -22,6 +22,8 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.runtime.IScript;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 
 /**
@@ -121,6 +123,15 @@ public interface IMonitor {
 	 * @return the running identity, e.g. a session, task or engine.
 	 */
 	IIdentity getIdentity();
+
+	/**
+	 * Check if the monitored identity has been interrupted by a client action.
+	 * Applies to any task, such as a {@link ITask} or {@link IScript}. In other
+	 * identities it will always return false.
+	 * 
+	 * @return true if interrupted
+	 */
+	boolean isInterrupted();
 
 	/**
 	 * Tells us that errors have happened in the context we're monitoring.

@@ -70,7 +70,6 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 						 * register the task so it can be interrupted and inquired about
 						 */
 						session.registerTask(ObserveContextTask.this);
-						
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.TaskStarted, ObserveContextTask.this.descriptor));
 

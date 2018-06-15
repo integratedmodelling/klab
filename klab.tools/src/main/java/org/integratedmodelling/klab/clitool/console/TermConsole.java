@@ -95,6 +95,11 @@ public class TermConsole implements IConsole {
 			return false;
 		}
 
+		@Override
+		public boolean isInterrupted() {
+			return false;
+		}
+
 	}
 
 	public void start(CliStartupOptions options) throws Exception {

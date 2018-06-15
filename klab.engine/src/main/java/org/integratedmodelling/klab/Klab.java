@@ -353,6 +353,11 @@ public enum Klab implements IRuntimeService {
         public boolean hasErrors() {
             return errors > 0;
         }
+
+		@Override
+		public boolean isInterrupted() {
+			return false;
+		}
     }
 
     @Override

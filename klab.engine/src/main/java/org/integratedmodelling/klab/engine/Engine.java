@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -93,7 +94,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public class Monitor implements IMonitor {
 
 		private IIdentity identity = Engine.this;
-		int errorCount = 0;
+		private int errorCount = 0;
+		private AtomicBoolean isInterrupted = new AtomicBoolean(false);
 
 		@Override
 		public void info(Object... info) {
@@ -186,6 +188,15 @@ public class Engine extends Server implements IEngine, UserDetails {
 		public void notifyEnd(boolean error) {
 			((errorCount > 0 || error) ? System.err : System.out).println(
 					identity + ((errorCount > 0 || error) ? " finished with errors" : " finished with no errors"));
+		}
+
+		public void interrupt() {
+			isInterrupted.set(true);
+		}
+
+		@Override
+		public boolean isInterrupted() {
+			return isInterrupted.get();
 		}
 	}
 
