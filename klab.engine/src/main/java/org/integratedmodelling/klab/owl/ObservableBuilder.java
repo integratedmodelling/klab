@@ -210,6 +210,7 @@ public class ObservableBuilder implements Builder {
                 reset(makeValue(build(), this.comparison, false));
                 break;
             case OBSERVABILITY:
+                reset(makeObservability(build(), false));
                 break;
             case TYPE:
                 reset(makeType(build(), false));

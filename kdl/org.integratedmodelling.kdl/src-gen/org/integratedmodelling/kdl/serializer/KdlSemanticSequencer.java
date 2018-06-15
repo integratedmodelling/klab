@@ -13,12 +13,8 @@ import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.serializer.ISerializationContext;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
-import org.integratedmodelling.kdl.kdl.Classification;
-import org.integratedmodelling.kdl.kdl.Classifier;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
-import org.integratedmodelling.kdl.kdl.Concept;
-import org.integratedmodelling.kdl.kdl.ConceptDeclaration;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
@@ -28,7 +24,6 @@ import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
 import org.integratedmodelling.kdl.kdl.Unit;
@@ -54,31 +49,12 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case KdlPackage.ACTOR_DEFINITION:
 				sequence_ActorDefinition(context, (ActorDefinition) semanticObject); 
 				return; 
-			case KdlPackage.CLASSIFICATION:
-				sequence_Classification(context, (Classification) semanticObject); 
-				return; 
-			case KdlPackage.CLASSIFIER:
-				sequence_Classifier(context, (Classifier) semanticObject); 
-				return; 
 			case KdlPackage.CLASSIFIER_RHS:
 				sequence_ClassifierRHS(context, (ClassifierRHS) semanticObject); 
 				return; 
 			case KdlPackage.COMPUTATION:
 				sequence_Computation(context, (Computation) semanticObject); 
 				return; 
-			case KdlPackage.CONCEPT:
-				sequence_Concept(context, (Concept) semanticObject); 
-				return; 
-			case KdlPackage.CONCEPT_DECLARATION:
-				if (rule == grammarAccess.getConceptDeclarationRule()) {
-					sequence_ConceptDeclaration(context, (ConceptDeclaration) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getSimpleConceptDeclarationRule()) {
-					sequence_SimpleConceptDeclaration(context, (ConceptDeclaration) semanticObject); 
-					return; 
-				}
-				else break;
 			case KdlPackage.CURRENCY:
 				sequence_Currency(context, (Currency) semanticObject); 
 				return; 
@@ -116,9 +92,6 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case KdlPackage.NUMBER:
 				sequence_Number(context, (org.integratedmodelling.kdl.kdl.Number) semanticObject); 
-				return; 
-			case KdlPackage.OBSERVABLE_SEMANTICS:
-				sequence_ObservableSemantics(context, (ObservableSemantics) semanticObject); 
 				return; 
 			case KdlPackage.PARAMETER:
 				sequence_Parameter(context, (org.integratedmodelling.kdl.kdl.Parameter) semanticObject); 
@@ -189,18 +162,6 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Classification returns Classification
-	 *
-	 * Constraint:
-	 *     (classifiers+=Classifier classifiers+=Classifier*)
-	 */
-	protected void sequence_Classification(ISerializationContext context, Classification semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     ClassifierRHS returns ClassifierRHS
 	 *
 	 * Constraint:
@@ -211,8 +172,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         num=Number | 
 	 *         set=List | 
 	 *         string=STRING | 
-	 *         concept=ConceptDeclaration | 
-	 *         (toResolve+=ConceptDeclaration toResolve+=ConceptDeclaration*) | 
+	 *         (toResolve+=STRING toResolve+=STRING*) | 
 	 *         (op=REL_OPERATOR expression=Number) | 
 	 *         nodata='unknown' | 
 	 *         star?='*'
@@ -225,64 +185,12 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Classifier returns Classifier
-	 *
-	 * Constraint:
-	 *     (declaration=ConceptDeclaration (otherwise?='otherwise' | (negated?='unless'? classifier=ClassifierRHS))?)
-	 */
-	protected void sequence_Classifier(ISerializationContext context, Classifier semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Computation returns Computation
 	 *
 	 * Constraint:
 	 *     (functions+=Function functions+=Function*)
 	 */
 	protected void sequence_Computation(ISerializationContext context, Computation semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     ConceptDeclaration returns ConceptDeclaration
-	 *
-	 * Constraint:
-	 *     (name=STRING? main+=Concept+ inherency=SimpleConceptDeclaration? context=SimpleConceptDeclaration?)
-	 */
-	protected void sequence_ConceptDeclaration(ISerializationContext context, ConceptDeclaration semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Concept returns Concept
-	 *
-	 * Constraint:
-	 *     (
-	 *         (
-	 *             negated?='not'? 
-	 *             name=ConceptReference 
-	 *             ((stringIdentifier=ID | stringIdentifier=STRING | intIdentifier=INT) (authority=UPPERCASE_ID | authority=UPPERCASE_PATH))?
-	 *         ) | 
-	 *         (presence?='presence' concept=SimpleConceptDeclaration) | 
-	 *         (count?='count' concept=SimpleConceptDeclaration) | 
-	 *         (distance?='distance' concept=SimpleConceptDeclaration) | 
-	 *         (probability?='probability' concept=SimpleConceptDeclaration) | 
-	 *         (uncertainty?='uncertainty' concept=SimpleConceptDeclaration) | 
-	 *         (proportion?='proportion' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
-	 *         (ratio?='ratio' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration) | 
-	 *         (value?='value' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
-	 *         (occurrence?='occurrence' concept=SimpleConceptDeclaration) | 
-	 *         declaration=ConceptDeclaration
-	 *     )
-	 */
-	protected void sequence_Concept(ISerializationContext context, Concept semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -304,12 +212,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     DataflowBody returns DataflowBody
 	 *
 	 * Constraint:
-	 *     (
-	 *         (newObservation=ObservableSemantics | urnObservation=Urn)? 
-	 *         dataflows+=ActorDefinition* 
-	 *         geometry=Geometry? 
-	 *         ((units=Unit | computations+=Computation | semantics=ObservableSemantics | metadata=Metadata | javaClass=JavaClass)? geometry=Geometry?)*
-	 *     )
+	 *     (dataflows+=ActorDefinition* (geometry=Geometry | units=Unit | computations+=Computation | metadata=Metadata | javaClass=JavaClass)*)
 	 */
 	protected void sequence_DataflowBody(ISerializationContext context, DataflowBody semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -323,7 +226,6 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 * Constraint:
 	 *     (
 	 *         (mediated=LOWERCASE_ID? ((name=PathName parameters=ParameterList?) | urn=Urn | value=Literal) variable=LOWERCASE_ID?) | 
-	 *         (classification=Classification variable=LOWERCASE_ID?) | 
 	 *         (chain+=Function chain+=Function* variable=LOWERCASE_ID?)
 	 *     )
 	 */
@@ -458,32 +360,6 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     ObservableSemantics returns ObservableSemantics
-	 *
-	 * Constraint:
-	 *     (
-	 *         declaration=ConceptDeclaration 
-	 *         (
-	 *             (
-	 *                 by=Concept | 
-	 *                 downTo=CAMELCASE_ID | 
-	 *                 downTo=NamespaceId | 
-	 *                 role=Concept | 
-	 *                 unit=Unit | 
-	 *                 currency=Currency | 
-	 *                 unit=Unit
-	 *             )? 
-	 *             (from=Number to=Number)?
-	 *         )+
-	 *     )
-	 */
-	protected void sequence_ObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     ParameterList returns ParameterList
 	 *
 	 * Constraint:
@@ -521,18 +397,6 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     )
 	 */
 	protected void sequence_REL_OPERATOR(ISerializationContext context, REL_OPERATOR semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     SimpleConceptDeclaration returns ConceptDeclaration
-	 *
-	 * Constraint:
-	 *     (name=STRING? main+=Concept+)
-	 */
-	protected void sequence_SimpleConceptDeclaration(ISerializationContext context, ConceptDeclaration semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

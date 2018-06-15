@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getVariable <em>Variable</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getClassification <em>Classification</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getChain <em>Chain</em>}</li>
  * </ul>
  *
@@ -187,32 +186,6 @@ public interface Function extends EObject
    * @generated
    */
   void setVariable(String value);
-
-  /**
-   * Returns the value of the '<em><b>Classification</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Classification</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Classification</em>' containment reference.
-   * @see #setClassification(Classification)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getFunction_Classification()
-   * @model containment="true"
-   * @generated
-   */
-  Classification getClassification();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Function#getClassification <em>Classification</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Classification</em>' containment reference.
-   * @see #getClassification()
-   * @generated
-   */
-  void setClassification(Classification value);
 
   /**
    * Returns the value of the '<em><b>Chain</b></em>' containment reference list.

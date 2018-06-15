@@ -16,13 +16,10 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getNewObservation <em>New Observation</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getUrnObservation <em>Urn Observation</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getDataflows <em>Dataflows</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getGeometry <em>Geometry</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getUnits <em>Units</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getComputations <em>Computations</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getSemantics <em>Semantics</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.DataflowBody#getJavaClass <em>Java Class</em>}</li>
  * </ul>
@@ -33,58 +30,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface DataflowBody extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>New Observation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>New Observation</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>New Observation</em>' containment reference.
-   * @see #setNewObservation(ObservableSemantics)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getDataflowBody_NewObservation()
-   * @model containment="true"
-   * @generated
-   */
-  ObservableSemantics getNewObservation();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getNewObservation <em>New Observation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>New Observation</em>' containment reference.
-   * @see #getNewObservation()
-   * @generated
-   */
-  void setNewObservation(ObservableSemantics value);
-
-  /**
-   * Returns the value of the '<em><b>Urn Observation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Urn Observation</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Urn Observation</em>' containment reference.
-   * @see #setUrnObservation(Urn)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getDataflowBody_UrnObservation()
-   * @model containment="true"
-   * @generated
-   */
-  Urn getUrnObservation();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getUrnObservation <em>Urn Observation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Urn Observation</em>' containment reference.
-   * @see #getUrnObservation()
-   * @generated
-   */
-  void setUrnObservation(Urn value);
-
   /**
    * Returns the value of the '<em><b>Dataflows</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kdl.kdl.ActorDefinition}.
@@ -168,32 +113,6 @@ public interface DataflowBody extends EObject
    * @generated
    */
   EList<Computation> getComputations();
-
-  /**
-   * Returns the value of the '<em><b>Semantics</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Semantics</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Semantics</em>' containment reference.
-   * @see #setSemantics(ObservableSemantics)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getDataflowBody_Semantics()
-   * @model containment="true"
-   * @generated
-   */
-  ObservableSemantics getSemantics();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getSemantics <em>Semantics</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Semantics</em>' containment reference.
-   * @see #getSemantics()
-   * @generated
-   */
-  void setSemantics(ObservableSemantics value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.

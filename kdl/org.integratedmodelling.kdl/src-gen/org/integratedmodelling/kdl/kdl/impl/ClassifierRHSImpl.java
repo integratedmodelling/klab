@@ -16,11 +16,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
-import org.integratedmodelling.kdl.kdl.ConceptDeclaration;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
@@ -41,7 +39,6 @@ import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getNum <em>Num</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getString <em>String</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getToResolve <em>To Resolve</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getExpression <em>Expression</em>}</li>
@@ -174,24 +171,14 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
   protected String string = STRING_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getConcept() <em>Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getConcept()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration concept;
-
-  /**
-   * The cached value of the '{@link #getToResolve() <em>To Resolve</em>}' containment reference list.
+   * The cached value of the '{@link #getToResolve() <em>To Resolve</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getToResolve()
    * @generated
    * @ordered
    */
-  protected EList<ConceptDeclaration> toResolve;
+  protected EList<String> toResolve;
 
   /**
    * The cached value of the '{@link #getOp() <em>Op</em>}' containment reference.
@@ -563,59 +550,11 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
-  public ConceptDeclaration getConcept()
-  {
-    return concept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetConcept(ConceptDeclaration newConcept, NotificationChain msgs)
-  {
-    ConceptDeclaration oldConcept = concept;
-    concept = newConcept;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.CLASSIFIER_RHS__CONCEPT, oldConcept, newConcept);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setConcept(ConceptDeclaration newConcept)
-  {
-    if (newConcept != concept)
-    {
-      NotificationChain msgs = null;
-      if (concept != null)
-        msgs = ((InternalEObject)concept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.CLASSIFIER_RHS__CONCEPT, null, msgs);
-      if (newConcept != null)
-        msgs = ((InternalEObject)newConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.CLASSIFIER_RHS__CONCEPT, null, msgs);
-      msgs = basicSetConcept(newConcept, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.CLASSIFIER_RHS__CONCEPT, newConcept, newConcept));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<ConceptDeclaration> getToResolve()
+  public EList<String> getToResolve()
   {
     if (toResolve == null)
     {
-      toResolve = new EObjectContainmentEList<ConceptDeclaration>(ConceptDeclaration.class, this, KdlPackage.CLASSIFIER_RHS__TO_RESOLVE);
+      toResolve = new EDataTypeEList<String>(String.class, this, KdlPackage.CLASSIFIER_RHS__TO_RESOLVE);
     }
     return toResolve;
   }
@@ -780,10 +719,6 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return basicSetNum(null, msgs);
       case KdlPackage.CLASSIFIER_RHS__SET:
         return basicSetSet(null, msgs);
-      case KdlPackage.CLASSIFIER_RHS__CONCEPT:
-        return basicSetConcept(null, msgs);
-      case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
-        return ((InternalEList<?>)getToResolve()).basicRemove(otherEnd, msgs);
       case KdlPackage.CLASSIFIER_RHS__OP:
         return basicSetOp(null, msgs);
       case KdlPackage.CLASSIFIER_RHS__EXPRESSION:
@@ -818,8 +753,6 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return getSet();
       case KdlPackage.CLASSIFIER_RHS__STRING:
         return getString();
-      case KdlPackage.CLASSIFIER_RHS__CONCEPT:
-        return getConcept();
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         return getToResolve();
       case KdlPackage.CLASSIFIER_RHS__OP:
@@ -869,12 +802,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KdlPackage.CLASSIFIER_RHS__STRING:
         setString((String)newValue);
         return;
-      case KdlPackage.CLASSIFIER_RHS__CONCEPT:
-        setConcept((ConceptDeclaration)newValue);
-        return;
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         getToResolve().clear();
-        getToResolve().addAll((Collection<? extends ConceptDeclaration>)newValue);
+        getToResolve().addAll((Collection<? extends String>)newValue);
         return;
       case KdlPackage.CLASSIFIER_RHS__OP:
         setOp((REL_OPERATOR)newValue);
@@ -926,9 +856,6 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KdlPackage.CLASSIFIER_RHS__STRING:
         setString(STRING_EDEFAULT);
         return;
-      case KdlPackage.CLASSIFIER_RHS__CONCEPT:
-        setConcept((ConceptDeclaration)null);
-        return;
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         getToResolve().clear();
         return;
@@ -974,8 +901,6 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return set != null;
       case KdlPackage.CLASSIFIER_RHS__STRING:
         return STRING_EDEFAULT == null ? string != null : !STRING_EDEFAULT.equals(string);
-      case KdlPackage.CLASSIFIER_RHS__CONCEPT:
-        return concept != null;
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         return toResolve != null && !toResolve.isEmpty();
       case KdlPackage.CLASSIFIER_RHS__OP:
@@ -1009,6 +934,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
     result.append(rightLimit);
     result.append(", string: ");
     result.append(string);
+    result.append(", toResolve: ");
+    result.append(toResolve);
     result.append(", nodata: ");
     result.append(nodata);
     result.append(", star: ");

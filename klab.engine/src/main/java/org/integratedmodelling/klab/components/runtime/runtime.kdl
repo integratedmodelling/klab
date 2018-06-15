@@ -55,6 +55,17 @@ contextualizer convert
 
 }
 
+contextualizer classify
+	"Return a state contextualizer that classifies its input into a concept"
+{
+	
+	object classification
+		"A classification stated in k.IM or built from a trait, class or metadata property"
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver
+
+}
+
 contextualizer resolve
 	"Return a resolver for a URN-specified resource"
 {

@@ -48,55 +48,16 @@ ActorDefinition:
 	
 DataflowBody:
 	{DataflowBody}
-	('observe' (('new' newObservation=ObservableSemantics) | (urnObservation=Urn)))?
 	(dataflows+=ActorDefinition*)
 	(('geometry' geometry=Geometry)? &
 	('units' units=Unit)? &
 	(computations+=Computation*) &
-	('semantics' semantics=ObservableSemantics)? &
 	('metadata' metadata=Metadata)?
 	('class' javaClass=JavaClass)?);
 Computation:
 	'compute' functions+=Function (',' functions+=Function)*;
 Geometry:
 	'*' | SHAPE (',' SHAPE)*;
-ConceptDeclaration:
-	(name=STRING)? main+=Concept+ ('of' inherency=SimpleConceptDeclaration)? ('within' context=SimpleConceptDeclaration)?;
-ConceptReference:
-	CAMELCASE_ID | NamespaceId;
-Concept:
-	(negated?='not')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by'
-	authority=(UPPERCASE_ID | UPPERCASE_PATH))? |
-	presence?='presence' 'of' concept=SimpleConceptDeclaration |
-	count?='count' 'of' concept=SimpleConceptDeclaration |
-	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
-	probability?='probability' 'of' concept=SimpleConceptDeclaration |
-	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
-	proportion?='proportion' 'of' concept=SimpleConceptDeclaration => ('in' other=SimpleConceptDeclaration)? |
-	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
-	value?='value' 'of' concept=SimpleConceptDeclaration => ('over' other=SimpleConceptDeclaration)? |
-	occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
-	'(' declaration=ConceptDeclaration ')';
-
-ObservableSemantics:
-	declaration=ConceptDeclaration
-	(
-		('by' by=Concept)? &
-		('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? &
-		('as' role=Concept)? &
-		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
-		)? &
-		(from=Number 'to' to=Number)? 
-	);
-	
-	/*
- * Declaration without inherency and context, used in Concept to ensure that
- * the 'within' and 'of' remain outer-level unless parenthesesized.
- */
-SimpleConceptDeclaration returns ConceptDeclaration:
-	(name=STRING)? main+=Concept+;
 Parameter:
 	name=LOWERCASE_ID value=Value (docstring=STRING)?;
 ACTOR:
@@ -121,14 +82,10 @@ ACTOR:
 	
 TARGET:
 	'models' | 'concepts' | 'observers';
-Classification:
-	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;
-Classifier:
-	declaration=ConceptDeclaration (otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?;
 ClassifierRHS:
 	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration |
-	'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
+	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING |
+	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number |
 	nodata='unknown' | star?='*';
 List:
 	{List} '(' contents+=Value* ')';
@@ -169,7 +126,6 @@ Function:
 	(mediated=LOWERCASE_ID '>>')?
 	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal) ('as'
 	variable=LOWERCASE_ID)? |
-	'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? |
 	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	/**
  * ---------------------------------------

@@ -9,12 +9,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
-import org.integratedmodelling.kdl.kdl.Classification;
-import org.integratedmodelling.kdl.kdl.Classifier;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
-import org.integratedmodelling.kdl.kdl.Concept;
-import org.integratedmodelling.kdl.kdl.ConceptDeclaration;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
@@ -24,7 +20,6 @@ import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
@@ -124,45 +119,10 @@ public class KdlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case KdlPackage.CONCEPT_DECLARATION:
-      {
-        ConceptDeclaration conceptDeclaration = (ConceptDeclaration)theEObject;
-        T result = caseConceptDeclaration(conceptDeclaration);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KdlPackage.CONCEPT:
-      {
-        Concept concept = (Concept)theEObject;
-        T result = caseConcept(concept);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KdlPackage.OBSERVABLE_SEMANTICS:
-      {
-        ObservableSemantics observableSemantics = (ObservableSemantics)theEObject;
-        T result = caseObservableSemantics(observableSemantics);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case KdlPackage.PARAMETER:
       {
         Parameter parameter = (Parameter)theEObject;
         T result = caseParameter(parameter);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KdlPackage.CLASSIFICATION:
-      {
-        Classification classification = (Classification)theEObject;
-        T result = caseClassification(classification);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KdlPackage.CLASSIFIER:
-      {
-        Classifier classifier = (Classifier)theEObject;
-        T result = caseClassifier(classifier);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -333,54 +293,6 @@ public class KdlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Concept Declaration</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Concept Declaration</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseConceptDeclaration(ConceptDeclaration object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Concept</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Concept</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseConcept(Concept object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Observable Semantics</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Observable Semantics</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseObservableSemantics(ObservableSemantics object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Parameter</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -392,38 +304,6 @@ public class KdlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseParameter(Parameter object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Classification</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Classification</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseClassification(Classification object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Classifier</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Classifier</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseClassifier(Classifier object)
   {
     return null;
   }

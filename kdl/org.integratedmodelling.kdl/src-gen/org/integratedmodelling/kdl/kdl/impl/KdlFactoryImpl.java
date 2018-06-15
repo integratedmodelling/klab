@@ -13,12 +13,8 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
-import org.integratedmodelling.kdl.kdl.Classification;
-import org.integratedmodelling.kdl.kdl.Classifier;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
-import org.integratedmodelling.kdl.kdl.Concept;
-import org.integratedmodelling.kdl.kdl.ConceptDeclaration;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
@@ -29,7 +25,6 @@ import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
@@ -95,12 +90,7 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
       case KdlPackage.ACTOR_DEFINITION: return createActorDefinition();
       case KdlPackage.DATAFLOW_BODY: return createDataflowBody();
       case KdlPackage.COMPUTATION: return createComputation();
-      case KdlPackage.CONCEPT_DECLARATION: return createConceptDeclaration();
-      case KdlPackage.CONCEPT: return createConcept();
-      case KdlPackage.OBSERVABLE_SEMANTICS: return createObservableSemantics();
       case KdlPackage.PARAMETER: return createParameter();
-      case KdlPackage.CLASSIFICATION: return createClassification();
-      case KdlPackage.CLASSIFIER: return createClassifier();
       case KdlPackage.CLASSIFIER_RHS: return createClassifierRHS();
       case KdlPackage.LIST: return createList();
       case KdlPackage.LITERAL: return createLiteral();
@@ -203,65 +193,10 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ConceptDeclaration createConceptDeclaration()
-  {
-    ConceptDeclarationImpl conceptDeclaration = new ConceptDeclarationImpl();
-    return conceptDeclaration;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Concept createConcept()
-  {
-    ConceptImpl concept = new ConceptImpl();
-    return concept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ObservableSemantics createObservableSemantics()
-  {
-    ObservableSemanticsImpl observableSemantics = new ObservableSemanticsImpl();
-    return observableSemantics;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Parameter createParameter()
   {
     ParameterImpl parameter = new ParameterImpl();
     return parameter;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Classification createClassification()
-  {
-    ClassificationImpl classification = new ClassificationImpl();
-    return classification;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Classifier createClassifier()
-  {
-    ClassifierImpl classifier = new ClassifierImpl();
-    return classifier;
   }
 
   /**

@@ -12,12 +12,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
-import org.integratedmodelling.kdl.kdl.Classification;
-import org.integratedmodelling.kdl.kdl.Classifier;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
-import org.integratedmodelling.kdl.kdl.Concept;
-import org.integratedmodelling.kdl.kdl.ConceptDeclaration;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
@@ -28,7 +24,6 @@ import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.Unit;
@@ -78,42 +73,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass conceptDeclarationEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass conceptEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass observableSemanticsEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass parameterEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass classificationEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass classifierEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -628,7 +588,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getDataflowBody_NewObservation()
+  public EReference getDataflowBody_Dataflows()
   {
     return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(0);
   }
@@ -638,29 +598,9 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getDataflowBody_UrnObservation()
-  {
-    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getDataflowBody_Dataflows()
-  {
-    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EAttribute getDataflowBody_Geometry()
   {
-    return (EAttribute)dataflowBodyEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)dataflowBodyEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -670,7 +610,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getDataflowBody_Units()
   {
-    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(4);
+    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -680,17 +620,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getDataflowBody_Computations()
   {
-    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getDataflowBody_Semantics()
-  {
-    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(6);
+    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -700,7 +630,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getDataflowBody_Metadata()
   {
-    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(7);
+    return (EReference)dataflowBodyEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -710,7 +640,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EAttribute getDataflowBody_JavaClass()
   {
-    return (EAttribute)dataflowBodyEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)dataflowBodyEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -731,326 +661,6 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
   public EReference getComputation_Functions()
   {
     return (EReference)computationEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getConceptDeclaration()
-  {
-    return conceptDeclarationEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConceptDeclaration_Name()
-  {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getConceptDeclaration_Main()
-  {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getConceptDeclaration_Inherency()
-  {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getConceptDeclaration_Context()
-  {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getConcept()
-  {
-    return conceptEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Negated()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Name()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_StringIdentifier()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_IntIdentifier()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Authority()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Presence()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getConcept_Concept()
-  {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(6);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Count()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(7);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Distance()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(8);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Probability()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(9);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Uncertainty()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(10);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Proportion()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(11);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getConcept_Other()
-  {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(12);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Ratio()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(13);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Value()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(14);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getConcept_Occurrence()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(15);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getConcept_Declaration()
-  {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(16);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getObservableSemantics()
-  {
-    return observableSemanticsEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_Declaration()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_By()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getObservableSemantics_DownTo()
-  {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_Role()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_Unit()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_Currency()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_From()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(6);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_To()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1091,76 +701,6 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
   public EAttribute getParameter_Docstring()
   {
     return (EAttribute)parameterEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getClassification()
-  {
-    return classificationEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getClassification_Classifiers()
-  {
-    return (EReference)classificationEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getClassifier()
-  {
-    return classifierEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getClassifier_Declaration()
-  {
-    return (EReference)classifierEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getClassifier_Otherwise()
-  {
-    return (EAttribute)classifierEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getClassifier_Negated()
-  {
-    return (EAttribute)classifierEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getClassifier_Classifier()
-  {
-    return (EReference)classifierEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1258,19 +798,9 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getClassifierRHS_Concept()
+  public EAttribute getClassifierRHS_ToResolve()
   {
-    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(8);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getClassifierRHS_ToResolve()
-  {
-    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1280,7 +810,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getClassifierRHS_Op()
   {
-    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(10);
+    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -1290,7 +820,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getClassifierRHS_Expression()
   {
-    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(11);
+    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1300,7 +830,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EAttribute getClassifierRHS_Nodata()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1310,7 +840,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EAttribute getClassifierRHS_Star()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -1688,19 +1218,9 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFunction_Classification()
-  {
-    return (EReference)functionEClass.getEStructuralFeatures().get(6);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getFunction_Chain()
   {
-    return (EReference)functionEClass.getEStructuralFeatures().get(7);
+    return (EReference)functionEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2049,67 +1569,20 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__RANGE_MAX);
 
     dataflowBodyEClass = createEClass(DATAFLOW_BODY);
-    createEReference(dataflowBodyEClass, DATAFLOW_BODY__NEW_OBSERVATION);
-    createEReference(dataflowBodyEClass, DATAFLOW_BODY__URN_OBSERVATION);
     createEReference(dataflowBodyEClass, DATAFLOW_BODY__DATAFLOWS);
     createEAttribute(dataflowBodyEClass, DATAFLOW_BODY__GEOMETRY);
     createEReference(dataflowBodyEClass, DATAFLOW_BODY__UNITS);
     createEReference(dataflowBodyEClass, DATAFLOW_BODY__COMPUTATIONS);
-    createEReference(dataflowBodyEClass, DATAFLOW_BODY__SEMANTICS);
     createEReference(dataflowBodyEClass, DATAFLOW_BODY__METADATA);
     createEAttribute(dataflowBodyEClass, DATAFLOW_BODY__JAVA_CLASS);
 
     computationEClass = createEClass(COMPUTATION);
     createEReference(computationEClass, COMPUTATION__FUNCTIONS);
 
-    conceptDeclarationEClass = createEClass(CONCEPT_DECLARATION);
-    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__NAME);
-    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MAIN);
-    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__INHERENCY);
-    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTEXT);
-
-    conceptEClass = createEClass(CONCEPT);
-    createEAttribute(conceptEClass, CONCEPT__NEGATED);
-    createEAttribute(conceptEClass, CONCEPT__NAME);
-    createEAttribute(conceptEClass, CONCEPT__STRING_IDENTIFIER);
-    createEAttribute(conceptEClass, CONCEPT__INT_IDENTIFIER);
-    createEAttribute(conceptEClass, CONCEPT__AUTHORITY);
-    createEAttribute(conceptEClass, CONCEPT__PRESENCE);
-    createEReference(conceptEClass, CONCEPT__CONCEPT);
-    createEAttribute(conceptEClass, CONCEPT__COUNT);
-    createEAttribute(conceptEClass, CONCEPT__DISTANCE);
-    createEAttribute(conceptEClass, CONCEPT__PROBABILITY);
-    createEAttribute(conceptEClass, CONCEPT__UNCERTAINTY);
-    createEAttribute(conceptEClass, CONCEPT__PROPORTION);
-    createEReference(conceptEClass, CONCEPT__OTHER);
-    createEAttribute(conceptEClass, CONCEPT__RATIO);
-    createEAttribute(conceptEClass, CONCEPT__VALUE);
-    createEAttribute(conceptEClass, CONCEPT__OCCURRENCE);
-    createEReference(conceptEClass, CONCEPT__DECLARATION);
-
-    observableSemanticsEClass = createEClass(OBSERVABLE_SEMANTICS);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DECLARATION);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__BY);
-    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DOWN_TO);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ROLE);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__UNIT);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CURRENCY);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__FROM);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
-
     parameterEClass = createEClass(PARAMETER);
     createEAttribute(parameterEClass, PARAMETER__NAME);
     createEReference(parameterEClass, PARAMETER__VALUE);
     createEAttribute(parameterEClass, PARAMETER__DOCSTRING);
-
-    classificationEClass = createEClass(CLASSIFICATION);
-    createEReference(classificationEClass, CLASSIFICATION__CLASSIFIERS);
-
-    classifierEClass = createEClass(CLASSIFIER);
-    createEReference(classifierEClass, CLASSIFIER__DECLARATION);
-    createEAttribute(classifierEClass, CLASSIFIER__OTHERWISE);
-    createEAttribute(classifierEClass, CLASSIFIER__NEGATED);
-    createEReference(classifierEClass, CLASSIFIER__CLASSIFIER);
 
     classifierRHSEClass = createEClass(CLASSIFIER_RHS);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__BOOLEAN);
@@ -2120,8 +1593,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__NUM);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__SET);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__STRING);
-    createEReference(classifierRHSEClass, CLASSIFIER_RHS__CONCEPT);
-    createEReference(classifierRHSEClass, CLASSIFIER_RHS__TO_RESOLVE);
+    createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__TO_RESOLVE);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__OP);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__EXPRESSION);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__NODATA);
@@ -2171,7 +1643,6 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(functionEClass, FUNCTION__URN);
     createEReference(functionEClass, FUNCTION__VALUE);
     createEAttribute(functionEClass, FUNCTION__VARIABLE);
-    createEReference(functionEClass, FUNCTION__CLASSIFICATION);
     createEReference(functionEClass, FUNCTION__CHAIN);
 
     unitElementEClass = createEClass(UNIT_ELEMENT);
@@ -2277,67 +1748,20 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getActorDefinition_RangeMax(), this.getNumber(), null, "rangeMax", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dataflowBodyEClass, DataflowBody.class, "DataflowBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getDataflowBody_NewObservation(), this.getObservableSemantics(), null, "newObservation", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDataflowBody_UrnObservation(), this.getUrn(), null, "urnObservation", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDataflowBody_Dataflows(), this.getActorDefinition(), null, "dataflows", null, 0, -1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDataflowBody_Geometry(), ecorePackage.getEString(), "geometry", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDataflowBody_Units(), this.getUnit(), null, "units", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDataflowBody_Computations(), this.getComputation(), null, "computations", null, 0, -1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDataflowBody_Semantics(), this.getObservableSemantics(), null, "semantics", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDataflowBody_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDataflowBody_JavaClass(), ecorePackage.getEString(), "javaClass", null, 0, 1, DataflowBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(computationEClass, Computation.class, "Computation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getComputation_Functions(), this.getFunction(), null, "functions", null, 0, -1, Computation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(conceptDeclarationEClass, ConceptDeclaration.class, "ConceptDeclaration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getConceptDeclaration_Name(), ecorePackage.getEString(), "name", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConceptDeclaration_Main(), this.getConcept(), null, "main", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConceptDeclaration_Inherency(), this.getConceptDeclaration(), null, "inherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConceptDeclaration_Context(), this.getConceptDeclaration(), null, "context", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(conceptEClass, Concept.class, "Concept", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getConcept_Negated(), ecorePackage.getEBoolean(), "negated", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Name(), ecorePackage.getEString(), "name", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_StringIdentifier(), ecorePackage.getEString(), "stringIdentifier", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_IntIdentifier(), ecorePackage.getEInt(), "intIdentifier", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Authority(), ecorePackage.getEString(), "authority", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Presence(), ecorePackage.getEBoolean(), "presence", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConcept_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Count(), ecorePackage.getEBoolean(), "count", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Distance(), ecorePackage.getEBoolean(), "distance", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Probability(), ecorePackage.getEBoolean(), "probability", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Uncertainty(), ecorePackage.getEBoolean(), "uncertainty", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Proportion(), ecorePackage.getEBoolean(), "proportion", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConcept_Other(), this.getConceptDeclaration(), null, "other", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Ratio(), ecorePackage.getEBoolean(), "ratio", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Occurrence(), ecorePackage.getEBoolean(), "occurrence", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConcept_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(observableSemanticsEClass, ObservableSemantics.class, "ObservableSemantics", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getObservableSemantics_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_By(), this.getConcept(), null, "by", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getObservableSemantics_DownTo(), ecorePackage.getEString(), "downTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_Role(), this.getConcept(), null, "role", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_Unit(), this.getUnit(), null, "unit", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_Currency(), this.getCurrency(), null, "currency", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_From(), this.getNumber(), null, "from", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getParameter_Value(), this.getValue(), null, "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getParameter_Docstring(), ecorePackage.getEString(), "docstring", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(classificationEClass, Classification.class, "Classification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getClassification_Classifiers(), this.getClassifier(), null, "classifiers", null, 0, -1, Classification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(classifierEClass, Classifier.class, "Classifier", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getClassifier_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getClassifier_Otherwise(), ecorePackage.getEBoolean(), "otherwise", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getClassifier_Negated(), ecorePackage.getEBoolean(), "negated", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getClassifier_Classifier(), this.getClassifierRHS(), null, "classifier", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(classifierRHSEClass, ClassifierRHS.class, "ClassifierRHS", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getClassifierRHS_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2348,8 +1772,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getClassifierRHS_Num(), this.getNumber(), null, "num", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Set(), this.getList(), null, "set", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_String(), ecorePackage.getEString(), "string", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getClassifierRHS_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getClassifierRHS_ToResolve(), this.getConceptDeclaration(), null, "toResolve", null, 0, -1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getClassifierRHS_ToResolve(), ecorePackage.getEString(), "toResolve", null, 0, -1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Expression(), this.getNumber(), null, "expression", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Nodata(), ecorePackage.getEString(), "nodata", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2399,7 +1822,6 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getFunction_Urn(), this.getUrn(), null, "urn", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Value(), this.getLiteral(), null, "value", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getFunction_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getFunction_Classification(), this.getClassification(), null, "classification", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Chain(), this.getFunction(), null, "chain", null, 0, -1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getNum <em>Num</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getString <em>String</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getToResolve <em>To Resolve</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getExpression <em>Expression</em>}</li>
@@ -247,46 +246,20 @@ public interface ClassifierRHS extends EObject
   void setString(String value);
 
   /**
-   * Returns the value of the '<em><b>Concept</b></em>' containment reference.
+   * Returns the value of the '<em><b>To Resolve</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Concept</em>' containment reference isn't clear,
+   * If the meaning of the '<em>To Resolve</em>' attribute list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Concept</em>' containment reference.
-   * @see #setConcept(ConceptDeclaration)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getClassifierRHS_Concept()
-   * @model containment="true"
-   * @generated
-   */
-  ConceptDeclaration getConcept();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getConcept <em>Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Concept</em>' containment reference.
-   * @see #getConcept()
-   * @generated
-   */
-  void setConcept(ConceptDeclaration value);
-
-  /**
-   * Returns the value of the '<em><b>To Resolve</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kdl.kdl.ConceptDeclaration}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>To Resolve</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>To Resolve</em>' containment reference list.
+   * @return the value of the '<em>To Resolve</em>' attribute list.
    * @see org.integratedmodelling.kdl.kdl.KdlPackage#getClassifierRHS_ToResolve()
-   * @model containment="true"
+   * @model unique="false"
    * @generated
    */
-  EList<ConceptDeclaration> getToResolve();
+  EList<String> getToResolve();
 
   /**
    * Returns the value of the '<em><b>Op</b></em>' containment reference.

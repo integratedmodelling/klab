@@ -335,5 +335,4 @@ public class Classification implements IClassification {
 		classifiers.add(new Pair<>(c, classifier));
 	}
 
-
 }

@@ -857,47 +857,6 @@ public enum Kim {
 		}
 	}
 
-	/**
-	 * Create a number of concepts mimicking the IM worldview for testing.
-	 */
-	public void setupTestConcepts() {
-		setConceptDescriptor("geography:Elevation",
-				new ConceptDescriptor("geography:Elevation", "The height of the terrain over sea level.",
-						Type.OBSERVABLE, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.LENGTH),
-				true);
-		setConceptDescriptor("geography:Slope", new ConceptDescriptor("geography:Slope", Type.OBSERVABLE, Type.QUALITY,
-				Type.INTENSIVE_PROPERTY, Type.ANGLE), true);
-		setConceptDescriptor("hydrology:HydrologicalSoilGroup",
-				new ConceptDescriptor("hydrology:HydrologicalSoilGroup", Type.OBSERVABLE, Type.QUALITY, Type.CLASS),
-				true);
-		setConceptDescriptor("infrastructure:City", new ConceptDescriptor("infrastructure:City", Type.OBSERVABLE,
-				Type.SUBJECT, Type.COUNTABLE, Type.DIRECT_OBSERVABLE), true);
-		setConceptDescriptor("infrastructure:Building", new ConceptDescriptor("infrastructure:Building",
-				Type.OBSERVABLE, Type.SUBJECT, Type.COUNTABLE, Type.DIRECT_OBSERVABLE), true);
-		setConceptDescriptor("earth:Earthquake", new ConceptDescriptor("earth:Earthquake", Type.OBSERVABLE, Type.EVENT,
-				Type.COUNTABLE, Type.DIRECT_OBSERVABLE), true);
-		setConceptDescriptor("hydrology:SurfaceWaterFlow", new ConceptDescriptor("hydrology:SurfaceWaterFlow",
-				Type.OBSERVABLE, Type.PROCESS, Type.DIRECT_OBSERVABLE), true);
-		setConceptDescriptor("im:Tall",
-				new ConceptDescriptor("im:Tall", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING, Type.SUBJECTIVE), true);
-		setConceptDescriptor("im:Small",
-				new ConceptDescriptor("im:Small", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING, Type.SUBJECTIVE), true);
-		setConceptDescriptor("im:Normalized", new ConceptDescriptor("im:Normalized", Type.TRAIT, Type.ATTRIBUTE), true);
-		setConceptDescriptor("im:Large",
-				new ConceptDescriptor("im:Large", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING, Type.SUBJECTIVE), true);
-		setConceptDescriptor("im:Potential", new ConceptDescriptor("im:Potential", Type.TRAIT, Type.ATTRIBUTE), true);
-		setConceptDescriptor("im:Level", new ConceptDescriptor("im:Level", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING,
-				Type.ABSTRACT, Type.SUBJECTIVE), true);
-		setConceptDescriptor("im:High",
-				new ConceptDescriptor("im:High", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING, Type.SUBJECTIVE), true);
-		setConceptDescriptor("im:Moderate",
-				new ConceptDescriptor("im:Moderate", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING, Type.SUBJECTIVE), true);
-		setConceptDescriptor("im:Low",
-				new ConceptDescriptor("im:Low", Type.TRAIT, Type.ATTRIBUTE, Type.ORDERING, Type.SUBJECTIVE), true);
-		setConceptDescriptor("materials:Concrete",
-				new ConceptDescriptor("materials:Concrete", Type.TRAIT, Type.IDENTITY), true);
-	}
-
 	public boolean initialBuildDone() {
 		return initialBuildDone;
 	}

@@ -386,31 +386,13 @@ public interface KdlPackage extends EPackage
   int DATAFLOW_BODY = 2;
 
   /**
-   * The feature id for the '<em><b>New Observation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DATAFLOW_BODY__NEW_OBSERVATION = 0;
-
-  /**
-   * The feature id for the '<em><b>Urn Observation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DATAFLOW_BODY__URN_OBSERVATION = 1;
-
-  /**
    * The feature id for the '<em><b>Dataflows</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY__DATAFLOWS = 2;
+  int DATAFLOW_BODY__DATAFLOWS = 0;
 
   /**
    * The feature id for the '<em><b>Geometry</b></em>' attribute.
@@ -419,7 +401,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY__GEOMETRY = 3;
+  int DATAFLOW_BODY__GEOMETRY = 1;
 
   /**
    * The feature id for the '<em><b>Units</b></em>' containment reference.
@@ -428,7 +410,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY__UNITS = 4;
+  int DATAFLOW_BODY__UNITS = 2;
 
   /**
    * The feature id for the '<em><b>Computations</b></em>' containment reference list.
@@ -437,16 +419,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY__COMPUTATIONS = 5;
-
-  /**
-   * The feature id for the '<em><b>Semantics</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DATAFLOW_BODY__SEMANTICS = 6;
+  int DATAFLOW_BODY__COMPUTATIONS = 3;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -455,7 +428,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY__METADATA = 7;
+  int DATAFLOW_BODY__METADATA = 4;
 
   /**
    * The feature id for the '<em><b>Java Class</b></em>' attribute.
@@ -464,7 +437,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY__JAVA_CLASS = 8;
+  int DATAFLOW_BODY__JAVA_CLASS = 5;
 
   /**
    * The number of structural features of the '<em>Dataflow Body</em>' class.
@@ -473,7 +446,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DATAFLOW_BODY_FEATURE_COUNT = 9;
+  int DATAFLOW_BODY_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ComputationImpl <em>Computation</em>}' class.
@@ -504,324 +477,6 @@ public interface KdlPackage extends EPackage
   int COMPUTATION_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kdl.kdl.impl.ConceptDeclarationImpl
-   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getConceptDeclaration()
-   * @generated
-   */
-  int CONCEPT_DECLARATION = 4;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_DECLARATION__NAME = 0;
-
-  /**
-   * The feature id for the '<em><b>Main</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_DECLARATION__MAIN = 1;
-
-  /**
-   * The feature id for the '<em><b>Inherency</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_DECLARATION__INHERENCY = 2;
-
-  /**
-   * The feature id for the '<em><b>Context</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_DECLARATION__CONTEXT = 3;
-
-  /**
-   * The number of structural features of the '<em>Concept Declaration</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_DECLARATION_FEATURE_COUNT = 4;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ConceptImpl <em>Concept</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kdl.kdl.impl.ConceptImpl
-   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getConcept()
-   * @generated
-   */
-  int CONCEPT = 5;
-
-  /**
-   * The feature id for the '<em><b>Negated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__NEGATED = 0;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__NAME = 1;
-
-  /**
-   * The feature id for the '<em><b>String Identifier</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__STRING_IDENTIFIER = 2;
-
-  /**
-   * The feature id for the '<em><b>Int Identifier</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__INT_IDENTIFIER = 3;
-
-  /**
-   * The feature id for the '<em><b>Authority</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__AUTHORITY = 4;
-
-  /**
-   * The feature id for the '<em><b>Presence</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__PRESENCE = 5;
-
-  /**
-   * The feature id for the '<em><b>Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__CONCEPT = 6;
-
-  /**
-   * The feature id for the '<em><b>Count</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__COUNT = 7;
-
-  /**
-   * The feature id for the '<em><b>Distance</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__DISTANCE = 8;
-
-  /**
-   * The feature id for the '<em><b>Probability</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__PROBABILITY = 9;
-
-  /**
-   * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__UNCERTAINTY = 10;
-
-  /**
-   * The feature id for the '<em><b>Proportion</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__PROPORTION = 11;
-
-  /**
-   * The feature id for the '<em><b>Other</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__OTHER = 12;
-
-  /**
-   * The feature id for the '<em><b>Ratio</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__RATIO = 13;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__VALUE = 14;
-
-  /**
-   * The feature id for the '<em><b>Occurrence</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__OCCURRENCE = 15;
-
-  /**
-   * The feature id for the '<em><b>Declaration</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__DECLARATION = 16;
-
-  /**
-   * The number of structural features of the '<em>Concept</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_FEATURE_COUNT = 17;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ObservableSemanticsImpl <em>Observable Semantics</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kdl.kdl.impl.ObservableSemanticsImpl
-   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getObservableSemantics()
-   * @generated
-   */
-  int OBSERVABLE_SEMANTICS = 6;
-
-  /**
-   * The feature id for the '<em><b>Declaration</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__DECLARATION = 0;
-
-  /**
-   * The feature id for the '<em><b>By</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__BY = 1;
-
-  /**
-   * The feature id for the '<em><b>Down To</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__DOWN_TO = 2;
-
-  /**
-   * The feature id for the '<em><b>Role</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__ROLE = 3;
-
-  /**
-   * The feature id for the '<em><b>Unit</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__UNIT = 4;
-
-  /**
-   * The feature id for the '<em><b>Currency</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__CURRENCY = 5;
-
-  /**
-   * The feature id for the '<em><b>From</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__FROM = 6;
-
-  /**
-   * The feature id for the '<em><b>To</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__TO = 7;
-
-  /**
-   * The number of structural features of the '<em>Observable Semantics</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 8;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ParameterImpl <em>Parameter</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -829,7 +484,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getParameter()
    * @generated
    */
-  int PARAMETER = 7;
+  int PARAMETER = 4;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -868,89 +523,6 @@ public interface KdlPackage extends EPackage
   int PARAMETER_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassificationImpl <em>Classification</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kdl.kdl.impl.ClassificationImpl
-   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getClassification()
-   * @generated
-   */
-  int CLASSIFICATION = 8;
-
-  /**
-   * The feature id for the '<em><b>Classifiers</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFICATION__CLASSIFIERS = 0;
-
-  /**
-   * The number of structural features of the '<em>Classification</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFICATION_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassifierImpl <em>Classifier</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kdl.kdl.impl.ClassifierImpl
-   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getClassifier()
-   * @generated
-   */
-  int CLASSIFIER = 9;
-
-  /**
-   * The feature id for the '<em><b>Declaration</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFIER__DECLARATION = 0;
-
-  /**
-   * The feature id for the '<em><b>Otherwise</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFIER__OTHERWISE = 1;
-
-  /**
-   * The feature id for the '<em><b>Negated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFIER__NEGATED = 2;
-
-  /**
-   * The feature id for the '<em><b>Classifier</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFIER__CLASSIFIER = 3;
-
-  /**
-   * The number of structural features of the '<em>Classifier</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFIER_FEATURE_COUNT = 4;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl <em>Classifier RHS</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -958,7 +530,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getClassifierRHS()
    * @generated
    */
-  int CLASSIFIER_RHS = 10;
+  int CLASSIFIER_RHS = 5;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -1033,22 +605,13 @@ public interface KdlPackage extends EPackage
   int CLASSIFIER_RHS__STRING = 7;
 
   /**
-   * The feature id for the '<em><b>Concept</b></em>' containment reference.
+   * The feature id for the '<em><b>To Resolve</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__CONCEPT = 8;
-
-  /**
-   * The feature id for the '<em><b>To Resolve</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CLASSIFIER_RHS__TO_RESOLVE = 9;
+  int CLASSIFIER_RHS__TO_RESOLVE = 8;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' containment reference.
@@ -1057,7 +620,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__OP = 10;
+  int CLASSIFIER_RHS__OP = 9;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -1066,7 +629,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__EXPRESSION = 11;
+  int CLASSIFIER_RHS__EXPRESSION = 10;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -1075,7 +638,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__NODATA = 12;
+  int CLASSIFIER_RHS__NODATA = 11;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -1084,7 +647,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__STAR = 13;
+  int CLASSIFIER_RHS__STAR = 12;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -1093,7 +656,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 14;
+  int CLASSIFIER_RHS_FEATURE_COUNT = 13;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ListImpl <em>List</em>}' class.
@@ -1103,7 +666,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getList()
    * @generated
    */
-  int LIST = 11;
+  int LIST = 6;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -1131,7 +694,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 12;
+  int LITERAL = 7;
 
   /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
@@ -1213,7 +776,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMetadata()
    * @generated
    */
-  int METADATA = 13;
+  int METADATA = 8;
 
   /**
    * The feature id for the '<em><b>Ids</b></em>' attribute list.
@@ -1250,7 +813,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 14;
+  int PARAMETER_LIST = 9;
 
   /**
    * The feature id for the '<em><b>Values</b></em>' containment reference list.
@@ -1287,7 +850,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 15;
+  int VALUE = 10;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1369,7 +932,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUrn()
    * @generated
    */
-  int URN = 16;
+  int URN = 11;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1397,7 +960,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 17;
+  int KEY_VALUE_PAIR = 12;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1443,7 +1006,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 18;
+  int FUNCTION = 13;
 
   /**
    * The feature id for the '<em><b>Mediated</b></em>' attribute.
@@ -1500,22 +1063,13 @@ public interface KdlPackage extends EPackage
   int FUNCTION__VARIABLE = 5;
 
   /**
-   * The feature id for the '<em><b>Classification</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FUNCTION__CLASSIFICATION = 6;
-
-  /**
    * The feature id for the '<em><b>Chain</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FUNCTION__CHAIN = 7;
+  int FUNCTION__CHAIN = 6;
 
   /**
    * The number of structural features of the '<em>Function</em>' class.
@@ -1524,7 +1078,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_FEATURE_COUNT = 8;
+  int FUNCTION_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.UnitElementImpl <em>Unit Element</em>}' class.
@@ -1534,7 +1088,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 19;
+  int UNIT_ELEMENT = 14;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1580,7 +1134,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 20;
+  int REL_OPERATOR = 15;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -1653,7 +1207,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 21;
+  int UNIT = 16;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -1699,7 +1253,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 22;
+  int CURRENCY = 17;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1745,7 +1299,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 23;
+  int NUMBER = 18;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -1827,7 +1381,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 24;
+  int UNIT_OP = 19;
 
 
   /**
@@ -2202,28 +1756,6 @@ public interface KdlPackage extends EPackage
   EClass getDataflowBody();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getNewObservation <em>New Observation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>New Observation</em>'.
-   * @see org.integratedmodelling.kdl.kdl.DataflowBody#getNewObservation()
-   * @see #getDataflowBody()
-   * @generated
-   */
-  EReference getDataflowBody_NewObservation();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getUrnObservation <em>Urn Observation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Urn Observation</em>'.
-   * @see org.integratedmodelling.kdl.kdl.DataflowBody#getUrnObservation()
-   * @see #getDataflowBody()
-   * @generated
-   */
-  EReference getDataflowBody_UrnObservation();
-
-  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getDataflows <em>Dataflows</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2266,17 +1798,6 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EReference getDataflowBody_Computations();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getSemantics <em>Semantics</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Semantics</em>'.
-   * @see org.integratedmodelling.kdl.kdl.DataflowBody#getSemantics()
-   * @see #getDataflowBody()
-   * @generated
-   */
-  EReference getDataflowBody_Semantics();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getMetadata <em>Metadata</em>}'.
@@ -2322,355 +1843,6 @@ public interface KdlPackage extends EPackage
   EReference getComputation_Functions();
 
   /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.ConceptDeclaration <em>Concept Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Concept Declaration</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ConceptDeclaration
-   * @generated
-   */
-  EClass getConceptDeclaration();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ConceptDeclaration#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ConceptDeclaration#getName()
-   * @see #getConceptDeclaration()
-   * @generated
-   */
-  EAttribute getConceptDeclaration_Name();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.ConceptDeclaration#getMain <em>Main</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Main</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ConceptDeclaration#getMain()
-   * @see #getConceptDeclaration()
-   * @generated
-   */
-  EReference getConceptDeclaration_Main();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ConceptDeclaration#getInherency <em>Inherency</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Inherency</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ConceptDeclaration#getInherency()
-   * @see #getConceptDeclaration()
-   * @generated
-   */
-  EReference getConceptDeclaration_Inherency();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ConceptDeclaration#getContext <em>Context</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Context</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ConceptDeclaration#getContext()
-   * @see #getConceptDeclaration()
-   * @generated
-   */
-  EReference getConceptDeclaration_Context();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Concept <em>Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Concept</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept
-   * @generated
-   */
-  EClass getConcept();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isNegated <em>Negated</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Negated</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isNegated()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Negated();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getName()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Name();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#getStringIdentifier <em>String Identifier</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>String Identifier</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getStringIdentifier()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_StringIdentifier();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#getIntIdentifier <em>Int Identifier</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Int Identifier</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getIntIdentifier()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_IntIdentifier();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#getAuthority <em>Authority</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Authority</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getAuthority()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Authority();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isPresence <em>Presence</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Presence</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isPresence()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Presence();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Concept#getConcept <em>Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Concept</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getConcept()
-   * @see #getConcept()
-   * @generated
-   */
-  EReference getConcept_Concept();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isCount <em>Count</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Count</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isCount()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Count();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isDistance <em>Distance</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Distance</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isDistance()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Distance();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isProbability <em>Probability</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Probability</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isProbability()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Probability();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isUncertainty <em>Uncertainty</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Uncertainty</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isUncertainty()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Uncertainty();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isProportion <em>Proportion</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Proportion</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isProportion()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Proportion();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Concept#getOther <em>Other</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Other</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getOther()
-   * @see #getConcept()
-   * @generated
-   */
-  EReference getConcept_Other();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isRatio <em>Ratio</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Ratio</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isRatio()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Ratio();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isValue()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Value();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Concept#isOccurrence <em>Occurrence</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Occurrence</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#isOccurrence()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Occurrence();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Concept#getDeclaration <em>Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Declaration</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Concept#getDeclaration()
-   * @see #getConcept()
-   * @generated
-   */
-  EReference getConcept_Declaration();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics <em>Observable Semantics</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Observable Semantics</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics
-   * @generated
-   */
-  EClass getObservableSemantics();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getDeclaration <em>Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Declaration</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getDeclaration()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_Declaration();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getBy <em>By</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>By</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getBy()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_By();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getDownTo <em>Down To</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Down To</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getDownTo()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EAttribute getObservableSemantics_DownTo();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getRole <em>Role</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Role</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getRole()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_Role();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getUnit <em>Unit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Unit</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getUnit()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_Unit();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getCurrency <em>Currency</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Currency</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getCurrency()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_Currency();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getFrom <em>From</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>From</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getFrom()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_From();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics#getTo <em>To</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>To</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics#getTo()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_To();
-
-  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Parameter <em>Parameter</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2712,81 +1884,6 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getParameter_Docstring();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Classification <em>Classification</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Classification</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classification
-   * @generated
-   */
-  EClass getClassification();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.Classification#getClassifiers <em>Classifiers</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Classifiers</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classification#getClassifiers()
-   * @see #getClassification()
-   * @generated
-   */
-  EReference getClassification_Classifiers();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Classifier <em>Classifier</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Classifier</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classifier
-   * @generated
-   */
-  EClass getClassifier();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Classifier#getDeclaration <em>Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Declaration</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classifier#getDeclaration()
-   * @see #getClassifier()
-   * @generated
-   */
-  EReference getClassifier_Declaration();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Classifier#isOtherwise <em>Otherwise</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Otherwise</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classifier#isOtherwise()
-   * @see #getClassifier()
-   * @generated
-   */
-  EAttribute getClassifier_Otherwise();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Classifier#isNegated <em>Negated</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Negated</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classifier#isNegated()
-   * @see #getClassifier()
-   * @generated
-   */
-  EAttribute getClassifier_Negated();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Classifier#getClassifier <em>Classifier</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Classifier</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Classifier#getClassifier()
-   * @see #getClassifier()
-   * @generated
-   */
-  EReference getClassifier_Classifier();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS <em>Classifier RHS</em>}'.
@@ -2887,26 +1984,15 @@ public interface KdlPackage extends EPackage
   EAttribute getClassifierRHS_String();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getConcept <em>Concept</em>}'.
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getToResolve <em>To Resolve</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Concept</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ClassifierRHS#getConcept()
-   * @see #getClassifierRHS()
-   * @generated
-   */
-  EReference getClassifierRHS_Concept();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getToResolve <em>To Resolve</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>To Resolve</em>'.
+   * @return the meta object for the attribute list '<em>To Resolve</em>'.
    * @see org.integratedmodelling.kdl.kdl.ClassifierRHS#getToResolve()
    * @see #getClassifierRHS()
    * @generated
    */
-  EReference getClassifierRHS_ToResolve();
+  EAttribute getClassifierRHS_ToResolve();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getOp <em>Op</em>}'.
@@ -3350,17 +2436,6 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getFunction_Variable();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Function#getClassification <em>Classification</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Classification</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Function#getClassification()
-   * @see #getFunction()
-   * @generated
-   */
-  EReference getFunction_Classification();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.Function#getChain <em>Chain</em>}'.
@@ -3977,22 +3052,6 @@ public interface KdlPackage extends EPackage
     EClass DATAFLOW_BODY = eINSTANCE.getDataflowBody();
 
     /**
-     * The meta object literal for the '<em><b>New Observation</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference DATAFLOW_BODY__NEW_OBSERVATION = eINSTANCE.getDataflowBody_NewObservation();
-
-    /**
-     * The meta object literal for the '<em><b>Urn Observation</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference DATAFLOW_BODY__URN_OBSERVATION = eINSTANCE.getDataflowBody_UrnObservation();
-
-    /**
      * The meta object literal for the '<em><b>Dataflows</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4023,14 +3082,6 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EReference DATAFLOW_BODY__COMPUTATIONS = eINSTANCE.getDataflowBody_Computations();
-
-    /**
-     * The meta object literal for the '<em><b>Semantics</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference DATAFLOW_BODY__SEMANTICS = eINSTANCE.getDataflowBody_Semantics();
 
     /**
      * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
@@ -4067,268 +3118,6 @@ public interface KdlPackage extends EPackage
     EReference COMPUTATION__FUNCTIONS = eINSTANCE.getComputation_Functions();
 
     /**
-     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kdl.kdl.impl.ConceptDeclarationImpl
-     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getConceptDeclaration()
-     * @generated
-     */
-    EClass CONCEPT_DECLARATION = eINSTANCE.getConceptDeclaration();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_DECLARATION__NAME = eINSTANCE.getConceptDeclaration_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Main</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_DECLARATION__MAIN = eINSTANCE.getConceptDeclaration_Main();
-
-    /**
-     * The meta object literal for the '<em><b>Inherency</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_DECLARATION__INHERENCY = eINSTANCE.getConceptDeclaration_Inherency();
-
-    /**
-     * The meta object literal for the '<em><b>Context</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_DECLARATION__CONTEXT = eINSTANCE.getConceptDeclaration_Context();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ConceptImpl <em>Concept</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kdl.kdl.impl.ConceptImpl
-     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getConcept()
-     * @generated
-     */
-    EClass CONCEPT = eINSTANCE.getConcept();
-
-    /**
-     * The meta object literal for the '<em><b>Negated</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__NEGATED = eINSTANCE.getConcept_Negated();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__NAME = eINSTANCE.getConcept_Name();
-
-    /**
-     * The meta object literal for the '<em><b>String Identifier</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__STRING_IDENTIFIER = eINSTANCE.getConcept_StringIdentifier();
-
-    /**
-     * The meta object literal for the '<em><b>Int Identifier</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__INT_IDENTIFIER = eINSTANCE.getConcept_IntIdentifier();
-
-    /**
-     * The meta object literal for the '<em><b>Authority</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__AUTHORITY = eINSTANCE.getConcept_Authority();
-
-    /**
-     * The meta object literal for the '<em><b>Presence</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__PRESENCE = eINSTANCE.getConcept_Presence();
-
-    /**
-     * The meta object literal for the '<em><b>Concept</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT__CONCEPT = eINSTANCE.getConcept_Concept();
-
-    /**
-     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__COUNT = eINSTANCE.getConcept_Count();
-
-    /**
-     * The meta object literal for the '<em><b>Distance</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__DISTANCE = eINSTANCE.getConcept_Distance();
-
-    /**
-     * The meta object literal for the '<em><b>Probability</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__PROBABILITY = eINSTANCE.getConcept_Probability();
-
-    /**
-     * The meta object literal for the '<em><b>Uncertainty</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__UNCERTAINTY = eINSTANCE.getConcept_Uncertainty();
-
-    /**
-     * The meta object literal for the '<em><b>Proportion</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__PROPORTION = eINSTANCE.getConcept_Proportion();
-
-    /**
-     * The meta object literal for the '<em><b>Other</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT__OTHER = eINSTANCE.getConcept_Other();
-
-    /**
-     * The meta object literal for the '<em><b>Ratio</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__RATIO = eINSTANCE.getConcept_Ratio();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__VALUE = eINSTANCE.getConcept_Value();
-
-    /**
-     * The meta object literal for the '<em><b>Occurrence</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__OCCURRENCE = eINSTANCE.getConcept_Occurrence();
-
-    /**
-     * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT__DECLARATION = eINSTANCE.getConcept_Declaration();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ObservableSemanticsImpl <em>Observable Semantics</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kdl.kdl.impl.ObservableSemanticsImpl
-     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getObservableSemantics()
-     * @generated
-     */
-    EClass OBSERVABLE_SEMANTICS = eINSTANCE.getObservableSemantics();
-
-    /**
-     * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__DECLARATION = eINSTANCE.getObservableSemantics_Declaration();
-
-    /**
-     * The meta object literal for the '<em><b>By</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__BY = eINSTANCE.getObservableSemantics_By();
-
-    /**
-     * The meta object literal for the '<em><b>Down To</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute OBSERVABLE_SEMANTICS__DOWN_TO = eINSTANCE.getObservableSemantics_DownTo();
-
-    /**
-     * The meta object literal for the '<em><b>Role</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__ROLE = eINSTANCE.getObservableSemantics_Role();
-
-    /**
-     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__UNIT = eINSTANCE.getObservableSemantics_Unit();
-
-    /**
-     * The meta object literal for the '<em><b>Currency</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__CURRENCY = eINSTANCE.getObservableSemantics_Currency();
-
-    /**
-     * The meta object literal for the '<em><b>From</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__FROM = eINSTANCE.getObservableSemantics_From();
-
-    /**
-     * The meta object literal for the '<em><b>To</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__TO = eINSTANCE.getObservableSemantics_To();
-
-    /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ParameterImpl <em>Parameter</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4361,66 +3150,6 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute PARAMETER__DOCSTRING = eINSTANCE.getParameter_Docstring();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassificationImpl <em>Classification</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kdl.kdl.impl.ClassificationImpl
-     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getClassification()
-     * @generated
-     */
-    EClass CLASSIFICATION = eINSTANCE.getClassification();
-
-    /**
-     * The meta object literal for the '<em><b>Classifiers</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CLASSIFICATION__CLASSIFIERS = eINSTANCE.getClassification_Classifiers();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassifierImpl <em>Classifier</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kdl.kdl.impl.ClassifierImpl
-     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getClassifier()
-     * @generated
-     */
-    EClass CLASSIFIER = eINSTANCE.getClassifier();
-
-    /**
-     * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CLASSIFIER__DECLARATION = eINSTANCE.getClassifier_Declaration();
-
-    /**
-     * The meta object literal for the '<em><b>Otherwise</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CLASSIFIER__OTHERWISE = eINSTANCE.getClassifier_Otherwise();
-
-    /**
-     * The meta object literal for the '<em><b>Negated</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CLASSIFIER__NEGATED = eINSTANCE.getClassifier_Negated();
-
-    /**
-     * The meta object literal for the '<em><b>Classifier</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CLASSIFIER__CLASSIFIER = eINSTANCE.getClassifier_Classifier();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl <em>Classifier RHS</em>}' class.
@@ -4497,20 +3226,12 @@ public interface KdlPackage extends EPackage
     EAttribute CLASSIFIER_RHS__STRING = eINSTANCE.getClassifierRHS_String();
 
     /**
-     * The meta object literal for the '<em><b>Concept</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>To Resolve</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference CLASSIFIER_RHS__CONCEPT = eINSTANCE.getClassifierRHS_Concept();
-
-    /**
-     * The meta object literal for the '<em><b>To Resolve</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CLASSIFIER_RHS__TO_RESOLVE = eINSTANCE.getClassifierRHS_ToResolve();
+    EAttribute CLASSIFIER_RHS__TO_RESOLVE = eINSTANCE.getClassifierRHS_ToResolve();
 
     /**
      * The meta object literal for the '<em><b>Op</b></em>' containment reference feature.
@@ -4855,14 +3576,6 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute FUNCTION__VARIABLE = eINSTANCE.getFunction_Variable();
-
-    /**
-     * The meta object literal for the '<em><b>Classification</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference FUNCTION__CLASSIFICATION = eINSTANCE.getFunction_Classification();
 
     /**
      * The meta object literal for the '<em><b>Chain</b></em>' containment reference list feature.

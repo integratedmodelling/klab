@@ -19,13 +19,13 @@ class KdlValidator extends AbstractKdlValidator {
 
 	@Check
 	def checkDataflowBody(DataflowBody body) {
-		if (body.semantics !== null) {
-			val globals = getDataflow(body)
-			if (globals !== null && globals.worldview === null) {
-				error("Dataflows that specify semantics must state the worldview in the header", body,
-					KdlPackage.Literals.DATAFLOW_BODY__SEMANTICS)
-			}
-		}
+//		if (body.semantics !== null) {
+//			val globals = getDataflow(body)
+//			if (globals !== null && globals.worldview === null) {
+//				error("Dataflows that specify semantics must state the worldview in the header", body,
+//					KdlPackage.Literals.DATAFLOW_BODY__SEMANTICS)
+//			}
+//		}
 	}
 
 	@Check

@@ -1663,6 +1663,8 @@ public class KimValidator extends AbstractKimValidator {
             EnumSet<IKimConcept.Type> ptype = this.checkDeclaration(p);
             EnumSet<IKimConcept.Type> ctype = EnumSet.<IKimConcept.Type>copyOf(type);
             ctype.addAll(ptype);
+            ctype.remove(IKimConcept.Type.ABSTRACT);
+            ptype.remove(IKimConcept.Type.ABSTRACT);
             int _size_1 = Kim.intersection(ctype, IKimConcept.DECLARABLE_TYPES).size();
             boolean _notEquals = (_size_1 != 1);
             if (_notEquals) {
@@ -1741,6 +1743,10 @@ public class KimValidator extends AbstractKimValidator {
             }
             if ((!error)) {
               type.addAll(ptype);
+              boolean _isAbstract = concept.isAbstract();
+              if (_isAbstract) {
+                type.add(IKimConcept.Type.ABSTRACT);
+              }
             }
             boolean _contains = ptype.contains(IKimConcept.Type.MACRO);
             if (_contains) {

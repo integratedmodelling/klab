@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.integratedmodelling.kdl.kdl.Classification;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Literal;
@@ -40,7 +39,6 @@ import org.integratedmodelling.kdl.kdl.Urn;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getVariable <em>Variable</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getClassification <em>Classification</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getChain <em>Chain</em>}</li>
  * </ul>
  *
@@ -137,16 +135,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
    * @ordered
    */
   protected String variable = VARIABLE_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getClassification() <em>Classification</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getClassification()
-   * @generated
-   * @ordered
-   */
-  protected Classification classification;
 
   /**
    * The cached value of the '{@link #getChain() <em>Chain</em>}' containment reference list.
@@ -397,54 +385,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
    * <!-- end-user-doc -->
    * @generated
    */
-  public Classification getClassification()
-  {
-    return classification;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetClassification(Classification newClassification, NotificationChain msgs)
-  {
-    Classification oldClassification = classification;
-    classification = newClassification;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.FUNCTION__CLASSIFICATION, oldClassification, newClassification);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setClassification(Classification newClassification)
-  {
-    if (newClassification != classification)
-    {
-      NotificationChain msgs = null;
-      if (classification != null)
-        msgs = ((InternalEObject)classification).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.FUNCTION__CLASSIFICATION, null, msgs);
-      if (newClassification != null)
-        msgs = ((InternalEObject)newClassification).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.FUNCTION__CLASSIFICATION, null, msgs);
-      msgs = basicSetClassification(newClassification, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.FUNCTION__CLASSIFICATION, newClassification, newClassification));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<Function> getChain()
   {
     if (chain == null)
@@ -470,8 +410,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return basicSetUrn(null, msgs);
       case KdlPackage.FUNCTION__VALUE:
         return basicSetValue(null, msgs);
-      case KdlPackage.FUNCTION__CLASSIFICATION:
-        return basicSetClassification(null, msgs);
       case KdlPackage.FUNCTION__CHAIN:
         return ((InternalEList<?>)getChain()).basicRemove(otherEnd, msgs);
     }
@@ -500,8 +438,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return getValue();
       case KdlPackage.FUNCTION__VARIABLE:
         return getVariable();
-      case KdlPackage.FUNCTION__CLASSIFICATION:
-        return getClassification();
       case KdlPackage.FUNCTION__CHAIN:
         return getChain();
     }
@@ -536,9 +472,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return;
       case KdlPackage.FUNCTION__VARIABLE:
         setVariable((String)newValue);
-        return;
-      case KdlPackage.FUNCTION__CLASSIFICATION:
-        setClassification((Classification)newValue);
         return;
       case KdlPackage.FUNCTION__CHAIN:
         getChain().clear();
@@ -576,9 +509,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
       case KdlPackage.FUNCTION__VARIABLE:
         setVariable(VARIABLE_EDEFAULT);
         return;
-      case KdlPackage.FUNCTION__CLASSIFICATION:
-        setClassification((Classification)null);
-        return;
       case KdlPackage.FUNCTION__CHAIN:
         getChain().clear();
         return;
@@ -608,8 +538,6 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return value != null;
       case KdlPackage.FUNCTION__VARIABLE:
         return VARIABLE_EDEFAULT == null ? variable != null : !VARIABLE_EDEFAULT.equals(variable);
-      case KdlPackage.FUNCTION__CLASSIFICATION:
-        return classification != null;
       case KdlPackage.FUNCTION__CHAIN:
         return chain != null && !chain.isEmpty();
     }

@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
@@ -199,7 +201,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				throw new IllegalArgumentException(e);
 			}
 		} else if (resource.getClassification() != null) {
-			
+			return ClassifyingStateResolver.getServiceCall(((ComputableResource)resource).getValidatedResource(IClassification.class));
 		}
 
 		// temp

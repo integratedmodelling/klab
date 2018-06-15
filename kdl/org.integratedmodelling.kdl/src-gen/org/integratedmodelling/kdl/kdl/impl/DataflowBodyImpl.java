@@ -24,9 +24,7 @@ import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Metadata;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.kdl.Unit;
-import org.integratedmodelling.kdl.kdl.Urn;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,13 +34,10 @@ import org.integratedmodelling.kdl.kdl.Urn;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getNewObservation <em>New Observation</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getUrnObservation <em>Urn Observation</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getDataflows <em>Dataflows</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getGeometry <em>Geometry</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getUnits <em>Units</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getComputations <em>Computations</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getSemantics <em>Semantics</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl#getJavaClass <em>Java Class</em>}</li>
  * </ul>
@@ -51,26 +46,6 @@ import org.integratedmodelling.kdl.kdl.Urn;
  */
 public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements DataflowBody
 {
-  /**
-   * The cached value of the '{@link #getNewObservation() <em>New Observation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getNewObservation()
-   * @generated
-   * @ordered
-   */
-  protected ObservableSemantics newObservation;
-
-  /**
-   * The cached value of the '{@link #getUrnObservation() <em>Urn Observation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getUrnObservation()
-   * @generated
-   * @ordered
-   */
-  protected Urn urnObservation;
-
   /**
    * The cached value of the '{@link #getDataflows() <em>Dataflows</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -122,16 +97,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   protected EList<Computation> computations;
 
   /**
-   * The cached value of the '{@link #getSemantics() <em>Semantics</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getSemantics()
-   * @generated
-   * @ordered
-   */
-  protected ObservableSemantics semantics;
-
-  /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -180,102 +145,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   protected EClass eStaticClass()
   {
     return KdlPackage.Literals.DATAFLOW_BODY;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ObservableSemantics getNewObservation()
-  {
-    return newObservation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetNewObservation(ObservableSemantics newNewObservation, NotificationChain msgs)
-  {
-    ObservableSemantics oldNewObservation = newObservation;
-    newObservation = newNewObservation;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION, oldNewObservation, newNewObservation);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setNewObservation(ObservableSemantics newNewObservation)
-  {
-    if (newNewObservation != newObservation)
-    {
-      NotificationChain msgs = null;
-      if (newObservation != null)
-        msgs = ((InternalEObject)newObservation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION, null, msgs);
-      if (newNewObservation != null)
-        msgs = ((InternalEObject)newNewObservation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION, null, msgs);
-      msgs = basicSetNewObservation(newNewObservation, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION, newNewObservation, newNewObservation));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Urn getUrnObservation()
-  {
-    return urnObservation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetUrnObservation(Urn newUrnObservation, NotificationChain msgs)
-  {
-    Urn oldUrnObservation = urnObservation;
-    urnObservation = newUrnObservation;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__URN_OBSERVATION, oldUrnObservation, newUrnObservation);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setUrnObservation(Urn newUrnObservation)
-  {
-    if (newUrnObservation != urnObservation)
-    {
-      NotificationChain msgs = null;
-      if (urnObservation != null)
-        msgs = ((InternalEObject)urnObservation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__URN_OBSERVATION, null, msgs);
-      if (newUrnObservation != null)
-        msgs = ((InternalEObject)newUrnObservation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__URN_OBSERVATION, null, msgs);
-      msgs = basicSetUrnObservation(newUrnObservation, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__URN_OBSERVATION, newUrnObservation, newUrnObservation));
   }
 
   /**
@@ -382,54 +251,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
    * <!-- end-user-doc -->
    * @generated
    */
-  public ObservableSemantics getSemantics()
-  {
-    return semantics;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetSemantics(ObservableSemantics newSemantics, NotificationChain msgs)
-  {
-    ObservableSemantics oldSemantics = semantics;
-    semantics = newSemantics;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__SEMANTICS, oldSemantics, newSemantics);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setSemantics(ObservableSemantics newSemantics)
-  {
-    if (newSemantics != semantics)
-    {
-      NotificationChain msgs = null;
-      if (semantics != null)
-        msgs = ((InternalEObject)semantics).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__SEMANTICS, null, msgs);
-      if (newSemantics != null)
-        msgs = ((InternalEObject)newSemantics).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__SEMANTICS, null, msgs);
-      msgs = basicSetSemantics(newSemantics, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__SEMANTICS, newSemantics, newSemantics));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Metadata getMetadata()
   {
     return metadata;
@@ -506,18 +327,12 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   {
     switch (featureID)
     {
-      case KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION:
-        return basicSetNewObservation(null, msgs);
-      case KdlPackage.DATAFLOW_BODY__URN_OBSERVATION:
-        return basicSetUrnObservation(null, msgs);
       case KdlPackage.DATAFLOW_BODY__DATAFLOWS:
         return ((InternalEList<?>)getDataflows()).basicRemove(otherEnd, msgs);
       case KdlPackage.DATAFLOW_BODY__UNITS:
         return basicSetUnits(null, msgs);
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
         return ((InternalEList<?>)getComputations()).basicRemove(otherEnd, msgs);
-      case KdlPackage.DATAFLOW_BODY__SEMANTICS:
-        return basicSetSemantics(null, msgs);
       case KdlPackage.DATAFLOW_BODY__METADATA:
         return basicSetMetadata(null, msgs);
     }
@@ -534,10 +349,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   {
     switch (featureID)
     {
-      case KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION:
-        return getNewObservation();
-      case KdlPackage.DATAFLOW_BODY__URN_OBSERVATION:
-        return getUrnObservation();
       case KdlPackage.DATAFLOW_BODY__DATAFLOWS:
         return getDataflows();
       case KdlPackage.DATAFLOW_BODY__GEOMETRY:
@@ -546,8 +357,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
         return getUnits();
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
         return getComputations();
-      case KdlPackage.DATAFLOW_BODY__SEMANTICS:
-        return getSemantics();
       case KdlPackage.DATAFLOW_BODY__METADATA:
         return getMetadata();
       case KdlPackage.DATAFLOW_BODY__JAVA_CLASS:
@@ -567,12 +376,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   {
     switch (featureID)
     {
-      case KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION:
-        setNewObservation((ObservableSemantics)newValue);
-        return;
-      case KdlPackage.DATAFLOW_BODY__URN_OBSERVATION:
-        setUrnObservation((Urn)newValue);
-        return;
       case KdlPackage.DATAFLOW_BODY__DATAFLOWS:
         getDataflows().clear();
         getDataflows().addAll((Collection<? extends ActorDefinition>)newValue);
@@ -586,9 +389,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
         getComputations().clear();
         getComputations().addAll((Collection<? extends Computation>)newValue);
-        return;
-      case KdlPackage.DATAFLOW_BODY__SEMANTICS:
-        setSemantics((ObservableSemantics)newValue);
         return;
       case KdlPackage.DATAFLOW_BODY__METADATA:
         setMetadata((Metadata)newValue);
@@ -610,12 +410,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   {
     switch (featureID)
     {
-      case KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION:
-        setNewObservation((ObservableSemantics)null);
-        return;
-      case KdlPackage.DATAFLOW_BODY__URN_OBSERVATION:
-        setUrnObservation((Urn)null);
-        return;
       case KdlPackage.DATAFLOW_BODY__DATAFLOWS:
         getDataflows().clear();
         return;
@@ -627,9 +421,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
         return;
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
         getComputations().clear();
-        return;
-      case KdlPackage.DATAFLOW_BODY__SEMANTICS:
-        setSemantics((ObservableSemantics)null);
         return;
       case KdlPackage.DATAFLOW_BODY__METADATA:
         setMetadata((Metadata)null);
@@ -651,10 +442,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   {
     switch (featureID)
     {
-      case KdlPackage.DATAFLOW_BODY__NEW_OBSERVATION:
-        return newObservation != null;
-      case KdlPackage.DATAFLOW_BODY__URN_OBSERVATION:
-        return urnObservation != null;
       case KdlPackage.DATAFLOW_BODY__DATAFLOWS:
         return dataflows != null && !dataflows.isEmpty();
       case KdlPackage.DATAFLOW_BODY__GEOMETRY:
@@ -663,8 +450,6 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
         return units != null;
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
         return computations != null && !computations.isEmpty();
-      case KdlPackage.DATAFLOW_BODY__SEMANTICS:
-        return semantics != null;
       case KdlPackage.DATAFLOW_BODY__METADATA:
         return metadata != null;
       case KdlPackage.DATAFLOW_BODY__JAVA_CLASS:

@@ -110,21 +110,21 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
         ICompositeNode node = NodeModelUtils.getNode(o.getBody().getUnits());
         this.units = node.getText();
       }
-      if (o.getBody().getSemantics() != null) {
-        // store as string
-        ICompositeNode node = NodeModelUtils.getNode(o.getBody().getSemantics());
-        this.semantics = node.getText();
-      }
-      if (o.getBody().getNewObservation() != null) {
-        // store as string
-        ICompositeNode node = NodeModelUtils.getNode(o.getBody().getNewObservation());
-        this.newObservationType = node.getText();
-      }
-      if (o.getBody().getUrnObservation() != null) {
-        // store as string
-        ICompositeNode node = NodeModelUtils.getNode(o.getBody().getUrnObservation());
-        this.newObservationUrn = node.getText();
-      }
+//      if (o.getBody().getSemantics() != null) {
+//        // store as string
+//        ICompositeNode node = NodeModelUtils.getNode(o.getBody().getSemantics());
+//        this.semantics = node.getText();
+//      }
+//      if (o.getBody().getNewObservation() != null) {
+//        // store as string
+//        ICompositeNode node = NodeModelUtils.getNode(o.getBody().getNewObservation());
+//        this.newObservationType = node.getText();
+//      }
+//      if (o.getBody().getUrnObservation() != null) {
+//        // store as string
+//        ICompositeNode node = NodeModelUtils.getNode(o.getBody().getUrnObservation());
+//        this.newObservationUrn = node.getText();
+//      }
 
       for (Computation computation : o.getBody().getComputations()) {
         KdlComputation kc = new KdlComputation();

@@ -60,33 +60,6 @@ public interface KdlFactory extends EFactory
   Computation createComputation();
 
   /**
-   * Returns a new object of class '<em>Concept Declaration</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Concept Declaration</em>'.
-   * @generated
-   */
-  ConceptDeclaration createConceptDeclaration();
-
-  /**
-   * Returns a new object of class '<em>Concept</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Concept</em>'.
-   * @generated
-   */
-  Concept createConcept();
-
-  /**
-   * Returns a new object of class '<em>Observable Semantics</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Observable Semantics</em>'.
-   * @generated
-   */
-  ObservableSemantics createObservableSemantics();
-
-  /**
    * Returns a new object of class '<em>Parameter</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -94,24 +67,6 @@ public interface KdlFactory extends EFactory
    * @generated
    */
   Parameter createParameter();
-
-  /**
-   * Returns a new object of class '<em>Classification</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Classification</em>'.
-   * @generated
-   */
-  Classification createClassification();
-
-  /**
-   * Returns a new object of class '<em>Classifier</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Classifier</em>'.
-   * @generated
-   */
-  Classifier createClassifier();
 
   /**
    * Returns a new object of class '<em>Classifier RHS</em>'.

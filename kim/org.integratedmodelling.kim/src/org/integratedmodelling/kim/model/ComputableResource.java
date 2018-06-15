@@ -305,8 +305,9 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		return this.mediation;
 	}
 
-	public Object getValidatedResource() {
-		return validatedResource;
+	@SuppressWarnings("unchecked")
+	public <T> T getValidatedResource(Class<T> cls) {
+		return (T)validatedResource;
 	}
 
 	public void setValidatedResource(Object validatedResource) {

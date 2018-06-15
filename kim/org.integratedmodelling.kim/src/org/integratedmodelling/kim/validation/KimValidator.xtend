@@ -1281,8 +1281,11 @@ class KimValidator extends AbstractKimValidator {
 
 					var ptype = checkDeclaration(p)
 					var ctype = EnumSet.copyOf(type);
+	
 					ctype.addAll(ptype)
-
+					ctype.remove(Type.ABSTRACT)
+					ptype.remove(Type.ABSTRACT)
+					
 					if (Kim.intersection(ctype, IKimConcept.DECLARABLE_TYPES).size() != 1) {
 						error('This is not a suitable parent for the declared type', concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i)
@@ -1340,6 +1343,9 @@ class KimValidator extends AbstractKimValidator {
 
 					if (!error) {
 						type.addAll(ptype)
+						if (concept.isAbstract) {
+							type.add(Type.ABSTRACT)
+						}
 					}
 					if (ptype.contains(Type.MACRO)) {
 						template = true

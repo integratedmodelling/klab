@@ -10,7 +10,6 @@ import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.validation.AbstractKdlValidator;
 
 /**
@@ -21,16 +20,8 @@ import org.integratedmodelling.kdl.validation.AbstractKdlValidator;
 @SuppressWarnings("all")
 public class KdlValidator extends AbstractKdlValidator {
   @Check
-  public void checkDataflowBody(final DataflowBody body) {
-    ObservableSemantics _semantics = body.getSemantics();
-    boolean _tripleNotEquals = (_semantics != null);
-    if (_tripleNotEquals) {
-      final Model globals = this.getDataflow(body);
-      if (((globals != null) && (globals.getWorldview() == null))) {
-        this.error("Dataflows that specify semantics must state the worldview in the header", body, 
-          KdlPackage.Literals.DATAFLOW_BODY__SEMANTICS);
-      }
-    }
+  public Object checkDataflowBody(final DataflowBody body) {
+    return null;
   }
   
   @Check

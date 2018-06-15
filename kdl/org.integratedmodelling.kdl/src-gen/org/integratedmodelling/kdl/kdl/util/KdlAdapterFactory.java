@@ -11,12 +11,8 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
-import org.integratedmodelling.kdl.kdl.Classification;
-import org.integratedmodelling.kdl.kdl.Classifier;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
-import org.integratedmodelling.kdl.kdl.Concept;
-import org.integratedmodelling.kdl.kdl.ConceptDeclaration;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
@@ -26,7 +22,6 @@ import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.kdl.ObservableSemantics;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
@@ -119,34 +114,9 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
         return createComputationAdapter();
       }
       @Override
-      public Adapter caseConceptDeclaration(ConceptDeclaration object)
-      {
-        return createConceptDeclarationAdapter();
-      }
-      @Override
-      public Adapter caseConcept(Concept object)
-      {
-        return createConceptAdapter();
-      }
-      @Override
-      public Adapter caseObservableSemantics(ObservableSemantics object)
-      {
-        return createObservableSemanticsAdapter();
-      }
-      @Override
       public Adapter caseParameter(Parameter object)
       {
         return createParameterAdapter();
-      }
-      @Override
-      public Adapter caseClassification(Classification object)
-      {
-        return createClassificationAdapter();
-      }
-      @Override
-      public Adapter caseClassifier(Classifier object)
-      {
-        return createClassifierAdapter();
       }
       @Override
       public Adapter caseClassifierRHS(ClassifierRHS object)
@@ -301,51 +271,6 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.ConceptDeclaration <em>Concept Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kdl.kdl.ConceptDeclaration
-   * @generated
-   */
-  public Adapter createConceptDeclarationAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Concept <em>Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kdl.kdl.Concept
-   * @generated
-   */
-  public Adapter createConceptAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.ObservableSemantics <em>Observable Semantics</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kdl.kdl.ObservableSemantics
-   * @generated
-   */
-  public Adapter createObservableSemanticsAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Parameter <em>Parameter</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -356,36 +281,6 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createParameterAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Classification <em>Classification</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kdl.kdl.Classification
-   * @generated
-   */
-  public Adapter createClassificationAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Classifier <em>Classifier</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kdl.kdl.Classifier
-   * @generated
-   */
-  public Adapter createClassifierAdapter()
   {
     return null;
   }

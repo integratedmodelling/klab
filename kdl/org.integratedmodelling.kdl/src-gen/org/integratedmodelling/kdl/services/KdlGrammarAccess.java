@@ -391,27 +391,23 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRangeMaxNumberParserRuleCall_1_7_2_3_0 = (RuleCall)cRangeMaxAssignment_1_7_2_3.eContents().get(0);
 		
 		//// 'as' must ONLY BE LEGAL FOR IMPORTS
-		// // if multiple, semantics must be given to recognize the observables
-		//
+		//// if multiple, semantics must be given to recognize the observables
 		//ActorDefinition:
 		//	(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
 		//	// parameters denotes the ability of the implementation of accepting modified values during run
-		//
 		//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//
-		//	parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
-		//	targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
-		//	coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
-		//	| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
-		//	enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
-		//	rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
+		//	parameter?='parameter'?
+		//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
+		//	docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+		//	coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
+		//	parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+		//	enumValues+=UPPERCASE_ID)*)?
+		//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
+		//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
-		//// parameters denotes the ability of the implementation of accepting modified values during run
-		//
+		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//
 		//parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 		//targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 		//coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
@@ -420,11 +416,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
-		//// parameters denotes the ability of the implementation of accepting modified values during run
-		//
+		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//
 		//parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 		//targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 		//coverage+=Function (',' coverage+=Function)*)?
@@ -482,9 +475,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getMinimumPlusSignKeyword_0_0_1_1_1_1_0() { return cMinimumPlusSignKeyword_0_0_1_1_1_1_0; }
 		
 		//// parameters denotes the ability of the implementation of accepting modified values during run
-		//
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//
 		//parameter?='parameter'?
 		public Assignment getParameterAssignment_0_1() { return cParameterAssignment_0_1; }
 		
@@ -600,7 +591,6 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
-		//
 		//optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
@@ -761,161 +751,107 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.DataflowBody");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cDataflowBodyAction_0 = (Action)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cObserveKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
-		private final Group cGroup_1_1_0 = (Group)cAlternatives_1_1.eContents().get(0);
-		private final Keyword cNewKeyword_1_1_0_0 = (Keyword)cGroup_1_1_0.eContents().get(0);
-		private final Assignment cNewObservationAssignment_1_1_0_1 = (Assignment)cGroup_1_1_0.eContents().get(1);
-		private final RuleCall cNewObservationObservableSemanticsParserRuleCall_1_1_0_1_0 = (RuleCall)cNewObservationAssignment_1_1_0_1.eContents().get(0);
-		private final Assignment cUrnObservationAssignment_1_1_1 = (Assignment)cAlternatives_1_1.eContents().get(1);
-		private final RuleCall cUrnObservationUrnParserRuleCall_1_1_1_0 = (RuleCall)cUrnObservationAssignment_1_1_1.eContents().get(0);
-		private final Assignment cDataflowsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cDataflowsActorDefinitionParserRuleCall_2_0 = (RuleCall)cDataflowsAssignment_2.eContents().get(0);
-		private final UnorderedGroup cUnorderedGroup_3 = (UnorderedGroup)cGroup.eContents().get(3);
-		private final Group cGroup_3_0 = (Group)cUnorderedGroup_3.eContents().get(0);
-		private final Keyword cGeometryKeyword_3_0_0 = (Keyword)cGroup_3_0.eContents().get(0);
-		private final Assignment cGeometryAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
-		private final RuleCall cGeometryGeometryParserRuleCall_3_0_1_0 = (RuleCall)cGeometryAssignment_3_0_1.eContents().get(0);
-		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
-		private final Keyword cUnitsKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
-		private final Assignment cUnitsAssignment_3_1_1 = (Assignment)cGroup_3_1.eContents().get(1);
-		private final RuleCall cUnitsUnitParserRuleCall_3_1_1_0 = (RuleCall)cUnitsAssignment_3_1_1.eContents().get(0);
-		private final Assignment cComputationsAssignment_3_2 = (Assignment)cUnorderedGroup_3.eContents().get(2);
-		private final RuleCall cComputationsComputationParserRuleCall_3_2_0 = (RuleCall)cComputationsAssignment_3_2.eContents().get(0);
-		private final Group cGroup_3_3 = (Group)cUnorderedGroup_3.eContents().get(3);
-		private final Keyword cSemanticsKeyword_3_3_0 = (Keyword)cGroup_3_3.eContents().get(0);
-		private final Assignment cSemanticsAssignment_3_3_1 = (Assignment)cGroup_3_3.eContents().get(1);
-		private final RuleCall cSemanticsObservableSemanticsParserRuleCall_3_3_1_0 = (RuleCall)cSemanticsAssignment_3_3_1.eContents().get(0);
-		private final Group cGroup_3_4 = (Group)cUnorderedGroup_3.eContents().get(4);
-		private final Group cGroup_3_4_0 = (Group)cGroup_3_4.eContents().get(0);
-		private final Keyword cMetadataKeyword_3_4_0_0 = (Keyword)cGroup_3_4_0.eContents().get(0);
-		private final Assignment cMetadataAssignment_3_4_0_1 = (Assignment)cGroup_3_4_0.eContents().get(1);
-		private final RuleCall cMetadataMetadataParserRuleCall_3_4_0_1_0 = (RuleCall)cMetadataAssignment_3_4_0_1.eContents().get(0);
-		private final Group cGroup_3_4_1 = (Group)cGroup_3_4.eContents().get(1);
-		private final Keyword cClassKeyword_3_4_1_0 = (Keyword)cGroup_3_4_1.eContents().get(0);
-		private final Assignment cJavaClassAssignment_3_4_1_1 = (Assignment)cGroup_3_4_1.eContents().get(1);
-		private final RuleCall cJavaClassJavaClassParserRuleCall_3_4_1_1_0 = (RuleCall)cJavaClassAssignment_3_4_1_1.eContents().get(0);
+		private final Assignment cDataflowsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDataflowsActorDefinitionParserRuleCall_1_0 = (RuleCall)cDataflowsAssignment_1.eContents().get(0);
+		private final UnorderedGroup cUnorderedGroup_2 = (UnorderedGroup)cGroup.eContents().get(2);
+		private final Group cGroup_2_0 = (Group)cUnorderedGroup_2.eContents().get(0);
+		private final Keyword cGeometryKeyword_2_0_0 = (Keyword)cGroup_2_0.eContents().get(0);
+		private final Assignment cGeometryAssignment_2_0_1 = (Assignment)cGroup_2_0.eContents().get(1);
+		private final RuleCall cGeometryGeometryParserRuleCall_2_0_1_0 = (RuleCall)cGeometryAssignment_2_0_1.eContents().get(0);
+		private final Group cGroup_2_1 = (Group)cUnorderedGroup_2.eContents().get(1);
+		private final Keyword cUnitsKeyword_2_1_0 = (Keyword)cGroup_2_1.eContents().get(0);
+		private final Assignment cUnitsAssignment_2_1_1 = (Assignment)cGroup_2_1.eContents().get(1);
+		private final RuleCall cUnitsUnitParserRuleCall_2_1_1_0 = (RuleCall)cUnitsAssignment_2_1_1.eContents().get(0);
+		private final Assignment cComputationsAssignment_2_2 = (Assignment)cUnorderedGroup_2.eContents().get(2);
+		private final RuleCall cComputationsComputationParserRuleCall_2_2_0 = (RuleCall)cComputationsAssignment_2_2.eContents().get(0);
+		private final Group cGroup_2_3 = (Group)cUnorderedGroup_2.eContents().get(3);
+		private final Group cGroup_2_3_0 = (Group)cGroup_2_3.eContents().get(0);
+		private final Keyword cMetadataKeyword_2_3_0_0 = (Keyword)cGroup_2_3_0.eContents().get(0);
+		private final Assignment cMetadataAssignment_2_3_0_1 = (Assignment)cGroup_2_3_0.eContents().get(1);
+		private final RuleCall cMetadataMetadataParserRuleCall_2_3_0_1_0 = (RuleCall)cMetadataAssignment_2_3_0_1.eContents().get(0);
+		private final Group cGroup_2_3_1 = (Group)cGroup_2_3.eContents().get(1);
+		private final Keyword cClassKeyword_2_3_1_0 = (Keyword)cGroup_2_3_1.eContents().get(0);
+		private final Assignment cJavaClassAssignment_2_3_1_1 = (Assignment)cGroup_2_3_1.eContents().get(1);
+		private final RuleCall cJavaClassJavaClassParserRuleCall_2_3_1_1_0 = (RuleCall)cJavaClassAssignment_2_3_1_1.eContents().get(0);
 		
 		//DataflowBody:
-		//	{DataflowBody} ('observe' ('new' newObservation=ObservableSemantics | urnObservation=Urn))?
-		//	dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations+=Computation* &
-		//	('semantics' semantics=ObservableSemantics)? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
+		//	{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
+		//	computations+=Computation* & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{DataflowBody} ('observe' ('new' newObservation=ObservableSemantics | urnObservation=Urn))? dataflows+=ActorDefinition*
-		//(('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations+=Computation* & ('semantics'
-		//semantics=ObservableSemantics)? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?)
+		//{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
+		//computations+=Computation* & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?)
 		public Group getGroup() { return cGroup; }
 		
 		//{DataflowBody}
 		public Action getDataflowBodyAction_0() { return cDataflowBodyAction_0; }
 		
-		//('observe' ('new' newObservation=ObservableSemantics | urnObservation=Urn))?
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//'observe'
-		public Keyword getObserveKeyword_1_0() { return cObserveKeyword_1_0; }
-		
-		//'new' newObservation=ObservableSemantics | urnObservation=Urn
-		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
-		
-		//'new' newObservation=ObservableSemantics
-		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
-		
-		//'new'
-		public Keyword getNewKeyword_1_1_0_0() { return cNewKeyword_1_1_0_0; }
-		
-		//newObservation=ObservableSemantics
-		public Assignment getNewObservationAssignment_1_1_0_1() { return cNewObservationAssignment_1_1_0_1; }
-		
-		//ObservableSemantics
-		public RuleCall getNewObservationObservableSemanticsParserRuleCall_1_1_0_1_0() { return cNewObservationObservableSemanticsParserRuleCall_1_1_0_1_0; }
-		
-		//urnObservation=Urn
-		public Assignment getUrnObservationAssignment_1_1_1() { return cUrnObservationAssignment_1_1_1; }
-		
-		//Urn
-		public RuleCall getUrnObservationUrnParserRuleCall_1_1_1_0() { return cUrnObservationUrnParserRuleCall_1_1_1_0; }
-		
 		//dataflows+=ActorDefinition*
-		public Assignment getDataflowsAssignment_2() { return cDataflowsAssignment_2; }
+		public Assignment getDataflowsAssignment_1() { return cDataflowsAssignment_1; }
 		
 		//ActorDefinition
-		public RuleCall getDataflowsActorDefinitionParserRuleCall_2_0() { return cDataflowsActorDefinitionParserRuleCall_2_0; }
+		public RuleCall getDataflowsActorDefinitionParserRuleCall_1_0() { return cDataflowsActorDefinitionParserRuleCall_1_0; }
 		
-		//('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations+=Computation* & ('semantics'
-		//semantics=ObservableSemantics)? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?
-		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
+		//('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations+=Computation* & ('metadata' metadata=Metadata)?
+		//('class' javaClass=JavaClass)?
+		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
 		
 		//('geometry' geometry=Geometry)?
-		public Group getGroup_3_0() { return cGroup_3_0; }
+		public Group getGroup_2_0() { return cGroup_2_0; }
 		
 		//'geometry'
-		public Keyword getGeometryKeyword_3_0_0() { return cGeometryKeyword_3_0_0; }
+		public Keyword getGeometryKeyword_2_0_0() { return cGeometryKeyword_2_0_0; }
 		
 		//geometry=Geometry
-		public Assignment getGeometryAssignment_3_0_1() { return cGeometryAssignment_3_0_1; }
+		public Assignment getGeometryAssignment_2_0_1() { return cGeometryAssignment_2_0_1; }
 		
 		//Geometry
-		public RuleCall getGeometryGeometryParserRuleCall_3_0_1_0() { return cGeometryGeometryParserRuleCall_3_0_1_0; }
+		public RuleCall getGeometryGeometryParserRuleCall_2_0_1_0() { return cGeometryGeometryParserRuleCall_2_0_1_0; }
 		
 		//('units' units=Unit)?
-		public Group getGroup_3_1() { return cGroup_3_1; }
+		public Group getGroup_2_1() { return cGroup_2_1; }
 		
 		//'units'
-		public Keyword getUnitsKeyword_3_1_0() { return cUnitsKeyword_3_1_0; }
+		public Keyword getUnitsKeyword_2_1_0() { return cUnitsKeyword_2_1_0; }
 		
 		//units=Unit
-		public Assignment getUnitsAssignment_3_1_1() { return cUnitsAssignment_3_1_1; }
+		public Assignment getUnitsAssignment_2_1_1() { return cUnitsAssignment_2_1_1; }
 		
 		//Unit
-		public RuleCall getUnitsUnitParserRuleCall_3_1_1_0() { return cUnitsUnitParserRuleCall_3_1_1_0; }
+		public RuleCall getUnitsUnitParserRuleCall_2_1_1_0() { return cUnitsUnitParserRuleCall_2_1_1_0; }
 		
 		//computations+=Computation*
-		public Assignment getComputationsAssignment_3_2() { return cComputationsAssignment_3_2; }
+		public Assignment getComputationsAssignment_2_2() { return cComputationsAssignment_2_2; }
 		
 		//Computation
-		public RuleCall getComputationsComputationParserRuleCall_3_2_0() { return cComputationsComputationParserRuleCall_3_2_0; }
-		
-		//('semantics' semantics=ObservableSemantics)?
-		public Group getGroup_3_3() { return cGroup_3_3; }
-		
-		//'semantics'
-		public Keyword getSemanticsKeyword_3_3_0() { return cSemanticsKeyword_3_3_0; }
-		
-		//semantics=ObservableSemantics
-		public Assignment getSemanticsAssignment_3_3_1() { return cSemanticsAssignment_3_3_1; }
-		
-		//ObservableSemantics
-		public RuleCall getSemanticsObservableSemanticsParserRuleCall_3_3_1_0() { return cSemanticsObservableSemanticsParserRuleCall_3_3_1_0; }
+		public RuleCall getComputationsComputationParserRuleCall_2_2_0() { return cComputationsComputationParserRuleCall_2_2_0; }
 		
 		//('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?
-		public Group getGroup_3_4() { return cGroup_3_4; }
+		public Group getGroup_2_3() { return cGroup_2_3; }
 		
 		//('metadata' metadata=Metadata)?
-		public Group getGroup_3_4_0() { return cGroup_3_4_0; }
+		public Group getGroup_2_3_0() { return cGroup_2_3_0; }
 		
 		//'metadata'
-		public Keyword getMetadataKeyword_3_4_0_0() { return cMetadataKeyword_3_4_0_0; }
+		public Keyword getMetadataKeyword_2_3_0_0() { return cMetadataKeyword_2_3_0_0; }
 		
 		//metadata=Metadata
-		public Assignment getMetadataAssignment_3_4_0_1() { return cMetadataAssignment_3_4_0_1; }
+		public Assignment getMetadataAssignment_2_3_0_1() { return cMetadataAssignment_2_3_0_1; }
 		
 		//Metadata
-		public RuleCall getMetadataMetadataParserRuleCall_3_4_0_1_0() { return cMetadataMetadataParserRuleCall_3_4_0_1_0; }
+		public RuleCall getMetadataMetadataParserRuleCall_2_3_0_1_0() { return cMetadataMetadataParserRuleCall_2_3_0_1_0; }
 		
 		//('class' javaClass=JavaClass)?
-		public Group getGroup_3_4_1() { return cGroup_3_4_1; }
+		public Group getGroup_2_3_1() { return cGroup_2_3_1; }
 		
 		//'class'
-		public Keyword getClassKeyword_3_4_1_0() { return cClassKeyword_3_4_1_0; }
+		public Keyword getClassKeyword_2_3_1_0() { return cClassKeyword_2_3_1_0; }
 		
 		//javaClass=JavaClass
-		public Assignment getJavaClassAssignment_3_4_1_1() { return cJavaClassAssignment_3_4_1_1; }
+		public Assignment getJavaClassAssignment_2_3_1_1() { return cJavaClassAssignment_2_3_1_1; }
 		
 		//JavaClass
-		public RuleCall getJavaClassJavaClassParserRuleCall_3_4_1_1_0() { return cJavaClassJavaClassParserRuleCall_3_4_1_1_0; }
+		public RuleCall getJavaClassJavaClassParserRuleCall_2_3_1_1_0() { return cJavaClassJavaClassParserRuleCall_2_3_1_1_0; }
 	}
 	public class ComputationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Computation");
@@ -991,677 +927,6 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//SHAPE
 		public RuleCall getSHAPETerminalRuleCall_1_1_1() { return cSHAPETerminalRuleCall_1_1_1; }
 	}
-	public class ConceptDeclarationElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ConceptDeclaration");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNameSTRINGTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
-		private final Assignment cMainAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cMainConceptParserRuleCall_1_0 = (RuleCall)cMainAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Keyword cOfKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cInherencyAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cInherencySimpleConceptDeclarationParserRuleCall_2_1_0 = (RuleCall)cInherencyAssignment_2_1.eContents().get(0);
-		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Keyword cWithinKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final Assignment cContextAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cContextSimpleConceptDeclarationParserRuleCall_3_1_0 = (RuleCall)cContextAssignment_3_1.eContents().get(0);
-		
-		//ConceptDeclaration:
-		//	name=STRING? main+=Concept+ ('of' inherency=SimpleConceptDeclaration)? ('within' context=SimpleConceptDeclaration)?;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//name=STRING? main+=Concept+ ('of' inherency=SimpleConceptDeclaration)? ('within' context=SimpleConceptDeclaration)?
-		public Group getGroup() { return cGroup; }
-		
-		//name=STRING?
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
-		
-		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_0_0() { return cNameSTRINGTerminalRuleCall_0_0; }
-		
-		//main+=Concept+
-		public Assignment getMainAssignment_1() { return cMainAssignment_1; }
-		
-		//Concept
-		public RuleCall getMainConceptParserRuleCall_1_0() { return cMainConceptParserRuleCall_1_0; }
-		
-		//('of' inherency=SimpleConceptDeclaration)?
-		public Group getGroup_2() { return cGroup_2; }
-		
-		//'of'
-		public Keyword getOfKeyword_2_0() { return cOfKeyword_2_0; }
-		
-		//inherency=SimpleConceptDeclaration
-		public Assignment getInherencyAssignment_2_1() { return cInherencyAssignment_2_1; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getInherencySimpleConceptDeclarationParserRuleCall_2_1_0() { return cInherencySimpleConceptDeclarationParserRuleCall_2_1_0; }
-		
-		//('within' context=SimpleConceptDeclaration)?
-		public Group getGroup_3() { return cGroup_3; }
-		
-		//'within'
-		public Keyword getWithinKeyword_3_0() { return cWithinKeyword_3_0; }
-		
-		//context=SimpleConceptDeclaration
-		public Assignment getContextAssignment_3_1() { return cContextAssignment_3_1; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getContextSimpleConceptDeclarationParserRuleCall_3_1_0() { return cContextSimpleConceptDeclarationParserRuleCall_3_1_0; }
-	}
-	public class ConceptReferenceElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ConceptReference");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cCAMELCASE_IDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cNamespaceIdParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		
-		//ConceptReference:
-		//	CAMELCASE_ID | NamespaceId;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//CAMELCASE_ID | NamespaceId
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//CAMELCASE_ID
-		public RuleCall getCAMELCASE_IDTerminalRuleCall_0() { return cCAMELCASE_IDTerminalRuleCall_0; }
-		
-		//NamespaceId
-		public RuleCall getNamespaceIdParserRuleCall_1() { return cNamespaceIdParserRuleCall_1; }
-	}
-	public class ConceptElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Concept");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Assignment cNegatedAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
-		private final Keyword cNegatedNotKeyword_0_0_0 = (Keyword)cNegatedAssignment_0_0.eContents().get(0);
-		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cNameConceptReferenceParserRuleCall_0_1_0 = (RuleCall)cNameAssignment_0_1.eContents().get(0);
-		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
-		private final Keyword cIdentifiedKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
-		private final Keyword cAsKeyword_0_2_1 = (Keyword)cGroup_0_2.eContents().get(1);
-		private final Alternatives cAlternatives_0_2_2 = (Alternatives)cGroup_0_2.eContents().get(2);
-		private final Assignment cStringIdentifierAssignment_0_2_2_0 = (Assignment)cAlternatives_0_2_2.eContents().get(0);
-		private final Alternatives cStringIdentifierAlternatives_0_2_2_0_0 = (Alternatives)cStringIdentifierAssignment_0_2_2_0.eContents().get(0);
-		private final RuleCall cStringIdentifierIDTerminalRuleCall_0_2_2_0_0_0 = (RuleCall)cStringIdentifierAlternatives_0_2_2_0_0.eContents().get(0);
-		private final RuleCall cStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1 = (RuleCall)cStringIdentifierAlternatives_0_2_2_0_0.eContents().get(1);
-		private final Assignment cIntIdentifierAssignment_0_2_2_1 = (Assignment)cAlternatives_0_2_2.eContents().get(1);
-		private final RuleCall cIntIdentifierINTTerminalRuleCall_0_2_2_1_0 = (RuleCall)cIntIdentifierAssignment_0_2_2_1.eContents().get(0);
-		private final Keyword cByKeyword_0_2_3 = (Keyword)cGroup_0_2.eContents().get(3);
-		private final Assignment cAuthorityAssignment_0_2_4 = (Assignment)cGroup_0_2.eContents().get(4);
-		private final Alternatives cAuthorityAlternatives_0_2_4_0 = (Alternatives)cAuthorityAssignment_0_2_4.eContents().get(0);
-		private final RuleCall cAuthorityUPPERCASE_IDTerminalRuleCall_0_2_4_0_0 = (RuleCall)cAuthorityAlternatives_0_2_4_0.eContents().get(0);
-		private final RuleCall cAuthorityUPPERCASE_PATHTerminalRuleCall_0_2_4_0_1 = (RuleCall)cAuthorityAlternatives_0_2_4_0.eContents().get(1);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Assignment cPresenceAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final Keyword cPresencePresenceKeyword_1_0_0 = (Keyword)cPresenceAssignment_1_0.eContents().get(0);
-		private final Keyword cOfKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final Assignment cConceptAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_1_2_0 = (RuleCall)cConceptAssignment_1_2.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Assignment cCountAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
-		private final Keyword cCountCountKeyword_2_0_0 = (Keyword)cCountAssignment_2_0.eContents().get(0);
-		private final Keyword cOfKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
-		private final Assignment cConceptAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_2_2_0 = (RuleCall)cConceptAssignment_2_2.eContents().get(0);
-		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Assignment cDistanceAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
-		private final Keyword cDistanceDistanceKeyword_3_0_0 = (Keyword)cDistanceAssignment_3_0.eContents().get(0);
-		private final Alternatives cAlternatives_3_1 = (Alternatives)cGroup_3.eContents().get(1);
-		private final Keyword cToKeyword_3_1_0 = (Keyword)cAlternatives_3_1.eContents().get(0);
-		private final Keyword cFromKeyword_3_1_1 = (Keyword)cAlternatives_3_1.eContents().get(1);
-		private final Assignment cConceptAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_3_2_0 = (RuleCall)cConceptAssignment_3_2.eContents().get(0);
-		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
-		private final Assignment cProbabilityAssignment_4_0 = (Assignment)cGroup_4.eContents().get(0);
-		private final Keyword cProbabilityProbabilityKeyword_4_0_0 = (Keyword)cProbabilityAssignment_4_0.eContents().get(0);
-		private final Keyword cOfKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
-		private final Assignment cConceptAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_4_2_0 = (RuleCall)cConceptAssignment_4_2.eContents().get(0);
-		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
-		private final Assignment cUncertaintyAssignment_5_0 = (Assignment)cGroup_5.eContents().get(0);
-		private final Keyword cUncertaintyUncertaintyKeyword_5_0_0 = (Keyword)cUncertaintyAssignment_5_0.eContents().get(0);
-		private final Keyword cOfKeyword_5_1 = (Keyword)cGroup_5.eContents().get(1);
-		private final Assignment cConceptAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_5_2_0 = (RuleCall)cConceptAssignment_5_2.eContents().get(0);
-		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
-		private final Assignment cProportionAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
-		private final Keyword cProportionProportionKeyword_6_0_0 = (Keyword)cProportionAssignment_6_0.eContents().get(0);
-		private final Keyword cOfKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
-		private final Assignment cConceptAssignment_6_2 = (Assignment)cGroup_6.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_6_2_0 = (RuleCall)cConceptAssignment_6_2.eContents().get(0);
-		private final Group cGroup_6_3 = (Group)cGroup_6.eContents().get(3);
-		private final Group cGroup_6_3_0 = (Group)cGroup_6_3.eContents().get(0);
-		private final Keyword cInKeyword_6_3_0_0 = (Keyword)cGroup_6_3_0.eContents().get(0);
-		private final Assignment cOtherAssignment_6_3_0_1 = (Assignment)cGroup_6_3_0.eContents().get(1);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_6_3_0_1_0 = (RuleCall)cOtherAssignment_6_3_0_1.eContents().get(0);
-		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
-		private final Assignment cRatioAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
-		private final Keyword cRatioRatioKeyword_7_0_0 = (Keyword)cRatioAssignment_7_0.eContents().get(0);
-		private final Keyword cOfKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
-		private final Assignment cConceptAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_7_2_0 = (RuleCall)cConceptAssignment_7_2.eContents().get(0);
-		private final Keyword cToKeyword_7_3 = (Keyword)cGroup_7.eContents().get(3);
-		private final Assignment cOtherAssignment_7_4 = (Assignment)cGroup_7.eContents().get(4);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_7_4_0 = (RuleCall)cOtherAssignment_7_4.eContents().get(0);
-		private final Group cGroup_8 = (Group)cAlternatives.eContents().get(8);
-		private final Assignment cValueAssignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
-		private final Keyword cValueValueKeyword_8_0_0 = (Keyword)cValueAssignment_8_0.eContents().get(0);
-		private final Keyword cOfKeyword_8_1 = (Keyword)cGroup_8.eContents().get(1);
-		private final Assignment cConceptAssignment_8_2 = (Assignment)cGroup_8.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_8_2_0 = (RuleCall)cConceptAssignment_8_2.eContents().get(0);
-		private final Group cGroup_8_3 = (Group)cGroup_8.eContents().get(3);
-		private final Group cGroup_8_3_0 = (Group)cGroup_8_3.eContents().get(0);
-		private final Keyword cOverKeyword_8_3_0_0 = (Keyword)cGroup_8_3_0.eContents().get(0);
-		private final Assignment cOtherAssignment_8_3_0_1 = (Assignment)cGroup_8_3_0.eContents().get(1);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_8_3_0_1_0 = (RuleCall)cOtherAssignment_8_3_0_1.eContents().get(0);
-		private final Group cGroup_9 = (Group)cAlternatives.eContents().get(9);
-		private final Assignment cOccurrenceAssignment_9_0 = (Assignment)cGroup_9.eContents().get(0);
-		private final Keyword cOccurrenceOccurrenceKeyword_9_0_0 = (Keyword)cOccurrenceAssignment_9_0.eContents().get(0);
-		private final Keyword cOfKeyword_9_1 = (Keyword)cGroup_9.eContents().get(1);
-		private final Assignment cConceptAssignment_9_2 = (Assignment)cGroup_9.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_9_2_0 = (RuleCall)cConceptAssignment_9_2.eContents().get(0);
-		private final Group cGroup_10 = (Group)cAlternatives.eContents().get(10);
-		private final Keyword cLeftParenthesisKeyword_10_0 = (Keyword)cGroup_10.eContents().get(0);
-		private final Assignment cDeclarationAssignment_10_1 = (Assignment)cGroup_10.eContents().get(1);
-		private final RuleCall cDeclarationConceptDeclarationParserRuleCall_10_1_0 = (RuleCall)cDeclarationAssignment_10_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_10_2 = (Keyword)cGroup_10.eContents().get(2);
-		
-		//Concept:
-		//	negated?='not'? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by'
-		//	authority=(UPPERCASE_ID | UPPERCASE_PATH))? | presence?='presence' 'of' concept=SimpleConceptDeclaration |
-		//	count?='count' 'of' concept=SimpleConceptDeclaration | distance?='distance' ('to' | 'from')
-		//	concept=SimpleConceptDeclaration | probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
-		//	concept=SimpleConceptDeclaration => ('in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
-		//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
-		//	concept=SimpleConceptDeclaration => ('over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-		//	concept=SimpleConceptDeclaration | '(' declaration=ConceptDeclaration ')';
-		@Override public ParserRule getRule() { return rule; }
-		
-		//negated?='not'? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by'
-		//authority=(UPPERCASE_ID | UPPERCASE_PATH))? | presence?='presence' 'of' concept=SimpleConceptDeclaration |
-		//count?='count' 'of' concept=SimpleConceptDeclaration | distance?='distance' ('to' | 'from')
-		//concept=SimpleConceptDeclaration | probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
-		//concept=SimpleConceptDeclaration => ('in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
-		//concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
-		//concept=SimpleConceptDeclaration => ('over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-		//concept=SimpleConceptDeclaration | '(' declaration=ConceptDeclaration ')'
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//negated?='not'? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by'
-		//authority=(UPPERCASE_ID | UPPERCASE_PATH))?
-		public Group getGroup_0() { return cGroup_0; }
-		
-		//negated?='not'?
-		public Assignment getNegatedAssignment_0_0() { return cNegatedAssignment_0_0; }
-		
-		//'not'
-		public Keyword getNegatedNotKeyword_0_0_0() { return cNegatedNotKeyword_0_0_0; }
-		
-		//name=ConceptReference
-		public Assignment getNameAssignment_0_1() { return cNameAssignment_0_1; }
-		
-		//ConceptReference
-		public RuleCall getNameConceptReferenceParserRuleCall_0_1_0() { return cNameConceptReferenceParserRuleCall_0_1_0; }
-		
-		//('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?
-		public Group getGroup_0_2() { return cGroup_0_2; }
-		
-		//'identified'
-		public Keyword getIdentifiedKeyword_0_2_0() { return cIdentifiedKeyword_0_2_0; }
-		
-		//'as'
-		public Keyword getAsKeyword_0_2_1() { return cAsKeyword_0_2_1; }
-		
-		//stringIdentifier=(ID | STRING) | intIdentifier=INT
-		public Alternatives getAlternatives_0_2_2() { return cAlternatives_0_2_2; }
-		
-		//stringIdentifier=(ID | STRING)
-		public Assignment getStringIdentifierAssignment_0_2_2_0() { return cStringIdentifierAssignment_0_2_2_0; }
-		
-		//(ID | STRING)
-		public Alternatives getStringIdentifierAlternatives_0_2_2_0_0() { return cStringIdentifierAlternatives_0_2_2_0_0; }
-		
-		//ID
-		public RuleCall getStringIdentifierIDTerminalRuleCall_0_2_2_0_0_0() { return cStringIdentifierIDTerminalRuleCall_0_2_2_0_0_0; }
-		
-		//STRING
-		public RuleCall getStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1() { return cStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1; }
-		
-		//intIdentifier=INT
-		public Assignment getIntIdentifierAssignment_0_2_2_1() { return cIntIdentifierAssignment_0_2_2_1; }
-		
-		//INT
-		public RuleCall getIntIdentifierINTTerminalRuleCall_0_2_2_1_0() { return cIntIdentifierINTTerminalRuleCall_0_2_2_1_0; }
-		
-		//'by'
-		public Keyword getByKeyword_0_2_3() { return cByKeyword_0_2_3; }
-		
-		//authority=(UPPERCASE_ID | UPPERCASE_PATH)
-		public Assignment getAuthorityAssignment_0_2_4() { return cAuthorityAssignment_0_2_4; }
-		
-		//(UPPERCASE_ID | UPPERCASE_PATH)
-		public Alternatives getAuthorityAlternatives_0_2_4_0() { return cAuthorityAlternatives_0_2_4_0; }
-		
-		//UPPERCASE_ID
-		public RuleCall getAuthorityUPPERCASE_IDTerminalRuleCall_0_2_4_0_0() { return cAuthorityUPPERCASE_IDTerminalRuleCall_0_2_4_0_0; }
-		
-		//UPPERCASE_PATH
-		public RuleCall getAuthorityUPPERCASE_PATHTerminalRuleCall_0_2_4_0_1() { return cAuthorityUPPERCASE_PATHTerminalRuleCall_0_2_4_0_1; }
-		
-		//presence?='presence' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//presence?='presence'
-		public Assignment getPresenceAssignment_1_0() { return cPresenceAssignment_1_0; }
-		
-		//'presence'
-		public Keyword getPresencePresenceKeyword_1_0_0() { return cPresencePresenceKeyword_1_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_1_1() { return cOfKeyword_1_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_1_2() { return cConceptAssignment_1_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_1_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_1_2_0; }
-		
-		//count?='count' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_2() { return cGroup_2; }
-		
-		//count?='count'
-		public Assignment getCountAssignment_2_0() { return cCountAssignment_2_0; }
-		
-		//'count'
-		public Keyword getCountCountKeyword_2_0_0() { return cCountCountKeyword_2_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_2_1() { return cOfKeyword_2_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_2_2() { return cConceptAssignment_2_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_2_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_2_2_0; }
-		
-		//distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration
-		public Group getGroup_3() { return cGroup_3; }
-		
-		//distance?='distance'
-		public Assignment getDistanceAssignment_3_0() { return cDistanceAssignment_3_0; }
-		
-		//'distance'
-		public Keyword getDistanceDistanceKeyword_3_0_0() { return cDistanceDistanceKeyword_3_0_0; }
-		
-		//'to' | 'from'
-		public Alternatives getAlternatives_3_1() { return cAlternatives_3_1; }
-		
-		//'to'
-		public Keyword getToKeyword_3_1_0() { return cToKeyword_3_1_0; }
-		
-		//'from'
-		public Keyword getFromKeyword_3_1_1() { return cFromKeyword_3_1_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_3_2() { return cConceptAssignment_3_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_3_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_3_2_0; }
-		
-		//probability?='probability' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_4() { return cGroup_4; }
-		
-		//probability?='probability'
-		public Assignment getProbabilityAssignment_4_0() { return cProbabilityAssignment_4_0; }
-		
-		//'probability'
-		public Keyword getProbabilityProbabilityKeyword_4_0_0() { return cProbabilityProbabilityKeyword_4_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_4_1() { return cOfKeyword_4_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_4_2() { return cConceptAssignment_4_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_4_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_4_2_0; }
-		
-		//uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_5() { return cGroup_5; }
-		
-		//uncertainty?='uncertainty'
-		public Assignment getUncertaintyAssignment_5_0() { return cUncertaintyAssignment_5_0; }
-		
-		//'uncertainty'
-		public Keyword getUncertaintyUncertaintyKeyword_5_0_0() { return cUncertaintyUncertaintyKeyword_5_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_5_1() { return cOfKeyword_5_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_5_2() { return cConceptAssignment_5_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_5_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_5_2_0; }
-		
-		//proportion?='proportion' 'of' concept=SimpleConceptDeclaration => ('in' other=SimpleConceptDeclaration)?
-		public Group getGroup_6() { return cGroup_6; }
-		
-		//proportion?='proportion'
-		public Assignment getProportionAssignment_6_0() { return cProportionAssignment_6_0; }
-		
-		//'proportion'
-		public Keyword getProportionProportionKeyword_6_0_0() { return cProportionProportionKeyword_6_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_6_1() { return cOfKeyword_6_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_6_2() { return cConceptAssignment_6_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_6_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_6_2_0; }
-		
-		//=> ('in' other=SimpleConceptDeclaration)?
-		public Group getGroup_6_3() { return cGroup_6_3; }
-		
-		//'in' other=SimpleConceptDeclaration
-		public Group getGroup_6_3_0() { return cGroup_6_3_0; }
-		
-		//'in'
-		public Keyword getInKeyword_6_3_0_0() { return cInKeyword_6_3_0_0; }
-		
-		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_6_3_0_1() { return cOtherAssignment_6_3_0_1; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_6_3_0_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_6_3_0_1_0; }
-		
-		//ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration
-		public Group getGroup_7() { return cGroup_7; }
-		
-		//ratio?='ratio'
-		public Assignment getRatioAssignment_7_0() { return cRatioAssignment_7_0; }
-		
-		//'ratio'
-		public Keyword getRatioRatioKeyword_7_0_0() { return cRatioRatioKeyword_7_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_7_1() { return cOfKeyword_7_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_7_2() { return cConceptAssignment_7_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_7_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_7_2_0; }
-		
-		//=> 'to'
-		public Keyword getToKeyword_7_3() { return cToKeyword_7_3; }
-		
-		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_7_4() { return cOtherAssignment_7_4; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_7_4_0() { return cOtherSimpleConceptDeclarationParserRuleCall_7_4_0; }
-		
-		//value?='value' 'of' concept=SimpleConceptDeclaration => ('over' other=SimpleConceptDeclaration)?
-		public Group getGroup_8() { return cGroup_8; }
-		
-		//value?='value'
-		public Assignment getValueAssignment_8_0() { return cValueAssignment_8_0; }
-		
-		//'value'
-		public Keyword getValueValueKeyword_8_0_0() { return cValueValueKeyword_8_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_8_1() { return cOfKeyword_8_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_8_2() { return cConceptAssignment_8_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_8_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_8_2_0; }
-		
-		//=> ('over' other=SimpleConceptDeclaration)?
-		public Group getGroup_8_3() { return cGroup_8_3; }
-		
-		//'over' other=SimpleConceptDeclaration
-		public Group getGroup_8_3_0() { return cGroup_8_3_0; }
-		
-		//'over'
-		public Keyword getOverKeyword_8_3_0_0() { return cOverKeyword_8_3_0_0; }
-		
-		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_8_3_0_1() { return cOtherAssignment_8_3_0_1; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_8_3_0_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_8_3_0_1_0; }
-		
-		//occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_9() { return cGroup_9; }
-		
-		//occurrence?='occurrence'
-		public Assignment getOccurrenceAssignment_9_0() { return cOccurrenceAssignment_9_0; }
-		
-		//'occurrence'
-		public Keyword getOccurrenceOccurrenceKeyword_9_0_0() { return cOccurrenceOccurrenceKeyword_9_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_9_1() { return cOfKeyword_9_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_9_2() { return cConceptAssignment_9_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_9_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_9_2_0; }
-		
-		//'(' declaration=ConceptDeclaration ')'
-		public Group getGroup_10() { return cGroup_10; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_10_0() { return cLeftParenthesisKeyword_10_0; }
-		
-		//declaration=ConceptDeclaration
-		public Assignment getDeclarationAssignment_10_1() { return cDeclarationAssignment_10_1; }
-		
-		//ConceptDeclaration
-		public RuleCall getDeclarationConceptDeclarationParserRuleCall_10_1_0() { return cDeclarationConceptDeclarationParserRuleCall_10_1_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_10_2() { return cRightParenthesisKeyword_10_2; }
-	}
-	public class ObservableSemanticsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ObservableSemantics");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cDeclarationAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cDeclarationConceptDeclarationParserRuleCall_0_0 = (RuleCall)cDeclarationAssignment_0.eContents().get(0);
-		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
-		private final Keyword cByKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
-		private final Assignment cByAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final RuleCall cByConceptParserRuleCall_1_0_1_0 = (RuleCall)cByAssignment_1_0_1.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cUnorderedGroup_1.eContents().get(1);
-		private final Keyword cDownKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
-		private final Keyword cToKeyword_1_1_1 = (Keyword)cGroup_1_1.eContents().get(1);
-		private final Assignment cDownToAssignment_1_1_2 = (Assignment)cGroup_1_1.eContents().get(2);
-		private final Alternatives cDownToAlternatives_1_1_2_0 = (Alternatives)cDownToAssignment_1_1_2.eContents().get(0);
-		private final RuleCall cDownToCAMELCASE_IDTerminalRuleCall_1_1_2_0_0 = (RuleCall)cDownToAlternatives_1_1_2_0.eContents().get(0);
-		private final RuleCall cDownToNamespaceIdParserRuleCall_1_1_2_0_1 = (RuleCall)cDownToAlternatives_1_1_2_0.eContents().get(1);
-		private final Group cGroup_1_2 = (Group)cUnorderedGroup_1.eContents().get(2);
-		private final Keyword cAsKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
-		private final Assignment cRoleAssignment_1_2_1 = (Assignment)cGroup_1_2.eContents().get(1);
-		private final RuleCall cRoleConceptParserRuleCall_1_2_1_0 = (RuleCall)cRoleAssignment_1_2_1.eContents().get(0);
-		private final Alternatives cAlternatives_1_3 = (Alternatives)cUnorderedGroup_1.eContents().get(3);
-		private final Group cGroup_1_3_0 = (Group)cAlternatives_1_3.eContents().get(0);
-		private final Keyword cInKeyword_1_3_0_0 = (Keyword)cGroup_1_3_0.eContents().get(0);
-		private final Alternatives cAlternatives_1_3_0_1 = (Alternatives)cGroup_1_3_0.eContents().get(1);
-		private final Assignment cUnitAssignment_1_3_0_1_0 = (Assignment)cAlternatives_1_3_0_1.eContents().get(0);
-		private final RuleCall cUnitUnitParserRuleCall_1_3_0_1_0_0 = (RuleCall)cUnitAssignment_1_3_0_1_0.eContents().get(0);
-		private final Assignment cCurrencyAssignment_1_3_0_1_1 = (Assignment)cAlternatives_1_3_0_1.eContents().get(1);
-		private final RuleCall cCurrencyCurrencyParserRuleCall_1_3_0_1_1_0 = (RuleCall)cCurrencyAssignment_1_3_0_1_1.eContents().get(0);
-		private final Group cGroup_1_3_1 = (Group)cAlternatives_1_3.eContents().get(1);
-		private final Keyword cPerKeyword_1_3_1_0 = (Keyword)cGroup_1_3_1.eContents().get(0);
-		private final Assignment cUnitAssignment_1_3_1_1 = (Assignment)cGroup_1_3_1.eContents().get(1);
-		private final RuleCall cUnitUnitParserRuleCall_1_3_1_1_0 = (RuleCall)cUnitAssignment_1_3_1_1.eContents().get(0);
-		private final Group cGroup_1_4 = (Group)cUnorderedGroup_1.eContents().get(4);
-		private final Assignment cFromAssignment_1_4_0 = (Assignment)cGroup_1_4.eContents().get(0);
-		private final RuleCall cFromNumberParserRuleCall_1_4_0_0 = (RuleCall)cFromAssignment_1_4_0.eContents().get(0);
-		private final Keyword cToKeyword_1_4_1 = (Keyword)cGroup_1_4.eContents().get(1);
-		private final Assignment cToAssignment_1_4_2 = (Assignment)cGroup_1_4.eContents().get(2);
-		private final RuleCall cToNumberParserRuleCall_1_4_2_0 = (RuleCall)cToAssignment_1_4_2.eContents().get(0);
-		
-		//ObservableSemantics:
-		//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? & ('as'
-		//	role=Concept)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?);
-		@Override public ParserRule getRule() { return rule; }
-		
-		//declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? & ('as'
-		//role=Concept)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?)
-		public Group getGroup() { return cGroup; }
-		
-		//declaration=ConceptDeclaration
-		public Assignment getDeclarationAssignment_0() { return cDeclarationAssignment_0; }
-		
-		//ConceptDeclaration
-		public RuleCall getDeclarationConceptDeclarationParserRuleCall_0_0() { return cDeclarationConceptDeclarationParserRuleCall_0_0; }
-		
-		//('by' by=Concept)? & ('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? & ('as' role=Concept)? & ('in' (unit=Unit |
-		//currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
-		
-		//('by' by=Concept)?
-		public Group getGroup_1_0() { return cGroup_1_0; }
-		
-		//'by'
-		public Keyword getByKeyword_1_0_0() { return cByKeyword_1_0_0; }
-		
-		//by=Concept
-		public Assignment getByAssignment_1_0_1() { return cByAssignment_1_0_1; }
-		
-		//Concept
-		public RuleCall getByConceptParserRuleCall_1_0_1_0() { return cByConceptParserRuleCall_1_0_1_0; }
-		
-		//('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))?
-		public Group getGroup_1_1() { return cGroup_1_1; }
-		
-		//'down'
-		public Keyword getDownKeyword_1_1_0() { return cDownKeyword_1_1_0; }
-		
-		//'to'
-		public Keyword getToKeyword_1_1_1() { return cToKeyword_1_1_1; }
-		
-		//downTo=(CAMELCASE_ID | NamespaceId)
-		public Assignment getDownToAssignment_1_1_2() { return cDownToAssignment_1_1_2; }
-		
-		//(CAMELCASE_ID | NamespaceId)
-		public Alternatives getDownToAlternatives_1_1_2_0() { return cDownToAlternatives_1_1_2_0; }
-		
-		//CAMELCASE_ID
-		public RuleCall getDownToCAMELCASE_IDTerminalRuleCall_1_1_2_0_0() { return cDownToCAMELCASE_IDTerminalRuleCall_1_1_2_0_0; }
-		
-		//NamespaceId
-		public RuleCall getDownToNamespaceIdParserRuleCall_1_1_2_0_1() { return cDownToNamespaceIdParserRuleCall_1_1_2_0_1; }
-		
-		//('as' role=Concept)?
-		public Group getGroup_1_2() { return cGroup_1_2; }
-		
-		//'as'
-		public Keyword getAsKeyword_1_2_0() { return cAsKeyword_1_2_0; }
-		
-		//role=Concept
-		public Assignment getRoleAssignment_1_2_1() { return cRoleAssignment_1_2_1; }
-		
-		//Concept
-		public RuleCall getRoleConceptParserRuleCall_1_2_1_0() { return cRoleConceptParserRuleCall_1_2_1_0; }
-		
-		//('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)?
-		public Alternatives getAlternatives_1_3() { return cAlternatives_1_3; }
-		
-		//'in' (unit=Unit | currency=Currency)
-		public Group getGroup_1_3_0() { return cGroup_1_3_0; }
-		
-		//'in'
-		public Keyword getInKeyword_1_3_0_0() { return cInKeyword_1_3_0_0; }
-		
-		//unit=Unit | currency=Currency
-		public Alternatives getAlternatives_1_3_0_1() { return cAlternatives_1_3_0_1; }
-		
-		//unit=Unit
-		public Assignment getUnitAssignment_1_3_0_1_0() { return cUnitAssignment_1_3_0_1_0; }
-		
-		//Unit
-		public RuleCall getUnitUnitParserRuleCall_1_3_0_1_0_0() { return cUnitUnitParserRuleCall_1_3_0_1_0_0; }
-		
-		//currency=Currency
-		public Assignment getCurrencyAssignment_1_3_0_1_1() { return cCurrencyAssignment_1_3_0_1_1; }
-		
-		//Currency
-		public RuleCall getCurrencyCurrencyParserRuleCall_1_3_0_1_1_0() { return cCurrencyCurrencyParserRuleCall_1_3_0_1_1_0; }
-		
-		//'per' unit=Unit
-		public Group getGroup_1_3_1() { return cGroup_1_3_1; }
-		
-		//'per'
-		public Keyword getPerKeyword_1_3_1_0() { return cPerKeyword_1_3_1_0; }
-		
-		//unit=Unit
-		public Assignment getUnitAssignment_1_3_1_1() { return cUnitAssignment_1_3_1_1; }
-		
-		//Unit
-		public RuleCall getUnitUnitParserRuleCall_1_3_1_1_0() { return cUnitUnitParserRuleCall_1_3_1_1_0; }
-		
-		//(from=Number 'to' to=Number)?
-		public Group getGroup_1_4() { return cGroup_1_4; }
-		
-		//from=Number
-		public Assignment getFromAssignment_1_4_0() { return cFromAssignment_1_4_0; }
-		
-		//Number
-		public RuleCall getFromNumberParserRuleCall_1_4_0_0() { return cFromNumberParserRuleCall_1_4_0_0; }
-		
-		//'to'
-		public Keyword getToKeyword_1_4_1() { return cToKeyword_1_4_1; }
-		
-		//to=Number
-		public Assignment getToAssignment_1_4_2() { return cToAssignment_1_4_2; }
-		
-		//Number
-		public RuleCall getToNumberParserRuleCall_1_4_2_0() { return cToNumberParserRuleCall_1_4_2_0; }
-	}
-	public class SimpleConceptDeclarationElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.SimpleConceptDeclaration");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNameSTRINGTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
-		private final Assignment cMainAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cMainConceptParserRuleCall_1_0 = (RuleCall)cMainAssignment_1.eContents().get(0);
-		
-		///*
-		// * Declaration without inherency and context, used in Concept to ensure that
-		// * the 'within' and 'of' remain outer-level unless parenthesesized.
-		// */
-		//SimpleConceptDeclaration ConceptDeclaration:
-		//	name=STRING? main+=Concept+;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//name=STRING? main+=Concept+
-		public Group getGroup() { return cGroup; }
-		
-		//name=STRING?
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
-		
-		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_0_0() { return cNameSTRINGTerminalRuleCall_0_0; }
-		
-		//main+=Concept+
-		public Assignment getMainAssignment_1() { return cMainAssignment_1; }
-		
-		//Concept
-		public RuleCall getMainConceptParserRuleCall_1_0() { return cMainConceptParserRuleCall_1_0; }
-	}
 	public class ParameterElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Parameter");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1716,54 +981,43 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cPartitionKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
 		
 		//ACTOR: // countable, so always a dataflow for direct object instantiation
-		// 'object' |
-		//	// non-countable, so one object only
-		// 'process' | // any acceptable quality type, for declarations only
-		// 'value' |
-		//	// all the next are in quality scope; number type is handled internally
-		// 'number' | 'concept' | 'boolean' | 'text' |
-		//	// specialized functions that produce extents
-		// 'extent' | 'spatialextent' | 'temporalextent' |
-		//	// only contracts for annotations
-		// 'annotation' |
-		//	// only contracts for contextualizers returned by runtime functions
-		// 'contextualizer' |
-		//	// only for command prototypes
-		// 'void' | // partial contextualizers for their parents
-		// 'partition';
+		//	'object' | // non-countable, so one object only
+		//	'process' | // any acceptable quality type, for declarations only
+		//	'value' | // all the next are in quality scope; number type is handled internally
+		//	'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
+		//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
+		//	'annotation' | // only contracts for contextualizers returned by runtime functions
+		//	'contextualizer' | // only for command prototypes
+		//	'void' | // partial contextualizers for their parents
+		//	'partition';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//// countable, so always a dataflow for direct object instantiation
-		// 'object' | // non-countable, so one object only
-		//
+		//'object' | // non-countable, so one object only
 		//'process' | // any acceptable quality type, for declarations only
-		// 'value' |
-		//// all the next are in quality scope; number type is handled internally
-		// 'number' | 'concept' | 'boolean' | 'text' |
-		//// specialized functions that produce extents
-		// 'extent' | 'spatialextent' | 'temporalextent' |
-		//// only contracts for annotations
-		// 'annotation' | // only contracts for contextualizers returned by runtime functions
-		//
+		//'value' | // all the next are in quality scope; number type is handled internally
+		//'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
+		//'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
+		//'annotation' | // only contracts for contextualizers returned by runtime functions
 		//'contextualizer' | // only for command prototypes
-		// 'void' | // partial contextualizers for their parents
-		// 'partition'
+		//'void' | // partial contextualizers for their parents
+		//'partition'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//// countable, so always a dataflow for direct object instantiation
-		// 'object'
+		//'object'
 		public Keyword getObjectKeyword_0() { return cObjectKeyword_0; }
 		
 		//// non-countable, so one object only
-		// 'process'
+		//'process'
 		public Keyword getProcessKeyword_1() { return cProcessKeyword_1; }
 		
 		//// any acceptable quality type, for declarations only
-		// 'value'
+		//'value'
 		public Keyword getValueKeyword_2() { return cValueKeyword_2; }
 		
 		//// all the next are in quality scope; number type is handled internally
-		// 'number'
+		//'number'
 		public Keyword getNumberKeyword_3() { return cNumberKeyword_3; }
 		
 		//'concept'
@@ -1776,7 +1030,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getTextKeyword_6() { return cTextKeyword_6; }
 		
 		//// specialized functions that produce extents
-		// 'extent'
+		//'extent'
 		public Keyword getExtentKeyword_7() { return cExtentKeyword_7; }
 		
 		//'spatialextent'
@@ -1786,19 +1040,19 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getTemporalextentKeyword_9() { return cTemporalextentKeyword_9; }
 		
 		//// only contracts for annotations
-		// 'annotation'
+		//'annotation'
 		public Keyword getAnnotationKeyword_10() { return cAnnotationKeyword_10; }
 		
 		//// only contracts for contextualizers returned by runtime functions
-		// 'contextualizer'
+		//'contextualizer'
 		public Keyword getContextualizerKeyword_11() { return cContextualizerKeyword_11; }
 		
 		//// only for command prototypes
-		// 'void'
+		//'void'
 		public Keyword getVoidKeyword_12() { return cVoidKeyword_12; }
 		
 		//// partial contextualizers for their parents
-		// 'partition'
+		//'partition'
 		public Keyword getPartitionKeyword_13() { return cPartitionKeyword_13; }
 	}
 	public class TARGETElements extends AbstractParserRuleElementFinder {
@@ -1823,100 +1077,6 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'observers'
 		public Keyword getObserversKeyword_2() { return cObserversKeyword_2; }
-	}
-	public class ClassificationElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Classification");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cClassifiersAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cClassifiersClassifierParserRuleCall_0_0 = (RuleCall)cClassifiersAssignment_0.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cCommaKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cClassifiersAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cClassifiersClassifierParserRuleCall_1_1_0 = (RuleCall)cClassifiersAssignment_1_1.eContents().get(0);
-		
-		//Classification:
-		//	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//classifiers+=Classifier (=> ',' classifiers+=Classifier)*
-		public Group getGroup() { return cGroup; }
-		
-		//classifiers+=Classifier
-		public Assignment getClassifiersAssignment_0() { return cClassifiersAssignment_0; }
-		
-		//Classifier
-		public RuleCall getClassifiersClassifierParserRuleCall_0_0() { return cClassifiersClassifierParserRuleCall_0_0; }
-		
-		//(=> ',' classifiers+=Classifier)*
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//=> ','
-		public Keyword getCommaKeyword_1_0() { return cCommaKeyword_1_0; }
-		
-		//classifiers+=Classifier
-		public Assignment getClassifiersAssignment_1_1() { return cClassifiersAssignment_1_1; }
-		
-		//Classifier
-		public RuleCall getClassifiersClassifierParserRuleCall_1_1_0() { return cClassifiersClassifierParserRuleCall_1_1_0; }
-	}
-	public class ClassifierElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Classifier");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cDeclarationAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cDeclarationConceptDeclarationParserRuleCall_0_0 = (RuleCall)cDeclarationAssignment_0.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cOtherwiseAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final Keyword cOtherwiseOtherwiseKeyword_1_0_0 = (Keyword)cOtherwiseAssignment_1_0.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
-		private final Alternatives cAlternatives_1_1_0 = (Alternatives)cGroup_1_1.eContents().get(0);
-		private final Keyword cIfKeyword_1_1_0_0 = (Keyword)cAlternatives_1_1_0.eContents().get(0);
-		private final Assignment cNegatedAssignment_1_1_0_1 = (Assignment)cAlternatives_1_1_0.eContents().get(1);
-		private final Keyword cNegatedUnlessKeyword_1_1_0_1_0 = (Keyword)cNegatedAssignment_1_1_0_1.eContents().get(0);
-		private final Assignment cClassifierAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cClassifierClassifierRHSParserRuleCall_1_1_1_0 = (RuleCall)cClassifierAssignment_1_1_1.eContents().get(0);
-		
-		//Classifier:
-		//	declaration=ConceptDeclaration (otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//declaration=ConceptDeclaration (otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?
-		public Group getGroup() { return cGroup; }
-		
-		//declaration=ConceptDeclaration
-		public Assignment getDeclarationAssignment_0() { return cDeclarationAssignment_0; }
-		
-		//ConceptDeclaration
-		public RuleCall getDeclarationConceptDeclarationParserRuleCall_0_0() { return cDeclarationConceptDeclarationParserRuleCall_0_0; }
-		
-		//(otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
-		
-		//otherwise?='otherwise'
-		public Assignment getOtherwiseAssignment_1_0() { return cOtherwiseAssignment_1_0; }
-		
-		//'otherwise'
-		public Keyword getOtherwiseOtherwiseKeyword_1_0_0() { return cOtherwiseOtherwiseKeyword_1_0_0; }
-		
-		//('if' | negated?='unless') classifier=ClassifierRHS
-		public Group getGroup_1_1() { return cGroup_1_1; }
-		
-		//'if' | negated?='unless'
-		public Alternatives getAlternatives_1_1_0() { return cAlternatives_1_1_0; }
-		
-		//'if'
-		public Keyword getIfKeyword_1_1_0_0() { return cIfKeyword_1_1_0_0; }
-		
-		//negated?='unless'
-		public Assignment getNegatedAssignment_1_1_0_1() { return cNegatedAssignment_1_1_0_1; }
-		
-		//'unless'
-		public Keyword getNegatedUnlessKeyword_1_1_0_1_0() { return cNegatedUnlessKeyword_1_1_0_1_0; }
-		
-		//classifier=ClassifierRHS
-		public Assignment getClassifierAssignment_1_1_1() { return cClassifierAssignment_1_1_1; }
-		
-		//ClassifierRHS
-		public RuleCall getClassifierClassifierRHSParserRuleCall_1_1_1_0() { return cClassifierClassifierRHSParserRuleCall_1_1_1_0; }
 	}
 	public class ClassifierRHSElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ClassifierRHS");
@@ -1948,38 +1108,35 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSetListParserRuleCall_3_1_0 = (RuleCall)cSetAssignment_3_1.eContents().get(0);
 		private final Assignment cStringAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
 		private final RuleCall cStringSTRINGTerminalRuleCall_4_0 = (RuleCall)cStringAssignment_4.eContents().get(0);
-		private final Assignment cConceptAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final RuleCall cConceptConceptDeclarationParserRuleCall_5_0 = (RuleCall)cConceptAssignment_5.eContents().get(0);
+		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
+		private final Keyword cLeftParenthesisKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cToResolveAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cToResolveSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cToResolveAssignment_5_1.eContents().get(0);
+		private final Group cGroup_5_2 = (Group)cGroup_5.eContents().get(2);
+		private final Keyword cCommaKeyword_5_2_0 = (Keyword)cGroup_5_2.eContents().get(0);
+		private final Assignment cToResolveAssignment_5_2_1 = (Assignment)cGroup_5_2.eContents().get(1);
+		private final RuleCall cToResolveSTRINGTerminalRuleCall_5_2_1_0 = (RuleCall)cToResolveAssignment_5_2_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_5_3 = (Keyword)cGroup_5.eContents().get(3);
 		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
-		private final Keyword cLeftParenthesisKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
-		private final Assignment cToResolveAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
-		private final RuleCall cToResolveConceptDeclarationParserRuleCall_6_1_0 = (RuleCall)cToResolveAssignment_6_1.eContents().get(0);
-		private final Group cGroup_6_2 = (Group)cGroup_6.eContents().get(2);
-		private final Keyword cCommaKeyword_6_2_0 = (Keyword)cGroup_6_2.eContents().get(0);
-		private final Assignment cToResolveAssignment_6_2_1 = (Assignment)cGroup_6_2.eContents().get(1);
-		private final RuleCall cToResolveConceptDeclarationParserRuleCall_6_2_1_0 = (RuleCall)cToResolveAssignment_6_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_6_3 = (Keyword)cGroup_6.eContents().get(3);
-		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
-		private final Assignment cOpAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
-		private final RuleCall cOpREL_OPERATORParserRuleCall_7_0_0 = (RuleCall)cOpAssignment_7_0.eContents().get(0);
-		private final Assignment cExpressionAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
-		private final RuleCall cExpressionNumberParserRuleCall_7_1_0 = (RuleCall)cExpressionAssignment_7_1.eContents().get(0);
-		private final Assignment cNodataAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
-		private final Keyword cNodataUnknownKeyword_8_0 = (Keyword)cNodataAssignment_8.eContents().get(0);
-		private final Assignment cStarAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
-		private final Keyword cStarAsteriskKeyword_9_0 = (Keyword)cStarAssignment_9.eContents().get(0);
+		private final Assignment cOpAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
+		private final RuleCall cOpREL_OPERATORParserRuleCall_6_0_0 = (RuleCall)cOpAssignment_6_0.eContents().get(0);
+		private final Assignment cExpressionAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
+		private final RuleCall cExpressionNumberParserRuleCall_6_1_0 = (RuleCall)cExpressionAssignment_6_1.eContents().get(0);
+		private final Assignment cNodataAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final Keyword cNodataUnknownKeyword_7_0 = (Keyword)cNodataAssignment_7.eContents().get(0);
+		private final Assignment cStarAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
+		private final Keyword cStarAsteriskKeyword_8_0 = (Keyword)cStarAssignment_8.eContents().get(0);
 		
 		//ClassifierRHS:
 		//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration |
-		//	'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
-		//	nodata='unknown' | star?='*';
+		//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING |
+		//	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' |
+		//	star?='*';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration |
-		//'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
-		//nodata='unknown' | star?='*'
+		//(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | '(' toResolve+=STRING (=> ','
+		//toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' | star?='*'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(boolean='true' | boolean='false')
@@ -2063,65 +1220,59 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getStringSTRINGTerminalRuleCall_4_0() { return cStringSTRINGTerminalRuleCall_4_0; }
 		
-		//concept=ConceptDeclaration
-		public Assignment getConceptAssignment_5() { return cConceptAssignment_5; }
-		
-		//ConceptDeclaration
-		public RuleCall getConceptConceptDeclarationParserRuleCall_5_0() { return cConceptConceptDeclarationParserRuleCall_5_0; }
-		
-		//'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')'
-		public Group getGroup_6() { return cGroup_6; }
+		//'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')'
+		public Group getGroup_5() { return cGroup_5; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_6_0() { return cLeftParenthesisKeyword_6_0; }
+		public Keyword getLeftParenthesisKeyword_5_0() { return cLeftParenthesisKeyword_5_0; }
 		
-		//toResolve+=ConceptDeclaration
-		public Assignment getToResolveAssignment_6_1() { return cToResolveAssignment_6_1; }
+		//toResolve+=STRING
+		public Assignment getToResolveAssignment_5_1() { return cToResolveAssignment_5_1; }
 		
-		//ConceptDeclaration
-		public RuleCall getToResolveConceptDeclarationParserRuleCall_6_1_0() { return cToResolveConceptDeclarationParserRuleCall_6_1_0; }
+		//STRING
+		public RuleCall getToResolveSTRINGTerminalRuleCall_5_1_0() { return cToResolveSTRINGTerminalRuleCall_5_1_0; }
 		
-		//(=> ',' toResolve+=ConceptDeclaration)*
-		public Group getGroup_6_2() { return cGroup_6_2; }
+		//(=> ',' toResolve+=STRING)*
+		public Group getGroup_5_2() { return cGroup_5_2; }
 		
 		//=> ','
-		public Keyword getCommaKeyword_6_2_0() { return cCommaKeyword_6_2_0; }
+		public Keyword getCommaKeyword_5_2_0() { return cCommaKeyword_5_2_0; }
 		
-		//toResolve+=ConceptDeclaration
-		public Assignment getToResolveAssignment_6_2_1() { return cToResolveAssignment_6_2_1; }
+		//toResolve+=STRING
+		public Assignment getToResolveAssignment_5_2_1() { return cToResolveAssignment_5_2_1; }
 		
-		//ConceptDeclaration
-		public RuleCall getToResolveConceptDeclarationParserRuleCall_6_2_1_0() { return cToResolveConceptDeclarationParserRuleCall_6_2_1_0; }
+		//STRING
+		public RuleCall getToResolveSTRINGTerminalRuleCall_5_2_1_0() { return cToResolveSTRINGTerminalRuleCall_5_2_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_6_3() { return cRightParenthesisKeyword_6_3; }
+		public Keyword getRightParenthesisKeyword_5_3() { return cRightParenthesisKeyword_5_3; }
 		
 		//op=REL_OPERATOR expression=Number
-		public Group getGroup_7() { return cGroup_7; }
+		public Group getGroup_6() { return cGroup_6; }
 		
 		//op=REL_OPERATOR
-		public Assignment getOpAssignment_7_0() { return cOpAssignment_7_0; }
+		public Assignment getOpAssignment_6_0() { return cOpAssignment_6_0; }
 		
 		//REL_OPERATOR
-		public RuleCall getOpREL_OPERATORParserRuleCall_7_0_0() { return cOpREL_OPERATORParserRuleCall_7_0_0; }
+		public RuleCall getOpREL_OPERATORParserRuleCall_6_0_0() { return cOpREL_OPERATORParserRuleCall_6_0_0; }
 		
 		//expression=Number
-		public Assignment getExpressionAssignment_7_1() { return cExpressionAssignment_7_1; }
+		public Assignment getExpressionAssignment_6_1() { return cExpressionAssignment_6_1; }
 		
 		//Number
-		public RuleCall getExpressionNumberParserRuleCall_7_1_0() { return cExpressionNumberParserRuleCall_7_1_0; }
+		public RuleCall getExpressionNumberParserRuleCall_6_1_0() { return cExpressionNumberParserRuleCall_6_1_0; }
 		
 		//nodata='unknown'
-		public Assignment getNodataAssignment_8() { return cNodataAssignment_8; }
+		public Assignment getNodataAssignment_7() { return cNodataAssignment_7; }
 		
 		//'unknown'
-		public Keyword getNodataUnknownKeyword_8_0() { return cNodataUnknownKeyword_8_0; }
+		public Keyword getNodataUnknownKeyword_7_0() { return cNodataUnknownKeyword_7_0; }
 		
 		//star?='*'
-		public Assignment getStarAssignment_9() { return cStarAssignment_9; }
+		public Assignment getStarAssignment_8() { return cStarAssignment_8; }
 		
 		//'*'
-		public Keyword getStarAsteriskKeyword_9_0() { return cStarAsteriskKeyword_9_0; }
+		public Keyword getStarAsteriskKeyword_8_0() { return cStarAsteriskKeyword_8_0; }
 	}
 	public class ListElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.List");
@@ -2570,7 +1721,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 		
 		//// String used when there are strange chars or keywords in the URN.
-		// name=(UrnId | STRING | LocalFilePath)
+		//name=(UrnId | STRING | LocalFilePath)
 		public Assignment getNameAssignment() { return cNameAssignment; }
 		
 		//(UrnId | STRING | LocalFilePath)
@@ -2606,8 +1757,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		///**
 		// * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
 		// * legal, but not required, to start with the default prefix urn:klab:
-		// */
-		//UrnId:
+		// */ UrnId:
 		//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -2679,8 +1829,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		///**
 		// * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
 		// * on whether there is an encoder for their file extension.
-		// */
-		//LocalFilePath:
+		// */ LocalFilePath:
 		//	(CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID) ('/' (CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID))* ('.'
 		//	LOWERCASE_ID)? ('#' LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
@@ -2805,38 +1954,27 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cVariableAssignment_0_2_1 = (Assignment)cGroup_0_2.eContents().get(1);
 		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0 = (RuleCall)cVariableAssignment_0_2_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cClassifyKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final Assignment cClassificationAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cClassificationClassificationParserRuleCall_1_2_0 = (RuleCall)cClassificationAssignment_1_2.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cChainAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cChainFunctionParserRuleCall_1_1_0 = (RuleCall)cChainAssignment_1_1.eContents().get(0);
+		private final Group cGroup_1_2 = (Group)cGroup_1.eContents().get(2);
+		private final Keyword cCommaKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
+		private final Assignment cChainAssignment_1_2_1 = (Assignment)cGroup_1_2.eContents().get(1);
+		private final RuleCall cChainFunctionParserRuleCall_1_2_1_0 = (RuleCall)cChainAssignment_1_2_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_1_3 = (Keyword)cGroup_1.eContents().get(3);
 		private final Group cGroup_1_4 = (Group)cGroup_1.eContents().get(4);
 		private final Keyword cAsKeyword_1_4_0 = (Keyword)cGroup_1_4.eContents().get(0);
 		private final Assignment cVariableAssignment_1_4_1 = (Assignment)cGroup_1_4.eContents().get(1);
 		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_1_4_1_0 = (RuleCall)cVariableAssignment_1_4_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cLeftParenthesisKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cChainAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cChainFunctionParserRuleCall_2_1_0 = (RuleCall)cChainAssignment_2_1.eContents().get(0);
-		private final Group cGroup_2_2 = (Group)cGroup_2.eContents().get(2);
-		private final Keyword cCommaKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
-		private final Assignment cChainAssignment_2_2_1 = (Assignment)cGroup_2_2.eContents().get(1);
-		private final RuleCall cChainFunctionParserRuleCall_2_2_1_0 = (RuleCall)cChainAssignment_2_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_2_3 = (Keyword)cGroup_2.eContents().get(3);
-		private final Group cGroup_2_4 = (Group)cGroup_2.eContents().get(4);
-		private final Keyword cAsKeyword_2_4_0 = (Keyword)cGroup_2_4.eContents().get(0);
-		private final Assignment cVariableAssignment_2_4_1 = (Assignment)cGroup_2_4.eContents().get(1);
-		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_2_4_1_0 = (RuleCall)cVariableAssignment_2_4_1.eContents().get(0);
 		
 		//Function:
 		//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-		//	variable=LOWERCASE_ID)? | 'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '('
-		//	chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+		//	variable=LOWERCASE_ID)? |
+		//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-		//variable=LOWERCASE_ID)? | 'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '('
-		//chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?
+		//variable=LOWERCASE_ID)? | '(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
@@ -2903,20 +2041,29 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//LOWERCASE_ID
 		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0; }
 		
-		//'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)?
+		//'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//'classify'
-		public Keyword getClassifyKeyword_1_0() { return cClassifyKeyword_1_0; }
-		
 		//'('
-		public Keyword getLeftParenthesisKeyword_1_1() { return cLeftParenthesisKeyword_1_1; }
+		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
 		
-		//classification=Classification
-		public Assignment getClassificationAssignment_1_2() { return cClassificationAssignment_1_2; }
+		//chain+=Function
+		public Assignment getChainAssignment_1_1() { return cChainAssignment_1_1; }
 		
-		//Classification
-		public RuleCall getClassificationClassificationParserRuleCall_1_2_0() { return cClassificationClassificationParserRuleCall_1_2_0; }
+		//Function
+		public RuleCall getChainFunctionParserRuleCall_1_1_0() { return cChainFunctionParserRuleCall_1_1_0; }
+		
+		//(',' chain+=Function)*
+		public Group getGroup_1_2() { return cGroup_1_2; }
+		
+		//','
+		public Keyword getCommaKeyword_1_2_0() { return cCommaKeyword_1_2_0; }
+		
+		//chain+=Function
+		public Assignment getChainAssignment_1_2_1() { return cChainAssignment_1_2_1; }
+		
+		//Function
+		public RuleCall getChainFunctionParserRuleCall_1_2_1_0() { return cChainFunctionParserRuleCall_1_2_1_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_1_3() { return cRightParenthesisKeyword_1_3; }
@@ -2932,45 +2079,6 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//LOWERCASE_ID
 		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_1_4_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_1_4_1_0; }
-		
-		//'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?
-		public Group getGroup_2() { return cGroup_2; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_2_0() { return cLeftParenthesisKeyword_2_0; }
-		
-		//chain+=Function
-		public Assignment getChainAssignment_2_1() { return cChainAssignment_2_1; }
-		
-		//Function
-		public RuleCall getChainFunctionParserRuleCall_2_1_0() { return cChainFunctionParserRuleCall_2_1_0; }
-		
-		//(',' chain+=Function)*
-		public Group getGroup_2_2() { return cGroup_2_2; }
-		
-		//','
-		public Keyword getCommaKeyword_2_2_0() { return cCommaKeyword_2_2_0; }
-		
-		//chain+=Function
-		public Assignment getChainAssignment_2_2_1() { return cChainAssignment_2_2_1; }
-		
-		//Function
-		public RuleCall getChainFunctionParserRuleCall_2_2_1_0() { return cChainFunctionParserRuleCall_2_2_1_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_2_3() { return cRightParenthesisKeyword_2_3; }
-		
-		//('as' variable=LOWERCASE_ID)?
-		public Group getGroup_2_4() { return cGroup_2_4; }
-		
-		//'as'
-		public Keyword getAsKeyword_2_4_0() { return cAsKeyword_2_4_0; }
-		
-		//variable=LOWERCASE_ID
-		public Assignment getVariableAssignment_2_4_1() { return cVariableAssignment_2_4_1; }
-		
-		//LOWERCASE_ID
-		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_2_4_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_2_4_1_0; }
 	}
 	public class UnitElementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.UnitElement");
@@ -2992,9 +2100,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		// * Unit of measurement re: jsr-108, parseable by Java
 		// * TODO implement expression syntax and provide validator
 		// * ---------------------------------------
-		// */
-		//UnitElement:
-		//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number | '(' unit=Unit ')';
+		// */ UnitElement:
+		//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number |
+		//	'(' unit=Unit ')';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number | '(' unit=Unit ')'
@@ -3539,16 +2647,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	private final DataflowBodyElements pDataflowBody;
 	private final ComputationElements pComputation;
 	private final GeometryElements pGeometry;
-	private final ConceptDeclarationElements pConceptDeclaration;
-	private final ConceptReferenceElements pConceptReference;
-	private final ConceptElements pConcept;
-	private final ObservableSemanticsElements pObservableSemantics;
-	private final SimpleConceptDeclarationElements pSimpleConceptDeclaration;
 	private final ParameterElements pParameter;
 	private final ACTORElements pACTOR;
 	private final TARGETElements pTARGET;
-	private final ClassificationElements pClassification;
-	private final ClassifierElements pClassifier;
 	private final ClassifierRHSElements pClassifierRHS;
 	private final ListElements pList;
 	private final LiteralElements pLiteral;
@@ -3595,16 +2696,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pDataflowBody = new DataflowBodyElements();
 		this.pComputation = new ComputationElements();
 		this.pGeometry = new GeometryElements();
-		this.pConceptDeclaration = new ConceptDeclarationElements();
-		this.pConceptReference = new ConceptReferenceElements();
-		this.pConcept = new ConceptElements();
-		this.pObservableSemantics = new ObservableSemanticsElements();
-		this.pSimpleConceptDeclaration = new SimpleConceptDeclarationElements();
 		this.pParameter = new ParameterElements();
 		this.pACTOR = new ACTORElements();
 		this.pTARGET = new TARGETElements();
-		this.pClassification = new ClassificationElements();
-		this.pClassifier = new ClassifierElements();
 		this.pClassifierRHS = new ClassifierRHSElements();
 		this.pList = new ListElements();
 		this.pLiteral = new LiteralElements();
@@ -3682,20 +2776,19 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//// 'as' must ONLY BE LEGAL FOR IMPORTS
-	// // if multiple, semantics must be given to recognize the observables
-	//
+	//// if multiple, semantics must be given to recognize the observables
 	//ActorDefinition:
 	//	(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
 	//	// parameters denotes the ability of the implementation of accepting modified values during run
-	//
 	//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-	//
-	//	parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
-	//	targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
-	//	coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
-	//	| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
-	//	enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
-	//	rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
+	//	parameter?='parameter'?
+	//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
+	//	docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+	//	coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
+	//	parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+	//	enumValues+=UPPERCASE_ID)*)?
+	//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
+	//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}
@@ -3705,9 +2798,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//DataflowBody:
-	//	{DataflowBody} ('observe' ('new' newObservation=ObservableSemantics | urnObservation=Urn))?
-	//	dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations+=Computation* &
-	//	('semantics' semantics=ObservableSemantics)? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
+	//	{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
+	//	computations+=Computation* & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
 	public DataflowBodyElements getDataflowBodyAccess() {
 		return pDataflowBody;
 	}
@@ -3736,69 +2828,6 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		return getGeometryAccess().getRule();
 	}
 	
-	//ConceptDeclaration:
-	//	name=STRING? main+=Concept+ ('of' inherency=SimpleConceptDeclaration)? ('within' context=SimpleConceptDeclaration)?;
-	public ConceptDeclarationElements getConceptDeclarationAccess() {
-		return pConceptDeclaration;
-	}
-	
-	public ParserRule getConceptDeclarationRule() {
-		return getConceptDeclarationAccess().getRule();
-	}
-	
-	//ConceptReference:
-	//	CAMELCASE_ID | NamespaceId;
-	public ConceptReferenceElements getConceptReferenceAccess() {
-		return pConceptReference;
-	}
-	
-	public ParserRule getConceptReferenceRule() {
-		return getConceptReferenceAccess().getRule();
-	}
-	
-	//Concept:
-	//	negated?='not'? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by'
-	//	authority=(UPPERCASE_ID | UPPERCASE_PATH))? | presence?='presence' 'of' concept=SimpleConceptDeclaration |
-	//	count?='count' 'of' concept=SimpleConceptDeclaration | distance?='distance' ('to' | 'from')
-	//	concept=SimpleConceptDeclaration | probability?='probability' 'of' concept=SimpleConceptDeclaration |
-	//	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
-	//	concept=SimpleConceptDeclaration => ('in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
-	//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
-	//	concept=SimpleConceptDeclaration => ('over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-	//	concept=SimpleConceptDeclaration | '(' declaration=ConceptDeclaration ')';
-	public ConceptElements getConceptAccess() {
-		return pConcept;
-	}
-	
-	public ParserRule getConceptRule() {
-		return getConceptAccess().getRule();
-	}
-	
-	//ObservableSemantics:
-	//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? & ('as'
-	//	role=Concept)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?);
-	public ObservableSemanticsElements getObservableSemanticsAccess() {
-		return pObservableSemantics;
-	}
-	
-	public ParserRule getObservableSemanticsRule() {
-		return getObservableSemanticsAccess().getRule();
-	}
-	
-	///*
-	// * Declaration without inherency and context, used in Concept to ensure that
-	// * the 'within' and 'of' remain outer-level unless parenthesesized.
-	// */
-	//SimpleConceptDeclaration ConceptDeclaration:
-	//	name=STRING? main+=Concept+;
-	public SimpleConceptDeclarationElements getSimpleConceptDeclarationAccess() {
-		return pSimpleConceptDeclaration;
-	}
-	
-	public ParserRule getSimpleConceptDeclarationRule() {
-		return getSimpleConceptDeclarationAccess().getRule();
-	}
-	
 	//Parameter:
 	//	name=LOWERCASE_ID value=Value docstring=STRING?;
 	public ParameterElements getParameterAccess() {
@@ -3810,21 +2839,15 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ACTOR: // countable, so always a dataflow for direct object instantiation
-	// 'object' |
-	//	// non-countable, so one object only
-	// 'process' | // any acceptable quality type, for declarations only
-	// 'value' |
-	//	// all the next are in quality scope; number type is handled internally
-	// 'number' | 'concept' | 'boolean' | 'text' |
-	//	// specialized functions that produce extents
-	// 'extent' | 'spatialextent' | 'temporalextent' |
-	//	// only contracts for annotations
-	// 'annotation' |
-	//	// only contracts for contextualizers returned by runtime functions
-	// 'contextualizer' |
-	//	// only for command prototypes
-	// 'void' | // partial contextualizers for their parents
-	// 'partition';
+	//	'object' | // non-countable, so one object only
+	//	'process' | // any acceptable quality type, for declarations only
+	//	'value' | // all the next are in quality scope; number type is handled internally
+	//	'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
+	//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
+	//	'annotation' | // only contracts for contextualizers returned by runtime functions
+	//	'contextualizer' | // only for command prototypes
+	//	'void' | // partial contextualizers for their parents
+	//	'partition';
 	public ACTORElements getACTORAccess() {
 		return pACTOR;
 	}
@@ -3843,31 +2866,11 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		return getTARGETAccess().getRule();
 	}
 	
-	//Classification:
-	//	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;
-	public ClassificationElements getClassificationAccess() {
-		return pClassification;
-	}
-	
-	public ParserRule getClassificationRule() {
-		return getClassificationAccess().getRule();
-	}
-	
-	//Classifier:
-	//	declaration=ConceptDeclaration (otherwise?='otherwise' | ('if' | negated?='unless') classifier=ClassifierRHS)?;
-	public ClassifierElements getClassifierAccess() {
-		return pClassifier;
-	}
-	
-	public ParserRule getClassifierRule() {
-		return getClassifierAccess().getRule();
-	}
-	
 	//ClassifierRHS:
 	//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | concept=ConceptDeclaration |
-	//	'(' toResolve+=ConceptDeclaration (=> ',' toResolve+=ConceptDeclaration)* ')' | op=REL_OPERATOR expression=Number |
-	//	nodata='unknown' | star?='*';
+	//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING |
+	//	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' |
+	//	star?='*';
 	public ClassifierRHSElements getClassifierRHSAccess() {
 		return pClassifierRHS;
 	}
@@ -3960,8 +2963,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
 	// * legal, but not required, to start with the default prefix urn:klab:
-	// */
-	//UrnId:
+	// */ UrnId:
 	//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
 	public UrnIdElements getUrnIdAccess() {
 		return pUrnId;
@@ -3974,8 +2976,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
 	// * on whether there is an encoder for their file extension.
-	// */
-	//LocalFilePath:
+	// */ LocalFilePath:
 	//	(CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID) ('/' (CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID))* ('.'
 	//	LOWERCASE_ID)? ('#' LOWERCASE_ID)?;
 	public LocalFilePathElements getLocalFilePathAccess() {
@@ -3998,8 +2999,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Function:
 	//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-	//	variable=LOWERCASE_ID)? | 'classify' '(' classification=Classification ')' ('as' variable=LOWERCASE_ID)? | '('
-	//	chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+	//	variable=LOWERCASE_ID)? |
+	//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	public FunctionElements getFunctionAccess() {
 		return pFunction;
 	}
@@ -4013,9 +3014,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	// * Unit of measurement re: jsr-108, parseable by Java
 	// * TODO implement expression syntax and provide validator
 	// * ---------------------------------------
-	// */
-	//UnitElement:
-	//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number | '(' unit=Unit ')';
+	// */ UnitElement:
+	//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number |
+	//	'(' unit=Unit ')';
 	public UnitElementElements getUnitElementAccess() {
 		return pUnitElement;
 	}

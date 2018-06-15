@@ -69,7 +69,7 @@ public interface IProvenance {
 		IProvenance getProvenance();
 
 		/**
-		 * Workflows that don't end well produce these.
+		 * Workflows that end in disappointment produce these.
 		 * 
 		 * @return true if empty
 		 */
@@ -82,16 +82,6 @@ public interface IProvenance {
 	 * @return true if empty
 	 */
 	boolean isEmpty();
-
-//	/**
-//	 * Temporary - to be improved. Collect metadata for a node, merging with
-//	 * upstream metadata as needed.
-//	 *
-//	 * @param node
-//	 *            the node
-//	 * @return collect metadata from node
-//	 */
-//	public IKimMetadata collectMetadata(Object node);
 
 	/**
 	 * Return all the primary actions in chronological order.

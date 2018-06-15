@@ -10,7 +10,6 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
-import org.eclipse.xtext.serializer.analysis.GrammarAlias.AlternativeAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -23,7 +22,6 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected KdlGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_4_1_q;
-	protected AbstractElementAlias match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
 	
@@ -32,7 +30,6 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 		grammarAccess = (KdlGrammarAccess) access;
 		match_ClassifierRHS_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_1_1());
 		match_ClassifierRHS_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_4_1());
-		match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConceptAccess().getFromKeyword_3_1_1()), new TokenAlias(false, false, grammarAccess.getConceptAccess().getToKeyword_3_1_0()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
 	}
@@ -53,8 +50,6 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_ClassifierRHS_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ClassifierRHS_ExclusiveKeyword_1_4_1_q.equals(syntax))
 				emit_ClassifierRHS_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0.equals(syntax))
-				emit_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_0_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_3_0_1_0_q.equals(syntax))
@@ -82,17 +77,6 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     int1=Number (ambiguity) (rule end)
 	 */
 	protected void emit_ClassifierRHS_ExclusiveKeyword_1_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Ambiguous syntax:
-	 *     'to' | 'from'
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     distance?='distance' (ambiguity) concept=SimpleConceptDeclaration
-	 */
-	protected void emit_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
