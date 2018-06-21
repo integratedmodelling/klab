@@ -21,7 +21,7 @@ public class Network implements ICommand {
 								call.getParameters().get("browser", false)
 										? () -> BrowserUtils
 												.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
-														+ CliRuntime.INSTANCE.getSession().getId() + "&mode=ide&test_tree=true")
+														+ CliRuntime.INSTANCE.getSession().getId() + "&mode=ide")
 										: null)) {
 					session.getMonitor().error("Please wait until engine is active");
 				}
