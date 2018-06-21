@@ -91,7 +91,9 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					if (scope.getCoverage().isRelevant()) {
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope);
-
+						
+						System.out.println(dataflow.getKdlCode());
+						
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode())));
 
