@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -152,6 +153,13 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
    * @return the provenance record leading to this
    */
   IProvenance getProvenance();
-
+  
+  /**
+   * The type of this artifact. Types are a small set meant to enable more efficient
+   * storage and correct contextualization.
+   * 
+   * @return the type
+   */
+  IPrototype.Type getType();
 
 }

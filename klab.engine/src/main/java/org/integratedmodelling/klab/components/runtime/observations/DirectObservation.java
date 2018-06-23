@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -31,5 +32,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
     @Override
     public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
         return getRuntimeContext().getChildren(this, cls);
+    }
+    
+    @Override
+    public IPrototype.Type getType() {
+    	return IPrototype.Type.OBJECT;
     }
 }

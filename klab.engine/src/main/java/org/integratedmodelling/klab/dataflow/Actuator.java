@@ -267,6 +267,7 @@ public class Actuator implements IActuator {
 			IComputableResource resource, IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
 
 		if (contextualizer instanceof IStateResolver) {
+			
 			/*
 			 * pass the distributed computation to the runtime provider for possible
 			 * parallelization instead of hard-coding a loop here.
@@ -435,7 +436,8 @@ public class Actuator implements IActuator {
 				nout++;
 			}
 
-			// UNCOMMENT TO OUTPUT SEMANTICS
+			// UNCOMMENT TO OUTPUT SEMANTICS - FIXME should be an annotation on top of the actuator
+			// to enable re-runs and the like
 			// if (observable != null) {
 			// ret += ofs + " " + "semantics " + getObservable().getDeclaration() + "\n";
 			// }
@@ -500,11 +502,7 @@ public class Actuator implements IActuator {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	// public boolean isCreateObservation() {
-	// return createObservation;
-	// }
-	//
+	
 	public void setCreateObservation(boolean createObservation) {
 		this.createsObservation = createObservation;
 	}

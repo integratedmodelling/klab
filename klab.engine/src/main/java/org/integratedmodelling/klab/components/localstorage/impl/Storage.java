@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-public class Storage implements IArtifact {
+public abstract class Storage implements IArtifact {
 
   IMetadata metadata = new Metadata();
   IGeometry geometry;

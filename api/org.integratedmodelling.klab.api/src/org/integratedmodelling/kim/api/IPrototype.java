@@ -25,6 +25,8 @@ public interface IPrototype {
 	/**
 	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now.
 	 * 
+	 * FIXME this should become IArtifact.Type
+	 * 
 	 * @author ferdinando.villa
 	 *
 	 */

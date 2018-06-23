@@ -9,6 +9,8 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
+import io.github.lukehutch.fastclasspathscanner.classloaderhandler.ClassLoaderHandler.DelegationOrder;
+
 /**
  * The state we wrap has the desired semantics but its values must be converted.
  * 
@@ -65,5 +67,10 @@ public class MediatingState extends Observation implements IState {
     public IState as(IObservable observable) {
         return delegate.as(observable);
     }
+
+	@Override
+	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+		return delegate.getType();
+	}
 
 }

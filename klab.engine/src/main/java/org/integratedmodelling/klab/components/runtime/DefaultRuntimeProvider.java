@@ -256,6 +256,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return Observation.empty(observable, scale);
 	}
 
+	
 	static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
 			boolean scalarStorage) {
 
@@ -293,8 +294,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
 				}
 			} else {
-
-				// TODO figure out dynamic vs. not, using Actuator.isStorageDynamic()
 				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, context);
 			}
 

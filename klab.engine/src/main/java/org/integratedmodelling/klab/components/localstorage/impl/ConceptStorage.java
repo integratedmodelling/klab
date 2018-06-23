@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -73,6 +74,11 @@ public class ConceptStorage extends Storage implements IDataArtifact {
 	@Override
 	public <T> T get(ILocator index, Class<T> cls) {
 		return Utils.asType(get(index), cls);
+	}
+
+	@Override
+	public Type getType() {
+		return Type.CONCEPT;
 	}
 
 }

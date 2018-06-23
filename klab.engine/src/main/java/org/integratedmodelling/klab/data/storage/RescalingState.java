@@ -338,4 +338,9 @@ public class RescalingState extends Observation implements IState {
 		return delegate.as(observable);
 	}
 
+	@Override
+	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+		return delegate.getType();
+	}
+
 }

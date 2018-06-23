@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -24,7 +25,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
  * @author ferdinando.villa
  *
  */
-public class Artifact implements IArtifact {
+public abstract class Artifact implements IArtifact {
 
   // all observation data in a group share the same list and contain their index in it; established
   // at chain()
@@ -155,10 +156,14 @@ public class Artifact implements IArtifact {
   }
 
   public static IArtifact empty() {
-    Artifact ret = new Artifact();
+    Artifact ret = new Artifact() {
+		@Override
+		public Type getType() {
+			return Type.VOID;
+		}
+    };
     ret.empty = true;
     return ret;
   }
-
 
 }

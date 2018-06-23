@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  * @author Ferd
  *
  */
-public class ObservedArtifact extends Artifact implements IArtifact {
+public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
   private IGeometry      geometry;
   private IRuntimeContext runtimeContext;

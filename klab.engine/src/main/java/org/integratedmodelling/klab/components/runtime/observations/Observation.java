@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.utils.Path;
  * @author ferdinando.villa
  *
  */
-public class Observation extends ObservedArtifact implements IObservation {
+public abstract class Observation extends ObservedArtifact implements IObservation {
 
 	private Observable observable;
 	private Subject observer;
@@ -138,7 +138,14 @@ public class Observation extends ObservedArtifact implements IObservation {
 	}
 
 	public static IObservation empty(IObservable observable, IScale scale) {
-		Observation ret = new Observation((Observable) observable, (Scale) scale, null);
+		Observation ret = new Observation((Observable) observable, (Scale) scale, null) {
+
+			@Override
+			public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+				return org.integratedmodelling.kim.api.IPrototype.Type.VOID;
+			}
+			
+		};
 		ret.setEmpty(true);
 		return ret;
 	}
