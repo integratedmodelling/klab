@@ -35,6 +35,7 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	// this produces a catch-all and should only be called when isOtherwise() == true
     public KimClassifier(Classifier statement, IKimStatement parent) {
     	super(statement, parent);
+    	this.sourceCode = "*";
     	this.catchAll = true;
     }
     

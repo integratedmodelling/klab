@@ -17,8 +17,6 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.cpu.nativecpu.NDArray;
-import org.nd4j.linalg.factory.Nd4j;
 
 public class Storage implements IArtifact {
 

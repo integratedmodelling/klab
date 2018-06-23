@@ -21,6 +21,7 @@ public class LocalStorageComponent implements IStorageProvider {
 
   @Override
   public IDataArtifact createStorage(IObservable observable, IScale scale, IComputationContext context) {
+	  
     switch (observable.getObservationType()) {
       case CLASSIFICATION:
         return new ConceptStorage(scale);

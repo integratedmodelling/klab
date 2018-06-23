@@ -2,12 +2,13 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -375,6 +376,43 @@ public enum Types implements ITypeService {
 		return ret;
 	}
 
+//    /**
+//     * Produce a type that exposes a single passed trait.
+//     * 
+//     * @param trait
+//     * @return
+//     */
+//    private IConcept makeTypeFor(IConcept trait) {
+//
+//        IConcept ret = trait.getOntology().getConcept(traitID);
+//
+//        if (ret == null) {
+//
+//            List<IAxiom> axioms = new ArrayList<>();
+//            axioms.add(Axiom.ClassAssertion(traitID));
+//            axioms.add(Axiom.SubClass(NS.TYPE, traitID));
+//            axioms.add(Axiom.AnnotationAssertion(traitID, NS.CONCEPT_DEFINITION_PROPERTY, Qualities.TYPE
+//                    .name().toLowerCase() + " " + ((Concept) trait).getAssertedDefinition()));
+//            axioms.add(Axiom.AnnotationAssertion(traitID, IMetadata.DC_LABEL, trait.getLocalName()));
+//            // type of x are base declarations.
+//            axioms.add(Axiom.AnnotationAssertion(traitID, NS.BASE_DECLARATION, "true"));
+//            axioms.add(Axiom.AnnotationAssertion(traitID, NS.IS_TYPE_DELEGATE, "true"));
+//            trait.getOntology().define(axioms);
+//            ret = trait.getOntology().getConcept(traitID);
+//            OWL.restrictSome(ret, KLAB.p(NS.EXPOSES_TRAIT_PROPERTY), trait);
+//
+//            /*
+//             * types inherit the context from their trait
+//             */
+//            IConcept context = getContextType(trait);
+//            if (context != null) {
+//                OWL.restrictSome(ret, KLAB.p(NS.HAS_CONTEXT_PROPERTY), context);
+//            }
+//        }
+//
+//        return ret;
+//    }
+	
 	public IConcept getTypeByTrait(Observable observable, Concept by, Concept downTo, Ontology ontology) {
 
 		String id = observable.getName();
@@ -410,22 +448,21 @@ public enum Types implements ITypeService {
 			 * CHECK - this produces a trait, not a class. Do we still need that
 			 * distinction?
 			 */
-			Set<Type> type = EnumSet.copyOf(by.getTypeSet());
-			if (!observable.isAbstract()) {
-				type.remove(Type.ABSTRACT);
+			Set<Type> type = Kim.INSTANCE.getType("class");
+			if (observable.isAbstract()) {
+				type.add(Type.ABSTRACT);
 			}
 
 			List<IAxiom> axioms = new ArrayList<>();
+			// FIXME this needs to use IDs and labels like the rest
 			axioms.add(Axiom.ClassAssertion(id, type));
-			axioms.add(Axiom.SubClass(by.toString(), id));
+			axioms.add(Axiom.SubClass(NS.CORE_TYPE, id));
 			axioms.add(Axiom.AnnotationAssertion(id, NS.BASE_DECLARATION, "true"));
 	        axioms.add(Axiom.AnnotationAssertion(id, NS.DISPLAY_LABEL_PROPERTY, id));
 	        axioms.add(Axiom.AnnotationAssertion(id, NS.CONCEPT_DEFINITION_PROPERTY, definition));
 	        axioms.add(Axiom.AnnotationAssertion(id, "rdfs:label", id));
 			ontology.define(axioms);
 			ret = ontology.getConcept(id);
-
-			
 			
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.REPRESENTED_BY_PROPERTY), by);
 			if (downTo != null) {

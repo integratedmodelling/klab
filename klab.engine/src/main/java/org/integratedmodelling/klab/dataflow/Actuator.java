@@ -139,9 +139,10 @@ public class Actuator implements IActuator {
 	 * Compute the actuator.
 	 * 
 	 * @param target
-	 *            the artifact being computed. If this actuator handles an
+	 *            the final artifact being computed. If this actuator handles an
 	 *            instantiation, the passed target is null and will be set to the
-	 *            first object in the result chain.
+	 *            first object in the result chain, or to the empty artifact if no
+	 *            instances are created.
 	 * @param runtimeContext
 	 *            the runtime context
 	 * @return the finalized observation data. TODO when an instantiator returns no
@@ -177,8 +178,12 @@ public class Actuator implements IActuator {
 
 		/*
 		 * run the contextualization strategy with the localized context. Each
-		 * contextualizer may produce/require something else than the actuator's target;
-		 * we use the context's artifact table to keep track.
+		 * contextualizer may produce/require something else than the actuator's target
+		 * (in case of explicit retargeting) or an intermediate version requiring a
+		 * different type. We use the context's artifact table to keep track.
+		 * 
+		 * FIXME the final artifact (created before calling) may not be compatible with
+		 * the intermediate ones (e.g. in classification).
 		 */
 		for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
 
@@ -195,6 +200,8 @@ public class Actuator implements IActuator {
 			 * Initial target will be null if the actuator is for an instantiator. We take
 			 * it from the context as setupContext() may have swapped it for a rescaling
 			 * mediator.
+			 * 
+			 * FIXME the initial target should be the empty artifact with instantiators.
 			 */
 			IArtifact targetArtifact = indirectTarget == null ? target : ctx.getArtifact(indirectTarget.getLocalName());
 
@@ -231,11 +238,11 @@ public class Actuator implements IActuator {
 
 		if (Klab.INSTANCE.getMessageBus() != null
 				&& !ctx.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
-			
+
 			/*
 			 * Send the result to the session's channel, only for primary observations and
-			 * with no children. TODO ensure that @probe annotations are honored: send
-			 * the probed artifacts, and ensure they're not sent if not probed.
+			 * with no children. TODO ensure that @probe annotations are honored: send the
+			 * probed artifacts, and ensure they're not sent if not probed.
 			 */
 			ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 			session.getMonitor()
