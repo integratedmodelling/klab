@@ -110,7 +110,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		@Override
 		public void warn(Object... o) {
 			String message = NotificationUtils.getMessage(o);
-			Consumer<String> warningWriter = Logging.INSTANCE.getInfoWriter();
+			Consumer<String> warningWriter = Logging.INSTANCE.getWarningWriter();
 			if (warningWriter != null) {
 				warningWriter.accept(message);
 			}
@@ -120,7 +120,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		@Override
 		public void error(Object... o) {
 			String message = NotificationUtils.getMessage(o);
-			Consumer<String> errorWriter = Logging.INSTANCE.getInfoWriter();
+			Consumer<String> errorWriter = Logging.INSTANCE.getErrorWriter();
 			if (errorWriter != null) {
 				errorWriter.accept(message);
 			}
@@ -131,7 +131,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		@Override
 		public void debug(Object... o) {
 			String message = NotificationUtils.getMessage(o);
-			Consumer<String> debugWriter = Logging.INSTANCE.getInfoWriter();
+			Consumer<String> debugWriter = Logging.INSTANCE.getDebugWriter();
 			if (debugWriter != null) {
 				debugWriter.accept(message);
 			}

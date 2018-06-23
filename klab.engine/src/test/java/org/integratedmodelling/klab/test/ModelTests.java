@@ -3,6 +3,9 @@
  */
 package org.integratedmodelling.klab.test;
 
+import java.util.function.Consumer;
+
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.engine.Engine;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -22,6 +25,14 @@ public class ModelTests {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		engine = Engine.start();
+		// ensure errors cause exc
+		Logging.INSTANCE.setErrorWriter(new Consumer<String>() {
+			
+			@Override
+			public void accept(String t) {
+				throw new RuntimeException(t);
+			}
+		});
 	}
 
 	@AfterClass

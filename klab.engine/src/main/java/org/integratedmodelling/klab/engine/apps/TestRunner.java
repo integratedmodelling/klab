@@ -148,7 +148,7 @@ public class TestRunner implements Annotations.Handler {
 					+ ((monitor.hasErrors() || exceptions.size() > 0) ? "errors" : "no errors"));
 
 			for (Throwable t : exceptions) {
-				Logging.INSTANCE.info("   EXCEPTION: " + t.getMessage());
+				Logging.INSTANCE.error("Exception running test " + id + ": " + t.getMessage());
 			}
 
 		}

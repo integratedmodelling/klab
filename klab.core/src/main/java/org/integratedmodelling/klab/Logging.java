@@ -63,11 +63,12 @@ public enum Logging implements ILoggingService {
         }
 
         if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.INFO.intValue()) {
-            if (logger != null) {
-                logger.info(payload);
-            } else if (infoWriter != null) {
+            if (infoWriter != null) {
             	infoWriter.accept(payload);
             }
+            if (logger != null) {
+                logger.info(payload);
+            } 
         }
 
     }
@@ -84,12 +85,12 @@ public enum Logging implements ILoggingService {
 		}
 
 		if (Configuration.INSTANCE.getLoggingLevel().intValue() <= Level.WARNING.intValue()) {
-
-			if (logger != null) {
-				logger.warn(payload);
-            } else if (warningWriter != null) {
+			if (warningWriter != null) {
             	warningWriter.accept(payload);
             }
+			if (logger != null) {
+				logger.warn(payload);
+            } 
 		}
 	}
 
@@ -104,12 +105,12 @@ public enum Logging implements ILoggingService {
 		}
 
 		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
-			if (logger != null) {
-				logger.error(payload);
-            } else if (errorWriter != null) {
+			if (errorWriter != null) {
             	errorWriter.accept(payload);
             }
-
+			if (logger != null) {
+				logger.error(payload);
+            } 
 		}
 	}
 
@@ -124,13 +125,12 @@ public enum Logging implements ILoggingService {
 		}
 
 		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.FINE.intValue()) {
-
-			if (logger != null) {
-				logger.debug(payload);
-            } else if (debugWriter != null) {
+			if (debugWriter != null) {
             	debugWriter.accept(payload);
             }
-
+			if (logger != null) {
+				logger.debug(payload);
+            } 
 		}
 	}
 
