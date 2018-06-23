@@ -21,6 +21,7 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -49,6 +50,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private Version resourceVersion;
 	private boolean error = false;
 	private String adapterType;
+	private Type type;
 
 	/** {@inheritDoc} */
 	@Override
@@ -66,6 +68,8 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.adapterType = this.adapterType;
 		ret.localPath = this.localPath;
 		ret.localPaths.addAll(resourcePaths);
+		ret.type = type;
+		
 		return ret;
 	}
 
@@ -162,6 +166,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public Builder withParameters(IParameters parameters) {
 		this.parameters.putAll(parameters);
+		return this;
+	}
+
+	@Override
+	public Builder withType(Type type) {
+		this.type = type;
 		return this;
 	}
 

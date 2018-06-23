@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.api.model.contextualization;
 
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry;
 
 /**
@@ -51,5 +52,13 @@ public abstract interface IContextualizer {
    *         able to take any input geometry for its type.
    */
   IGeometry getGeometry();
+  
+  /**
+   * Contextualizers expose a type so that an artifact chain can be established when intermediate
+   * computations of different types are required for an observation.
+   * 
+   * @return
+   */
+  IPrototype.Type getType();
 
 }

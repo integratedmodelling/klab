@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
@@ -119,6 +120,13 @@ public interface IResource extends Serializable {
 	IParameters getParameters();
 
 	/**
+	 * The type of the artifact produced. 
+	 * 
+	 * @return the type
+	 */
+	IPrototype.Type getType();
+	
+	/**
 	 * A builder can be obtained through
 	 * {@link IResourceService#createResourceBuilder()} and is used to set all the
 	 * properties of a {@link IResource} that will be built at publication. The
@@ -129,6 +137,13 @@ public interface IResource extends Serializable {
 	 */
 	interface Builder {
 
+		/**
+		 * 
+		 * @param type
+		 * @return the builder itself
+		 */
+		Builder withType(IPrototype.Type type);
+		
 		/**
 		 * 
 		 * @param key

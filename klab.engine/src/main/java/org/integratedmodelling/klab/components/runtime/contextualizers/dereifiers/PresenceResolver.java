@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -70,4 +71,10 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 		return Geometry.create("S2");
 	}
 
+	@Override
+	public Type getType() {
+		return Type.BOOLEAN;
+	}
+
+	
 }

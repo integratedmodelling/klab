@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
@@ -53,6 +54,12 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	@Override
 	public IGeometry getGeometry() {
 		return resource.getGeometry();
+	}
+
+	@Override
+	public Type getType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

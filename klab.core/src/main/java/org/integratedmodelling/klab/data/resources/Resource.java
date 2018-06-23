@@ -21,6 +21,8 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -65,6 +67,7 @@ public class Resource implements IResource {
 	String adapterType;
 	String localPath;
 	IGeometry geometry;
+	IPrototype.Type type;
 	long resourceTimestamp;
 	IMetadata metadata = new Metadata();
 	Parameters parameters = new Parameters();
@@ -198,6 +201,12 @@ public class Resource implements IResource {
 	@Override
 	public String getLocalPath() {
 		return localPath;
+	}
+
+	@Override
+	public Type getType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

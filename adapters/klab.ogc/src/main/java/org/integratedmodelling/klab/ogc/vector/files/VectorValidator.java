@@ -34,6 +34,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
@@ -42,7 +43,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -97,6 +97,8 @@ public class VectorValidator implements IResourceValidator {
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters userData, IMonitor monitor) throws IOException {
 
+		
+		
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 
@@ -111,6 +113,7 @@ public class VectorValidator implements IResourceValidator {
 
 		int shapeDimension = 0;
 		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
+			
 			if (ad.getLocalName().equals("the_geom")) {
 				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
 				if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
@@ -131,6 +134,9 @@ public class VectorValidator implements IResourceValidator {
 		}
 		
 		// TODO if attributes are requested, validate their type and name
+		
+		// TODO if attributes are requested, set the type in the builder accordingly
+		ret.withType(IPrototype.Type.OBJECT);
 
 		// Compute union or convex hull if requested
 		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {

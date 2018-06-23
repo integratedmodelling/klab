@@ -8,6 +8,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -139,6 +140,11 @@ public class FutureResource implements IResource, Future<IResource> {
 	@Override
 	public String getLocalPath() {
 		return getDelegate(timeout).getLocalPath();
+	}
+
+	@Override
+	public Type getType() {
+		return getDelegate(timeout).getType();
 	}
 
 }

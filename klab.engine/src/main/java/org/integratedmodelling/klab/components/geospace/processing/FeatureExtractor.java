@@ -350,4 +350,11 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		return new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[coords.size()])), gfact);
 	}
 
+	@Override
+	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+		return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+	}
+	
+
+
 }

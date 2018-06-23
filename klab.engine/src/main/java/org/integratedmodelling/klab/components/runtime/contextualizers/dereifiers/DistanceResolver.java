@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.contextualizers.dereifie
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -52,6 +53,11 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("S2");
+	}
+	
+	@Override
+	public Type getType() {
+		return Type.NUMBER;
 	}
 
 }

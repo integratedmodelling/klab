@@ -27,6 +27,7 @@ import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
@@ -48,7 +49,7 @@ public class RasterValidator implements IResourceValidator {
 	@Override
 	public IResource.Builder validate(URL url, IParameters userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IPrototype.Type.NUMBER);
 
 		try {
 
@@ -81,9 +82,9 @@ public class RasterValidator implements IResourceValidator {
 						monitor.info("Testing reprojection to UTM " + utmProjection + "...");
 						CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
 					}
-					
+
 					crsCode = CRS.lookupIdentifier(crs, true);
-					
+
 				} catch (Throwable e) {
 					ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
 				}
@@ -103,11 +104,11 @@ public class RasterValidator implements IResourceValidator {
 								+ userData.get("band", Integer.class) + " is requested");
 					}
 				}
-				
+
 				/*
 				 * TODO we could (maybe on demand) compute the shape of the covered region
 				 */
-				
+
 				/*
 				 * If userdata do not contain nodata values, add them
 				 */

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.network.services;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -57,6 +58,11 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 	@Override
 	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
 		return new RandomInstantiator(parameters, context);
+	}
+
+	@Override
+	public Type getType() {
+		return Type.OBJECT;
 	}
 
 }

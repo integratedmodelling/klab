@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
@@ -52,6 +53,11 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 	@Override
 	public IGeometry getGeometry() {
 		return resource.getGeometry();
+	}
+
+	@Override
+	public Type getType() {
+		return resource.getType();
 	}
 
 }

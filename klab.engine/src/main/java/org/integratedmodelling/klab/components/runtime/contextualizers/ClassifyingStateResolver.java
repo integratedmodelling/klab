@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -45,5 +46,10 @@ public class ClassifyingStateResolver implements IStateResolver, IExpression {
 	@Override
 	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
 		return classification.classify(context.get("self"), context.getMonitor());
+	}
+
+	@Override
+	public Type getType() {
+		return Type.CONCEPT;
 	}
 }
