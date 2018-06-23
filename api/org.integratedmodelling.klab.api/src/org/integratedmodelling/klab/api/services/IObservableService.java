@@ -256,20 +256,20 @@ public interface IObservableService {
 		 */
 		Builder as(IConcept role);
 
-		/**
-		 * 
-		 * @param limit
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder downTo(IConcept limit);
-
-		/**
-		 * Classify of the concept built so far 'by' the passed one.
-		 * 
-		 * @param trait
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder by(IConcept trait);
+//		/**
+//		 * 
+//		 * @param limit
+//		 * @return the same builder this was called on, for chaining calls
+//		 */
+//		Builder downTo(IConcept limit);
+//
+//		/**
+//		 * Classify of the concept built so far 'by' the passed one.
+//		 * 
+//		 * @param trait
+//		 * @return the same builder this was called on, for chaining calls
+//		 */
+//		Builder by(IConcept trait);
 
 		/**
 		 * Contextualize the concept built so far to the passed context one. Will choose

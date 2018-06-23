@@ -27,6 +27,8 @@ public class Classifier implements IClassifier {
 
 	Classifier(IKimClassifier statement) {
 
+		this.sourceCode = statement.getSourceCode().trim();
+		
 		this.numberMatch = statement.getNumberMatch();
 		this.anythingMatch = statement.isCatchAnything();
 		this.catchAll = statement.isCatchAll();
@@ -62,6 +64,7 @@ public class Classifier implements IClassifier {
 	private boolean negated = false;
 	private IExpression expressionMatch = null;
 	private boolean anythingMatch = false;
+	private String sourceCode;
 
 	// each sublist is in AND, each concept in each list is in OR
 	protected List<List<IConcept>> conceptMatches = null;
@@ -442,5 +445,10 @@ public class Classifier implements IClassifier {
 
 	public static Classifier create(Object o) {
 		return new Classifier(o);
+	}
+
+	@Override
+	public String getSourceCode() {
+		return sourceCode;
 	}
 }

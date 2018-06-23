@@ -273,7 +273,7 @@ ObservableSemantics:
 	declaration=ConceptDeclaration
 	(
 		('by' by=Concept)? &
-		('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? &
+		('down' 'to' downTo=Concept)? &
 		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
@@ -775,7 +775,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 	declaration=ConceptDeclaration
 	(
 		('by' by=Concept)? &
-		('down' 'to' downTo=(CAMELCASE_ID | NamespaceId))? &
+		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |

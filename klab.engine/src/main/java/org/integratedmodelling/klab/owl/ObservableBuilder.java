@@ -138,20 +138,20 @@ public class ObservableBuilder implements Builder {
         return this;
     }
 
-    @Override
-    public Builder downTo(IConcept concept) {
-        this.downTo = concept;
-        isTrivial = false;
-        return this;
-    }
-
-    @Override
-    public Builder by(IConcept concept) {
-        // must be a trait and must be unique
-        this.classifier = concept;
-        isTrivial = false;
-        return this;
-    }
+//    @Override
+//    public Builder downTo(IConcept concept) {
+//        this.downTo = concept;
+//        isTrivial = false;
+//        return this;
+//    }
+//
+//    @Override
+//    public Builder by(IConcept concept) {
+//        // must be a trait and must be unique
+//        this.classifier = concept;
+//        isTrivial = false;
+//        return this;
+//    }
 
     @Override
     public Builder withGoal(IConcept goal) {
@@ -912,7 +912,7 @@ public class ObservableBuilder implements Builder {
 
         Concept ret = main;
         ArrayList<String> tids = new ArrayList<>();
-        ArrayList<IConcept> keep = new ArrayList<IConcept>();
+//        ArrayList<IConcept> keep = new ArrayList<IConcept>();
 
         /*
          * preload any base traits we already have. If any of them is abstract, take notice so we can
@@ -933,17 +933,17 @@ public class ObservableBuilder implements Builder {
         String cId = "";
         String cDs = "";
 
-        /*
-         * we also add a non-by, non-down-to concept (untrasformed) if absent, so that we can
-         * reconstruct an observable without transformations but with all traits and roles if required.
-         * This is returned by getUntransformedObservable().
-         * 
-         * TODO this is related to the observable not being the same as the declared - see what's the
-         * best way to handle this. Better to build the concept using only the declaration, then create
-         * the other using the same axioms + by/downto if needed. No need for a special uId - just do it
-         * after.
-         */
-        String uId = "";
+//        /*
+//         * we also add a non-by, non-down-to concept (untrasformed) if absent, so that we can
+//         * reconstruct an observable without transformations but with all traits and roles if required.
+//         * This is returned by getUntransformedObservable().
+//         * 
+//         * TODO this is related to the observable not being the same as the declared - see what's the
+//         * best way to handle this. Better to build the concept using only the declaration, then create
+//         * the other using the same axioms + by/downto if needed. No need for a special uId - just do it
+//         * after.
+//         */
+//        String uId = "";
 
         if (traits != null && traits.size() > 0) {
 
@@ -999,7 +999,7 @@ public class ObservableBuilder implements Builder {
             for (String s : tids) {
                 cId += s;
                 cDs += s;
-                uId += s;
+//                uId += s;
             }
         }
 
@@ -1009,7 +1009,7 @@ public class ObservableBuilder implements Builder {
         String cleanId = getCleanId(main);
         cId += cleanId;
         cDs += cleanId;
-        uId += cleanId;
+//        uId += cleanId;
 
         /*
          * handle context, inherency etc.
@@ -1026,7 +1026,7 @@ public class ObservableBuilder implements Builder {
             cleanId = getCleanId(inherent);
             cId += "Of" + cleanId;
             cDs += "Of" + cleanId;
-            uId += "Of" + cleanId;
+//            uId += "Of" + cleanId;
         }
 
         if (context != null) {
@@ -1041,7 +1041,7 @@ public class ObservableBuilder implements Builder {
             cleanId = getCleanId(context);
             cId += "In" + cleanId;
             cDs += "In" + cleanId;
-            uId += "In" + cleanId;
+//            uId += "In" + cleanId;
         }
 
         if (compresent != null) {
@@ -1056,7 +1056,7 @@ public class ObservableBuilder implements Builder {
             cleanId = getCleanId(compresent);
             cId += "With" + cleanId;
             cDs += "With" + cleanId;
-            uId += "With" + cleanId;
+//            uId += "With" + cleanId;
         }
 
         if (goal != null) {
@@ -1072,7 +1072,7 @@ public class ObservableBuilder implements Builder {
             cleanId = getCleanId(goal);
             cId += "For" + cleanId;
             cDs += "For" + cleanId;
-            uId += "For" + cleanId;
+//            uId += "For" + cleanId;
         }
 
         if (caused != null) {
@@ -1087,7 +1087,7 @@ public class ObservableBuilder implements Builder {
             cleanId = getCleanId(caused);
             cId += "To" + cleanId;
             cDs += "To" + cleanId;
-            uId += "To" + cleanId;
+//            uId += "To" + cleanId;
         }
 
         if (causant != null) {
@@ -1102,7 +1102,7 @@ public class ObservableBuilder implements Builder {
             cleanId = getCleanId(causant);
             cId += "From" + cleanId;
             cDs += "From" + cleanId;
-            uId += "From" + cleanId;
+//            uId += "From" + cleanId;
         }
 
         String roleIds = "";
@@ -1153,56 +1153,11 @@ public class ObservableBuilder implements Builder {
                 .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration
                         .getDefinition())));
 
-        // /*
-        // * if there is a 'by', this is the child of the class that exposes it, not the
-        // * original concept's.
-        // */
-        // axioms.add(Axiom
-        // .SubClass((byTrait == null ? main.toString() : makeTypeFor(byTrait).toString()), cId));
-        //
-        // if (needUntransformed) {
-        // axioms.add(Axiom.SubClass(main.toString(), uId));
-        // }
-        //
+
 
         if (type.contains(Type.ABSTRACT)) {
             axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_ABSTRACT, "true"));
         }
-
-        // Set<IConcept> allowedDetail = new HashSet<>();
-        //
-        // if (byTrait != null) {
-        //
-        // if (!NS.isTrait(byTrait)) {
-        // throw new KlabValidationException("the concept in a 'by' clause must be a base abstract
-        // trait");
-        // }
-        //
-        // /*
-        // * TODO trait must be a base trait and abstract.
-        // */
-        // if (!NS.isBaseDeclaration(byTrait) || !byTrait.isAbstract()) {
-        // throw new KlabValidationException("traits used in a 'by' clause must be abstract and
-        // declared
-        // at
-        // root level");
-        // }
-        // cId += "By" + cleanInternalId(byTrait.getLocalName());
-        // cDs += "By" + cleanInternalId(byTrait.getLocalName());
-        // byDefinition = byTrait.getDefinition();
-        // makeAbstract = true;
-        // }
-        //
-        // if (downTo != null) {
-        // IConcept trait = byTrait == null ? main : byTrait;
-        // if (!NS.isTrait(trait)) {
-        // throw new KlabValidationException("cannot use 'down to' on non-trait observables");
-        // }
-        // allowedDetail.addAll(Types.getChildrenAtLevel(trait, Types.getDetailLevel(trait, downTo)));
-        // cId += "DownTo" + cleanInternalId(downTo.getLocalName());
-        // // display label stays the same
-        // downToDefinition = downTo.getDefinition();
-        // }
 
         ontology.define(axioms);
         ret = ontology.getConcept(conceptId);
@@ -1233,14 +1188,18 @@ public class ObservableBuilder implements Builder {
         if (context != null) {
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
         }
-
-        // if (byTrait != null) {
-        // OWL.restrictSome(ret, KLAB.p(NS.REPRESENTED_BY_PROPERTY), byTrait);
-        // }
-        // if (downTo != null) {
-        // OWL.restrictSome(ret, KLAB.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION,
-        // allowedDetail);
-        // }
+        if (caused != null) {
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused);
+        }
+        if (causant != null) {
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant);
+        }
+        if (compresent != null) {
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent);
+        }
+        if (goal != null) {
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal);
+        }
 
         if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {
             monitor.error("this declaration has logical errors and is inconsistent", declaration);
@@ -1249,11 +1208,12 @@ public class ObservableBuilder implements Builder {
         if (negated) {
             // TODO - add Not to the ids
         }
+        
 
         return ret;
     }
 
-    private static String getCleanId(IConcept main) {
+    public static String getCleanId(IConcept main) {
         String id = main.getMetadata().get(IMetadata.DC_LABEL, String.class);
         if (id == null) {
             id = main.getName();

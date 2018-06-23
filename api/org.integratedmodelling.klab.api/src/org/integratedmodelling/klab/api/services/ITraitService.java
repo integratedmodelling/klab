@@ -27,13 +27,37 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 public interface ITraitService {
 
     /**
-     * <p>getTraits.</p>
+     * Return all traits, i.e. identities, attributes and realms.
      *
      * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
      * @return a {@link java.util.Collection} object.
      */
     Collection<IConcept> getTraits(IConcept concept);
 
+
+    /**
+     * Return all identities.
+     * 
+     * @param concept
+     * @return identities
+     */
+	Collection<IConcept> getIdentities(IConcept concept);
+
+	/**
+	 * Return all attributes
+	 * @param concept
+	 * @return attributes
+	 */
+	Collection<IConcept> getAttributes(IConcept concept);
+
+	/**
+	 * Return all realms.
+	 * 
+	 * @param concept
+	 * @return realms
+	 */
+	Collection<IConcept> getRealms(IConcept concept);
+    
     /**
      * <p>getBaseParentTrait.</p>
      *
@@ -60,5 +84,6 @@ public interface ITraitService {
      * @return a boolean.
      */
     boolean hasParentTrait(IConcept type, IConcept trait);
+
 
 }

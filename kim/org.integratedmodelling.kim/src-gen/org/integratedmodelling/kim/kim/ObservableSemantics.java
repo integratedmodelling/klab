@@ -141,30 +141,30 @@ public interface ObservableSemantics extends EObject
   void setBy(Concept value);
 
   /**
-   * Returns the value of the '<em><b>Down To</b></em>' attribute.
+   * Returns the value of the '<em><b>Down To</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Down To</em>' attribute isn't clear,
+   * If the meaning of the '<em>Down To</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Down To</em>' attribute.
-   * @see #setDownTo(String)
+   * @return the value of the '<em>Down To</em>' containment reference.
+   * @see #setDownTo(Concept)
    * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_DownTo()
-   * @model
+   * @model containment="true"
    * @generated
    */
-  String getDownTo();
+  Concept getDownTo();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Down To</em>' attribute.
+   * @param value the new value of the '<em>Down To</em>' containment reference.
    * @see #getDownTo()
    * @generated
    */
-  void setDownTo(String value);
+  void setDownTo(Concept value);
 
   /**
    * Returns the value of the '<em><b>Role</b></em>' containment reference.

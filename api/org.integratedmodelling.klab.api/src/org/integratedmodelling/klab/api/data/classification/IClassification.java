@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.utils.Pair;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -25,7 +26,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IClassification extends Iterable<IClassifier> {
+public interface IClassification extends Iterable<Pair<IConcept, IClassifier>> {
 
     /**
      * Return the main concept that subsumes all those expressed by the classifiers. In some situations this may be
@@ -48,7 +49,7 @@ public interface IClassification extends Iterable<IClassifier> {
      *
      * @return true if we express the discretization of a finite domain
      */
-    public boolean isContiguousAndFinite();
+    boolean isContiguousAndFinite();
 
     /**
      * Return the concept that the passed object classifies to, or null if no
@@ -67,7 +68,7 @@ public interface IClassification extends Iterable<IClassifier> {
      * @param object the object
      * @return the double
      */
-    public double undiscretize(IConcept object);
+    double undiscretize(IConcept object);
 
     /**
      * Return a sensible numeric value for the passed concept. NaN should be reserved for no-data,
@@ -78,7 +79,7 @@ public interface IClassification extends Iterable<IClassifier> {
      * @param o the o
      * @return the number we can use to encode the concept, which must be one of the getConcepts()
      */
-    public double getNumericValue(IConcept o);
+    double getNumericValue(IConcept o);
 
     /**
      * Classify to the numeric ranking of the concept instead of the concept.
@@ -87,5 +88,5 @@ public interface IClassification extends Iterable<IClassifier> {
      * @param monitor a monitor
      * @return a numeric ranking - equivalent to calling getNumericCode(classify(o))
      */
-    public int classifyToIndex(Object o, IMonitor monitor);
+    int classifyToIndex(Object o, IMonitor monitor);
 }

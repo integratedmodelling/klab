@@ -1730,7 +1730,7 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__BY = 3;
 
   /**
-   * The feature id for the '<em><b>Down To</b></em>' attribute.
+   * The feature id for the '<em><b>Down To</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -5768,15 +5768,15 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_By();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Down To</em>'.
+   * @return the meta object for the containment reference '<em>Down To</em>'.
    * @see org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo()
    * @see #getObservableSemantics()
    * @generated
    */
-  EAttribute getObservableSemantics_DownTo();
+  EReference getObservableSemantics_DownTo();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getRole <em>Role</em>}'.
@@ -9537,12 +9537,12 @@ public interface KimPackage extends EPackage
     EReference OBSERVABLE_SEMANTICS__BY = eINSTANCE.getObservableSemantics_By();
 
     /**
-     * The meta object literal for the '<em><b>Down To</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Down To</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute OBSERVABLE_SEMANTICS__DOWN_TO = eINSTANCE.getObservableSemantics_DownTo();
+    EReference OBSERVABLE_SEMANTICS__DOWN_TO = eINSTANCE.getObservableSemantics_DownTo();
 
     /**
      * The meta object literal for the '<em><b>Role</b></em>' containment reference feature.

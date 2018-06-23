@@ -465,8 +465,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     accordingTo=PropertyId (ambiguity) 'as' role=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
-	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
 	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) 'named' name=LOWERCASE_ID
@@ -477,8 +476,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     by=Concept (ambiguity) 'as' role=Concept
 	 *     by=Concept (ambiguity) 'by' by=Concept
-	 *     by=Concept (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     by=Concept (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     by=Concept (ambiguity) 'in' currency=Currency
 	 *     by=Concept (ambiguity) 'in' unit=Unit
 	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
@@ -489,8 +487,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'as' role=Concept
 	 *     currency=Currency (ambiguity) 'by' by=Concept
-	 *     currency=Currency (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     currency=Currency (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
 	 *     currency=Currency (ambiguity) 'named' name=LOWERCASE_ID
@@ -501,8 +498,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     declaration=ConceptDeclaration (ambiguity) 'as' role=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
-	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
@@ -510,35 +506,21 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
-	 *     downTo=CAMELCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=CAMELCASE_ID (ambiguity) 'as' role=Concept
-	 *     downTo=CAMELCASE_ID (ambiguity) 'by' by=Concept
-	 *     downTo=CAMELCASE_ID (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     downTo=CAMELCASE_ID (ambiguity) 'down' 'to' downTo=NamespaceId
-	 *     downTo=CAMELCASE_ID (ambiguity) 'in' currency=Currency
-	 *     downTo=CAMELCASE_ID (ambiguity) 'in' unit=Unit
-	 *     downTo=CAMELCASE_ID (ambiguity) 'named' name=LOWERCASE_ID
-	 *     downTo=CAMELCASE_ID (ambiguity) 'per' unit=Unit
-	 *     downTo=CAMELCASE_ID (ambiguity) (rule end)
-	 *     downTo=CAMELCASE_ID (ambiguity) from=Number
-	 *     downTo=CAMELCASE_ID (ambiguity) optional?='optional'
-	 *     downTo=NamespaceId (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=NamespaceId (ambiguity) 'as' role=Concept
-	 *     downTo=NamespaceId (ambiguity) 'by' by=Concept
-	 *     downTo=NamespaceId (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     downTo=NamespaceId (ambiguity) 'down' 'to' downTo=NamespaceId
-	 *     downTo=NamespaceId (ambiguity) 'in' currency=Currency
-	 *     downTo=NamespaceId (ambiguity) 'in' unit=Unit
-	 *     downTo=NamespaceId (ambiguity) 'named' name=LOWERCASE_ID
-	 *     downTo=NamespaceId (ambiguity) 'per' unit=Unit
-	 *     downTo=NamespaceId (ambiguity) (rule end)
-	 *     downTo=NamespaceId (ambiguity) from=Number
-	 *     downTo=NamespaceId (ambiguity) optional?='optional'
+	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     downTo=Concept (ambiguity) 'as' role=Concept
+	 *     downTo=Concept (ambiguity) 'by' by=Concept
+	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
+	 *     downTo=Concept (ambiguity) 'in' currency=Currency
+	 *     downTo=Concept (ambiguity) 'in' unit=Unit
+	 *     downTo=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     downTo=Concept (ambiguity) 'per' unit=Unit
+	 *     downTo=Concept (ambiguity) (rule end)
+	 *     downTo=Concept (ambiguity) from=Number
+	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'as' role=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
-	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) 'named' name=LOWERCASE_ID
@@ -549,8 +531,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'as' role=Concept
 	 *     optional?='optional' (ambiguity) 'by' by=Concept
-	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
 	 *     optional?='optional' (ambiguity) 'in' unit=Unit
 	 *     optional?='optional' (ambiguity) 'named' name=LOWERCASE_ID
@@ -561,8 +542,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     role=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     role=Concept (ambiguity) 'as' role=Concept
 	 *     role=Concept (ambiguity) 'by' by=Concept
-	 *     role=Concept (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     role=Concept (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     role=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     role=Concept (ambiguity) 'in' currency=Currency
 	 *     role=Concept (ambiguity) 'in' unit=Unit
 	 *     role=Concept (ambiguity) 'named' name=LOWERCASE_ID
@@ -573,8 +553,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     to=Number (ambiguity) 'as' role=Concept
 	 *     to=Number (ambiguity) 'by' by=Concept
-	 *     to=Number (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     to=Number (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
 	 *     to=Number (ambiguity) 'in' currency=Currency
 	 *     to=Number (ambiguity) 'in' unit=Unit
 	 *     to=Number (ambiguity) 'named' name=LOWERCASE_ID
@@ -585,8 +564,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     unit=Unit (ambiguity) 'as' role=Concept
 	 *     unit=Unit (ambiguity) 'by' by=Concept
-	 *     unit=Unit (ambiguity) 'down' 'to' downTo=CAMELCASE_ID
-	 *     unit=Unit (ambiguity) 'down' 'to' downTo=NamespaceId
+	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
 	 *     unit=Unit (ambiguity) 'in' unit=Unit
 	 *     unit=Unit (ambiguity) 'named' name=LOWERCASE_ID

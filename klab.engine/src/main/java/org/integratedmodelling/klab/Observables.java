@@ -303,42 +303,6 @@ public enum Observables implements IObservableService {
 		return OWL.INSTANCE.getRestrictedClasses((IConcept) main, Concepts.p(NS.APPLIES_TO_PROPERTY));
 	}
 
-	// @Override
-	// public Builder declare(IConcept main, IOntology ontology) {
-	// return new ObservableBuilder((Concept) main, (Ontology) ontology);
-	// }
-
-	// @Override
-	// public Builder declare(String main, IConcept parent, IOntology ontology) {
-	// return new ObservableBuilder(main, (Concept) parent, (Ontology) ontology);
-	// }
-
-	// @Override
-	// public Builder declare(String main, Set<Type> type, IOntology ontology) {
-	// return new ObservableBuilder(main, type, (Ontology) ontology);
-	// }
-
-	// @Override
-	// public Builder declare(IConcept main) {
-	// return declare(main,
-	// Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology()
-	// : null);
-	// }
-
-	// @Override
-	// public Builder declare(String main, IConcept parent) {
-	// return declare(main, parent,
-	// Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology()
-	// : null);
-	// }
-
-	// @Override
-	// public Builder declare(String main, Set<Type> type) {
-	// return declare(main, type,
-	// Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology()
-	// : null);
-	// }
-
 	@Override
 	public Class<? extends IObservation> getObservationClass(IObservable observable) {
 		if (observable.getType().is(Type.SUBJECT)) {
@@ -402,7 +366,7 @@ public enum Observables implements IObservableService {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public Type getObservableType(IObservable observable) {
 		EnumSet<Type> type = EnumSet.copyOf(((Observable) observable).getTypeSet());
@@ -436,22 +400,78 @@ public enum Observables implements IObservableService {
 		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY));
 	}
 
-    /**
-     * Set the "applied to" clause for a trait or observable. Should also validate.
-     * 
-     * @param type
-     * @param applicables
-     */
-    public void setApplicableObservables(IConcept type, List<IConcept> applicables) {
-        // TODO validate
-        OWL.INSTANCE.restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables);
-    }
-	
+	/**
+	 * Set the "applied to" clause for a trait or observable. Should also validate.
+	 * 
+	 * @param type
+	 * @param applicables
+	 */
+	public void setApplicableObservables(IConcept type, List<IConcept> applicables) {
+		// TODO validate
+		OWL.INSTANCE.restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables);
+	}
+
 	public void defineRelationship(Concept relationship, IConcept source, IConcept target) {
 		IProperty hasSource = Concepts.p(NS.IMPLIES_SOURCE_PROPERTY);
 		IProperty hasTarget = Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY);
 		OWL.INSTANCE.restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source));
 		OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target));
+	}
+
+	/**
+	 * Copy all the observation logical context (inherent, context, caused, ...
+	 * including traits and roles) from a concept to another. Assumes that the
+	 * target concept has none of these.
+	 * 
+	 * @param type
+	 * @param target
+	 */
+	public void copyContext(IConcept type, IConcept target) {
+
+		IConcept inherent = getInherentType(type);
+		IConcept context = getContextType(type);
+		IConcept goal = getGoalType(type);
+		IConcept causant = getCausantType(type);
+		IConcept caused = getCausedType(type);
+		IConcept compresent = getCompresentType(type);
+
+		if (inherent != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+		}
+		if (context == null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+		}
+		if (caused != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused);
+		}
+		if (causant != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant);
+		}
+		if (compresent != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent);
+		}
+		if (goal != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal);
+		}
+
+		Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
+		Collection<IConcept> realms = Traits.INSTANCE.getRealms(type);
+		Collection<IConcept> attributes = Traits.INSTANCE.getAttributes(type);
+		Collection<IConcept> acceptedRoles = Roles.INSTANCE.getRoles(type);
+
+		if (identities.size() > 0) {
+			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
+		}
+		if (realms.size() > 0) {
+			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
+		}
+		if (attributes.size() > 0) {
+			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
+		}
+		if (acceptedRoles.size() > 0) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
+		}
+
 	}
 
 }

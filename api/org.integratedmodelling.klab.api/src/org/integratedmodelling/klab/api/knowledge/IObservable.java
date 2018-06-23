@@ -137,7 +137,30 @@ public interface IObservable extends IConcept, IResolvable {
    */
   IConcept getInherentType();
 
-  // TODO other predicates
+  /**
+   * The caused ('causing') type.
+   * @return the caused type
+   */
+  IConcept getCaused();
+  
+  /**
+   * The causant ('caused by') type
+   * @return the caused type
+   */
+  IConcept getCausant();
+
+  /**
+   * The compresent ('with') type
+   * @return the compresent type
+   */
+  IConcept getCompresent();
+
+  /**
+   * The purpose ('for') type
+   * @return the purpose type
+   */
+  IConcept getPurpose();
+  
   
   /**
    * If the observable was defined with an inline value (e.g. '10 as Concept'), report the POD value

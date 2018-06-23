@@ -30,6 +30,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
  */
 public abstract class LargeArray<T> {
 
+	
     class Slice {
 
 		/*

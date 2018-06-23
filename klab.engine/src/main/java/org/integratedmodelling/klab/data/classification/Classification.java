@@ -216,12 +216,8 @@ public class Classification implements IClassification {
 	}
 
 	@Override
-	public Iterator<IClassifier> iterator() {
-		List<IClassifier> ret = new ArrayList<>();
-		for (Pair<IConcept, IClassifier> cls : classifiers) {
-			ret.add(cls.getSecond());
-		}
-		return ret.iterator();
+	public Iterator<Pair<IConcept, IClassifier>> iterator() {
+		return classifiers.iterator();
 	}
 
 	@Override

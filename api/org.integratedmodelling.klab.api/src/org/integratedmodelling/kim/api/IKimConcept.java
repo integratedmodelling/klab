@@ -430,9 +430,9 @@ public interface IKimConcept extends IKimStatement {
 
   String getAuthority();
 
-  IKimConcept getDownTo();
-
-  IKimConcept getByTrait();
+//  IKimConcept getDownTo();
+//
+//  IKimConcept getByTrait();
 
   UnarySemanticOperator getObservationType();
 

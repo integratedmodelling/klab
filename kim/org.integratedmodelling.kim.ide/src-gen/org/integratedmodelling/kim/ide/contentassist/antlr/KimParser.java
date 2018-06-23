@@ -84,7 +84,6 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_1_1(), "rule__LocalFilePath__Alternatives_1_1");
 					put(grammarAccess.getObserveStatementBodyAccess().getAlternatives_0_3_1(), "rule__ObserveStatementBody__Alternatives_0_3_1");
 					put(grammarAccess.getObserveStatementBodyAccess().getAlternatives_0_3_2_1(), "rule__ObserveStatementBody__Alternatives_0_3_2_1");
-					put(grammarAccess.getObservableSemanticsAccess().getDownToAlternatives_3_1_2_0(), "rule__ObservableSemantics__DownToAlternatives_3_1_2_0");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4(), "rule__ObservableSemantics__Alternatives_3_4");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4_0_1(), "rule__ObservableSemantics__Alternatives_3_4_0_1");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_5(), "rule__ObservableSemantics__Alternatives_3_5");
@@ -166,7 +165,6 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getINTENSIVE_PROPERTYAccess().getAlternatives(), "rule__INTENSIVE_PROPERTY__Alternatives");
 					put(grammarAccess.getAGENT_TYPEAccess().getAlternatives(), "rule__AGENT_TYPE__Alternatives");
 					put(grammarAccess.getPROPERTY_TYPEAccess().getAlternatives(), "rule__PROPERTY_TYPE__Alternatives");
-					put(grammarAccess.getSimpleObservableSemanticsAccess().getDownToAlternatives_1_1_2_0(), "rule__SimpleObservableSemantics__DownToAlternatives_1_1_2_0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getAlternatives_1_3(), "rule__SimpleObservableSemantics__Alternatives_1_3");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getAlternatives_1_3_0_1(), "rule__SimpleObservableSemantics__Alternatives_1_3_0_1");
 					put(grammarAccess.getNamedObservableSemanticsAccess().getNameAlternatives_2_0(), "rule__NamedObservableSemantics__NameAlternatives_2_0");

@@ -3,6 +3,7 @@ package org.integratedmodelling.kim.model;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -10,7 +11,11 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KeyValuePair;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.IClassifier;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -96,6 +101,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	}
 
 	private String getStringValue(Object val) {
+		
 		if (val instanceof List) {
 			String ret = "(";
 			for (Object o : ((List<?>) val)) {
@@ -110,7 +116,13 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 			return ret + "}";
 		} else if (val instanceof Range) {
 			return ((Range) val).getLowerBound() + " to " + ((Range) val).getUpperBound();
-		}
+		} else if (val instanceof IClassification) {
+			String ret = "{";
+			for (Pair<IConcept, IClassifier> o : ((IClassification) val)) {
+				ret += (ret.length() == 1 ? "" : ", ") + o.getSecond().getSourceCode() + " : " + o.getFirst();
+			}
+			return ret + "}";
+		} // TODO lookup table
 		return val.toString();
 	}
 

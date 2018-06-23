@@ -5640,38 +5640,21 @@ ruleObservableSemantics returns [EObject current=null]
 								}
 								(
 									(
-										(
-											lv_downTo_9_1=RULE_CAMELCASE_ID
-											{
-												newLeafNode(lv_downTo_9_1, grammarAccess.getObservableSemanticsAccess().getDownToCAMELCASE_IDTerminalRuleCall_3_1_2_0_0());
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getDownToConceptParserRuleCall_3_1_2_0());
+										}
+										lv_downTo_9_0=ruleConcept
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed(
-													$current,
-													"downTo",
-													lv_downTo_9_1,
-													"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
-											}
-											    |
-											{
-												newCompositeNode(grammarAccess.getObservableSemanticsAccess().getDownToNamespaceIdParserRuleCall_3_1_2_0_1());
-											}
-											lv_downTo_9_2=ruleNamespaceId
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
-												}
-												set(
-													$current,
-													"downTo",
-													lv_downTo_9_2,
-													"org.integratedmodelling.kim.Kim.NamespaceId");
-												afterParserOrEnumRuleCall();
-											}
-										)
+											set(
+												$current,
+												"downTo",
+												lv_downTo_9_0,
+												"org.integratedmodelling.kim.Kim.Concept");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								))
@@ -13680,38 +13663,21 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 								}
 								(
 									(
-										(
-											lv_downTo_6_1=RULE_CAMELCASE_ID
-											{
-												newLeafNode(lv_downTo_6_1, grammarAccess.getSimpleObservableSemanticsAccess().getDownToCAMELCASE_IDTerminalRuleCall_1_1_2_0_0());
+										{
+											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getDownToConceptParserRuleCall_1_1_2_0());
+										}
+										lv_downTo_6_0=ruleConcept
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed(
-													$current,
-													"downTo",
-													lv_downTo_6_1,
-													"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
-											}
-											    |
-											{
-												newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getDownToNamespaceIdParserRuleCall_1_1_2_0_1());
-											}
-											lv_downTo_6_2=ruleNamespaceId
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												set(
-													$current,
-													"downTo",
-													lv_downTo_6_2,
-													"org.integratedmodelling.kim.Kim.NamespaceId");
-												afterParserOrEnumRuleCall();
-											}
-										)
+											set(
+												$current,
+												"downTo",
+												lv_downTo_6_0,
+												"org.integratedmodelling.kim.Kim.Concept");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								))

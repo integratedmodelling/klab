@@ -514,4 +514,24 @@ public class Observable extends Concept implements IObservable {
 		return Observables.INSTANCE.getInherentType(getType());
 	}
 
+	@Override
+	public IConcept getCaused() {
+		return Observables.INSTANCE.getCausedType(getType());
+	}
+
+	@Override
+	public IConcept getCausant() {
+		return Observables.INSTANCE.getCausantType(getType());
+	}
+
+	@Override
+	public IConcept getCompresent() {
+		return Observables.INSTANCE.getCompresentType(getType());
+	}
+
+	@Override
+	public IConcept getPurpose() {
+		return Observables.INSTANCE.getGoalType(getType());
+	}
+
 }

@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -214,15 +215,6 @@ public enum KimKnowledgeProcessor {
 
 		Observable ret = new Observable(observable);
 
-		if (concept.getBy() != null) {
-			// TODO modify observable AND declaration
-		}
-
-		if (concept.getDownTo() != null) {
-			// TODO modify observable AND declaration. If it's downTo the full detail, don't
-			// add anything.
-		}
-
 		String declaration = observable.getType().getDefinition();
 
 		if (concept.getUnit() != null) {
@@ -268,6 +260,25 @@ public enum KimKnowledgeProcessor {
 		}
 
 		ret.setDeclaration(declaration);
+
+		if (concept.getBy() != null) {
+
+			Concept by = declareInternal(concept.getBy(), monitor);
+			Concept downTo = null;
+
+			if (concept.getDownTo() != null) {
+				downTo = declareInternal(concept.getDownTo(), monitor);
+			}
+
+			IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo,
+					(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null));
+
+			ret.setObservable((Concept)classifiedType);
+			ret.setBy(by);
+			ret.setDownTo(downTo);
+			ret.setDeclaration(classifiedType.getDefinition());
+			
+		}
 
 		return ret;
 	}

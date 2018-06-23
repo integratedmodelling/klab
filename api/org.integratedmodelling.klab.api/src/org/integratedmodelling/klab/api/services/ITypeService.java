@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+
 /**
  * The Interface ITypeService.
  *
@@ -22,5 +24,7 @@ package org.integratedmodelling.klab.api.services;
  * @version $Id: $Id
  */
 public interface ITypeService {
+
+	IConcept getByType(IConcept concept);
 
 }

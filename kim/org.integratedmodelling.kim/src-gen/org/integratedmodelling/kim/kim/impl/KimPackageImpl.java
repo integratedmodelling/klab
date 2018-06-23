@@ -2123,9 +2123,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getObservableSemantics_DownTo()
+  public EReference getObservableSemantics_DownTo()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(4);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -4551,7 +4551,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__GENERIC);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DECLARATION);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__BY);
-    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DOWN_TO);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DOWN_TO);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ROLE);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ACCORDING_TO);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__UNIT);
@@ -5020,7 +5020,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getObservableSemantics_Generic(), ecorePackage.getEBoolean(), "generic", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_By(), this.getConcept(), null, "by", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getObservableSemantics_DownTo(), ecorePackage.getEString(), "downTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_DownTo(), this.getConcept(), null, "downTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Role(), this.getConcept(), null, "role", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_AccordingTo(), ecorePackage.getEString(), "accordingTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Unit(), this.getUnit(), null, "unit", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
