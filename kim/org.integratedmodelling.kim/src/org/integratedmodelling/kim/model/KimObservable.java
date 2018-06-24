@@ -10,7 +10,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
-import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Range;
 
 public class KimObservable extends KimStatement implements IKimObservable {
@@ -18,7 +18,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private static final long serialVersionUID = 9015149238349286112L;
 
 	public KimObservable(String name, String type) {
-		this.nonSemanticType = IPrototype.Type.valueOf(type.toUpperCase());
+		this.nonSemanticType = IArtifact.Type.valueOf(type.toUpperCase());
 		this.modelReference = type;
 	}
 
@@ -39,10 +39,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private IKimConcept by = null;
 	private IKimConcept downTo = null;
 	private String modelReference;
-	private IPrototype.Type nonSemanticType = null;
+	private IArtifact.Type nonSemanticType = null;
 
 	@Override
-	public IPrototype.Type getNonSemanticType() {
+	public IArtifact.Type getNonSemanticType() {
 		return nonSemanticType;
 	}
 

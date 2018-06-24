@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -535,24 +536,24 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getArtifactType() {
+	public IArtifact.Type getArtifactType() {
 		
 		if (observable != null) {
 			if (by != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
-				return org.integratedmodelling.kim.api.IPrototype.Type.CONCEPT;
+				return IArtifact.Type.CONCEPT;
 			} else if (observable.is(Type.PRESENCE)) {
-				return org.integratedmodelling.kim.api.IPrototype.Type.BOOLEAN;
+				return IArtifact.Type.BOOLEAN;
 			} else if (observable.is(Type.QUALITY)) { // don't reorder these!
-				return org.integratedmodelling.kim.api.IPrototype.Type.NUMBER;
+				return IArtifact.Type.NUMBER;
 			} else if (observable.is(Type.COUNTABLE)) {
-				return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+				return IArtifact.Type.OBJECT;
 			} else if (observable.is(Type.CONFIGURATION)) {
-				return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+				return IArtifact.Type.OBJECT;
 			} else if (observable.is(Type.PROCESS)) {
-				return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+				return IArtifact.Type.OBJECT;
 			}
 		}
-		return org.integratedmodelling.kim.api.IPrototype.Type.VOID;
+		return IArtifact.Type.VOID;
 	}
 
 }

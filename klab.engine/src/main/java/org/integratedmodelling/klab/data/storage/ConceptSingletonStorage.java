@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.data.storage;
 
-import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.scale.Scale;

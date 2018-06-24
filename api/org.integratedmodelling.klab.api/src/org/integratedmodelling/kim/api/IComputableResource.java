@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -132,7 +133,7 @@ public interface IComputableResource {
 	 * 
 	 * @return the requirements as a collection of name and type pairs.
 	 */
-	Collection<Pair<String, IPrototype.Type>> getRequiredResourceNames();
+	Collection<Pair<String, IArtifact.Type>> getRequiredResourceNames();
 
 	/**
 	 * Any parameters set for the computation, e.g. in the case of a function call

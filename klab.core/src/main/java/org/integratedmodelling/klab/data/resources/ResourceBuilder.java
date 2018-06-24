@@ -21,12 +21,13 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -50,7 +51,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private Version resourceVersion;
 	private boolean error = false;
 	private String adapterType;
-	private Type type;
+	private IArtifact.Type type;
 
 	/** {@inheritDoc} */
 	@Override

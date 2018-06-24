@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;

@@ -36,13 +36,13 @@ import java.util.Set;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -908,7 +908,7 @@ public enum OWL {
 		return prefix;
 	}
 
-	public Concept getNonsemanticPeer(String name, IPrototype.Type type) {
+	public Concept getNonsemanticPeer(String name, IArtifact.Type type) {
 
 		String conceptId = StringUtils.capitalize(type.name().toLowerCase()) + CamelCase.toUpperCamelCase(name, '.');
 		Type qualityType = null;

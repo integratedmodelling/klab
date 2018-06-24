@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -134,9 +135,9 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 	}
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+	public IArtifact.Type getType() {
 		// we can't really know
-		return org.integratedmodelling.kim.api.IPrototype.Type.VALUE;
+		return IArtifact.Type.VALUE;
 	}
 
 }

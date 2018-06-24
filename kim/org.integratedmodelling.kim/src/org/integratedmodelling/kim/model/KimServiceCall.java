@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KeyValuePair;
@@ -14,6 +13,7 @@ import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -60,7 +60,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 		}
 	}
 
-	public List<KimNotification> validateUsage(Set<IPrototype.Type> expectedType) {
+	public List<KimNotification> validateUsage(Set<IArtifact.Type> expectedType) {
 		return Kim.INSTANCE.validateFunctionCall(this, expectedType);
 	}
 

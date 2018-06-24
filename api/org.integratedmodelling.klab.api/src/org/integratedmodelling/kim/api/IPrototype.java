@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -22,82 +24,6 @@ import org.integratedmodelling.klab.utils.Range;
  */
 public interface IPrototype {
 
-	/**
-	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now.
-	 * 
-	 * FIXME this should become IArtifact.Type
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	enum Type {
-		/**
-		 * Contextualizes number states.
-		 */
-		NUMBER,
-		/**
-		 * Contextualizes presence/absence states
-		 */
-		BOOLEAN,
-		/**
-		 * Contextualizes category states
-		 */
-		CONCEPT,
-		/**
-		 * Contextualizes processes
-		 */
-		PROCESS,
-		/**
-		 * Instantiates or contextualizes objects, according to arity.
-		 */
-		OBJECT,
-		/**
-		 * Produces text values, to be transformed by successive contextualizers.
-		 * Illegal in contracts.
-		 */
-		TEXT,
-		/**
-		 * Contextualizes any quality. Only legal in contracts.
-		 */
-		VALUE,
-		/**
-		 * Produces range values. Only legal in parameters
-		 */
-		RANGE,
-		/**
-		 * Produce one of a set of values. Only legal in parameters, values are
-		 * specified externally.
-		 */
-		ENUM,
-		/**
-		 * Produce extents other than time or space
-		 */
-		EXTENT,
-		/**
-		 * Produce temporal extents
-		 */
-		TEMPORALEXTENT,
-		/**
-		 * Produce spatial extents
-		 */
-		SPATIALEXTENT,
-		/**
-		 * Specify annotation contracts
-		 */
-		ANNOTATION,
-		/**
-		 * A list value
-		 */
-		LIST,
-		/**
-		 * No value - used only for options in command prototypes
-		 */
-		VOID,
-		/**
-		 * Only for service prototypes returning contextualizers
-		 */
-		CONTEXTUALIZER
-	}
 
 	/**
 	 * Descriptor for each argument.
@@ -175,7 +101,7 @@ public interface IPrototype {
 	 * 
 	 * @return return type
 	 */
-	Type getType();
+	IArtifact.Type getType();
 
 	/**
 	 * Descriptor for the passed argument name.

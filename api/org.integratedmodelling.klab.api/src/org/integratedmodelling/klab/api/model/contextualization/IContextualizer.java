@@ -15,8 +15,8 @@
  */
 package org.integratedmodelling.klab.api.model.contextualization;
 
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
  * A contextualizer builds the observation of an observable in a context based on what the
@@ -59,6 +59,6 @@ public abstract interface IContextualizer {
    * 
    * @return
    */
-  IPrototype.Type getType();
+  IArtifact.Type getType();
 
 }

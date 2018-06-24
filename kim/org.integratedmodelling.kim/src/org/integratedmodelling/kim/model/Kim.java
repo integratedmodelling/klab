@@ -57,6 +57,7 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -307,7 +308,7 @@ public enum Kim {
 		 * @param expectedType
 		 * @return pairs of message + level, or an empty list if OK.
 		 */
-		List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IPrototype.Type> expectedType);
+		List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IArtifact.Type> expectedType);
 
 		/**
 		 * Return any errors, warnings and info messages caused by the passed annotation
@@ -875,7 +876,7 @@ public enum Kim {
 	 * @return a list of notifications, possibly empty, or null if the function is
 	 *         unknown.
 	 */
-	public List<KimNotification> validateFunctionCall(IServiceCall call, Set<IPrototype.Type> expectedReturnType) {
+	public List<KimNotification> validateFunctionCall(IServiceCall call, Set<IArtifact.Type> expectedReturnType) {
 		List<KimNotification> ret = new ArrayList<>();
 		if (validatorCallback != null) {
 			List<Pair<String, Level>> results = validatorCallback.validateFunction(call, expectedReturnType);

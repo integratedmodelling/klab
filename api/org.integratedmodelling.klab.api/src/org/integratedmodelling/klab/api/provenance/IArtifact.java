@@ -28,21 +28,29 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
- * An Artifact can be any of the first-class products of a k.LAB task: a non-semantic
- * {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} or {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, a semantic {@link org.integratedmodelling.klab.api.observations.IObservation} (as produced by
- * most activities in k.LAB) or a {@link IKimModel k.IM model description} when the model has been
- * produced by an observation activity, such as a learning model.
+ * An Artifact can be any of the first-class products of a k.LAB task: a
+ * non-semantic
+ * {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} or
+ * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, a
+ * semantic {@link org.integratedmodelling.klab.api.observations.IObservation}
+ * (as produced by most activities in k.LAB) or a {@link IKimModel k.IM model
+ * description} when the model has been produced by an observation activity,
+ * such as a learning model.
  * <p>
- * By implementing {@link java.lang.Iterable}, we also allow Artifacts to represent groups of artifacts (e.g.
- * all the {@link ISubject subjects} instantiated by resolving a subject {@link IObservable
- * observable}). This enables simpler handling of provenance, as each observation activity returns
+ * By implementing {@link java.lang.Iterable}, we also allow Artifacts to
+ * represent groups of artifacts (e.g. all the {@link ISubject subjects}
+ * instantiated by resolving a subject {@link IObservable observable}). This
+ * enables simpler handling of provenance, as each observation activity returns
  * one artifact, possibly iterable as a group.
  * <p>
- * Each artifact exposes the provenance graph it's part of, allowing all k.LAB tasks to simply
- * return an {@code IArtifact} and provide full information on what happened.
+ * Each artifact exposes the provenance graph it's part of, allowing all k.LAB
+ * tasks to simply return an {@code IArtifact} and provide full information on
+ * what happened.
  * <p>
- * The API to use a {@link org.integratedmodelling.kim.api.IKimModel} as an artifact ({@link org.integratedmodelling.klab.api.data.artifacts.IModelArtifact}) is not fully
- * developed yet.
+ * The API to use a {@link org.integratedmodelling.kim.api.IKimModel} as an
+ * artifact
+ * ({@link org.integratedmodelling.klab.api.data.artifacts.IModelArtifact}) is
+ * not fully developed yet.
  * <p>
  *
  * @author Ferd
@@ -50,116 +58,214 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  */
 public interface IArtifact extends Node, Iterable<IArtifact> {
 
-  /**
-   * The geometry linked to the observation. Observational artifacts will specialize this as IScale.
-   *
-   * @return the geometry
-   */
-  IGeometry getGeometry();
+	/**
+	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now, should
+	 * be integrated with it.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	enum Type {
+		/**
+		 * Contextualizes number states.
+		 */
+		NUMBER,
+		/**
+		 * Contextualizes presence/absence states
+		 */
+		BOOLEAN,
+		/**
+		 * Contextualizes category states
+		 */
+		CONCEPT,
+		/**
+		 * Contextualizes processes
+		 */
+		PROCESS,
+		/**
+		 * Instantiates or contextualizes objects, according to arity.
+		 */
+		OBJECT,
+		/**
+		 * Produces text values, to be transformed by successive contextualizers.
+		 * Illegal in contracts.
+		 */
+		TEXT,
+		/**
+		 * Contextualizes any quality. Only legal in contracts.
+		 */
+		VALUE,
+		/**
+		 * Produces range values. Only legal in parameters
+		 */
+		RANGE,
+		/**
+		 * Produce one of a set of values. Only legal in parameters, values are
+		 * specified externally.
+		 */
+		ENUM,
+		/**
+		 * Produce extents other than time or space
+		 */
+		EXTENT,
+		/**
+		 * Produce temporal extents
+		 */
+		TEMPORALEXTENT,
+		/**
+		 * Produce spatial extents
+		 */
+		SPATIALEXTENT,
+		/**
+		 * Specify annotation contracts
+		 */
+		ANNOTATION,
+		/**
+		 * A list value
+		 */
+		LIST,
+		/**
+		 * No value - used only for options in command prototypes
+		 */
+		VOID,
+		/**
+		 * Only for service prototypes returning contextualizers
+		 */
+		CONTEXTUALIZER
+	}
 
-  /**
-   * Metadata. Never null, possibly empty.
-   *
-   * @return the metadata
-   */
-  IMetadata getMetadata();
+	/**
+	 * The geometry linked to the observation. Observational artifacts will
+	 * specialize this as IScale.
+	 *
+	 * @return the geometry
+	 */
+	IGeometry getGeometry();
 
-  /**
-   * <p>getUrn.</p>
-   *
-   * @return a {@link java.lang.String} object.
-   */
-  String getUrn();
+	/**
+	 * Metadata. Never null, possibly empty.
+	 *
+	 * @return the metadata
+	 */
+	IMetadata getMetadata();
 
-  /**
-   * <p>getConsumer.</p>
-   *
-   * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
-   */
-  IAgent getConsumer();
+	/**
+	 * <p>
+	 * getUrn.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getUrn();
 
-  /**
-   * <p>getOwner.</p>
-   *
-   * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
-   */
-  IAgent getOwner();
+	/**
+	 * <p>
+	 * getConsumer.
+	 * </p>
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
+	 */
+	IAgent getConsumer();
 
-  /**
-   * <p>getAntecedents.</p>
-   *
-   * @return a {@link java.util.Collection} object.
-   */
-  Collection<IArtifact> getAntecedents();
+	/**
+	 * <p>
+	 * getOwner.
+	 * </p>
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
+	 */
+	IAgent getOwner();
 
-  /**
-   * <p>getConsequents.</p>
-   *
-   * @return a {@link java.util.Collection} object.
-   */
-  Collection<IArtifact> getConsequents();
+	/**
+	 * <p>
+	 * getAntecedents.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Collection} object.
+	 */
+	Collection<IArtifact> getAntecedents();
 
-  /**
-   * Trace the nearest artifact of the passed concept (or with the passed role/trait) up the
-   * provenance chain.
-   *
-   * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-   * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact} object.
-   */
-  IArtifact trace(IConcept concept);
+	/**
+	 * <p>
+	 * getConsequents.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Collection} object.
+	 */
+	Collection<IArtifact> getConsequents();
 
-  /**
-   * Collect all artifacts of the passed concept (or with the passed role/trait) up the provenance
-   * chain.
-   *
-   * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-   * @return a {@link java.util.Collection} object.
-   */
-  Collection<IArtifact> collect(IConcept concept);
+	/**
+	 * Trace the nearest artifact of the passed concept (or with the passed
+	 * role/trait) up the provenance chain.
+	 *
+	 * @param concept
+	 *            a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *            object.
+	 * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact}
+	 *         object.
+	 */
+	IArtifact trace(IConcept concept);
 
-  /**
-   * Trace the nearest artifact with the passed role within the passed observation up the provenance
-   * chain.
-   *
-   * @param role
-   * @param roleContext a {@link org.integratedmodelling.klab.api.observations.IDirectObservation} object.
-   * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact} object.
-   */
-  IArtifact trace(IConcept role, IDirectObservation roleContext);
+	/**
+	 * Collect all artifacts of the passed concept (or with the passed role/trait)
+	 * up the provenance chain.
+	 *
+	 * @param concept
+	 *            a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *            object.
+	 * @return a {@link java.util.Collection} object.
+	 */
+	Collection<IArtifact> collect(IConcept concept);
 
-  /**
-   * Collect all artifacts with the passed role within the passed observation up the provenance
-   * chain.
-   *
-   * @param role
-   * @param roleContext a {@link org.integratedmodelling.klab.api.observations.IDirectObservation} object.
-   * @return a {@link java.util.Collection} object.
-   */
-  Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext);
+	/**
+	 * Trace the nearest artifact with the passed role within the passed observation
+	 * up the provenance chain.
+	 *
+	 * @param role
+	 * @param roleContext
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.observations.IDirectObservation}
+	 *            object.
+	 * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact}
+	 *         object.
+	 */
+	IArtifact trace(IConcept role, IDirectObservation roleContext);
 
-  /**
-   * The size of the group that this artifact is part of. Any artifact is part of
-   * a group including at least itself.
-   *
-   * @return 1 or more
-   */
-  int groupSize();
-  
+	/**
+	 * Collect all artifacts with the passed role within the passed observation up
+	 * the provenance chain.
+	 *
+	 * @param role
+	 * @param roleContext
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.observations.IDirectObservation}
+	 *            object.
+	 * @return a {@link java.util.Collection} object.
+	 */
+	Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext);
 
-  /**
-   * Any observation that exists has provenance. Call this on the root observation for the entire
-   * graph.
-   *
-   * @return the provenance record leading to this
-   */
-  IProvenance getProvenance();
-  
-  /**
-   * The type of this artifact. Types are a small set meant to enable more efficient
-   * storage and correct contextualization.
-   * 
-   * @return the type
-   */
-  IPrototype.Type getType();
+	/**
+	 * The size of the group that this artifact is part of. Any artifact is part of
+	 * a group including at least itself.
+	 *
+	 * @return 1 or more
+	 */
+	int groupSize();
+
+	/**
+	 * Any observation that exists has provenance. Call this on the root observation
+	 * for the entire graph.
+	 *
+	 * @return the provenance record leading to this
+	 */
+	IProvenance getProvenance();
+
+	/**
+	 * The type of this artifact. Types are a small set meant to enable more
+	 * efficient storage and correct contextualization.
+	 * 
+	 * @return the type
+	 */
+	Type getType();
 
 }

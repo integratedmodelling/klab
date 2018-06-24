@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -339,7 +340,7 @@ public class RescalingState extends Observation implements IState {
 	}
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+	public IArtifact.Type getType() {
 		return delegate.getType();
 	}
 

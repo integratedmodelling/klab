@@ -34,11 +34,11 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
@@ -136,7 +136,7 @@ public class VectorValidator implements IResourceValidator {
 		// TODO if attributes are requested, validate their type and name
 		
 		// TODO if attributes are requested, set the type in the builder accordingly
-		ret.withType(IPrototype.Type.OBJECT);
+		ret.withType(IArtifact.Type.OBJECT);
 
 		// Compute union or convex hull if requested
 		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {

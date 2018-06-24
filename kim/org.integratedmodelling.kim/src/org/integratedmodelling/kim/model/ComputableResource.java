@@ -11,7 +11,6 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.kim.Classification;
@@ -20,6 +19,8 @@ import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
@@ -40,7 +41,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private boolean mediation;
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
-	private Collection<Pair<String, Type>> requiredResourceNames = new ArrayList<>();
+	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = new ArrayList<>();
 	private String targetId;
 	
 	/**

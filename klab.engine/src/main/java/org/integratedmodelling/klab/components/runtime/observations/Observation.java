@@ -9,6 +9,8 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -95,8 +97,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public boolean is(Type type) {
-		return type == Type.OBSERVATION;
+	public boolean is(IIdentity.Type type) {
+		return type == IIdentity.Type.OBSERVATION;
 	}
 
 	@Override
@@ -141,8 +143,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		Observation ret = new Observation((Observable) observable, (Scale) scale, null) {
 
 			@Override
-			public org.integratedmodelling.kim.api.IPrototype.Type getType() {
-				return org.integratedmodelling.kim.api.IPrototype.Type.VOID;
+			public IArtifact.Type getType() {
+				return IArtifact.Type.VOID;
 			}
 			
 		};

@@ -4,12 +4,11 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
-
-import io.github.lukehutch.fastclasspathscanner.classloaderhandler.ClassLoaderHandler.DelegationOrder;
 
 /**
  * The state we wrap has the desired semantics but its values must be converted.
@@ -69,7 +68,7 @@ public class MediatingState extends Observation implements IState {
     }
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+	public IArtifact.Type getType() {
 		return delegate.getType();
 	}
 

@@ -15,9 +15,9 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -78,7 +78,7 @@ public interface IObservable extends IConcept, IResolvable {
    * 
    * @return the artifact type.
    */
-  IPrototype.Type getArtifactType();
+  IArtifact.Type getArtifactType();
 
   /**
    * Observables always have a name, which is unique in the context of a model where they are used,

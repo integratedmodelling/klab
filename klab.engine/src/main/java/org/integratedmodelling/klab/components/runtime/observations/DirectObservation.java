@@ -35,7 +35,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
     }
     
     @Override
-    public IPrototype.Type getType() {
-    	return IPrototype.Type.OBJECT;
+    public IArtifact.Type getType() {
+    	return IArtifact.Type.OBJECT;
     }
 }

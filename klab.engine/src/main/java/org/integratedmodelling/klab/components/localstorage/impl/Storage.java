@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -30,8 +29,8 @@ public abstract class Storage implements IArtifact {
   public Storage(IGeometry geometry) {
     this.geometry = geometry;
     this.sliceSize = geometry.size();
-    if (geometry.getDimension(Type.TIME) != null) {
-    	this.timeStates = geometry.getDimension(Type.TIME).size();
+    if (geometry.getDimension(IGeometry.Dimension.Type.TIME) != null) {
+    	this.timeStates = geometry.getDimension(IGeometry.Dimension.Type.TIME).size();
     	this.sliceSize /= this.timeStates;
     }
 //    this.storage.add(new Pair<>(0, Nd4j.zeros((int)this.sliceSize)));

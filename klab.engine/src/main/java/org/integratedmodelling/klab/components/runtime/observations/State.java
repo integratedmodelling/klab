@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -69,7 +70,7 @@ public class State extends Observation implements IState {
 	}
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+	public IArtifact.Type getType() {
 		return storage.getType();
 	}
 }

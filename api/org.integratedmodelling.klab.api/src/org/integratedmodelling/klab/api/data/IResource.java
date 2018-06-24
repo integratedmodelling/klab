@@ -17,11 +17,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IResourceService;
 
 /**
@@ -124,7 +124,7 @@ public interface IResource extends Serializable {
 	 * 
 	 * @return the type
 	 */
-	IPrototype.Type getType();
+	IArtifact.Type getType();
 	
 	/**
 	 * A builder can be obtained through
@@ -142,7 +142,7 @@ public interface IResource extends Serializable {
 		 * @param type
 		 * @return the builder itself
 		 */
-		Builder withType(IPrototype.Type type);
+		Builder withType(IArtifact.Type type);
 		
 		/**
 		 * 

@@ -348,7 +348,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IState createState(IObservable observable, org.integratedmodelling.kim.api.IPrototype.Type type,
+	public IState createState(IObservable observable, IArtifact.Type type,
 			IScale scale, IComputationContext context) {
 		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
 		return new State((Observable) observable, (Scale) scale, (RuntimeContext)context, storage);

@@ -19,6 +19,7 @@ import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.FunctionOrID;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 import com.google.common.collect.Sets;
 
@@ -188,13 +189,13 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
                 }
                 for (IServiceCall extent : extents) {
                     for (KimNotification note : Kim.INSTANCE.validateFunctionCall(extent,
-                            Sets.immutableEnumSet(IPrototype.Type.SPATIALEXTENT, IPrototype.Type.TEMPORALEXTENT))) {
+                            Sets.immutableEnumSet(IArtifact.Type.SPATIALEXTENT, IArtifact.Type.TEMPORALEXTENT))) {
                         if (note.getLevel() == Level.SEVERE) {
                             ok = false;
                         }
                         ret.add(note);
                         IPrototype prot = Kim.INSTANCE.getValidator().getFunctionPrototype(extent.getName());
-                        if (prot != null && prot.getType() == IPrototype.Type.TEMPORALEXTENT) {
+                        if (prot != null && prot.getType() == IArtifact.Type.TEMPORALEXTENT) {
                             hasTemporalActions = true;
                         }
                     }

@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.kim;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.StringUtils;
-import org.integratedmodelling.klab.utils.collections.Collections;
 
 /**
  * The k.LAB prototype specializes {@link org.integratedmodelling.klab.common.Prototype} in the k.IM
@@ -24,7 +25,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
   public Prototype(IKdlActuator actuator, String namespace) {
 
     this.name = (namespace == null ? "" : (namespace + ".")) + actuator.getName();
-    this.type = Type.valueOf(actuator.getType().name());
+    this.type = IArtifact.Type.valueOf(actuator.getType().name());
 
     if (actuator.getDescription() != null) {
       this.description = StringUtils.pack(actuator.getDescription());

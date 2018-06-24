@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -39,14 +38,14 @@ import org.integratedmodelling.klab.owl.Observable;
 public class StateStack implements IState {
 
 	IState delegate;
-	Map<IPrototype.Type, IState> stack = new HashMap<>();
+	Map<IArtifact.Type, IState> stack = new HashMap<>();
 
-	public StateStack(IState state, org.integratedmodelling.kim.api.IPrototype.Type type) {
+	public StateStack(IState state, IArtifact.Type type) {
 		this.delegate = state;
 		stack.put(type, state);
 	}
 
-	public static IState get(IState state, IPrototype.Type type, IComputationContext context) {
+	public static IState get(IState state, IArtifact.Type type, IComputationContext context) {
 
 		if (state.getType() == type) {
 			return state;
@@ -58,7 +57,7 @@ public class StateStack implements IState {
 		return new StateStack(state, type);
 	}
 
-	private IState getOrCreate(IPrototype.Type type, IComputationContext context) {
+	private IState getOrCreate(IArtifact.Type type, IComputationContext context) {
 
 		IState ret = stack.get(type);
 		if (ret == null) {
@@ -211,7 +210,7 @@ public class StateStack implements IState {
 		return delegate.getProvenance();
 	}
 
-	public boolean is(Type type) {
+	public boolean is(IIdentity.Type type) {
 		return delegate.is(type);
 	}
 
@@ -220,7 +219,7 @@ public class StateStack implements IState {
 	}
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
+	public IArtifact.Type getType() {
 		return delegate.getType();
 	}
 

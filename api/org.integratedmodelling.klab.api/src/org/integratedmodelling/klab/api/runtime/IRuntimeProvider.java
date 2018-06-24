@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -161,7 +160,7 @@ public interface IRuntimeProvider {
 	 * @param context
 	 * @return a new state
 	 */
-	IState createState(IObservable observable, IPrototype.Type type, IScale scale, IComputationContext context);
+	IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context);
 
 	/**
 	 * If the runtime provides a computation that can turn the passed artifact type

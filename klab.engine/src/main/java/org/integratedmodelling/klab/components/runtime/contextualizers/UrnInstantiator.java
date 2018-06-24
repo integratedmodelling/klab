@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.api.IPrototype.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
@@ -15,6 +14,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -57,9 +57,8 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+	public IArtifact.Type getType() {
+		return resource.getType();
 	}
 
 }

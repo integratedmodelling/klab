@@ -1,6 +1,6 @@
 package org.integratedmodelling.kim.api;
 
-import org.integratedmodelling.kim.api.IPrototype.Type;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Range;
 
 public interface IKimObservable extends IKimStatement {
@@ -95,6 +95,6 @@ public interface IKimObservable extends IKimStatement {
 	 * 
 	 * @return
 	 */
-	Type getNonSemanticType();
+	IArtifact.Type getNonSemanticType();
 
 }

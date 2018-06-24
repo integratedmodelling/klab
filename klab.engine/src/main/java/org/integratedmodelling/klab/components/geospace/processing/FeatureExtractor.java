@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -351,10 +352,8 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
-		return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+	public IArtifact.Type getType() {
+		return IArtifact.Type.OBJECT;
 	}
 	
-
-
 }

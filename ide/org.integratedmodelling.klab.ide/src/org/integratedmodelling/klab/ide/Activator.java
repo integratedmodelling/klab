@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.utils.Pair;
@@ -49,7 +50,7 @@ public class Activator extends AbstractUIPlugin {
 
 			@Override
 			public List<Pair<String, Level>> validateFunction(IServiceCall functionCall,
-					Set<IPrototype.Type> expected) {
+					Set<IArtifact.Type> expected) {
 				IPrototype prototype = KimData.INSTANCE.getFunctionPrototype(functionCall.getName());
 				if (prototype != null) {
 					return prototype.validate(functionCall);
