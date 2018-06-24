@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -15,7 +14,6 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -51,7 +49,7 @@ public class Actuator implements IActuator {
 	private INamespace namespace;
 	private Observable observable;
 	protected Coverage coverage;
-	private IKdlActuator.Type type;
+	private IArtifact.Type type;
 	List<IActuator> actuators = new ArrayList<>();
 	Date creationTime = new Date();
 	private boolean createsObservation;
@@ -501,11 +499,11 @@ public class Actuator implements IActuator {
 		this.namespace = namespace;
 	}
 
-	public IKdlActuator.Type getType() {
+	public IArtifact.Type getType() {
 		return type;
 	}
 
-	public void setType(IKdlActuator.Type type) {
+	public void setType(IArtifact.Type type) {
 		this.type = type;
 	}
 

@@ -16,9 +16,9 @@
 package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
+import org.integratedmodelling.klab.utils.Range;
 
 /**
  * An Artifact can be any of the first-class products of a k.LAB task: a
@@ -131,7 +132,28 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 		/**
 		 * Only for service prototypes returning contextualizers
 		 */
-		CONTEXTUALIZER
+		CONTEXTUALIZER;
+		
+	    /**
+	     * Classify a POD type producing the type that represents it.
+	     * 
+	     * @param o
+	     * @return a type for o. If o == null, VALUE is returned.
+	     */
+	    public static Type classify(Object o) {
+	      if (o instanceof Number) {
+	        return NUMBER;
+	      } else if (o instanceof Boolean) {
+	        return BOOLEAN;
+	      } else if (o instanceof String) {
+	        return TEXT;
+	      } else if (o instanceof Range) {
+	        return RANGE;
+	      } else if (o instanceof List) {
+	        return LIST;
+	      }
+	      return VALUE;
+	    }
 	}
 
 	/**

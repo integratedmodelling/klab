@@ -79,6 +79,6 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
 
 	@Override
 	public IArtifact.Type getType() {
-		return Prototype.classifyType(this.value);
+		return IArtifact.Type.classify(this.value);
 	}
 }

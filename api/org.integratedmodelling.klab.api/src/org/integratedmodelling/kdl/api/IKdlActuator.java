@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 /**
  * The actor definition parsed from a KDL file. Used as a "contract" (i.e. an interface
@@ -15,100 +15,6 @@ import org.integratedmodelling.klab.utils.Range;
  *
  */
 public interface IKdlActuator extends IKdlStatement {
-
-  /**
-   * Type contextualized by the actor.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  enum Type {
-    /**
-     * Contextualizes number states.
-     */
-    NUMBER,
-    /**
-     * Contextualizes presence/absence states
-     */
-    BOOLEAN,
-    /**
-     * Contextualizes category states
-     */
-    CONCEPT,
-    /**
-     * Contextualizes processes
-     */
-    PROCESS,
-    /**
-     * Instantiates or contextualizes objects, according to arity.
-     */
-    OBJECT,
-    /**
-     * Produces text values, to be transformed by successive contextualizers. Illegal in contracts.
-     */
-    TEXT,
-    /**
-     * Contextualizes any quality. Only legal in contracts.
-     */
-    VALUE,
-    /**
-     * Produces range values. Only legal in parameters
-     */
-    RANGE,
-    /**
-     * Produce one of a set of values. Only legal in parameters, values are specified externally.
-     */
-    ENUM,
-    /**
-     * Produce extents other than time or space
-     */
-    EXTENT,
-    /**
-     * Produce temporal extents
-     */
-    TEMPORALEXTENT,
-    /**
-     * Produce spatial extents
-     */
-    SPATIALEXTENT,
-    /**
-     * Specify annotation contracts
-     */
-    ANNOTATION,
-    /**
-     * A list value
-     */
-    LIST,
-    /**
-     * Only for CLI command prototypes
-     */
-    VOID,
-    /**
-     * Only for service prototypes returning contextualizers
-     */
-    CONTEXTUALIZER;
-
-    /**
-     * Classify a POD type producing the type that represents it.
-     * 
-     * @param o
-     * @return a type for o. If o == null, VALUE is returned.
-     */
-    public static Type classify(Object o) {
-      if (o instanceof Number) {
-        return NUMBER;
-      } else if (o instanceof Boolean) {
-        return BOOLEAN;
-      } else if (o instanceof String) {
-        return TEXT;
-      } else if (o instanceof Range) {
-        return RANGE;
-      } else if (o instanceof List) {
-        return LIST;
-      }
-      return VALUE;
-    }
-  }
 
   public enum Target {
     MODELS, OBSERVERS, CONCEPTS

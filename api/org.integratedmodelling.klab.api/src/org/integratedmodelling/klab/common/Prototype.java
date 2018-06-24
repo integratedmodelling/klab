@@ -175,33 +175,6 @@ public class Prototype implements IPrototype {
     }
     return ret;
   }
-
-  /**
-   * Classify the type of the passed object according to 
-   * @param val
-   * @return
-   */
-  public static Type classifyType(Object val) {
-	  
-	  if (val == null) {
-		  // not void: nodata, could be anything
-		  return Type.VALUE;
-	  }
-	  if (val instanceof Number) {
-		  return Type.NUMBER;
-	  }
-	  if (val instanceof Boolean) {
-		  return Type.BOOLEAN;
-	  }
-	  if (val instanceof String) {
-		  return Type.TEXT;
-	  }
-	  if (val instanceof Collection) {
-		  return Type.LIST;
-	  }
-	  
-	  throw new IllegalArgumentException("cannot establish type of value " + val);
-  }
   
   private boolean classify(Object val, ArgumentImpl argument) {
     if (val == null) {

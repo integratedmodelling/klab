@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -14,6 +15,7 @@ import org.integratedmodelling.kdl.api.IKdlContextualizer;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Function;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class KdlActuator extends KdlStatement implements IKdlActuator {
 
