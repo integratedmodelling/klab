@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -147,6 +148,20 @@ public interface IRuntimeProvider {
 	 *         object.
 	 */
 	IObservation createEmptyObservation(IObservable observable, IScale scale);
+
+	/**
+	 * Create a state to be used for intermediate computations or temporary storage
+	 * of the specified type. The state should not be registered with the context or
+	 * the provenance; such details are left to the logics that use it. The
+	 * installed storage provider should be used to produce the state.
+	 * 
+	 * @param observable
+	 * @param type
+	 * @param scale
+	 * @param context
+	 * @return a new state
+	 */
+	IState createState(IObservable observable, IPrototype.Type type, IScale scale, IComputationContext context);
 
 	/**
 	 * If the runtime provides a computation that can turn the passed artifact type

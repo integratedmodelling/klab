@@ -534,4 +534,25 @@ public class Observable extends Concept implements IObservable {
 		return Observables.INSTANCE.getGoalType(getType());
 	}
 
+	@Override
+	public org.integratedmodelling.kim.api.IPrototype.Type getArtifactType() {
+		
+		if (observable != null) {
+			if (by != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+				return org.integratedmodelling.kim.api.IPrototype.Type.CONCEPT;
+			} else if (observable.is(Type.PRESENCE)) {
+				return org.integratedmodelling.kim.api.IPrototype.Type.BOOLEAN;
+			} else if (observable.is(Type.QUALITY)) { // don't reorder these!
+				return org.integratedmodelling.kim.api.IPrototype.Type.NUMBER;
+			} else if (observable.is(Type.COUNTABLE)) {
+				return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+			} else if (observable.is(Type.CONFIGURATION)) {
+				return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+			} else if (observable.is(Type.PROCESS)) {
+				return org.integratedmodelling.kim.api.IPrototype.Type.OBJECT;
+			}
+		}
+		return org.integratedmodelling.kim.api.IPrototype.Type.VOID;
+	}
+
 }

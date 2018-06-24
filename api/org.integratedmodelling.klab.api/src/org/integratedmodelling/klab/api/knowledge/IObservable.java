@@ -15,12 +15,12 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.utils.Range;
 
-// TODO: Auto-generated Javadoc
 /**
  * An observable is a declared concept with additional observation semantics, including classifying
  * concepts for discretizations, units, currencies or ranges. The declaration of non-quality
@@ -72,6 +72,13 @@ public interface IObservable extends IConcept, IResolvable {
    * @return the necessary observation type
    */
   ObservationType getObservationType();
+  
+  /**
+   * Return the type of the artifact correspondent to an observation of this observable.
+   * 
+   * @return the artifact type.
+   */
+  IPrototype.Type getArtifactType();
 
   /**
    * Observables always have a name, which is unique in the context of a model where they are used,

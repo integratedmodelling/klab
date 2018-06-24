@@ -15,8 +15,8 @@
  */
 package org.integratedmodelling.klab.api.data;
 
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
@@ -39,6 +39,6 @@ public interface IStorageProvider {
    * @param context a {@link org.integratedmodelling.klab.api.runtime.IComputationContext} object.
    * @return a {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} object.
    */
-  IDataArtifact createStorage(IObservable observable, IScale scale, IComputationContext context);
+  IDataArtifact createStorage(IPrototype.Type type, IScale scale, IComputationContext context);
 
 }

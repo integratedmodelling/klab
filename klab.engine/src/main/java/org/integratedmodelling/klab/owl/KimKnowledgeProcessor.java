@@ -399,7 +399,7 @@ public enum KimKnowledgeProcessor {
 
 			// set the k.IM definition in the concept FIXME this must only happen if the
 			// concept wasn't there - within build() and repeat if mods are made
-			ret.getOntology().define(Collections.singletonList(
+ 			ret.getOntology().define(Collections.singletonList(
 					Axiom.AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.getDefinition())));
 
 			// consistency check

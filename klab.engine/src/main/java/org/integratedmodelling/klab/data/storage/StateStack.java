@@ -12,7 +12,6 @@ import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -40,36 +39,38 @@ import org.integratedmodelling.klab.owl.Observable;
 public class StateStack implements IState {
 
 	IState delegate;
-	Map<IPrototype.Type, IDataArtifact> stack = new HashMap<>();
-	
+	Map<IPrototype.Type, IState> stack = new HashMap<>();
+
 	public StateStack(IState state, org.integratedmodelling.kim.api.IPrototype.Type type) {
 		this.delegate = state;
 		stack.put(type, state);
 	}
 
-	public static IDataArtifact get(IState state, IPrototype.Type type, IComputationContext context) {
-		
+	public static IState get(IState state, IPrototype.Type type, IComputationContext context) {
+
 		if (state.getType() == type) {
 			return state;
 		}
-		
+
 		if (state instanceof StateStack) {
-			return ((StateStack)state).getOrCreate(type, context);
+			return ((StateStack) state).getOrCreate(type, context);
 		}
 		return new StateStack(state, type);
 	}
-	
-	private IDataArtifact getOrCreate(IPrototype.Type type, IComputationContext context) {
 
-		IDataArtifact ret = stack.get(type);
+	private IState getOrCreate(IPrototype.Type type, IComputationContext context) {
+
+		IState ret = stack.get(type);
 		if (ret == null) {
-			IConcept concept = OWL.INSTANCE.getNonsemanticPeer(delegate.getObservable().getLocalName(), type);
-			ret = Klab.INSTANCE.getStorageProvider().createStorage(Observable.promote(concept), delegate.getScale(), context);
+			IConcept concept = OWL.INSTANCE
+					.getNonsemanticPeer(delegate.getObservable().getLocalName() + "_" + type.name(), type);
+			IObservable observable = Observable.promote(concept);
+			ret = Klab.INSTANCE.getRuntimeProvider().createState(observable, type, delegate.getScale(), context);
 			stack.put(type, ret);
 		}
 		return ret;
 	}
-	
+
 	public Iterator<IArtifact> iterator() {
 		return delegate.iterator();
 	}
@@ -222,5 +223,5 @@ public class StateStack implements IState {
 	public org.integratedmodelling.kim.api.IPrototype.Type getType() {
 		return delegate.getType();
 	}
-	
+
 }

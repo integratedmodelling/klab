@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
+import org.integratedmodelling.klab.data.storage.StateStack;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -266,6 +268,14 @@ public class Actuator implements IActuator {
 	private IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
 			IComputableResource resource, IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
 
+		if (ret instanceof IState) {
+			/*
+			 * ensure we are using the appropriate state for the type, creating
+			 * a stack if necessary.
+			 */
+			ret = StateStack.get((IState)ret, contextualizer.getType(), ctx);
+		}
+		
 		if (contextualizer instanceof IStateResolver) {
 			
 			/*

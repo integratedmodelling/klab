@@ -277,38 +277,25 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			IDataArtifact storage = null;
 
 			if (scalarStorage) {
-				switch (observable.getObservationType()) {
-				case CLASSIFICATION:
+				switch (observable.getArtifactType()) {
+				case CONCEPT:
 					storage = new ConceptSingletonStorage(observable, (Scale) scale);
 					break;
-				case QUANTIFICATION:
+				case NUMBER:
 					storage = new DoubleSingletonStorage(observable, (Scale) scale);
 					break;
-				case VERIFICATION:
+				case BOOLEAN:
 					storage = new BooleanSingletonStorage(observable, (Scale) scale);
 					break;
-				case INSTANTIATION:
-				case SIMULATION:
-				case DETECTION:
 				default:
 					throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
 				}
 			} else {
-				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable, scale, context);
+				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale, context);
 			}
 
-			switch (observable.getObservationType()) {
-			case CLASSIFICATION:
-			case QUANTIFICATION:
-			case VERIFICATION:
-				ret = new State((Observable) observable, (Scale) scale, context, storage);
-				break;
-			case INSTANTIATION:
-			case SIMULATION:
-			case DETECTION:
-			default:
-				throw new IllegalArgumentException("illegal observable for storage: " + observable);
-			}
+			ret = new State((Observable) observable, (Scale) scale, context, storage);
+		
 		} else if (observable.is(Type.CONFIGURATION)) {
 
 			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
@@ -358,5 +345,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 
 		return null;
+	}
+
+	@Override
+	public IState createState(IObservable observable, org.integratedmodelling.kim.api.IPrototype.Type type,
+			IScale scale, IComputationContext context) {
+		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
+		return new State((Observable) observable, (Scale) scale, (RuntimeContext)context, storage);
 	}
 }
