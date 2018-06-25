@@ -14,6 +14,12 @@ import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
+/**
+ * A state is simply an Observation wrapper for one (or more) {@link IDataArtifact}s. 
+ * 
+ * @author Ferd
+ *
+ */
 public class State extends Observation implements IState {
 
 	IDataArtifact storage;

@@ -132,7 +132,13 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 		/**
 		 * Only for service prototypes returning contextualizers
 		 */
-		CONTEXTUALIZER;
+		CONTEXTUALIZER,
+		
+		/**
+		 * Tables are supersets of maps so map literals are valid tables. A table
+		 * is a valid literal for an OBJECT input.
+		 */
+		TABLE;
 		
 	    /**
 	     * Classify a POD type producing the type that represents it.

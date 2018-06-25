@@ -13,7 +13,7 @@
  *    @colormap('elevation')
  * specify value breaks, interpolate colors
  *    @colormap(breaks = {0: (3,4,5), 100: (3,4,5), 300: (3,4,5), 2399: (3,4,5), 4599: (3,4,5)}, interpolate=true)
- * specific values -> specific color (allow ranges, numbers and truth values)
+ * specific values -> specific color (allow concepts, ranges, numbers and truth values)
  *    @colormap(values = {im:Low: (2,3,4), im:High: (23,3,22)})
  *    @colormap(values = {0 to 10: (2,3,4), 10 to 222: (23,3,22), *: (33, 2, 22)})
  * build map to match actual values to ramp
