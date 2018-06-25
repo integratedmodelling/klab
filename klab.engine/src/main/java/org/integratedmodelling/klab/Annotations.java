@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +11,15 @@ import java.util.Map;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IAnnotationService;
@@ -112,6 +120,85 @@ public enum Annotations implements IAnnotationService {
       } catch (IOException e) {
         Logging.INSTANCE.error(e);
       }
+    }
+    
+    /**
+     * Collect the annotations from an k.IM object and its semantic lineage, ensuring that
+     * downstream annotations of the same name override those upstream.
+     * 
+     * @param object
+     * @return all annotations from upstream
+     */
+    public Collection<IKimAnnotation> collectAnnotations(IKimObject object) {
+    	Map<String, IKimAnnotation> ret = new HashMap<>();
+    	collectAnnotations(object, ret);
+    	return ret.values();
+    }
+
+    /**
+     * Collect the annotations from anything semantic lineage, ensuring that
+     * downstream annotations of the same name override those upstream.
+     * 
+     * @param object
+     * @return all annotations from upstream
+     */
+    public Collection<IKimAnnotation> collectAnnotations(ISemantic object) {
+    	Map<String, IKimAnnotation> ret = new HashMap<>();
+    	collectAnnotations(object, ret);
+    	return ret.values();
+    }
+
+    private void collectAnnotations(IKimStatement object, Map<String, IKimAnnotation> collection) {
+	
+    	for (IKimAnnotation annotation : object.getAnnotations()) {
+    		if (!collection.containsKey(annotation.getName())) {
+    			collection.put(annotation.getName(), annotation);
+    		}
+    	}
+    	
+    	if (object.getParent() != null) {
+    		collectAnnotations(object.getParent(), collection);
+    	}
+    }
+    
+    private void collectAnnotations(IKimObject object, Map<String, IKimAnnotation> collection) {
+
+    	for (IKimAnnotation annotation : object.getAnnotations()) {
+    		if (!collection.containsKey(annotation.getName())) {
+    			collection.put(annotation.getName(), annotation);
+    		}
+    	}
+    	
+    	if (object instanceof IModel) {
+    		collectAnnotations(((IModel)object).getObservables().get(0), collection);
+    	} else if (object instanceof IObserver) {
+    		collectAnnotations(((IModel)object).getObservables().get(0), collection);
+    	} else if (object instanceof IConceptDefinition) {
+    		collectAnnotations(((IConceptDefinition)object).getStatement(), collection);
+    	}
+    }
+    
+    private void collectAnnotations(ISemantic object, Map<String, IKimAnnotation> collection) {
+    	
+    	if (object instanceof IObservable) {
+    	
+    		/*
+    		 * collect from roles, traits and main 
+    		 */
+    		for (IConcept role : Roles.INSTANCE.getRoles(((IObservable)object).getType())) {
+        		collectAnnotations(role, collection);
+    		}
+    		for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable)object).getType())) {
+        		collectAnnotations(trait, collection);
+    		}
+    		collectAnnotations(((IObservable)object).getMain(), collection);
+
+    	} else if (object instanceof IConcept) {
+    		IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
+    		if (mobject != null) {
+    			collectAnnotations(object, collection);
+    		}
+    	}
     }
     
 }

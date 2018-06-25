@@ -12,6 +12,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -308,7 +309,7 @@ public class DataflowCompiler {
 						ret.addComputation(adapter);
 					}
 				}
-				ret.getAnnotations().addAll(model.getAnnotations());
+				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(model));
 			} else {
 				ret.setReference(true);
 			}

@@ -134,6 +134,7 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 	}
 
 	public EKimObject getEParent() {
+		
 		IKimStatement parent = delegate_.getParent();
 		if (parent instanceof IKimConceptStatement) {
 			return new EConcept((IKimConceptStatement) parent);
