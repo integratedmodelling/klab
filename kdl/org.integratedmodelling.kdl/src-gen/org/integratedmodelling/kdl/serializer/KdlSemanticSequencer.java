@@ -11,7 +11,9 @@ import org.eclipse.xtext.Action;
 import org.eclipse.xtext.Parameter;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.serializer.ISerializationContext;
+import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
+import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
@@ -22,10 +24,15 @@ import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.KeyValuePair;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
+import org.integratedmodelling.kdl.kdl.LookupTable;
+import org.integratedmodelling.kdl.kdl.Map;
+import org.integratedmodelling.kdl.kdl.MapEntry;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
+import org.integratedmodelling.kdl.kdl.Table;
+import org.integratedmodelling.kdl.kdl.TableRow;
 import org.integratedmodelling.kdl.kdl.Unit;
 import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.Urn;
@@ -50,8 +57,15 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_ActorDefinition(context, (ActorDefinition) semanticObject); 
 				return; 
 			case KdlPackage.CLASSIFIER_RHS:
-				sequence_ClassifierRHS(context, (ClassifierRHS) semanticObject); 
-				return; 
+				if (rule == grammarAccess.getClassifierRHSRule()) {
+					sequence_ClassifierRHS(context, (ClassifierRHS) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getTableClassifierRule()) {
+					sequence_TableClassifier(context, (ClassifierRHS) semanticObject); 
+					return; 
+				}
+				else break;
 			case KdlPackage.COMPUTATION:
 				sequence_Computation(context, (Computation) semanticObject); 
 				return; 
@@ -84,6 +98,15 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case KdlPackage.LOOKUP_TABLE:
+				sequence_LookupTable(context, (LookupTable) semanticObject); 
+				return; 
+			case KdlPackage.MAP:
+				sequence_Map(context, (Map) semanticObject); 
+				return; 
+			case KdlPackage.MAP_ENTRY:
+				sequence_MapEntry(context, (MapEntry) semanticObject); 
+				return; 
 			case KdlPackage.METADATA:
 				sequence_Metadata(context, (Metadata) semanticObject); 
 				return; 
@@ -101,6 +124,12 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case KdlPackage.REL_OPERATOR:
 				sequence_REL_OPERATOR(context, (REL_OPERATOR) semanticObject); 
+				return; 
+			case KdlPackage.TABLE:
+				sequence_Table(context, (Table) semanticObject); 
+				return; 
+			case KdlPackage.TABLE_ROW:
+				sequence_TableRow(context, (TableRow) semanticObject); 
 				return; 
 			case KdlPackage.UNIT:
 				sequence_Unit(context, (Unit) semanticObject); 
@@ -172,6 +201,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         num=Number | 
 	 *         set=List | 
 	 *         string=STRING | 
+	 *         map=Map | 
 	 *         (toResolve+=STRING toResolve+=STRING*) | 
 	 *         (op=REL_OPERATOR expression=Number) | 
 	 *         nodata='unknown' | 
@@ -304,6 +334,51 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     LookupTable returns LookupTable
+	 *
+	 * Constraint:
+	 *     table=Table?
+	 */
+	protected void sequence_LookupTable(ISerializationContext context, LookupTable semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     MapEntry returns MapEntry
+	 *
+	 * Constraint:
+	 *     (classifier=ClassifierRHS value=Value)
+	 */
+	protected void sequence_MapEntry(ISerializationContext context, MapEntry semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, KdlPackage.Literals.MAP_ENTRY__CLASSIFIER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KdlPackage.Literals.MAP_ENTRY__CLASSIFIER));
+			if (transientValues.isValueTransient(semanticObject, KdlPackage.Literals.MAP_ENTRY__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KdlPackage.Literals.MAP_ENTRY__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getMapEntryAccess().getClassifierClassifierRHSParserRuleCall_0_0(), semanticObject.getClassifier());
+		feeder.accept(grammarAccess.getMapEntryAccess().getValueValueParserRuleCall_2_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Map returns Map
+	 *
+	 * Constraint:
+	 *     (entries+=MapEntry entries+=MapEntry*)?
+	 */
+	protected void sequence_Map(ISerializationContext context, Map semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Metadata returns Metadata
 	 *
 	 * Constraint:
@@ -403,6 +478,54 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     TableClassifier returns ClassifierRHS
+	 *
+	 * Constraint:
+	 *     (
+	 *         boolean='true' | 
+	 *         boolean='false' | 
+	 *         (int0=Number leftLimit='inclusive'? int1=Number rightLimit='inclusive'?) | 
+	 *         num=Number | 
+	 *         set=List | 
+	 *         string=STRING | 
+	 *         (op=REL_OPERATOR expression=Number) | 
+	 *         expr=EXPR | 
+	 *         nodata='unknown' | 
+	 *         star?='*' | 
+	 *         anything?='#'
+	 *     )
+	 */
+	protected void sequence_TableClassifier(ISerializationContext context, ClassifierRHS semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     TableRow returns TableRow
+	 *
+	 * Constraint:
+	 *     (elements+=TableClassifier elements+=TableClassifier*)
+	 */
+	protected void sequence_TableRow(ISerializationContext context, TableRow semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Table returns Table
+	 *
+	 * Constraint:
+	 *     (rows+=TableRow rows+=TableRow*)
+	 */
+	protected void sequence_Table(ISerializationContext context, Table semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     UnitElement returns UnitElement
 	 *
 	 * Constraint:
@@ -445,9 +568,10 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (
 	 *         literal=LiteralOrIdOrComma | 
 	 *         function=Function | 
-	 *         (urn=Urn unit=Unit) | 
-	 *         currency=Currency | 
+	 *         urn=Urn | 
 	 *         list=List | 
+	 *         map=Map | 
+	 *         table=LookupTable | 
 	 *         enumId=UPPERCASE_ID
 	 *     )
 	 */

@@ -18,11 +18,16 @@ import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.KeyValuePair;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
+import org.integratedmodelling.kdl.kdl.LookupTable;
+import org.integratedmodelling.kdl.kdl.Map;
+import org.integratedmodelling.kdl.kdl.MapEntry;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
+import org.integratedmodelling.kdl.kdl.Table;
+import org.integratedmodelling.kdl.kdl.TableRow;
 import org.integratedmodelling.kdl.kdl.Unit;
 import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.Urn;
@@ -172,6 +177,41 @@ public class KdlSwitch<T> extends Switch<T>
       {
         Urn urn = (Urn)theEObject;
         T result = caseUrn(urn);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KdlPackage.MAP:
+      {
+        Map map = (Map)theEObject;
+        T result = caseMap(map);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KdlPackage.MAP_ENTRY:
+      {
+        MapEntry mapEntry = (MapEntry)theEObject;
+        T result = caseMapEntry(mapEntry);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KdlPackage.LOOKUP_TABLE:
+      {
+        LookupTable lookupTable = (LookupTable)theEObject;
+        T result = caseLookupTable(lookupTable);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KdlPackage.TABLE:
+      {
+        Table table = (Table)theEObject;
+        T result = caseTable(table);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KdlPackage.TABLE_ROW:
+      {
+        TableRow tableRow = (TableRow)theEObject;
+        T result = caseTableRow(tableRow);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -416,6 +456,86 @@ public class KdlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseUrn(Urn object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Map</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Map</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMap(Map object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Map Entry</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Map Entry</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMapEntry(MapEntry object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Lookup Table</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLookupTable(LookupTable object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Table</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Table</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTable(Table object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Table Row</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Table Row</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTableRow(TableRow object)
   {
     return null;
   }

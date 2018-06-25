@@ -132,6 +132,51 @@ public interface KdlFactory extends EFactory
   Urn createUrn();
 
   /**
+   * Returns a new object of class '<em>Map</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Map</em>'.
+   * @generated
+   */
+  Map createMap();
+
+  /**
+   * Returns a new object of class '<em>Map Entry</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Map Entry</em>'.
+   * @generated
+   */
+  MapEntry createMapEntry();
+
+  /**
+   * Returns a new object of class '<em>Lookup Table</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Lookup Table</em>'.
+   * @generated
+   */
+  LookupTable createLookupTable();
+
+  /**
+   * Returns a new object of class '<em>Table</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Table</em>'.
+   * @generated
+   */
+  Table createTable();
+
+  /**
+   * Returns a new object of class '<em>Table Row</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Table Row</em>'.
+   * @generated
+   */
+  TableRow createTableRow();
+
+  /**
    * Returns a new object of class '<em>Key Value Pair</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

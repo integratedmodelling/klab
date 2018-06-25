@@ -12,12 +12,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
-import org.integratedmodelling.kdl.kdl.Unit;
+import org.integratedmodelling.kdl.kdl.LookupTable;
+import org.integratedmodelling.kdl.kdl.Map;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.kdl.Value;
 
@@ -32,9 +32,9 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getUrn <em>Urn</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getUnit <em>Unit</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getCurrency <em>Currency</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getList <em>List</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getMap <em>Map</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getEnumId <em>Enum Id</em>}</li>
  * </ul>
  *
@@ -73,26 +73,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected Urn urn;
 
   /**
-   * The cached value of the '{@link #getUnit() <em>Unit</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getUnit()
-   * @generated
-   * @ordered
-   */
-  protected Unit unit;
-
-  /**
-   * The cached value of the '{@link #getCurrency() <em>Currency</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getCurrency()
-   * @generated
-   * @ordered
-   */
-  protected Currency currency;
-
-  /**
    * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -101,6 +81,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected List list;
+
+  /**
+   * The cached value of the '{@link #getMap() <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMap()
+   * @generated
+   * @ordered
+   */
+  protected Map map;
+
+  /**
+   * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTable()
+   * @generated
+   * @ordered
+   */
+  protected LookupTable table;
 
   /**
    * The default value of the '{@link #getEnumId() <em>Enum Id</em>}' attribute.
@@ -292,102 +292,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public Unit getUnit()
-  {
-    return unit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetUnit(Unit newUnit, NotificationChain msgs)
-  {
-    Unit oldUnit = unit;
-    unit = newUnit;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__UNIT, oldUnit, newUnit);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setUnit(Unit newUnit)
-  {
-    if (newUnit != unit)
-    {
-      NotificationChain msgs = null;
-      if (unit != null)
-        msgs = ((InternalEObject)unit).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__UNIT, null, msgs);
-      if (newUnit != null)
-        msgs = ((InternalEObject)newUnit).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__UNIT, null, msgs);
-      msgs = basicSetUnit(newUnit, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__UNIT, newUnit, newUnit));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Currency getCurrency()
-  {
-    return currency;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetCurrency(Currency newCurrency, NotificationChain msgs)
-  {
-    Currency oldCurrency = currency;
-    currency = newCurrency;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__CURRENCY, oldCurrency, newCurrency);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setCurrency(Currency newCurrency)
-  {
-    if (newCurrency != currency)
-    {
-      NotificationChain msgs = null;
-      if (currency != null)
-        msgs = ((InternalEObject)currency).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__CURRENCY, null, msgs);
-      if (newCurrency != null)
-        msgs = ((InternalEObject)newCurrency).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__CURRENCY, null, msgs);
-      msgs = basicSetCurrency(newCurrency, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__CURRENCY, newCurrency, newCurrency));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public List getList()
   {
     return list;
@@ -436,6 +340,102 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
+  public Map getMap()
+  {
+    return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMap(Map newMap, NotificationChain msgs)
+  {
+    Map oldMap = map;
+    map = newMap;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__MAP, oldMap, newMap);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMap(Map newMap)
+  {
+    if (newMap != map)
+    {
+      NotificationChain msgs = null;
+      if (map != null)
+        msgs = ((InternalEObject)map).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__MAP, null, msgs);
+      if (newMap != null)
+        msgs = ((InternalEObject)newMap).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__MAP, null, msgs);
+      msgs = basicSetMap(newMap, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__MAP, newMap, newMap));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public LookupTable getTable()
+  {
+    return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetTable(LookupTable newTable, NotificationChain msgs)
+  {
+    LookupTable oldTable = table;
+    table = newTable;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__TABLE, oldTable, newTable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTable(LookupTable newTable)
+  {
+    if (newTable != table)
+    {
+      NotificationChain msgs = null;
+      if (table != null)
+        msgs = ((InternalEObject)table).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__TABLE, null, msgs);
+      if (newTable != null)
+        msgs = ((InternalEObject)newTable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.VALUE__TABLE, null, msgs);
+      msgs = basicSetTable(newTable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__TABLE, newTable, newTable));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getEnumId()
   {
     return enumId;
@@ -470,12 +470,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetFunction(null, msgs);
       case KdlPackage.VALUE__URN:
         return basicSetUrn(null, msgs);
-      case KdlPackage.VALUE__UNIT:
-        return basicSetUnit(null, msgs);
-      case KdlPackage.VALUE__CURRENCY:
-        return basicSetCurrency(null, msgs);
       case KdlPackage.VALUE__LIST:
         return basicSetList(null, msgs);
+      case KdlPackage.VALUE__MAP:
+        return basicSetMap(null, msgs);
+      case KdlPackage.VALUE__TABLE:
+        return basicSetTable(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -496,12 +496,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getFunction();
       case KdlPackage.VALUE__URN:
         return getUrn();
-      case KdlPackage.VALUE__UNIT:
-        return getUnit();
-      case KdlPackage.VALUE__CURRENCY:
-        return getCurrency();
       case KdlPackage.VALUE__LIST:
         return getList();
+      case KdlPackage.VALUE__MAP:
+        return getMap();
+      case KdlPackage.VALUE__TABLE:
+        return getTable();
       case KdlPackage.VALUE__ENUM_ID:
         return getEnumId();
     }
@@ -527,14 +527,14 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KdlPackage.VALUE__URN:
         setUrn((Urn)newValue);
         return;
-      case KdlPackage.VALUE__UNIT:
-        setUnit((Unit)newValue);
-        return;
-      case KdlPackage.VALUE__CURRENCY:
-        setCurrency((Currency)newValue);
-        return;
       case KdlPackage.VALUE__LIST:
         setList((List)newValue);
+        return;
+      case KdlPackage.VALUE__MAP:
+        setMap((Map)newValue);
+        return;
+      case KdlPackage.VALUE__TABLE:
+        setTable((LookupTable)newValue);
         return;
       case KdlPackage.VALUE__ENUM_ID:
         setEnumId((String)newValue);
@@ -562,14 +562,14 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KdlPackage.VALUE__URN:
         setUrn((Urn)null);
         return;
-      case KdlPackage.VALUE__UNIT:
-        setUnit((Unit)null);
-        return;
-      case KdlPackage.VALUE__CURRENCY:
-        setCurrency((Currency)null);
-        return;
       case KdlPackage.VALUE__LIST:
         setList((List)null);
+        return;
+      case KdlPackage.VALUE__MAP:
+        setMap((Map)null);
+        return;
+      case KdlPackage.VALUE__TABLE:
+        setTable((LookupTable)null);
         return;
       case KdlPackage.VALUE__ENUM_ID:
         setEnumId(ENUM_ID_EDEFAULT);
@@ -594,12 +594,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return function != null;
       case KdlPackage.VALUE__URN:
         return urn != null;
-      case KdlPackage.VALUE__UNIT:
-        return unit != null;
-      case KdlPackage.VALUE__CURRENCY:
-        return currency != null;
       case KdlPackage.VALUE__LIST:
         return list != null;
+      case KdlPackage.VALUE__MAP:
+        return map != null;
+      case KdlPackage.VALUE__TABLE:
+        return table != null;
       case KdlPackage.VALUE__ENUM_ID:
         return ENUM_ID_EDEFAULT == null ? enumId != null : !ENUM_ID_EDEFAULT.equals(enumId);
     }

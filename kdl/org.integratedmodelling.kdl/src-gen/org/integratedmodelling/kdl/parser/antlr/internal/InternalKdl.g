@@ -1882,6 +1882,362 @@ ruleTARGET returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 	)
 ;
 
+// Entry rule entryRuleClassifierRHS
+entryRuleClassifierRHS returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getClassifierRHSRule()); }
+	iv_ruleClassifierRHS=ruleClassifierRHS
+	{ $current=$iv_ruleClassifierRHS.current; }
+	EOF;
+
+// Rule ClassifierRHS
+ruleClassifierRHS returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					lv_boolean_0_0='true'
+					{
+						newLeafNode(lv_boolean_0_0, grammarAccess.getClassifierRHSAccess().getBooleanTrueKeyword_0_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getClassifierRHSRule());
+						}
+						setWithLastConsumed($current, "boolean", lv_boolean_0_0, "true");
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_boolean_1_0='false'
+					{
+						newLeafNode(lv_boolean_1_0, grammarAccess.getClassifierRHSAccess().getBooleanFalseKeyword_0_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getClassifierRHSRule());
+						}
+						setWithLastConsumed($current, "boolean", lv_boolean_1_0, "false");
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getClassifierRHSAccess().getInt0NumberParserRuleCall_1_0_0());
+					}
+					lv_int0_2_0=ruleNumber
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+						}
+						set(
+							$current,
+							"int0",
+							lv_int0_2_0,
+							"org.integratedmodelling.kdl.Kdl.Number");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					(
+						lv_leftLimit_3_0='inclusive'
+						{
+							newLeafNode(lv_leftLimit_3_0, grammarAccess.getClassifierRHSAccess().getLeftLimitInclusiveKeyword_1_1_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getClassifierRHSRule());
+							}
+							setWithLastConsumed($current, "leftLimit", lv_leftLimit_3_0, "inclusive");
+						}
+					)
+				)
+				    |
+				otherlv_4='exclusive'
+				{
+					newLeafNode(otherlv_4, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_1_1());
+				}
+			)?
+			(
+				('to')=>
+				otherlv_5='to'
+				{
+					newLeafNode(otherlv_5, grammarAccess.getClassifierRHSAccess().getToKeyword_1_2());
+				}
+			)
+			(
+				((
+					ruleNumber
+				)
+				)=>
+				(
+					{
+						newCompositeNode(grammarAccess.getClassifierRHSAccess().getInt1NumberParserRuleCall_1_3_0());
+					}
+					lv_int1_6_0=ruleNumber
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+						}
+						set(
+							$current,
+							"int1",
+							lv_int1_6_0,
+							"org.integratedmodelling.kdl.Kdl.Number");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					(
+						lv_rightLimit_7_0='inclusive'
+						{
+							newLeafNode(lv_rightLimit_7_0, grammarAccess.getClassifierRHSAccess().getRightLimitInclusiveKeyword_1_4_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getClassifierRHSRule());
+							}
+							setWithLastConsumed($current, "rightLimit", lv_rightLimit_7_0, "inclusive");
+						}
+					)
+				)
+				    |
+				otherlv_8='exclusive'
+				{
+					newLeafNode(otherlv_8, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_4_1());
+				}
+			)?
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getClassifierRHSAccess().getNumNumberParserRuleCall_2_0());
+				}
+				lv_num_9_0=ruleNumber
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+					}
+					set(
+						$current,
+						"num",
+						lv_num_9_0,
+						"org.integratedmodelling.kdl.Kdl.Number");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			otherlv_10='in'
+			{
+				newLeafNode(otherlv_10, grammarAccess.getClassifierRHSAccess().getInKeyword_3_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getClassifierRHSAccess().getSetListParserRuleCall_3_1_0());
+					}
+					lv_set_11_0=ruleList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+						}
+						set(
+							$current,
+							"set",
+							lv_set_11_0,
+							"org.integratedmodelling.kdl.Kdl.List");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				lv_string_12_0=RULE_STRING
+				{
+					newLeafNode(lv_string_12_0, grammarAccess.getClassifierRHSAccess().getStringSTRINGTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getClassifierRHSRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"string",
+						lv_string_12_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getClassifierRHSAccess().getMapMapParserRuleCall_5_0());
+				}
+				lv_map_13_0=ruleMap
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+					}
+					set(
+						$current,
+						"map",
+						lv_map_13_0,
+						"org.integratedmodelling.kdl.Kdl.Map");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			otherlv_14='('
+			{
+				newLeafNode(otherlv_14, grammarAccess.getClassifierRHSAccess().getLeftParenthesisKeyword_6_0());
+			}
+			(
+				(
+					lv_toResolve_15_0=RULE_STRING
+					{
+						newLeafNode(lv_toResolve_15_0, grammarAccess.getClassifierRHSAccess().getToResolveSTRINGTerminalRuleCall_6_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getClassifierRHSRule());
+						}
+						addWithLastConsumed(
+							$current,
+							"toResolve",
+							lv_toResolve_15_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+			(
+				(
+					(',')=>
+					otherlv_16=','
+					{
+						newLeafNode(otherlv_16, grammarAccess.getClassifierRHSAccess().getCommaKeyword_6_2_0());
+					}
+				)
+				(
+					(
+						lv_toResolve_17_0=RULE_STRING
+						{
+							newLeafNode(lv_toResolve_17_0, grammarAccess.getClassifierRHSAccess().getToResolveSTRINGTerminalRuleCall_6_2_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getClassifierRHSRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"toResolve",
+								lv_toResolve_17_0,
+								"org.eclipse.xtext.common.Terminals.STRING");
+						}
+					)
+				)
+			)*
+			otherlv_18=')'
+			{
+				newLeafNode(otherlv_18, grammarAccess.getClassifierRHSAccess().getRightParenthesisKeyword_6_3());
+			}
+		)
+		    |
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getClassifierRHSAccess().getOpREL_OPERATORParserRuleCall_7_0_0());
+					}
+					lv_op_19_0=ruleREL_OPERATOR
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+						}
+						set(
+							$current,
+							"op",
+							lv_op_19_0,
+							"org.integratedmodelling.kdl.Kdl.REL_OPERATOR");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getClassifierRHSAccess().getExpressionNumberParserRuleCall_7_1_0());
+					}
+					lv_expression_20_0=ruleNumber
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSRule());
+						}
+						set(
+							$current,
+							"expression",
+							lv_expression_20_0,
+							"org.integratedmodelling.kdl.Kdl.Number");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				lv_nodata_21_0='unknown'
+				{
+					newLeafNode(lv_nodata_21_0, grammarAccess.getClassifierRHSAccess().getNodataUnknownKeyword_8_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getClassifierRHSRule());
+					}
+					setWithLastConsumed($current, "nodata", lv_nodata_21_0, "unknown");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_star_22_0='*'
+				{
+					newLeafNode(lv_star_22_0, grammarAccess.getClassifierRHSAccess().getStarAsteriskKeyword_9_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getClassifierRHSRule());
+					}
+					setWithLastConsumed($current, "star", true, "*");
+				}
+			)
+		)
+	)
+;
+
 // Entry rule entryRuleList
 entryRuleList returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getListRule()); }
@@ -2644,60 +3000,19 @@ ruleValue returns [EObject current=null]
 		    |
 		(
 			(
-				(
-					{
-						newCompositeNode(grammarAccess.getValueAccess().getUrnUrnParserRuleCall_2_0_0());
-					}
-					lv_urn_2_0=ruleUrn
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueRule());
-						}
-						set(
-							$current,
-							"urn",
-							lv_urn_2_0,
-							"org.integratedmodelling.kdl.Kdl.Urn");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getValueAccess().getUnitUnitParserRuleCall_2_1_0());
-					}
-					lv_unit_3_0=ruleUnit
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueRule());
-						}
-						set(
-							$current,
-							"unit",
-							lv_unit_3_0,
-							"org.integratedmodelling.kdl.Kdl.Unit");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)
-		    |
-		(
-			(
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getCurrencyCurrencyParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnParserRuleCall_2_0());
 				}
-				lv_currency_4_0=ruleCurrency
+				lv_urn_2_0=ruleUrn
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
 					}
 					set(
 						$current,
-						"currency",
-						lv_currency_4_0,
-						"org.integratedmodelling.kdl.Kdl.Currency");
+						"urn",
+						lv_urn_2_0,
+						"org.integratedmodelling.kdl.Kdl.Urn");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2706,9 +3021,9 @@ ruleValue returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getListListParserRuleCall_4_0());
+					newCompositeNode(grammarAccess.getValueAccess().getListListParserRuleCall_3_0());
 				}
-				lv_list_5_0=ruleList
+				lv_list_3_0=ruleList
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -2716,8 +3031,48 @@ ruleValue returns [EObject current=null]
 					set(
 						$current,
 						"list",
-						lv_list_5_0,
+						lv_list_3_0,
 						"org.integratedmodelling.kdl.Kdl.List");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getValueAccess().getMapMapParserRuleCall_4_0());
+				}
+				lv_map_4_0=ruleMap
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getValueRule());
+					}
+					set(
+						$current,
+						"map",
+						lv_map_4_0,
+						"org.integratedmodelling.kdl.Kdl.Map");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_5_0());
+				}
+				lv_table_5_0=ruleLookupTable
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getValueRule());
+					}
+					set(
+						$current,
+						"table",
+						lv_table_5_0,
+						"org.integratedmodelling.kdl.Kdl.LookupTable");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2727,7 +3082,7 @@ ruleValue returns [EObject current=null]
 			(
 				lv_enumId_6_0=RULE_UPPERCASE_ID
 				{
-					newLeafNode(lv_enumId_6_0, grammarAccess.getValueAccess().getEnumIdUPPERCASE_IDTerminalRuleCall_5_0());
+					newLeafNode(lv_enumId_6_0, grammarAccess.getValueAccess().getEnumIdUPPERCASE_IDTerminalRuleCall_6_0());
 				}
 				{
 					if ($current==null) {
@@ -2922,6 +3277,650 @@ ruleUrnId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 				newLeafNode(this_LOWERCASE_ID_11, grammarAccess.getUrnIdAccess().getLOWERCASE_IDTerminalRuleCall_9_1());
 			}
 		)?
+	)
+;
+
+// Entry rule entryRuleMap
+entryRuleMap returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMapRule()); }
+	iv_ruleMap=ruleMap
+	{ $current=$iv_ruleMap.current; }
+	EOF;
+
+// Rule Map
+ruleMap returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				/* */
+			}
+			{
+				$current = forceCreateModelElement(
+					grammarAccess.getMapAccess().getMapAction_0(),
+					$current);
+			}
+		)
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getMapAccess().getLeftCurlyBracketKeyword_1());
+		}
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getMapAccess().getEntriesMapEntryParserRuleCall_2_0_0());
+					}
+					lv_entries_2_0=ruleMapEntry
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMapRule());
+						}
+						add(
+							$current,
+							"entries",
+							lv_entries_2_0,
+							"org.integratedmodelling.kdl.Kdl.MapEntry");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					(','
+					)=>
+					otherlv_3=','
+					{
+						newLeafNode(otherlv_3, grammarAccess.getMapAccess().getCommaKeyword_2_1_0_0());
+					}
+				)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getMapAccess().getEntriesMapEntryParserRuleCall_2_1_1_0());
+						}
+						lv_entries_4_0=ruleMapEntry
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getMapRule());
+							}
+							add(
+								$current,
+								"entries",
+								lv_entries_4_0,
+								"org.integratedmodelling.kdl.Kdl.MapEntry");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+			)*
+		)?
+		otherlv_5='}'
+		{
+			newLeafNode(otherlv_5, grammarAccess.getMapAccess().getRightCurlyBracketKeyword_3());
+		}
+	)
+;
+
+// Entry rule entryRuleMapEntry
+entryRuleMapEntry returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMapEntryRule()); }
+	iv_ruleMapEntry=ruleMapEntry
+	{ $current=$iv_ruleMapEntry.current; }
+	EOF;
+
+// Rule MapEntry
+ruleMapEntry returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMapEntryAccess().getClassifierClassifierRHSParserRuleCall_0_0());
+				}
+				lv_classifier_0_0=ruleClassifierRHS
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMapEntryRule());
+					}
+					set(
+						$current,
+						"classifier",
+						lv_classifier_0_0,
+						"org.integratedmodelling.kdl.Kdl.ClassifierRHS");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_1=':'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getMapEntryAccess().getColonKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMapEntryAccess().getValueValueParserRuleCall_2_0());
+				}
+				lv_value_2_0=ruleValue
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMapEntryRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_2_0,
+						"org.integratedmodelling.kdl.Kdl.Value");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleLookupTable
+entryRuleLookupTable returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getLookupTableRule()); }
+	iv_ruleLookupTable=ruleLookupTable
+	{ $current=$iv_ruleLookupTable.current; }
+	EOF;
+
+// Rule LookupTable
+ruleLookupTable returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				/* */
+			}
+			{
+				$current = forceCreateModelElement(
+					grammarAccess.getLookupTableAccess().getLookupTableAction_0(),
+					$current);
+			}
+		)
+		otherlv_1='{{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getLookupTableAccess().getLeftCurlyBracketLeftCurlyBracketKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLookupTableAccess().getTableTableParserRuleCall_2_0());
+				}
+				lv_table_2_0=ruleTable
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLookupTableRule());
+					}
+					set(
+						$current,
+						"table",
+						lv_table_2_0,
+						"org.integratedmodelling.kdl.Kdl.Table");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		otherlv_3='}}'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getLookupTableAccess().getRightCurlyBracketRightCurlyBracketKeyword_3());
+		}
+	)
+;
+
+// Entry rule entryRuleTable
+entryRuleTable returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTableRule()); }
+	iv_ruleTable=ruleTable
+	{ $current=$iv_ruleTable.current; }
+	EOF;
+
+// Rule Table
+ruleTable returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTableAccess().getRowsTableRowParserRuleCall_0_0());
+				}
+				lv_rows_0_0=ruleTableRow
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTableRule());
+					}
+					add(
+						$current,
+						"rows",
+						lv_rows_0_0,
+						"org.integratedmodelling.kdl.Kdl.TableRow");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_1=','
+			{
+				newLeafNode(otherlv_1, grammarAccess.getTableAccess().getCommaKeyword_1_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableAccess().getRowsTableRowParserRuleCall_1_1_0());
+					}
+					lv_rows_2_0=ruleTableRow
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableRule());
+						}
+						add(
+							$current,
+							"rows",
+							lv_rows_2_0,
+							"org.integratedmodelling.kdl.Kdl.TableRow");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)*
+	)
+;
+
+// Entry rule entryRuleTableRow
+entryRuleTableRow returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTableRowRule()); }
+	iv_ruleTableRow=ruleTableRow
+	{ $current=$iv_ruleTableRow.current; }
+	EOF;
+
+// Rule TableRow
+ruleTableRow returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTableRowAccess().getElementsTableClassifierParserRuleCall_0_0());
+				}
+				lv_elements_0_0=ruleTableClassifier
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTableRowRule());
+					}
+					add(
+						$current,
+						"elements",
+						lv_elements_0_0,
+						"org.integratedmodelling.kdl.Kdl.TableClassifier");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_1='|'
+			{
+				newLeafNode(otherlv_1, grammarAccess.getTableRowAccess().getVerticalLineKeyword_1_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableRowAccess().getElementsTableClassifierParserRuleCall_1_1_0());
+					}
+					lv_elements_2_0=ruleTableClassifier
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableRowRule());
+						}
+						add(
+							$current,
+							"elements",
+							lv_elements_2_0,
+							"org.integratedmodelling.kdl.Kdl.TableClassifier");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)*
+	)
+;
+
+// Entry rule entryRuleTableClassifier
+entryRuleTableClassifier returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTableClassifierRule()); }
+	iv_ruleTableClassifier=ruleTableClassifier
+	{ $current=$iv_ruleTableClassifier.current; }
+	EOF;
+
+// Rule TableClassifier
+ruleTableClassifier returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					lv_boolean_0_0='true'
+					{
+						newLeafNode(lv_boolean_0_0, grammarAccess.getTableClassifierAccess().getBooleanTrueKeyword_0_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getTableClassifierRule());
+						}
+						setWithLastConsumed($current, "boolean", lv_boolean_0_0, "true");
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_boolean_1_0='false'
+					{
+						newLeafNode(lv_boolean_1_0, grammarAccess.getTableClassifierAccess().getBooleanFalseKeyword_0_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getTableClassifierRule());
+						}
+						setWithLastConsumed($current, "boolean", lv_boolean_1_0, "false");
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getInt0NumberParserRuleCall_1_0_0());
+					}
+					lv_int0_2_0=ruleNumber
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+						}
+						set(
+							$current,
+							"int0",
+							lv_int0_2_0,
+							"org.integratedmodelling.kdl.Kdl.Number");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					(
+						lv_leftLimit_3_0='inclusive'
+						{
+							newLeafNode(lv_leftLimit_3_0, grammarAccess.getTableClassifierAccess().getLeftLimitInclusiveKeyword_1_1_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getTableClassifierRule());
+							}
+							setWithLastConsumed($current, "leftLimit", lv_leftLimit_3_0, "inclusive");
+						}
+					)
+				)
+				    |
+				otherlv_4='exclusive'
+				{
+					newLeafNode(otherlv_4, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
+				}
+			)?
+			(
+				('to')=>
+				otherlv_5='to'
+				{
+					newLeafNode(otherlv_5, grammarAccess.getTableClassifierAccess().getToKeyword_1_2());
+				}
+			)
+			(
+				((
+					ruleNumber
+				)
+				)=>
+				(
+					{
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getInt1NumberParserRuleCall_1_3_0());
+					}
+					lv_int1_6_0=ruleNumber
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+						}
+						set(
+							$current,
+							"int1",
+							lv_int1_6_0,
+							"org.integratedmodelling.kdl.Kdl.Number");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					(
+						lv_rightLimit_7_0='inclusive'
+						{
+							newLeafNode(lv_rightLimit_7_0, grammarAccess.getTableClassifierAccess().getRightLimitInclusiveKeyword_1_4_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getTableClassifierRule());
+							}
+							setWithLastConsumed($current, "rightLimit", lv_rightLimit_7_0, "inclusive");
+						}
+					)
+				)
+				    |
+				otherlv_8='exclusive'
+				{
+					newLeafNode(otherlv_8, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
+				}
+			)?
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTableClassifierAccess().getNumNumberParserRuleCall_2_0());
+				}
+				lv_num_9_0=ruleNumber
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+					}
+					set(
+						$current,
+						"num",
+						lv_num_9_0,
+						"org.integratedmodelling.kdl.Kdl.Number");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			otherlv_10='in'
+			{
+				newLeafNode(otherlv_10, grammarAccess.getTableClassifierAccess().getInKeyword_3_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getSetListParserRuleCall_3_1_0());
+					}
+					lv_set_11_0=ruleList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+						}
+						set(
+							$current,
+							"set",
+							lv_set_11_0,
+							"org.integratedmodelling.kdl.Kdl.List");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				lv_string_12_0=RULE_STRING
+				{
+					newLeafNode(lv_string_12_0, grammarAccess.getTableClassifierAccess().getStringSTRINGTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTableClassifierRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"string",
+						lv_string_12_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		    |
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getOpREL_OPERATORParserRuleCall_5_0_0());
+					}
+					lv_op_13_0=ruleREL_OPERATOR
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+						}
+						set(
+							$current,
+							"op",
+							lv_op_13_0,
+							"org.integratedmodelling.kdl.Kdl.REL_OPERATOR");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableClassifierAccess().getExpressionNumberParserRuleCall_5_1_0());
+					}
+					lv_expression_14_0=ruleNumber
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
+						}
+						set(
+							$current,
+							"expression",
+							lv_expression_14_0,
+							"org.integratedmodelling.kdl.Kdl.Number");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				lv_expr_15_0=RULE_EXPR
+				{
+					newLeafNode(lv_expr_15_0, grammarAccess.getTableClassifierAccess().getExprEXPRTerminalRuleCall_6_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTableClassifierRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"expr",
+						lv_expr_15_0,
+						"org.integratedmodelling.kdl.Kdl.EXPR");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_nodata_16_0='unknown'
+				{
+					newLeafNode(lv_nodata_16_0, grammarAccess.getTableClassifierAccess().getNodataUnknownKeyword_7_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTableClassifierRule());
+					}
+					setWithLastConsumed($current, "nodata", lv_nodata_16_0, "unknown");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_star_17_0='*'
+				{
+					newLeafNode(lv_star_17_0, grammarAccess.getTableClassifierAccess().getStarAsteriskKeyword_8_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTableClassifierRule());
+					}
+					setWithLastConsumed($current, "star", true, "*");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_anything_18_0='#'
+				{
+					newLeafNode(lv_anything_18_0, grammarAccess.getTableClassifierAccess().getAnythingNumberSignKeyword_9_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTableClassifierRule());
+					}
+					setWithLastConsumed($current, "anything", true, "#");
+				}
+			)
+		)
 	)
 ;
 
@@ -3652,106 +4651,6 @@ ruleUnit returns [EObject current=null]
 	)
 ;
 
-// Entry rule entryRuleCurrency
-entryRuleCurrency returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getCurrencyRule()); }
-	iv_ruleCurrency=ruleCurrency
-	{ $current=$iv_ruleCurrency.current; }
-	EOF;
-
-// Rule Currency
-ruleCurrency returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			(
-				(
-					lv_id_0_0=RULE_ID
-					{
-						newLeafNode(lv_id_0_0, grammarAccess.getCurrencyAccess().getIdIDTerminalRuleCall_0_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getCurrencyRule());
-						}
-						setWithLastConsumed(
-							$current,
-							"id",
-							lv_id_0_0,
-							"org.eclipse.xtext.common.Terminals.ID");
-					}
-				)
-			)
-			(
-				otherlv_1='@'
-				{
-					newLeafNode(otherlv_1, grammarAccess.getCurrencyAccess().getCommercialAtKeyword_0_1_0());
-				}
-				(
-					(
-						lv_year_2_0=RULE_INT
-						{
-							newLeafNode(lv_year_2_0, grammarAccess.getCurrencyAccess().getYearINTTerminalRuleCall_0_1_1_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getCurrencyRule());
-							}
-							setWithLastConsumed(
-								$current,
-								"year",
-								lv_year_2_0,
-								"org.eclipse.xtext.common.Terminals.INT");
-						}
-					)
-				)
-			)
-		)
-		    |
-		(
-			(
-				(
-					lv_concept_3_1=RULE_CAMELCASE_ID
-					{
-						newLeafNode(lv_concept_3_1, grammarAccess.getCurrencyAccess().getConceptCAMELCASE_IDTerminalRuleCall_1_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getCurrencyRule());
-						}
-						setWithLastConsumed(
-							$current,
-							"concept",
-							lv_concept_3_1,
-							"org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
-					}
-					    |
-					{
-						newCompositeNode(grammarAccess.getCurrencyAccess().getConceptNamespaceIdParserRuleCall_1_0_1());
-					}
-					lv_concept_3_2=ruleNamespaceId
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getCurrencyRule());
-						}
-						set(
-							$current,
-							"concept",
-							lv_concept_3_2,
-							"org.integratedmodelling.kdl.Kdl.NamespaceId");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)
-	)
-;
-
 // Entry rule entryRuleNumber
 entryRuleNumber returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getNumberRule()); }
@@ -4292,6 +5191,8 @@ ruleUnitOp returns [Enumerator current=null]
 		)
 	)
 ;
+
+RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
 
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 

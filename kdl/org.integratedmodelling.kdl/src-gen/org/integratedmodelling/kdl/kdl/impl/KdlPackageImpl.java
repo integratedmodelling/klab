@@ -22,10 +22,15 @@ import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.KeyValuePair;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
+import org.integratedmodelling.kdl.kdl.LookupTable;
+import org.integratedmodelling.kdl.kdl.Map;
+import org.integratedmodelling.kdl.kdl.MapEntry;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
+import org.integratedmodelling.kdl.kdl.Table;
+import org.integratedmodelling.kdl.kdl.TableRow;
 import org.integratedmodelling.kdl.kdl.Unit;
 import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.UnitOp;
@@ -123,6 +128,41 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   private EClass urnEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass mapEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass mapEntryEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass lookupTableEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass tableEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass tableRowEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -798,9 +838,19 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getClassifierRHS_Map()
+  {
+    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getClassifierRHS_ToResolve()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -810,7 +860,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getClassifierRHS_Op()
   {
-    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(9);
+    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -820,7 +870,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getClassifierRHS_Expression()
   {
-    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(10);
+    return (EReference)classifierRHSEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -830,7 +880,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EAttribute getClassifierRHS_Nodata()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -840,7 +890,27 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EAttribute getClassifierRHS_Star()
   {
-    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getClassifierRHS_Expr()
+  {
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getClassifierRHS_Anything()
+  {
+    return (EAttribute)classifierRHSEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -1048,7 +1118,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getValue_Unit()
+  public EReference getValue_List()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(3);
   }
@@ -1058,7 +1128,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getValue_Currency()
+  public EReference getValue_Map()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(4);
   }
@@ -1068,7 +1138,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getValue_List()
+  public EReference getValue_Table()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(5);
   }
@@ -1101,6 +1171,116 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
   public EAttribute getUrn_Name()
   {
     return (EAttribute)urnEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getMap()
+  {
+    return mapEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMap_Entries()
+  {
+    return (EReference)mapEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getMapEntry()
+  {
+    return mapEntryEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMapEntry_Classifier()
+  {
+    return (EReference)mapEntryEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMapEntry_Value()
+  {
+    return (EReference)mapEntryEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getLookupTable()
+  {
+    return lookupTableEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getLookupTable_Table()
+  {
+    return (EReference)lookupTableEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTable()
+  {
+    return tableEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getTable_Rows()
+  {
+    return (EReference)tableEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTableRow()
+  {
+    return tableRowEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getTableRow_Elements()
+  {
+    return (EReference)tableRowEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1593,11 +1773,14 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__NUM);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__SET);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__STRING);
+    createEReference(classifierRHSEClass, CLASSIFIER_RHS__MAP);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__TO_RESOLVE);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__OP);
     createEReference(classifierRHSEClass, CLASSIFIER_RHS__EXPRESSION);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__NODATA);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__STAR);
+    createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__EXPR);
+    createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__ANYTHING);
 
     listEClass = createEClass(LIST);
     createEReference(listEClass, LIST__CONTENTS);
@@ -1623,13 +1806,29 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(valueEClass, VALUE__LITERAL);
     createEReference(valueEClass, VALUE__FUNCTION);
     createEReference(valueEClass, VALUE__URN);
-    createEReference(valueEClass, VALUE__UNIT);
-    createEReference(valueEClass, VALUE__CURRENCY);
     createEReference(valueEClass, VALUE__LIST);
+    createEReference(valueEClass, VALUE__MAP);
+    createEReference(valueEClass, VALUE__TABLE);
     createEAttribute(valueEClass, VALUE__ENUM_ID);
 
     urnEClass = createEClass(URN);
     createEAttribute(urnEClass, URN__NAME);
+
+    mapEClass = createEClass(MAP);
+    createEReference(mapEClass, MAP__ENTRIES);
+
+    mapEntryEClass = createEClass(MAP_ENTRY);
+    createEReference(mapEntryEClass, MAP_ENTRY__CLASSIFIER);
+    createEReference(mapEntryEClass, MAP_ENTRY__VALUE);
+
+    lookupTableEClass = createEClass(LOOKUP_TABLE);
+    createEReference(lookupTableEClass, LOOKUP_TABLE__TABLE);
+
+    tableEClass = createEClass(TABLE);
+    createEReference(tableEClass, TABLE__ROWS);
+
+    tableRowEClass = createEClass(TABLE_ROW);
+    createEReference(tableRowEClass, TABLE_ROW__ELEMENTS);
 
     keyValuePairEClass = createEClass(KEY_VALUE_PAIR);
     createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__NAME);
@@ -1772,11 +1971,14 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getClassifierRHS_Num(), this.getNumber(), null, "num", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Set(), this.getList(), null, "set", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_String(), ecorePackage.getEString(), "string", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getClassifierRHS_Map(), this.getMap(), null, "map", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_ToResolve(), ecorePackage.getEString(), "toResolve", null, 0, -1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifierRHS_Expression(), this.getNumber(), null, "expression", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Nodata(), ecorePackage.getEString(), "nodata", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifierRHS_Star(), ecorePackage.getEBoolean(), "star", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getClassifierRHS_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getClassifierRHS_Anything(), ecorePackage.getEBoolean(), "anything", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(listEClass, List.class, "List", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getList_Contents(), this.getValue(), null, "contents", null, 0, -1, List.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1802,13 +2004,29 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Function(), this.getFunction(), null, "function", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Urn(), this.getUrn(), null, "urn", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getValue_Unit(), this.getUnit(), null, "unit", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getValue_Currency(), this.getCurrency(), null, "currency", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_List(), this.getList(), null, "list", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_EnumId(), ecorePackage.getEString(), "enumId", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(urnEClass, Urn.class, "Urn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUrn_Name(), ecorePackage.getEString(), "name", null, 0, 1, Urn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(mapEClass, Map.class, "Map", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMap_Entries(), this.getMapEntry(), null, "entries", null, 0, -1, Map.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(mapEntryEClass, MapEntry.class, "MapEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMapEntry_Classifier(), this.getClassifierRHS(), null, "classifier", null, 0, 1, MapEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMapEntry_Value(), this.getValue(), null, "value", null, 0, 1, MapEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(lookupTableEClass, LookupTable.class, "LookupTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getLookupTable_Table(), this.getTable(), null, "table", null, 0, 1, LookupTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(tableEClass, Table.class, "Table", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getTable_Rows(), this.getTableRow(), null, "rows", null, 0, -1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(tableRowEClass, TableRow.class, "TableRow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getTableRow_Elements(), this.getClassifierRHS(), null, "elements", null, 0, -1, TableRow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(keyValuePairEClass, KeyValuePair.class, "KeyValuePair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getKeyValuePair_Name(), ecorePackage.getEString(), "name", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

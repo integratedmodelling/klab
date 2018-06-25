@@ -20,11 +20,16 @@ import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.KeyValuePair;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
+import org.integratedmodelling.kdl.kdl.LookupTable;
+import org.integratedmodelling.kdl.kdl.Map;
+import org.integratedmodelling.kdl.kdl.MapEntry;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
+import org.integratedmodelling.kdl.kdl.Table;
+import org.integratedmodelling.kdl.kdl.TableRow;
 import org.integratedmodelling.kdl.kdl.Unit;
 import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.Urn;
@@ -152,6 +157,31 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseUrn(Urn object)
       {
         return createUrnAdapter();
+      }
+      @Override
+      public Adapter caseMap(Map object)
+      {
+        return createMapAdapter();
+      }
+      @Override
+      public Adapter caseMapEntry(MapEntry object)
+      {
+        return createMapEntryAdapter();
+      }
+      @Override
+      public Adapter caseLookupTable(LookupTable object)
+      {
+        return createLookupTableAdapter();
+      }
+      @Override
+      public Adapter caseTable(Table object)
+      {
+        return createTableAdapter();
+      }
+      @Override
+      public Adapter caseTableRow(TableRow object)
+      {
+        return createTableRowAdapter();
       }
       @Override
       public Adapter caseKeyValuePair(KeyValuePair object)
@@ -386,6 +416,81 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createUrnAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Map <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.Map
+   * @generated
+   */
+  public Adapter createMapAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.MapEntry <em>Map Entry</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.MapEntry
+   * @generated
+   */
+  public Adapter createMapEntryAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.LookupTable <em>Lookup Table</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.LookupTable
+   * @generated
+   */
+  public Adapter createLookupTableAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Table <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.Table
+   * @generated
+   */
+  public Adapter createTableAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.TableRow <em>Table Row</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.TableRow
+   * @generated
+   */
+  public Adapter createTableRowAdapter()
   {
     return null;
   }

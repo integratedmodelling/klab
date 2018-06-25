@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.List;
+import org.integratedmodelling.kdl.kdl.Map;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
 
 /**
@@ -39,11 +40,14 @@ import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getNum <em>Num</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getString <em>String</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getToResolve <em>To Resolve</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#isStar <em>Star</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#getExpr <em>Expr</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl#isAnything <em>Anything</em>}</li>
  * </ul>
  *
  * @generated
@@ -171,6 +175,16 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
   protected String string = STRING_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getMap() <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMap()
+   * @generated
+   * @ordered
+   */
+  protected Map map;
+
+  /**
    * The cached value of the '{@link #getToResolve() <em>To Resolve</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -239,6 +253,46 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * @ordered
    */
   protected boolean star = STAR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getExpr() <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpr()
+   * @generated
+   * @ordered
+   */
+  protected static final String EXPR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getExpr() <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpr()
+   * @generated
+   * @ordered
+   */
+  protected String expr = EXPR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isAnything() <em>Anything</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAnything()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean ANYTHING_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isAnything() <em>Anything</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAnything()
+   * @generated
+   * @ordered
+   */
+  protected boolean anything = ANYTHING_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -550,6 +604,54 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
+  public Map getMap()
+  {
+    return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMap(Map newMap, NotificationChain msgs)
+  {
+    Map oldMap = map;
+    map = newMap;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.CLASSIFIER_RHS__MAP, oldMap, newMap);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMap(Map newMap)
+  {
+    if (newMap != map)
+    {
+      NotificationChain msgs = null;
+      if (map != null)
+        msgs = ((InternalEObject)map).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.CLASSIFIER_RHS__MAP, null, msgs);
+      if (newMap != null)
+        msgs = ((InternalEObject)newMap).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.CLASSIFIER_RHS__MAP, null, msgs);
+      msgs = basicSetMap(newMap, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.CLASSIFIER_RHS__MAP, newMap, newMap));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<String> getToResolve()
   {
     if (toResolve == null)
@@ -706,6 +808,52 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getExpr()
+  {
+    return expr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpr(String newExpr)
+  {
+    String oldExpr = expr;
+    expr = newExpr;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.CLASSIFIER_RHS__EXPR, oldExpr, expr));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isAnything()
+  {
+    return anything;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAnything(boolean newAnything)
+  {
+    boolean oldAnything = anything;
+    anything = newAnything;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.CLASSIFIER_RHS__ANYTHING, oldAnything, anything));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -719,6 +867,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return basicSetNum(null, msgs);
       case KdlPackage.CLASSIFIER_RHS__SET:
         return basicSetSet(null, msgs);
+      case KdlPackage.CLASSIFIER_RHS__MAP:
+        return basicSetMap(null, msgs);
       case KdlPackage.CLASSIFIER_RHS__OP:
         return basicSetOp(null, msgs);
       case KdlPackage.CLASSIFIER_RHS__EXPRESSION:
@@ -753,6 +903,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return getSet();
       case KdlPackage.CLASSIFIER_RHS__STRING:
         return getString();
+      case KdlPackage.CLASSIFIER_RHS__MAP:
+        return getMap();
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         return getToResolve();
       case KdlPackage.CLASSIFIER_RHS__OP:
@@ -763,6 +915,10 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return getNodata();
       case KdlPackage.CLASSIFIER_RHS__STAR:
         return isStar();
+      case KdlPackage.CLASSIFIER_RHS__EXPR:
+        return getExpr();
+      case KdlPackage.CLASSIFIER_RHS__ANYTHING:
+        return isAnything();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -802,6 +958,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KdlPackage.CLASSIFIER_RHS__STRING:
         setString((String)newValue);
         return;
+      case KdlPackage.CLASSIFIER_RHS__MAP:
+        setMap((Map)newValue);
+        return;
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         getToResolve().clear();
         getToResolve().addAll((Collection<? extends String>)newValue);
@@ -817,6 +976,12 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return;
       case KdlPackage.CLASSIFIER_RHS__STAR:
         setStar((Boolean)newValue);
+        return;
+      case KdlPackage.CLASSIFIER_RHS__EXPR:
+        setExpr((String)newValue);
+        return;
+      case KdlPackage.CLASSIFIER_RHS__ANYTHING:
+        setAnything((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -856,6 +1021,9 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
       case KdlPackage.CLASSIFIER_RHS__STRING:
         setString(STRING_EDEFAULT);
         return;
+      case KdlPackage.CLASSIFIER_RHS__MAP:
+        setMap((Map)null);
+        return;
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         getToResolve().clear();
         return;
@@ -870,6 +1038,12 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return;
       case KdlPackage.CLASSIFIER_RHS__STAR:
         setStar(STAR_EDEFAULT);
+        return;
+      case KdlPackage.CLASSIFIER_RHS__EXPR:
+        setExpr(EXPR_EDEFAULT);
+        return;
+      case KdlPackage.CLASSIFIER_RHS__ANYTHING:
+        setAnything(ANYTHING_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -901,6 +1075,8 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return set != null;
       case KdlPackage.CLASSIFIER_RHS__STRING:
         return STRING_EDEFAULT == null ? string != null : !STRING_EDEFAULT.equals(string);
+      case KdlPackage.CLASSIFIER_RHS__MAP:
+        return map != null;
       case KdlPackage.CLASSIFIER_RHS__TO_RESOLVE:
         return toResolve != null && !toResolve.isEmpty();
       case KdlPackage.CLASSIFIER_RHS__OP:
@@ -911,6 +1087,10 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
         return NODATA_EDEFAULT == null ? nodata != null : !NODATA_EDEFAULT.equals(nodata);
       case KdlPackage.CLASSIFIER_RHS__STAR:
         return star != STAR_EDEFAULT;
+      case KdlPackage.CLASSIFIER_RHS__EXPR:
+        return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
+      case KdlPackage.CLASSIFIER_RHS__ANYTHING:
+        return anything != ANYTHING_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -940,6 +1120,10 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
     result.append(nodata);
     result.append(", star: ");
     result.append(star);
+    result.append(", expr: ");
+    result.append(expr);
+    result.append(", anything: ");
+    result.append(anything);
     result.append(')');
     return result.toString();
   }

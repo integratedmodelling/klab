@@ -24,11 +24,14 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getNum <em>Num</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getSet <em>Set</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getString <em>String</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getToResolve <em>To Resolve</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#isStar <em>Star</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getExpr <em>Expr</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#isAnything <em>Anything</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kdl.kdl.KdlPackage#getClassifierRHS()
@@ -246,6 +249,32 @@ public interface ClassifierRHS extends EObject
   void setString(String value);
 
   /**
+   * Returns the value of the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Map</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Map</em>' containment reference.
+   * @see #setMap(Map)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getClassifierRHS_Map()
+   * @model containment="true"
+   * @generated
+   */
+  Map getMap();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getMap <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Map</em>' containment reference.
+   * @see #getMap()
+   * @generated
+   */
+  void setMap(Map value);
+
+  /**
    * Returns the value of the '<em><b>To Resolve</b></em>' attribute list.
    * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
@@ -364,5 +393,57 @@ public interface ClassifierRHS extends EObject
    * @generated
    */
   void setStar(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Expr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Expr</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expr</em>' attribute.
+   * @see #setExpr(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getClassifierRHS_Expr()
+   * @model
+   * @generated
+   */
+  String getExpr();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getExpr <em>Expr</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expr</em>' attribute.
+   * @see #getExpr()
+   * @generated
+   */
+  void setExpr(String value);
+
+  /**
+   * Returns the value of the '<em><b>Anything</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Anything</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Anything</em>' attribute.
+   * @see #setAnything(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getClassifierRHS_Anything()
+   * @model
+   * @generated
+   */
+  boolean isAnything();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#isAnything <em>Anything</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Anything</em>' attribute.
+   * @see #isAnything()
+   * @generated
+   */
+  void setAnything(boolean value);
 
 } // ClassifierRHS

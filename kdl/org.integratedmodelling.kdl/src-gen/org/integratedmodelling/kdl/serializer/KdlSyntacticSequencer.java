@@ -24,6 +24,8 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
+	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
+	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_4_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
@@ -32,6 +34,8 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_ClassifierRHS_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_4_1());
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
+		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
+		match_TableClassifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
 	}
 	
 	@Override
@@ -54,6 +58,10 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_3_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_3_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_TableClassifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
+				emit_TableClassifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_TableClassifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
+				emit_TableClassifier_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -100,6 +108,28 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     exponential?='e' (ambiguity) exp=INT
 	 */
 	protected void emit_Number_PlusSignKeyword_3_0_1_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'exclusive'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     int0=Number (ambiguity) 'to' int1=Number
+	 */
+	protected void emit_TableClassifier_ExclusiveKeyword_1_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'exclusive'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     int1=Number (ambiguity) (rule end)
+	 */
+	protected void emit_TableClassifier_ExclusiveKeyword_1_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

@@ -23,11 +23,16 @@ import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.KeyValuePair;
 import org.integratedmodelling.kdl.kdl.List;
 import org.integratedmodelling.kdl.kdl.Literal;
+import org.integratedmodelling.kdl.kdl.LookupTable;
+import org.integratedmodelling.kdl.kdl.Map;
+import org.integratedmodelling.kdl.kdl.MapEntry;
 import org.integratedmodelling.kdl.kdl.Metadata;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
+import org.integratedmodelling.kdl.kdl.Table;
+import org.integratedmodelling.kdl.kdl.TableRow;
 import org.integratedmodelling.kdl.kdl.Unit;
 import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.UnitOp;
@@ -98,6 +103,11 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
       case KdlPackage.PARAMETER_LIST: return createParameterList();
       case KdlPackage.VALUE: return createValue();
       case KdlPackage.URN: return createUrn();
+      case KdlPackage.MAP: return createMap();
+      case KdlPackage.MAP_ENTRY: return createMapEntry();
+      case KdlPackage.LOOKUP_TABLE: return createLookupTable();
+      case KdlPackage.TABLE: return createTable();
+      case KdlPackage.TABLE_ROW: return createTableRow();
       case KdlPackage.KEY_VALUE_PAIR: return createKeyValuePair();
       case KdlPackage.FUNCTION: return createFunction();
       case KdlPackage.UNIT_ELEMENT: return createUnitElement();
@@ -274,6 +284,61 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
   {
     UrnImpl urn = new UrnImpl();
     return urn;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Map createMap()
+  {
+    MapImpl map = new MapImpl();
+    return map;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public MapEntry createMapEntry()
+  {
+    MapEntryImpl mapEntry = new MapEntryImpl();
+    return mapEntry;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public LookupTable createLookupTable()
+  {
+    LookupTableImpl lookupTable = new LookupTableImpl();
+    return lookupTable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Table createTable()
+  {
+    TableImpl table = new TableImpl();
+    return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TableRow createTableRow()
+  {
+    TableRowImpl tableRow = new TableRowImpl();
+    return tableRow;
   }
 
   /**

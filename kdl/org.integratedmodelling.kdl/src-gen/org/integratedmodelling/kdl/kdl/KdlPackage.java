@@ -605,13 +605,22 @@ public interface KdlPackage extends EPackage
   int CLASSIFIER_RHS__STRING = 7;
 
   /**
+   * The feature id for the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__MAP = 8;
+
+  /**
    * The feature id for the '<em><b>To Resolve</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__TO_RESOLVE = 8;
+  int CLASSIFIER_RHS__TO_RESOLVE = 9;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' containment reference.
@@ -620,7 +629,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__OP = 9;
+  int CLASSIFIER_RHS__OP = 10;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -629,7 +638,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__EXPRESSION = 10;
+  int CLASSIFIER_RHS__EXPRESSION = 11;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -638,7 +647,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__NODATA = 11;
+  int CLASSIFIER_RHS__NODATA = 12;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -647,7 +656,25 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__STAR = 12;
+  int CLASSIFIER_RHS__STAR = 13;
+
+  /**
+   * The feature id for the '<em><b>Expr</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__EXPR = 14;
+
+  /**
+   * The feature id for the '<em><b>Anything</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__ANYTHING = 15;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -656,7 +683,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 13;
+  int CLASSIFIER_RHS_FEATURE_COUNT = 16;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ListImpl <em>List</em>}' class.
@@ -880,31 +907,31 @@ public interface KdlPackage extends EPackage
   int VALUE__URN = 2;
 
   /**
-   * The feature id for the '<em><b>Unit</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__UNIT = 3;
-
-  /**
-   * The feature id for the '<em><b>Currency</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__CURRENCY = 4;
-
-  /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 5;
+  int VALUE__LIST = 3;
+
+  /**
+   * The feature id for the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__MAP = 4;
+
+  /**
+   * The feature id for the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__TABLE = 5;
 
   /**
    * The feature id for the '<em><b>Enum Id</b></em>' attribute.
@@ -953,6 +980,155 @@ public interface KdlPackage extends EPackage
   int URN_FEATURE_COUNT = 1;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.MapImpl <em>Map</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.MapImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMap()
+   * @generated
+   */
+  int MAP = 12;
+
+  /**
+   * The feature id for the '<em><b>Entries</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP__ENTRIES = 0;
+
+  /**
+   * The number of structural features of the '<em>Map</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.MapEntryImpl <em>Map Entry</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.MapEntryImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMapEntry()
+   * @generated
+   */
+  int MAP_ENTRY = 13;
+
+  /**
+   * The feature id for the '<em><b>Classifier</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_ENTRY__CLASSIFIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_ENTRY__VALUE = 1;
+
+  /**
+   * The number of structural features of the '<em>Map Entry</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MAP_ENTRY_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.LookupTableImpl <em>Lookup Table</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.LookupTableImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getLookupTable()
+   * @generated
+   */
+  int LOOKUP_TABLE = 14;
+
+  /**
+   * The feature id for the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOOKUP_TABLE__TABLE = 0;
+
+  /**
+   * The number of structural features of the '<em>Lookup Table</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOOKUP_TABLE_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.TableImpl <em>Table</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.TableImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getTable()
+   * @generated
+   */
+  int TABLE = 15;
+
+  /**
+   * The feature id for the '<em><b>Rows</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE__ROWS = 0;
+
+  /**
+   * The number of structural features of the '<em>Table</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.TableRowImpl <em>Table Row</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.TableRowImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getTableRow()
+   * @generated
+   */
+  int TABLE_ROW = 16;
+
+  /**
+   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_ROW__ELEMENTS = 0;
+
+  /**
+   * The number of structural features of the '<em>Table Row</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_ROW_FEATURE_COUNT = 1;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.KeyValuePairImpl <em>Key Value Pair</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -960,7 +1136,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 12;
+  int KEY_VALUE_PAIR = 17;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1006,7 +1182,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 13;
+  int FUNCTION = 18;
 
   /**
    * The feature id for the '<em><b>Mediated</b></em>' attribute.
@@ -1088,7 +1264,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 14;
+  int UNIT_ELEMENT = 19;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1134,7 +1310,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 15;
+  int REL_OPERATOR = 20;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -1207,7 +1383,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 16;
+  int UNIT = 21;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -1253,7 +1429,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 17;
+  int CURRENCY = 22;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1299,7 +1475,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 18;
+  int NUMBER = 23;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -1381,7 +1557,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 19;
+  int UNIT_OP = 24;
 
 
   /**
@@ -1984,6 +2160,17 @@ public interface KdlPackage extends EPackage
   EAttribute getClassifierRHS_String();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getMap <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Map</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ClassifierRHS#getMap()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EReference getClassifierRHS_Map();
+
+  /**
    * Returns the meta object for the attribute list '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getToResolve <em>To Resolve</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2037,6 +2224,28 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getClassifierRHS_Star();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#getExpr <em>Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expr</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ClassifierRHS#getExpr()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EAttribute getClassifierRHS_Expr();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS#isAnything <em>Anything</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Anything</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ClassifierRHS#isAnything()
+   * @see #getClassifierRHS()
+   * @generated
+   */
+  EAttribute getClassifierRHS_Anything();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.List <em>List</em>}'.
@@ -2254,28 +2463,6 @@ public interface KdlPackage extends EPackage
   EReference getValue_Urn();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Value#getUnit <em>Unit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Unit</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Value#getUnit()
-   * @see #getValue()
-   * @generated
-   */
-  EReference getValue_Unit();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Value#getCurrency <em>Currency</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Currency</em>'.
-   * @see org.integratedmodelling.kdl.kdl.Value#getCurrency()
-   * @see #getValue()
-   * @generated
-   */
-  EReference getValue_Currency();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Value#getList <em>List</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2285,6 +2472,28 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EReference getValue_List();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Value#getMap <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Map</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Value#getMap()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Map();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Value#getTable <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Table</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Value#getTable()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Table();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Value#getEnumId <em>Enum Id</em>}'.
@@ -2317,6 +2526,122 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getUrn_Name();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Map <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Map</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Map
+   * @generated
+   */
+  EClass getMap();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.Map#getEntries <em>Entries</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Entries</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Map#getEntries()
+   * @see #getMap()
+   * @generated
+   */
+  EReference getMap_Entries();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.MapEntry <em>Map Entry</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Map Entry</em>'.
+   * @see org.integratedmodelling.kdl.kdl.MapEntry
+   * @generated
+   */
+  EClass getMapEntry();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.MapEntry#getClassifier <em>Classifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Classifier</em>'.
+   * @see org.integratedmodelling.kdl.kdl.MapEntry#getClassifier()
+   * @see #getMapEntry()
+   * @generated
+   */
+  EReference getMapEntry_Classifier();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.MapEntry#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kdl.kdl.MapEntry#getValue()
+   * @see #getMapEntry()
+   * @generated
+   */
+  EReference getMapEntry_Value();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.LookupTable <em>Lookup Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Lookup Table</em>'.
+   * @see org.integratedmodelling.kdl.kdl.LookupTable
+   * @generated
+   */
+  EClass getLookupTable();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.LookupTable#getTable <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Table</em>'.
+   * @see org.integratedmodelling.kdl.kdl.LookupTable#getTable()
+   * @see #getLookupTable()
+   * @generated
+   */
+  EReference getLookupTable_Table();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Table <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Table</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Table
+   * @generated
+   */
+  EClass getTable();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.Table#getRows <em>Rows</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Rows</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Table#getRows()
+   * @see #getTable()
+   * @generated
+   */
+  EReference getTable_Rows();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.TableRow <em>Table Row</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Table Row</em>'.
+   * @see org.integratedmodelling.kdl.kdl.TableRow
+   * @generated
+   */
+  EClass getTableRow();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.TableRow#getElements <em>Elements</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Elements</em>'.
+   * @see org.integratedmodelling.kdl.kdl.TableRow#getElements()
+   * @see #getTableRow()
+   * @generated
+   */
+  EReference getTableRow_Elements();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.KeyValuePair <em>Key Value Pair</em>}'.
@@ -3226,6 +3551,14 @@ public interface KdlPackage extends EPackage
     EAttribute CLASSIFIER_RHS__STRING = eINSTANCE.getClassifierRHS_String();
 
     /**
+     * The meta object literal for the '<em><b>Map</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CLASSIFIER_RHS__MAP = eINSTANCE.getClassifierRHS_Map();
+
+    /**
      * The meta object literal for the '<em><b>To Resolve</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3264,6 +3597,22 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute CLASSIFIER_RHS__STAR = eINSTANCE.getClassifierRHS_Star();
+
+    /**
+     * The meta object literal for the '<em><b>Expr</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CLASSIFIER_RHS__EXPR = eINSTANCE.getClassifierRHS_Expr();
+
+    /**
+     * The meta object literal for the '<em><b>Anything</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CLASSIFIER_RHS__ANYTHING = eINSTANCE.getClassifierRHS_Anything();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ListImpl <em>List</em>}' class.
@@ -3436,28 +3785,28 @@ public interface KdlPackage extends EPackage
     EReference VALUE__URN = eINSTANCE.getValue_Urn();
 
     /**
-     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference VALUE__UNIT = eINSTANCE.getValue_Unit();
-
-    /**
-     * The meta object literal for the '<em><b>Currency</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference VALUE__CURRENCY = eINSTANCE.getValue_Currency();
-
-    /**
      * The meta object literal for the '<em><b>List</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference VALUE__LIST = eINSTANCE.getValue_List();
+
+    /**
+     * The meta object literal for the '<em><b>Map</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__MAP = eINSTANCE.getValue_Map();
+
+    /**
+     * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__TABLE = eINSTANCE.getValue_Table();
 
     /**
      * The meta object literal for the '<em><b>Enum Id</b></em>' attribute feature.
@@ -3484,6 +3833,104 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute URN__NAME = eINSTANCE.getUrn_Name();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.MapImpl <em>Map</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.MapImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMap()
+     * @generated
+     */
+    EClass MAP = eINSTANCE.getMap();
+
+    /**
+     * The meta object literal for the '<em><b>Entries</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MAP__ENTRIES = eINSTANCE.getMap_Entries();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.MapEntryImpl <em>Map Entry</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.MapEntryImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMapEntry()
+     * @generated
+     */
+    EClass MAP_ENTRY = eINSTANCE.getMapEntry();
+
+    /**
+     * The meta object literal for the '<em><b>Classifier</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MAP_ENTRY__CLASSIFIER = eINSTANCE.getMapEntry_Classifier();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MAP_ENTRY__VALUE = eINSTANCE.getMapEntry_Value();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.LookupTableImpl <em>Lookup Table</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.LookupTableImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getLookupTable()
+     * @generated
+     */
+    EClass LOOKUP_TABLE = eINSTANCE.getLookupTable();
+
+    /**
+     * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LOOKUP_TABLE__TABLE = eINSTANCE.getLookupTable_Table();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.TableImpl <em>Table</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.TableImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getTable()
+     * @generated
+     */
+    EClass TABLE = eINSTANCE.getTable();
+
+    /**
+     * The meta object literal for the '<em><b>Rows</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TABLE__ROWS = eINSTANCE.getTable_Rows();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.TableRowImpl <em>Table Row</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.TableRowImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getTableRow()
+     * @generated
+     */
+    EClass TABLE_ROW = eINSTANCE.getTableRow();
+
+    /**
+     * The meta object literal for the '<em><b>Elements</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TABLE_ROW__ELEMENTS = eINSTANCE.getTableRow_Elements();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.KeyValuePairImpl <em>Key Value Pair</em>}' class.

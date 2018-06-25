@@ -82,11 +82,19 @@ ACTOR:
 	
 TARGET:
 	'models' | 'concepts' | 'observers';
+
 ClassifierRHS:
-	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING |
-	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number |
-	nodata='unknown' | star?='*';
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? | 
+	num=Number | 
+	'in' set=List |
+	string=STRING |  
+	map=Map |
+	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | 
+	op=REL_OPERATOR expression=Number |
+	nodata='unknown' | 
+	star?='*'; 
+	
 List:
 	{List} '(' contents+=Value* ')';
 Literal:
@@ -100,8 +108,12 @@ Metadata:
 ParameterList:
 	values+=Value (',' values+=Value)* | pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
 Value:
-	literal=LiteralOrIdOrComma | function=Function | urn=Urn unit=Unit | currency=Currency | list=List |
-	enumId=UPPERCASE_ID;
+	literal=LiteralOrIdOrComma | 
+	function=Function | 
+	urn=Urn | 
+	list=List |
+	map=Map | 
+	table=LookupTable | enumId=UPPERCASE_ID;
 Urn:
 // String used when there are strange chars or keywords in the URN.
 	name=(UrnId | STRING | LocalFilePath);
@@ -112,6 +124,43 @@ Urn:
  */
 UrnId:
 	('urn:klab:')? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
+
+Map:
+	{Map} '{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+;
+
+MapEntry:
+	classifier=ClassifierRHS ':' value=Value
+;
+
+
+// Lookup table literal
+LookupTable: {LookupTable}
+	'{{' table=Table? '}}'
+;
+
+Table:
+	rows+=TableRow (',' rows+=TableRow)*;
+
+TableRow:
+	elements+=TableClassifier ('|' elements+=TableClassifier)*
+;
+
+TableClassifier returns ClassifierRHS:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+	'in' set=List | 
+	string=STRING | 
+	op=REL_OPERATOR expression=Number | 
+	expr=EXPR |
+	nodata='unknown' |
+	star?='*' |
+	anything?='#';
+
+terminal EXPR:
+	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
+	
 
 	/**
  * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends

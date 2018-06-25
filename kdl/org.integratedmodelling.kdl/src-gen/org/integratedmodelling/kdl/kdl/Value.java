@@ -17,9 +17,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getUrn <em>Urn</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getUnit <em>Unit</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getCurrency <em>Currency</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getList <em>List</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getMap <em>Map</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Value#getEnumId <em>Enum Id</em>}</li>
  * </ul>
  *
@@ -108,58 +108,6 @@ public interface Value extends EObject
   void setUrn(Urn value);
 
   /**
-   * Returns the value of the '<em><b>Unit</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Unit</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Unit</em>' containment reference.
-   * @see #setUnit(Unit)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getValue_Unit()
-   * @model containment="true"
-   * @generated
-   */
-  Unit getUnit();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Value#getUnit <em>Unit</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Unit</em>' containment reference.
-   * @see #getUnit()
-   * @generated
-   */
-  void setUnit(Unit value);
-
-  /**
-   * Returns the value of the '<em><b>Currency</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Currency</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Currency</em>' containment reference.
-   * @see #setCurrency(Currency)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getValue_Currency()
-   * @model containment="true"
-   * @generated
-   */
-  Currency getCurrency();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Value#getCurrency <em>Currency</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Currency</em>' containment reference.
-   * @see #getCurrency()
-   * @generated
-   */
-  void setCurrency(Currency value);
-
-  /**
    * Returns the value of the '<em><b>List</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
@@ -184,6 +132,58 @@ public interface Value extends EObject
    * @generated
    */
   void setList(List value);
+
+  /**
+   * Returns the value of the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Map</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Map</em>' containment reference.
+   * @see #setMap(Map)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getValue_Map()
+   * @model containment="true"
+   * @generated
+   */
+  Map getMap();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Value#getMap <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Map</em>' containment reference.
+   * @see #getMap()
+   * @generated
+   */
+  void setMap(Map value);
+
+  /**
+   * Returns the value of the '<em><b>Table</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Table</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Table</em>' containment reference.
+   * @see #setTable(LookupTable)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getValue_Table()
+   * @model containment="true"
+   * @generated
+   */
+  LookupTable getTable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Value#getTable <em>Table</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Table</em>' containment reference.
+   * @see #getTable()
+   * @generated
+   */
+  void setTable(LookupTable value);
 
   /**
    * Returns the value of the '<em><b>Enum Id</b></em>' attribute.
