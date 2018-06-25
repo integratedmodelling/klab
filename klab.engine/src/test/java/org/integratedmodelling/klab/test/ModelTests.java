@@ -84,6 +84,7 @@ public class ModelTests {
 	}
 	
 	@Test
+	@Ignore("fails due to bad projection data, not k.LAB")
 	public void nonStandardProjection() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test9.kim")).get();
 	}
@@ -99,7 +100,6 @@ public class ModelTests {
 	}
 	
 	@Test
-//	@Ignore
 	public void simpleClassification() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test12.kim")).get();
 	}

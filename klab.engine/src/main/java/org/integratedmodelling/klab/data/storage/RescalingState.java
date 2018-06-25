@@ -325,23 +325,25 @@ public class RescalingState extends Observation implements IState {
 
 	// Remaining functionality is delegated to original state
 
-	public boolean isDynamic() {
-		return delegate.isDynamic();
-	}
-
 	@Override
 	public long size() {
 		return delegate.size();
 	}
 
-	@Override
-	public IState as(IObservable observable) {
-		return delegate.as(observable);
-	}
+//	@Override
+//	public IState as(IObservable observable) {
+//		return delegate.as(observable);
+//	}
 
 	@Override
 	public IArtifact.Type getType() {
 		return delegate.getType();
+	}
+
+	@Override
+	public IState as(IArtifact.Type type) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

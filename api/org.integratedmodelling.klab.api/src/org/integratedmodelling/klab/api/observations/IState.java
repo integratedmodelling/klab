@@ -16,11 +16,13 @@
 package org.integratedmodelling.klab.api.observations;
 
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
- * A {@link org.integratedmodelling.klab.api.observations.IState} is the semantic {@link org.integratedmodelling.klab.api.observations.IObservation} that specializes a non-semantic
- * {@link IDataArtifact data artifact}. Its {@link #getObservable() observable} is always a quality.
+ * A {@link org.integratedmodelling.klab.api.observations.IState} is the
+ * semantic {@link org.integratedmodelling.klab.api.observations.IObservation}
+ * that specializes a non-semantic {@link IDataArtifact data artifact}. Its
+ * {@link #getObservable() observable} is always a quality.
  * <p>
  *
  * @author ferdinando.villa
@@ -28,31 +30,26 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
  */
 public interface IState extends IObservation, IDataArtifact {
 
-  /**
-   * True if the state has the same value overall independent of scale.
-   *
-   * @return true if constant
-   */
-  boolean isConstant();
+	/**
+	 * True if the state has the same value overall independent of scale. Used to
+	 * optimize visualization, computation and storage.
+	 *
+	 * @return true if constant
+	 */
+	boolean isConstant();
 
-  /**
-   * True if the state is expected to change at every time transition. This depends on semantics and
-   * context: it will be expected to change if the observable is affected by a process that exists
-   * in the context. States are expected to be changeable even if not dynamic, but will define their
-   * storage more conservatively (and less efficiently) if so.
-   *
-   * @return true if dynamic
-   */
-  boolean isDynamic();
-
-  /**
-   * Return either the original state or a wrapper that will allow get/set of values in a specified
-   * observation semantics.
-   *
-   * @param observable an observable that must be identical semantically but may have different
-   *        observation semantics, e.g. a "by" clause or different units/currencies.
-   * @return the (possibly wrapped) state
-   */
-  IState as(IObservable observable);
+	/**
+	 * If this is called with a type different from the original one returned by
+	 * {@link #getType()}, an additional layer of storage is created and a
+	 * corresponding state view is returned, preserving the mapping so that calling
+	 * {@link #as(org.integratedmodelling.klab.api.provenance.IArtifact.Type)} on
+	 * the returned state with the original type will yield back this state. This is
+	 * used to enable differently typed intermediate computations when creating an
+	 * artifact.
+	 * 
+	 * @param type
+	 * @return a typed view of this state.
+	 */
+	IState as(IArtifact.Type type);
 
 }

@@ -31,7 +31,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
-import org.integratedmodelling.klab.data.storage.StateStack;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -268,14 +267,14 @@ public class Actuator implements IActuator {
 
 		if (ret instanceof IState) {
 			/*
-			 * ensure we are using the appropriate state for the type, creating
-			 * a stack if necessary.
+			 * switch the storage in the state to the type needed in the compute chain,
+			 * creating a layer if necessary.
 			 */
-			ret = StateStack.get((IState)ret, contextualizer.getType(), ctx);
+			ret = ((IState) ret).as(contextualizer.getType());
 		}
-		
+
 		if (contextualizer instanceof IStateResolver) {
-			
+
 			/*
 			 * pass the distributed computation to the runtime provider for possible
 			 * parallelization instead of hard-coding a loop here.
@@ -444,7 +443,8 @@ public class Actuator implements IActuator {
 				nout++;
 			}
 
-			// UNCOMMENT TO OUTPUT SEMANTICS - FIXME should be an annotation on top of the actuator
+			// UNCOMMENT TO OUTPUT SEMANTICS - FIXME should be an annotation on top of the
+			// actuator
 			// to enable re-runs and the like
 			// if (observable != null) {
 			// ret += ofs + " " + "semantics " + getObservable().getDeclaration() + "\n";
@@ -510,7 +510,7 @@ public class Actuator implements IActuator {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public void setCreateObservation(boolean createObservation) {
 		this.createsObservation = createObservation;
 	}

@@ -53,23 +53,25 @@ public class MediatingState extends Observation implements IState {
 		return delegate.isConstant();
 	}
 
-	public boolean isDynamic() {
-		return delegate.isDynamic();
-	}
-
     @Override
     public long size() {
         return delegate.size();
     }
 
-    @Override
-    public IState as(IObservable observable) {
-        return delegate.as(observable);
-    }
+//    @Override
+//    public IState as(IObservable observable) {
+//        return delegate.as(observable);
+//    }
 
 	@Override
 	public IArtifact.Type getType() {
 		return delegate.getType();
+	}
+
+	@Override
+	public IState as(IArtifact.Type type) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

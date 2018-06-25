@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 
-import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
