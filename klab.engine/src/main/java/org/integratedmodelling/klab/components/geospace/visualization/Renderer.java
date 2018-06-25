@@ -13,6 +13,7 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -34,56 +35,70 @@ public enum Renderer {
 		// workspace
 	}
 
-	public void renderToImage(IState state, File imageFile, int[] viewport) {
-		
+	/**
+	 * Render a given state to an image within a specified viewport using settings
+	 * from annotations or defaults.
+	 * 
+	 * @param state
+	 * @param imageFile
+	 * @param viewport
+	 */
+	public void render(IState state, File imageFile, int[] viewport) {
+
+		if (state.getSpace() == null || !(state.getSpace() instanceof Space && ((Space)state.getSpace()).getGrid() != null)) {
+			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
+		}
+			
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 
-//        CoordinateReferenceSystem googleMercator = CRS.decode("EPSG:3857");
-//        ReferencedEnvelope mapExtent =
-//                new ReferencedEnvelope(
-//                        -20037508.34, 20037508.34, -20037508.34, 20037508.34, googleMercator);
-//        Rectangle screenSize =
-//                new Rectangle(200, (int) (mapExtent.getHeight() / mapExtent.getWidth() * 200));
-//        AffineTransform w2s = RendererUtilities.worldToScreenTransform(mapExtent, screenSize);
-//        GridCoverageRenderer renderer =
-//                new GridCoverageRenderer(googleMercator, mapExtent, screenSize, w2s);
-//        RasterSymbolizer rasterSymbolizer = new StyleBuilder().createRasterSymbolizer();
-//        RenderedImage image =
-//                renderer.renderImage(
-//                        worldPaletteReader,
-//                        null,
-//                        rasterSymbolizer,
-//                        Interpolation.getInstance(Interpolation.INTERP_BICUBIC),
-//                        null,
-//                        256,
-//                        256);
+		// CoordinateReferenceSystem googleMercator = CRS.decode("EPSG:3857");
+		// ReferencedEnvelope mapExtent =
+		// new ReferencedEnvelope(
+		// -20037508.34, 20037508.34, -20037508.34, 20037508.34, googleMercator);
+		// Rectangle screenSize =
+		// new Rectangle(200, (int) (mapExtent.getHeight() / mapExtent.getWidth() *
+		// 200));
+		// AffineTransform w2s = RendererUtilities.worldToScreenTransform(mapExtent,
+		// screenSize);
+		// GridCoverageRenderer renderer =
+		// new GridCoverageRenderer(googleMercator, mapExtent, screenSize, w2s);
+		// RasterSymbolizer rasterSymbolizer = new
+		// StyleBuilder().createRasterSymbolizer();
+		// RenderedImage image =
+		// renderer.renderImage(
+		// worldPaletteReader,
+		// null,
+		// rasterSymbolizer,
+		// Interpolation.getInstance(Interpolation.INTERP_BICUBIC),
+		// null,
+		// 256,
+		// 256);
 
-//		public static BufferedImage convertRenderedImage(RenderedImage img) {
-//			if (img instanceof BufferedImage) {
-//				return (BufferedImage) img;
-//			}
-//			ColorModel cm = img.getColorModel();
-//			int width = img.getWidth();
-//			int height = img.getHeight();
-//			WritableRaster raster = cm
-//					.createCompatibleWritableRaster(width, height);
-//			boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-//			Hashtable properties = new Hashtable();
-//			String[] keys = img.getPropertyNames();
-//			if (keys != null) {
-//				for (int i = 0; i < keys.length; i++) {
-//					properties.put(keys[i], img.getProperty(keys[i]));
-//				}
-//			}
-//			BufferedImage result = new BufferedImage(cm, raster,
-//					isAlphaPremultiplied, properties);
-//			img.copyData(raster);
-//			return result;
-//		}
-		
-		
-//		File outputfile = new File("image.jpg");
-//		ImageIO.write(bufferedImage, "jpg", outputfile);
+		// public static BufferedImage convertRenderedImage(RenderedImage img) {
+		// if (img instanceof BufferedImage) {
+		// return (BufferedImage) img;
+		// }
+		// ColorModel cm = img.getColorModel();
+		// int width = img.getWidth();
+		// int height = img.getHeight();
+		// WritableRaster raster = cm
+		// .createCompatibleWritableRaster(width, height);
+		// boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		// Hashtable properties = new Hashtable();
+		// String[] keys = img.getPropertyNames();
+		// if (keys != null) {
+		// for (int i = 0; i < keys.length; i++) {
+		// properties.put(keys[i], img.getProperty(keys[i]));
+		// }
+		// }
+		// BufferedImage result = new BufferedImage(cm, raster,
+		// isAlphaPremultiplied, properties);
+		// img.copyData(raster);
+		// return result;
+		// }
+
+		// File outputfile = new File("image.jpg");
+		// ImageIO.write(bufferedImage, "jpg", outputfile);
 	}
 
 	private RasterSymbolizer getRasterSymbolizer(IState state) {

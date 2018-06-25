@@ -1,0 +1,93 @@
+/**
+ * This file defines the contract for all core annotations recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+/**
+ * Deprecation
+ */
+annotation deprecated
+	"Add the @deprecated annotation to any object to add markers in the language notifying
+     users of the need to prepare for their future removal."
+{
+	
+	optional input defaultvalue
+		"A string description of the reason for deprecation and the suggested
+         alternatives."
+		default ""
+}
+
+/**
+ * Batch run: use CL parameters to enable multiple batch contexts
+ */
+annotation run for observers
+	"Mark a context for batch execution, specifying the observations to be made in it."
+{
+	optional input name 
+		"A name for this run. If given, the results will be saved in a subdirectory
+         of the same name." 
+		default ""
+	
+	optional input description 
+		"A description for this run, its parameters and intended outputs."
+		default ""
+			
+	optional input observations
+		"A list of the concepts or objects to observe in the context after it is resolved."
+		default ()
+
+	optional input visualize
+		"After resolving the observable, launch a suitable viewer for the context."
+		default false
+		
+	class org.integratedmodelling.klab.engine.apps.AppRunner
+}
+
+/**
+ * Batch unit test with optional assertions
+ */
+annotation test for observers
+	"Mark a context for execution as a test, specifying the observations to be made in it and
+     any checks to apply on the results."
+{
+	text input name 
+		"A name for this test. If given, the test logs will include it." 
+
+	optional input repeat
+		"Repeat the test the indicated number of times. Default is 1. Used to catch non-deterministic conditions."
+		default 1
+
+	optional input save 
+		"If given with a value of true, the result context will be saved in a directory
+         with the test name, or a random name if a name is not given." 
+		default false
+	
+	optional input description 
+		"A description for this test, its purpose, parameters and intended outputs."
+		default ""
+			
+	optional input observations
+		"A list of the concepts or objects to observe in the context after it is resolved."
+		default ()
+		
+	optional input assertions
+		"A list of functions or Groovy code fragments returning a boolean, to execute on the resulting
+         context (identified by the 'context' variable) after all observations are made. Any
+         fragment returning false or raising an exception causes the test to fail."
+		default ()
+
+	optional input resources
+		"A list of resource URNs that must be available in for the test to run. If the named resources
+		 are unavailable, a warning is emitted and the test terminates without failure."
+		default ()
+
+	optional input visualize
+		"After resolving the observable, launch a suitable viewer for the context."
+		default false
+
+	class org.integratedmodelling.klab.engine.apps.TestRunner
+
+}

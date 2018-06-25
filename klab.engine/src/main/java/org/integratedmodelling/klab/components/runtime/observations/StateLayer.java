@@ -11,10 +11,10 @@ public class StateLayer extends State implements IState {
 	public StateLayer(State state, IDataArtifact layer) {
 		super(state.getObservable(), state.getScale(), (RuntimeContext)state.getRuntimeContext(), layer);
 		this.delegate = state;
-		// overwrite with the original map
+		// share the layers map with the original layer
 		this.layers = state.layers;
 	}
-
+	
 	public IState as(org.integratedmodelling.klab.api.provenance.IArtifact.Type type) {
 		if (delegate.getType() == type) {
 			return delegate;
