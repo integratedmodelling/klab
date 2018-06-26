@@ -5274,12 +5274,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     addEEnumLiteral(dataTypeEEnum, DataType.TEXT);
     addEEnumLiteral(dataTypeEEnum, DataType.INTEGER);
     addEEnumLiteral(dataTypeEEnum, DataType.FLOAT);
-    addEEnumLiteral(dataTypeEEnum, DataType.DOUBLE);
     addEEnumLiteral(dataTypeEEnum, DataType.BOOLEAN);
     addEEnumLiteral(dataTypeEEnum, DataType.DATE);
-    addEEnumLiteral(dataTypeEEnum, DataType.POINT);
-    addEEnumLiteral(dataTypeEEnum, DataType.LINE);
-    addEEnumLiteral(dataTypeEEnum, DataType.POLYGON);
 
     initEEnum(unitOpEEnum, UnitOp.class, "UnitOp");
     addEEnumLiteral(unitOpEEnum, UnitOp.OVER);

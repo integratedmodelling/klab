@@ -45,3 +45,18 @@ annotation colormap
 		default true
 }
 
+annotation color 
+	"Specify color parameters for features to be displayed."
+{
+	optional input line 	
+		"Color for the line delineating the boundary"
+		default 'white'
+	
+	optional input fill
+		"Color for the polygon fill"
+		default 'white'
+		
+	optional input opacity
+		"Opacity of the fill color, 0 (transparent) to 1 (fully opaque)"
+		default 1.0
+}

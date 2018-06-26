@@ -14749,50 +14749,18 @@ ruleDataType returns [Enumerator current=null]
 		)
 		    |
 		(
-			enumLiteral_3='double'
+			enumLiteral_3='boolean'
 			{
-				$current = grammarAccess.getDataTypeAccess().getDOUBLEEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
-				newLeafNode(enumLiteral_3, grammarAccess.getDataTypeAccess().getDOUBLEEnumLiteralDeclaration_3());
+				$current = grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_3, grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_3());
 			}
 		)
 		    |
 		(
-			enumLiteral_4='boolean'
+			enumLiteral_4='date'
 			{
-				$current = grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_4().getEnumLiteral().getInstance();
-				newLeafNode(enumLiteral_4, grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_4());
-			}
-		)
-		    |
-		(
-			enumLiteral_5='date'
-			{
-				$current = grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_5().getEnumLiteral().getInstance();
-				newLeafNode(enumLiteral_5, grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_5());
-			}
-		)
-		    |
-		(
-			enumLiteral_6='point'
-			{
-				$current = grammarAccess.getDataTypeAccess().getPOINTEnumLiteralDeclaration_6().getEnumLiteral().getInstance();
-				newLeafNode(enumLiteral_6, grammarAccess.getDataTypeAccess().getPOINTEnumLiteralDeclaration_6());
-			}
-		)
-		    |
-		(
-			enumLiteral_7='line'
-			{
-				$current = grammarAccess.getDataTypeAccess().getLINEEnumLiteralDeclaration_7().getEnumLiteral().getInstance();
-				newLeafNode(enumLiteral_7, grammarAccess.getDataTypeAccess().getLINEEnumLiteralDeclaration_7());
-			}
-		)
-		    |
-		(
-			enumLiteral_8='polygon'
-			{
-				$current = grammarAccess.getDataTypeAccess().getPOLYGONEnumLiteralDeclaration_8().getEnumLiteral().getInstance();
-				newLeafNode(enumLiteral_8, grammarAccess.getDataTypeAccess().getPOLYGONEnumLiteralDeclaration_8());
+				$current = grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_4().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_4, grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_4());
 			}
 		)
 	)

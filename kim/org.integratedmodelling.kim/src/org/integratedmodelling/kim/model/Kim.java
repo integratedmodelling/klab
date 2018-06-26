@@ -50,6 +50,8 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
+import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
@@ -413,12 +415,28 @@ public enum Kim {
 		} else if (value.getList() != null) {
 			return parseList(value.getList(), namespace);
 		} else if (value.getMap() != null) {
-			// return parseMap(value.getMap(), namespace);
+			return parseMap(value.getMap(), namespace);
 		} else if (value.getTable() != null) {
-			// return parseTable(value.getTable(), namespace);
+			return parseTable(value.getTable(), /* FIXME? Tables as values are orphans */ null, namespace);
+		} else if (value.getConcept() != null) {
+			return declareConcept(value.getConcept());
 		}
 
 		return null;
+	}
+
+	private KimLookupTable parseTable(LookupTable table, IKimStatement parent, IKimNamespace namespace) {
+		KimLookupTable ret = new KimLookupTable(table, parent);
+		// TODO
+		return ret;
+	}
+
+	private  Map<?,?> parseMap(org.integratedmodelling.kim.kim.Map map, IKimNamespace namespace) {
+		Map<Object, Object> ret = new HashMap<>();
+		for (MapEntry entry : map.getEntries()) {
+			
+		}
+		return ret;
 	}
 
 	public List<?> parseList(org.integratedmodelling.kim.kim.List list, IKimNamespace namespace) {
@@ -437,12 +455,12 @@ public enum Kim {
 		return ret;
 	}
 
-	public Parameters parseMap(Metadata map, IKimNamespace namespace) {
+	
+	public Parameters parseMetadata(Metadata map, IKimNamespace namespace) {
 		Map<String, Object> ret = new HashMap<>();
 		// TODO
 		return new Parameters(ret);
 	}
-
 	public Object parseLiteral(Literal literal, IKimNamespace namespace) {
 		if (literal.getBoolean() != null) {
 			return Boolean.parseBoolean(literal.getBoolean());

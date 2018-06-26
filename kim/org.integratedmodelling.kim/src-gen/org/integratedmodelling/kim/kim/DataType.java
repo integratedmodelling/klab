@@ -52,16 +52,6 @@ public enum DataType implements Enumerator
   FLOAT(2, "FLOAT", "float"),
 
   /**
-   * The '<em><b>DOUBLE</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #DOUBLE_VALUE
-   * @generated
-   * @ordered
-   */
-  DOUBLE(3, "DOUBLE", "double"),
-
-  /**
    * The '<em><b>BOOLEAN</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -69,7 +59,7 @@ public enum DataType implements Enumerator
    * @generated
    * @ordered
    */
-  BOOLEAN(4, "BOOLEAN", "boolean"),
+  BOOLEAN(3, "BOOLEAN", "boolean"),
 
   /**
    * The '<em><b>DATE</b></em>' literal object.
@@ -79,37 +69,7 @@ public enum DataType implements Enumerator
    * @generated
    * @ordered
    */
-  DATE(5, "DATE", "date"),
-
-  /**
-   * The '<em><b>POINT</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #POINT_VALUE
-   * @generated
-   * @ordered
-   */
-  POINT(6, "POINT", "point"),
-
-  /**
-   * The '<em><b>LINE</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #LINE_VALUE
-   * @generated
-   * @ordered
-   */
-  LINE(7, "LINE", "line"),
-
-  /**
-   * The '<em><b>POLYGON</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #POLYGON_VALUE
-   * @generated
-   * @ordered
-   */
-  POLYGON(8, "POLYGON", "polygon");
+  DATE(4, "DATE", "date");
 
   /**
    * The '<em><b>TEXT</b></em>' literal value.
@@ -157,21 +117,6 @@ public enum DataType implements Enumerator
   public static final int FLOAT_VALUE = 2;
 
   /**
-   * The '<em><b>DOUBLE</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>DOUBLE</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @see #DOUBLE
-   * @model literal="double"
-   * @generated
-   * @ordered
-   */
-  public static final int DOUBLE_VALUE = 3;
-
-  /**
    * The '<em><b>BOOLEAN</b></em>' literal value.
    * <!-- begin-user-doc -->
    * <p>
@@ -184,7 +129,7 @@ public enum DataType implements Enumerator
    * @generated
    * @ordered
    */
-  public static final int BOOLEAN_VALUE = 4;
+  public static final int BOOLEAN_VALUE = 3;
 
   /**
    * The '<em><b>DATE</b></em>' literal value.
@@ -199,52 +144,7 @@ public enum DataType implements Enumerator
    * @generated
    * @ordered
    */
-  public static final int DATE_VALUE = 5;
-
-  /**
-   * The '<em><b>POINT</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>POINT</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @see #POINT
-   * @model literal="point"
-   * @generated
-   * @ordered
-   */
-  public static final int POINT_VALUE = 6;
-
-  /**
-   * The '<em><b>LINE</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>LINE</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @see #LINE
-   * @model literal="line"
-   * @generated
-   * @ordered
-   */
-  public static final int LINE_VALUE = 7;
-
-  /**
-   * The '<em><b>POLYGON</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>POLYGON</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @see #POLYGON
-   * @model literal="polygon"
-   * @generated
-   * @ordered
-   */
-  public static final int POLYGON_VALUE = 8;
+  public static final int DATE_VALUE = 4;
 
   /**
    * An array of all the '<em><b>Data Type</b></em>' enumerators.
@@ -258,12 +158,8 @@ public enum DataType implements Enumerator
       TEXT,
       INTEGER,
       FLOAT,
-      DOUBLE,
       BOOLEAN,
       DATE,
-      POINT,
-      LINE,
-      POLYGON,
     };
 
   /**
@@ -331,12 +227,8 @@ public enum DataType implements Enumerator
       case TEXT_VALUE: return TEXT;
       case INTEGER_VALUE: return INTEGER;
       case FLOAT_VALUE: return FLOAT;
-      case DOUBLE_VALUE: return DOUBLE;
       case BOOLEAN_VALUE: return BOOLEAN;
       case DATE_VALUE: return DATE;
-      case POINT_VALUE: return POINT;
-      case LINE_VALUE: return LINE;
-      case POLYGON_VALUE: return POLYGON;
     }
     return null;
   }

@@ -8606,33 +8606,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cINTEGERIntegerKeyword_1_0 = (Keyword)cINTEGEREnumLiteralDeclaration_1.eContents().get(0);
 		private final EnumLiteralDeclaration cFLOATEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
 		private final Keyword cFLOATFloatKeyword_2_0 = (Keyword)cFLOATEnumLiteralDeclaration_2.eContents().get(0);
-		private final EnumLiteralDeclaration cDOUBLEEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
-		private final Keyword cDOUBLEDoubleKeyword_3_0 = (Keyword)cDOUBLEEnumLiteralDeclaration_3.eContents().get(0);
-		private final EnumLiteralDeclaration cBOOLEANEnumLiteralDeclaration_4 = (EnumLiteralDeclaration)cAlternatives.eContents().get(4);
-		private final Keyword cBOOLEANBooleanKeyword_4_0 = (Keyword)cBOOLEANEnumLiteralDeclaration_4.eContents().get(0);
-		private final EnumLiteralDeclaration cDATEEnumLiteralDeclaration_5 = (EnumLiteralDeclaration)cAlternatives.eContents().get(5);
-		private final Keyword cDATEDateKeyword_5_0 = (Keyword)cDATEEnumLiteralDeclaration_5.eContents().get(0);
-		private final EnumLiteralDeclaration cPOINTEnumLiteralDeclaration_6 = (EnumLiteralDeclaration)cAlternatives.eContents().get(6);
-		private final Keyword cPOINTPointKeyword_6_0 = (Keyword)cPOINTEnumLiteralDeclaration_6.eContents().get(0);
-		private final EnumLiteralDeclaration cLINEEnumLiteralDeclaration_7 = (EnumLiteralDeclaration)cAlternatives.eContents().get(7);
-		private final Keyword cLINELineKeyword_7_0 = (Keyword)cLINEEnumLiteralDeclaration_7.eContents().get(0);
-		private final EnumLiteralDeclaration cPOLYGONEnumLiteralDeclaration_8 = (EnumLiteralDeclaration)cAlternatives.eContents().get(8);
-		private final Keyword cPOLYGONPolygonKeyword_8_0 = (Keyword)cPOLYGONEnumLiteralDeclaration_8.eContents().get(0);
+		private final EnumLiteralDeclaration cBOOLEANEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
+		private final Keyword cBOOLEANBooleanKeyword_3_0 = (Keyword)cBOOLEANEnumLiteralDeclaration_3.eContents().get(0);
+		private final EnumLiteralDeclaration cDATEEnumLiteralDeclaration_4 = (EnumLiteralDeclaration)cAlternatives.eContents().get(4);
+		private final Keyword cDATEDateKeyword_4_0 = (Keyword)cDATEEnumLiteralDeclaration_4.eContents().get(0);
 		
 		//enum DataType:
 		//	TEXT='text' |
 		//	INTEGER='integer' |
 		//	FLOAT='float' |
-		//	DOUBLE='double' |
 		//	BOOLEAN='boolean' |
-		//	DATE='date' |
-		//	POINT='point' |
-		//	LINE='line' |
-		//	POLYGON='polygon';
+		//	DATE='date';
 		public EnumRule getRule() { return rule; }
 		
-		//TEXT='text' | INTEGER='integer' | FLOAT='float' | DOUBLE='double' | BOOLEAN='boolean' | DATE='date' | POINT='point' |
-		//LINE='line' | POLYGON='polygon'
+		//TEXT='text' | INTEGER='integer' | FLOAT='float' | BOOLEAN='boolean' | DATE='date'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//TEXT='text'
@@ -8653,41 +8640,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'float'
 		public Keyword getFLOATFloatKeyword_2_0() { return cFLOATFloatKeyword_2_0; }
 		
-		//DOUBLE='double'
-		public EnumLiteralDeclaration getDOUBLEEnumLiteralDeclaration_3() { return cDOUBLEEnumLiteralDeclaration_3; }
-		
-		//'double'
-		public Keyword getDOUBLEDoubleKeyword_3_0() { return cDOUBLEDoubleKeyword_3_0; }
-		
 		//BOOLEAN='boolean'
-		public EnumLiteralDeclaration getBOOLEANEnumLiteralDeclaration_4() { return cBOOLEANEnumLiteralDeclaration_4; }
+		public EnumLiteralDeclaration getBOOLEANEnumLiteralDeclaration_3() { return cBOOLEANEnumLiteralDeclaration_3; }
 		
 		//'boolean'
-		public Keyword getBOOLEANBooleanKeyword_4_0() { return cBOOLEANBooleanKeyword_4_0; }
+		public Keyword getBOOLEANBooleanKeyword_3_0() { return cBOOLEANBooleanKeyword_3_0; }
 		
 		//DATE='date'
-		public EnumLiteralDeclaration getDATEEnumLiteralDeclaration_5() { return cDATEEnumLiteralDeclaration_5; }
+		public EnumLiteralDeclaration getDATEEnumLiteralDeclaration_4() { return cDATEEnumLiteralDeclaration_4; }
 		
 		//'date'
-		public Keyword getDATEDateKeyword_5_0() { return cDATEDateKeyword_5_0; }
-		
-		//POINT='point'
-		public EnumLiteralDeclaration getPOINTEnumLiteralDeclaration_6() { return cPOINTEnumLiteralDeclaration_6; }
-		
-		//'point'
-		public Keyword getPOINTPointKeyword_6_0() { return cPOINTPointKeyword_6_0; }
-		
-		//LINE='line'
-		public EnumLiteralDeclaration getLINEEnumLiteralDeclaration_7() { return cLINEEnumLiteralDeclaration_7; }
-		
-		//'line'
-		public Keyword getLINELineKeyword_7_0() { return cLINELineKeyword_7_0; }
-		
-		//POLYGON='polygon'
-		public EnumLiteralDeclaration getPOLYGONEnumLiteralDeclaration_8() { return cPOLYGONEnumLiteralDeclaration_8; }
-		
-		//'polygon'
-		public Keyword getPOLYGONPolygonKeyword_8_0() { return cPOLYGONPolygonKeyword_8_0; }
+		public Keyword getDATEDateKeyword_4_0() { return cDATEDateKeyword_4_0; }
 	}
 	public class UnitOpElements extends AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UnitOp");
@@ -9761,12 +9724,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	TEXT='text' |
 	//	INTEGER='integer' |
 	//	FLOAT='float' |
-	//	DOUBLE='double' |
 	//	BOOLEAN='boolean' |
-	//	DATE='date' |
-	//	POINT='point' |
-	//	LINE='line' |
-	//	POLYGON='polygon';
+	//	DATE='date';
 	public DataTypeElements getDataTypeAccess() {
 		return eDataType;
 	}

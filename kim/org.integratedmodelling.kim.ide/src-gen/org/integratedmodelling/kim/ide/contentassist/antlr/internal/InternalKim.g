@@ -6088,39 +6088,15 @@ rule__DataType__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getDataTypeAccess().getDOUBLEEnumLiteralDeclaration_3()); }
-		('double')
-		{ after(grammarAccess.getDataTypeAccess().getDOUBLEEnumLiteralDeclaration_3()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_4()); }
+		{ before(grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_3()); }
 		('boolean')
-		{ after(grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_4()); }
+		{ after(grammarAccess.getDataTypeAccess().getBOOLEANEnumLiteralDeclaration_3()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_5()); }
+		{ before(grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_4()); }
 		('date')
-		{ after(grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_5()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getDataTypeAccess().getPOINTEnumLiteralDeclaration_6()); }
-		('point')
-		{ after(grammarAccess.getDataTypeAccess().getPOINTEnumLiteralDeclaration_6()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getDataTypeAccess().getLINEEnumLiteralDeclaration_7()); }
-		('line')
-		{ after(grammarAccess.getDataTypeAccess().getLINEEnumLiteralDeclaration_7()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getDataTypeAccess().getPOLYGONEnumLiteralDeclaration_8()); }
-		('polygon')
-		{ after(grammarAccess.getDataTypeAccess().getPOLYGONEnumLiteralDeclaration_8()); }
+		{ after(grammarAccess.getDataTypeAccess().getDATEEnumLiteralDeclaration_4()); }
 	)
 ;
 finally {

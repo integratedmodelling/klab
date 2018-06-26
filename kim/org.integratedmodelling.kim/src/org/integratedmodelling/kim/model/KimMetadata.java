@@ -20,7 +20,7 @@ public class KimMetadata extends KimStatement implements IKimMetadata {
 
   public KimMetadata(Metadata statement, IKimStatement parent) {
     super(statement, parent);
-    this.data = Kim.INSTANCE.parseMap(statement,
+    this.data = Kim.INSTANCE.parseMetadata(statement,
         Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement), false));
   }
 

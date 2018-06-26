@@ -689,12 +689,8 @@ enum DataType:
 	TEXT='text' |
 	INTEGER='integer' |
 	FLOAT='float' |
-	DOUBLE='double' |
 	BOOLEAN='boolean' |
-	DATE='date' |
-	POINT='point' |
-	LINE='line' |
-	POLYGON='polygon';
+	DATE='date';
 
 	/**
  * Carefully selected keywords to define a concept, which enable automatic definition of
