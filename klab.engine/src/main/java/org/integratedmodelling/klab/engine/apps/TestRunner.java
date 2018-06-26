@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 public class TestRunner implements Annotations.Handler {
 
 	@Override
-	public Object process(IKimObject target, IParameters arguments, IMonitor monitor) throws Exception {
+	public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
 
 		String id = arguments.get("name", "unnamed test");
 		int repetitions = arguments.get("repeat", 1);

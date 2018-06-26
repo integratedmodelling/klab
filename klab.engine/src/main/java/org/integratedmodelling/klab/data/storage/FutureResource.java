@@ -88,7 +88,7 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).getHistory();
 	}
 
-	public IParameters getParameters() {
+	public IParameters<String> getParameters() {
 		return getDelegate(timeout).getParameters();
 	}
 

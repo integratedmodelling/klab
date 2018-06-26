@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class Metadata extends Parameters implements IMetadata {
+public class Metadata extends Parameters<String> implements IMetadata {
 
   /**
    * Instantiates a new metadata.

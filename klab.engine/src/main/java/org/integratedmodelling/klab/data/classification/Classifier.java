@@ -169,7 +169,7 @@ public class Classifier implements IClassifier {
 				 * TODO find an elegant way to communicate external parameter maps, and set
 				 * :self = o in it.
 				 */
-				Parameters parms = new Parameters();
+				Parameters<String> parms = new Parameters<>();
 				parms.put("self", o);
 				// FIXME pass a proper monitor
 				return negated

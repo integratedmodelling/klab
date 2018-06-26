@@ -21,7 +21,7 @@ public class Import implements ICommand {
 
 		String adapter = call.getParameters().get("adapter", String.class);
 		String projectId = call.getParameters().get("project", String.class);
-		Parameters parameters = new Parameters();
+		Parameters<String> parameters = new Parameters<>();
 		IProject project = Resources.INSTANCE.getLocalWorkspace().getProject(projectId);
 
 		if (project == null) {

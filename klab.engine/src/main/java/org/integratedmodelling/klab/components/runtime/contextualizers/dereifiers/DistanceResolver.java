@@ -29,7 +29,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 	public DistanceResolver() {
 	}
 
-	public DistanceResolver(IParameters parameters, IComputationContext context) {
+	public DistanceResolver(IParameters<String> parameters, IComputationContext context) {
 		// TODO Auto-generated constructor stub
 	}
 

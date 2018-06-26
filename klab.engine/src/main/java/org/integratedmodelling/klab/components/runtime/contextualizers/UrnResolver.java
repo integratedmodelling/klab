@@ -43,7 +43,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		// TODO resolve URN, generate the appropriate contextualizer for type and
 		// geometry
 		// TODO support multiple URNs

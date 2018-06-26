@@ -39,6 +39,6 @@ public interface IExpression {
    * @return the result of evaluating the expression
    * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
    */
-  Object eval(IParameters parameters, IComputationContext context) throws KlabException;
+  Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException;
 
 }

@@ -51,7 +51,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IComputationContext extends IParameters {
+public interface IComputationContext extends IParameters<String> {
 
 	/**
 	 * The namespace of reference in this context. Usually that of the running model

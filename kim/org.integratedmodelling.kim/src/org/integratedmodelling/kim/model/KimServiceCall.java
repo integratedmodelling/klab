@@ -25,7 +25,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	private static final long serialVersionUID = 8447771460330621498L;
 
 	protected String name;
-	protected Parameters parameters = new Parameters();
+	protected Parameters<String> parameters = new Parameters();
 
 	protected KimServiceCall(EObject object, IKimStatement parent) {
 		super(object, parent);
@@ -137,7 +137,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	}
 
 	@Override
-	public Parameters getParameters() {
+	public Parameters<String> getParameters() {
 		return parameters;
 	}
 
@@ -145,7 +145,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 		this.name = name;
 	}
 
-	public void setParameters(Parameters parameters) {
+	public void setParameters(Parameters<String> parameters) {
 		this.parameters = parameters;
 	}
 

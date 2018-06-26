@@ -576,7 +576,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IParameters getParameters() {
+		public IParameters<String> getParameters() {
 			return baseDimension.getParameters();
 		}
 

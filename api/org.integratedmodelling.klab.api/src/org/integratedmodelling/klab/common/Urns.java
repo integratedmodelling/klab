@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.Path;
 
 /**
  * This class encodes the rules for creating URNs that describe local resources:

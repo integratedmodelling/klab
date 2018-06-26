@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 public abstract class Expression implements IExpression {
 
   // A dummy context to use when we don't have a context to pass
-  private static class Context extends Parameters implements IComputationContext {
+  private static class Context extends Parameters<String> implements IComputationContext {
 
     private IMonitor monitor;
     private INamespace namespace;

@@ -31,6 +31,6 @@ public interface IServiceCall extends IKimStatement {
 	 * @return the parameters for the call. See {@link #DEFAULT_PARAMETER_NAME} for
 	 *         naming rules if no names are given.
 	 */
-	Parameters getParameters();
+	Parameters<String> getParameters();
 
 }

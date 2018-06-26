@@ -19,7 +19,7 @@ public class TerrainService implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new TerrainService();
 	}
 

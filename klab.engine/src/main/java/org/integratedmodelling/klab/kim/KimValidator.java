@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -30,6 +33,30 @@ public class KimValidator implements Kim.Validator {
 	public KimValidator(Monitor monitor) {
 		this.monitor = monitor;
 	}
+	
+	public static Map<Object, Object> compileMapLiteral(Map<?,?> mapLiteral) {
+		
+		Map<Object,Object> ret = new HashMap<>();
+		
+		for (Object key : mapLiteral.keySet()) {
+			Object value = mapLiteral.get(key);
+			if (value instanceof IKimConcept) {
+				value = Concepts.INSTANCE.declare((IKimConcept) value);
+			} else if (value instanceof IKimExpression) {
+				value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
+						((IKimExpression) value).getLanguage());
+			} else if (value instanceof IKimLookupTable) {
+				// TODO table
+			} else if (value instanceof Map) {
+				value = compileMapLiteral((Map<?,?>)value);
+			}
+
+			ret.put(key, value);
+		}
+		
+		return ret;
+	}
+	
 
 	@Override
 	public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IArtifact.Type> expectedType) {

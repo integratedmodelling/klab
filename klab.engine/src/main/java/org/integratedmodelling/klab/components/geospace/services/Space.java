@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.utils.Pair;
 public class Space implements IExpression {
 
   @Override
-  public Object eval(IParameters parameters, IComputationContext context)
+  public Object eval(IParameters<String> parameters, IComputationContext context)
       throws KlabException {
 
     Shape shape = null;

@@ -15,6 +15,6 @@ public interface IKimMetadata extends IKimStatement {
 	 * 
 	 * @return the data
 	 */
-	public IParameters getData();
+	public IParameters<String> getData();
 	
 }

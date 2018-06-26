@@ -1,27 +1,24 @@
 package org.integratedmodelling.klab.model;
 
+import java.util.Map;
+
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.utils.Parameters;
 
-public class Annotation extends Parameters implements IAnnotation {
+public class Annotation extends Parameters<Object> implements IAnnotation {
 
 	String name;
 
 	public Annotation(IKimAnnotation statement) {
 		this.name = statement.getName();
-		for (String key : statement.getParameters().keySet()) {
-			Object value = statement.getParameters().get(key);
-			if (value instanceof IKimConcept) {
-				value = Concepts.INSTANCE.declare((IKimConcept) value);
-			}
-
-			// TODO table
-
-			this.put(key, value);
-		}
+		this.putAll(KimValidator.compileMapLiteral(statement.getParameters()));
 	}
 
 	@Override

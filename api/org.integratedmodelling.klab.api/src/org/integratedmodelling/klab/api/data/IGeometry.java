@@ -187,7 +187,7 @@ public interface IGeometry extends Serializable, ILocator {
          * 
          * @return the parameters
          */
-        IParameters getParameters();
+        IParameters<String> getParameters();
 
     }
 

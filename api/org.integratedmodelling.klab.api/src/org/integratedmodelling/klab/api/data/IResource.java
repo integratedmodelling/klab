@@ -117,7 +117,7 @@ public interface IResource extends Serializable {
 	 *
 	 * @return parameter map, possibly empty, never null.
 	 */
-	IParameters getParameters();
+	IParameters<String> getParameters();
 
 	/**
 	 * The type of the artifact produced. 
@@ -258,7 +258,7 @@ public interface IResource extends Serializable {
 		 * @param parameters a parameters object
 		 * @return the builder itself
 		 */
-		Builder withParameters(IParameters parameters);
+		Builder withParameters(IParameters<String> parameters);
 
 	}
 

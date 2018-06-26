@@ -494,7 +494,7 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	@Override
-	public IParameters getParameters() {
+	public IParameters<String> getParameters() {
 		return baseDimension.getParameters();
 	}
 

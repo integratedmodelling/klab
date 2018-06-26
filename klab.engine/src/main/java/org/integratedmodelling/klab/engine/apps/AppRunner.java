@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 public class AppRunner implements Annotations.Handler {
 
   @Override
-  public Object process(IKimObject target, IParameters arguments, IMonitor monitor) throws Exception {
+  public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
 
     if (!(arguments.get("observations") instanceof List)) {
         monitor.warn("run annotation does not specify observations");

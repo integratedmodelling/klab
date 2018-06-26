@@ -47,7 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RasterValidator implements IResourceValidator {
 
 	@Override
-	public IResource.Builder validate(URL url, IParameters userData, IMonitor monitor) {
+	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
 		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IArtifact.Type.NUMBER);
 
@@ -136,7 +136,7 @@ public class RasterValidator implements IResourceValidator {
 	}
 
 	@Override
-	public boolean canHandle(File resource, IParameters parameters) {
+	public boolean canHandle(File resource, IParameters<String> parameters) {
 
 		if (resource == null) {
 			return false;

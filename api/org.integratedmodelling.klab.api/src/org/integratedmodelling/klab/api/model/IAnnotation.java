@@ -11,7 +11,7 @@ import org.integratedmodelling.kim.api.IParameters;
  * @author Ferd
  *
  */
-public interface IAnnotation extends IParameters {
+public interface IAnnotation extends IParameters<Object> {
 
 	/**
 	 * The name of the annotation.

@@ -50,7 +50,7 @@ public interface IResourceValidator {
 	 * @return a builder for the resource, containing any validation errors. Never
 	 *         null.
 	 */
-	Builder validate(URL url, IParameters userData, IMonitor monitor);
+	Builder validate(URL url, IParameters<String> userData, IMonitor monitor);
 
 	/**
 	 * Check if the passed file and/or parameters can be validated by this
@@ -62,7 +62,7 @@ public interface IResourceValidator {
 	 *            parameters associated with a creation request. Can be empty.
 	 * @return true if input can be validated
 	 */
-	boolean canHandle(File resource, IParameters parameters);
+	boolean canHandle(File resource, IParameters<String> parameters);
 
 	/**
 	 * Return all the files that make up a resource identified by the main file imported, including

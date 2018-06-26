@@ -260,7 +260,7 @@ public enum Resources implements IResourceService {
 	}
 
 	// @Override
-	public List<IResourceAdapter> getResourceAdapter(File resource, IParameters parameters) {
+	public List<IResourceAdapter> getResourceAdapter(File resource, IParameters<String> parameters) {
 		List<IResourceAdapter> ret = new ArrayList<>();
 		for (IResourceAdapter adapter : resourceAdapters.values()) {
 			if (adapter.getValidator().canHandle(resource, parameters)) {
@@ -304,7 +304,7 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public IResource createLocalResource(String resourceId, File file, IParameters parameters, IProject project,
+	public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters, IProject project,
 			String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
 
 		IUserIdentity user = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(IUserIdentity.class);
@@ -350,7 +350,7 @@ public enum Resources implements IResourceService {
 	}
 
 	private IResource importResource(String urn, IProject project, String adapterType, File file,
-			IParameters parameters, Version version, List<IResource> history, IMonitor monitor) {
+			IParameters<String> parameters, Version version, List<IResource> history, IMonitor monitor) {
 
 		String id = Path.getLast(urn, ':');
 		List<Throwable> errors = new ArrayList<>();
@@ -442,7 +442,7 @@ public enum Resources implements IResourceService {
 	}
 
 	private FutureResource importResourceAsynchronously(String urn, IProject project, String adapterType, File file,
-			IParameters parameters, Version version, List<IResource> history, IMonitor monitor) {
+			IParameters<String> parameters, Version version, List<IResource> history, IMonitor monitor) {
 		// TODO create future, send it for execution, return it. The future knows its
 		// URN so it can be used for basic ops.
 		return null;

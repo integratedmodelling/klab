@@ -39,7 +39,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class WfsValidator extends VectorValidator {
 
 	@Override
-	public IResource.Builder validate(URL url, IParameters userData, IMonitor monitor) {
+	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
 		if (!canHandle(null, userData)) {
 			throw new IllegalArgumentException("WFS specifications are invalid or incomplete");
@@ -73,7 +73,7 @@ public class WfsValidator extends VectorValidator {
 	}
 
 	@Override
-	public boolean canHandle(File resource, IParameters parameters) {
+	public boolean canHandle(File resource, IParameters<String> parameters) {
 		return resource == null && parameters.contains("serviceUrl") && parameters.contains("wfsIdentifier");
 	}
 

@@ -16,11 +16,11 @@ import org.integratedmodelling.kim.api.IParameters;
  * @author ferdinando.villa
  *
  */
-public class Parameters implements Map<String, Object>, IParameters {
+public class Parameters<T> implements IParameters<T> {
 
-  private Map<String, Object> delegate;
+  private Map<T, Object> delegate;
 
-  public Parameters(Map<String, Object> delegate) {
+  public Parameters(Map<T, Object> delegate) {
     this.delegate = delegate;
   }
   
@@ -29,12 +29,12 @@ public class Parameters implements Map<String, Object>, IParameters {
    * 
    * @return a map with all data
    */
-  public Map<String,Object> getData() {
+  public Map<T,Object> getData() {
     return delegate;
   }
 
   @Override
-  public <T> T get(String name, T defaultValue) {
+  public <K> K get(T name, K defaultValue) {
     Object ret = get(name);
     if (ret == null) {
       return defaultValue;
@@ -43,7 +43,7 @@ public class Parameters implements Map<String, Object>, IParameters {
   }
 
   @Override
-  public <T> T get(String name, Class<? extends T> cls) {
+  public <K> K get(T name, Class<? extends K> cls) {
     Object ret = get(name);
     if (ret == null) {
       return null;
@@ -76,7 +76,7 @@ public class Parameters implements Map<String, Object>, IParameters {
     return delegate.get(key);
   }
 
-  public Object put(String key, Object value) {
+  public Object put(T key, Object value) {
     return delegate.put(key, value);
   }
 
@@ -84,7 +84,7 @@ public class Parameters implements Map<String, Object>, IParameters {
     return delegate.remove(key);
   }
 
-  public void putAll(Map<? extends String, ? extends Object> m) {
+  public void putAll(Map<? extends T, ? extends Object> m) {
     delegate.putAll(m);
   }
 
@@ -92,7 +92,7 @@ public class Parameters implements Map<String, Object>, IParameters {
     delegate.clear();
   }
 
-  public Set<String> keySet() {
+  public Set<T> keySet() {
     return delegate.keySet();
   }
 
@@ -100,7 +100,7 @@ public class Parameters implements Map<String, Object>, IParameters {
     return delegate.values();
   }
 
-  public Set<Entry<String, Object>> entrySet() {
+  public Set<Entry<T, Object>> entrySet() {
     return delegate.entrySet();
   }
 
@@ -116,15 +116,15 @@ public class Parameters implements Map<String, Object>, IParameters {
     return delegate.getOrDefault(key, defaultValue);
   }
 
-  public void forEach(BiConsumer<? super String, ? super Object> action) {
+  public void forEach(BiConsumer<? super T, ? super Object> action) {
     delegate.forEach(action);
   }
 
-  public void replaceAll(BiFunction<? super String, ? super Object, ? extends Object> function) {
+  public void replaceAll(BiFunction<? super T, ? super Object, ? extends Object> function) {
     delegate.replaceAll(function);
   }
 
-  public Object putIfAbsent(String key, Object value) {
+  public Object putIfAbsent(T key, Object value) {
     return delegate.putIfAbsent(key, value);
   }
 
@@ -132,41 +132,41 @@ public class Parameters implements Map<String, Object>, IParameters {
     return delegate.remove(key, value);
   }
 
-  public boolean replace(String key, Object oldValue, Object newValue) {
+  public boolean replace(T key, Object oldValue, Object newValue) {
     return delegate.replace(key, oldValue, newValue);
   }
 
-  public Object replace(String key, Object value) {
+  public Object replace(T key, Object value) {
     return delegate.replace(key, value);
   }
 
-  public Object computeIfAbsent(String key,
-      Function<? super String, ? extends Object> mappingFunction) {
+  public Object computeIfAbsent(T key,
+      Function<? super T, ? extends Object> mappingFunction) {
     return delegate.computeIfAbsent(key, mappingFunction);
   }
 
-  public Object computeIfPresent(String key,
-      BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+  public Object computeIfPresent(T key,
+      BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
     return delegate.computeIfPresent(key, remappingFunction);
   }
 
-  public Object compute(String key,
-      BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+  public Object compute(T key,
+      BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
     return delegate.compute(key, remappingFunction);
   }
 
-  public Object merge(String key, Object value,
+  public Object merge(T key, Object value,
       BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
     return delegate.merge(key, value, remappingFunction);
   }
 
   @Override
-  public boolean contains(String key) {
+  public boolean contains(T key) {
     return delegate.get(key) != null;
   }
 
   @Override
-  public boolean contains(String key, Class<?> cls) {
+  public boolean contains(T key, Class<?> cls) {
     Object obj = delegate.get(key);
     return obj != null && cls.isAssignableFrom(obj.getClass());
   }

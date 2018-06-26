@@ -63,7 +63,7 @@ import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 public class VectorValidator implements IResourceValidator {
 
 	@Override
-	public IResource.Builder validate(URL url, IParameters userData, IMonitor monitor) {
+	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
 		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
 
@@ -95,7 +95,7 @@ public class VectorValidator implements IResourceValidator {
 	}
 
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
-			IParameters userData, IMonitor monitor) throws IOException {
+			IParameters<String> userData, IMonitor monitor) throws IOException {
 
 		
 		
@@ -203,7 +203,7 @@ public class VectorValidator implements IResourceValidator {
 	}
 
 	@Override
-	public boolean canHandle(File resource, IParameters parameters) {
+	public boolean canHandle(File resource, IParameters<String> parameters) {
 
 		if (resource == null) {
 			return false;

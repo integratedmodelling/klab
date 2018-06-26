@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 public class WcsValidator implements IResourceValidator {
 
 	@Override
-	public Builder validate(URL url, IParameters userData, IMonitor monitor) {
+	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
 		if (!canHandle(null, userData)) {
 			throw new IllegalArgumentException("WCS specifications are invalid or incomplete");
@@ -77,7 +77,7 @@ public class WcsValidator implements IResourceValidator {
 	}
 
 	@Override
-	public boolean canHandle(File resource, IParameters parameters) {
+	public boolean canHandle(File resource, IParameters<String> parameters) {
 		return resource == null && parameters.contains("wcsVersion") && parameters.contains("serviceUrl")
 				&& parameters.contains("wcsIdentifier");
 	}

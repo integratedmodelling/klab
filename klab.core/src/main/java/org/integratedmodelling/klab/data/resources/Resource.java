@@ -68,7 +68,7 @@ public class Resource implements IResource {
 	IArtifact.Type type;
 	long resourceTimestamp;
 	IMetadata metadata = new Metadata();
-	Parameters parameters = new Parameters();
+	Parameters<String> parameters = new Parameters<>();
 	List<String> localPaths = new ArrayList<>();
 	List<IResource> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
@@ -127,7 +127,7 @@ public class Resource implements IResource {
 
 	/** {@inheritDoc} */
 	@Override
-	public IParameters getParameters() {
+	public IParameters<String> getParameters() {
 		return parameters;
 	}
 

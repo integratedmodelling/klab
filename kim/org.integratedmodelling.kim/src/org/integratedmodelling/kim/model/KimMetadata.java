@@ -16,7 +16,7 @@ public class KimMetadata extends KimStatement implements IKimMetadata {
   /*
    * It's a multimap: the value can be a list and if so, the API must be capable of dealing with it.
    */
-  protected Parameters data;
+  protected Parameters<String> data;
 
   public KimMetadata(Metadata statement, IKimStatement parent) {
     super(statement, parent);
@@ -24,7 +24,7 @@ public class KimMetadata extends KimStatement implements IKimMetadata {
         Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement), false));
   }
 
-  public IParameters getData() {
+  public IParameters<String> getData() {
     return data;
   }
 

@@ -151,7 +151,7 @@ public enum Renderer {
 	 * @param state
 	 * @return
 	 */
-	public Style getStyle(String id, IState state, IParameters parameters) {
+	public Style getStyle(String id, IState state, IParameters<String> parameters) {
 
 		return null;
 	}

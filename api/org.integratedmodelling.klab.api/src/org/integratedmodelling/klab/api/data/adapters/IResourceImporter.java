@@ -16,7 +16,7 @@ public interface IResourceImporter {
 	 * @param userData
 	 * @return builders for all found resources, possibly with errors.
 	 */
-	Collection<IResource.Builder> importResources(String importLocation, IParameters userData);
+	Collection<IResource.Builder> importResources(String importLocation, IParameters<String> userData);
 
 	/**
 	 * Check if the passed location (file, URL or whatever) can be handled. In this
@@ -28,5 +28,5 @@ public interface IResourceImporter {
 	 * @return true if we recognize this URL or we don't know and want to try
 	 *         importing.
 	 */
-	boolean canHandle(String importLocation, IParameters userData);
+	boolean canHandle(String importLocation, IParameters<String> userData);
 }

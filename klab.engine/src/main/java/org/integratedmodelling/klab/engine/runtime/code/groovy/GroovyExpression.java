@@ -204,7 +204,7 @@ public class GroovyExpression extends Expression {
     return BASE_ACTION_CLASS;
   }
 
-  public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+  public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 
     if (isTrue) {
       return true;
@@ -239,7 +239,7 @@ public class GroovyExpression extends Expression {
     return null;
   }
 
-  private void setBindings(Binding binding, IComputationContext context, IParameters parameters) {
+  private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
 
     for (String key : parameters.keySet()) {
       binding.setVariable(key, parameters.get(key));

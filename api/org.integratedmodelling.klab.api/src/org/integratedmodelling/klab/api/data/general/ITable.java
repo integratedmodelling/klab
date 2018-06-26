@@ -18,9 +18,9 @@ package org.integratedmodelling.klab.api.data.general;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 /**
  * Unified table interface for both in-memory and persistent tables read from
@@ -136,7 +136,7 @@ public interface ITable<T> {
 	 *         parameters and row values.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	List<Object> lookup(String columnId, IExpression match, Map<String, Object> parameters, IMonitor monitor)
+	List<Object> lookup(String columnId, IExpression match, IParameters<String> parameters, IMonitor monitor)
 			throws KlabException;
 
 	/**

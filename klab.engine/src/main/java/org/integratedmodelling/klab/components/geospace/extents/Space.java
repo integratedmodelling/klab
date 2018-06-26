@@ -576,7 +576,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public IParameters getParameters() {
+	public IParameters<String> getParameters() {
 		return baseDimension.getParameters();
 	}
 

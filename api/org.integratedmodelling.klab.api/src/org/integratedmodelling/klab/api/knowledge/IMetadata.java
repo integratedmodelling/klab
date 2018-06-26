@@ -24,7 +24,7 @@ import org.integratedmodelling.kim.api.IParameters;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IMetadata extends IParameters {
+public interface IMetadata extends IParameters<String> {
 
     /** The dc name. */
     public static String       DC_NAME                        = "dc:name";

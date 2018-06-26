@@ -38,7 +38,7 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 	
 	public RandomInstantiator() {/* to instantiate as expression - do not remove (or use) */}
 	
-	public RandomInstantiator(IParameters parameters, IComputationContext context) {
+	public RandomInstantiator(IParameters<String> parameters, IComputationContext context) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -56,7 +56,7 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new RandomInstantiator(parameters, context);
 	}
 

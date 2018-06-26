@@ -63,7 +63,7 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new LiteralStateResolver(parameters.get("val"));
 	}
 

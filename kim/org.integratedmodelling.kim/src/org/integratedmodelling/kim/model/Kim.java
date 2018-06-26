@@ -48,6 +48,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
@@ -397,10 +398,9 @@ public enum Kim {
 	}
 
 	public Object parseValue(Value value, IKimNamespace namespace) {
+
 		if (value.getLiteral() != null) {
 			return parseLiteral(value.getLiteral(), namespace);
-		} else if (value.getExpr() != null) {
-			return value.getExpr();
 		} else if (value.getFunction() != null) {
 			return new KimServiceCall(value.getFunction(), null);
 		} else if (value.getId() != null) {
@@ -420,6 +420,8 @@ public enum Kim {
 			return parseTable(value.getTable(), /* FIXME? Tables as values are orphans */ null, namespace);
 		} else if (value.getConcept() != null) {
 			return declareConcept(value.getConcept());
+		} else if (value.getExpr() != null) {
+			return new KimExpression(value.getExpr(), null);
 		}
 
 		return null;
@@ -431,12 +433,129 @@ public enum Kim {
 		return ret;
 	}
 
-	private  Map<?,?> parseMap(org.integratedmodelling.kim.kim.Map map, IKimNamespace namespace) {
+	private Map<?, ?> parseMap(org.integratedmodelling.kim.kim.Map map, IKimNamespace namespace) {
 		Map<Object, Object> ret = new HashMap<>();
 		for (MapEntry entry : map.getEntries()) {
-			
+
+			Object key = parseClassifierAsValue(entry.getClassifier(), null, namespace);
+			Object value = parseValue(entry.getValue(), namespace);
+
+			ret.put(key, value);
 		}
 		return ret;
+	}
+
+	/**
+	 * Return the object to classify against, unless we have a quantifier or an
+	 * operator, in which case an actual classifier is returned. This is used when a
+	 * classifier is admitted as the syntax for a map or table key.
+	 * 
+	 * @param statement
+	 * @param parent
+	 * @param namespace
+	 * @return
+	 */
+	public Object parseClassifierAsValue(ClassifierRHS statement, IKimStatement parent, IKimNamespace namespace) {
+
+		// TODO
+
+		// if (statement == null && matchedConcept != null) {
+		// conceptMatch = matchedConcept;
+		// return;
+		// }
+		//
+		// if (statement.isAnything()) {
+		// catchAnything = true;
+		// return;
+		// } else if (statement.getNum() != null) {
+		// Number n = Kim.INSTANCE.parseNumber(statement.getNum());
+		// this.numberMatch = n.doubleValue();
+		// } else if (statement.getBoolean() != null) {
+		// this.booleanMatch = statement.getBoolean().equals("true");
+		// } else if (statement.getInt0() != null) {
+		//
+		// Number from = Kim.INSTANCE.parseNumber(statement.getInt0());
+		// Number to = Kim.INSTANCE.parseNumber(statement.getInt1());
+		// String lt = statement.getLeftLimit();
+		// String rt = statement.getRightLimit();
+		// if (lt == null)
+		// lt = "inclusive";
+		// if (rt == null)
+		// rt = "exclusive";
+		// this.intervalMatch = new Range(from.doubleValue(), to.doubleValue(), lt
+		// .equals("exclusive"), rt.equals("exclusive"));
+		//
+		// } else if (statement.getOp() != null) {
+		//
+		// Range ni = null;
+		// Number op = Kim.INSTANCE.parseNumber(statement.getExpression());
+		//
+		// if (statement.getOp().isGe()) {
+		// ni = new Range(op.doubleValue(), null, false, true);
+		// } else if (statement.getOp().isGt()) {
+		// ni = new Range(op.doubleValue(), null, true, true);
+		// } else if (statement.getOp().isLe()) {
+		// ni = new Range(null, op.doubleValue(), true, false);
+		// } else if (statement.getOp().isLt()) {
+		// ni = new Range(null, op.doubleValue(), true, true);
+		// } else if (statement.getOp().isEq()) {
+		// numberMatch = op.doubleValue();
+		// } else if (statement.getOp().isNe()) {
+		// this.numberMatch = op.doubleValue();
+		// this.negated = true;
+		// }
+		//
+		// if (ni != null) {
+		// this.intervalMatch = ni;
+		// }
+		//
+		// } else if (statement.getNodata() != null) {
+		// this.nullMatch = true;
+		// } else if (statement.getSet() != null) {
+		//
+		// for (Object o : Kim.INSTANCE.parseList(statement.getSet(), namespace)) {
+		// if (o instanceof Number) {
+		// addClassifier(createNumberMatcher((Number) o));
+		// } else if (o instanceof String) {
+		// addClassifier(createStringMatcher((String) o));
+		// } else if (o instanceof IConcept) {
+		// addClassifier(createConceptMatcher((IConcept) o));
+		// } else if (o == null) {
+		// addClassifier(createNullMatcher());
+		// } else if (o instanceof List<?>) {
+		// addClassifier(createMultipleMatcher((List<?>) o));
+		// }
+		// }
+		//
+		// } else if (statement.getToResolve() != null &&
+		// statement.getToResolve().size() > 0) {
+		//
+		// for (ConceptDeclaration cdu : statement.getToResolve()) {
+		// if (conceptMatches == null) {
+		// conceptMatches = new ArrayList<>();
+		// }
+		// conceptMatches.add(Kim.INSTANCE.declareConcept(cdu));
+		// }
+		//
+		// } else if (statement.getConcept() != null) {
+		//
+		// conceptMatch = Kim.INSTANCE.declareConcept(statement.getConcept());
+		//
+		// } else if (statement.getString() != null) {
+		//
+		// this.stringMatch = statement.getString();
+		//
+		// } else if (statement.getExpr() != null) {
+		//
+		// this.expressionMatch = statement.getExpr();
+		//
+		// } else if (statement.isStar()) {
+		//
+		// catchAll = true;
+		//
+		// }
+
+		return null;
 	}
 
 	public List<?> parseList(org.integratedmodelling.kim.kim.List list, IKimNamespace namespace) {
@@ -455,12 +574,12 @@ public enum Kim {
 		return ret;
 	}
 
-	
-	public Parameters parseMetadata(Metadata map, IKimNamespace namespace) {
+	public Parameters<String> parseMetadata(Metadata map, IKimNamespace namespace) {
 		Map<String, Object> ret = new HashMap<>();
 		// TODO
-		return new Parameters(ret);
+		return new Parameters<>(ret);
 	}
+
 	public Object parseLiteral(Literal literal, IKimNamespace namespace) {
 		if (literal.getBoolean() != null) {
 			return Boolean.parseBoolean(literal.getBoolean());
@@ -707,9 +826,11 @@ public enum Kim {
 		case "event":
 			return EnumSet.of(Type.EVENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "relationship":
-			return EnumSet.of(Type.RELATIONSHIP, Type.UNIDIRECTIONAL, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
+			return EnumSet.of(Type.RELATIONSHIP, Type.UNIDIRECTIONAL, Type.DIRECT_OBSERVABLE, Type.COUNTABLE,
+					Type.OBSERVABLE);
 		case "bond":
-			return EnumSet.of(Type.RELATIONSHIP, Type.BIDIRECTIONAL, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
+			return EnumSet.of(Type.RELATIONSHIP, Type.BIDIRECTIONAL, Type.DIRECT_OBSERVABLE, Type.COUNTABLE,
+					Type.OBSERVABLE);
 		case "configuration":
 			return EnumSet.of(Type.CONFIGURATION);
 		case "extent":
@@ -1036,7 +1157,7 @@ public enum Kim {
 	}
 
 	public KimObservable declareModelReference(ModelBodyStatement statement, String string) {
-		
+
 		KimNamespace namespace = getNamespace(statement, true);
 		IKimModel model = null;
 		if (string.startsWith(namespace.getName())) {
@@ -1045,17 +1166,18 @@ public enum Kim {
 		if (!string.contains(".")) {
 			for (IKimScope object : namespace.getChildren()) {
 				if (object instanceof IKimModel && ((IKimModel) object).getName().equals(string)) {
-					model = (IKimModel)object;
+					model = (IKimModel) object;
 				}
 			}
-		} else if (namespace.getSymbolTable().containsKey(string) && namespace.getSymbolTable().get(string) instanceof IKimModel) {
-			model = (IKimModel)namespace.getSymbolTable().get(string);
+		} else if (namespace.getSymbolTable().containsKey(string)
+				&& namespace.getSymbolTable().get(string) instanceof IKimModel) {
+			model = (IKimModel) namespace.getSymbolTable().get(string);
 		}
 		return model == null ? null : (KimObservable) model.getObservables().get(0);
 	}
 
 	public KimObservable createNonSemanticObservable(String type, String name) {
-	  return new KimObservable(name, type);
+		return new KimObservable(name, type);
 	}
 
 }

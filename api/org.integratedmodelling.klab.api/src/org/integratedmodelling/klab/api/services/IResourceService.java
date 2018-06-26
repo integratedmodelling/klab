@@ -151,7 +151,7 @@ public interface IResourceService {
 	 * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
 	 *         with a local URN if successful.
 	 */
-	IResource createLocalResource(String resourceId, File file, IParameters userData, IProject project,
+	IResource createLocalResource(String resourceId, File file, IParameters<String> userData, IProject project,
 			String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
 
 	/**

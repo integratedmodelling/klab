@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class ResourceBuilder implements IResource.Builder {
 
 	private Metadata metadata = new Metadata();
-	private Parameters parameters = new Parameters();
+	private Parameters<String> parameters = new Parameters<>();
 	private IGeometry geometry;
 	private String localPath;
 	private List<String> resourcePaths = new ArrayList<>();
@@ -165,7 +165,7 @@ public class ResourceBuilder implements IResource.Builder {
 	}
 
 	@Override
-	public Builder withParameters(IParameters parameters) {
+	public Builder withParameters(IParameters<String> parameters) {
 		this.parameters.putAll(parameters);
 		return this;
 	}

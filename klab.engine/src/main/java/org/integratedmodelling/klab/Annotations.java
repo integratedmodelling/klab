@@ -60,7 +60,7 @@ public enum Annotations implements IAnnotationService {
          *         applications.
          * @throws Exception 
          */
-        Object process(IKimObject target, IParameters arguments, IMonitor monitor) throws Exception;
+        Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception;
     }
 
     Map<String, Handler>    handlers   = Collections.synchronizedMap(new HashMap<>());

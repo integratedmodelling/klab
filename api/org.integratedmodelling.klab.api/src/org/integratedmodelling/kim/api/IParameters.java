@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.utils.Parameters;
  * @author ferdinando.villa
  *
  */
-public interface IParameters extends Map<String, Object>    {
+public interface IParameters<T> extends Map<T, Object>    {
 
   /**
    * Get the value as the passed type, if necessary converting between numeric types or casting to
@@ -23,7 +23,7 @@ public interface IParameters extends Map<String, Object>    {
    * @return a plain Java object
    * @throws IllegalArgumentException if the requested class is incompatible with the type.
    */
-  <T> T get(String name, Class<? extends T> cls);
+  <K> K get(T name, Class<? extends K> cls);
 
   /**
    * Get the value as the passed type, returning a set default if the value is not there, otherwise
@@ -35,7 +35,7 @@ public interface IParameters extends Map<String, Object>    {
    * @return a plain Java object
    * @throws IllegalArgumentException if the requested class is incompatible with the type.
    */
-  <T> T get(String name, T defaultValue);
+  <K> K get(T name, K defaultValue);
   
   /**
    * Like {@link #containsKey(Object)}, except it returns false also if the key is there but the
@@ -44,7 +44,7 @@ public interface IParameters extends Map<String, Object>    {
    * @param key
    * @return false if key is not there or points to a null object
    */
-  boolean contains(String key);
+  boolean contains(T key);
 
   /**
    * Check if an object is present for the key and it is of the passed class.
@@ -53,5 +53,5 @@ public interface IParameters extends Map<String, Object>    {
    * @param cls
    * @return true if object is there and belongs to cls
    */
-  boolean contains(String key, Class<?> cls);
+  boolean contains(T key, Class<?> cls);
 }

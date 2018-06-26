@@ -3,13 +3,13 @@ package org.integratedmodelling.klab.data.table;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 
-public class Table implements ITable {
+public class Table<T> implements ITable<T> {
 
 	@Override
 	public String getName() {
@@ -30,45 +30,45 @@ public class Table implements ITable {
 	}
 
 	@Override
-	public Map map(int keyColumnIndex, int valueColumnIndex) throws KlabIOException {
+	public Map<String, T> map(int keyColumnIndex, int valueColumnIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map getRowAsMap(int rowIndex) {
+	public Map<String, T> getRowAsMap(int rowIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object[] getRow(int rowIndex) {
+	public T[] getRow(int rowIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object[] getColumn(int columnIndex) {
+	public T[] getColumn(int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List lookup(int columnId, Object... values) {
+	public List<Object> lookup(int columnId, Object... values) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List lookup(String columnId, IExpression match, Map parameters, IMonitor monitor) throws KlabException {
+	public List<Object> lookup(String columnId, IExpression match, IParameters<String> parameters, IMonitor monitor)
+			throws KlabException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List lookup(IExpression expression) {
+	public List<Map<String, Object>> lookup(IExpression expression) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

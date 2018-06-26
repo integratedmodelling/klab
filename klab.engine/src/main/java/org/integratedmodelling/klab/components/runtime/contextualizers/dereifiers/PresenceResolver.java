@@ -36,7 +36,7 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 	public PresenceResolver() {
 	}
 
-	public PresenceResolver(IParameters parameters, IComputationContext context) {
+	public PresenceResolver(IParameters<String> parameters, IComputationContext context) {
 		this.artifact = context.getArtifact(parameters.get("artifact", String.class));
 	}
 
@@ -47,7 +47,7 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new PresenceResolver(parameters, context);
 	}
 

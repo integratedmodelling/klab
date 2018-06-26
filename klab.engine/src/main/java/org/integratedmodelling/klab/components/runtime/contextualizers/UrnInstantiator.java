@@ -47,7 +47,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new UrnInstantiator(parameters.get("urn", String.class));
 	}
 

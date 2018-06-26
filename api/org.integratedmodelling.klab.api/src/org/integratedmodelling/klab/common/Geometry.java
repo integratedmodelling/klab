@@ -168,7 +168,7 @@ public class Geometry implements IGeometry {
 		private boolean regular;
 		private int dimensionality;
 		private long[] shape;
-		private Parameters parameters = new Parameters();
+		private Parameters<String> parameters = new Parameters<>();
 
 		@Override
 		public Type getType() {
@@ -214,7 +214,7 @@ public class Geometry implements IGeometry {
 		}
 
 		@Override
-		public IParameters getParameters() {
+		public IParameters<String> getParameters() {
 			return parameters;
 		}
 	}

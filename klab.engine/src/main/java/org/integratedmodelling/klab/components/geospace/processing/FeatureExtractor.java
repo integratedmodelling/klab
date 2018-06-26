@@ -67,7 +67,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	public FeatureExtractor() {
 	}
 
-	public FeatureExtractor(IParameters parameters, IComputationContext context) throws KlabValidationException {
+	public FeatureExtractor(IParameters<String> parameters, IComputationContext context) throws KlabValidationException {
 		if (parameters.containsKey("select")) {
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
 					.describe(parameters.get("select", String.class), context);
@@ -161,7 +161,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
 		ImageProcessor imp = image.getProcessor();
 		boolean warned = false;
-		Parameters parameters = new Parameters();
+		Parameters<String> parameters = new Parameters<>();
 
 		// TODO
 		for (Cell cell : grid) {

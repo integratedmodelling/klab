@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Classifier;
@@ -30,7 +31,7 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	private ArrayList<IKimClassifier> classifierMatches;
 	private ArrayList<IKimConcept> conceptMatches;
 	private String stringMatch;
-	private String expressionMatch;
+	private IKimExpression expressionMatch;
     
 	// this produces a catch-all and should only be called when isOtherwise() == true
     public KimClassifier(Classifier statement, IKimStatement parent) {
@@ -134,7 +135,7 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
         
         } else if (statement.getExpr() != null) {
         
-        	this.expressionMatch = statement.getExpr();
+        	this.expressionMatch = new KimExpression(statement.getExpr(), null);
         
         } else if (statement.isStar()) {
         
@@ -274,11 +275,11 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	}
 
 	@Override
-	public String getExpressionMatch() {
+	public IKimExpression getExpressionMatch() {
 		return expressionMatch;
 	}
 
-	public void setExpressionMatch(String expressionMatch) {
+	public void setExpressionMatch(IKimExpression expressionMatch) {
 		this.expressionMatch = expressionMatch;
 	}
 

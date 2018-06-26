@@ -31,7 +31,7 @@ public interface IKimClassifier extends IKimStatement {
 
 	boolean isNullMatch();
 
-	String getExpressionMatch();
+	IKimExpression getExpressionMatch();
 
 	String getStringMatch();
 

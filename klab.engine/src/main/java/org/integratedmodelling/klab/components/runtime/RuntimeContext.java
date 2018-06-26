@@ -60,7 +60,7 @@ import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
  * @author ferdinando.villa
  *
  */
-public class RuntimeContext extends Parameters implements IRuntimeContext {
+public class RuntimeContext extends Parameters<String> implements IRuntimeContext {
 
 	INamespace namespace;
 	Provenance provenance;

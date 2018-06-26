@@ -63,7 +63,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
