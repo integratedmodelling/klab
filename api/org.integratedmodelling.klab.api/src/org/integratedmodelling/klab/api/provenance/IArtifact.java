@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -185,6 +186,17 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getUrn();
+	
+	/**
+	 * All the annotations proceeding from the k.IM lineage of this artifact (from the
+	 * model that produced it, the concepts it incarnates, etc.). Never null, possibly
+	 * empty.
+	 * <p>
+	 * When artifacts are persisted, these may or may not be preserved.
+	 * 
+	 * @return k.IM annotations in the lineage of this artifact.
+	 */
+	Collection<IKimAnnotation> getAnnotations();
 
 	/**
 	 * <p>

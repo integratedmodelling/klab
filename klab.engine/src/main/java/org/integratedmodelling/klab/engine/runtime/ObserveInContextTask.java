@@ -89,6 +89,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
 							ResolutionScope.create(context, monitor, scenarios));
 					if (scope.getCoverage().isRelevant()) {
+						
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope);
 						

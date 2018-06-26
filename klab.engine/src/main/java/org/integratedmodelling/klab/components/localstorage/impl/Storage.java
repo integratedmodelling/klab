@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -127,4 +128,9 @@ public abstract class Storage implements IArtifact {
     return artifact.groupSize();
   }
 
+  @Override
+  public Collection<IKimAnnotation> getAnnotations() {
+	  return artifact.getAnnotations();
+  }
+  
 }

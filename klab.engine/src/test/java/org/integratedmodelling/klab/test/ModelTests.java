@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -30,7 +31,7 @@ public class ModelTests {
 			
 			@Override
 			public void accept(String t) {
-				throw new RuntimeException(t);
+				throw new KlabException(t);
 			}
 		});
 	}

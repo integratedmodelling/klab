@@ -12,8 +12,11 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.rest.StateSummary;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -40,15 +43,18 @@ public enum Renderer {
 	 * from annotations or defaults.
 	 * 
 	 * @param state
+	 * @param locator must specify a full spatial slice
 	 * @param imageFile
 	 * @param viewport
 	 */
-	public void render(IState state, File imageFile, int[] viewport) {
+	public void render(IState state, ILocator locator, File imageFile, int[] viewport) {
 
 		if (state.getSpace() == null || !(state.getSpace() instanceof Space && ((Space)state.getSpace()).getGrid() != null)) {
 			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
 		}
-			
+
+		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
+		
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 
 		// CoordinateReferenceSystem googleMercator = CRS.decode("EPSG:3857");

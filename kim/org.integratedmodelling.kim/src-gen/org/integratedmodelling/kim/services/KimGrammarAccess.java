@@ -7091,13 +7091,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cClassifierClassifierRHSWithIdParserRuleCall_0_0 = (RuleCall)cClassifierAssignment_0.eContents().get(0);
 		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValueValueWithConceptParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		private final RuleCall cValueValueWithIdAndConceptParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//MapEntry:
-		//	classifier=ClassifierRHSWithId ':' value=ValueWithConcept;
+		//	classifier=ClassifierRHSWithId ':' value=ValueWithIdAndConcept;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//classifier=ClassifierRHSWithId ':' value=ValueWithConcept
+		//classifier=ClassifierRHSWithId ':' value=ValueWithIdAndConcept
 		public Group getGroup() { return cGroup; }
 		
 		//classifier=ClassifierRHSWithId
@@ -7109,11 +7109,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//':'
 		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
 		
-		//value=ValueWithConcept
+		//value=ValueWithIdAndConcept
 		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
 		
-		//ValueWithConcept
-		public RuleCall getValueValueWithConceptParserRuleCall_2_0() { return cValueValueWithConceptParserRuleCall_2_0; }
+		//ValueWithIdAndConcept
+		public RuleCall getValueValueWithIdAndConceptParserRuleCall_2_0() { return cValueValueWithIdAndConceptParserRuleCall_2_0; }
 	}
 	public class DocSelectorElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DocSelector");
@@ -9668,7 +9668,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MapEntry:
-	//	classifier=ClassifierRHSWithId ':' value=ValueWithConcept;
+	//	classifier=ClassifierRHSWithId ':' value=ValueWithIdAndConcept;
 	public MapEntryElements getMapEntryAccess() {
 		return pMapEntry;
 	}

@@ -627,7 +627,7 @@ Map:
 ;
 
 MapEntry:
-	classifier=ClassifierRHSWithId ':' value=ValueWithConcept
+	classifier=ClassifierRHSWithId ':' value=ValueWithIdAndConcept
 ;
 
 DocSelector:

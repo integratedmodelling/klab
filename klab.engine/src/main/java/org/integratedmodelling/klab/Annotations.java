@@ -183,7 +183,7 @@ public enum Annotations implements IAnnotationService {
     	if (object instanceof IObservable) {
     	
     		/*
-    		 * collect from roles, traits and main 
+    		 * collect from roles, traits and main in this order
     		 */
     		for (IConcept role : Roles.INSTANCE.getRoles(((IObservable)object).getType())) {
         		collectAnnotations(role, collection);
@@ -191,12 +191,13 @@ public enum Annotations implements IAnnotationService {
     		for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable)object).getType())) {
         		collectAnnotations(trait, collection);
     		}
+    		
     		collectAnnotations(((IObservable)object).getMain(), collection);
 
     	} else if (object instanceof IConcept) {
     		IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
     		if (mobject != null) {
-    			collectAnnotations(object, collection);
+    			collectAnnotations(mobject, collection);
     		}
     	}
     }

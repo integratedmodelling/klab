@@ -242,10 +242,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return context;
 	}
 
-	static IObservation createObservation(Actuator actuator, RuntimeContext context) {
-		return createObservation(actuator.getObservable(), context.getScale(), context,
-				actuator.isStorageScalar(context.getScale()));
-	}
+//	static IObservation createObservation(Actuator actuator, RuntimeContext context) {
+//		return createObservation(actuator.getObservable(), context.getScale(), context,
+//				actuator.isStorageScalar(context.getScale()));
+//	}
 
 	static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context) {
 		return createObservation(observable, scale, context, false);
@@ -257,7 +257,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	
-	static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
+	private static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
 			boolean scalarStorage) {
 
 		boolean createActors = scale.getTime() != null;
