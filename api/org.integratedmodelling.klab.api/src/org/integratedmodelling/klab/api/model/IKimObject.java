@@ -17,7 +17,7 @@ package org.integratedmodelling.klab.api.model;
 
 import java.io.Serializable;
 import java.util.List;
-import org.integratedmodelling.kim.api.IKimAnnotation;
+
 import org.integratedmodelling.kim.api.IKimStatement;
 
 /**
@@ -69,7 +69,7 @@ public interface IKimObject extends Serializable {
      *
      * @return a list of annotations in order of declaration, or null.
      */
-    List<IKimAnnotation> getAnnotations();
+    List<IAnnotation> getAnnotations();
 
     /**
      * True if the object is declared deprecated. If so, the annotations will likely

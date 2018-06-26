@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -436,7 +436,7 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 	}
 
 	@Override
-	public void processAnnotation(IKimAnnotation annotation) {
+	public void processAnnotation(IAnnotation annotation) {
 		switch (annotation.getName()) {
 		case "probe":
 			addTargetToStructure(annotation);
@@ -446,10 +446,10 @@ public class RuntimeContext extends Parameters implements IRuntimeContext {
 		}
 	}
 
-	private void addTargetToStructure(IKimAnnotation probe) {
+	private void addTargetToStructure(IAnnotation probe) {
 
 		IState state = null;
-		if (probe.getParameters().get("observable") == null) {
+		if (probe.get("observable") == null) {
 			// TODO check if collapsing is requested
 			state = target instanceof IState ? (IState) target : null;
 		} else {

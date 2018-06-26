@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.kim;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -17,6 +16,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -127,7 +127,7 @@ public class KimNotifier implements Kim.Notifier {
 		 * Execute any annotations recognized by the engine.
 		 */
 		for (IKimObject object : ns.getObjects()) {
-			for (IKimAnnotation annotation : object.getAnnotations()) {
+			for (IAnnotation annotation : object.getAnnotations()) {
 				Annotations.INSTANCE.process(annotation, object, monitor);
 			}
 		}

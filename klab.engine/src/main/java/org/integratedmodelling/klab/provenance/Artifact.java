@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
  */
 public abstract class Artifact implements IArtifact {
 
-	List<IKimAnnotation> annotations = new ArrayList<>();
+	List<IAnnotation> annotations = new ArrayList<>();
 	
 	// all observation data in a group share the same list and contain their index
 	// in it; established
@@ -53,7 +53,7 @@ public abstract class Artifact implements IArtifact {
 	}
 
 	@Override
-	public Collection<IKimAnnotation> getAnnotations() {
+	public Collection<IAnnotation> getAnnotations() {
 		return annotations;
 	}
 	

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
 
-import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -135,7 +135,7 @@ public interface IRuntimeContext extends IComputationContext {
 	 * 
 	 * @param annotation
 	 */
-	void processAnnotation(IKimAnnotation annotation);
+	void processAnnotation(IAnnotation annotation);
 
 	/**
 	 * Specialize the provenance so we can use setting methods on it.

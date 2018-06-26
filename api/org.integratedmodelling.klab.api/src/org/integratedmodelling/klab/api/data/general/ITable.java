@@ -62,11 +62,6 @@ public interface ITable<T> {
 	 * file at all. It should be implemented so that very large data tables can be
 	 * handled efficiently.
 	 *
-	 * The key is always a string representation to avoid errors due to not knowing
-	 * what the internal DB representation was for the column. use
-	 * sanitizeKey(Object) to apply some default sanitization to a non-string key -
-	 * e.g. converting a double w/o decimals into an integer.
-	 *
 	 * @param keyColumnName
 	 *            a {@link java.lang.String} object.
 	 * @param valueColumnName
@@ -74,7 +69,7 @@ public interface ITable<T> {
 	 * @return a map between values and names in matching columns.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException
 	 */
-	Map<String, T> map(int keyColumnIndex, int valueColumnIndex) throws KlabIOException;
+	Map<String, T> map(int keyColumnIndex, int valueColumnIndex);
 
 	/**
 	 * Get the row as a keyed map, assuming the table has headers. If not, names

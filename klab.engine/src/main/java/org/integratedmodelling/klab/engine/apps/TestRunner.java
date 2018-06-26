@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
@@ -22,12 +23,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.utils.Parameters;
 
 public class TestRunner implements Annotations.Handler {
 
 	@Override
-	public Object process(IKimObject target, Parameters arguments, IMonitor monitor) throws Exception {
+	public Object process(IKimObject target, IParameters arguments, IMonitor monitor) throws Exception {
 
 		String id = arguments.get("name", "unnamed test");
 		int repetitions = arguments.get("repeat", 1);

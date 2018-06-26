@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
@@ -16,6 +15,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -59,7 +59,7 @@ public class Actuator implements IActuator {
 	private List<IComputableResource> computedResources = new ArrayList<>();
 	// we store the annotations from the model to enable probes or other
 	// non-semantic options
-	private List<IKimAnnotation> annotations = new ArrayList<>();
+	private List<IAnnotation> annotations = new ArrayList<>();
 
 	public void addComputation(IComputableResource resource) {
 		computedResources.add(resource);
@@ -254,7 +254,7 @@ public class Actuator implements IActuator {
 		 * when computation is finished, pass all annotations from the models to the
 		 * context, so it can execute any post-contextualization actions.
 		 */
-		for (IKimAnnotation annotation : annotations) {
+		for (IAnnotation annotation : annotations) {
 			ctx.processAnnotation(annotation);
 		}
 
@@ -560,7 +560,7 @@ public class Actuator implements IActuator {
 		return exported;
 	}
 
-	public List<IKimAnnotation> getAnnotations() {
+	public List<IAnnotation> getAnnotations() {
 		return annotations;
 	}
 

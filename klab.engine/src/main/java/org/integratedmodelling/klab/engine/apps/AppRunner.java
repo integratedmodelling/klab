@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.apps;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -13,7 +14,6 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * The handler for the 'run' annotation makes observations in the target context and returns them.
@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class AppRunner implements Annotations.Handler {
 
   @Override
-  public Object process(IKimObject target, Parameters arguments, IMonitor monitor) throws Exception {
+  public Object process(IKimObject target, IParameters arguments, IMonitor monitor) throws Exception {
 
     if (!(arguments.get("observations") instanceof List)) {
         monitor.warn("run annotation does not specify observations");

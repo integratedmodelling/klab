@@ -15,8 +15,8 @@
  */
 package org.integratedmodelling.klab.api.services;
 
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -47,6 +47,6 @@ public interface IAnnotationService {
      * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
      * @return a {@link java.lang.Object} object.
      */
-    Object process(IKimAnnotation annotation, IKimObject object, IMonitor monitor);
+    Object process(IAnnotation annotation, IKimObject object, IMonitor monitor);
     
 }

@@ -18,12 +18,12 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
@@ -196,7 +196,7 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 	 * 
 	 * @return k.IM annotations in the lineage of this artifact.
 	 */
-	Collection<IKimAnnotation> getAnnotations();
+	Collection<IAnnotation> getAnnotations();
 
 	/**
 	 * <p>

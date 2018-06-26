@@ -12,10 +12,12 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -26,7 +28,7 @@ import org.integratedmodelling.klab.api.services.IAnnotationService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.kim.Prototype;
-import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.model.Annotation;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,7 +60,7 @@ public enum Annotations implements IAnnotationService {
          *         applications.
          * @throws Exception 
          */
-        Object process(IKimObject target, Parameters arguments, IMonitor monitor) throws Exception;
+        Object process(IKimObject target, IParameters arguments, IMonitor monitor) throws Exception;
     }
 
     Map<String, Handler>    handlers   = Collections.synchronizedMap(new HashMap<>());
@@ -70,12 +72,12 @@ public enum Annotations implements IAnnotationService {
     }
 
     @Override
-    public Object process(IKimAnnotation annotation, IKimObject object, IMonitor monitor) {
+    public Object process(IAnnotation annotation, IKimObject object, IMonitor monitor) {
 
         Handler handler = handlers.get(annotation.getName());
         if (handler != null) {
             try {
-              return handler.process(object, annotation.getParameters(), monitor);
+              return handler.process(object, annotation, monitor);
             } catch (Exception e) {
               monitor.error(e);
             }
@@ -129,8 +131,8 @@ public enum Annotations implements IAnnotationService {
      * @param object
      * @return all annotations from upstream
      */
-    public Collection<IKimAnnotation> collectAnnotations(IKimObject object) {
-    	Map<String, IKimAnnotation> ret = new HashMap<>();
+    public Collection<IAnnotation> collectAnnotations(IKimObject object) {
+    	Map<String, IAnnotation> ret = new HashMap<>();
     	collectAnnotations(object, ret);
     	return ret.values();
     }
@@ -142,17 +144,18 @@ public enum Annotations implements IAnnotationService {
      * @param object
      * @return all annotations from upstream
      */
-    public Collection<IKimAnnotation> collectAnnotations(ISemantic object) {
-    	Map<String, IKimAnnotation> ret = new HashMap<>();
+    public Collection<IAnnotation> collectAnnotations(ISemantic object) {
+    	Map<String, IAnnotation> ret = new HashMap<>();
     	collectAnnotations(object, ret);
     	return ret.values();
     }
 
-    private void collectAnnotations(IKimStatement object, Map<String, IKimAnnotation> collection) {
+    private void collectAnnotations(IKimStatement object, Map<String, IAnnotation> collection) {
 	
     	for (IKimAnnotation annotation : object.getAnnotations()) {
     		if (!collection.containsKey(annotation.getName())) {
-    			collection.put(annotation.getName(), annotation);
+    			Annotation a = new Annotation(annotation);
+    			collection.put(a.getName(), a);
     		}
     	}
     	
@@ -161,9 +164,9 @@ public enum Annotations implements IAnnotationService {
     	}
     }
     
-    private void collectAnnotations(IKimObject object, Map<String, IKimAnnotation> collection) {
+    private void collectAnnotations(IKimObject object, Map<String, IAnnotation> collection) {
 
-    	for (IKimAnnotation annotation : object.getAnnotations()) {
+    	for (IAnnotation annotation : object.getAnnotations()) {
     		if (!collection.containsKey(annotation.getName())) {
     			collection.put(annotation.getName(), annotation);
     		}
@@ -178,7 +181,7 @@ public enum Annotations implements IAnnotationService {
     	}
     }
     
-    private void collectAnnotations(ISemantic object, Map<String, IKimAnnotation> collection) {
+    private void collectAnnotations(ISemantic object, Map<String, IAnnotation> collection) {
     	
     	if (object instanceof IObservable) {
     	

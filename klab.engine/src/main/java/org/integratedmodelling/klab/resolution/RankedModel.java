@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
@@ -13,6 +12,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -78,7 +78,7 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().getStatement();
 	}
 
-	public List<IKimAnnotation> getAnnotations() {
+	public List<IAnnotation> getAnnotations() {
 		return getDelegate().getAnnotations();
 	}
 
