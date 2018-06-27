@@ -528,10 +528,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			} else {
 				observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 			}
-			
-			// transmit all annotations to the artifact
-			observation.getAnnotations().addAll(actuator.getAnnotations());
 
+			// transmit all annotations and any interpretation keys to the artifact
+			actuator.notifyNewObservation(observation);
+			
 			/*
 			 * register the obs and potentially the root subject
 			 */

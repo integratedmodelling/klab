@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.Iterator;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -69,5 +72,5 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 	public Type getType() {
 		return Type.BOOLEAN;
 	}
-
+	
 }

@@ -17,7 +17,7 @@ public class ExpressionStateResolver implements IStateResolver {
 	IExpression expression;
 	IExpression condition;
 
-	public ExpressionStateResolver(Descriptor descriptor, Descriptor condition, IParameters parameters,
+	public ExpressionStateResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
 			IComputationContext context) {
 		this.expression = descriptor.compile();
 		if (condition != null) {

@@ -43,7 +43,7 @@ public class ConversionResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new ConversionResolver((IValueMediator) parameters.get("original"),
 				(IValueMediator) parameters.get("target"));
 	}

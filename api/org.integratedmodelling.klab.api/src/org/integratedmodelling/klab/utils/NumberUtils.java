@@ -254,4 +254,20 @@ public class NumberUtils {
         return ret / (double) n;
     }
 
+	public static Number convertNumber(Number object, Class<?> cls) {
+		if (Double.class.isAssignableFrom(cls)) {
+			return object.doubleValue();
+		}
+		if (Integer.class.isAssignableFrom(cls)) {
+			return object.intValue();
+		}
+		if (Long.class.isAssignableFrom(cls)) {
+			return object.longValue();
+		}
+		if (Float.class.isAssignableFrom(cls)) {
+			return object.floatValue();
+		}
+		return object;
+	}
+
 }

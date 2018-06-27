@@ -42,7 +42,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 	public ExpressionResolver() {
 	}
 
-	public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters parameters,
+	public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
 			IComputationContext context) {
 		this.geometry = context.getScale();
 		this.expression = descriptor.compile();

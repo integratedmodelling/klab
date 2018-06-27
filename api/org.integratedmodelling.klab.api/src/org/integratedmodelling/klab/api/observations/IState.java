@@ -15,6 +15,9 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
+import java.util.Iterator;
+
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
@@ -51,5 +54,17 @@ public interface IState extends IObservation, IDataArtifact {
 	 * @return a typed view of this state.
 	 */
 	IState as(IArtifact.Type type);
+
+	/**
+	 * Iterate the values in the state as the specified type, converting when
+	 * possible.
+	 * 
+	 * @param index
+	 * @param cls
+	 * @return a valid iterator. Never null.
+	 * @throws IllegalArgumentException
+	 *             if an iterator cannot be produced for the passed type.
+	 */
+	<T> Iterator<T> iterator(ILocator index, Class<? extends T> cls);
 
 }

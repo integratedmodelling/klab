@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -34,8 +35,6 @@ import org.integratedmodelling.klab.scale.Scale;
 public enum Observations implements IObservationService {
 
 	INSTANCE;
-
-	private static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
 
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
@@ -74,13 +73,13 @@ public enum Observations implements IObservationService {
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
 
-		if (state.getMetadata().containsKey(STATE_SUMMARY_METADATA_KEY + locator)) {
-			return state.getMetadata().get(STATE_SUMMARY_METADATA_KEY, StateSummary.class);
+		if (state.getMetadata().containsKey(State.STATE_SUMMARY_METADATA_KEY + locator)) {
+			return state.getMetadata().get(State.STATE_SUMMARY_METADATA_KEY, StateSummary.class);
 		}
 
 		StateSummary ret = computeStateSummary(state, locator);
 
-		state.getMetadata().put(STATE_SUMMARY_METADATA_KEY + locator, ret);
+		state.getMetadata().put(State.STATE_SUMMARY_METADATA_KEY + locator, ret);
 
 		return ret;
 	}

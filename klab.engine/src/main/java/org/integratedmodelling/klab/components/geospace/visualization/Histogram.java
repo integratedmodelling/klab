@@ -44,49 +44,49 @@ import com.google.common.primitives.Ints;
  */
 public class Histogram  {
 
-    String _description;
+    String description;
 
-    int[]    _bins;
-    double[] _boundaries;
-    String[] _binLegends;
+    int[]    bins;
+    double[] boundaries;
+    String[] binLegends;
 
     /**
      * True if there are nodata values. Redundant.
      */
-    boolean _nodata = false;
+    boolean nodata = false;
 
-    long   _nodataCount     = 0;
-    double _aggregatedMean  = 0;
-    double _aggregatedTotal = Double.NaN;
+    long   nodataCount     = 0;
+    double aggregatedMean  = 0;
+    double aggregatedTotal = Double.NaN;
 
     /**
      * When the data are not numeric, this contains the amount of occurrences per
      * category, using the string value of the object counted (which appears also in
      * _binLegends in the same order as the bins).
      */
-    HashMap<String, Integer> _occurrences;
+    HashMap<String, Integer> occurrences;
 
     /**
      * Count of nodata values in the data seen.
      */
     public long getNoDataCount() {
-        return _nodataCount;
+        return nodataCount;
     }
 
     public int[] getBins() {
-        return _bins;
+        return bins;
     }
 
     public boolean isEmpty() {
-        return _nodata;
+        return nodata;
     }
 
     public double[] getNumericBoundaries() {
-        return _boundaries;
+        return boundaries;
     }
 
     public String[] getValueDescriptions() {
-        return _binLegends;
+        return binLegends;
     }
 
     /**
@@ -94,7 +94,7 @@ public class Histogram  {
      * of the observation (aggregated or not).
      */
     public double getAggregatedMean() {
-        return _aggregatedMean;
+        return aggregatedMean;
     }
 
     /**
@@ -102,32 +102,32 @@ public class Histogram  {
      * in which case it's the total amount over the extents of space and time.
      */
     public double getAggregatedTotal() {
-        return _aggregatedTotal;
+        return aggregatedTotal;
     }
 
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public Image getImage(int w, int h) {
 
-        int divs = _bins == null ? 0 : _bins.length;
+        int divs = bins == null ? 0 : bins.length;
 
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         img.createGraphics();
         Graphics2D g = (Graphics2D) img.getGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, w, h);
-        if (_nodata || divs == 0) {
+        if (nodata || divs == 0) {
             g.setColor(Color.RED);
             g.drawLine(0, 0, w - 1, h - 1);
             g.drawLine(0, h - 1, w - 1, 0);
         } else {
-            int max = max(_bins);
+            int max = max(bins);
             int dw = w / divs;
             int dx = 0;
             g.setColor(Color.GRAY);
-            for (int d : _bins) {
+            for (int d : bins) {
                 int dh = (int) ((double) h * (double) d / max);
                 g.fillRect(dx, h - dh, dw, dh);
                 dx += dw;
@@ -153,46 +153,46 @@ public class Histogram  {
      * @return the key
      */
     public Map<String, Integer> getKey() {
-        return _occurrences;
+        return occurrences;
     }
 
     public void deserialize(org.integratedmodelling.klab.rest.Histogram bean) {
 
-        this._aggregatedMean = bean.getAggregatedMean();
-        this._aggregatedTotal = bean.getAggregatedTotal();
-        this._nodata = bean.isNodata();
-        this._nodataCount = bean.getNodataCount();
+        this.aggregatedMean = bean.getAggregatedMean();
+        this.aggregatedTotal = bean.getAggregatedTotal();
+        this.nodata = bean.isNodata();
+        this.nodataCount = bean.getNodataCount();
         if (bean.getBinLegends() != null) {
-            this._binLegends = bean.getBinLegends().toArray(new String[bean.getBinLegends().size()]);
+            this.binLegends = bean.getBinLegends().toArray(new String[bean.getBinLegends().size()]);
         }
         if (bean.getBins() != null) {
-            this._bins = Ints.toArray(bean.getBins());
+            this.bins = Ints.toArray(bean.getBins());
         }
         if (bean.getBoundaries() != null) {
-            this._boundaries = Doubles.toArray(bean.getBoundaries());
+            this.boundaries = Doubles.toArray(bean.getBoundaries());
         }
-        this._occurrences = bean.getOccurrences();
-        this._description = bean.getDescription();
+        this.occurrences = bean.getOccurrences();
+        this.description = bean.getDescription();
     }
 
     public org.integratedmodelling.klab.rest.Histogram serialize() {
 
         org.integratedmodelling.klab.rest.Histogram ret = new org.integratedmodelling.klab.rest.Histogram();
 
-        ret.setAggregatedMean(_aggregatedMean);
-        ret.setAggregatedTotal(_aggregatedTotal);
-        ret.setDescription(_description);
-        ret.setNodata(_nodata);
-        ret.setNodataCount(_nodataCount);
-        ret.setOccurrences(_occurrences);
-        if (_binLegends != null) {
-            ret.setBinLegends(Arrays.asList(_binLegends));
+        ret.setAggregatedMean(aggregatedMean);
+        ret.setAggregatedTotal(aggregatedTotal);
+        ret.setDescription(description);
+        ret.setNodata(nodata);
+        ret.setNodataCount(nodataCount);
+        ret.setOccurrences(occurrences);
+        if (binLegends != null) {
+            ret.setBinLegends(Arrays.asList(binLegends));
         }
-        if (_bins != null) {
-            ret.setBins(Ints.asList(_bins));
+        if (bins != null) {
+            ret.setBins(Ints.asList(bins));
         }
-        if (_boundaries != null) {
-            ret.setBoundaries(Doubles.asList(_boundaries));
+        if (boundaries != null) {
+            ret.setBoundaries(Doubles.asList(boundaries));
         }
 
         return ret;

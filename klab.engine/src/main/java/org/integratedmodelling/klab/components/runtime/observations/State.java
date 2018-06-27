@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Klab;
@@ -11,6 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -22,6 +24,10 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public class State extends Observation implements IState {
 
+	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
+	public static final String CLASSIFICATION_METADATA_KEY = "metadata.keys.classification_";
+	public static final String LOOKUP_TABLE_METADATA_KEY = "metadata.keys.lookup_table_";
+	
 	IDataArtifact storage;
 	Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
 
@@ -79,6 +85,11 @@ public class State extends Observation implements IState {
 	@Override
 	public IArtifact.Type getType() {
 		return storage.getType();
+	}
+
+	@Override
+	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+		return DataIterator.create(this, getScale().at(index), cls);
 	}
 
 }

@@ -323,18 +323,18 @@ public class RescalingState extends Observation implements IState {
 		}
 	}
 
+
+	@Override
+	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+		return DataIterator.create(this, getScale().at(index), cls);
+	}
+	
 	// Remaining functionality is delegated to original state
 
 	@Override
 	public long size() {
 		return delegate.size();
 	}
-
-//	@Override
-//	public IState as(IObservable observable) {
-//		return delegate.as(observable);
-//	}
-
 	@Override
 	public IArtifact.Type getType() {
 		return delegate.getType();
@@ -345,5 +345,6 @@ public class RescalingState extends Observation implements IState {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

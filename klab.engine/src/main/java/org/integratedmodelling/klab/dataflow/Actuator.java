@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -577,5 +578,27 @@ public class Actuator implements IActuator {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public void notifyNewObservation(IObservation observation) {
+		
+		/*
+		 * transmit all annotations
+		 */
+		observation.getAnnotations().addAll(annotations);
+
+		/*
+		 * add classification or lookup table as legend if our computations end with
+		 * one.
+		 */
+		if (observation instanceof IState && computationStrategy.size() > 0) {
+			 IComputableResource lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
+			 if (lastResource.getClassification() != null) {
+				 observation.getMetadata().put(State.CLASSIFICATION_METADATA_KEY, lastResource.getClassification());
+			 } else if (lastResource.getLookupTable() != null) {
+				 observation.getMetadata().put(State.LOOKUP_TABLE_METADATA_KEY, lastResource.getLookupTable());
+			 }
+		}
+		
 	}
 }

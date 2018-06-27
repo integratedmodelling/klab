@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.data.storage;
 
+import java.util.Iterator;
+
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -74,4 +76,8 @@ public class MediatingState extends Observation implements IState {
 		return null;
 	}
 
+	@Override
+	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+		return DataIterator.create(this, getScale().at(index), cls);
+	}
 }
