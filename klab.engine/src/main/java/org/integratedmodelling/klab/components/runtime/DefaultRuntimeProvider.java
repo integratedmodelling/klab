@@ -216,20 +216,26 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		// to notify
 		// non-reentrant behavior
 		// TODO if this is done, the next one must be local to each thread
+		IArtifact self = context.get("self", IArtifact.class);
 		RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 		for (IScale state : scale) {
 			data.set(state, resolver.resolve(data.getObservable(),
-					variables.isEmpty() ? ctx : localizeContext(ctx, state, variables)));
+					variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
 		}
 		return data;
 	}
 
-	private IComputationContext localizeContext(RuntimeContext context, IScale state,
+	private IComputationContext localizeContext(RuntimeContext context, IScale state, IArtifact self,
 			Collection<Pair<String, IDataArtifact>> variables) {
-
-		if (context.getTargetArtifact() instanceof IDataArtifact) {
-			context.set("self", ((IDataArtifact) context.getTargetArtifact()).get(state));
+		
+		/*
+		 * this may not be the same layer we're producing but reflects the current value for
+		 * the computation.
+		 */
+		IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
+		if (targetArtifact instanceof IDataArtifact) {
+			context.set("self", ((IDataArtifact) targetArtifact).get(state));
 		}
 
 		for (String var : context.getInputs()) {
@@ -241,11 +247,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		context.setScale(state);
 		return context;
 	}
-
-//	static IObservation createObservation(Actuator actuator, RuntimeContext context) {
-//		return createObservation(actuator.getObservable(), context.getScale(), context,
-//				actuator.isStorageScalar(context.getScale()));
-//	}
 
 	static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context) {
 		return createObservation(observable, scale, context, false);

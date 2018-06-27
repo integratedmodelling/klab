@@ -116,7 +116,8 @@ public interface IRuntimeProvider {
 	 *            the context before distribution - i.e., all states in it will be
 	 *            whole states and need to be contextualized to each extent before
 	 *            computation happens (the resolver expects individual values at
-	 *            each call).
+	 *            each call). The current version of the target artifact will be 
+	 *            set in it as 'self' if it exists.
 	 * @param scale
 	 *            the scale, already set to the slice needed for this computation
 	 * @return the computed result - return the same object passed as data whenever

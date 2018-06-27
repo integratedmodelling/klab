@@ -20,24 +20,35 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * A Resolver is a {@link org.integratedmodelling.klab.api.model.contextualization.IContextualizer}
- * that <i>explains</i> an existing observation by ensuring that it conforms to its definition.
+ * A Resolver is a
+ * {@link org.integratedmodelling.klab.api.model.contextualization.IContextualizer}
+ * that <i>explains</i> an existing observation by ensuring that it conforms to
+ * its definition.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
- * @param <T> the observation type resolved
+ * @param <T>
+ *            the observation type resolved
  */
 public abstract interface IResolver<T extends IArtifact> extends IContextualizer {
 
-  /**
-   * Called once per temporal transition for the scale and the geometry of the observation being
-   * resolved.
-   *
-   * @param ret the observation being resolved.
-   * @param context the runtime context of the computation.
-   * @return the final observation - either the same passed or a new one if mediation was necessary.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  T resolve(T ret, IComputationContext context) throws KlabException;
+	/**
+	 * Called once per temporal transition for the scale and the geometry of the
+	 * observation being resolved.
+	 *
+	 * @param ret
+	 *            the target observation being resolved, which should hold the
+	 *            output
+	 * @param context
+	 *            the runtime context of the computation. If we have incompatible
+	 *            previous values for the outputs, these will available as 'self'
+	 *            (retrievable as <code>context.get("self", T.class)</code> and may
+	 *            or may not be the same object as ret. In case, its
+	 *            {@link IArtifact#getType() type} can be checked.
+	 * @return the final observation - either the same passed as ret (usual case) or
+	 *         a new one if any mediation was necessary.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	T resolve(T ret, IComputationContext context) throws KlabException;
 
 }

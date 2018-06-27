@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -175,13 +177,18 @@ public class Actuator implements IActuator {
 		IArtifact ret = target;
 
 		/*
+		 * Keep the latest layer for all artifacts involved here, indexed by name (use
+		 * self_ for the actuator's target).
+		 */
+		Map<String, IArtifact> artifactTable = new HashMap<>();
+
+		artifactTable.put("self_", target);
+
+		/*
 		 * run the contextualization strategy with the localized context. Each
 		 * contextualizer may produce/require something else than the actuator's target
 		 * (in case of explicit retargeting) or an intermediate version requiring a
 		 * different type. We use the context's artifact table to keep track.
-		 * 
-		 * FIXME the final artifact (created before calling) may not be compatible with
-		 * the intermediate ones (e.g. in classification).
 		 */
 		for (Pair<IContextualizer, IComputableResource> contextualizer : computation) {
 
@@ -191,17 +198,12 @@ public class Actuator implements IActuator {
 			 * problem if one uses defaults that a previous one provides with a different
 			 * meaning).
 			 */
-
 			IObservable indirectTarget = contextualizer.getSecond().getTarget();
 
-			/*
-			 * Initial target will be null if the actuator is for an instantiator. We take
-			 * it from the context as setupContext() may have swapped it for a rescaling
-			 * mediator.
-			 * 
-			 * FIXME the initial target should be the empty artifact with instantiators.
-			 */
-			IArtifact targetArtifact = indirectTarget == null ? target : ctx.getArtifact(indirectTarget.getLocalName());
+			String targetId = indirectTarget == null ? "self_" : indirectTarget.getLocalName();
+			if (!artifactTable.containsKey(targetId)) {
+				artifactTable.put(targetId, ctx.getArtifact(targetId));
+			}
 
 			/*
 			 * run the contextualizer on its target. This may get a null and instantiate a
@@ -209,18 +211,19 @@ public class Actuator implements IActuator {
 			 * 
 			 * FIXME parameters are kept from previous contextualizers in ctx
 			 */
-			targetArtifact = runContextualizer(contextualizer.getFirst(),
-					indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
-					targetArtifact, ctx, ctx.getScale());
+			artifactTable.put(targetId,
+					runContextualizer(contextualizer.getFirst(),
+							indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
+							artifactTable.get(targetId), ctx, ctx.getScale()));
 
 			/*
 			 * if we have produced the artifact (through an instantiator), set it in the
 			 * context.
 			 */
 			if (indirectTarget == null) {
-				ret = targetArtifact;
+				ret = artifactTable.get(targetId);
 			} else {
-				ctx.setData(indirectTarget.getLocalName(), targetArtifact);
+				ctx.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
 			}
 		}
 
@@ -264,10 +267,17 @@ public class Actuator implements IActuator {
 	private IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
 			IComputableResource resource, IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
 
+		/*
+		 * This is what we get as the original content of self, which may be null or an
+		 * empty state, or contain the result of the previous computation, including
+		 * those that create state layers of a different type.
+		 */
+		IArtifact self = ret;
+
 		if (ret instanceof IState) {
 			/*
-			 * switch the storage in the state to the type needed in the compute chain,
-			 * creating a layer if necessary.
+			 * Establish the container for the output: switch the storage in the state to
+			 * the type needed in the compute chain, creating a layer if necessary.
 			 */
 			ret = ((IState) ret).as(contextualizer.getType());
 		}
@@ -279,16 +289,16 @@ public class Actuator implements IActuator {
 			 * parallelization instead of hard-coding a loop here.
 			 */
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IState) ret, addParameters(ctx, resource), /*
-																 * TODO CHECK THE USE OF AT() - CALLED FROM setupContext
-																 * already has this applied
-																 */ scale.at(ITime.INITIALIZATION));
+					(IState) ret, addParameters(ctx, self, resource), /*
+																		 * TODO CHECK THE USE OF AT() - CALLED FROM
+																		 * setupContext already has this applied
+																		 */ scale.at(ITime.INITIALIZATION));
 
 		} else if (contextualizer instanceof IResolver) {
-			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, resource));
+			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, self, resource));
 		} else if (contextualizer instanceof IInstantiator) {
 			for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(observable,
-					addParameters(ctx, resource))) {
+					addParameters(ctx, self, resource))) {
 				if (ret == null) {
 					ret = object;
 				} else {
@@ -311,10 +321,16 @@ public class Actuator implements IActuator {
 	 * found by the contextualizer.
 	 * 
 	 * @param ctx
+	 * @param self
+	 *            the current artifact which will be set as "self" in the context.
+	 *            May be the target or a layer of the target.
 	 * @param second
 	 * @return
 	 */
-	private IRuntimeContext addParameters(IRuntimeContext ctx, IComputableResource resource) {
+	private IRuntimeContext addParameters(IRuntimeContext ctx, IArtifact self, IComputableResource resource) {
+		if (self != null) {
+			ctx.set("self", self);
+		}
 		for (String name : resource.getParameters().keySet()) {
 			ctx.set(name, resource.getParameters().get(name));
 		}
@@ -598,8 +614,8 @@ public class Actuator implements IActuator {
 				}
 			} else if (lastResource.getLookupTable() != null) {
 				if (observation instanceof IKeyHolder) {
-					((IKeyHolder) observation).setDataKey(
-							((ComputableResource) lastResource).getValidatedResource(ILookupTable.class));
+					((IKeyHolder) observation)
+							.setDataKey(((ComputableResource) lastResource).getValidatedResource(ILookupTable.class));
 				}
 			}
 		}

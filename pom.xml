@@ -67,6 +67,7 @@
 		<module>client</module>
 		<module>klab.tools</module>
 		<module>ide</module>
+		<module>klab.hub</module>
 	</modules>
 
 	<properties>
