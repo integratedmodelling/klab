@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -344,6 +345,11 @@ public class RescalingState extends Observation implements IState {
 	public IState as(IArtifact.Type type) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IDataKey getDataKey() {
+		return delegate.getDataKey();
 	}
 
 

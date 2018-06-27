@@ -4,12 +4,11 @@ import java.util.Iterator;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
 /**
@@ -20,12 +19,12 @@ import org.integratedmodelling.klab.utils.NumberUtils;
  * @param <T>
  */
 public class DataIterator<T> implements Iterator<T> {
-	
+
 	private Iterator<IScale> iterator;
 	private IDataArtifact data;
 	private Function<Object, T> converter;
-	
-	public DataIterator(IDataArtifact data, Iterator<IScale> iterator, Function<Object,T> translator) {
+
+	public DataIterator(IDataArtifact data, Iterator<IScale> iterator, Function<Object, T> translator) {
 		this.iterator = iterator;
 		this.data = data;
 		this.converter = translator;
@@ -34,7 +33,7 @@ public class DataIterator<T> implements Iterator<T> {
 	@SuppressWarnings("unchecked")
 	public static <T> DataIterator<T> create(IState data, IScale scale, Class<? extends T> cls) {
 		
-		IClassification classification = data.getMetadata().get(State.CLASSIFICATION_METADATA_KEY, IClassification.class);
+		IDataKey classification = data.getDataKey();
 		
 		if (Number.class.isAssignableFrom(cls)) {	
 			return (DataIterator<T>) new DataIterator<Number>(data, scale.iterator(), getConverterToNumber(data, cls, classification));
@@ -48,28 +47,30 @@ public class DataIterator<T> implements Iterator<T> {
 		}
 		throw new IllegalArgumentException("cannot iterate state " + data + " as " + cls.getCanonicalName());
 	}
-	
+
 	private static Function<Object, Boolean> getConverterToBoolean(IDataArtifact data) {
 
 		return (object) -> {
 			if (object instanceof Boolean) {
-				return (Boolean)object;
+				return (Boolean) object;
 			} else if (object instanceof Number) {
-				return NumberUtils.equal(((Number)object).doubleValue(), 0);
+				return NumberUtils.equal(((Number) object).doubleValue(), 0);
 			}
 			return false;
 		};
 	}
 
-	private static Function<Object, Number> getConverterToNumber(IDataArtifact data, Class<?> cls, IClassification classification) {
-		
+	private static Function<Object, Number> getConverterToNumber(IDataArtifact data, Class<?> cls,
+			IDataKey classification) {
+
 		return (object) -> {
 			if (object instanceof Boolean) {
-				return (Boolean)object ? 0 : 1;
+				return (Boolean) object ? 0 : 1;
 			} else if (object instanceof Number) {
-				return object.getClass().equals(cls)? (Number)object : NumberUtils.convertNumber((Number)object, cls);
+				return object.getClass().equals(cls) ? (Number) object
+						: NumberUtils.convertNumber((Number) object, cls);
 			} else if (object instanceof IConcept && classification != null) {
-				return NumberUtils.convertNumber(classification.getNumericValue((IConcept)object), cls);
+				return NumberUtils.convertNumber(classification.reverseLookup(object), cls);
 			}
 			return 0;
 		};
@@ -85,7 +86,7 @@ public class DataIterator<T> implements Iterator<T> {
 	public T next() {
 		Object value = data.get(iterator.next());
 		if (value != null) {
-			return converter == null ? (T)value : converter.apply(value);
+			return converter == null ? (T) value : converter.apply(value);
 		}
 		return null;
 	}

@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.visualization;
 
 import java.awt.Color;
-import java.io.File;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public enum Renderer {
 	 * @param imageFile
 	 * @param viewport
 	 */
-	public void render(IState state, ILocator locator, File imageFile, int[] viewport) {
+	public BufferedImage render(IState state, ILocator locator, int[] viewport) {
 
 		if (state.getSpace() == null || !(state.getSpace() instanceof Space && ((Space)state.getSpace()).getGrid() != null)) {
 			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
@@ -103,8 +103,8 @@ public enum Renderer {
 		// return result;
 		// }
 
-		// File outputfile = new File("image.jpg");
-		// ImageIO.write(bufferedImage, "jpg", outputfile);
+		
+		return null;
 	}
 
 	private RasterSymbolizer getRasterSymbolizer(IState state) {

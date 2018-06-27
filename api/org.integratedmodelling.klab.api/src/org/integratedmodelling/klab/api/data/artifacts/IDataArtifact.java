@@ -15,10 +15,9 @@
  */
 package org.integratedmodelling.klab.api.data.artifacts;
 
-import java.util.Iterator;
-
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -102,5 +101,13 @@ public interface IDataArtifact extends IArtifact {
 	 * @return total count of states
 	 */
 	long size();
+
+	/**
+	 * If the individual values can be matched to an interpretive key, return it
+	 * here.
+	 * 
+	 * @return the data key, or null.
+	 */
+	IDataKey getDataKey();
 
 }

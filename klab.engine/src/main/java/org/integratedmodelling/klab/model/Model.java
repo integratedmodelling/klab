@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.classification.Classification;
+import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Documentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -155,6 +156,7 @@ public class Model extends KimObject implements IModel {
 		if (resource.getClassification() != null) {
 			resource.setValidatedResource(new Classification(resource.getClassification()));
 		} else if (resource.getLookupTable() != null) {
+			resource.setValidatedResource(new LookupTable(resource.getLookupTable()));
 		}
 		return resource;
 	}

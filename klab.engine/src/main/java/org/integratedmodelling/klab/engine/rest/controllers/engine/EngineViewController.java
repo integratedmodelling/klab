@@ -133,7 +133,7 @@ public class EngineViewController {
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION, method = RequestMethod.GET)
 	@ResponseBody
-	public void getObservationData(Principal principal, @PathVariable String observation,
+	public void getObservationData(Principal principal, @PathVariable String observation, @RequestParam(required = false) String viewport,
 			HttpServletResponse response) {
 
 		ISession session = EngineSessionController.getSession(principal);

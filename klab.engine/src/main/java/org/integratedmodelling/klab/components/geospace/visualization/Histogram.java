@@ -44,6 +44,45 @@ import com.google.common.primitives.Ints;
  */
 public class Histogram  {
 
+	static class Builder {
+		
+		private int[] bins;
+		private double max;
+		private double min;
+		private boolean degenerate = false;
+
+		public Builder(double min, double max, int bins) {
+			this.min = min;
+			this.max = max;
+			this.degenerate = Double.isNaN(min) || Double.isNaN(max);
+			this.bins = new int[bins];
+		}
+		
+		public void add(double d) {
+            if (!degenerate) { 
+            	bins[(int) ((d - min) / (max - min) * (bins.length - 1))] ++;
+            }
+		}
+		
+		public Histogram build() {
+
+			if (degenerate) {
+				return null;
+			}
+			
+			Histogram ret = new Histogram();
+			
+			ret.bins = bins;
+			ret.boundaries = new double[] {min, max};
+			
+			return ret;
+		}
+		
+		
+		
+	}
+	
+	
     String description;
 
     int[]    bins;

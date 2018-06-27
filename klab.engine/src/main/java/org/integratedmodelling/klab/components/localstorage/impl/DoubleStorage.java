@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -72,6 +73,11 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 	@Override
 	public Type getType() {
 		return Type.NUMBER;
+	}
+
+	@Override
+	public IDataKey getDataKey() {
+		return null;
 	}
 
 }

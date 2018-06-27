@@ -1,10 +1,14 @@
 package org.integratedmodelling.klab.data.storage;
 
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.scale.Scale;
 
-public class ConceptSingletonStorage extends AbstractSingletonStorage<IConcept> {
+public class ConceptSingletonStorage extends AbstractSingletonStorage<IConcept> implements IKeyHolder {
+
+	private IDataKey dataKey;
 
 	public ConceptSingletonStorage(IObservable observable, Scale scale) {
 		super(observable, scale);
@@ -18,6 +22,16 @@ public class ConceptSingletonStorage extends AbstractSingletonStorage<IConcept> 
 	@Override
 	public Type getType() {
 		return Type.CONCEPT;
+	}
+
+	@Override
+	public IDataKey getDataKey() {
+		return dataKey;
+	}
+
+	@Override
+	public void setDataKey(IDataKey key) {
+		this.dataKey = key;
 	}
 
 }

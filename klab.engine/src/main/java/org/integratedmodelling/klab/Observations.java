@@ -1,5 +1,9 @@
 package org.integratedmodelling.klab;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -85,7 +89,27 @@ public enum Observations implements IObservationService {
 	}
 
 	private StateSummary computeStateSummary(IState state, ILocator locator) {
+		
 		StateSummary ret = new StateSummary();
+		
+		int ndata = 0;
+		int nndat = 0;
+
+		SummaryStatistics statistics = new SummaryStatistics();
+		
+		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext(); ) {
+			Double d = it.next();
+			if (d != null) {
+				ndata ++;
+				statistics.addValue(d);
+			} else {
+				nndat ++;
+			}
+		}
+		
+		ret.setNodataPercentage((double)nndat/(double)ndata);
+		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
+		
 		return ret;
 	}
 

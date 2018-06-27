@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
@@ -11,10 +13,11 @@ import org.integratedmodelling.klab.utils.Utils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class ConceptStorage extends Storage implements IDataArtifact {
+public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder {
 
-	BiMap<IConcept, Integer> classification = HashBiMap.create();
+	BiMap<IConcept, Integer> conceptKey = HashBiMap.create();
 	int[] data;
+	IDataKey dataKey;
 
 	public ConceptStorage(IGeometry scale) {
 		super(scale);
@@ -35,7 +38,7 @@ public class ConceptStorage extends Storage implements IDataArtifact {
 			throw new KlabUnimplementedException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
 		int key = data[(int) offset];
-		return key == Integer.MIN_VALUE ? null : classification.inverse().get(key);
+		return key == Integer.MIN_VALUE ? null : conceptKey.inverse().get(key);
 	}
 
 	@Override
@@ -48,12 +51,14 @@ public class ConceptStorage extends Storage implements IDataArtifact {
 		if (value == null) {
 			data[(int) offset] = Integer.MIN_VALUE;
 		} else if (value instanceof IConcept) {
-			int cValue = classification.size();
-			if (classification.containsKey((IConcept) value)) {
-				cValue = classification.get(value);
+			int cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
+			if (conceptKey.containsKey((IConcept) value)) {
+				cValue = conceptKey.get(value);
 			} else {
-				cValue++;
-				classification.put((IConcept) value, cValue);
+				if (dataKey == null) {
+					cValue++;
+				}
+				conceptKey.put((IConcept) value, cValue);
 			}
 			data[(int) offset] = cValue;
 		} else {
@@ -78,6 +83,16 @@ public class ConceptStorage extends Storage implements IDataArtifact {
 	@Override
 	public Type getType() {
 		return Type.CONCEPT;
+	}
+
+	@Override
+	public IDataKey getDataKey() {
+		return dataKey;
+	}
+
+	@Override
+	public void setDataKey(IDataKey key) {
+		this.dataKey = key;
 	}
 
 }

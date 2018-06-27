@@ -8,11 +8,13 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.storage.DataIterator;
+import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -22,13 +24,12 @@ import org.integratedmodelling.klab.scale.Scale;
  * @author Ferd
  *
  */
-public class State extends Observation implements IState {
+public class State extends Observation implements IState, IKeyHolder {
 
 	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
-	public static final String CLASSIFICATION_METADATA_KEY = "metadata.keys.classification_";
-	public static final String LOOKUP_TABLE_METADATA_KEY = "metadata.keys.lookup_table_";
 	
 	IDataArtifact storage;
+	IDataKey dataKey;
 	Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
 
 	public State(Observable observable, Scale scale, RuntimeContext context, IDataArtifact data) {
@@ -90,6 +91,19 @@ public class State extends Observation implements IState {
 	@Override
 	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
 		return DataIterator.create(this, getScale().at(index), cls);
+	}
+
+	@Override
+	public IDataKey getDataKey() {
+		return dataKey;
+	}
+
+	@Override
+	public void setDataKey(IDataKey key) {
+		this.dataKey = key;
+		if (this.storage instanceof IKeyHolder) {
+			((IKeyHolder)this.storage).setDataKey(key);
+		}
 	}
 
 }

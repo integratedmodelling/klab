@@ -296,13 +296,15 @@ public class Classification implements IClassification {
         return numCodes.get(o);
 	}
 	
-    public Number getRank(IConcept object) {
-        for (int i = 0; i < conceptOrder.size(); i++) {
-            if (conceptOrder.get(i).equals(object)) {
-                return i;
+    public int getRank(IConcept object) {
+    	if (this.conceptIndexes == null) {
+            conceptIndexes = new HashMap<>();
+            for (int i = 0; i < conceptOrder.size(); i++) {
+                conceptIndexes.put(conceptOrder.get(i), i);
             }
-        }
-        return 0;
+    	}
+        Integer ret = conceptIndexes.get(object);
+        return ret == null ? -1 : ret;
     }
 
 
@@ -329,6 +331,11 @@ public class Classification implements IClassification {
 
 	public void addClassifier(Classifier classifier, IConcept c) {
 		classifiers.add(new Pair<>(c, classifier));
+	}
+
+	@Override
+	public int reverseLookup(Object value) {
+		return getRank((IConcept)value);
 	}
 
 }
