@@ -11,9 +11,11 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.storage.DataIterator;
+import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -104,6 +106,12 @@ public class State extends Observation implements IState, IKeyHolder {
 		if (this.storage instanceof IKeyHolder) {
 			((IKeyHolder)this.storage).setDataKey(key);
 		}
+	}
+
+	@Override
+	public IState at(ILocator locator) {
+		IScale scale = getScale().at(locator);
+		return scale == getScale() ? this : new RescalingState(this, (Scale)scale, getRuntimeContext());
 	}
 
 }

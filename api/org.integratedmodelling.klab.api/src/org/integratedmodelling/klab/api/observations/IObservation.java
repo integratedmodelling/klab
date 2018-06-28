@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.observations;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -61,6 +62,16 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
    * @return the observation's scale
    */
   IScale getScale();
+  
+  /**
+   * Return a view of this observation restricted to the passed locator, which is applied
+   * to the scale to obtain a new scale, used as a filter to obtain the view.
+   * 
+   * @param locator
+   * @return a rescaled view of this observation
+   * @throws IllegalArgumentException if the locator is unsuitable for the observation
+   */
+  IObservation at(ILocator locator);
 
   /**
    * Observation may have been made in the context of another direct observation. This will always

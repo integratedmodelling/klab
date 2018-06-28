@@ -67,4 +67,7 @@ public interface IState extends IObservation, IDataArtifact {
 	 */
 	<T> Iterator<T> iterator(ILocator index, Class<? extends T> cls);
 
+	@Override
+	IState at(ILocator locator);
+	
 }

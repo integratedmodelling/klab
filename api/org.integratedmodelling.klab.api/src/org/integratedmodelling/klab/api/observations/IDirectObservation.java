@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 
 /**
@@ -44,5 +45,8 @@ public abstract interface IDirectObservation extends IObservation, IObjectArtifa
 	 * @return a {@link java.util.Collection} object.
 	 */
 	Collection<IState> getStates();
-
+	
+	@Override
+	IDirectObservation at(ILocator locator);
+	
 }

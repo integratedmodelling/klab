@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -145,6 +146,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 			@Override
 			public IArtifact.Type getType() {
 				return IArtifact.Type.VOID;
+			}
+
+			@Override
+			public IObservation at(ILocator locator) {
+				return this;
 			}
 			
 		};

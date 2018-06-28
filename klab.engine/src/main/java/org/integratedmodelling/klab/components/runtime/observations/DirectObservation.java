@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -36,5 +38,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
     @Override
     public IArtifact.Type getType() {
     	return IArtifact.Type.OBJECT;
+    }
+    
+    public IDirectObservation at(ILocator locator) {
+    	Logging.INSTANCE.warn("RELOCATION OF DIRECT OBSERVATION IS UNIMPLEMENTED!");
+    	return this;
     }
 }

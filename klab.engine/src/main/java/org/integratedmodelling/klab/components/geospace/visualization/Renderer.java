@@ -1,11 +1,16 @@
 package org.integratedmodelling.klab.components.geospace.visualization;
 
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.renderer.lite.RendererUtilities;
+import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
 import org.geotools.styling.ColorMap;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Style;
@@ -15,8 +20,15 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -43,67 +55,80 @@ public enum Renderer {
 	 * from annotations or defaults.
 	 * 
 	 * @param state
-	 * @param locator must specify a full spatial slice
+	 * @param locator
+	 *            must specify a full spatial slice
 	 * @param imageFile
 	 * @param viewport
 	 */
 	public BufferedImage render(IState state, ILocator locator, int[] viewport) {
 
-		if (state.getSpace() == null || !(state.getSpace() instanceof Space && ((Space)state.getSpace()).getGrid() != null)) {
+		if (state.getSpace() == null
+				|| !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid() != null)) {
 			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
 		}
 
+		ISpace space = state.getSpace();
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
-		
+
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
+		try {
+			
+			GeotoolsUtils.INSTANCE.stateToCoverage(state, locator);
+			IEnvelope envelope = space.getEnvelope();
+			IProjection projection = space.getProjection();
+			Rectangle screenSize = new Rectangle(viewport[0], viewport[1]);
+			AffineTransform w2s = RendererUtilities.worldToScreenTransform(((Envelope) envelope).getJTSEnvelope(),
+					screenSize);
+			GridCoverageRenderer renderer = new GridCoverageRenderer(
+					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
+					screenSize, w2s);
 
-		// CoordinateReferenceSystem googleMercator = CRS.decode("EPSG:3857");
-		// ReferencedEnvelope mapExtent =
-		// new ReferencedEnvelope(
-		// -20037508.34, 20037508.34, -20037508.34, 20037508.34, googleMercator);
-		// Rectangle screenSize =
-		// new Rectangle(200, (int) (mapExtent.getHeight() / mapExtent.getWidth() *
-		// 200));
-		// AffineTransform w2s = RendererUtilities.worldToScreenTransform(mapExtent,
-		// screenSize);
-		// GridCoverageRenderer renderer =
-		// new GridCoverageRenderer(googleMercator, mapExtent, screenSize, w2s);
-		// RasterSymbolizer rasterSymbolizer = new
-		// StyleBuilder().createRasterSymbolizer();
-		// RenderedImage image =
-		// renderer.renderImage(
-		// worldPaletteReader,
-		// null,
-		// rasterSymbolizer,
-		// Interpolation.getInstance(Interpolation.INTERP_BICUBIC),
-		// null,
-		// 256,
-		// 256);
+			// CoordinateReferenceSystem googleMercator = CRS.decode("EPSG:3857");
+			// ReferencedEnvelope mapExtent =
+			// new ReferencedEnvelope(
+			// -20037508.34, 20037508.34, -20037508.34, 20037508.34, googleMercator);
+			// GridCoverageRenderer renderer =
+			// new GridCoverageRenderer(googleMercator, mapExtent, screenSize, w2s);
+			// RasterSymbolizer rasterSymbolizer = new
+			// StyleBuilder().createRasterSymbolizer();
+			// RenderedImage image =
+			// renderer.renderImage(
+			// worldPaletteReader,
+			// null,
+			// rasterSymbolizer,
+			// Interpolation.getInstance(Interpolation.INTERP_BICUBIC),
+			// null,
+			// 256,
+			// 256);
 
-		// public static BufferedImage convertRenderedImage(RenderedImage img) {
-		// if (img instanceof BufferedImage) {
-		// return (BufferedImage) img;
-		// }
-		// ColorModel cm = img.getColorModel();
-		// int width = img.getWidth();
-		// int height = img.getHeight();
-		// WritableRaster raster = cm
-		// .createCompatibleWritableRaster(width, height);
-		// boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		// Hashtable properties = new Hashtable();
-		// String[] keys = img.getPropertyNames();
-		// if (keys != null) {
-		// for (int i = 0; i < keys.length; i++) {
-		// properties.put(keys[i], img.getProperty(keys[i]));
-		// }
-		// }
-		// BufferedImage result = new BufferedImage(cm, raster,
-		// isAlphaPremultiplied, properties);
-		// img.copyData(raster);
-		// return result;
-		// }
+			// public static BufferedImage convertRenderedImage(RenderedImage img) {
+			// if (img instanceof BufferedImage) {
+			// return (BufferedImage) img;
+			// }
+			// ColorModel cm = img.getColorModel();
+			// int width = img.getWidth();
+			// int height = img.getHeight();
+			// WritableRaster raster = cm
+			// .createCompatibleWritableRaster(width, height);
+			// boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+			// Hashtable properties = new Hashtable();
+			// String[] keys = img.getPropertyNames();
+			// if (keys != null) {
+			// for (int i = 0; i < keys.length; i++) {
+			// properties.put(keys[i], img.getProperty(keys[i]));
+			// }
+			// }
+			// BufferedImage result = new BufferedImage(cm, raster,
+			// isAlphaPremultiplied, properties);
+			// img.copyData(raster);
+			// return result;
+			// }
 
-		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return null;
 	}
 

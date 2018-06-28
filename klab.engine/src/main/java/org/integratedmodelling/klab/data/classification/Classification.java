@@ -31,7 +31,6 @@ public class Classification implements IClassification {
 	private IConcept nilClassifier;
 	private List<IConcept> conceptOrder = new ArrayList<>();
 	private double[] distributionBreakpoints;
-//    private Map<Integer, IConcept>    conceptOrderRank = null;
     private Map<IConcept, Double>     numCodes         = null;
     private Map<IConcept, Integer>    conceptIndexes;
 

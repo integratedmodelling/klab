@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
@@ -84,5 +85,10 @@ public class MediatingState extends Observation implements IState {
 	@Override
 	public IDataKey getDataKey() {
 		return delegate.getDataKey();
+	}
+
+	@Override
+	public IState at(ILocator locator) {
+		return new MediatingState((IState)delegate.at(locator), (RuntimeContext) getRuntimeContext(), from, to);
 	}
 }
