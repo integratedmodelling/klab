@@ -12,6 +12,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
@@ -349,6 +350,16 @@ public class Classification implements IClassification {
 			ret.add(Concepts.INSTANCE.getDisplayName(c));
 		}
 		return ret;
+	}
+
+	@Override
+	public boolean isOrdered() {
+		for (IConcept c : conceptOrder) {
+			if (!c.is(Type.ORDERING)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

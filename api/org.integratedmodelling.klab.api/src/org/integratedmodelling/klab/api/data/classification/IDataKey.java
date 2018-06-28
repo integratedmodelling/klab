@@ -38,4 +38,11 @@ public interface IDataKey {
 	 */
 	List<String> getLabels();
 
+	/**
+	 * True if the keyed categories reflect an ordering. 
+	 * 
+	 * @return true if ordered.
+	 */
+	boolean isOrdered();
+
 }

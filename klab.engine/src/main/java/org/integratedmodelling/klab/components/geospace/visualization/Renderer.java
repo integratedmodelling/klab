@@ -7,12 +7,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import javax.media.jai.Interpolation;
 
+import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
@@ -50,6 +52,7 @@ public enum Renderer {
 
 	private Map<String, Style> styles = new HashMap<>();
 	private StyleBuilder styleBuilder = new StyleBuilder();
+	ColorBrewer colorBrewer = new ColorBrewer();
 
 	Renderer() {
 		// TODO lookup and load any pre-defined styles in the classpath and local
@@ -126,8 +129,8 @@ public enum Renderer {
 	private RasterSymbolizer getRasterSymbolizer(IState state, ILocator locator) {
 
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
-		String defaultMap = state.getDataKey() == null ? "jet" : "random";
 		double opacity = 1.0;
+		Color[] colors = null;
 
 		for (IAnnotation annotation : state.getAnnotations()) {
 			if (annotation.getName().equals("colormap")) {
@@ -137,12 +140,22 @@ public enum Renderer {
 			}
 		}
 
-		if (defaultMap.equals("jet")) {
+		if (colors == null) {
+			if (state.getDataKey() == null) {
+				colors = jet(1.0f);
+			} else {
 
-		} else if (defaultMap.equals("random")) {
+				// establish if we have an ordering
+				if (state.getDataKey().isOrdered()) {
 
-		} else {
-
+				} else {
+					if (state.getDataKey().size() > 20) {
+						// warn and use a scale
+					} else {
+						colors = Arrays.copyOf(random20, state.getDataKey().size());
+					}
+				}
+			}
 		}
 
 		// create style
@@ -186,4 +199,27 @@ public enum Renderer {
 
 		return null;
 	}
+
+	public Color[] jet(float alpha) {
+		Color[] ret = new Color[256];
+		for (int i = 0; i < 256; i++) {
+			double n = (int) (4.0 * (double) i / 256.0);
+			int red = (int) (255 * Math.min(Math.max(Math.min(n - 1.5, -n + 4.5), 0), 1));
+			int green = (int) (255 * Math.min(Math.max(Math.min(n - 0.5, -n + 3.5), 0), 1));
+			int blue = (int) (255 * Math.min(Math.max(Math.min(n + 0.5, -n + 2.5), 0), 1));
+			ret[i] = new Color(red, green, blue, alpha);
+		}
+		return ret;
+	}
+
+	/**
+	 * Default different/random selected by Sasha Trubetskoy (see
+	 * https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors)
+	 */
+	static Color[] random20 = new Color[] { new Color(230, 25, 75), new Color(60, 180, 75), new Color(255, 225, 25),
+			new Color(0, 130, 200), new Color(245, 130, 48), new Color(145, 30, 180), new Color(70, 240, 240),
+			new Color(240, 50, 230), new Color(210, 245, 60), new Color(250, 190, 190), new Color(0, 128, 128),
+			new Color(230, 190, 255), new Color(170, 110, 40), new Color(255, 250, 200), new Color(128, 0, 0),
+			new Color(170, 255, 195), new Color(128, 128, 0), new Color(255, 215, 180), new Color(0, 0, 128),
+			new Color(128, 128, 128), new Color(255, 255, 255), new Color(0, 0, 0) };
 }

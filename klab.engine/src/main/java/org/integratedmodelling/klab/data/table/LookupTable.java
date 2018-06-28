@@ -36,4 +36,10 @@ public class LookupTable implements ILookupTable {
 		return null;
 	}
 
+	@Override
+	public boolean isOrdered() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
