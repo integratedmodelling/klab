@@ -14,14 +14,12 @@ import java.util.Map;
 import javax.media.jai.Interpolation;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
 import org.geotools.styling.ColorMap;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import org.geotools.styling.StyleFactory;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -30,6 +28,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -70,19 +69,22 @@ public enum Renderer {
 	public BufferedImage render(IState state, ILocator locator, int[] viewport) {
 
 		if (state.getSpace() == null
-				|| !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid() != null)) {
+				|| !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid().isPresent())) {
 			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
 		}
 
 		ISpace space = state.getSpace();
+		IGrid grid = ((Space) state.getSpace()).getGrid().get();
 
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 		try {
 
+			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
 			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator);
 			IEnvelope envelope = space.getEnvelope();
 			IProjection projection = space.getProjection();
-			Rectangle screenSize = new Rectangle(viewport[0], viewport[1]);
+			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
+			Rectangle screenSize = new Rectangle(imagesize[0], imagesize[1]);
 			AffineTransform w2s = RendererUtilities.worldToScreenTransform(((Envelope) envelope).getJTSEnvelope(),
 					screenSize);
 			GridCoverageRenderer renderer = new GridCoverageRenderer(

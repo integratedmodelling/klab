@@ -144,13 +144,13 @@ public class EngineViewController {
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION, method = RequestMethod.GET)
 	public void getObservationData(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) String viewport, @RequestParam ObservationReference.GeometryType format,
-			HttpServletResponse response) throws Exception {
+			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
+			@RequestParam ObservationReference.GeometryType format, HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
-		// TODO link to parameters
+		// TODO link to locator parameter
 		ILocator timeLocator = ITime.INITIALIZATION;
 
 		if (obs instanceof IState) {
