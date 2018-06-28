@@ -1,19 +1,30 @@
 package org.integratedmodelling.klab.engine.rest.controllers.engine;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Iterator;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.utils.NumberUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -132,17 +143,28 @@ public class EngineViewController {
 	 * http://www.baeldung.com/spring-mvc-content-negotiation-json-xml
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION, method = RequestMethod.GET)
-	@ResponseBody
-	public void getObservationData(Principal principal, @PathVariable String observation, @RequestParam(required = false) String viewport,
-			HttpServletResponse response) {
+	public void getObservationData(Principal principal, @PathVariable String observation,
+			@RequestParam(required = false) String viewport, @RequestParam ObservationReference.GeometryType format,
+			HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
-		// for an image:
-		// InputStream in =
-		// servletContext.getResourceAsStream("/WEB-INF/images/image-example.jpg");
-		// response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-		// IOUtils.copy(in, response.getOutputStream());
+		// TODO link to parameters
+		ILocator timeLocator = ITime.INITIALIZATION;
+
+		if (obs instanceof IState) {
+
+			if (format == ObservationReference.GeometryType.RASTER) {
+				BufferedImage image = Renderer.INSTANCE.render((IState) obs, timeLocator,
+						NumberUtils.intArrayFromString(viewport == null ? "800,800" : viewport));
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				ImageIO.write(image, "png", os);
+				InputStream in = new ByteArrayInputStream(os.toByteArray());
+				response.setContentType(MediaType.IMAGE_PNG_VALUE);
+				IOUtils.copy(in, response.getOutputStream());
+			}
+		}
+
 	}
 }

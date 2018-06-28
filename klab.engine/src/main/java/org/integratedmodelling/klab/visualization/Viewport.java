@@ -26,73 +26,87 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.visualization;
 
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class Viewport  {
+public class Viewport {
 
-    int x, y;
+	int x, y;
 
-    public Viewport(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+	/**
+	 * Create a viewport from a string spec - either a single integer (for a square
+	 * viewport) or two comma-separated ones.
+	 * 
+	 * @param specs
+	 * @return
+	 */
+	public static Viewport create(String specs) {
+		int[] size = NumberUtils.intArrayFromString(specs);
+		return new Viewport(size[0], size.length == 1 ? size[0] : size[1]);
+	}
 
-    public int getWidth() {
-        return x;
-    }
+	public Viewport(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
 
-    public int getHeight() {
-        return y;
-    }
+	public int getWidth() {
+		return x;
+	}
 
-    public int[] getSizeFor(double imageWidth, double imageHeight) {
-        Pair<Integer, Integer> ret = getViewportSize(x, y, imageWidth, imageHeight);
-        return new int[] { ret.getFirst(), ret.getSecond() };
-    }
+	public int getHeight() {
+		return y;
+	}
 
-    /**
-     * Define the plot size for the given map dimensions that ensures
-     * that a map drawing of the area fits maximally within a viewport.
-     * 
-     * @param viewportWidth
-     * @param viewportHeight
-     * @param mapWidth
-     * @param mapHeight
-     * @return <width, height> of the largest map that fits in the viewport without distorsion.
-     */
-    public static Pair<Integer, Integer> getViewportSize(int viewportWidth, int viewportHeight,
-            Number mapWidth, Number mapHeight) {
+	public int[] getSizeFor(double imageWidth, double imageHeight) {
+		Pair<Integer, Integer> ret = getViewportSize(x, y, imageWidth, imageHeight);
+		return new int[] { ret.getFirst(), ret.getSecond() };
+	}
 
-        int x = viewportWidth, y = viewportHeight;
-        double image_aspect_ratio = mapWidth.doubleValue() / mapHeight.doubleValue();
+	/**
+	 * Define the plot size for the given map dimensions that ensures that a map
+	 * drawing of the area fits maximally within a viewport.
+	 * 
+	 * @param viewportWidth
+	 * @param viewportHeight
+	 * @param mapWidth
+	 * @param mapHeight
+	 * @return <width, height> of the largest map that fits in the viewport without
+	 *         distorsion.
+	 */
+	public static Pair<Integer, Integer> getViewportSize(int viewportWidth, int viewportHeight, Number mapWidth,
+			Number mapHeight) {
 
-        // largest side of image must fit within corresponding side of viewport
-        if (mapWidth.doubleValue() > mapHeight.doubleValue()) {
-            x = viewportWidth;
-            y = (int) (((double) x) / image_aspect_ratio);
-            if (y > viewportHeight) {
-                // reduce further
-                double fc = (double) viewportHeight / (double) y;
-                x = (int) ((double) x * fc);
-                y = (int) ((double) y * fc);
-            }
-        } else {
-            y = viewportHeight;
-            x = (int) (((double) y) * image_aspect_ratio);
-            if (x > viewportWidth) {
-                // reduce further
-                double fc = (double) viewportWidth / (double) x;
-                x = (int) ((double) x * fc);
-                y = (int) ((double) y * fc);
-            }
-        }
+		int x = viewportWidth, y = viewportHeight;
+		double image_aspect_ratio = mapWidth.doubleValue() / mapHeight.doubleValue();
 
-        return new Pair<Integer, Integer>(x, y);
-    }
+		// largest side of image must fit within corresponding side of viewport
+		if (mapWidth.doubleValue() > mapHeight.doubleValue()) {
+			x = viewportWidth;
+			y = (int) (((double) x) / image_aspect_ratio);
+			if (y > viewportHeight) {
+				// reduce further
+				double fc = (double) viewportHeight / (double) y;
+				x = (int) ((double) x * fc);
+				y = (int) ((double) y * fc);
+			}
+		} else {
+			y = viewportHeight;
+			x = (int) (((double) y) * image_aspect_ratio);
+			if (x > viewportWidth) {
+				// reduce further
+				double fc = (double) viewportWidth / (double) x;
+				x = (int) ((double) x * fc);
+				y = (int) ((double) y * fc);
+			}
+		}
 
-    public void setSize(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+		return new Pair<Integer, Integer>(x, y);
+	}
+
+	public void setSize(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
 
 }
