@@ -338,4 +338,18 @@ public class Classification implements IClassification {
 		return getRank((IConcept)value);
 	}
 
+	@Override
+	public int size() {
+		return classifiers.size();
+	}
+	
+	@Override
+	public List<String> getLabels() {
+		List<String> ret = new ArrayList<>();
+		for (IConcept c : conceptOrder) {
+			ret.add(Concepts.INSTANCE.getDisplayName(c));
+		}
+		return ret;
+	}
+
 }

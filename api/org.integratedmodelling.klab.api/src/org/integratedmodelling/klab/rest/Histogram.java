@@ -1,76 +1,134 @@
+/*******************************************************************************
+ *  Copyright (C) 2007, 2014:
+ *  
+ *    - Ferdinando Villa <ferdinando.villa@bc3research.org>
+ *    - integratedmodelling.org
+ *    - any other authors listed in @author annotations
+ *
+ *    All rights reserved. This file is part of the k.LAB software suite,
+ *    meant to enable modular, collaborative, integrated 
+ *    development of interoperable data and model components. For
+ *    details, see http://integratedmodelling.org.
+ *    
+ *    This program is free software; you can redistribute it and/or
+ *    modify it under the terms of the Affero General Public License 
+ *    Version 3 or any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but without any warranty; without even the implied warranty of
+ *    merchantability or fitness for a particular purpose.  See the
+ *    Affero General Public License for more details.
+ *  
+ *     You should have received a copy of the Affero General Public License
+ *     along with this program; if not, write to the Free Software
+ *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *     The license is also available at: https://www.gnu.org/licenses/agpl.html
+ *******************************************************************************/
 package org.integratedmodelling.klab.rest;
 
-import java.util.HashMap;
-import java.util.List;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
+/**
+ * Serializable histogram with builder.
+ * 
+ * @author Ferd
+ *
+ */
 public class Histogram {
-    
-	private String           description;
-    private List<Integer>    bins;
-    private List<Double>     boundaries;
-    private List<String>     binLegends;
-    boolean                  nodata          = false;
-    long                     nodataCount     = 0;
-    double                   aggregatedMean  = 0;
-    double                   aggregatedTotal = Double.NaN;
-    
-    HashMap<String, Integer> occurrences;
-	
-    public String getDescription() {
-		return description;
+
+	public static class Builder {
+
+		private int[] bins;
+		private double max;
+		private double min;
+		private boolean degenerate = false;
+
+		private Builder(double min, double max, int bins) {
+			this.min = min;
+			this.max = max;
+			this.degenerate = Double.isNaN(min) || Double.isNaN(max);
+			this.bins = new int[bins];
+		}
+
+		public void add(double d) {
+			if (!degenerate) {
+				bins[(int) ((d - min) / (max - min) * (bins.length - 1))]++;
+			}
+		}
+
+		public Histogram build() {
+
+			Histogram ret = new Histogram();
+
+			ret.bins = bins;
+			ret.boundaries = new double[] { min, max };
+			ret.degenerate = degenerate;
+
+			return ret;
+		}
 	}
-	public void setDescription(String description) {
-		this.description = description;
+
+	public static Builder builder(double min, double max, int bins) {
+		return new Builder(min, max, bins);
 	}
-	public List<Integer> getBins() {
+
+	int[] bins;
+	double[] boundaries;
+	boolean degenerate = false;
+
+	public int[] getBins() {
 		return bins;
 	}
-	public void setBins(List<Integer> bins) {
+
+	public void setBins(int[] bins) {
 		this.bins = bins;
 	}
-	public List<Double> getBoundaries() {
+
+	public double[] getBoundaries() {
 		return boundaries;
 	}
-	public void setBoundaries(List<Double> boundaries) {
+
+	public void setBoundaries(double[] boundaries) {
 		this.boundaries = boundaries;
 	}
-	public List<String> getBinLegends() {
-		return binLegends;
+
+	public boolean isDegenerate() {
+		return degenerate;
 	}
-	public void setBinLegends(List<String> binLegends) {
-		this.binLegends = binLegends;
+
+	public void setDegenerate(boolean degenerate) {
+		this.degenerate = degenerate;
 	}
-	public boolean isNodata() {
-		return nodata;
+
+	public Image getImage(int w, int h) {
+
+		int divs = bins == null ? 0 : bins.length;
+
+		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		img.createGraphics();
+		Graphics2D g = (Graphics2D) img.getGraphics();
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, w, h);
+		if (degenerate) {
+			g.setColor(Color.RED);
+			g.drawLine(0, 0, w - 1, h - 1);
+			g.drawLine(0, h - 1, w - 1, 0);
+		} else {
+			int max = Arrays.stream(bins).max().getAsInt();
+			int dw = w / divs;
+			int dx = 0;
+			g.setColor(Color.GRAY);
+			for (int d : bins) {
+				int dh = (int) ((double) h * (double) d / max);
+				g.fillRect(dx, h - dh, dw, dh);
+				dx += dw;
+			}
+		}
+		return img;
 	}
-	public void setNodata(boolean nodata) {
-		this.nodata = nodata;
-	}
-	public long getNodataCount() {
-		return nodataCount;
-	}
-	public void setNodataCount(long nodataCount) {
-		this.nodataCount = nodataCount;
-	}
-	public double getAggregatedMean() {
-		return aggregatedMean;
-	}
-	public void setAggregatedMean(double aggregatedMean) {
-		this.aggregatedMean = aggregatedMean;
-	}
-	public double getAggregatedTotal() {
-		return aggregatedTotal;
-	}
-	public void setAggregatedTotal(double aggregatedTotal) {
-		this.aggregatedTotal = aggregatedTotal;
-	}
-	public HashMap<String, Integer> getOccurrences() {
-		return occurrences;
-	}
-	public void setOccurrences(HashMap<String, Integer> occurrences) {
-		this.occurrences = occurrences;
-	}
-    
-    
-    
+
 }

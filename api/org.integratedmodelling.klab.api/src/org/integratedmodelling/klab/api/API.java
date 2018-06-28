@@ -247,7 +247,6 @@ public interface API {
             public static final String COMPONENT_URN = "/network/retrieve/component/" + P_URN;
 
         }
-
     }
 
     /**
@@ -259,12 +258,12 @@ public interface API {
     public interface RESOURCE {
 
         /**
-         * Add a resource to the local catalog passing a local file URL and/or resource properties.
-         * Return URN after validation.
+         * Add a resource to the local catalog by uploading zipped contents from a
+         * valid resource import. Return URN after validation.
          * 
-         * ProtocolsPUT
+         * PUT
          */
-        public static final String ADD = "/resource/add";
+        public static final String SUBMIT = "/resource/submit";
 
         /**
          * Publish a local resource to the public catalog of this or another server.

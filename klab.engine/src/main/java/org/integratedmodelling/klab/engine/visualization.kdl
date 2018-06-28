@@ -6,7 +6,6 @@
 @klab 0.10.0
 @version 0.10.0
 
-
 /**
  * Reference or define colormaps. Examples:
  *load colormap and if needed, adjust to values
@@ -18,6 +17,8 @@
  *    @colormap(values = {0 to 10: (2,3,4), 10 to 222: (23,3,22), *: (33, 2, 22)})
  * build map to match actual values to ramp
  *    @colormap(colors = ((0,0,0) (1,2,3)))
+ * for feature or presence/absence:
+ *    @color(white)
  */
 annotation colormap
 	"Create or define a color map to use to display the result of the annotated model or any observation of
@@ -46,8 +47,13 @@ annotation colormap
 }
 
 annotation color 
-	"Specify color parameters for features to be displayed."
+	"Specify color parameters for features to be displayed. Used on boolean states, can use a single color
+	 value to specify how to render the 'present' state."
 {
+	optional input 'value'
+		"The name of a color to render areas where the observation is true."
+		default ""
+
 	optional input line 	
 		"Color for the line delineating the boundary"
 		default 'white'

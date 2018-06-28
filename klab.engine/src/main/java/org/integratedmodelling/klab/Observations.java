@@ -31,9 +31,11 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.Histogram;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.scale.Scale;
 
 public enum Observations implements IObservationService {
@@ -109,6 +111,16 @@ public enum Observations implements IObservationService {
 		
 		ret.setNodataPercentage((double)nndat/(double)ndata);
 		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
+		if (ret.getNodataPercentage() > 0) {
+			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(), state.getDataKey() == null ? 10 : state.getDataKey().size());
+			for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext(); ) {
+				Double d = it.next();
+				if (d != null) {
+					histogram.add(d);
+				}
+			}
+			ret.setHistogram(histogram.build());
+		}
 		
 		return ret;
 	}
