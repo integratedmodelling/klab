@@ -131,7 +131,9 @@ public enum Renderer {
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
 		double opacity = 1.0;
 		Color[] colors = null;
-
+		double[] values = null;
+		int colormapType = 0;
+		
 		for (IAnnotation annotation : state.getAnnotations()) {
 			if (annotation.getName().equals("colormap")) {
 
@@ -143,25 +145,26 @@ public enum Renderer {
 		if (colors == null) {
 			if (state.getDataKey() == null) {
 				colors = jet(1.0f);
+				colormapType = ColorMap.TYPE_RAMP;
 			} else {
 
 				// establish if we have an ordering
 				if (state.getDataKey().isOrdered()) {
 
+					colormapType = ColorMap.TYPE_INTERVALS;
+					
 				} else {
 					if (state.getDataKey().size() > 20) {
 						// warn and use a scale
 					} else {
 						colors = Arrays.copyOf(random20, state.getDataKey().size());
+						colormapType = ColorMap.TYPE_VALUES;
 					}
 				}
 			}
 		}
 
-		// create style
-		// TODO use colormaps and do it right, then export to GeotoolsUtils for map
-		// generation also as
-		// Image
+		// TEMPORARY
 		ColorMap colorMap = styleBuilder.createColorMap(new String[] { "poco", "meglio", "buono", "ostia" }, // labels
 				new double[] { 100, 400, 2000, 3000 }, // values that begin a category, or break points in a
 														// ramp, or isolated values, according to the type of
@@ -222,4 +225,6 @@ public enum Renderer {
 			new Color(230, 190, 255), new Color(170, 110, 40), new Color(255, 250, 200), new Color(128, 0, 0),
 			new Color(170, 255, 195), new Color(128, 128, 0), new Color(255, 215, 180), new Color(0, 0, 128),
 			new Color(128, 128, 128), new Color(255, 255, 255), new Color(0, 0, 0) };
+	
+	// elevation: check out http://cartographicperspectives.org/index.php/journal/article/download/20/70
 }
