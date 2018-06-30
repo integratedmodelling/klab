@@ -67,8 +67,10 @@ public class MediatingState extends Observation implements IState {
 
 	@Override
 	public IState as(IArtifact.Type type) {
-		// TODO Auto-generated method stub
-		return null;
+		if (delegate.getType() == type) {
+			return this;
+		}
+		return new MediatingState(delegate.as(type), (RuntimeContext) getRuntimeContext(), from, to);
 	}
 
 	@Override
@@ -95,6 +97,7 @@ public class MediatingState extends Observation implements IState {
 	}
 
 	public static IState getMediator(IState state, IValueMediator to) {
+		
 		IValueMediator from = state.getObservable().getUnit();
 		if (from == null) {
 			from = state.getObservable().getCurrency();
@@ -106,7 +109,10 @@ public class MediatingState extends Observation implements IState {
 			throw new IllegalArgumentException("cannot create a mediating state between "
 					+ (from == null ? "nothing" : from.toString()) + " and " + to.toString());
 		}
-		return new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
+		
+		return from.equals(to)
+				? state
+				: new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
 	}
 
 }

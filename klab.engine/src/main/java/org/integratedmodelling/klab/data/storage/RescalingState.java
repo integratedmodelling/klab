@@ -343,8 +343,10 @@ public class RescalingState extends Observation implements IState {
 
 	@Override
 	public IState as(IArtifact.Type type) {
-		// TODO Auto-generated method stub
-		return null;
+		if (delegate.getType() == type) {
+			return this;
+		}
+		return new RescalingState(delegate.as(type), newScale, getRuntimeContext());
 	}
 
 	@Override
