@@ -391,23 +391,27 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRangeMaxNumberParserRuleCall_1_7_2_3_0 = (RuleCall)cRangeMaxAssignment_1_7_2_3.eContents().get(0);
 		
 		//// 'as' must ONLY BE LEGAL FOR IMPORTS
-		//// if multiple, semantics must be given to recognize the observables
+		// // if multiple, semantics must be given to recognize the observables
+		//
 		//ActorDefinition:
 		//	(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
 		//	// parameters denotes the ability of the implementation of accepting modified values during run
+		//
 		//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//	parameter?='parameter'?
-		//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
-		//	docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
-		//	coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
-		//	parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
-		//	enumValues+=UPPERCASE_ID)*)?
-		//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
-		//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
+		//
+		//	parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
+		//	targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
+		//	coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
+		//	| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+		//	enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
+		//	rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
+		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
+		//// parameters denotes the ability of the implementation of accepting modified values during run
+		//
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
+		//
 		//parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 		//targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 		//coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
@@ -416,8 +420,11 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
+		//(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
+		//// parameters denotes the ability of the implementation of accepting modified values during run
+		//
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
+		//
 		//parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
 		//targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
 		//coverage+=Function (',' coverage+=Function)*)?
@@ -475,7 +482,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getMinimumPlusSignKeyword_0_0_1_1_1_1_0() { return cMinimumPlusSignKeyword_0_0_1_1_1_1_0; }
 		
 		//// parameters denotes the ability of the implementation of accepting modified values during run
+		//
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
+		//
 		//parameter?='parameter'?
 		public Assignment getParameterAssignment_0_1() { return cParameterAssignment_0_1; }
 		
@@ -591,6 +600,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
+		//
 		//optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum')
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
@@ -981,43 +991,54 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cPartitionKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
 		
 		//ACTOR: // countable, so always a dataflow for direct object instantiation
-		//	'object' | // non-countable, so one object only
-		//	'process' | // any acceptable quality type, for declarations only
-		//	'value' | // all the next are in quality scope; number type is handled internally
-		//	'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
-		//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
-		//	'annotation' | // only contracts for contextualizers returned by runtime functions
-		//	'contextualizer' | // only for command prototypes
-		//	'void' | // partial contextualizers for their parents
-		//	'partition';
+		// 'object' |
+		//	// non-countable, so one object only
+		// 'process' | // any acceptable quality type, for declarations only
+		// 'value' |
+		//	// all the next are in quality scope; number type is handled internally
+		// 'number' | 'concept' | 'boolean' | 'text' |
+		//	// specialized functions that produce extents
+		// 'extent' | 'spatialextent' | 'temporalextent' |
+		//	// only contracts for annotations
+		// 'annotation' |
+		//	// only contracts for contextualizers returned by runtime functions
+		// 'contextualizer' |
+		//	// only for command prototypes
+		// 'void' | // partial contextualizers for their parents
+		// 'partition';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//// countable, so always a dataflow for direct object instantiation
-		//'object' | // non-countable, so one object only
+		// 'object' | // non-countable, so one object only
+		//
 		//'process' | // any acceptable quality type, for declarations only
-		//'value' | // all the next are in quality scope; number type is handled internally
-		//'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
-		//'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
-		//'annotation' | // only contracts for contextualizers returned by runtime functions
+		// 'value' |
+		//// all the next are in quality scope; number type is handled internally
+		// 'number' | 'concept' | 'boolean' | 'text' |
+		//// specialized functions that produce extents
+		// 'extent' | 'spatialextent' | 'temporalextent' |
+		//// only contracts for annotations
+		// 'annotation' | // only contracts for contextualizers returned by runtime functions
+		//
 		//'contextualizer' | // only for command prototypes
-		//'void' | // partial contextualizers for their parents
-		//'partition'
+		// 'void' | // partial contextualizers for their parents
+		// 'partition'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//// countable, so always a dataflow for direct object instantiation
-		//'object'
+		// 'object'
 		public Keyword getObjectKeyword_0() { return cObjectKeyword_0; }
 		
 		//// non-countable, so one object only
-		//'process'
+		// 'process'
 		public Keyword getProcessKeyword_1() { return cProcessKeyword_1; }
 		
 		//// any acceptable quality type, for declarations only
-		//'value'
+		// 'value'
 		public Keyword getValueKeyword_2() { return cValueKeyword_2; }
 		
 		//// all the next are in quality scope; number type is handled internally
-		//'number'
+		// 'number'
 		public Keyword getNumberKeyword_3() { return cNumberKeyword_3; }
 		
 		//'concept'
@@ -1030,7 +1051,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getTextKeyword_6() { return cTextKeyword_6; }
 		
 		//// specialized functions that produce extents
-		//'extent'
+		// 'extent'
 		public Keyword getExtentKeyword_7() { return cExtentKeyword_7; }
 		
 		//'spatialextent'
@@ -1040,19 +1061,19 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getTemporalextentKeyword_9() { return cTemporalextentKeyword_9; }
 		
 		//// only contracts for annotations
-		//'annotation'
+		// 'annotation'
 		public Keyword getAnnotationKeyword_10() { return cAnnotationKeyword_10; }
 		
 		//// only contracts for contextualizers returned by runtime functions
-		//'contextualizer'
+		// 'contextualizer'
 		public Keyword getContextualizerKeyword_11() { return cContextualizerKeyword_11; }
 		
 		//// only for command prototypes
-		//'void'
+		// 'void'
 		public Keyword getVoidKeyword_12() { return cVoidKeyword_12; }
 		
 		//// partial contextualizers for their parents
-		//'partition'
+		// 'partition'
 		public Keyword getPartitionKeyword_13() { return cPartitionKeyword_13; }
 	}
 	public class TARGETElements extends AbstractParserRuleElementFinder {
@@ -1131,10 +1152,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ClassifierRHS:
 		//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//	(rightLimit='inclusive' | 'exclusive')? | num=Number |
-		//	'in' set=List | string=STRING | map=Map |
-		//	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' |
-		//	star?='*';
+		//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | map=Map | '('
+		//	toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' | star?='*';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
@@ -1726,7 +1745,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 		
 		//// String used when there are strange chars or keywords in the URN.
-		//name=(UrnId | STRING | LocalFilePath)
+		// name=(UrnId | STRING | LocalFilePath)
 		public Assignment getNameAssignment() { return cNameAssignment; }
 		
 		//(UrnId | STRING | LocalFilePath)
@@ -1762,7 +1781,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		///**
 		// * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
 		// * legal, but not required, to start with the default prefix urn:klab:
-		// */ UrnId:
+		// */
+		//UrnId:
 		//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -1907,9 +1927,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//// Lookup table literal
-		//LookupTable:
-		//	{LookupTable}
-		//	'{{' table=Table? '}}';
+		// LookupTable:
+		//	{LookupTable} '{{' table=Table? '}}';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{LookupTable} '{{' table=Table? '}}'
@@ -2046,9 +2065,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//TableClassifier ClassifierRHS:
 		//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-		//	(rightLimit='inclusive' | 'exclusive')? | num=Number |
-		//	'in' set=List | string=STRING | op=REL_OPERATOR expression=Number | expr=EXPR | nodata='unknown' | star?='*' |
-		//	anything?='#';
+		//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | op=REL_OPERATOR
+		//	expression=Number | expr=EXPR | nodata='unknown' | star?='*' | anything?='#';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
@@ -2199,7 +2217,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		///**
 		// * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
 		// * on whether there is an encoder for their file extension.
-		// */ LocalFilePath:
+		// */
+		//LocalFilePath:
 		//	(CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID) ('/' (CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID))* ('.'
 		//	LOWERCASE_ID)? ('#' LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
@@ -2339,8 +2358,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Function:
 		//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-		//	variable=LOWERCASE_ID)? |
-		//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+		//	variable=LOWERCASE_ID)? | '(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
@@ -2470,9 +2488,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		// * Unit of measurement re: jsr-108, parseable by Java
 		// * TODO implement expression syntax and provide validator
 		// * ---------------------------------------
-		// */ UnitElement:
-		//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number |
-		//	'(' unit=Unit ')';
+		// */
+		//UnitElement:
+		//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number | '(' unit=Unit ')';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number | '(' unit=Unit ')'
@@ -3160,19 +3178,20 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//// 'as' must ONLY BE LEGAL FOR IMPORTS
-	//// if multiple, semantics must be given to recognize the observables
+	// // if multiple, semantics must be given to recognize the observables
+	//
 	//ActorDefinition:
 	//	(exported?='export' | (optional?='optional'? imported?='import') (multiple?='multiple' | arity=INT minimum?='+'?)?)?
 	//	// parameters denotes the ability of the implementation of accepting modified values during run
+	//
 	//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-	//	parameter?='parameter'?
-	//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)?
-	//	docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
-	//	coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list' | 'enum'))
-	//	parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
-	//	enumValues+=UPPERCASE_ID)*)?
-	//	docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum' rangeMin=Number | 'maximum'
-	//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
+	//
+	//	parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('for' targets+=TARGET (','
+	//	targets+=TARGET)*)? docstring=STRING? ('{' body=DataflowBody '}')? ('as' localName=LOWERCASE_ID)? ('over'
+	//	coverage+=Function (',' coverage+=Function)*)? | (optional?='optional' | type=('number' | 'boolean' | 'text' | 'list'
+	//	| 'enum')) parameter?='input' name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('values' enumValues+=UPPERCASE_ID (','
+	//	enumValues+=UPPERCASE_ID)*)? docstring=STRING ('default' default=Value)? ('{' body=DataflowBody '}')? ('minimum'
+	//	rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}
@@ -3223,15 +3242,21 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ACTOR: // countable, so always a dataflow for direct object instantiation
-	//	'object' | // non-countable, so one object only
-	//	'process' | // any acceptable quality type, for declarations only
-	//	'value' | // all the next are in quality scope; number type is handled internally
-	//	'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
-	//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
-	//	'annotation' | // only contracts for contextualizers returned by runtime functions
-	//	'contextualizer' | // only for command prototypes
-	//	'void' | // partial contextualizers for their parents
-	//	'partition';
+	// 'object' |
+	//	// non-countable, so one object only
+	// 'process' | // any acceptable quality type, for declarations only
+	// 'value' |
+	//	// all the next are in quality scope; number type is handled internally
+	// 'number' | 'concept' | 'boolean' | 'text' |
+	//	// specialized functions that produce extents
+	// 'extent' | 'spatialextent' | 'temporalextent' |
+	//	// only contracts for annotations
+	// 'annotation' |
+	//	// only contracts for contextualizers returned by runtime functions
+	// 'contextualizer' |
+	//	// only for command prototypes
+	// 'void' | // partial contextualizers for their parents
+	// 'partition';
 	public ACTORElements getACTORAccess() {
 		return pACTOR;
 	}
@@ -3252,10 +3277,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//ClassifierRHS:
 	//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	//	(rightLimit='inclusive' | 'exclusive')? | num=Number |
-	//	'in' set=List | string=STRING | map=Map |
-	//	'(' toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' |
-	//	star?='*';
+	//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | map=Map | '('
+	//	toResolve+=STRING (=> ',' toResolve+=STRING)* ')' | op=REL_OPERATOR expression=Number | nodata='unknown' | star?='*';
 	public ClassifierRHSElements getClassifierRHSAccess() {
 		return pClassifierRHS;
 	}
@@ -3348,7 +3371,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
 	// * legal, but not required, to start with the default prefix urn:klab:
-	// */ UrnId:
+	// */
+	//UrnId:
 	//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
 	public UrnIdElements getUrnIdAccess() {
 		return pUrnId;
@@ -3379,9 +3403,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//// Lookup table literal
-	//LookupTable:
-	//	{LookupTable}
-	//	'{{' table=Table? '}}';
+	// LookupTable:
+	//	{LookupTable} '{{' table=Table? '}}';
 	public LookupTableElements getLookupTableAccess() {
 		return pLookupTable;
 	}
@@ -3412,9 +3435,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//TableClassifier ClassifierRHS:
 	//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
-	//	(rightLimit='inclusive' | 'exclusive')? | num=Number |
-	//	'in' set=List | string=STRING | op=REL_OPERATOR expression=Number | expr=EXPR | nodata='unknown' | star?='*' |
-	//	anything?='#';
+	//	(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | op=REL_OPERATOR
+	//	expression=Number | expr=EXPR | nodata='unknown' | star?='*' | anything?='#';
 	public TableClassifierElements getTableClassifierAccess() {
 		return pTableClassifier;
 	}
@@ -3432,7 +3454,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
 	// * on whether there is an encoder for their file extension.
-	// */ LocalFilePath:
+	// */
+	//LocalFilePath:
 	//	(CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID) ('/' (CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID))* ('.'
 	//	LOWERCASE_ID)? ('#' LOWERCASE_ID)?;
 	public LocalFilePathElements getLocalFilePathAccess() {
@@ -3455,8 +3478,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Function:
 	//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-	//	variable=LOWERCASE_ID)? |
-	//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
+	//	variable=LOWERCASE_ID)? | '(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	public FunctionElements getFunctionAccess() {
 		return pFunction;
 	}
@@ -3470,9 +3492,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	// * Unit of measurement re: jsr-108, parseable by Java
 	// * TODO implement expression syntax and provide validator
 	// * ---------------------------------------
-	// */ UnitElement:
-	//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number |
-	//	'(' unit=Unit ')';
+	// */
+	//UnitElement:
+	//	id=(CAMELCASE_ID | LOWERCASE_ID) | num=Number | '(' unit=Unit ')';
 	public UnitElementElements getUnitElementAccess() {
 		return pUnitElement;
 	}

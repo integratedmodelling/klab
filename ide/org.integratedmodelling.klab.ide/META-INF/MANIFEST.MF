@@ -30,8 +30,7 @@ Require-Bundle: javax.inject,
  org.eclipse.xtext.util,
  org.integratedmodelling.klab.client,
  org.integratedmodelling.klab.api,
- org.integratedmodelling.klab.ide.navigator;bundle-version="0.10.0",
- org.integratedmodelling.klab.ide.builder;bundle-version="0.10.0"
+ org.integratedmodelling.klab.ide.navigator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"
