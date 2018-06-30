@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
@@ -354,6 +355,11 @@ public class RescalingState extends Observation implements IState {
 	@Override
 	public IState at(ILocator locator) {
 		return delegate.at(locator);
+	}
+
+	@Override
+	public IState in(IValueMediator mediator) {
+		return MediatingState.getMediator(this, mediator);
 	}
 
 

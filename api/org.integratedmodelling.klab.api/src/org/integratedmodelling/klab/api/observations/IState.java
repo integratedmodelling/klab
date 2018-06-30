@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.util.Iterator;
 
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -67,7 +68,19 @@ public interface IState extends IObservation, IDataArtifact {
 	 */
 	<T> Iterator<T> iterator(ILocator index, Class<? extends T> cls);
 
+	/**
+	 * Create a state that will see this state through a value mediator, both when
+	 * setting and getting. Will only create a new state if the mediator has an
+	 * effect.
+	 * 
+	 * @param mediator
+	 * @return a mediated state, or this.
+	 * @throws IllegalArgumentException
+	 *             if the mediator does not apply to the state.
+	 */
+	IState in(IValueMediator mediator);
+
 	@Override
 	IState at(ILocator locator);
-	
+
 }

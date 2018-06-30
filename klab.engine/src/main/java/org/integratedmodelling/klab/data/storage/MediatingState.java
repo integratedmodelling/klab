@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
@@ -24,14 +23,14 @@ public class MediatingState extends Observation implements IState {
 	IState delegate;
 	IValueMediator from;
 	IValueMediator to;
-	
+
 	public MediatingState(IState state, RuntimeContext context, IValueMediator from, IValueMediator to) {
-	    super(new Observable((Observable)state.getObservable()), (Scale)state.getScale(), context);
+		super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
 		this.delegate = state;
 		this.from = from;
 		this.to = to;
 	}
-	
+
 	public Object get(ILocator index) {
 		Object val = delegate.get(index);
 		return val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val;
@@ -46,7 +45,7 @@ public class MediatingState extends Observation implements IState {
 	}
 
 	public long set(ILocator index, Object value) {
-		Object val = value instanceof Number ? from.convert(((Number)value).doubleValue(), to) : value;
+		Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
 		return delegate.set(index, val);
 	}
 
@@ -56,15 +55,10 @@ public class MediatingState extends Observation implements IState {
 		return delegate.isConstant();
 	}
 
-    @Override
-    public long size() {
-        return delegate.size();
-    }
-
-//    @Override
-//    public IState as(IObservable observable) {
-//        return delegate.as(observable);
-//    }
+	@Override
+	public long size() {
+		return delegate.size();
+	}
 
 	@Override
 	public IArtifact.Type getType() {
@@ -89,6 +83,30 @@ public class MediatingState extends Observation implements IState {
 
 	@Override
 	public IState at(ILocator locator) {
-		return new MediatingState((IState)delegate.at(locator), (RuntimeContext) getRuntimeContext(), from, to);
+		return new MediatingState((IState) delegate.at(locator), (RuntimeContext) getRuntimeContext(), from, to);
 	}
+
+	@Override
+	public IState in(IValueMediator mediator) {
+		if (mediator.equals(from)) {
+			return delegate;
+		}
+		return getMediator(this, mediator);
+	}
+
+	public static IState getMediator(IState state, IValueMediator to) {
+		IValueMediator from = state.getObservable().getUnit();
+		if (from == null) {
+			from = state.getObservable().getCurrency();
+		}
+		if (from == null) {
+			from = state.getObservable().getCurrency();
+		}
+		if (from == null || !from.isCompatible(to)) {
+			throw new IllegalArgumentException("cannot create a mediating state between "
+					+ (from == null ? "nothing" : from.toString()) + " and " + to.toString());
+		}
+		return new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
+	}
+
 }

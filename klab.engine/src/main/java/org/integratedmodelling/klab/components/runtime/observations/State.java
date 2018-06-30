@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -15,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.storage.DataIterator;
+import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.owl.Observable;
@@ -112,6 +114,11 @@ public class State extends Observation implements IState, IKeyHolder {
 	public IState at(ILocator locator) {
 		IScale scale = getScale().at(locator);
 		return scale == getScale() ? this : new RescalingState(this, (Scale)scale, getRuntimeContext());
+	}
+
+	@Override
+	public IState in(IValueMediator mediator) {
+		return MediatingState.getMediator(this, mediator);
 	}
 
 }
