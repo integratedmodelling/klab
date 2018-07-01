@@ -45,7 +45,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * Simple example building a mask with presence/absence rasterization:
  * 
  * <pre>
- * Rasterizer&lt;Boolean&gt; rasterizer = new Rasterizer<>(grid);
+ * Rasterizer&lt;Boolean&gt; rasterizer = new Rasterizer&lt;&gt;(grid);
  * for (IShape shape : shapes) {
  * 	// use anything different from boolean and a more complex function for shapes
  * 	// with attributes
@@ -63,9 +63,14 @@ import com.vividsolutions.jts.geom.Polygon;
  * compatible type, so for example declaring a Rasterizer&lt;Number&gt and
  * assigning a Long for the first shape will require that all subsequent values
  * are Long.
+ * <p>
+ * The rasterizer also exposes a method to return the world coordinates of all
+ * points covered by a shape. The {@link #getCoordinates(IShape)} method does
+ * not use the type T and does not affect the state of the rasterizer set with
+ * {@link #add(IShape, Function)}. It can be called as many times as needed.
  * 
  * @author ferdinando.villa
- * @author Steve Ansari, NOAA (original RGB-encoding and rasterization logics)
+ * @author Steve Ansari, NOAA (original value encoding and rasterization logics)
  * 
  * @param <T>
  *            the type of the value rasterized
@@ -265,7 +270,7 @@ public class Rasterizer<T> {
 		return ret;
 	}
 
-	float encodeToFloat(T value) {
+	private float encodeToFloat(T value) {
 		if (value != null) {
 			if (this.valueClass == null) {
 				this.valueClass = value.getClass();
@@ -305,7 +310,7 @@ public class Rasterizer<T> {
 	private void drawGeometry(Geometry geometry, Color color) {
 
 		graphics.setColor(color);
-		
+
 		Coordinate[] coords = geometry.getCoordinates();
 
 		// enlarge if needed

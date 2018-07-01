@@ -165,7 +165,7 @@ public class TermConsole implements IConsole {
 		} else {
 			e = e.toString();
 		}
-		terminal.console.append("&r-" + e + "\n");
+		terminal.console.append("&p-" + e + "\n");
 	}
 
 	@Override

@@ -65,11 +65,13 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.visualization.Viewport;
 import org.opengis.feature.simple.SimpleFeature;
@@ -106,7 +108,8 @@ public class SpatialDisplay {
 
 		Layer getLayer() {
 			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
-			Layer layer = new GridCoverageLayer(coverage, createRGBStyle(state, coverage));
+			Layer layer = new GridCoverageLayer(coverage,
+					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, ITime.INITIALIZATION)));
 			layer.setTitle(state.getObservable().getLocalName());
 			return layer;
 		}
@@ -245,26 +248,29 @@ public class SpatialDisplay {
 		rLayers.put(rlDesc.name, rlDesc);
 	}
 
-	private RasterSymbolizer getRasterSymbolizer(IState state) {
-
-		if (!state.getMetadata().contains("colormap")) {
-			return styleFactory.getDefaultRasterSymbolizer();
-		}
-
-		// create style
-		// TODO use colormaps and do it right, then export to GeotoolsUtils for map
-		// generation also as
-		// Image
-		StyleBuilder sb = new StyleBuilder();
-		ColorMap colorMap = sb.createColorMap(new String[] { "poco", "meglio", "buono", "ostia" }, // labels
-				new double[] { 100, 400, 2000, 3000 }, // values that begin a category, or break points in a
-														// ramp, or isolated values, according to the type of
-														// color map specified by Type
-				new Color[] { new Color(0, 100, 0), new Color(150, 150, 50), new Color(200, 200, 50), Color.WHITE },
-				ColorMap.TYPE_RAMP);
-
-		return sb.createRasterSymbolizer(colorMap, 1.0 /* opacity */);
-	}
+	// private RasterSymbolizer getRasterSymbolizer(IState state) {
+	//
+	// if (!state.getMetadata().contains("colormap")) {
+	// return styleFactory.getDefaultRasterSymbolizer();
+	// }
+	//
+	// // create style
+	// // TODO use colormaps and do it right, then export to GeotoolsUtils for map
+	// // generation also as
+	// // Image
+	// StyleBuilder sb = new StyleBuilder();
+	// ColorMap colorMap = sb.createColorMap(new String[] { "poco", "meglio",
+	// "buono", "ostia" }, // labels
+	// new double[] { 100, 400, 2000, 3000 }, // values that begin a category, or
+	// break points in a
+	// // ramp, or isolated values, according to the type of
+	// // color map specified by Type
+	// new Color[] { new Color(0, 100, 0), new Color(150, 150, 50), new Color(200,
+	// 200, 50), Color.WHITE },
+	// ColorMap.TYPE_RAMP);
+	//
+	// return sb.createRasterSymbolizer(colorMap, 1.0 /* opacity */);
+	// }
 
 	/**
 	 * Show the map using a JMapFrame.
@@ -398,73 +404,82 @@ public class SpatialDisplay {
 		return style;
 	}
 
-	/**
-	 * This method examines the names of the sample dimensions in the provided
-	 * coverage looking for "red...", "green..." and "blue..." (case insensitive
-	 * match). If these names are not found it uses bands 1, 2, and 3 for the red,
-	 * green and blue channels. It then sets up a raster symbolizer and returns this
-	 * wrapped in a Style.
-	 *
-	 * @return a new Style object containing a raster symbolizer set up for RGB
-	 *         image
-	 */
-	private Style createRGBStyle(IState state, GridCoverage2D cov) {
-
-		// We need at least three bands to create an RGB style
-		int numBands = cov.getNumSampleDimensions();
-		if (numBands < 3) {
-			return createGreyscaleStyle(state, 1);
-		}
-		// Get the names of the bands
-		String[] sampleDimensionNames = new String[numBands];
-		for (int i = 0; i < numBands; i++) {
-			GridSampleDimension dim = cov.getSampleDimension(i);
-			sampleDimensionNames[i] = dim.getDescription().toString();
-		}
-		final int RED = 0, GREEN = 1, BLUE = 2;
-		int[] channelNum = { -1, -1, -1 };
-		// We examine the band names looking for "red...", "green...", "blue...".
-		// Note that the channel numbers we record are indexed from 1, not 0.
-		for (int i = 0; i < numBands; i++) {
-			String name = sampleDimensionNames[i].toLowerCase();
-			if (name != null) {
-				if (name.matches("red.*")) {
-					channelNum[RED] = i + 1;
-				} else if (name.matches("green.*")) {
-					channelNum[GREEN] = i + 1;
-				} else if (name.matches("blue.*")) {
-					channelNum[BLUE] = i + 1;
-				}
-			}
-		}
-		// If we didn't find named bands "red...", "green...", "blue..."
-		// we fall back to using the first three bands in order
-		if (channelNum[RED] < 0 || channelNum[GREEN] < 0 || channelNum[BLUE] < 0) {
-			channelNum[RED] = 1;
-			channelNum[GREEN] = 2;
-			channelNum[BLUE] = 3;
-		}
-		// Now we create a RasterSymbolizer using the selected channels
-		SelectedChannelType[] sct = new SelectedChannelType[cov.getNumSampleDimensions()];
-		ContrastEnhancement ce = styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
-		for (int i = 0; i < 3; i++) {
-			sct[i] = styleFactory.createSelectedChannelType(String.valueOf(channelNum[i]), ce);
-		}
-		RasterSymbolizer sym = getRasterSymbolizer(state);
-		ChannelSelection sel = styleFactory.channelSelection(sct[RED], sct[GREEN], sct[BLUE]);
-		sym.setChannelSelection(sel);
-
-		return SLD.wrapSymbolizers(sym);
-	}
-
-	private Style createGreyscaleStyle(IState state, int band) {
-		ContrastEnhancement ce = styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
-		SelectedChannelType sct = styleFactory.createSelectedChannelType(String.valueOf(band), ce);
-		RasterSymbolizer sym = getRasterSymbolizer(state);
-		ChannelSelection sel = styleFactory.channelSelection(sct);
-		sym.setChannelSelection(sel);
-		return SLD.wrapSymbolizers(sym);
-	}
+	// /**
+	// * This method examines the names of the sample dimensions in the provided
+	// * coverage looking for "red...", "green..." and "blue..." (case insensitive
+	// * match). If these names are not found it uses bands 1, 2, and 3 for the red,
+	// * green and blue channels. It then sets up a raster symbolizer and returns
+	// this
+	// * wrapped in a Style.
+	// *
+	// * @return a new Style object containing a raster symbolizer set up for RGB
+	// * image
+	// */
+	// private Style createRGBStyle(IState state, GridCoverage2D cov) {
+	//
+	// // We need at least three bands to create an RGB style
+	// int numBands = cov.getNumSampleDimensions();
+	// if (numBands < 3) {
+	// return createGreyscaleStyle(state, 1);
+	// }
+	// // Get the names of the bands
+	// String[] sampleDimensionNames = new String[numBands];
+	// for (int i = 0; i < numBands; i++) {
+	// GridSampleDimension dim = cov.getSampleDimension(i);
+	// sampleDimensionNames[i] = dim.getDescription().toString();
+	// }
+	// final int RED = 0, GREEN = 1, BLUE = 2;
+	// int[] channelNum = { -1, -1, -1 };
+	// // We examine the band names looking for "red...", "green...", "blue...".
+	// // Note that the channel numbers we record are indexed from 1, not 0.
+	// for (int i = 0; i < numBands; i++) {
+	// String name = sampleDimensionNames[i].toLowerCase();
+	// if (name != null) {
+	// if (name.matches("red.*")) {
+	// channelNum[RED] = i + 1;
+	// } else if (name.matches("green.*")) {
+	// channelNum[GREEN] = i + 1;
+	// } else if (name.matches("blue.*")) {
+	// channelNum[BLUE] = i + 1;
+	// }
+	// }
+	// }
+	// // If we didn't find named bands "red...", "green...", "blue..."
+	// // we fall back to using the first three bands in order
+	// if (channelNum[RED] < 0 || channelNum[GREEN] < 0 || channelNum[BLUE] < 0) {
+	// channelNum[RED] = 1;
+	// channelNum[GREEN] = 2;
+	// channelNum[BLUE] = 3;
+	// }
+	// // Now we create a RasterSymbolizer using the selected channels
+	// SelectedChannelType[] sct = new
+	// SelectedChannelType[cov.getNumSampleDimensions()];
+	// ContrastEnhancement ce =
+	// styleFactory.contrastEnhancement(filterFactory.literal(1.0),
+	// ContrastMethod.NORMALIZE);
+	// for (int i = 0; i < 3; i++) {
+	// sct[i] =
+	// styleFactory.createSelectedChannelType(String.valueOf(channelNum[i]), ce);
+	// }
+	// RasterSymbolizer sym = getRasterSymbolizer(state);
+	// ChannelSelection sel = styleFactory.channelSelection(sct[RED], sct[GREEN],
+	// sct[BLUE]);
+	// sym.setChannelSelection(sel);
+	//
+	// return SLD.wrapSymbolizers(sym);
+	// }
+	//
+	// private Style createGreyscaleStyle(IState state, int band) {
+	// ContrastEnhancement ce =
+	// styleFactory.contrastEnhancement(filterFactory.literal(1.0),
+	// ContrastMethod.NORMALIZE);
+	// SelectedChannelType sct =
+	// styleFactory.createSelectedChannelType(String.valueOf(band), ce);
+	// RasterSymbolizer sym = getRasterSymbolizer(state);
+	// ChannelSelection sel = styleFactory.channelSelection(sct);
+	// sym.setChannelSelection(sel);
+	// return SLD.wrapSymbolizers(sym);
+	// }
 
 	public void add(IGrid grid, String layer) {
 		for (IExtent cell : grid) {

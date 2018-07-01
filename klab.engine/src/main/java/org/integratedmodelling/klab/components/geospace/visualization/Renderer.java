@@ -1,17 +1,20 @@
 package org.integratedmodelling.klab.components.geospace.visualization;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.media.jai.Interpolation;
 
 import org.geotools.brewer.color.ColorBrewer;
@@ -126,18 +129,33 @@ public enum Renderer {
 		return result;
 	}
 
-	private RasterSymbolizer getRasterSymbolizer(IState state, ILocator locator) {
+	public RasterSymbolizer getRasterSymbolizer(IState state, ILocator locator) {
 
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
-		double opacity = 1.0;
+
+		float opacity = 1f;
 		Color[] colors = null;
 		double[] values = null;
-		int colormapType = 0;
-		
+		String[] labels = null;
+		int colormapType = state.getDataKey() == null ? ColorMap.TYPE_RAMP
+				: (state.getDataKey().isOrdered() ? ColorMap.TYPE_INTERVALS : ColorMap.TYPE_VALUES);
+
 		for (IAnnotation annotation : state.getAnnotations()) {
 			if (annotation.getName().equals("colormap")) {
 
+				// check if we have just a name
+				String name = annotation.get("value", String.class);
+				if (name != null) {
+					colors = getColormap(name, opacity);
+				}
+
+				// go for a partial or full definition
+
+				// check for modifiers
+
 			} else if (annotation.getName().equals("color")) {
+
+				// must be boolean
 
 			}
 		}
@@ -145,34 +163,58 @@ public enum Renderer {
 		if (colors == null) {
 			if (state.getDataKey() == null) {
 				colors = jet(1.0f);
-				colormapType = ColorMap.TYPE_RAMP;
 			} else {
 
 				// establish if we have an ordering
 				if (state.getDataKey().isOrdered()) {
-
-					colormapType = ColorMap.TYPE_INTERVALS;
-					
+					// TODO intervals
 				} else {
-					if (state.getDataKey().size() > 20) {
-						// warn and use a scale
-					} else {
+					if (state.getDataKey().size() <= random20.length) {
 						colors = Arrays.copyOf(random20, state.getDataKey().size());
-						colormapType = ColorMap.TYPE_VALUES;
+					} else if (state.getDataKey().size() <= excel.length) {
+						colors = Arrays.copyOf(excel, state.getDataKey().size());
+					} else {
+						// TODO warn and use a scale
 					}
 				}
 			}
 		}
 
-		// TEMPORARY
-		ColorMap colorMap = styleBuilder.createColorMap(new String[] { "poco", "meglio", "buono", "ostia" }, // labels
-				new double[] { 100, 400, 2000, 3000 }, // values that begin a category, or break points in a
-														// ramp, or isolated values, according to the type of
-														// color map specified by Type
-				new Color[] { new Color(0, 100, 0), new Color(150, 150, 50), new Color(200, 200, 50), Color.WHITE },
-				ColorMap.TYPE_RAMP);
+		if (colormapType == ColorMap.TYPE_RAMP || colormapType == ColorMap.TYPE_INTERVALS) {
+			values = new double[colors.length];
+			labels = new String[colors.length];
+			for (int i = 0; i < colors.length; i++) {
+				values[i] = summary.getRange().get(0) + ((summary.getRange().get(1) - summary.getRange().get(0))
+						* ((double) (i + 1) / (double) colors.length));
+				labels[i] = "" + values[i];
+			}
 
+		} else {
+			// build value array
+		}
+
+		ColorMap colorMap = styleBuilder.createColorMap(labels, values, colors, colormapType);
 		return styleBuilder.createRasterSymbolizer(colorMap, opacity);
+	}
+
+	public Color[] getColormap(String name, float alpha) {
+
+		switch (name) {
+		case "jet":
+			return jet(alpha);
+		case "heat":
+			return heat();
+		case "rainbow":
+			return rainbow();
+		case "redgreen":
+			return redgreen();
+		case "redblackgreen":
+			return redblackgreen();
+		case "wave":
+			return wave();
+		}
+		// TODO try colorbrewer
+		throw new IllegalArgumentException("cannot find colormap " + name);
 	}
 
 	/**
@@ -203,16 +245,149 @@ public enum Renderer {
 		return null;
 	}
 
+	/*
+	 * -----------------------------------------------------------------------------
+	 * ------ Well-known colormaps
+	 * -----------------------------------------------------------------------------
+	 * ------
+	 */
 	public Color[] jet(float alpha) {
+
 		Color[] ret = new Color[256];
-		for (int i = 0; i < 256; i++) {
-			double n = (int) (4.0 * (double) i / 256.0);
-			int red = (int) (255 * Math.min(Math.max(Math.min(n - 1.5, -n + 4.5), 0), 1));
-			int green = (int) (255 * Math.min(Math.max(Math.min(n - 0.5, -n + 3.5), 0), 1));
-			int blue = (int) (255 * Math.min(Math.max(Math.min(n + 0.5, -n + 2.5), 0), 1));
-			ret[i] = new Color(red, green, blue, alpha);
+
+		float r = 0;
+		float g = 0;
+		float b = 0;
+
+		int n = 256 / 4;
+		for (int i = 0; i < 256; ++i) {
+			if (i < n / 2.) {
+				r = 0;
+				g = 0;
+				b = 0.5f + (float) i / n;
+			} else if (i >= n / 2. && i < 3. * n / 2.) {
+				r = 0;
+				g = (float) i / n - 0.5f;
+				b = 1.f;
+			} else if (i >= 3. * n / 2. && i < 5. * n / 2.) {
+				r = (float) i / n - 1.5f;
+				g = 1.f;
+				b = 1.f - (float) i / n + 1.5f;
+			} else if (i >= 5. * n / 2. && i < 7. * n / 2.) {
+				r = 1.f;
+				g = 1.f - (float) i / n + 2.5f;
+				b = 0;
+			} else if (i >= 7. * n / 2.) {
+				r = 1.f - (float) i / n + 3.5f;
+				g = 0;
+				b = 0;
+			}
+
+			ret[i] = new Color(r, g, b, alpha);
 		}
 		return ret;
+	}
+
+	public Color[] heat() {
+
+		Color[] ret = new Color[256];
+
+		int n = (int) (3. / 8. * 256);
+		for (int i = 0; i < 256; ++i) {
+			double r = (1. / n) * (i + 1);
+			double g = 0.;
+			double b = 0.;
+
+			if (i >= n) {
+				r = 1.;
+				g = (1. / n) * (i + 1 - n);
+				b = 0.;
+			}
+			if (i >= 2 * n) {
+				r = 1.;
+				g = 1.;
+				b = 1. / (256 - 2 * n) * (i + 1 - 2 * n);
+			}
+
+			ret[i] = new Color((int) (r * 255), (int) (g * 255), (int) (b * 255));
+		}
+
+		return ret;
+	}
+
+	public Color[] grayscale() {
+		Color[] colors = new Color[256];
+		for (int i = 0; i < colors.length; ++i)
+			colors[i] = new Color(i, i, i);
+		return colors;
+	}
+
+	public Color[] redgreen() {
+		Color[] colors = new Color[256];
+
+		double half = colors.length / 2.;
+		for (int i = 0; i <= half; ++i)
+			colors[i] = new Color(255, (int) ((i / half) * 255), (int) ((i / half) * 255));
+		for (int i = (int) half + 1; i < colors.length; ++i)
+			colors[i] = new Color(255 - (int) (((i - half) / half) * 255), 255,
+					255 - (int) (((i - half) / half) * 255));
+		return colors;
+	}
+
+	public Color[] redblackgreen() {
+
+		Color[] colors = new Color[256];
+
+		double half = colors.length / 2.;
+		for (int i = 0; i <= half; ++i)
+			colors[i] = new Color(255 - (int) (((i) / half) * 255), 0, 0);
+		for (int i = (int) half + 1; i < colors.length; ++i)
+			colors[i] = new Color(0, (int) (((i - half) / half) * 255), 0);
+		return colors;
+	}
+
+	public Color[] rainbow() {
+
+		Color[] colors = new Color[256];
+
+		for (int i = 0; i < colors.length; ++i) {
+			if (i <= 29)
+				colors[i] = new Color((int) (129.36 - i * 4.36), 0, 255);
+			else if (i <= 86)
+				colors[i] = new Color(0, (int) (-133.54 + i * 4.52), 255);
+			else if (i <= 141)
+				colors[i] = new Color(0, 255, (int) (665.83 - i * 4.72));
+			else if (i <= 199)
+				colors[i] = new Color((int) (-635.26 + i * 4.47), 255, 0);
+			else
+				colors[i] = new Color(255, (int) (1166.81 - i * 4.57), 0);
+		}
+		return colors;
+	}
+
+	public Color[] wave() {
+
+		Color[] colors = new Color[256];
+		for (int i = 0; i < colors.length; ++i) {
+			colors[i] = new Color((int) ((Math.sin(((double) i / 40 - 3.2)) + 1) * 128),
+					(int) ((1 - Math.sin((i / 2.55 - 3.1))) * 70 + 30),
+					(int) ((1 - Math.sin(((double) i / 40 - 3.1))) * 128));
+		}
+		return colors;
+	}
+
+	public BufferedImage createImage(Color[] colors, int width, int height) {
+
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = img.createGraphics();
+
+		double step = height / (double) colors.length;
+		for (int c = 0; c < height; ++c) {
+			g.setColor(colors[(int) Math.floor(c / step)]);
+			g.drawLine(0, height - (c + 1), width, height - (c + 1));
+		}
+
+		return img;
 	}
 
 	/**
@@ -225,6 +400,27 @@ public enum Renderer {
 			new Color(230, 190, 255), new Color(170, 110, 40), new Color(255, 250, 200), new Color(128, 0, 0),
 			new Color(170, 255, 195), new Color(128, 128, 0), new Color(255, 215, 180), new Color(0, 0, 128),
 			new Color(128, 128, 128), new Color(255, 255, 255), new Color(0, 0, 0) };
-	
-	// elevation: check out http://cartographicperspectives.org/index.php/journal/article/download/20/70
+
+	// http://dmcritchie.mvps.org/excel/colors.htm
+	static Color[] excel = new Color[] { new Color(255, 0, 0), new Color(0, 255, 0), new Color(0, 0, 255),
+			new Color(255, 255, 0), new Color(255, 0, 255), new Color(0, 255, 255), new Color(128, 0, 0),
+			new Color(0, 128, 0), new Color(0, 0, 128), new Color(128, 128, 0), new Color(128, 0, 128),
+			new Color(0, 128, 128), new Color(192, 192, 192), new Color(128, 128, 128), new Color(153, 153, 255),
+			new Color(153, 51, 102), new Color(255, 255, 204), new Color(204, 255, 255), new Color(102, 0, 102),
+			new Color(255, 128, 128), new Color(0, 102, 204), new Color(204, 204, 255), new Color(0, 0, 128),
+			new Color(255, 0, 255), new Color(255, 255, 0), new Color(0, 255, 255), new Color(128, 0, 128),
+			new Color(128, 0, 0), new Color(0, 128, 128), new Color(0, 0, 255), new Color(0, 204, 255),
+			new Color(204, 255, 255), new Color(204, 255, 204), new Color(255, 255, 153), new Color(153, 204, 255),
+			new Color(255, 153, 204), new Color(204, 153, 255), new Color(255, 204, 153), new Color(51, 102, 255),
+			new Color(51, 204, 204), new Color(153, 204, 0), new Color(255, 204, 0), new Color(255, 153, 0),
+			new Color(255, 102, 0), new Color(102, 102, 153), new Color(150, 150, 150), new Color(0, 51, 102),
+			new Color(51, 153, 102), new Color(0, 51, 0), new Color(51, 51, 0), new Color(153, 51, 0),
+			new Color(153, 51, 102), new Color(51, 51, 153), new Color(51, 51, 51) };
+
+	public static void main(String[] args) throws IOException {
+		ImageIO.write(INSTANCE.createImage(INSTANCE.wave(), 20, 256), "png", new java.io.File("legend.png"));
+	}
+
+	// elevation: check out
+	// http://cartographicperspectives.org/index.php/journal/article/download/20/70
 }
