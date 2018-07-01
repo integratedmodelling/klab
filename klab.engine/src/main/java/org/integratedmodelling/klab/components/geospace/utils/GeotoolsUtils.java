@@ -4,7 +4,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.media.jai.RasterFactory;
 
@@ -23,7 +22,6 @@ public enum GeotoolsUtils {
 	INSTANCE;
 
 	Map<IConcept, Integer> conceptMap = new HashMap<>();
-	AtomicInteger conceptIdx = new AtomicInteger(1);
 	GridCoverageFactory rasterFactory = new GridCoverageFactory();
 
 	/**
@@ -37,7 +35,7 @@ public enum GeotoolsUtils {
 	public GridCoverage2D stateToCoverage(IState state, ILocator locator) {
 		return stateToCoverage(state.at(locator));
 	}
-	
+
 	/**
 	 * Turn a state into a grid coverage.
 	 * 
@@ -80,7 +78,8 @@ public enum GeotoolsUtils {
 			} else if (o instanceof Boolean) {
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) (((Boolean) o) ? 1. : 0.));
 			} else if (o instanceof IConcept) {
-				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) getConceptIndex((IConcept) o));
+				raster.setSample((int) cell.getX(), (int) cell.getY(), 0,
+						(float) state.getDataKey().reverseLookup((IConcept) o));
 			}
 		}
 
@@ -113,21 +112,10 @@ public enum GeotoolsUtils {
 			} else if (o instanceof Boolean) {
 				ret.adapt(((Boolean) o) ? 1. : 0.);
 			} else if (o instanceof IConcept) {
-				ret.adapt((double) getConceptIndex((IConcept) o));
+				ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
 			}
 		}
 
 		return ret;
 	}
-
-	private int getConceptIndex(IConcept o) {
-
-		Integer n = conceptMap.get(o);
-		if (n == null) {
-			n = conceptIdx.getAndIncrement();
-			conceptMap.put(o, n);
-		}
-		return n;
-	}
-
 }
