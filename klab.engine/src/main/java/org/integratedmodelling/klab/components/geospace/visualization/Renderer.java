@@ -219,7 +219,7 @@ public enum Renderer {
 						if (pair.getFirst() instanceof IConcept) {
 							labels[i] = Concepts.INSTANCE.getDisplayName((IConcept)pair.getFirst());
 							values[i] = state.getDataKey().reverseLookup((IConcept)pair.getFirst());
-							colors[i] = parseColor(pair.getSecond());
+							colors[i] = pair.getSecond();
 						}
 
 						i++;

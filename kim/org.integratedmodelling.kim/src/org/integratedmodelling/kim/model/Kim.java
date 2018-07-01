@@ -458,7 +458,50 @@ public enum Kim {
 	 * @return
 	 */
 	public Object parseClassifierAsValue(ClassifierRHS statement, IKimStatement parent, IKimNamespace namespace) {
- 
+
+		if (statement.getBoolean() != null) {
+			return statement.getBoolean().equals("true");
+		}
+		if (statement.getOp() != null) {
+			Number op = Kim.INSTANCE.parseNumber(statement.getExpression());
+
+			if (statement.getOp().isGe()) {
+				return new Range(op.doubleValue(), null, false, true);
+			} else if (statement.getOp().isGt()) {
+				return new Range(op.doubleValue(), null, true, true);
+			} else if (statement.getOp().isLe()) {
+				return new Range(null, op.doubleValue(), true, false);
+			} else if (statement.getOp().isLt()) {
+				return new Range(null, op.doubleValue(), true, true);
+			} else if (statement.getOp().isEq()) {
+				return op.doubleValue();
+			} else if (statement.getOp().isNe()) {
+				// shouldn't happen, shouldn't throw
+			}
+		}
+		if (statement.getConcept() != null) {
+			return declareConcept(statement.getConcept());
+		}
+		if (statement.getString() != null) {
+			return statement.getString();
+		}
+		if (statement.getNum() != null) {
+			return parseNumber(statement.getNum());
+		}
+		if (statement.getInt0() != null) {
+			Number from = parseNumber(statement.getInt0());
+			Number to = parseNumber(statement.getInt1());
+			String lt = statement.getLeftLimit();
+			String rt = statement.getRightLimit();
+			if (lt == null)
+				lt = "inclusive";
+			if (rt == null)
+				rt = "exclusive";
+			return new Range(from.doubleValue(), to.doubleValue(), lt.equals("exclusive"), rt.equals("exclusive"));
+		}
+		if (statement.getId() != null) {
+			return statement.getId();
+		}
 		// TODO
 
 		// if (statement == null && matchedConcept != null) {

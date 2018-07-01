@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.services.IIndexingService;
+import org.integratedmodelling.klab.engine.indexing.SearchContext;
 
 public enum Indexing implements IIndexingService {
 	
@@ -14,7 +15,7 @@ public enum Indexing implements IIndexingService {
 	 * @return a new empty context.
 	 */
 	public Context createContext() {
-		return null;
+		return new SearchContext();
 	}
 	
 	@Override

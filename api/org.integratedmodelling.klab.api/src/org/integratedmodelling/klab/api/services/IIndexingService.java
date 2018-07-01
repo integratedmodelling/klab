@@ -23,12 +23,15 @@ public interface IIndexingService {
 	 */
 	public interface Context {
 
+		boolean isEmpty();
+		
 		/**
 		 * Notify the choice of a match and adjust the context to it.
 		 * 
 		 * @param match
+		 * @return an index for the match in the context
 		 */
-		void choose(Match match);
+		int accept(Match match);
 
 		/**
 		 * Return true if the current context admits further search.
@@ -44,6 +47,13 @@ public interface IIndexingService {
 		 * @return the chosen URN.
 		 */
 		String getUrn();
+
+		/**
+		 * Remove the match indexed by the passed integer.
+		 * 
+		 * @param matchIndex
+		 */
+		void remove(int matchIndex);
 	}
 
 	/**
