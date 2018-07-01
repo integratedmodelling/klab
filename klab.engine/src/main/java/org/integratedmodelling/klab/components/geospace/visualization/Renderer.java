@@ -294,6 +294,9 @@ public enum Renderer {
 		Color ret = null;
 
 		if (o instanceof String) {
+			if (o.equals("none")) {
+				return new Color(0f, 0f, 0f, 0f);
+			}
 			int[] color = ColorUtils.getRGB(o.toString());
 			if (color == null) {
 				throw new IllegalArgumentException("identifier " + o + " does not specify a known CSS color");
