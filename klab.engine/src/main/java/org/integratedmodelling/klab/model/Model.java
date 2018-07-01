@@ -90,7 +90,6 @@ public class Model extends KimObject implements IModel {
 		/*
 		 * TODO establish typechain for progressive checking until final action
 		 */
-
 		if (!model.getResourceUrns().isEmpty()) {
 			ComputableResource urnResource = validate(new ComputableResource(model.getResourceUrns().get(0)), monitor);
 			for (int i = 1; i < model.getResourceUrns().size(); i++) {

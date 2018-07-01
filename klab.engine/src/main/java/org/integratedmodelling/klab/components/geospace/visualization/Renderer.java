@@ -21,7 +21,6 @@ import javax.media.jai.Interpolation;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.brewer.color.PaletteType;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
@@ -30,8 +29,10 @@ import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -46,6 +47,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.ColorUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -147,6 +149,8 @@ public enum Renderer {
 		int colormapType = state.getDataKey() == null ? ColorMap.TYPE_RAMP
 				: (state.getDataKey().isOrdered() ? ColorMap.TYPE_INTERVALS : ColorMap.TYPE_VALUES);
 
+		// TODO parameters for shaded relief and contrast enhancement
+		
 		for (IAnnotation annotation : state.getAnnotations()) {
 			if (annotation.getName().equals("colormap")) {
 
@@ -184,9 +188,42 @@ public enum Renderer {
 						svals.add(new Pair<>(o, parseColor(vals.get(o))));
 					}
 
-					// TODO sort vals and ensure keys are recognizable
+					if (IConcept.class.isAssignableFrom(type)) {
+						colormapType = ColorMap.TYPE_VALUES;
+					} else if (Range.class.isAssignableFrom(type)) {
+						colormapType = ColorMap.TYPE_INTERVALS;
+					} else if (Number.class.isAssignableFrom(type)) {
+						colormapType = annotation.get("continuous", Boolean.TRUE) ? ColorMap.TYPE_RAMP : ColorMap.TYPE_INTERVALS;
+					} else if (Boolean.class.isAssignableFrom(type)) {
+						colormapType = ColorMap.TYPE_VALUES;
+						for (Pair<Object, Color> pair : svals) {
+							if ((Boolean)pair.getFirst()) {
+								pair.setFirst(1.0);
+							} else {
+								pair.setFirst(0.0);
+							}
+						}
+					} else {
+						throw new IllegalArgumentException(
+								"invalid color keys: must be number, boolean, concept or range");
+					}
+					
+					labels = new String[svals.size()];
+					values = new double[svals.size()];
+					colors = new Color[svals.size()];
+					
+					int i = 0;
+					for (Pair<Object, Color> pair : svals) {
+						
+						// we assume the user has used proper sorting.
+						if (pair.getFirst() instanceof IConcept) {
+							labels[i] = Concepts.INSTANCE.getDisplayName((IConcept)pair.getFirst());
+							values[i] = state.getDataKey().reverseLookup((IConcept)pair.getFirst());
+							colors[i] = parseColor(pair.getSecond());
+						}
 
-					// TODO build values, labels and colors
+						i++;
+					}
 
 				} else if (annotation.containsKey("colors")) {
 

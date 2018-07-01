@@ -3,13 +3,14 @@ package org.integratedmodelling.klab.kim;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -33,30 +34,29 @@ public class KimValidator implements Kim.Validator {
 	public KimValidator(Monitor monitor) {
 		this.monitor = monitor;
 	}
-	
-	public static Map<Object, Object> compileMapLiteral(Map<?,?> mapLiteral) {
-		
-		Map<Object,Object> ret = new HashMap<>();
-		
-		for (Object key : mapLiteral.keySet()) {
-			Object value = mapLiteral.get(key);
-			if (value instanceof IKimConcept) {
-				value = Concepts.INSTANCE.declare((IKimConcept) value);
-			} else if (value instanceof IKimExpression) {
-				value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
-						((IKimExpression) value).getLanguage());
-			} else if (value instanceof IKimLookupTable) {
-				// TODO table
-			} else if (value instanceof Map) {
-				value = compileMapLiteral((Map<?,?>)value);
-			}
 
-			ret.put(key, value);
+	public static Map<Object, Object> compileMapLiteral(Map<?, ?> mapLiteral) {
+
+		Map<Object, Object> ret = new LinkedHashMap<>();
+		for (Object key : mapLiteral.keySet()) {
+			ret.put(compileLiteral(key), compileLiteral(mapLiteral.get(key)));
 		}
-		
 		return ret;
 	}
-	
+
+	private static Object compileLiteral(Object value) {
+		if (value instanceof IKimConcept) {
+			value = Concepts.INSTANCE.declare((IKimConcept) value);
+		} else if (value instanceof IKimExpression) {
+			value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
+					((IKimExpression) value).getLanguage());
+		} else if (value instanceof IKimLookupTable) {
+			// TODO table
+		} else if (value instanceof Map) {
+			value = compileMapLiteral((Map<?, ?>) value);
+		}
+		return value;
+	}
 
 	@Override
 	public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IArtifact.Type> expectedType) {

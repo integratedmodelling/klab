@@ -1,13 +1,6 @@
 package org.integratedmodelling.klab.model;
 
-import java.util.Map;
-
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.kim.api.IKimLookupTable;
-import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.utils.Parameters;

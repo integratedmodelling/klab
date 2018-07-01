@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -433,13 +434,14 @@ public enum Kim {
 		return ret;
 	}
 
+	/*
+	 * The k.IM map preserves order.
+	 */
 	private Map<?, ?> parseMap(org.integratedmodelling.kim.kim.Map map, IKimNamespace namespace) {
-		Map<Object, Object> ret = new HashMap<>();
+		Map<Object, Object> ret = new LinkedHashMap<>();
 		for (MapEntry entry : map.getEntries()) {
-
 			Object key = parseClassifierAsValue(entry.getClassifier(), null, namespace);
 			Object value = parseValue(entry.getValue(), namespace);
-
 			ret.put(key, value);
 		}
 		return ret;
@@ -456,7 +458,7 @@ public enum Kim {
 	 * @return
 	 */
 	public Object parseClassifierAsValue(ClassifierRHS statement, IKimStatement parent, IKimNamespace namespace) {
-
+ 
 		// TODO
 
 		// if (statement == null && matchedConcept != null) {
@@ -575,7 +577,7 @@ public enum Kim {
 	}
 
 	public Parameters<String> parseMetadata(Metadata map, IKimNamespace namespace) {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		// TODO
 		return new Parameters<>(ret);
 	}
