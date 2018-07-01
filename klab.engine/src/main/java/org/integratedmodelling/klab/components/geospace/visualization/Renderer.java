@@ -21,6 +21,7 @@ import javax.media.jai.Interpolation;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.brewer.color.PaletteType;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
@@ -157,9 +158,20 @@ public enum Renderer {
 
 				if (name != null) {
 					colors = getColormap(name, opacity);
+					if (colors == null && colorBrewer.hasPalette(name)) {
+						BrewerPalette palette = colorBrewer.getPalette(name);
+						colors = palette.getColors(state.getDataKey() == null ? 256 : state.getDataKey().size());
+						if (palette.getType() == ColorBrewer.DIVERGING) {
+							midpoint = 0.0;
+						} else if (palette.getType() == ColorBrewer.QUALITATIVE) {
+							if (colormapType != ColorMap.TYPE_VALUES) {
+								throw new IllegalArgumentException("qualitative colormap chosen for quantitative data");
+							}
+						}
+					}
 				} else if (annotation.containsKey("values")) {
 
-					Map<?,?> vals = annotation.get("values", Map.class);
+					Map<?, ?> vals = annotation.get("values", Map.class);
 					List<Pair<Object, Color>> svals = new ArrayList<>();
 					Class<?> type = null;
 					for (Object o : vals.keySet()) {
@@ -171,12 +183,11 @@ public enum Renderer {
 						}
 						svals.add(new Pair<>(o, parseColor(vals.get(o))));
 					}
-					
+
 					// TODO sort vals and ensure keys are recognizable
-					
+
 					// TODO build values, labels and colors
-					
-					
+
 				} else if (annotation.containsKey("colors")) {
 
 					List<Color> clrs = new ArrayList<>();
@@ -189,11 +200,11 @@ public enum Renderer {
 				if (annotation.containsKey("opacity")) {
 					opacity = annotation.get("opacity", Number.class).floatValue();
 				}
-				
+
 				if (annotation.containsKey("midpoint")) {
 					midpoint = annotation.get("midpoint", Number.class).floatValue();
 				}
-				
+
 				// check for modifiers
 
 			} else if (annotation.getName().equals("color")) {
@@ -242,27 +253,25 @@ public enum Renderer {
 	}
 
 	private Color parseColor(Object o) {
-		
+
 		Color ret = null;
-		
+
 		if (o instanceof String) {
 			int[] color = ColorUtils.getRGB(o.toString());
 			if (color == null) {
-				throw new IllegalArgumentException(
-						"identifier " + o + " does not specify a known CSS color");
+				throw new IllegalArgumentException("identifier " + o + " does not specify a known CSS color");
 			}
 			ret = new Color(color[0], color[1], color[2]);
 		} else if (o instanceof List) {
 			// TODO more error handling
-			ret = new Color(((Number) ((List<?>) o).get(0)).intValue(),
-					((Number) ((List<?>) o).get(1)).intValue(),
+			ret = new Color(((Number) ((List<?>) o).get(0)).intValue(), ((Number) ((List<?>) o).get(1)).intValue(),
 					((Number) ((List<?>) o).get(2)).intValue());
 		}
 
 		if (ret == null) {
 			throw new IllegalArgumentException("bad color specification: need color name or RGB list");
 		}
-		
+
 		return ret;
 	}
 
@@ -286,15 +295,7 @@ public enum Renderer {
 		case "random":
 			return random20;
 		}
-
-		BrewerPalette palette = colorBrewer.getPalette(name);
-		if (palette != null) {
-			// TODO communicate the type and validate the use
-			palette.getType();
-			return palette.getColors();
-		}
-
-		throw new IllegalArgumentException("cannot find colormap " + name);
+		return null;
 	}
 
 	/**

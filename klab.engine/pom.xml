@@ -11,36 +11,13 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-<!-- 				<plugin>
-					<artifactId>kotlin-maven-plugin</artifactId>
-					<groupId>org.jetbrains.kotlin</groupId>
-					<version>${kotlin.version}</version>
-					<executions>
-						<execution>
-							<id>compile</id>
-							<goals>
-								<goal>compile</goal>
-							</goals>
-							<configuration>
-								<sourceDirs>
-									<sourceDir>${project.basedir}/src/main/java</sourceDir>
-								</sourceDirs>
-							</configuration>
-						</execution>
-						<execution>
-							<id>test-compile</id>
-							<goals>
-								<goal>test-compile</goal>
-							</goals>
-							<configuration>
-								<sourceDirs>
-									<sourceDir>${project.basedir}/src/test/java</sourceDir>
-								</sourceDirs>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
- -->				<plugin>
+				<!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
+					<version>${kotlin.version}</version> <executions> <execution> <id>compile</id> 
+					<goals> <goal>compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/main/java</sourceDir> 
+					</sourceDirs> </configuration> </execution> <execution> <id>test-compile</id> 
+					<goals> <goal>test-compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/test/java</sourceDir> 
+					</sourceDirs> </configuration> </execution> </executions> </plugin> -->
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
@@ -72,6 +49,14 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+
+		<!-- Lucene for indexing -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>7.4.0</version>
+		</dependency>
+
 
 		<!-- JUNG for network analysis, generation and I/O. Visualization only 
 			included in test scope. -->
@@ -116,17 +101,10 @@
 			<version>5.0.5.RELEASE</version>
 		</dependency>
 
-		<!-- Kotlin support
-		<dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
-			<artifactId>kotlin-stdlib</artifactId>
-			<version>${kotlin.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-kotlin</artifactId>
-			<version>2.9.5</version>
-		</dependency> -->
+		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
+			<artifactId>kotlin-stdlib</artifactId> <version>${kotlin.version}</version> 
+			</dependency> <dependency> <groupId>com.fasterxml.jackson.module</groupId> 
+			<artifactId>jackson-module-kotlin</artifactId> <version>2.9.5</version> </dependency> -->
 
 		<!-- JSON schema extraction -->
 		<dependency>

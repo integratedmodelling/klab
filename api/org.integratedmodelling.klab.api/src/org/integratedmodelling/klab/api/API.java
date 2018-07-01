@@ -344,6 +344,11 @@ public interface API {
              * DELETE
              */
             public static final String CLOSE = "/engine/session/close";
+            
+            /**
+             * Observe URN as a new context. Return task ID.
+             */
+            public static final String OBSERVE_CONTEXT_URN = "/engine/session/observe/" + P_URN;
         }
 
         /**

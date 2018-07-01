@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -68,6 +69,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
+import akka.actor.ActorSystem;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
@@ -88,7 +90,8 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 @Component(id = "runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
-	ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
+	private ActorSystem rootActorSystem = null;
+	private ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
 	@Override
 	public Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope,
@@ -102,7 +105,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				IRuntimeContext runtimeContext = context == null ? createRuntimeContext(actuator, scope, scale, monitor)
 						: ((Subject) context).getRuntimeContext().createChild(scale, actuator, scope, monitor);
 
-				
 				Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
 
 				/*
@@ -132,6 +134,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				return runtimeContext.getTargetArtifact();
 			}
 		});
+	}
+
+	public ActorSystem getActorSystem() {
+		if (rootActorSystem == null) {
+			Logging.INSTANCE.info("Creating root actor system...");
+			rootActorSystem = ActorSystem.create(Klab.INSTANCE.getRootMonitor().getIdentity().getId());
+		}
+		return rootActorSystem;
 	}
 
 	private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
@@ -201,7 +211,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				throw new IllegalArgumentException(e);
 			}
 		} else if (resource.getClassification() != null) {
-			return ClassifyingStateResolver.getServiceCall(((ComputableResource)resource).getValidatedResource(IClassification.class));
+			return ClassifyingStateResolver
+					.getServiceCall(((ComputableResource) resource).getValidatedResource(IClassification.class));
 		}
 
 		// temp
@@ -228,10 +239,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	private IComputationContext localizeContext(RuntimeContext context, IScale state, IArtifact self,
 			Collection<Pair<String, IDataArtifact>> variables) {
-		
+
 		/*
-		 * this may not be the same layer we're producing but reflects the current value for
-		 * the computation.
+		 * this may not be the same layer we're producing but reflects the current value
+		 * for the computation.
 		 */
 		IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
 		if (targetArtifact instanceof IDataArtifact) {
@@ -257,7 +268,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return Observation.empty(observable, scale);
 	}
 
-	
 	private static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
 			boolean scalarStorage) {
 
@@ -292,11 +302,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
 				}
 			} else {
-				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale, context);
+				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale,
+						context);
 			}
 
 			ret = new State((Observable) observable, (Scale) scale, context, storage);
-		
+
 		} else if (observable.is(Type.CONFIGURATION)) {
 
 			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
@@ -349,9 +360,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IState createState(IObservable observable, IArtifact.Type type,
-			IScale scale, IComputationContext context) {
+	public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context) {
 		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
-		return new State((Observable) observable, (Scale) scale, (RuntimeContext)context, storage);
+		return new State((Observable) observable, (Scale) scale, (RuntimeContext) context, storage);
 	}
 }
