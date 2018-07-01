@@ -9,14 +9,17 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.Interpolation;
 
+import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.renderer.lite.RendererUtilities;
@@ -40,6 +43,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.utils.ColorUtils;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -136,6 +141,7 @@ public enum Renderer {
 		float opacity = 1f;
 		Color[] colors = null;
 		double[] values = null;
+		double midpoint = Double.NaN;
 		String[] labels = null;
 		int colormapType = state.getDataKey() == null ? ColorMap.TYPE_RAMP
 				: (state.getDataKey().isOrdered() ? ColorMap.TYPE_INTERVALS : ColorMap.TYPE_VALUES);
@@ -145,12 +151,49 @@ public enum Renderer {
 
 				// check if we have just a name
 				String name = annotation.get("value", String.class);
-				if (name != null) {
-					colors = getColormap(name, opacity);
+				if (name == null) {
+					name = annotation.get("name", String.class);
 				}
 
-				// go for a partial or full definition
+				if (name != null) {
+					colors = getColormap(name, opacity);
+				} else if (annotation.containsKey("values")) {
 
+					Map<?,?> vals = annotation.get("values", Map.class);
+					List<Pair<Object, Color>> svals = new ArrayList<>();
+					Class<?> type = null;
+					for (Object o : vals.keySet()) {
+						if (type == null) {
+							type = o.getClass();
+						} else if (!type.equals(o.getClass())) {
+							throw new IllegalArgumentException(
+									"color keys must be of the same type in a colormap specification");
+						}
+						svals.add(new Pair<>(o, parseColor(vals.get(o))));
+					}
+					
+					// TODO sort vals and ensure keys are recognizable
+					
+					// TODO build values, labels and colors
+					
+					
+				} else if (annotation.containsKey("colors")) {
+
+					List<Color> clrs = new ArrayList<>();
+					for (Object o : annotation.get("colors", List.class)) {
+						clrs.add(parseColor(o));
+					}
+					colors = clrs.toArray(new Color[clrs.size()]);
+				}
+
+				if (annotation.containsKey("opacity")) {
+					opacity = annotation.get("opacity", Number.class).floatValue();
+				}
+				
+				if (annotation.containsKey("midpoint")) {
+					midpoint = annotation.get("midpoint", Number.class).floatValue();
+				}
+				
 				// check for modifiers
 
 			} else if (annotation.getName().equals("color")) {
@@ -184,6 +227,7 @@ public enum Renderer {
 			values = new double[colors.length];
 			labels = new String[colors.length];
 			for (int i = 0; i < colors.length; i++) {
+				// TODO handle midpoint
 				values[i] = summary.getRange().get(0) + ((summary.getRange().get(1) - summary.getRange().get(0))
 						* ((double) (i + 1) / (double) colors.length));
 				labels[i] = "" + values[i];
@@ -195,6 +239,31 @@ public enum Renderer {
 
 		ColorMap colorMap = styleBuilder.createColorMap(labels, values, colors, colormapType);
 		return styleBuilder.createRasterSymbolizer(colorMap, opacity);
+	}
+
+	private Color parseColor(Object o) {
+		
+		Color ret = null;
+		
+		if (o instanceof String) {
+			int[] color = ColorUtils.getRGB(o.toString());
+			if (color == null) {
+				throw new IllegalArgumentException(
+						"identifier " + o + " does not specify a known CSS color");
+			}
+			ret = new Color(color[0], color[1], color[2]);
+		} else if (o instanceof List) {
+			// TODO more error handling
+			ret = new Color(((Number) ((List<?>) o).get(0)).intValue(),
+					((Number) ((List<?>) o).get(1)).intValue(),
+					((Number) ((List<?>) o).get(2)).intValue());
+		}
+
+		if (ret == null) {
+			throw new IllegalArgumentException("bad color specification: need color name or RGB list");
+		}
+		
+		return ret;
 	}
 
 	public Color[] getColormap(String name, float alpha) {
@@ -212,8 +281,19 @@ public enum Renderer {
 			return redblackgreen();
 		case "wave":
 			return wave();
+		case "excel":
+			return excel;
+		case "random":
+			return random20;
 		}
-		// TODO try colorbrewer
+
+		BrewerPalette palette = colorBrewer.getPalette(name);
+		if (palette != null) {
+			// TODO communicate the type and validate the use
+			palette.getType();
+			return palette.getColors();
+		}
+
 		throw new IllegalArgumentException("cannot find colormap " + name);
 	}
 
