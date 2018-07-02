@@ -85,6 +85,7 @@ public class ObservationReference {
 	private String label;
 	private String observable;
 	private ValueType valueType;
+	private Set<IKimConcept.Type> semantics = new HashSet<>();
 	private Set<GeometryType> geometryTypes = new HashSet<>();
 	private String literalValue;
 	// private List<ObservationReference> siblings = new ArrayList<>();
@@ -380,6 +381,14 @@ public class ObservationReference {
 
 	public void setSiblings(List<ObservationReference> siblings) {
 		this.siblings = siblings;
+	}
+
+	public Set<IKimConcept.Type> getSemantics() {
+		return semantics;
+	}
+
+	public void setSemantics(Set<IKimConcept.Type> semantics) {
+		this.semantics = semantics;
 	}
 
 }

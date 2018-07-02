@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -325,7 +326,7 @@ public class Session implements ISession, UserDetails {
 
 		for (IRuntimeContext ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(),
-					Observations.INSTANCE.createArtifactDescriptor(ctx.getRootSubject(), null, 0));
+					Observations.INSTANCE.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0));
 		}
 		return ret;
 	}

@@ -249,7 +249,7 @@ public class Actuator implements IActuator {
 			session.getMonitor()
 					.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 							IMessage.Type.NewObservation, Observations.INSTANCE
-									.createArtifactDescriptor((IObservation) ret, ctx.getContextObservation(), 0)));
+									.createArtifactDescriptor((IObservation) ret, ctx.getContextObservation(), ITime.INITIALIZATION, 0)));
 		}
 
 		/*

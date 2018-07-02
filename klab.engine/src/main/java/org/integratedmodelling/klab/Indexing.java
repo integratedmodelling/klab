@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.services.IIndexingService;
+import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.indexing.SearchContext;
 
 public enum Indexing implements IIndexingService {
@@ -20,8 +21,7 @@ public enum Indexing implements IIndexingService {
 	
 	@Override
 	public Iterator<Match> query(String currentTerm, Context context) {
-		// TODO Auto-generated method stub
-		return null;
+		return Indexer.INSTANCE.query(currentTerm, (SearchContext)context);
 	}
 
 }

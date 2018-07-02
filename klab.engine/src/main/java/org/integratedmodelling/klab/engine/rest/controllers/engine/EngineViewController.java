@@ -55,12 +55,13 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer childLevel) {
+			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
+		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
 
-		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(),
+		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(), loc,
 				childLevel == null ? -1 : childLevel);
 	}
 
@@ -75,16 +76,13 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
+		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
 
 		if (!(obs instanceof IState)) {
 			throw new IllegalArgumentException("cannot summarize an observation that is not a state");
 		}
 
-		StateSummary summary = new StateSummary();
-
-		// TODO
-
-		return summary;
+		return Observations.INSTANCE.getStateSummary((IState)obs, loc);
 	}
 
 	/**
@@ -99,10 +97,11 @@ public class EngineViewController {
 	@ResponseBody
 	public ObservationReference getObservationSiblings(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
-			@RequestParam(required = false) Integer childLevel) {
+			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
+		ILocator loc = ITime.INITIALIZATION; // TODO parse locator
 
 		ObservationReference ret = null;
 
@@ -120,7 +119,7 @@ public class EngineViewController {
 				IArtifact artifact = it.next();
 				if (i >= offset) {
 					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
-							obs.getContext(), childLevel == null ? 0 : childLevel);
+							obs.getContext(), loc, childLevel == null ? 0 : childLevel);
 					if (ret == null) {
 						ret = ref;
 					} else {

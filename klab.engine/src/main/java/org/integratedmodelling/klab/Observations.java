@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -30,12 +31,13 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.Histogram;
+import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
-import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.scale.Scale;
 
 public enum Observations implements IObservationService {
@@ -91,31 +93,32 @@ public enum Observations implements IObservationService {
 	}
 
 	private StateSummary computeStateSummary(IState state, ILocator locator) {
-		
+
 		StateSummary ret = new StateSummary();
-		
+
 		int ndata = 0;
 		int nndat = 0;
 
 		SummaryStatistics statistics = new SummaryStatistics();
-		
-		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext(); ) {
+
+		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
 			Double d = it.next();
 			if (d != null) {
-				ndata ++;
+				ndata++;
 				statistics.addValue(d);
 			} else {
-				nndat ++;
+				nndat++;
 			}
 		}
-		
-		ret.setNodataPercentage((double)nndat/(double)ndata);
+
+		ret.setNodataPercentage((double) nndat / (double) ndata);
 		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
 		ret.setValueCount(ndata + nndat);
-		
+
 		if (ret.getNodataPercentage() > 0) {
-			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(), state.getDataKey() == null ? 10 : state.getDataKey().size());
-			for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext(); ) {
+			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
+					state.getDataKey() == null ? 10 : state.getDataKey().size());
+			for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
 				Double d = it.next();
 				if (d != null) {
 					histogram.add(d);
@@ -123,7 +126,7 @@ public enum Observations implements IObservationService {
 			}
 			ret.setHistogram(histogram.build());
 		}
-		
+
 		return ret;
 	}
 
@@ -146,9 +149,13 @@ public enum Observations implements IObservationService {
 	}
 
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			int childLevel) {
+			ILocator locator, int childLevel) {
 
 		ObservationReference ret = new ObservationReference();
+
+		if (locator != null) {
+			observation = observation.at(locator);
+		}
 
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
@@ -157,6 +164,7 @@ public enum Observations implements IObservationService {
 				: observation.getObservable().getLocalName());
 		ret.setObservable(observation.getObservable().getType().getDefinition());
 		ret.setSiblingCount(observation.groupSize());
+		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
 		ITime time = ((IScale) observation.getGeometry()).getTime();
@@ -189,11 +197,35 @@ public enum Observations implements IObservationService {
 
 		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
 			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
-				ret.getChildren()
-						.add(createArtifactDescriptor(child, observation, childLevel > 0 ? childLevel-- : childLevel));
+				ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
+						childLevel > 0 ? childLevel-- : childLevel));
 			}
+		}
+
+		if (observation instanceof IState && observation.getScale().size() == 1) {
+			ret.setLiteralValue(formatValue(observation.getObservable(),
+					((IState) observation).get(observation.getScale().getLocator(0))));
 		}
 
 		return ret;
 	}
+	
+
+	public String formatValue(IObservable observable, Object object) {
+		
+		if (object instanceof IConcept) {
+			object = Concepts.INSTANCE.getDisplayName((IConcept)object);
+		}
+
+		String ret = "" + object;
+		
+		if (observable.getUnit() != null) {
+			ret += " " + observable.getUnit();
+		} else if (observable.getCurrency() != null) {
+			ret += " " + observable.getCurrency();
+		}
+		
+		return ret;
+	}
+
 }
