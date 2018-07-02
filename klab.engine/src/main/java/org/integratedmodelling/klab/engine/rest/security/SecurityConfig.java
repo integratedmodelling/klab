@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -31,8 +32,11 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-
 	  http
+	  // disable automatic session creation to avoid use of cookie session
+	  // and the consequent authentication fails in web ui
+	  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	  .and()
 	  .addFilterBefore(certFilter(), RequestHeaderAuthenticationFilter.class)
 //	  .authorizeRequests().anyRequest().hasAnyRole("ADMIN")
 //      .and()
