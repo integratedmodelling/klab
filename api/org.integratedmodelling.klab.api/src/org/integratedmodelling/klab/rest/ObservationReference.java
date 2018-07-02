@@ -12,6 +12,10 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 
 public class ObservationReference {
 
+	public enum ObservationType {
+		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP
+	}
+
 	/**
 	 * The value of this enum defines the type of values this observation contains.
 	 * All non-quality observations have value type VOID.
@@ -85,6 +89,7 @@ public class ObservationReference {
 	private String label;
 	private String observable;
 	private ValueType valueType;
+	private ObservationType observationType;
 	private Set<IKimConcept.Type> semantics = new HashSet<>();
 	private Set<GeometryType> geometryTypes = new HashSet<>();
 	private String literalValue;
@@ -390,5 +395,12 @@ public class ObservationReference {
 	public void setSemantics(Set<IKimConcept.Type> semantics) {
 		this.semantics = semantics;
 	}
+	
+	public ObservationType getObservationType() {
+		return observationType;
+	}
 
+	public void setObservationType(ObservationType observationType) {
+		this.observationType = observationType;
+	}
 }

@@ -11,8 +11,12 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
+import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -153,6 +157,20 @@ public enum Observations implements IObservationService {
 
 		ObservationReference ret = new ObservationReference();
 
+		if (observation instanceof ISubject) {
+			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.SUBJECT);
+		} else if (observation instanceof IState) {
+			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.STATE);
+		} else if (observation instanceof IProcess) {
+			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.PROCESS);
+		} else if (observation instanceof IEvent) {
+			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.EVENT);
+		} else if (observation instanceof IConfiguration) {
+			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.CONFIGURATION);
+		} else if (observation instanceof IRelationship) {
+			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.RELATIONSHIP);
+		}
+		
 		if (locator != null) {
 			observation = observation.at(locator);
 		}
