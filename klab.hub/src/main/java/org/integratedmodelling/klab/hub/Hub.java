@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engines.modeler.base;
+package org.integratedmodelling.klab.hub;
 
 import java.util.Arrays;
 
@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 		"org.integratedmodelling.klab.engine.rest.controllers.network",
 		"org.integratedmodelling.klab.engine.rest.messaging",
 		"org.integratedmodelling.klab.engine.rest.controllers.resources" })
-public class Modeler implements ApplicationListener<ApplicationReadyEvent> { 
+public class Hub implements ApplicationListener<ApplicationReadyEvent> { 
 
 	private static Engine engine;
 	private static boolean networkServicesStarted = false;
@@ -49,11 +49,11 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 		return new RestTemplate(Arrays.asList(hmc));
 	}
 	
-	private Modeler() {
+	private Hub() {
 	}
 
-	public Modeler(Engine engine) {
-		Modeler.engine = engine;
+	public Hub(Engine engine) {
+		Hub.engine = engine;
 	}
 
 	public void stopNetworkServices() {
@@ -70,7 +70,7 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	 * services are up.
 	 */
 	public boolean startNetworkServices(Runnable callback) {
-		Modeler.callback = callback;
+		Hub.callback = callback;
 		return startNetworkServices();
 	}
 
@@ -83,7 +83,7 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 			return false;
 		}
 		if (!networkServicesStarted) {
-			this.context = SpringApplication.run(Modeler.class, new String[] {});
+			this.context = SpringApplication.run(Hub.class, new String[] {});
 			networkServicesStarted = true;
 		}
 		return networkServicesStarted;
@@ -93,7 +93,7 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);
 		engine = Engine.start(options);
-		SpringApplication.run(Modeler.class, options.getArguments());
+		SpringApplication.run(Hub.class, options.getArguments());
 		networkServicesStarted = true;
 	}
 
@@ -103,7 +103,7 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	}
 
 	public static void main(String args[]) {
-		new Modeler().run(args);
+		new Hub().run(args);
 	}
 
 	@Override

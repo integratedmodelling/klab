@@ -8,8 +8,6 @@ public class AuthorizeSessionResponse {
 	private long sessionAge;
 	private long lastActivity;
 
-	
-	
 	public String getSessionId() {
 		return sessionId;
 	}

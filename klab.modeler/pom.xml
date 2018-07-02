@@ -66,6 +66,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.hub</artifactId>
+			<version>${klab.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>
 			<version>${klab.version}</version>
 		</dependency>

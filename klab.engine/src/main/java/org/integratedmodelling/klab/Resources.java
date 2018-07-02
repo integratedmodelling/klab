@@ -506,6 +506,7 @@ public enum Resources implements IResourceService {
 			return builder.build();
 
 		} else {
+
 			/*
 			 * TODO send REST request to any node that owns this resource - start with the
 			 * named owner if we have it; if unsuccessful, try using resolution service on
