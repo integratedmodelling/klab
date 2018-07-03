@@ -116,7 +116,7 @@ public interface ISubject extends ICountableObservation {
    * @param scenarios IDs of any scenarios to use in resolution
    * @return the future IObservation.
    */
-  ITask<IObservation> observe(String urn, String... scenarios);
+  ITask<IObservation> observe(String urn, String... scenarios); 
 
   /**
    * Call this on the root observation to create the logical peers of an observation tree in the
