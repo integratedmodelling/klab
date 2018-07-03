@@ -3,12 +3,13 @@
 This package contains the implementation of the k.LAB authentication hub, which authenticates 
 engines and coordinates nodes in a hub. Since 0.10.0, the node and hub functionalities 
 are provided by separate servers. Both engines and nodes authenticate through a hub, 
-and the hub collects the nodes (including those of connected hubs) when returning 
-the network to each authenticated engine.
+and the hub collects the authorized nodes (including those of connected hubs) when 
+returning the network to each authenticated engine.
 
 This initial implementation, meant to support demos and courses while development 
 takes place, has the following limitations:
-- proxies engine authentication (through certificate file) through the old collaboration server
+- proxies engine authentication (through certificate file) through the old collaboration 
+  server
 - uses no certificate for its own authentication;
 - offers no user management facilities
 - does not connect to other hubs.

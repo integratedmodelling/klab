@@ -11,57 +11,21 @@
 	<name>k.LAB modeling engine</name>
 	<description>Default engine with native local storage and workflow runtime</description>
 
-<!-- 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot-version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-						<configuration>
-							<finalName>modeler.base</finalName>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					2.8.0-01 and later require maven-compiler-plugin 3.1 or higher
-					<version>3.1</version>
-					<configuration>
-						<compilerId>groovy-eclipse-compiler</compilerId>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.codehaus.groovy</groupId>
-							<artifactId>groovy-eclipse-compiler</artifactId>
-							<version>2.9.2-01</version>
-						</dependency>
-						for 2.8.0-01 and later you must have an explicit dependency on 
-							groovy-eclipse-batch
-						<dependency>
-							<groupId>org.codehaus.groovy</groupId>
-							<artifactId>groovy-eclipse-batch</artifactId>
-							<version>2.4.3-01</version>
-							or choose a different compiler version
-							<version>1.8.6-01</version>
-							<version>1.7.10-06</version>
-						</dependency>
-					</dependencies>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build> -->
+	<!-- <build> <plugins> <plugin> <groupId>org.springframework.boot</groupId> 
+		<artifactId>spring-boot-maven-plugin</artifactId> <version>${spring-boot-version}</version> 
+		<executions> <execution> <goals> <goal>repackage</goal> </goals> <configuration> 
+		<finalName>modeler.base</finalName> </configuration> </execution> </executions> 
+		</plugin> </plugins> <pluginManagement> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-compiler-plugin</artifactId> 2.8.0-01 and later require 
+		maven-compiler-plugin 3.1 or higher <version>3.1</version> <configuration> 
+		<compilerId>groovy-eclipse-compiler</compilerId> <source>1.8</source> <target>1.8</target> 
+		</configuration> <dependencies> <dependency> <groupId>org.codehaus.groovy</groupId> 
+		<artifactId>groovy-eclipse-compiler</artifactId> <version>2.9.2-01</version> 
+		</dependency> for 2.8.0-01 and later you must have an explicit dependency 
+		on groovy-eclipse-batch <dependency> <groupId>org.codehaus.groovy</groupId> 
+		<artifactId>groovy-eclipse-batch</artifactId> <version>2.4.3-01</version> 
+		or choose a different compiler version <version>1.8.6-01</version> <version>1.7.10-06</version> 
+		</dependency> </dependencies> </plugin> </plugins> </pluginManagement> </build> -->
 
 	<dependencies>
 		<dependency>
@@ -108,6 +72,5 @@
 			<version>${nd4j.version}</version>
 			<classifier>windows-x86_64-avx2</classifier>
 		</dependency>
-
 	</dependencies>
 </project>

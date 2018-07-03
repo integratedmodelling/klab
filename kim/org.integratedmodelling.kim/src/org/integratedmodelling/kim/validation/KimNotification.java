@@ -5,49 +5,54 @@ import java.util.logging.Level;
 import org.integratedmodelling.kim.api.INotification;
 
 /**
- * Trivial bean for notifications, so these can be sent outside of the validator and processed in
- * it.
+ * Trivial bean for notifications, so these can be sent outside of the validator
+ * and processed in it.
  * 
  * @author ferdinando.villa
  *
  */
 public class KimNotification implements INotification, Serializable {
 
-  private static final long serialVersionUID = -5812547783872203517L;
+	private static final long serialVersionUID = -5812547783872203517L;
 
-  String                    message;
-  Level                     level;
-  long                      timestamp        = System.currentTimeMillis();
+	String message;
+	Level level;
+	long timestamp = System.currentTimeMillis();
 
-  public KimNotification(String message, Level level) {
-    this.message = message;
-    this.level = level;
-  }
+	public KimNotification(String message, Level level) {
+		this.message = message;
+		this.level = level;
+	}
 
-  public String getMessage() {
-    return message;
-  }
+	public KimNotification(String message2, Level level2, long timestamp2) {
+		this(message2, level2);
+		this.timestamp = timestamp2;
+	}
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+	public String getMessage() {
+		return message;
+	}
 
-  public Level getLevel() {
-    return level;
-  }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-  public void setLevel(Level level) {
-    this.level = level;
-  }
+	public Level getLevel() {
+		return level;
+	}
 
-  @Override
-  public long getTimestamp() {
-    return timestamp;
-  }
+	public void setLevel(Level level) {
+		this.level = level;
+	}
 
-  @Override
-  public Type getType() {
-    return null;
-  }
+	@Override
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	@Override
+	public Type getType() {
+		return null;
+	}
 
 }

@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 
@@ -37,7 +38,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 public class ResourceCatalog implements IResourceCatalog {
 
 	Nitrite db;
-	ObjectRepository<Resource> resources;
+	ObjectRepository<ResourceReference> resources;
 
 	/**
 	 * Create a new resource catalog.
@@ -49,7 +50,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		this.db = Nitrite.builder()// .compressed() TODO may reintegrate in production
 				.filePath(Configuration.INSTANCE.getDataPath() + File.separator + name + ".db")
 				.openOrCreate("user", "password");
-		this.resources = db.getRepository(Resource.class);
+		this.resources = db.getRepository(ResourceReference.class);
 	}
 
 	@Override
@@ -74,7 +75,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public IResource get(Object key) {
-		return resources.find(eq("urn", key)).firstOrDefault();
+		return new Resource(resources.find(eq("urn", key)).firstOrDefault());
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		if (ret != null) {
 			removeDefinition(value.getUrn());
 		}
-		resources.insert((Resource) value);
+		resources.insert(((Resource) value).getReference());
 
 		if (value.getLocalPath() != null) {
 			/*
@@ -158,7 +159,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	@Override
 	public Set<String> keySet() {
 		Set<String> ret = new HashSet<>();
-		for (Iterator<Resource> r = resources.find().iterator(); r.hasNext();) {
+		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
 			ret.add(r.next().getUrn());
 		}
 		return ret;
@@ -167,8 +168,8 @@ public class ResourceCatalog implements IResourceCatalog {
 	@Override
 	public Collection<IResource> values() {
 		List<IResource> ret = new ArrayList<>();
-		for (Iterator<Resource> r = resources.find().iterator(); r.hasNext();) {
-			ret.add(r.next());
+		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
+			ret.add(new Resource(r.next()));
 		}
 		return ret;
 	}
@@ -176,8 +177,8 @@ public class ResourceCatalog implements IResourceCatalog {
 	@Override
 	public Set<Entry<String, IResource>> entrySet() {
 		Set<Entry<String, IResource>> ret = new HashSet<>();
-		for (Iterator<Resource> r = resources.find().iterator(); r.hasNext();) {
-			final Resource rr = r.next();
+		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
+			final ResourceReference rr = r.next();
 			ret.add(new Entry<String, IResource>() {
 				@Override
 				public String getKey() {
@@ -186,13 +187,13 @@ public class ResourceCatalog implements IResourceCatalog {
 
 				@Override
 				public IResource getValue() {
-					return rr;
+					return new Resource(rr);
 				}
 
 				@Override
 				public IResource setValue(IResource value) {
 					put(value.getUrn(), value);
-					return rr;
+					return new Resource(rr);
 				}
 			});
 		}

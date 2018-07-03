@@ -61,6 +61,10 @@ public class Utils {
 		return ret;
 	}
 
+	public static boolean isPOD(Object value) {
+		return value instanceof Number || value instanceof String || value instanceof Boolean;
+	}
+	
 	/**
 	 * Return the closest POD that the value can be parsed into. For now only handle
 	 * int and double. May add k.IM - like maps, lists, ranges.
@@ -78,9 +82,12 @@ public class Utils {
 			return Double.parseDouble(value);
 		} catch (Throwable e) {
 		}
+		
+		if (value.toLowerCase().equals("true") || value.toLowerCase().equals("false")) {
+			return value.toLowerCase().equals("true");
+		}
 
 		return value;
-
 	}
 
 	/**

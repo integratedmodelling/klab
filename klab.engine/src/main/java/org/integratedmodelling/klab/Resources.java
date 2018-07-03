@@ -510,7 +510,7 @@ public enum Resources implements IResourceService {
 			/*
 			 * TODO send REST request to any node that owns this resource - start with the
 			 * named owner if we have it; if unsuccessful, try using resolution service on
-			 * all nodes.
+			 * all nodes. Then use the get endpoint.
 			 */
 		}
 		return null;

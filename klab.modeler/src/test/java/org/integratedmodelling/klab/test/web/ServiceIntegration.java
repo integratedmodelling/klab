@@ -1,16 +1,8 @@
 package org.integratedmodelling.klab.test.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
 import org.integratedmodelling.klab.hub.Hub;
 import org.junit.Test;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 public class ServiceIntegration {
@@ -21,13 +13,13 @@ public class ServiceIntegration {
     	RestTemplate restTemplate = new RestTemplate();
     	
     	SpringApplicationBuilder uws = new SpringApplicationBuilder(Modeler.class)
-                .properties("server.port=8081",
-                        "server.contextPath=/UserService",
+                .properties("server.port=8284",
+                        "server.contextPath=/hub",
                         "SOA.ControllerFactory.enforceProxyCreation=true");
         uws.run();
         SpringApplicationBuilder pws = new SpringApplicationBuilder(Hub.class)
-                .properties("server.port=8082",
-                        "server.contextPath=/ProjectService",
+                .properties("server.port=8207",
+                        "server.contextPath=/node",
                         "SOA.ControllerFactory.enforceProxyCreation=true");
         pws.run();
 

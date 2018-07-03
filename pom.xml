@@ -69,6 +69,7 @@
 		<module>ide</module>
 		<module>klab.hub</module>
 		<module>klab.node</module>
+		<module>products</module>
 	</modules>
 
 	<properties>

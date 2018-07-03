@@ -29,11 +29,12 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.rest.Notification;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Parameters;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the
@@ -49,13 +50,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * or literal, which encodes their computation or resolution. Executing the KDL
  * call as part of a
  * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow} builds
- * the {@link org.integratedmodelling.klab.api.provenance.IArtifact}.
+ * the corresponding
+ * {@link org.integratedmodelling.klab.api.provenance.IArtifact}.
  *
  * @author Ferd
  * @version $Id: $Id
  */
-@JsonSerialize(using = ResourceSerializer.class)
-@JsonDeserialize(using = ResourceDeserializer.class)
 public class Resource implements IResource {
 
 	private static final long serialVersionUID = -923039635832182164L;
@@ -73,7 +73,60 @@ public class Resource implements IResource {
 	List<IResource> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
 
-	// only meant to be built by the custom deserializer in this package
+	public Resource(ResourceReference reference) {
+		this.urn = reference.getUrn();
+		this.version = Version.create(reference.getVersion());
+		this.adapterType = reference.getAdapterType();
+		this.localPath = reference.getLocalPath();
+		this.type = reference.getType();
+		this.resourceTimestamp = reference.getResourceTimestamp();
+		this.localPaths.addAll(reference.getLocalPaths());
+		this.geometry = Geometry.create(reference.getGeometry());
+		for (ResourceReference ref : reference.getHistory()) {
+			this.history.add(new Resource(ref));
+		}
+		for (String key : reference.getParameters().keySet()) {
+			this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
+		}
+		for (String key : reference.getMetadata().keySet()) {
+			this.metadata.put(key, Utils.asPOD(reference.getParameters().get(key)));
+		}
+		for (Notification notification : reference.getNotifications()) {
+			this.notifications.add(new KimNotification(notification.getMessage(), notification.getLevel(),
+					notification.getTimestamp()));
+		}
+	}
+
+	public ResourceReference getReference() {
+		ResourceReference ret = new ResourceReference();
+		ret.setUrn(this.urn);
+		ret.setVersion(this.version.toString());
+		ret.setGeometry(this.getGeometry().encode());
+		ret.setAdapterType(this.getAdapterType());
+		ret.setLocalPath(this.localPath);
+		ret.getLocalPaths().addAll(this.localPaths);
+		ret.setResourceTimestamp(this.resourceTimestamp);
+		for (IResource h : this.history) {
+			ret.getHistory().add(((Resource) h).getReference());
+		}
+		for (String key : this.parameters.keySet()) {
+			if (Utils.isPOD(this.parameters.get(key))) {
+				ret.getParameters().put(key, this.parameters.get(key).toString());
+			}
+		}
+		for (String key : this.metadata.keySet()) {
+			if (Utils.isPOD(this.metadata.get(key))) {
+				ret.getParameters().put(key, this.metadata.get(key).toString());
+			}
+		}
+		for (INotification notification : this.notifications) {
+			ret.getNotifications().add(
+					new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
+		}
+
+		return ret;
+	}
+
 	Resource() {
 	}
 
@@ -141,7 +194,7 @@ public class Resource implements IResource {
 	public List<String> getLocalPaths() {
 		return localPaths;
 	}
-	
+
 	/**
 	 * <p>
 	 * Getter for the field <code>resourceTimestamp</code>.
@@ -182,10 +235,10 @@ public class Resource implements IResource {
 			if (urn == null) {
 				throw new IllegalStateException("invalid resource: urn is undefined");
 			}
-			
-			//  TODO metadata consistency check for adapter
+
+			// TODO metadata consistency check for adapter
 		}
-		
+
 		// TODO more checks: consistent version history
 	}
 
