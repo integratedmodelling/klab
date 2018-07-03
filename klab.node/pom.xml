@@ -7,4 +7,20 @@
   </parent>
   <artifactId>klab.node</artifactId>
   <name>k.LAB node server</name>
-</project>
+  <dependencies>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.ogc</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.engine</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+  </dependencies></project>

@@ -1,9 +1,10 @@
-package org.integratedmodelling.klab.hub;
+package org.integratedmodelling.klab.node;
 
 import java.util.Arrays;
 
 import javax.annotation.PreDestroy;
 
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,12 +26,12 @@ import org.springframework.web.client.RestTemplate;
  */
 @Component
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.controllers.base",
-		"org.integratedmodelling.klab.hub.authentication", "org.integratedmodelling.klab.hub.network" })
-public class Hub implements ApplicationListener<ApplicationReadyEvent> {
+@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.controllers.base" })
+public class Node implements ApplicationListener<ApplicationReadyEvent> {
 
 	private static Runnable callback;
 	private ConfigurableApplicationContext context;
+	private Engine engine;
 
 	@Bean
 	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
@@ -45,7 +46,8 @@ public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 	public void run(String[] args) {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);
-		SpringApplication.run(Hub.class, options.getArguments());
+		this.engine = Engine.start(options);
+		SpringApplication.run(Node.class, options.getArguments());
 	}
 
 	@PreDestroy
@@ -53,7 +55,7 @@ public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 	}
 
 	public static void main(String args[]) {
-		new Hub().run(args);
+		new Node().run(args);
 	}
 
 	@Override
