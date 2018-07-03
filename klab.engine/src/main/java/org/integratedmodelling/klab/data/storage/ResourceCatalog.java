@@ -75,7 +75,8 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public IResource get(Object key) {
-		return new Resource(resources.find(eq("urn", key)).firstOrDefault());
+		ResourceReference ref = resources.find(eq("urn", key)).firstOrDefault();
+		return ref == null ? null : new Resource(ref);
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			resourcePath.mkdir();
 			try {
 				FileUtils.writeStringToFile(new File(resourcePath + File.separator + "resource.json"),
-						JsonUtils.printAsJson(value));
+						JsonUtils.printAsJson(((Resource)value).getReference()));
 			} catch (IOException e) {
 				throw new KlabIOException(e);
 			}
@@ -118,9 +119,6 @@ public class ResourceCatalog implements IResourceCatalog {
 		IResource ret = get(key);
 		resources.remove(eq("urn", key));
 		if (ret != null && ret.getLocalPath() != null) {
-			/*
-			 * Save resource data as JSON in resource path
-			 */
 			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + ret.getLocalPath());
 			if (resourcePath.exists()) {
 				try {
