@@ -17,12 +17,10 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
-import org.integratedmodelling.klab.rest.AuthenticationRequest;
 import org.integratedmodelling.klab.rest.AuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -40,19 +38,6 @@ import org.springframework.web.client.RestTemplate;
  */
 public class KlabCertificate implements ICertificate {
 
-	/*
-	 * Keys for user properties in certificates or for set operations.
-	 */
-	public static final String KEY_EMAIL = "klab.user.email";
-	public static final String KEY_USERNAME = "klab.username";
-	public static final String KEY_NODENAME = "klab.nodename";
-	public static final String KEY_URL = "klab.url";
-	public static final String KEY_SIGNATURE = "klab.signature";
-	public static final String KEY_SERVER = "klab.partner.node";
-	public static final String KEY_PARTNER_NAME = "klab.partner.name";
-	public static final String KEY_PARTNER_EMAIL = "klab.partner.email";
-	public static final String KEY_CERTIFICATE = "klab.certificate";
-	public static final String KEY_CERTIFICATE_TYPE = "klab.certificate.type";
 
 	// just for info
 	public static final String KEY_EXPIRATION = "klab.validuntil";
@@ -69,7 +54,7 @@ public class KlabCertificate implements ICertificate {
 	private String worldview = DEFAULT_WORLDVIEW;
 	private Collection<String> worldview_repositories = StringUtils.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
 	private AuthenticationResponse authentication = null;
-	private IIdentity identity = null;
+//	private IIdentity identity = null;
 	private String certificateType = "UNKNOWN";
 
 	/**
@@ -178,16 +163,7 @@ public class KlabCertificate implements ICertificate {
 
 			this.certificateType = properties.getProperty(KEY_CERTIFICATE_TYPE, "UNKNOWN");
 
-			/*
-			 * TODO perform some basic checks on the certificate to guarantee that all
-			 * needed properties are there.
-			 */
-			if (this.certificateType.equals(ICertificate.CERTIFICATE_TYPE_NODE)) {
-				return authenticateNode();
-			} else if (this.certificateType.equals(ICertificate.CERTIFICATE_TYPE_USER)) {
-				return authenticateUser();
-			}
-
+			return true;
 		}
 
 		return false;
@@ -258,73 +234,6 @@ public class KlabCertificate implements ICertificate {
 		return false;
 	}
 
-	private boolean authenticateNode() {
-		Logging.INSTANCE.info("authenticating node " + properties.getProperty(KEY_USERNAME));
-		/*
-		 * TODO authenticate node!
-		 */
-		return true;
-	}
-
-	private boolean authenticateUser() {
-
-		Logging.INSTANCE.info("authenticating user " + properties.getProperty(KEY_USERNAME));
-
-		String authenticationServer = properties.getProperty(KEY_SERVER);
-		if (authenticationServer == null) {
-			// try local hub, let fail if not active
-			authenticationServer = "http://127.0.0.1:8284/klab";
-		}
-		
-		/*
-		 * Authenticate with server(s). If authentication fails because of a 403,
-		 * invalidate the certificate. If no server can be reached, certificate is valid
-		 * but engine is offline.
-		 */
-		AuthenticationRequest request = new AuthenticationRequest(properties.getProperty(KEY_USERNAME),
-				properties.getProperty(KEY_SIGNATURE), properties.getProperty(KEY_CERTIFICATE_TYPE),
-				properties.getProperty(KEY_CERTIFICATE));
-
-		try {
-			authentication = Client.create().authenticate(authenticationServer, request);
-		} catch (Throwable e) {
-			Logging.INSTANCE.error(
-					"authentication failed for user " + properties.getProperty(KEY_USERNAME) + ": " + e.getMessage());
-			// TODO inspect exception; fatal if 403, warn and proceed offline otherwise
-		}
-
-		if (authentication != null) {
-
-			/*
-			 * check expiration
-			 */
-			try {
-				this.expiry = DateTime.parse(authentication.getUserData().getExpiry());
-			} catch (Throwable e) {
-				cause = "bad date or wrong date format in certificate. Please use latest version of software.";
-				return false;
-			}
-			if (expiry == null) {
-				cause = "certificate has no expiration date. Please obtain a new certificate.";
-				return false;
-			} else if (expiry.isBeforeNow()) {
-				cause = "certificate expired on " + expiry + ". Please obtain a new certificate.";
-				return false;
-			}
-		} else {
-
-			/*
-			 * user is offline
-			 */
-			Logging.INSTANCE.error(
-					"authentication unsuccessful for " + properties.getProperty(KEY_USERNAME) + ": continuing offline");
-
-		}
-
-		return true;
-
-	}
-
 	public DateTime getExpiryDate() {
 		return expiry;
 	}
@@ -370,57 +279,7 @@ public class KlabCertificate implements ICertificate {
 	}
 
 	@Override
-	public IIdentity getIdentity() {
-
-		if (this.identity == null) {
-
-			if (CERTIFICATE_TYPE_USER.equals(this.certificateType)) {
-
-				// TODO if we have connected, insert network session identity
-				if (authentication != null) {
-
-					NodeReference partnerNode = null;
-					for (NodeReference n : authentication.getNodes()) {
-						if (n.getId().equals(authentication.getAuthenticatingNodeId())) {
-							partnerNode = n;
-							break;
-						}
-					}
-					Partner partner = Auth.INSTANCE.requirePartner(partnerNode.getPartner());
-					Node node = new Node(partnerNode, partner);
-					node.setOnline(true);
-					NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
-							authentication.getNodes(), node);
-
-					this.identity = new KlabUser(authentication.getUserData(), networkSession);
-
-				} else {
-
-					// offline node with no partner
-					Node node = new Node(properties.getProperty(KEY_NODENAME), null);
-					((Node) node).setOnline(false);
-					this.identity = new KlabUser(properties.getProperty(KEY_USERNAME), node);
-				}
-
-				((KlabUser) this.identity).setOnline(authentication != null);
-
-			} else if (CERTIFICATE_TYPE_NODE.equals(this.certificateType)) {
-
-				Partner partner = new Partner(properties.getProperty(KEY_PARTNER_NAME)); // TODO
-				partner.setEmailAddress(properties.getProperty(KEY_PARTNER_EMAIL));
-
-				this.identity = new Node(properties.getProperty(KEY_NODENAME), partner);
-				/**
-				 * TODO add authenticated data
-				 */
-				((Node) this.identity).getUrls().add(properties.getProperty(KEY_URL));
-
-			} else {
-				throw new KlabUnsupportedFeatureException("cannot create identity of type " + this.certificateType);
-			}
-
-		}
-		return this.identity;
-
+	public String getProperty(String property) {
+		return properties == null ? null : properties.getProperty(property);
 	}
 }

@@ -1,29 +1,34 @@
 package org.integratedmodelling.klab;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
-import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.services.INetworkService;
+import org.integratedmodelling.klab.rest.AuthenticationResponse;
 
 public enum Network implements INetworkService {
-	
+
 	INSTANCE;
 
-	@Override
-	public IUserIdentity authenticate(ICertificate certificate) {
-		// TODO find the hub in the certificate
-		// TODO if not available and we have a list of mirrors, try the mirrors
-		return null;
-	}
-	
+	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
+	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
+
 	@Override
 	public Collection<INodeIdentity> getNodes() {
-		Set<INodeIdentity> ret = new HashSet<>();
-		// TODO
-		return ret;
+		return new HashSet<>(onlineNodes.values());
+	}
+
+	/**
+	 * Build the network based on the result of authentication.
+	 * 
+	 * @param authentication
+	 */
+	public void buildNetwork(AuthenticationResponse authentication) {
+		// TODO Auto-generated method stub
+
 	}
 }

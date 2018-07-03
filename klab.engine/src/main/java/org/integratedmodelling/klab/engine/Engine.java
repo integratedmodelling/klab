@@ -202,8 +202,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	public Engine(ICertificate certificate) {
 		this.certificate = certificate;
-		this.owner = Network.INSTANCE.authenticate(certificate);
-		Klab.INSTANCE.setRootIdentity(this.certificate.getIdentity());
+		this.owner = Auth.INSTANCE.authenticate(certificate);
+		Klab.INSTANCE.setRootIdentity(this.owner);
 	}
 
 	@Override

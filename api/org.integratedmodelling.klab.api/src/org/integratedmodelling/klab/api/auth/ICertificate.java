@@ -43,6 +43,20 @@ public interface ICertificate {
     public static final String CERTIFICATE_TYPE_NODE = "NODE";
     public static final String CERTIFICATE_TYPE_USER = "USER";
     public static final String CERTIFICATE_TYPE_PARTNER = "PARTNER";
+    
+	/*
+	 * Keys for user properties in certificates or for set operations.
+	 */
+	public static final String KEY_EMAIL = "klab.user.email";
+	public static final String KEY_USERNAME = "klab.username";
+	public static final String KEY_NODENAME = "klab.nodename";
+	public static final String KEY_URL = "klab.url";
+	public static final String KEY_SIGNATURE = "klab.signature";
+	public static final String KEY_SERVER = "klab.partner.node";
+	public static final String KEY_PARTNER_NAME = "klab.partner.name";
+	public static final String KEY_PARTNER_EMAIL = "klab.partner.email";
+	public static final String KEY_CERTIFICATE = "klab.certificate";
+	public static final String KEY_CERTIFICATE_TYPE = "klab.certificate.type";
 
     /**
      * Create the worldview workspace for this identity and return it (unloaded and
@@ -53,17 +67,17 @@ public interface ICertificate {
      */
     IWorldview getWorldview();
 
-    /**
-     * A certificate represents an identity - a partner, a partner node or a k.LAB user. The
-     * identity returned will reflect the results of authentication: it may have no network
-     * parent if the user is offline, for example. It should normally descend from a partner,
-     * node, and network session; the anonymous certificate will return a lonely anonymous
-     * user.
-     * 
-     * @return the {@link org.integratedmodelling.klab.api.auth.IIdentity} that owns this 
-     * certificate. Never null.
-     */
-    IIdentity getIdentity();
+//    /**
+//     * A certificate represents an identity - a partner, a partner node or a k.LAB user. The
+//     * identity returned will reflect the results of authentication: it may have no network
+//     * parent if the user is offline, for example. It should normally descend from a partner,
+//     * node, and network session; the anonymous certificate will return a lonely anonymous
+//     * user.
+//     * 
+//     * @return the {@link org.integratedmodelling.klab.api.auth.IIdentity} that owns this 
+//     * certificate. Never null.
+//     */
+//    IIdentity getIdentity();
 
     /**
      * Validity may depend on expiration date and possibly upstream conditions after
@@ -85,4 +99,12 @@ public interface ICertificate {
      * @return a description of the cause for invalidity
      */
     String getInvalidityCause();
+    
+    /**
+     * Return the named property on a valid certificate.
+     * 
+     * @param property
+     * @return the value of the property, or null.
+     */
+    String getProperty(String property);
 }
