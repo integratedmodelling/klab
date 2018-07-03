@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.api.services;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 
 /**
@@ -24,5 +27,15 @@ public interface INetworkService {
 	 * @return user identity
 	 */
 	IUserIdentity authenticate(ICertificate certificate);
+
+	/**
+	 * Return all the nodes we can access after authentication. Should only
+	 * return nodes that are online and transparently quarantine those that
+	 * are not. Therefore the results may differ between calls.
+	 * 
+	 * @return the list of available and online nodes. 
+	 * @throw IllegalStateException if called before authentication
+	 */
+	Collection<INodeIdentity> getNodes();
 
 }

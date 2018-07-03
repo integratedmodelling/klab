@@ -69,7 +69,7 @@ class ProductIterator implements InputIterator
     // regions in which a product is sold.
     public Set<BytesRef> contexts() {
         try {
-            Set<BytesRef> regions = new HashSet();
+            Set<BytesRef> regions = new HashSet<>();
             for (String region : currentProduct.regions) {
                 regions.add(new BytesRef(region.getBytes("UTF8")));
             }

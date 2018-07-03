@@ -276,6 +276,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 			certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
 		} else {
 			File certFile = options.getCertificateFile();
+			if (!certFile.exists()) {
+				// check for legacy certificate
+				certFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
+			}
 			certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
 					: KlabCertificate.createDefault();
 		}

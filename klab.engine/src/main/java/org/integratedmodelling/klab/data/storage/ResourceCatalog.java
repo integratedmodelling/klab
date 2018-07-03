@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -83,12 +84,14 @@ public class ResourceCatalog implements IResourceCatalog {
 	public IResource put(String key, IResource value) {
 
 		((Resource) value).validate(Resources.INSTANCE);
-
+		
 		IResource ret = get(value.getUrn());
 		if (ret != null) {
 			removeDefinition(value.getUrn());
 		}
-		resources.insert(((Resource) value).getReference());
+		
+		ResourceReference ref = ((Resource) value).getReference();
+		resources.insert(ref);
 
 		if (value.getLocalPath() != null) {
 			/*
@@ -98,7 +101,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			resourcePath.mkdir();
 			try {
 				FileUtils.writeStringToFile(new File(resourcePath + File.separator + "resource.json"),
-						JsonUtils.printAsJson(((Resource)value).getReference()));
+						JsonUtils.printAsJson(ref));
 			} catch (IOException e) {
 				throw new KlabIOException(e);
 			}
@@ -112,7 +115,6 @@ public class ResourceCatalog implements IResourceCatalog {
 		resources.remove(eq("urn", key));
 		return ret;
 	}
-	
 	
 	@Override
 	public IResource remove(Object key) {
@@ -133,8 +135,9 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public void putAll(Map<? extends String, ? extends IResource> m) {
-		// TODO Auto-generated method stub
-
+		for (String key : m.keySet()) {
+			put(key, m.get(key));
+		}
 	}
 
 	@Override
