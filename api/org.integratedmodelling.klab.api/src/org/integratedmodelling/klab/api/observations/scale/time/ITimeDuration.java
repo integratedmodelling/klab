@@ -44,4 +44,11 @@ public interface ITimeDuration extends Comparable<ITimeDuration> {
      * @return localization
      */
     IPair<ITimeInstant, ITimeInstant> localize();
+
+    /**
+     * True for a no-duration duration.
+     * 
+     * @return
+     */
+	boolean isEmpty();
 }

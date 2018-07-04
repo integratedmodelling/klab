@@ -1,12 +1,21 @@
 package org.integratedmodelling.klab.components.time.extents;
 
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
-import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.utils.NumberUtils;
 
+import com.google.common.collect.Lists;
 import com.ifesdjeen.timer.HashedWheelTimer;
+import com.ifesdjeen.timer.WaitStrategy;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -15,35 +24,149 @@ import com.ifesdjeen.timer.HashedWheelTimer;
  * @author ferdinando.villa
  *
  */
-public class Scheduler implements IScheduler {
+public abstract class Scheduler<T> implements IScheduler<T> {
 
-	HashedWheelTimer timer;
-	Type type;
+	private HashedWheelTimer timer;
+	private Type type;
+	private Map<Long, List<TreeNode>> reactors = new HashMap<>();
+	private long startTime = -1;
+	private long endTime = -1;
+	private long interval = -1;
+	private BiConsumer<T, Long> actionHandler;
+	private BiConsumer<T, Long> errorHandler;
 
+	class TreeNode {
+		TreeNode(T element) {
+			this.element = element;
+		}
+
+		T element;
+		Deque<T> prerequisites = new LinkedList<>();
+	}
+
+	protected abstract ITime getTime(T object);
 
 	public Scheduler(Type type) {
 		this.type = type;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void merge(IObservation temporalObservation) {
+	public void merge(T temporalObject) {
+		ITime time = getTime(temporalObject);
+		if (time == null || time.getStep().isEmpty()) {
+			return;
+		}
 
+		if (startTime < 0 || startTime > time.getStart().getMillis()) {
+			startTime = time.getStart().getMillis();
+		}
+		if (endTime < 0 || endTime < time.getEnd().getMillis()) {
+			endTime = time.getEnd().getMillis();
+		}
+
+		if (reactors.containsKey(time.getStep().getMilliseconds())) {
+			reactors.get(time.getStep().getMilliseconds()).add(new TreeNode(temporalObject));
+		} else {
+			reactors.put(time.getStep().getMilliseconds(), Lists.newArrayList(new TreeNode(temporalObject)));
+		}
 	}
 
 	@Override
-	public void merge(IObservation temporalObservation, IObservation requiredAntecedent) {
-
+	public void merge(T temporalObject, T requiredAntecedent) {
+		// TODO
 	}
-
 
 	@Override
-	public void start(BiConsumer<IObservation, ILocator> tickHandler) {
+	public void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler) {
+
+		this.actionHandler = tickHandler;
+		this.errorHandler = timingErrorHandler;
+
+		if (timer != null) {
+			throw new IllegalStateException("a scheduler can only be started once");
+		}
+
+		long[] spans = new long[reactors.size()];
+		int i = 0;
+		for (Long l : reactors.keySet()) {
+			spans[i++] = l;
+		}
+		this.interval = NumberUtils.lcm(spans);
+
+		if (type == Type.REAL_TIME) {
+			// for logging
+			startTime = System.currentTimeMillis();
+		}
+
+		// adjust the start time to start in phase with the interval (CHECK)
+		long remainder = startTime % interval;
+		if (remainder != 0) {
+			startTime -= (interval - remainder);
+		}
+
+		timer = new HashedWheelTimer(
+				type == Type.MOCK_TIME ? TimeUnit.NANOSECONDS.convert(interval, TimeUnit.MILLISECONDS)
+						: TimeUnit.MILLISECONDS.toNanos(10),
+				512, type == Type.MOCK_TIME ? new WaitStrategy() {
+					@Override
+					public void waitUntil(long deadlineNanoseconds) throws InterruptedException {
+						// TODO sleep if necessary until the current time hasn't been reached by all
+						// observations
+					}
+				} : new WaitStrategy.SleepWait());
+
+		/*
+		 * schedule the main task at the smallest interval
+		 */
+		timer.scheduleWithFixedDelay(() -> {
+			handleTick();
+		}, 0, interval, TimeUnit.MILLISECONDS);
 
 	}
-	
+
+	private void handleTick() {
+		this.startTime += this.interval;
+		for (Long key : reactors.keySet()) {
+			if ((this.startTime % key) == 0) {
+				callReactors(reactors.get(key));
+			}
+		}
+	}
+
+	private void callReactors(List<TreeNode> list) {
+
+		/*
+		 * TODO check that previous executor has finished and wait (if mock time) or
+		 * throw a specific exception (real time) for all the actors that have not
+		 * finished computing, unless configured otherwise, so that it can be caught and
+		 * the actor can be deactivated.
+		 */
+
+		// call all nodes concurrently, each calling its antecedents in order. The same antecedent
+		// could be in more than one node and should only be called once.
+		// NO must use an actual dependency graph
+		for (TreeNode node : list) {
+			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
+				// schedule a new task ensuring handling of all prerequisites
+				System.out.println("Calling for " + this.startTime + ": " + node.element);
+			}
+		}
+
+		// TODO schedule all tasks immediately
+	}
+
 	@Override
 	public void stop() {
-		
+
+		if (timer != null) {
+			timer.shutdownNow();
+			try {
+				timer.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				Logging.INSTANCE.error(e);
+			}
+		}
 	}
 
 }
