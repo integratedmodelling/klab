@@ -17,23 +17,16 @@ public interface IScheduler<T> {
 	}
 
 	/**
-	 * Merge in an observation that will be notified of ticks at its own resolution.
-	 * 
-	 * @param time
-	 */
-	void merge(T temporalObject);
-
-	/**
 	 * Merge in an observation indicating another with the same view of time that
 	 * must be notified before it.
 	 * 
 	 * @param temporalObservation
-	 * @param requiredAntecedent
+	 * @param requiredAntecedents
 	 *            must have been merged in previously
 	 * @throws IllegalArgumentException
 	 *             if requiredAntecedent has not been merged before
 	 */
-	void merge(T temporalObject, T requiredAntecedent);
+	void merge(T temporalObject, T... requiredAntecedents);
 
 	/**
 	 * Start the scheduler, passing the function to handle each tick for each

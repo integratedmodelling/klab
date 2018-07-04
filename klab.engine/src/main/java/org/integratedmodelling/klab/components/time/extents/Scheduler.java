@@ -52,7 +52,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void merge(T temporalObject) {
+	public void merge(T temporalObject, T... requiredAntecedents) {
 		ITime time = getTime(temporalObject);
 		if (time == null || time.getStep().isEmpty()) {
 			return;
@@ -70,11 +70,12 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		} else {
 			reactors.put(time.getStep().getMilliseconds(), Lists.newArrayList(new TreeNode(temporalObject)));
 		}
-	}
 
-	@Override
-	public void merge(T temporalObject, T requiredAntecedent) {
-		// TODO
+		if (requiredAntecedents != null) {
+			for (T antecedent : requiredAntecedents) {
+				// TODO create graph
+			}
+		}
 	}
 
 	@Override
@@ -143,12 +144,14 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		 * the actor can be deactivated.
 		 */
 
-		// call all nodes concurrently, each calling its antecedents in order. The same antecedent
+		// call all nodes concurrently, each calling its antecedents in order. The same
+		// antecedent
 		// could be in more than one node and should only be called once.
 		// NO must use an actual dependency graph
 		for (TreeNode node : list) {
 			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
-				// schedule a new task ensuring handling of all prerequisites
+				// TODO use topological sort. Should be able to enqueue groups in dependency
+				// order as soon as all deps are done.
 				System.out.println("Calling for " + this.startTime + ": " + node.element);
 			}
 		}
