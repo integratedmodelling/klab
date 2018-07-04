@@ -364,4 +364,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
 		return new State((Observable) observable, (Scale) scale, (RuntimeContext) context, storage);
 	}
+
+	@Override
+	public void shutdown() {
+		if (rootActorSystem != null) {
+			rootActorSystem.terminate();
+		}
+	}
 }

@@ -98,6 +98,7 @@ public class Resource implements IResource {
 	}
 
 	public ResourceReference getReference() {
+		
 		ResourceReference ret = new ResourceReference();
 		ret.setUrn(this.urn);
 		ret.setVersion(this.version.toString());

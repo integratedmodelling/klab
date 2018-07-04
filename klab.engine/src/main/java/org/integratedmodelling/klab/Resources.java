@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -640,6 +641,18 @@ public enum Resources implements IResourceService {
 			 */
 		}
 		return false;
+	}
+
+	/**
+	 * Create an importer for the resource specified by the passed URL into the
+	 * passed project.
+	 * 
+	 * @param url
+	 * @param project
+	 */
+	public Importer createImporter(URL url, IProject project) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

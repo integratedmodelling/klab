@@ -212,4 +212,10 @@ public class ResourceCatalog implements IResourceCatalog {
 		System.out.println("Retrieved: " + retrieved);
 	}
 
+	@Override
+	public void clearOnly(Object... objects) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

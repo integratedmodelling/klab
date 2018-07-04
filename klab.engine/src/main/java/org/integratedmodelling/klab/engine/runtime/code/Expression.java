@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
+import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -167,6 +168,12 @@ public abstract class Expression implements IExpression {
 
 	@Override
 	public Collection<IObservation> getChildrenOf(IObservation observation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IScheduler getScheduler() {
 		// TODO Auto-generated method stub
 		return null;
 	}

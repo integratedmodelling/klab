@@ -54,11 +54,14 @@ public class LocalOGCTests {
 		/*
 		 * TODO create test project, load resources, ensure present
 		 */
-		if (Resources.INSTANCE.getLocalWorkspace().getProject("test") == null) {
-			Resources.INSTANCE.getLocalWorkspace().createProject("test");
-		}
+		
 
 		IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test");
+		if (testProject == null) {
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test");
+		}
+		
+		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
 		
 		/*
 		 * TODO validate and build resources. This should be a set of test cases of its

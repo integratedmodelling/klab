@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
+import org.integratedmodelling.klab.auth.AnonymousCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.auth.NetworkSession;
@@ -145,6 +146,12 @@ public enum Auth implements IAuthenticationService {
 
 		IIdentity ret = null;
 
+		if (certificate instanceof AnonymousCertificate) {
+		        // no partner, no node, no token, no nothing. REST calls automatically accept the
+		        // anonymous user when secured as Roles.PUBLIC.
+		        return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
+		}
+		
 		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME));
 
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);

@@ -27,7 +27,6 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -296,7 +295,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	public void stop() {
 
-		// TODO shutdown all components
+		// shutdown all components
 		if (this.sessionClosingTask != null) {
 			this.sessionClosingTask.cancel(true);
 		}
@@ -336,7 +335,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 				scheduler.shutdownNow();
 			}
 		}
-	}
+
+		// shutdown the runtime
+		Klab.INSTANCE.getRuntimeProvider().shutdown();
+}
 
 	/**
 	 * Perform the engine boot sequence. Can only be called after a valid
