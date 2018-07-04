@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.engine.Engine;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -33,7 +34,7 @@ import org.reflections.scanners.ResourcesScanner;
  * @author ferdinando.villa
  *
  */
-public class LocalOGCTests {
+public class OGCModelTests {
 
 	static Engine engine;
 
@@ -122,6 +123,7 @@ public class LocalOGCTests {
 	}
 	
 	@Test
+	@Ignore
 	// TODO - shape extraction isn't there yet
 	public void simpleWCSTestWithShapeExtraction() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim.raster/test5.kim")).get();

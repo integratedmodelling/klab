@@ -25,17 +25,17 @@ import org.junit.Test;
  * @author ferdinando.villa
  *
  */
-public class RasterValidationTests extends TestSetup {
+public class VectorValidationTests extends TestSetup {
 
 	static Engine engine;
 	static IProject testProject;
-	
+
 	@BeforeClass
 	public static void setUp() throws Exception {
 		engine = Engine.start();
-		testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.raster");
+		testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.vector");
 		if (testProject == null) {
-			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.raster");
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.vector");
 		}
 		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
 	}
@@ -50,17 +50,23 @@ public class RasterValidationTests extends TestSetup {
 	public void tearDown() throws Exception {
 		engine.stop();
 	}
-	
+
 	@Test
-	public void utahLandcover() {
+	public void importStatesShp() {
 		System.out.println(JsonUtils
-				.printAsJson(((Resource) importResource("data.raster/utah_landcover.tif", testProject)).getReference()));
+				.printAsJson(((Resource) importResource("data.vector/states.shp", testProject)).getReference()));
 	}
-	
+
 	@Test
-	public void utahLandcoverAgain() {
+	public void importArchsites() {
 		System.out.println(JsonUtils
-				.printAsJson(((Resource) importResource("data.raster/utah_landcover.tif", testProject)).getReference()));
+				.printAsJson(((Resource) importResource("data.vector/archsites.shp", testProject)).getReference()));
+	}
+
+	@Test
+	public void importTigerRoads() {
+		System.out.println(JsonUtils
+				.printAsJson(((Resource) importResource("data.vector/tiger_roads.shp", testProject)).getReference()));
 	}
 
 }

@@ -72,6 +72,7 @@ public class Resource implements IResource {
 	List<String> localPaths = new ArrayList<>();
 	List<IResource> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
+	String projectName;
 
 	public Resource(ResourceReference reference) {
 		this.urn = reference.getUrn();
@@ -82,6 +83,7 @@ public class Resource implements IResource {
 		this.resourceTimestamp = reference.getResourceTimestamp();
 		this.localPaths.addAll(reference.getLocalPaths());
 		this.geometry = Geometry.create(reference.getGeometry());
+		this.projectName = reference.getProjectName();
 		for (ResourceReference ref : reference.getHistory()) {
 			this.history.add(new Resource(ref));
 		}
@@ -107,6 +109,8 @@ public class Resource implements IResource {
 		ret.setLocalPath(this.localPath);
 		ret.getLocalPaths().addAll(this.localPaths);
 		ret.setResourceTimestamp(this.resourceTimestamp);
+		ret.setProjectName(this.projectName);
+		
 		for (IResource h : this.history) {
 			ret.getHistory().add(((Resource) h).getReference());
 		}

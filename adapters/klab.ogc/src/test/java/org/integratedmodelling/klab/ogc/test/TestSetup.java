@@ -3,15 +3,14 @@ package org.integratedmodelling.klab.ogc.test;
 import java.net.URL;
 
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.services.IResourceService.Importer;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 
-public enum TestSetup {
+public class TestSetup {
 
-	INSTANCE;
-	
-	public void importResource(String resource) {
-		URL url = getClass().getClassLoader().getResource(resource);
-//		Importer importer = Resources.INSTANCE.createImporter(url);
+	public IResource importResource(String resource, IProject project, Object... parameterKVPs) {
+		URL resourceUrl = getClass().getClassLoader().getResource(resource);
+		return Resources.INSTANCE.importResource(resourceUrl, project, parameterKVPs);
 	}
 	
 }

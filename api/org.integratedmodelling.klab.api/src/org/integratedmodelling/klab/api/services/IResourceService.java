@@ -54,14 +54,6 @@ public interface IResourceService {
 	public interface Importer {
 
 		/**
-		 * Specify the project where to put the resource. Mandatory.
-		 * 
-		 * @param project
-		 * @return
-		 */
-		Importer in(IProject project);
-		
-		/**
 		 * Specify the adapter. Optional.
 		 * 
 		 * @param adapter
@@ -86,6 +78,11 @@ public interface IResourceService {
 
 		Importer withId(String id);
 
+		/**
+		 * Call the validation and import service and return the finished resource.
+		 * 
+		 * @return
+		 */
 		IResource finish();
 	}
 	

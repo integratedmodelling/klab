@@ -52,6 +52,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private boolean error = false;
 	private String adapterType;
 	private IArtifact.Type type;
+	private String projectName;
 
 	/** {@inheritDoc} */
 	@Override
@@ -70,6 +71,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.localPath = this.localPath;
 		ret.localPaths.addAll(resourcePaths);
 		ret.type = type;
+		ret.projectName = this.projectName;
 		
 		return ret;
 	}
@@ -173,6 +175,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public Builder withType(Type type) {
 		this.type = type;
+		return this;
+	}
+
+	@Override
+	public Builder withProjectName(String name) {
+		this.projectName = name;
 		return this;
 	}
 

@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.api.services.IResourceService.Importer;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
@@ -56,6 +57,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -406,7 +408,8 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				resource = builder.withResourceVersion(version).withParameters(parameters).withAdapterType(adapterType)
+				resource = builder.withResourceVersion(version).withProjectName(project.getName())
+						.withParameters(parameters).withAdapterType(adapterType)
 						.withLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
 
 			} else {
@@ -414,7 +417,7 @@ public enum Resources implements IResourceService {
 			}
 
 		} catch (Exception e) {
-			// FIXME only add KlabResourceException 
+			// FIXME only add KlabResourceException
 			errors.add(e);
 		}
 
@@ -433,7 +436,7 @@ public enum Resources implements IResourceService {
 		if (file != null || !resource.hasErrors()) {
 			localResourceCatalog.put(urn, resource);
 		}
-		
+
 		if (resource.hasErrors()) {
 			// TODO report errors but leave the resource so we can validate any use of it
 			monitor.error("Resource " + urn + " has errors:");
@@ -448,7 +451,26 @@ public enum Resources implements IResourceService {
 		// URN so it can be used for basic ops.
 		return null;
 	}
-
+	
+	/**
+	 * Easy programmatic access to resource importer.
+	 * 
+	 * @param resourceUrl
+	 * @param project
+	 * @param parameterKVPs
+	 * @return the finished resource
+	 */
+	public IResource importResource(URL resourceUrl, IProject project, Object... parameterKVPs) {
+		Importer importer = Resources.INSTANCE.createImporter(resourceUrl, project);
+		if (parameterKVPs != null) {
+			for (int i = 0; i < parameterKVPs.length; i++) {
+				importer.with(parameterKVPs[i].toString(), parameterKVPs[i+1]);
+				i++;
+			}
+		}
+		return importer.finish();
+	}
+	
 	/**
 	 * Extract the OWL assets in the classpath (under /knowledge/**) to the
 	 * specified filesystem directory.
@@ -651,8 +673,52 @@ public enum Resources implements IResourceService {
 	 * @param project
 	 */
 	public Importer createImporter(URL url, IProject project) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ImporterImpl(url, project);
 	}
 
+	class ImporterImpl implements Importer {
+
+		URL url;
+		File file;
+		IProject project;
+		IParameters<String> parameters = new Parameters<>();
+		String adapter;
+		String id;
+
+		ImporterImpl(URL url, IProject project) {
+			this.url = url;
+			this.project = project;
+			if (url.getProtocol().equals("file")) {
+				this.file = new File(url.getFile());
+				this.id = MiscUtilities.getFileBaseName(this.file);
+			} else {
+				this.id = MiscUtilities.getURLBaseName(this.url.toString());
+			}
+		}
+
+		@Override
+		public Importer withAdapter(String adapter) {
+			this.adapter = adapter;
+			return this;
+		}
+
+		@Override
+		public Importer with(String parameter, Object value) {
+			this.parameters.put(parameter, value);
+			return this;
+		}
+
+		@Override
+		public Importer withId(String id) {
+			this.id = id;
+			return this;
+		}
+
+		@Override
+		public IResource finish() {
+			return createLocalResource(this.id, this.file, this.parameters, this.project, this.adapter, true, false,
+					Klab.INSTANCE.getRootMonitor());
+		}
+
+	}
 }
