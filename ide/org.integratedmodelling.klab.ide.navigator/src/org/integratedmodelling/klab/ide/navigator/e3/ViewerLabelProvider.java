@@ -25,6 +25,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif");
 		}
 		if (element instanceof IKimNamespace) {
+			if (((IKimNamespace) element).isWorldviewBound()) {
+				// return the icon for a script or semantic annotation
+			}
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/namespace-checked.png");
 		}
 		if (element instanceof IKimConceptStatement) {
@@ -71,6 +74,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
 	public String getText(Object element) {
 		if (element instanceof IKimNamespace) {
+			if (((IKimNamespace) element).isWorldviewBound()) {
+				// return the name of any test or run annotated or the base name of the resource
+			}
 			return ((IKimNamespace) element).getName();
 		}
 		if (element instanceof IKimConceptStatement) {

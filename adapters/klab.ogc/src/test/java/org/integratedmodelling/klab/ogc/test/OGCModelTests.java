@@ -52,10 +52,6 @@ public class OGCModelTests {
 	public static void setUp() throws Exception {
 
 		engine = Engine.start();
-		/*
-		 * TODO create test project, load resources, ensure present
-		 */
-		
 
 		IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test");
 		if (testProject == null) {
@@ -80,26 +76,6 @@ public class OGCModelTests {
 	@AfterClass
 	public static void tearDown() throws Exception {
 		engine.stop();
-	}
-
-	/**
-	 * Previous version, no longer a test case
-	 * 
-	 * @throws Exception
-	 */
-	public void runAllTests() throws Exception {
-
-		String file = System.getProperty("test.case");
-
-		/*
-		 * run every file in the kim.raster/ package, under tests/resources
-		 */
-		for (String test : new Reflections("kim.raster", new ResourcesScanner())
-				.getResources(Pattern.compile(".*\\.kim"))) {
-			if (file == null || test.endsWith(file + ".kim")) {
-				engine.run(getClass().getClassLoader().getResource(test)).get();
-			}
-		}
 	}
 
 	@Test

@@ -147,11 +147,12 @@ public enum Auth implements IAuthenticationService {
 		IIdentity ret = null;
 
 		if (certificate instanceof AnonymousCertificate) {
-		        // no partner, no node, no token, no nothing. REST calls automatically accept the
-		        // anonymous user when secured as Roles.PUBLIC.
-		        return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
+			// no partner, no node, no token, no nothing. REST calls automatically accept
+			// the
+			// anonymous user when secured as Roles.PUBLIC.
+			return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
 		}
-		
+
 		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME));
 
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
@@ -166,8 +167,7 @@ public enum Auth implements IAuthenticationService {
 		 * invalidate the certificate. If no server can be reached, certificate is valid
 		 * but engine is offline.
 		 */
-		AuthenticationRequest request = new AuthenticationRequest(
-				certificate.getProperty(KlabCertificate.KEY_USERNAME),
+		AuthenticationRequest request = new AuthenticationRequest(certificate.getProperty(KlabCertificate.KEY_USERNAME),
 				certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
@@ -250,7 +250,8 @@ public enum Auth implements IAuthenticationService {
 				.equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
 
 			/*
-			 * FIXME - this is obsolete and won't happen - left for future porting to node codebase
+			 * FIXME - this is obsolete and won't happen - left for future porting to node
+			 * codebase
 			 */
 			Partner partner = new Partner(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME)); // TODO
 			partner.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
@@ -265,7 +266,7 @@ public enum Auth implements IAuthenticationService {
 			throw new KlabUnsupportedFeatureException(
 					"cannot create identity of type " + certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
 		}
-		
+
 		Network.INSTANCE.buildNetwork(authentication);
 
 		return ret;
