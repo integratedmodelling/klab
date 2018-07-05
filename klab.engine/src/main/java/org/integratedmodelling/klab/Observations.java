@@ -85,13 +85,13 @@ public enum Observations implements IObservationService {
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
 
-		if (state.getMetadata().containsKey(State.STATE_SUMMARY_METADATA_KEY + locator)) {
-			return state.getMetadata().get(State.STATE_SUMMARY_METADATA_KEY, StateSummary.class);
-		}
+//		if (state.getMetadata().containsKey(State.STATE_SUMMARY_METADATA_KEY + locator)) {
+//			return state.getMetadata().get(State.STATE_SUMMARY_METADATA_KEY, StateSummary.class);
+//		}
 
 		StateSummary ret = computeStateSummary(state, locator);
 
-		state.getMetadata().put(State.STATE_SUMMARY_METADATA_KEY + locator, ret);
+//		state.getMetadata().put(State.STATE_SUMMARY_METADATA_KEY + locator, ret);
 
 		return ret;
 	}

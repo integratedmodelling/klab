@@ -85,7 +85,7 @@ public class KlabCertificate implements ICertificate {
 		return new KlabCertificate(file);
 	}
 
-	public static ICertificate createFromClasspath(String resource) {
+	public static KlabCertificate createFromClasspath(String resource) {
 		return new KlabCertificate(resource);
 	}
 

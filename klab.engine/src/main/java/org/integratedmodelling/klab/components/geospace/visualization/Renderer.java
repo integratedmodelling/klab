@@ -106,7 +106,7 @@ public enum Renderer {
 					screenSize, w2s);
 			RasterSymbolizer rasterSymbolizer = getRasterSymbolizer(state, locator);
 			RenderedImage image = renderer.renderImage(coverage, rasterSymbolizer,
-					Interpolation.getInstance(Interpolation.INTERP_BICUBIC), new Color(0f, 0f, 0f, 0f), viewport[0],
+					Interpolation.getInstance(Interpolation.INTERP_BICUBIC), new Color(0, 0, 0), viewport[0],
 					viewport[1]);
 
 			return convertRenderedImage(image);

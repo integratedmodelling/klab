@@ -2,13 +2,18 @@ package org.integratedmodelling.klab.rest;
 
 
 public class Group {
+	
     private String id;
 
+    public Group() {}
+    
+    public Group(String id) {
+    	this.id = id;
+    }
     
     public String getId() {
         return id;
     }
-
     
     public void setId(String id) {
         this.id = id;

@@ -17,3 +17,9 @@ void 'structure'
 {
 	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowStructure
 }
+
+void 'list'
+	"Print the structure tree starting at the named observation."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.visualization.PrintStructure
+}

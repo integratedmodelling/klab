@@ -219,7 +219,7 @@ public enum Auth implements IAuthenticationService {
 		if (KlabCertificate.CERTIFICATE_TYPE_USER
 				.equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
 
-			// TODO if we have connected, insert network session identity
+			// if we have connected, insert network session identity
 			if (authentication != null) {
 
 				NodeReference partnerNode = null;
@@ -247,22 +247,6 @@ public enum Auth implements IAuthenticationService {
 
 			((KlabUser) ret).setOnline(authentication != null);
 
-		} else if (KlabCertificate.CERTIFICATE_TYPE_NODE
-				.equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
-
-			/*
-			 * FIXME - this is obsolete and won't happen - left for future porting to node
-			 * codebase
-			 */
-			Partner partner = new Partner(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME)); // TODO
-			partner.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
-
-			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), partner);
-			/**
-			 * TODO add authenticated data
-			 */
-			((Node) ret).getUrls().add(certificate.getProperty(KlabCertificate.KEY_URL));
-
 		} else {
 			throw new KlabUnsupportedFeatureException(
 					"cannot create identity of type " + certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
@@ -274,4 +258,6 @@ public enum Auth implements IAuthenticationService {
 
 	}
 
+	
+	
 }

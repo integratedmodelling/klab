@@ -117,7 +117,7 @@ public class Client extends RestTemplate {
 	 *         KlabAuthorizationException. If timeout, return null.
 	 */
 	public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
-		return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
+		return post(url + API.HUB.AUTHENTICATE_ENGINE, request, AuthenticationResponse.class);
 	}
 
 	/**

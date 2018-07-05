@@ -7,11 +7,10 @@ import java.util.Map;
 import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -31,16 +30,16 @@ import org.springframework.web.client.RestTemplate;
 @Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.controllers.base" })
-public class Node implements ApplicationListener<ApplicationReadyEvent> {
+public class Node implements ApplicationListener<ApplicationStartingEvent> {
 
-	private Runnable callback;
 	private ConfigurableApplicationContext context;
-	private Engine engine;
+	
+//	@Autowired
+	
 	
 	// defaults
 	private static int port = 8287;
 	private static String contextPath = "/node";
-
 
 	@Bean
 	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
@@ -65,6 +64,7 @@ public class Node implements ApplicationListener<ApplicationReadyEvent> {
 
 	@PreDestroy
 	public void shutdown() {
+		// TODO engine shutdown if needed
 	}
 
 	public static void main(String args[]) {
@@ -72,10 +72,7 @@ public class Node implements ApplicationListener<ApplicationReadyEvent> {
 	}
 
 	@Override
-	public void onApplicationEvent(ApplicationReadyEvent arg0) {
-		if (callback != null) {
-			callback.run();
-		}
+	public void onApplicationEvent(ApplicationStartingEvent arg0) {
 	}
 
 }
