@@ -120,12 +120,12 @@ public interface IResource extends Serializable {
 	IParameters<String> getParameters();
 
 	/**
-	 * The type of the artifact produced. 
+	 * The type of the artifact produced.
 	 * 
 	 * @return the type
 	 */
 	IArtifact.Type getType();
-	
+
 	/**
 	 * A builder can be obtained through
 	 * {@link IResourceService#createResourceBuilder()} and is used to set all the
@@ -143,7 +143,7 @@ public interface IResource extends Serializable {
 		 * @return the builder itself
 		 */
 		Builder withType(IArtifact.Type type);
-		
+
 		/**
 		 * 
 		 * @param key
@@ -248,17 +248,30 @@ public interface IResource extends Serializable {
 		/**
 		 * Set the local resource path.
 		 * 
-		 * @param localPath the local resource path
+		 * @param localPath
+		 *            the local resource path
 		 * @return the builder itself
 		 */
 		Builder withLocalPath(String localPath);
 
 		/**
 		 * Add all the passed parameters
-		 * @param parameters a parameters object
+		 * 
+		 * @param parameters
+		 *            a parameters object
 		 * @return the builder itself
 		 */
 		Builder withParameters(IParameters<String> parameters);
+
+		/**
+		 * Set the project name. Only for local resources. Project name enters the local
+		 * URN but is not exposed by the IResource API. Stored to enable easier management 
+		 * and retrieval.
+		 * 
+		 * @param name
+		 * @return the builder itself
+		 */
+		Builder withProjectName(String name);
 
 	}
 

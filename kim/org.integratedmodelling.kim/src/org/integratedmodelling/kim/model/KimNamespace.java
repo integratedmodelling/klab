@@ -26,6 +26,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     private boolean                    scenario        = false;
     private List<Pair<String, String>> owlImports       = new ArrayList<>();
     private Map<String, Object>        symbolTable      = new HashMap<>();
+    private boolean isWorldviewBound = false;
 
     public KimNamespace(Namespace namespace, KimProject project) {
         super(namespace, null);
@@ -41,6 +42,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         }
         this.project = project;
         // worldview-bound anonymous namespaces are private by design.
+        this.isWorldviewBound = namespace.isWorldviewBound();
         this.isPrivate = namespace.isPrivate() | namespace.isWorldviewBound();
         this.inactive = namespace.isInactive();
         this.scenario = namespace.isScenario();
@@ -49,24 +51,16 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         }
     }
 
-//    /**
-//     * Copy constructor. Shallow copy only as it's expected to build substitutes with full k.LAB semantics for
-//     * contextualization.
-//     * 
-//     * KEEP UPDATED WHEN FIELDS CHANGE.
-//     * 
-//     * @param namespace
-//     */
-//    protected KimNamespace(KimNamespace namespace) {
-//        super(namespace);
-//        this.name = namespace.name;
-//        this.project = namespace.project;
-//        this.timestamp = namespace.timestamp;
-//        this.imported = namespace.imported;
-//        this.isPrivate = namespace.isPrivate;
-//    }
+    @Override
+    public boolean isWorldviewBound() {
+		return isWorldviewBound;
+	}
 
-    public KimNamespace(String id, File file) {
+	public void setWorldviewBound(boolean isWorldviewBound) {
+		this.isWorldviewBound = isWorldviewBound;
+	}
+
+	public KimNamespace(String id, File file) {
         this.name = id;
         // TODO resource URI from file
     }

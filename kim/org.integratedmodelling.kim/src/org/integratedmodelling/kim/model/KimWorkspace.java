@@ -77,8 +77,8 @@ public class KimWorkspace implements IKimWorkspace {
 	}
 
 	public KimProject loadProject(File root) {
-		KimProject project = new KimProject(this, overrideIfPresent(root, this.overridingProjects));
 		String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
+		KimProject project = new KimProject(this, pname, overrideIfPresent(root, this.overridingProjects));
 		allProjects.put(pname, project);
 		projectLocations.add(root);
 		projectNames.add(pname);
@@ -301,6 +301,10 @@ public class KimWorkspace implements IKimWorkspace {
 
 	public KimProject getProjectForResource(Resource resource) {
 
+		if (resource.getURI().toString().contains("test.ogc.raster")) {
+			System.out.println("xoidu");
+		}
+		
 		KimProject ret = getProjectForURI(resource.getURI().toString());
 		if (ret == null) {
 			try {

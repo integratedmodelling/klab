@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class AuthenticationResponse {
@@ -46,11 +47,11 @@ public class AuthenticationResponse {
     public AuthenticationResponse() {}
 
     public AuthenticationResponse(AuthenticatedIdentity userData,
-            List<NodeReference> nodes,
+            Collection<NodeReference> nodes,
             String authenticatingNodeId) {
         super();
         this.userData = userData;
-        this.nodes = nodes;
+        this.nodes.addAll(nodes);
         this.authenticatingNodeId = authenticatingNodeId;
     }
 

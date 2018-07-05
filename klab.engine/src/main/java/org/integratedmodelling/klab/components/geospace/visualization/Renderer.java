@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.media.jai.Interpolation;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
@@ -105,36 +104,18 @@ public enum Renderer {
 					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
 					screenSize, w2s);
 			RasterSymbolizer rasterSymbolizer = getRasterSymbolizer(state, locator);
-			RenderedImage image = renderer.renderImage(coverage, rasterSymbolizer,
-					Interpolation.getInstance(Interpolation.INTERP_BICUBIC), new Color(0f, 0f, 0f, 0f), viewport[0],
-					viewport[1]);
 
-			return convertRenderedImage(image);
-
+			Rectangle imageBounds = new Rectangle(viewport[0], viewport[1]);
+			BufferedImage image = new BufferedImage(viewport[0], viewport[1], BufferedImage.TYPE_INT_ARGB);
+		    Graphics2D gr = image.createGraphics();
+		    gr.setPaint(new Color(0f, 0f, 0f, 0f));
+		    gr.fill(imageBounds);
+		    renderer.paint(gr, coverage, rasterSymbolizer);
+		    return image;
+		    
 		} catch (Exception e) {
 			throw new KlabInternalErrorException(e);
 		}
-	}
-
-	public static BufferedImage convertRenderedImage(RenderedImage img) {
-		if (img instanceof BufferedImage) {
-			return (BufferedImage) img;
-		}
-		ColorModel cm = img.getColorModel();
-		int width = img.getWidth();
-		int height = img.getHeight();
-		WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
-		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		Hashtable<String, Object> properties = new Hashtable<>();
-		String[] keys = img.getPropertyNames();
-		if (keys != null) {
-			for (int i = 0; i < keys.length; i++) {
-				properties.put(keys[i], img.getProperty(keys[i]));
-			}
-		}
-		BufferedImage result = new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
-		img.copyData(raster);
-		return result;
 	}
 
 	public RasterSymbolizer getRasterSymbolizer(IState state, ILocator locator) {

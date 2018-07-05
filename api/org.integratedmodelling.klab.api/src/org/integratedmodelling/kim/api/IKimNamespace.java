@@ -23,5 +23,12 @@ public interface IKimNamespace extends IKimStatement {
 
     boolean isInactive();
 
-    boolean isScenario();	
+    boolean isScenario();
+
+    /**
+     * Bound to a worldview, therefore used as a script or sidecar file.
+     * 
+     * @return
+     */
+	boolean isWorldviewBound();	
 }

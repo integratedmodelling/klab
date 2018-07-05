@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -81,6 +82,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	String targetName;
 	ISubject rootSubject;
 	Map<String, IObservation> observations;
+	Scheduler scheduler;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -571,6 +573,20 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public Graph<? extends IArtifact, ?> getStructure() {
 		return structure;
+	}
+
+	/**
+	 * TODO the scheduler starts right away, so this is actually "run" if the scheduler is null.
+	 */
+	@Override
+	public Scheduler<?> getScheduler() {
+		if (rootSubject == null || rootSubject.getScale().getTime() == null) {
+			throw new IllegalStateException("cannot create a scheduler for a non-temporal observation");
+		}
+		if (this.scheduler == null) {
+			// TODO create and configure the scheduler
+		}
+		return this.scheduler;
 	}
 
 }

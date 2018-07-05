@@ -25,4 +25,15 @@ import java.util.Map;
  */
 public interface IResourceCatalog extends Map<String, IResource> {
 
+	/**
+	 * Selectively clear resources linked to the passed objects.
+	 * 
+	 * @param objects
+	 *            resources, projects, IDs or anything that can be linked to a
+	 *            specific resource or set thereof.
+	 * @throws IllegalArgumentException
+	 *             if the input cannot be linked to a (set of) resource(s).
+	 */
+	public void clearOnly(Object... objects);
+
 }

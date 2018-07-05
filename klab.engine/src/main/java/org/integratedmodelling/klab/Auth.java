@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
+import org.integratedmodelling.klab.auth.AnonymousCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.auth.NetworkSession;
@@ -145,7 +146,12 @@ public enum Auth implements IAuthenticationService {
 
 		IIdentity ret = null;
 
-		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME));
+		if (certificate instanceof AnonymousCertificate) {
+			// no partner, no node, no token, no nothing. REST calls automatically accept
+			// the
+			// anonymous user when secured as Roles.PUBLIC.
+			return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
+		}
 
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
 		if (authenticationServer == null) {
@@ -154,13 +160,15 @@ public enum Auth implements IAuthenticationService {
 			authenticationServer = "http://127.0.0.1:8284/klab";
 		}
 
+		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME) + " with hub "
+				+ certificate.getProperty(KlabCertificate.KEY_SERVER));
+
 		/*
 		 * Authenticate with server(s). If authentication fails because of a 403,
 		 * invalidate the certificate. If no server can be reached, certificate is valid
 		 * but engine is offline.
 		 */
-		AuthenticationRequest request = new AuthenticationRequest(
-				certificate.getProperty(KlabCertificate.KEY_USERNAME),
+		AuthenticationRequest request = new AuthenticationRequest(certificate.getProperty(KlabCertificate.KEY_USERNAME),
 				certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
@@ -211,7 +219,7 @@ public enum Auth implements IAuthenticationService {
 		if (KlabCertificate.CERTIFICATE_TYPE_USER
 				.equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
 
-			// TODO if we have connected, insert network session identity
+			// if we have connected, insert network session identity
 			if (authentication != null) {
 
 				NodeReference partnerNode = null;
@@ -239,30 +247,17 @@ public enum Auth implements IAuthenticationService {
 
 			((KlabUser) ret).setOnline(authentication != null);
 
-		} else if (KlabCertificate.CERTIFICATE_TYPE_NODE
-				.equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
-
-			/*
-			 * FIXME - this is obsolete and won't happen - left for future porting to node codebase
-			 */
-			Partner partner = new Partner(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME)); // TODO
-			partner.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
-
-			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), partner);
-			/**
-			 * TODO add authenticated data
-			 */
-			((Node) ret).getUrls().add(certificate.getProperty(KlabCertificate.KEY_URL));
-
 		} else {
 			throw new KlabUnsupportedFeatureException(
 					"cannot create identity of type " + certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
 		}
-		
+
 		Network.INSTANCE.buildNetwork(authentication);
 
 		return ret;
 
 	}
 
+	
+	
 }

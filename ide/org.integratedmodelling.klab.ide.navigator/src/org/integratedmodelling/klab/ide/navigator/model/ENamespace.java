@@ -54,5 +54,9 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.isScenario();
 	}
 
+	@Override
+	public boolean isWorldviewBound() {
+		return delegate.isWorldviewBound();
+	}
 
 }

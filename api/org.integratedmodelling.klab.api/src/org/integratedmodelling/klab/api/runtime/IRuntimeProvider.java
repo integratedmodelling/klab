@@ -181,5 +181,11 @@ public interface IRuntimeProvider {
 	 *         strategy found".
 	 */
 	List<IComputableResource> getComputation(IObservable availableType, IObservable desiredObservation);
+	
+	/**
+	 * Runtime systems may create thread pools and memory mappings. This method will be called
+	 * at system shutdown so that those may be cleaned up.
+	 */
+	void shutdown();
 
 }

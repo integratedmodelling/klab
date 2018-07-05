@@ -58,8 +58,14 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     }
 
     @Override
-    public String[] getArguments() {
-        return this.arguments.toArray(new String[this.arguments.size()]);
+    public String[] getArguments(String... additionalArguments) {
+    	List<String> args = new ArrayList<>(this.arguments);
+    	if (additionalArguments != null) {
+    		for (String additionalArgument : additionalArguments) {
+    			args.add(additionalArgument);
+    		}
+    	}
+        return args.toArray(new String[args.size()]);
     }
 
     /**

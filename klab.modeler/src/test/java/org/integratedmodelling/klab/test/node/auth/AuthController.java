@@ -1,30 +1,10 @@
 package org.integratedmodelling.klab.test.node.auth;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
-import org.integratedmodelling.klab.rest.AuthenticationRequest;
-import org.integratedmodelling.klab.rest.AuthenticationResponse;
-import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.rest.NodeReference;
-import org.integratedmodelling.klab.utils.NameGenerator;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Mock authentication controller, will only authenticate the exact certificate in the classpath by comparing 
@@ -49,45 +29,5 @@ public class AuthController {
 
     @Value("${klab.user.email}")
     private String email;
-
-    @RequestMapping(
-            value = API.AUTHENTICATE,
-            method = RequestMethod.POST,
-            consumes = "application/json",
-            produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
-
-        if (request.getCertificate().equals(certificate)) {
-
-            // good enough for me
-
-            DateTime now = DateTime.now();
-            DateTime tomorrow = now.plusDays(1);
-
-            IdentityReference userIdentity = new IdentityReference(username, email, now.toString());
-            AuthenticatedIdentity identity = new AuthenticatedIdentity(userIdentity, new ArrayList<>(), tomorrow.toString(),
-                    NameGenerator.newName());
-
-            INodeIdentity node = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(INodeIdentity.class);
-            IPartnerIdentity partner = Klab.INSTANCE.getRootMonitor().getIdentity()
-                    .getParentIdentity(IPartnerIdentity.class);
-            IdentityReference partnerIdentity = new IdentityReference(partner.getName(), partner.getEmailAddress(), now.toString());
-
-            NodeReference thisnode = new NodeReference();
-
-            thisnode.setId(node.getName());
-            thisnode.setPartner(partnerIdentity);
-            thisnode.getPermissions().addAll(node.getPermissions());
-            thisnode.getUrls().addAll(node.getUrls());
-            thisnode.setOnline(true);
-            thisnode.setRetryPeriodMinutes(20);
-
-            return new ResponseEntity<AuthenticationResponse>(
-                    new AuthenticationResponse(identity, Collections.singletonList(thisnode), node.getName()),
-                    HttpStatus.OK);
-        }
-        return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
-    }
 
 }

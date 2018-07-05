@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class AuthenticatedIdentity {
@@ -87,10 +88,10 @@ public class AuthenticatedIdentity {
 
     public AuthenticatedIdentity() {}
     
-    public AuthenticatedIdentity(IdentityReference identity, List<Group> groups, String expiry, String token) {
+    public AuthenticatedIdentity(IdentityReference identity, Collection<Group> groups, String expiry, String token) {
         super();
         this.identity = identity;
-        this.groups = groups;
+        this.groups.addAll(groups);
         this.expiry = expiry;
         this.token = token;
     }

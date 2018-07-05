@@ -41,10 +41,10 @@ public class KimProject implements IKimProject {
      */
     private Map<String, KimNamespace> namespacesbyId = new HashMap<>();
 
-    public KimProject(KimWorkspace workspace, File dir) {
+    public KimProject(KimWorkspace workspace, String name, File dir) {
         this.workspace = workspace;
         this.root = dir;
-        this.name = Utils.getFileBaseName(dir);
+        this.name = name;
         this.properties = new Properties();
         File pfile = new File(this.root + File.separator + "META-INF" + File.separator + "klab.properties");
         if (pfile.exists()) {

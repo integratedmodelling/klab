@@ -356,7 +356,7 @@ public class RescalingState extends Observation implements IState {
 	
 	@Override
 	public IState at(ILocator locator) {
-		return delegate.at(locator);
+		return this; // TODO further rescaling! new RescalingState(delegate.at(locator), rescaledNewScale, getRuntimeContext());
 	}
 
 	@Override

@@ -49,14 +49,7 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
-
-		<!-- Hashed wheel timer for real- and mock-time contextualization -->
-		<dependency>
-			<groupId>com.github.ifesdjeen</groupId>
-			<artifactId>hashed-wheel-timer-core</artifactId>
-			<version>1.0.0-RC1</version>
-		</dependency>
-
+	
 		<!-- Lucene for indexing -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>

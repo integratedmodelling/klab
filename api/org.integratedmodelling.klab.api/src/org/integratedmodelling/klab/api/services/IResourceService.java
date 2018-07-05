@@ -46,6 +46,47 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 public interface IResourceService {
 
 	/**
+	 * An importer for programmatic import of local artifact.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public interface Importer {
+
+		/**
+		 * Specify the adapter. Optional.
+		 * 
+		 * @param adapter
+		 * @return the importer itself
+		 */
+		Importer withAdapter(String adapter);
+		
+		/**
+		 * Specify a parameter and its value. Optional.
+		 * 
+		 * @param adapter
+		 * @return the importer itself
+		 */
+		Importer with(String parameter, Object value);
+
+		/**
+		 * Specify an ID for the resource. Optional.
+		 * 
+		 * @param adapter
+		 * @return the importer itself
+		 */
+
+		Importer withId(String id);
+
+		/**
+		 * Call the validation and import service and return the finished resource.
+		 * 
+		 * @return
+		 */
+		IResource finish();
+	}
+	
+	/**
 	 * The local resource catalog is for resources created from local files or
 	 * specifications. These resources are created by the {@link IResourceValidator
 	 * validator} of an {@link IResourceAdapter adapter}, and must be published

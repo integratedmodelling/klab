@@ -81,6 +81,14 @@ public interface IComputationContext extends IParameters<String> {
 	IEventBus getEventBus();
 
 	/**
+	 * Return the scheduler for the context, creating it if necessary.
+	 * 
+	 * @return a scheduler.
+	 * @throws IllegalStateException if the context is not temporal.
+	 */
+	IScheduler getScheduler();
+
+	/**
 	 * Inspect the network graph of the current context, returning all relationships
 	 * that have the passed subject as target.
 	 *

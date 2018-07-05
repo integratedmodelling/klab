@@ -20,11 +20,11 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -210,6 +210,23 @@ public class ResourceCatalog implements IResourceCatalog {
 		catalog.put(resource.getUrn(), resource);
 		IResource retrieved = catalog.get(resource.getUrn());
 		System.out.println("Retrieved: " + retrieved);
+	}
+
+	@Override
+	public void clearOnly(Object... objects) {
+		if (objects != null) {
+			for (Object object : objects) {
+				if (object instanceof IProject) {
+					resources.remove(eq("projectName", ((IProject)object).getName()));
+				} else if (object instanceof IResource) {
+					resources.remove(eq("urn", ((IResource)object).getUrn()));
+				} else if (object instanceof String) {
+					resources.remove(eq("urn", (String)object));
+				} else {
+					throw new IllegalArgumentException("cannot remove resources corresponding to selector " + object);
+				}
+			}
+		}
 	}
 
 }
