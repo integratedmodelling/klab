@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.engines.modeler.base;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
@@ -38,7 +41,11 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	private static boolean networkServicesStarted = false;
 	private ConfigurableApplicationContext context;
 	private static Runnable callback;
-
+	
+	// defaults
+	private static int port = 8283;
+	private static String contextPath = "/modeler";
+	
 	@Bean
 	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
 		return new ProtobufHttpMessageConverter();
@@ -83,7 +90,12 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 			return false;
 		}
 		if (!networkServicesStarted) {
-			this.context = SpringApplication.run(Modeler.class, new String[] {});
+			Map<String, Object> props = new HashMap<>();
+			props.put("server.port", ""+port);
+			props.put("server.servlet.contextPath", contextPath);
+			SpringApplication app = new SpringApplication(Modeler.class);
+			app.setDefaultProperties(props);
+			this.context = app.run();
 			networkServicesStarted = true;
 		}
 		return networkServicesStarted;
@@ -92,8 +104,13 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	public void run(String[] args) {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);
+		Map<String, Object> props = new HashMap<>();
+		props.put("server.port", ""+port);
+		props.put("server.servlet.contextPath", contextPath);
 		engine = Engine.start(options);
-		SpringApplication.run(Modeler.class, options.getArguments());
+		SpringApplication app = new SpringApplication(Modeler.class);
+		app.setDefaultProperties(props);
+		this.context = app.run(options.getArguments());
 		networkServicesStarted = true;
 	}
 

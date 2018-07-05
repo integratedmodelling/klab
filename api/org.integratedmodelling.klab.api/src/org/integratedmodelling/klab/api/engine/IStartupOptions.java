@@ -63,8 +63,9 @@ public interface IStartupOptions {
     /**
      * Return all arguments that weren't parsed as predefined options.
      * 
+     * @param additionalArguments any additional arguments we wish to add
      * @return any remaining arguments to pass to main()
      */
-    String[] getArguments();
+    String[] getArguments(String... additionalArguments);
     
 }

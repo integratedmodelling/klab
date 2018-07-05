@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.hub;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This will start an engine at http://localhost:8283/modeler with the default
+ * This will start a hub at http://localhost:8284/klab with the default
  * security config.
  * 
  * @author ferdinando.villa
@@ -32,6 +34,10 @@ public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 	private static Runnable callback;
 	private ConfigurableApplicationContext context;
 
+	// defaults
+	private static int port = 8284;
+	private static String contextPath = "/klab";
+	
 	@Bean
 	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
 		return new ProtobufHttpMessageConverter();
@@ -45,7 +51,13 @@ public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 	public void run(String[] args) {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);
-		SpringApplication.run(Hub.class, options.getArguments());
+		Map<String, Object> props = new HashMap<>();
+		props.put("server.port", ""+port);
+		props.put("server.servlet.contextPath", contextPath);
+		SpringApplication app = new SpringApplication(Hub.class);
+		app.setDefaultProperties(props);
+		this.context = app.run(options.getArguments());
+
 	}
 
 	@PreDestroy

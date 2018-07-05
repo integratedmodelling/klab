@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.time.extents;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -11,11 +10,11 @@ import java.util.function.BiConsumer;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.engine.runtime.scheduling.HashedWheelTimer;
+import org.integratedmodelling.klab.engine.runtime.scheduling.WaitStrategy;
 import org.integratedmodelling.klab.utils.NumberUtils;
-
-import com.google.common.collect.Lists;
-import com.ifesdjeen.timer.HashedWheelTimer;
-import com.ifesdjeen.timer.WaitStrategy;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Scheduler for actors in either real or mock time. Akka does not allow the
@@ -26,9 +25,23 @@ import com.ifesdjeen.timer.WaitStrategy;
  */
 public abstract class Scheduler<T> implements IScheduler<T> {
 
+	class DGraph extends DefaultDirectedGraph<T,DefaultEdge> {
+
+		public DGraph(T observation) {
+			super(DefaultEdge.class);
+			addVertex(observation);
+		}
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7193783283781551257L;
+		
+	}
+	
 	private HashedWheelTimer timer;
 	private Type type;
-	private Map<Long, List<TreeNode>> reactors = new HashMap<>();
+	private Map<Long, DGraph> reactors = new HashMap<>();
 	private long startTime = -1;
 	private long endTime = -1;
 	private long interval = -1;
@@ -53,6 +66,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void merge(T temporalObject, T... requiredAntecedents) {
+		
 		ITime time = getTime(temporalObject);
 		if (time == null || time.getStep().isEmpty()) {
 			return;
@@ -65,15 +79,20 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 			endTime = time.getEnd().getMillis();
 		}
 
+		DGraph graph = null;
 		if (reactors.containsKey(time.getStep().getMilliseconds())) {
-			reactors.get(time.getStep().getMilliseconds()).add(new TreeNode(temporalObject));
+			(graph = reactors.get(time.getStep().getMilliseconds())).addVertex(temporalObject);
 		} else {
-			reactors.put(time.getStep().getMilliseconds(), Lists.newArrayList(new TreeNode(temporalObject)));
+			reactors.put(time.getStep().getMilliseconds(), (graph = new DGraph(temporalObject)));
 		}
 
 		if (requiredAntecedents != null) {
 			for (T antecedent : requiredAntecedents) {
-				// TODO create graph
+				
+				// must have same period and phase
+				
+				graph.addVertex(antecedent);
+				graph.addEdge(antecedent, temporalObject);
 			}
 		}
 	}
@@ -123,7 +142,6 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		timer.scheduleWithFixedDelay(() -> {
 			handleTick();
 		}, 0, interval, TimeUnit.MILLISECONDS);
-
 	}
 
 	private void handleTick() {
@@ -135,7 +153,7 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		}
 	}
 
-	private void callReactors(List<TreeNode> list) {
+	private void callReactors(DGraph graph) {
 
 		/*
 		 * TODO check that previous executor has finished and wait (if mock time) or
@@ -148,13 +166,13 @@ public abstract class Scheduler<T> implements IScheduler<T> {
 		// antecedent
 		// could be in more than one node and should only be called once.
 		// NO must use an actual dependency graph
-		for (TreeNode node : list) {
-			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
-				// TODO use topological sort. Should be able to enqueue groups in dependency
-				// order as soon as all deps are done.
-				System.out.println("Calling for " + this.startTime + ": " + node.element);
-			}
-		}
+//		for (TreeNode node : list) {
+//			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
+//				// TODO use topological sort. Should be able to enqueue groups in dependency
+//				// order as soon as all deps are done.
+//				System.out.println("Calling for " + this.startTime + ": " + node.element);
+//			}
+//		}
 
 		// TODO schedule all tasks immediately
 	}

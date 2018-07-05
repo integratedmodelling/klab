@@ -7,5 +7,8 @@
   </parent>
   <artifactId>products</artifactId>
   <packaging>pom</packaging>
-  <description>Parent module for all deliverable k.LAB stack products</description>
+  <description>Parent module for all deliverable k.LAB stack products, both production and testing.</description>
+  <modules>
+  	<module>test.network</module>
+  </modules>
 </project>
