@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.media.jai.Interpolation;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
@@ -105,11 +104,22 @@ public enum Renderer {
 					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
 					screenSize, w2s);
 			RasterSymbolizer rasterSymbolizer = getRasterSymbolizer(state, locator);
-			RenderedImage image = renderer.renderImage(coverage, rasterSymbolizer,
-					Interpolation.getInstance(Interpolation.INTERP_BICUBIC), new Color(0, 0, 0), viewport[0],
-					viewport[1]);
 
-			return convertRenderedImage(image);
+			Rectangle imageBounds = new Rectangle(viewport[0], viewport[1]);
+			BufferedImage image = new BufferedImage(viewport[0], viewport[1], BufferedImage.TYPE_INT_ARGB);
+		    Graphics2D gr = image.createGraphics();
+		    gr.setPaint(new Color(0f, 0f, 0f, 0f));
+		    gr.fill(imageBounds);
+		    
+		    renderer.paint(gr, coverage, rasterSymbolizer);
+		    
+		    return image;
+//			
+//			RenderedImage image = renderer.renderImage(coverage, rasterSymbolizer,
+//					Interpolation.getInstance(Interpolation.INTERP_BICUBIC), , viewport[0],
+//					viewport[1]);
+//
+//			return convertRenderedImage(image);
 
 		} catch (Exception e) {
 			throw new KlabInternalErrorException(e);
