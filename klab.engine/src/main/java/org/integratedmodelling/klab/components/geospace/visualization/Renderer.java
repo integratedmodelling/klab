@@ -110,41 +110,12 @@ public enum Renderer {
 		    Graphics2D gr = image.createGraphics();
 		    gr.setPaint(new Color(0f, 0f, 0f, 0f));
 		    gr.fill(imageBounds);
-		    
 		    renderer.paint(gr, coverage, rasterSymbolizer);
-		    
 		    return image;
-//			
-//			RenderedImage image = renderer.renderImage(coverage, rasterSymbolizer,
-//					Interpolation.getInstance(Interpolation.INTERP_BICUBIC), , viewport[0],
-//					viewport[1]);
-//
-//			return convertRenderedImage(image);
-
+		    
 		} catch (Exception e) {
 			throw new KlabInternalErrorException(e);
 		}
-	}
-
-	public static BufferedImage convertRenderedImage(RenderedImage img) {
-		if (img instanceof BufferedImage) {
-			return (BufferedImage) img;
-		}
-		ColorModel cm = img.getColorModel();
-		int width = img.getWidth();
-		int height = img.getHeight();
-		WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
-		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		Hashtable<String, Object> properties = new Hashtable<>();
-		String[] keys = img.getPropertyNames();
-		if (keys != null) {
-			for (int i = 0; i < keys.length; i++) {
-				properties.put(keys[i], img.getProperty(keys[i]));
-			}
-		}
-		BufferedImage result = new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
-		img.copyData(raster);
-		return result;
 	}
 
 	public RasterSymbolizer getRasterSymbolizer(IState state, ILocator locator) {
