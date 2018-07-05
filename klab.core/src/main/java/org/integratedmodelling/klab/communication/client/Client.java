@@ -72,12 +72,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * <code> RestTemplateHelper template = new RestTemplateHelper(); ...
  * template.with(session).post(....) ... </code>
  * 
- * with(..) can be called with any of IUser, INode, ITask, IContext and ISession according
- * to the type of authentication required by the receiver. Automatically sets the necessary
+ * with(..) can be called with any {@link IIdentity} according to the type of
+ * authentication required by the receiver. Automatically sets the necessary
  * tokens and parameters.
  *
- * The template also configures an objectmapper for optimal use in k.LAB, manages errors
- * and inserts user agent headers.
+ * The template also configures an objectmapper for optimal use in k.LAB,
+ * manages errors and inserts user agent headers.
  *
  * 
  * @author ferdinando.villa
@@ -85,297 +85,302 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class Client extends RestTemplate {
 
-    public static final String KLAB_VERSION_HEADER = "KlabVersion";
-    public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
+	public static final String KLAB_VERSION_HEADER = "KlabVersion";
+	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 
-    ObjectMapper objectMapper;
-    String authToken;
+	ObjectMapper objectMapper;
+	String authToken;
 
-    private static ClientHttpRequestFactory factory;
+	private static ClientHttpRequestFactory factory;
 
-    public static Client create() {
+	public static Client create() {
 
-        if (factory == null) {
-            factory = new HttpComponentsClientHttpRequestFactory();
-            if (Configuration.INSTANCE.getProperties().containsKey(KLAB_CONNECTION_TIMEOUT)) {
-                int connectTimeout = 1000
-                        * Integer.parseInt(Configuration.INSTANCE.getProperties().getProperty(KLAB_CONNECTION_TIMEOUT));
-                ((HttpComponentsClientHttpRequestFactory) factory).setReadTimeout(connectTimeout);
-                ((HttpComponentsClientHttpRequestFactory) factory).setConnectTimeout(connectTimeout);
-            }
-        }
+		if (factory == null) {
+			factory = new HttpComponentsClientHttpRequestFactory();
+			if (Configuration.INSTANCE.getProperties().containsKey(KLAB_CONNECTION_TIMEOUT)) {
+				int connectTimeout = 1000
+						* Integer.parseInt(Configuration.INSTANCE.getProperties().getProperty(KLAB_CONNECTION_TIMEOUT));
+				((HttpComponentsClientHttpRequestFactory) factory).setReadTimeout(connectTimeout);
+				((HttpComponentsClientHttpRequestFactory) factory).setConnectTimeout(connectTimeout);
+			}
+		}
 
-        return new Client(factory);
-    }
+		return new Client(factory);
+	}
 
-    /**
-     * Send an authentication request. 
-     * @param url
-     * @param request
-     * @return the response. If not authenticated, throw a KlabAuthorizationException. If timeout, return null.
-     */
-    public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
-        return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
-    }
+	/**
+	 * Send an authentication request.
+	 * 
+	 * @param url
+	 * @param request
+	 * @return the response. If not authenticated, throw a
+	 *         KlabAuthorizationException. If timeout, return null.
+	 */
+	public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
+		return post(url + API.AUTHENTICATE, request, AuthenticationResponse.class);
+	}
 
-    /**
-     * Check the engine's heartbeat.
-     * 
-     * @param url base engine/node URL
-     * @return true if alive
-     */
-    public boolean ping(String url) {
-        try {
-            ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD,
-                    new HttpEntity<Object>(null, null), Object.class);
-            return response.getStatusCodeValue() == 200;
-        } catch (Throwable e) {
-            return false;
-        }
-    }
+	/**
+	 * Check the engine's heartbeat.
+	 * 
+	 * @param url
+	 *            base engine/node URL
+	 * @return true if alive
+	 */
+	public boolean ping(String url) {
+		try {
+			ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD,
+					new HttpEntity<Object>(null, null), Object.class);
+			return response.getStatusCodeValue() == 200;
+		} catch (Throwable e) {
+			return false;
+		}
+	}
 
-    private class JSONResponseErrorHandler implements ResponseErrorHandler {
+	private class JSONResponseErrorHandler implements ResponseErrorHandler {
 
-        @Override
-        public void handleError(ClientHttpResponse response) throws IOException {
-        }
+		@Override
+		public void handleError(ClientHttpResponse response) throws IOException {
+		}
 
-        @Override
-        public boolean hasError(ClientHttpResponse response) throws IOException {
-            HttpStatus status = response.getStatusCode();
-            HttpStatus.Series series = status.series();
-            return (HttpStatus.Series.CLIENT_ERROR.equals(series) || HttpStatus.Series.SERVER_ERROR.equals(series));
-        }
-    }
+		@Override
+		public boolean hasError(ClientHttpResponse response) throws IOException {
+			HttpStatus status = response.getStatusCode();
+			HttpStatus.Series series = status.series();
+			return (HttpStatus.Series.CLIENT_ERROR.equals(series) || HttpStatus.Series.SERVER_ERROR.equals(series));
+		}
+	}
 
-    /**
-     * Interceptor to add user agents and ensure that the authorization token gets in.
-     * 
-     * @author ferdinando.villa
-     *
-     */
-    public class AuthorizationInterceptor implements ClientHttpRequestInterceptor {
+	/**
+	 * Interceptor to add user agents and ensure that the authorization token gets
+	 * in.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public class AuthorizationInterceptor implements ClientHttpRequestInterceptor {
 
-        @Override
-        public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-                throws IOException {
+		@Override
+		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+				throws IOException {
 
-            HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
-            HttpHeaders headers = requestWrapper.getHeaders();
-            headers.set("Accept", "application/json");
-            headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
-            headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-            if (authToken != null) {
-                headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
-            }
-            return execution.execute(requestWrapper, body);
-        }
-    }
+			HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
+			HttpHeaders headers = requestWrapper.getHeaders();
+			headers.set("Accept", "application/json");
+			headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
+			headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+			if (authToken != null) {
+				headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+			}
+			return execution.execute(requestWrapper, body);
+		}
+	}
 
-    private void setup() {
+	private void setup() {
 
-        objectMapper = new ObjectMapper();
-        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-        MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
-        StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-        FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
-        // ByteArrayHttpMessageConverter byteConverter = new
-        // ByteArrayHttpMessageConverter();
-        jsonMessageConverter.setObjectMapper(objectMapper);
+		objectMapper = new ObjectMapper();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+		StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+		FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+		// ByteArrayHttpMessageConverter byteConverter = new
+		// ByteArrayHttpMessageConverter();
+		jsonMessageConverter.setObjectMapper(objectMapper);
 
-        setErrorHandler(new JSONResponseErrorHandler());
-        messageConverters.add(jsonMessageConverter);
-        messageConverters.add(utf8);
-        messageConverters.add(formHttpMessageConverter);
-        // messageConverters.add(byteConverter);
-        setMessageConverters(messageConverters);
-        this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
-    }
+		setErrorHandler(new JSONResponseErrorHandler());
+		messageConverters.add(jsonMessageConverter);
+		messageConverters.add(utf8);
+		messageConverters.add(formHttpMessageConverter);
+		// messageConverters.add(byteConverter);
+		setMessageConverters(messageConverters);
+		this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
+	}
 
-    private Client(ClientHttpRequestFactory factory) {
-        super(factory);
-        setup();
-    }
+	private Client(ClientHttpRequestFactory factory) {
+		super(factory);
+		setup();
+	}
 
-    private Client() {
-        super(factory);
-    }
+	private Client() {
+		super(factory);
+	}
 
-    /**
-     * Return a client with authorization set to the passed object.
-     * 
-     * @param authorizer any identity. 
-     * @return a new 
-     */
-    public Client with(IIdentity authorizer) {
+	/**
+	 * Return a client with authorization set to the passed object.
+	 * 
+	 * @param authorizer
+	 *            any identity.
+	 * @return a new
+	 */
+	public Client with(IIdentity authorizer) {
 
-        /*
-         * TODO handle the chain of authorization properly. Tokens are only issued
-         * for engines, network sessions and sessions. The rest should set parameters
-         * for calls.
-         */
+		/*
+		 * TODO handle the chain of authorization properly. Tokens are only issued for
+		 * engines, network sessions and sessions. The rest should set parameters for
+		 * calls.
+		 */
 
-        Client ret = new Client();
-        ret.objectMapper = this.objectMapper;
-        ret.authToken = authorizer.getId();
-        return ret;
-    }
+		Client ret = new Client();
+		ret.objectMapper = this.objectMapper;
+		ret.authToken = authorizer.getId();
+		return ret;
+	}
 
-    @SuppressWarnings({ "rawtypes" })
-    public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
+	@SuppressWarnings({ "rawtypes" })
+	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
-        }
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+		}
 
-        HttpEntity<Object> entity = new HttpEntity<>(data, headers);
+		HttpEntity<Object> entity = new HttpEntity<>(data, headers);
 
-        try {
+		try {
 
-            ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
 
-            switch (response.getStatusCodeValue()) {
-            case 302:
-            case 403:
-                throw new KlabAuthorizationException("unauthorized request " + url);
-            case 404:
-                throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
-            }
+			switch (response.getStatusCodeValue()) {
+			case 302:
+			case 403:
+				throw new KlabAuthorizationException("unauthorized request " + url);
+			case 404:
+				throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+			}
 
-            if (response.getBody() == null) {
-                return null;
-            }
-            if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-                Object exception = response.getBody().get("exception");
-//                Object path = response.getBody().get("path");
-                Object message = response.getBody().get("message");
-//                Object error = response.getBody().get("error");
-                throw new KlabIOException("remote exception: " + (message == null ? exception : message));
-            }
+			if (response.getBody() == null) {
+				return null;
+			}
+			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
+				Object exception = response.getBody().get("exception");
+				// Object path = response.getBody().get("path");
+				Object message = response.getBody().get("message");
+				// Object error = response.getBody().get("error");
+				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
 
-            return objectMapper.convertValue(response.getBody(), cls);
+			return objectMapper.convertValue(response.getBody(), cls);
 
-        } catch (RestClientException e) {
-            throw new KlabIOException(e);
-        }
-    }
+		} catch (RestClientException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-    public boolean getDownload(String url, File output) {
+	public boolean getDownload(String url, File output) {
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+		HttpEntity<String> entity = new HttpEntity<String>(headers);
 
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-        // HttpEntity<String> entity = new HttpEntity<>(headers);
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
+		// HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class);
+		ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class);
 
-        switch (response.getStatusCodeValue()) {
-        case 302:
-        case 403:
-            throw new KlabAuthorizationException("unauthorized request " + url);
-        case 404:
-            throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
-        }
+		switch (response.getStatusCodeValue()) {
+		case 302:
+		case 403:
+			throw new KlabAuthorizationException("unauthorized request " + url);
+		case 404:
+			throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+		}
 
-        if (response.getBody() == null) {
-            return false;
-        }
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
-                Files.write(output.toPath(), response.getBody());
-            } catch (IOException e) {
-                throw new KlabIOException(e);
-            }
-        }
+		if (response.getBody() == null) {
+			return false;
+		}
+		if (response.getStatusCode() == HttpStatus.OK) {
+			try {
+				Files.write(output.toPath(), response.getBody());
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Instrumented for header communication and error parsing
-     * 
-     * @param url
-     * @param cls
-     * @return the deserialized result
-     */
-    @SuppressWarnings({ "rawtypes" })
-    public <T> T get(String url, Class<T> cls) {
+	/**
+	 * Instrumented for header communication and error parsing
+	 * 
+	 * @param url
+	 * @param cls
+	 * @return the deserialized result
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	public <T> T get(String url, Class<T> cls) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
-        }
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+		}
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
 
-        switch (response.getStatusCodeValue()) {
-        case 302:
-        case 403:
-            throw new KlabAuthorizationException("unauthorized request " + url);
-        case 404:
-            throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
-        }
+		switch (response.getStatusCodeValue()) {
+		case 302:
+		case 403:
+			throw new KlabAuthorizationException("unauthorized request " + url);
+		case 404:
+			throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+		}
 
-        if (response.getBody() == null) {
-            return null;
-        }
-        if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-            Object exception = response.getBody().get("exception");
-//            Object path = response.getBody().get("path");
-            Object message = response.getBody().get("message");
-//            Object error = response.getBody().get("error");
-            throw new KlabIOException("remote exception: " + (message == null ? exception : message));
-        }
+		if (response.getBody() == null) {
+			return null;
+		}
+		if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
+			Object exception = response.getBody().get("exception");
+			// Object path = response.getBody().get("path");
+			Object message = response.getBody().get("message");
+			// Object error = response.getBody().get("error");
+			throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+		}
 
-        return objectMapper.convertValue(response.getBody(), cls);
-    }
+		return objectMapper.convertValue(response.getBody(), cls);
+	}
 
-    /**
-     * Instrumented for header communication and error parsing
-     * 
-     * @param url
-     * @param cls
-     * @param urlVariables
-     * @return the deserialized result
-     */
-    <T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
-        return get(addParameters(url, urlVariables), cls);
-    }
+	/**
+	 * Instrumented for header communication and error parsing
+	 * 
+	 * @param url
+	 * @param cls
+	 * @param urlVariables
+	 * @return the deserialized result
+	 */
+	<T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
+		return get(addParameters(url, urlVariables), cls);
+	}
 
-    /**
-     * Create a GET URL from a base url and a set of parameters. Yes I know I can use
-     * URIComponentsBuilder etc.
-     * 
-     * @param url
-     * @param parameters
-     * @return the finished url
-     */
-    public static String addParameters(String url, Map<String, ?> parameters) {
-        String ret = url;
-        if (parameters != null) {
-            for (String key : parameters.keySet()) {
-                if (ret.length() == url.length()) {
-                    ret += "?";
-                } else {
-                    ret += "&";
-                }
-                ret += key + "=" + Escape.forURL(parameters.get(key).toString());
-            }
-        }
-        return ret;
-    }
+	/**
+	 * Create a GET URL from a base url and a set of parameters. Yes I know I can
+	 * use URIComponentsBuilder etc.
+	 * 
+	 * @param url
+	 * @param parameters
+	 * @return the finished url
+	 */
+	public static String addParameters(String url, Map<String, ?> parameters) {
+		String ret = url;
+		if (parameters != null) {
+			for (String key : parameters.keySet()) {
+				if (ret.length() == url.length()) {
+					ret += "?";
+				} else {
+					ret += "&";
+				}
+				ret += key + "=" + Escape.forURL(parameters.get(key).toString());
+			}
+		}
+		return ret;
+	}
 
 }

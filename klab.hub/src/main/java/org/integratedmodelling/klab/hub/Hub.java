@@ -19,16 +19,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This will start a hub at http://localhost:8284/klab with the default
- * security config.
+ * This will start a hub at http://localhost:8284/klab with the default security
+ * config.
  * 
  * @author ferdinando.villa
  * 
  */
 @Component
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.controllers.base",
-		"org.integratedmodelling.klab.hub.authentication", "org.integratedmodelling.klab.hub.network" })
+@ComponentScan(basePackages = { 
+		"org.integratedmodelling.klab.hub.security",
+		"org.integratedmodelling.klab.hub.authentication",
+		"org.integratedmodelling.klab.hub.network" })
 public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 
 	private static Runnable callback;
@@ -37,7 +39,7 @@ public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 	// defaults
 	private static int port = 8284;
 	private static String contextPath = "/klab";
-	
+
 	@Bean
 	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
 		return new ProtobufHttpMessageConverter();
@@ -52,7 +54,7 @@ public class Hub implements ApplicationListener<ApplicationReadyEvent> {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);
 		Map<String, Object> props = new HashMap<>();
-		props.put("server.port", ""+port);
+		props.put("server.port", "" + port);
 		props.put("server.servlet.contextPath", contextPath);
 		SpringApplication app = new SpringApplication(Hub.class);
 		app.setDefaultProperties(props);

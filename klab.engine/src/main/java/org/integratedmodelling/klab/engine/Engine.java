@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.auth.AnonymousCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
@@ -271,25 +272,34 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public static Engine start(IEngineStartupOptions options) {
 
 		ICertificate certificate = null;
-		if (options.getCertificateResource() != null) {
-			certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+
+		if (System.getProperty("anonymous") != null) {
+			certificate = new AnonymousCertificate();
 		} else {
-			File certFile = options.getCertificateFile();
-			if (!certFile.exists()) {
-				// check for legacy certificate
-				certFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
+
+			if (options.getCertificateResource() != null) {
+				certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			} else {
+				File certFile = options.getCertificateFile();
+				if (!certFile.exists()) {
+					// check for legacy certificate
+					certFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "im.cert");
+				}
+				certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
+						: KlabCertificate.createDefault();
 			}
-			certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
-					: KlabCertificate.createDefault();
 		}
 
 		if (!certificate.isValid()) {
 			throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
 		}
+		
 		Engine ret = new Engine(certificate);
+		
 		if (!ret.boot(options)) {
 			throw new KlabException("engine failed to start");
 		}
+		
 		return ret;
 	}
 
@@ -338,7 +348,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		// shutdown the runtime
 		Klab.INSTANCE.getRuntimeProvider().shutdown();
-}
+	}
 
 	/**
 	 * Perform the engine boot sequence. Can only be called after a valid

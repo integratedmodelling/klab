@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.test.network;
 
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,8 +12,10 @@ public class NetworkTests1h1n extends TestNetwork {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+        EngineStartupOptions options = new EngineStartupOptions();
+        options.setCertificateResource("testengine.cert");
 		start1h1n();
-		engine = Engine.start();
+		engine = Engine.start(options);
 	}
 
 	@AfterClass

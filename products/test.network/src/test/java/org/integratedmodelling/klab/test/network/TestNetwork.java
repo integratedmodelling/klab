@@ -7,11 +7,11 @@ import org.integratedmodelling.klab.hub.Hub;
 import org.integratedmodelling.klab.node.Node;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Sets up various test network configurations on the local machine.
+ * Sets up various test network configurations on the local machine. Run as an
+ * application to make the configuration active for testing outside of JUnit.
  * 
  * @author ferdinando.villa
  *
@@ -38,22 +38,22 @@ public class TestNetwork {
 		hprops.put("server.port", "8284");
 		hprops.put("server.servlet.contextPath", "/klab");
 
-		SpringApplication uws = new SpringApplicationBuilder(Hub.class)
+		SpringApplication hub = new SpringApplicationBuilder(Hub.class)
 				.properties("SOA.ControllerFactory.enforceProxyCreation=true").build();
-		uws.setDefaultProperties(hprops);
-		ConfigurableApplicationContext hcontext = uws.run();
+		hub.setDefaultProperties(hprops);
+		ConfigurableApplicationContext hcontext = hub.run();
 
 		Map<String, Object> nprops = new HashMap<>();
 		nprops.put("server.port", "8287");
 		nprops.put("server.servlet.contextPath", "/node");
 
 		hubs.put("hub", hcontext);
-		
-		SpringApplication pws = new SpringApplicationBuilder(Node.class)
+
+		SpringApplication node = new SpringApplicationBuilder(Node.class)
 				.properties("SOA.ControllerFactory.enforceProxyCreation=true").build();
-		pws.setDefaultProperties(nprops);
-		ConfigurableApplicationContext ncontext = pws.run();
-		
+		node.setDefaultProperties(nprops);
+		ConfigurableApplicationContext ncontext = node.run();
+
 		nodes.put("node", ncontext);
 	}
 
@@ -71,6 +71,27 @@ public class TestNetwork {
 		hubs.clear();
 		started = false;
 	}
-
+	
+	/**
+	 * Run the desired configuration, defaulting at 1h1n.
+	 * 
+	 * @param args
+	 * @throws InterruptedException
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		String configuration = "1h1n";
+		if (args != null && args.length > 0) {
+			configuration = args[0];
+		}
+		switch (configuration) {
+		case "1h1n": 
+			start1h1n(); 
+			break;
+		}
+		
+		while (true) {
+			Thread.sleep(1000);
+		}
+	}
 
 }

@@ -148,7 +148,7 @@ public class KlabCertificate implements ICertificate {
 				return false;
 			}
 
-			if (upgradeCertificate(file)) {
+			if (file != null && upgradeCertificate(file)) {
 				return true;
 			}
 

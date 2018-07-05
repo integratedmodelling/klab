@@ -153,14 +153,15 @@ public enum Auth implements IAuthenticationService {
 			return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
 		}
 
-		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME));
-
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
 		if (authenticationServer == null) {
 			Logging.INSTANCE.warn("certificate has no hub address: trying a local hub");
 			// try local hub, let fail if not active
 			authenticationServer = "http://127.0.0.1:8284/klab";
 		}
+
+		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME) + " with hub "
+				+ certificate.getProperty(KlabCertificate.KEY_SERVER));
 
 		/*
 		 * Authenticate with server(s). If authentication fails because of a 403,
