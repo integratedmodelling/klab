@@ -5,16 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -45,8 +42,12 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.ColorUtils;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.Triple;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -60,13 +61,22 @@ public enum Renderer {
 
 	INSTANCE;
 
+	private Map<String, ColorScheme> colorSchemata = new HashMap<>();
 	private Map<String, Style> styles = new HashMap<>();
 	private StyleBuilder styleBuilder = new StyleBuilder();
-	ColorBrewer colorBrewer = new ColorBrewer();
+	private ColorBrewer colorBrewer = new ColorBrewer();
 
 	Renderer() {
-		// TODO lookup and load any pre-defined styles in the classpath and local
-		// workspace
+		/*
+		 * find color schemata in classpath
+		 * 
+		 * TODO do the same from confDir/colors and components
+		 */
+		for (String schema : new Reflections("colors", new ResourcesScanner())
+				.getResources(Pattern.compile(".*\\.json"))) {
+			ColorScheme scheme = JsonUtils.load(getClass().getClassLoader().getResource(schema), ColorScheme.class);
+			colorSchemata.put(scheme.getName(), scheme);
+		}
 	}
 
 	/**
@@ -107,12 +117,12 @@ public enum Renderer {
 
 			Rectangle imageBounds = new Rectangle(imagesize[0], imagesize[1]);
 			BufferedImage image = new BufferedImage(imagesize[0], imagesize[1], BufferedImage.TYPE_INT_ARGB);
-		    Graphics2D gr = image.createGraphics();
-		    gr.setPaint(new Color(0f, 0f, 0f, 0f));
-		    gr.fill(imageBounds);
-		    renderer.paint(gr, coverage, rasterSymbolizer);
-		    return image;
-		    
+			Graphics2D gr = image.createGraphics();
+			gr.setPaint(new Color(0f, 0f, 0f, 0f));
+			gr.fill(imageBounds);
+			renderer.paint(gr, coverage, rasterSymbolizer);
+			return image;
+
 		} catch (Exception e) {
 			throw new KlabInternalErrorException(e);
 		}
@@ -131,7 +141,7 @@ public enum Renderer {
 				: (state.getDataKey().isOrdered() ? ColorMap.TYPE_INTERVALS : ColorMap.TYPE_VALUES);
 
 		// TODO parameters for shaded relief and contrast enhancement
-		
+
 		for (IAnnotation annotation : state.getAnnotations()) {
 			if (annotation.getName().equals("colormap")) {
 
@@ -142,17 +152,31 @@ public enum Renderer {
 				}
 
 				if (name != null) {
-					colors = getColormap(name, opacity);
-					if (colors == null && colorBrewer.hasPalette(name)) {
-						BrewerPalette palette = colorBrewer.getPalette(name);
-						colors = palette.getColors(state.getDataKey() == null ? 256 : state.getDataKey().size());
-						if (palette.getType() == ColorBrewer.DIVERGING) {
-							midpoint = 0.0;
-						} else if (palette.getType() == ColorBrewer.QUALITATIVE) {
-							if (colormapType != ColorMap.TYPE_VALUES) {
-								throw new IllegalArgumentException("qualitative colormap chosen for quantitative data");
+					if (colorSchemata.containsKey(name)) {
+						
+						ColorScheme scheme = colorSchemata.get(name);
+						Triple<double[], Color[], String[]> result = scheme.computeScheme(state);
+
+						values = result.getFirst();
+						colors = result.getSecond();
+						labels = result.getThird();
+												
+					} else {
+						
+						colors = getColormap(name, opacity);
+						if (colors == null && colorBrewer.hasPalette(name)) {
+							BrewerPalette palette = colorBrewer.getPalette(name);
+							colors = palette.getColors(state.getDataKey() == null ? 256 : state.getDataKey().size());
+							if (palette.getType() == ColorBrewer.DIVERGING) {
+								midpoint = 0.0;
+							} else if (palette.getType() == ColorBrewer.QUALITATIVE) {
+								if (colormapType != ColorMap.TYPE_VALUES) {
+									throw new IllegalArgumentException(
+											"qualitative colormap chosen for quantitative data");
+								}
 							}
 						}
+						
 					}
 				} else if (annotation.containsKey("values")) {
 
@@ -174,11 +198,12 @@ public enum Renderer {
 					} else if (Range.class.isAssignableFrom(type)) {
 						colormapType = ColorMap.TYPE_INTERVALS;
 					} else if (Number.class.isAssignableFrom(type)) {
-						colormapType = annotation.get("continuous", Boolean.TRUE) ? ColorMap.TYPE_RAMP : ColorMap.TYPE_INTERVALS;
+						colormapType = annotation.get("continuous", Boolean.TRUE) ? ColorMap.TYPE_RAMP
+								: ColorMap.TYPE_INTERVALS;
 					} else if (Boolean.class.isAssignableFrom(type)) {
 						colormapType = ColorMap.TYPE_VALUES;
 						for (Pair<Object, Color> pair : svals) {
-							if ((Boolean)pair.getFirst()) {
+							if ((Boolean) pair.getFirst()) {
 								pair.setFirst(1.0);
 							} else {
 								pair.setFirst(0.0);
@@ -188,18 +213,18 @@ public enum Renderer {
 						throw new IllegalArgumentException(
 								"invalid color keys: must be number, boolean, concept or range");
 					}
-					
+
 					labels = new String[svals.size()];
 					values = new double[svals.size()];
 					colors = new Color[svals.size()];
-					
+
 					int i = 0;
 					for (Pair<Object, Color> pair : svals) {
-						
+
 						// we assume the user has used proper sorting.
 						if (pair.getFirst() instanceof IConcept) {
-							labels[i] = Concepts.INSTANCE.getDisplayName((IConcept)pair.getFirst());
-							values[i] = state.getDataKey().reverseLookup((IConcept)pair.getFirst());
+							labels[i] = Concepts.INSTANCE.getDisplayName((IConcept) pair.getFirst());
+							values[i] = state.getDataKey().reverseLookup((IConcept) pair.getFirst());
 							colors[i] = pair.getSecond();
 						}
 
@@ -523,6 +548,4 @@ public enum Renderer {
 		ImageIO.write(INSTANCE.createImage(INSTANCE.wave(), 20, 256), "png", new java.io.File("legend.png"));
 	}
 
-	// elevation: check out
-	// http://cartographicperspectives.org/index.php/journal/article/download/20/70
 }

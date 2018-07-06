@@ -15,9 +15,13 @@
  */
 package org.integratedmodelling.klab.utils;
 
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -99,6 +103,54 @@ public class JsonUtils {
 	public static <T> Set<T> asSet(JsonNode node, Class<T> cls) {
 		return defaultMapper.convertValue(node, new TypeReference<Set<T>>() {
 		});
+	}
+	
+	/**
+	 * Load an object from a file.
+	 * 
+	 * @param file
+	 * @param cls
+	 * @return the object
+	 * @throws KlabIOException
+	 */
+	public static <T> T load(File file, Class<T> cls)  throws KlabIOException {
+		try {
+			return defaultMapper.readValue(file, cls);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+	}
+	
+	/**
+	 * Load an object from a URL.
+	 * 
+	 * @param url
+	 * @param cls
+	 * @return the object
+	 * @throws KlabIOException
+	 */
+	public static <T> T load(URL url, Class<T> cls)  throws KlabIOException {
+		try {
+			return defaultMapper.readValue(url, cls);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+	}
+	
+	
+	/**
+	 * Serialize an object to a file.
+	 * 
+	 * @param object
+	 * @param outFile
+	 * @throws KlabIOException
+	 */
+	public static void save(Object object, File outFile) throws KlabIOException {
+		try {
+			defaultMapper.writeValue(outFile, object);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
 	}
 
 	/**
