@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 public class TestRunner implements Annotations.Handler {
@@ -135,6 +136,12 @@ public class TestRunner implements Annotations.Handler {
 								}
 							}
 						}
+
+				        if (subject != null && monitor instanceof Monitor) {
+				        	for (Monitor.Listener listener : ((Monitor)monitor).getListeners()) {
+				        		listener.notifyRootContext(subject);
+				        	}
+				        }
 
 					} else {
 						monitor.error(id + ": errors in retrieving observer or session");

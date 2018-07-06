@@ -10,16 +10,18 @@ import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class Script implements IScript {
 
 	URL scriptUrl;
-	FutureTask<Object> delegate;
+	FutureTask<ISubject> delegate;
 	IMonitor monitor;
 	Session session;
 	String token = NameGenerator.shortUUID();
@@ -28,25 +30,28 @@ public class Script implements IScript {
 
 		this.scriptUrl = resource;
 		final Engine engine = session.getParentIdentity(Engine.class);
-		delegate = new FutureTask<Object>(new Callable<Object>() {
+		delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
 
 			@Override
-			public Object call() throws Exception {
+			public ISubject call() throws Exception {
 
 				/*
 				 * Unregister the task
 				 */
 				session.unregisterTask(Script.this);
 				
-				Object ret = null;
+				ISubject ret = null;
 				try {
+					ListenerImpl listener = new ListenerImpl();
 					Script.this.session = session;
 					Script.this.monitor = (session.getMonitor()).get(Script.this);
-					/* ret = */ Models.INSTANCE.load(resource, monitor);
+					((Monitor)Script.this.monitor).addListener(listener);
+					Models.INSTANCE.load(resource, Script.this.monitor);
 					/*
 					 * Unregister the task
 					 */
 					session.unregisterTask(Script.this);
+					ret = listener.subject;
 					
 				} catch (Exception e) {
 					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
@@ -61,16 +66,19 @@ public class Script implements IScript {
 	public Script(Engine engine, URL resource) {
 
 		this.scriptUrl = resource;
-		delegate = new FutureTask<Object>(new Callable<Object>() {
+		delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
 
 			@Override
-			public Object call() throws Exception {
+			public ISubject call() throws Exception {
 
-				Object ret = null;
+				ISubject ret = null;
 				try (Session session = engine.createSession()) {
+					ListenerImpl listener = new ListenerImpl();
 					Script.this.session = session;
 					Script.this.monitor = (session.getMonitor()).get(Script.this);
-					/* ret = */ Models.INSTANCE.load(resource, monitor);
+					((Monitor)Script.this.monitor).addListener(listener);
+					Models.INSTANCE.load(resource, monitor);
+					ret = listener.subject;
 				} catch (Exception e) {
 					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
 				}
@@ -112,12 +120,12 @@ public class Script implements IScript {
 	}
 
 	@Override
-	public Object get() throws InterruptedException, ExecutionException {
+	public ISubject get() throws InterruptedException, ExecutionException {
 		return delegate.get();
 	}
 
 	@Override
-	public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+	public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 		return delegate.get(timeout, unit);
 	}
 
@@ -129,6 +137,14 @@ public class Script implements IScript {
 	@Override
 	public IMonitor getMonitor() {
 		return monitor;
+	}
+	
+	class ListenerImpl implements IMonitor.Listener {
+		ISubject subject;
+		@Override
+		public void notifyRootContext(ISubject subject) {
+			this.subject = subject;
+		}
 	}
 
 }

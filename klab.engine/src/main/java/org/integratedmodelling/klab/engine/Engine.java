@@ -3,9 +3,11 @@ package org.integratedmodelling.klab.engine;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -96,7 +98,16 @@ public class Engine extends Server implements IEngine, UserDetails {
 		private IIdentity identity = Engine.this;
 		private int errorCount = 0;
 		private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-
+		List<Listener> listeners = new ArrayList<>();
+		
+		public List<Listener> getListeners() {
+			return listeners;
+		}
+		
+		public void addListener(Listener listener) {
+			this.listeners.add(listener);
+		}
+		
 		@Override
 		public void info(Object... info) {
 			String message = NotificationUtils.getMessage(info);

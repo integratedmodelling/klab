@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.runtime;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IScriptIdentity;
+import org.integratedmodelling.klab.api.observations.ISubject;
 
 /**
  * The Interface IScript.
@@ -25,6 +26,6 @@ import org.integratedmodelling.klab.api.auth.IScriptIdentity;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IScript extends IScriptIdentity, Future<Object> {
+public interface IScript extends IScriptIdentity, Future<ISubject> {
 
 }

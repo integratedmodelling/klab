@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -46,6 +47,10 @@ import org.integratedmodelling.klab.api.services.IRuntimeService;
  */
 public interface IMonitor {
 
+	interface Listener {
+		void notifyRootContext(ISubject subject);
+	}
+	
 	/**
 	 * For info to be seen by users: pass a string. Will also take an exception, but
 	 * usually exceptions shouldn't turn into warnings. These will be reported to

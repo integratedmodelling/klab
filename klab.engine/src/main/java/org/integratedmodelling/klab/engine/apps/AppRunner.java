@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 /**
@@ -64,6 +65,12 @@ public class AppRunner implements Annotations.Handler {
             }
             display.show();
           }
+        }
+        
+        if (subject != null && monitor instanceof Monitor) {
+        	for (Monitor.Listener listener : ((Monitor)monitor).getListeners()) {
+        		listener.notifyRootContext(subject);
+        	}
         }
         
       } else {
