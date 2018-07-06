@@ -54,7 +54,7 @@ interface Registration<T> extends ScheduledFuture<T>, Runnable {
 
   @Override
   default int compareTo(Delayed o) {
-    Registration other = (Registration) o;
+    Registration<?> other = (Registration<?>) o;
     long r1 = rounds();
     long r2 = other.rounds();
     if (r1 == r2) {

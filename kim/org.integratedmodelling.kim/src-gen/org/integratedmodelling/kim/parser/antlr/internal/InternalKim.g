@@ -2069,10 +2069,35 @@ ruleTable returns [EObject current=null]
 	(
 		(
 			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTableAccess().getHeadersHeaderRowParserRuleCall_0_0_0());
+					}
+					lv_headers_0_0=ruleHeaderRow
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTableRule());
+						}
+						set(
+							$current,
+							"headers",
+							lv_headers_0_0,
+							"org.integratedmodelling.kim.Kim.HeaderRow");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			this_SEPARATOR_1=RULE_SEPARATOR
+			{
+				newLeafNode(this_SEPARATOR_1, grammarAccess.getTableAccess().getSEPARATORTerminalRuleCall_0_1());
+			}
+		)?
+		(
+			(
 				{
-					newCompositeNode(grammarAccess.getTableAccess().getRowsTableRowParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getTableAccess().getRowsTableRowParserRuleCall_1_0());
 				}
-				lv_rows_0_0=ruleTableRow
+				lv_rows_2_0=ruleTableRow
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getTableRule());
@@ -2080,23 +2105,23 @@ ruleTable returns [EObject current=null]
 					add(
 						$current,
 						"rows",
-						lv_rows_0_0,
+						lv_rows_2_0,
 						"org.integratedmodelling.kim.Kim.TableRow");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
 		(
-			otherlv_1=','
+			otherlv_3=','
 			{
-				newLeafNode(otherlv_1, grammarAccess.getTableAccess().getCommaKeyword_1_0());
+				newLeafNode(otherlv_3, grammarAccess.getTableAccess().getCommaKeyword_2_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getTableAccess().getRowsTableRowParserRuleCall_1_1_0());
+						newCompositeNode(grammarAccess.getTableAccess().getRowsTableRowParserRuleCall_2_1_0());
 					}
-					lv_rows_2_0=ruleTableRow
+					lv_rows_4_0=ruleTableRow
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getTableRule());
@@ -2104,10 +2129,105 @@ ruleTable returns [EObject current=null]
 						add(
 							$current,
 							"rows",
-							lv_rows_2_0,
+							lv_rows_4_0,
 							"org.integratedmodelling.kim.Kim.TableRow");
 						afterParserOrEnumRuleCall();
 					}
+				)
+			)
+		)*
+	)
+;
+
+// Entry rule entryRuleHeaderRow
+entryRuleHeaderRow returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getHeaderRowRule()); }
+	iv_ruleHeaderRow=ruleHeaderRow
+	{ $current=$iv_ruleHeaderRow.current; }
+	EOF;
+
+// Rule HeaderRow
+ruleHeaderRow returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					lv_elements_0_1=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_elements_0_1, grammarAccess.getHeaderRowAccess().getElementsLOWERCASE_IDTerminalRuleCall_0_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getHeaderRowRule());
+						}
+						addWithLastConsumed(
+							$current,
+							"elements",
+							lv_elements_0_1,
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+					}
+					    |
+					lv_elements_0_2=RULE_STRING
+					{
+						newLeafNode(lv_elements_0_2, grammarAccess.getHeaderRowAccess().getElementsSTRINGTerminalRuleCall_0_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getHeaderRowRule());
+						}
+						addWithLastConsumed(
+							$current,
+							"elements",
+							lv_elements_0_2,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)
+		(
+			otherlv_1='|'
+			{
+				newLeafNode(otherlv_1, grammarAccess.getHeaderRowAccess().getVerticalLineKeyword_1_0());
+			}
+			(
+				(
+					(
+						lv_elements_2_1=RULE_LOWERCASE_ID
+						{
+							newLeafNode(lv_elements_2_1, grammarAccess.getHeaderRowAccess().getElementsLOWERCASE_IDTerminalRuleCall_1_1_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getHeaderRowRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"elements",
+								lv_elements_2_1,
+								"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+						}
+						    |
+						lv_elements_2_2=RULE_STRING
+						{
+							newLeafNode(lv_elements_2_2, grammarAccess.getHeaderRowAccess().getElementsSTRINGTerminalRuleCall_1_1_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getHeaderRowRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"elements",
+								lv_elements_2_2,
+								"org.eclipse.xtext.common.Terminals.STRING");
+						}
+					)
 				)
 			)
 		)*
@@ -14808,6 +14928,8 @@ RULE_ANNOTATION_ID : '@' RULE_LOWERCASE_ID;
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 
 RULE_LOWERCASE_DASHID : 'a'..'z' ('a'..'z'|'0'..'9'|'-')*;
+
+RULE_SEPARATOR : '---' '-'*;
 
 RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z')*;
 

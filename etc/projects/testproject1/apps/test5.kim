@@ -18,8 +18,10 @@ model geography:Elevation by im:Level
 model geography:Elevation by im:Level
 	using gis.terrain()
 	lookup (self, *, ?) into 
-		< 500  | geography:Elevation     | im:Low,
-		< 1500 | geography:Slope         | im:Moderate,
-		   *   | infrastructure:Road     | im:High,
-		   #   | infrastructure:Building | agriculture:Manure physical:DelimitedBody; // a "piece of shit"
-		
+		  elevation | concept                 | magnitude
+	      --------------------------------------------------------
+	      < 500     | geography:Elevation     | im:Low,
+	      < 1500    | geography:Slope         | im:Moderate,
+	         *      | infrastructure:Road     | im:High,
+	         #      | infrastructure:Building | agriculture:Manure
+;		

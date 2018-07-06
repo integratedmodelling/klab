@@ -71,9 +71,21 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	
 	@Override
 	protected String getUnassignedRuleCallToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (ruleCall.getRule() == grammarAccess.getSEPARATORRule())
+			return getSEPARATORToken(semanticObject, ruleCall, node);
 		return "";
 	}
 	
+	/**
+	 * terminal SEPARATOR:
+	 * 	'---' ('-')*
+	 * ;
+	 */
+	protected String getSEPARATORToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (node != null)
+			return getTokenText(node);
+		return "---";
+	}
 	
 	@Override
 	protected void emitUnassignedTokens(EObject semanticObject, ISynTransition transition, INode fromNode, INode toNode) {

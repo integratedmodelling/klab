@@ -34,6 +34,7 @@ import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KeyValuePair;
@@ -131,6 +132,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.URN: return createUrn();
       case KimPackage.LOOKUP_TABLE: return createLookupTable();
       case KimPackage.TABLE: return createTable();
+      case KimPackage.HEADER_ROW: return createHeaderRow();
       case KimPackage.TABLE_ROW: return createTableRow();
       case KimPackage.ACTION_SPECIFICATION: return createActionSpecification();
       case KimPackage.FUNCTION_OR_ID: return createFunctionOrID();
@@ -333,6 +335,17 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     TableImpl table = new TableImpl();
     return table;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public HeaderRow createHeaderRow()
+  {
+    HeaderRowImpl headerRow = new HeaderRowImpl();
+    return headerRow;
   }
 
   /**

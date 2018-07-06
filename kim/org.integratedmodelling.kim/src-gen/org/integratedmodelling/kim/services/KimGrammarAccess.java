@@ -1218,37 +1218,104 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	public class TableElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Table");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cRowsAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cRowsTableRowParserRuleCall_0_0 = (RuleCall)cRowsAssignment_0.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cCommaKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cRowsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cRowsTableRowParserRuleCall_1_1_0 = (RuleCall)cRowsAssignment_1_1.eContents().get(0);
+		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
+		private final Assignment cHeadersAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cHeadersHeaderRowParserRuleCall_0_0_0 = (RuleCall)cHeadersAssignment_0_0.eContents().get(0);
+		private final RuleCall cSEPARATORTerminalRuleCall_0_1 = (RuleCall)cGroup_0.eContents().get(1);
+		private final Assignment cRowsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cRowsTableRowParserRuleCall_1_0 = (RuleCall)cRowsAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cRowsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cRowsTableRowParserRuleCall_2_1_0 = (RuleCall)cRowsAssignment_2_1.eContents().get(0);
 		
 		//Table:
-		//	rows+=TableRow (',' rows+=TableRow)*;
+		//	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//rows+=TableRow (',' rows+=TableRow)*
+		//(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*
 		public Group getGroup() { return cGroup; }
 		
+		//(headers=HeaderRow SEPARATOR)?
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//headers=HeaderRow
+		public Assignment getHeadersAssignment_0_0() { return cHeadersAssignment_0_0; }
+		
+		//HeaderRow
+		public RuleCall getHeadersHeaderRowParserRuleCall_0_0_0() { return cHeadersHeaderRowParserRuleCall_0_0_0; }
+		
+		//SEPARATOR
+		public RuleCall getSEPARATORTerminalRuleCall_0_1() { return cSEPARATORTerminalRuleCall_0_1; }
+		
 		//rows+=TableRow
-		public Assignment getRowsAssignment_0() { return cRowsAssignment_0; }
+		public Assignment getRowsAssignment_1() { return cRowsAssignment_1; }
 		
 		//TableRow
-		public RuleCall getRowsTableRowParserRuleCall_0_0() { return cRowsTableRowParserRuleCall_0_0; }
+		public RuleCall getRowsTableRowParserRuleCall_1_0() { return cRowsTableRowParserRuleCall_1_0; }
 		
 		//(',' rows+=TableRow)*
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_2() { return cGroup_2; }
 		
 		//','
-		public Keyword getCommaKeyword_1_0() { return cCommaKeyword_1_0; }
+		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
 		
 		//rows+=TableRow
-		public Assignment getRowsAssignment_1_1() { return cRowsAssignment_1_1; }
+		public Assignment getRowsAssignment_2_1() { return cRowsAssignment_2_1; }
 		
 		//TableRow
-		public RuleCall getRowsTableRowParserRuleCall_1_1_0() { return cRowsTableRowParserRuleCall_1_1_0; }
+		public RuleCall getRowsTableRowParserRuleCall_2_1_0() { return cRowsTableRowParserRuleCall_2_1_0; }
+	}
+	public class HeaderRowElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.HeaderRow");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cElementsAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final Alternatives cElementsAlternatives_0_0 = (Alternatives)cElementsAssignment_0.eContents().get(0);
+		private final RuleCall cElementsLOWERCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cElementsAlternatives_0_0.eContents().get(0);
+		private final RuleCall cElementsSTRINGTerminalRuleCall_0_0_1 = (RuleCall)cElementsAlternatives_0_0.eContents().get(1);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cVerticalLineKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cElementsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final Alternatives cElementsAlternatives_1_1_0 = (Alternatives)cElementsAssignment_1_1.eContents().get(0);
+		private final RuleCall cElementsLOWERCASE_IDTerminalRuleCall_1_1_0_0 = (RuleCall)cElementsAlternatives_1_1_0.eContents().get(0);
+		private final RuleCall cElementsSTRINGTerminalRuleCall_1_1_0_1 = (RuleCall)cElementsAlternatives_1_1_0.eContents().get(1);
+		
+		//HeaderRow:
+		//	elements+=(LOWERCASE_ID | STRING) ('|' elements+=(LOWERCASE_ID | STRING))*;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//elements+=(LOWERCASE_ID | STRING) ('|' elements+=(LOWERCASE_ID | STRING))*
+		public Group getGroup() { return cGroup; }
+		
+		//elements+=(LOWERCASE_ID | STRING)
+		public Assignment getElementsAssignment_0() { return cElementsAssignment_0; }
+		
+		//(LOWERCASE_ID | STRING)
+		public Alternatives getElementsAlternatives_0_0() { return cElementsAlternatives_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getElementsLOWERCASE_IDTerminalRuleCall_0_0_0() { return cElementsLOWERCASE_IDTerminalRuleCall_0_0_0; }
+		
+		//STRING
+		public RuleCall getElementsSTRINGTerminalRuleCall_0_0_1() { return cElementsSTRINGTerminalRuleCall_0_0_1; }
+		
+		//('|' elements+=(LOWERCASE_ID | STRING))*
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'|'
+		public Keyword getVerticalLineKeyword_1_0() { return cVerticalLineKeyword_1_0; }
+		
+		//elements+=(LOWERCASE_ID | STRING)
+		public Assignment getElementsAssignment_1_1() { return cElementsAssignment_1_1; }
+		
+		//(LOWERCASE_ID | STRING)
+		public Alternatives getElementsAlternatives_1_1_0() { return cElementsAlternatives_1_1_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getElementsLOWERCASE_IDTerminalRuleCall_1_1_0_0() { return cElementsLOWERCASE_IDTerminalRuleCall_1_1_0_0; }
+		
+		//STRING
+		public RuleCall getElementsSTRINGTerminalRuleCall_1_1_0_1() { return cElementsSTRINGTerminalRuleCall_1_1_0_1; }
 	}
 	public class TableRowElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.TableRow");
@@ -8657,6 +8724,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final UrnElements pUrn;
 	private final LookupTableElements pLookupTable;
 	private final TableElements pTable;
+	private final HeaderRowElements pHeaderRow;
 	private final TableRowElements pTableRow;
 	private final TableClassifierElements pTableClassifier;
 	private final ActionSpecificationElements pActionSpecification;
@@ -8730,6 +8798,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tLOWERCASE_DASHID;
 	private final PathNameElements pPathName;
 	private final PathElements pPath;
+	private final TerminalRule tSEPARATOR;
 	private final TerminalRule tUPPERCASE_ID;
 	private final TerminalRule tUPPERCASE_PATH;
 	private final TerminalRule tCAMELCASE_ID;
@@ -8758,6 +8827,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pUrn = new UrnElements();
 		this.pLookupTable = new LookupTableElements();
 		this.pTable = new TableElements();
+		this.pHeaderRow = new HeaderRowElements();
 		this.pTableRow = new TableRowElements();
 		this.pTableClassifier = new TableClassifierElements();
 		this.pActionSpecification = new ActionSpecificationElements();
@@ -8831,6 +8901,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.tLOWERCASE_DASHID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LOWERCASE_DASHID");
 		this.pPathName = new PathNameElements();
 		this.pPath = new PathElements();
+		this.tSEPARATOR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.SEPARATOR");
 		this.tUPPERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 		this.tUPPERCASE_PATH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 		this.tCAMELCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.CAMELCASE_ID");
@@ -8997,13 +9068,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Table:
-	//	rows+=TableRow (',' rows+=TableRow)*;
+	//	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
 	public TableElements getTableAccess() {
 		return pTable;
 	}
 	
 	public ParserRule getTableRule() {
 		return getTableAccess().getRule();
+	}
+	
+	//HeaderRow:
+	//	elements+=(LOWERCASE_ID | STRING) ('|' elements+=(LOWERCASE_ID | STRING))*;
+	public HeaderRowElements getHeaderRowAccess() {
+		return pHeaderRow;
+	}
+	
+	public ParserRule getHeaderRowRule() {
+		return getHeaderRowAccess().getRule();
 	}
 	
 	//TableRow:
@@ -9883,6 +9964,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getPathRule() {
 		return getPathAccess().getRule();
+	}
+	
+	//terminal SEPARATOR:
+	//	'---' '-'*;
+	public TerminalRule getSEPARATORRule() {
+		return tSEPARATOR;
 	}
 	
 	//terminal UPPERCASE_ID:

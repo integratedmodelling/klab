@@ -29,6 +29,7 @@ import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KeyValuePair;
@@ -198,6 +199,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         Table table = (Table)theEObject;
         T result = caseTable(table);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.HEADER_ROW:
+      {
+        HeaderRow headerRow = (HeaderRow)theEObject;
+        T result = caseHeaderRow(headerRow);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -658,6 +666,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseTable(Table object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Header Row</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Header Row</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseHeaderRow(HeaderRow object)
   {
     return null;
   }

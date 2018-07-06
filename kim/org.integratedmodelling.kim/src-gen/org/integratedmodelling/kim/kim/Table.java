@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.Table#getHeaders <em>Headers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Table#getRows <em>Rows</em>}</li>
  * </ul>
  *
@@ -26,6 +27,32 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Table extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Headers</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Headers</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Headers</em>' containment reference.
+   * @see #setHeaders(HeaderRow)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getTable_Headers()
+   * @model containment="true"
+   * @generated
+   */
+  HeaderRow getHeaders();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Table#getHeaders <em>Headers</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Headers</em>' containment reference.
+   * @see #getHeaders()
+   * @generated
+   */
+  void setHeaders(HeaderRow value);
+
   /**
    * Returns the value of the '<em><b>Rows</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kim.kim.TableRow}.

@@ -9,7 +9,6 @@ worldview im;
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 
-// @resolveOnce <-- use to copy dataflows w/o search - OR the other way around, to force resolution of each one
 model each earth:Mountain
 	observing geography:Elevation in m
 	using gis.features.extract(

@@ -101,7 +101,11 @@ LookupTable: {LookupTable}
 ;
 
 Table:
-	rows+=TableRow (',' rows+=TableRow)*;
+	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
+
+HeaderRow:
+	elements+=(LOWERCASE_ID|STRING) ('|' elements+=(LOWERCASE_ID|STRING))*
+;
 
 TableRow:
 	elements+=TableClassifier ('|' elements+=TableClassifier)*
@@ -832,6 +836,10 @@ PathName:
 
 Path:
 	LOWERCASE_ID (('.' | '/') LOWERCASE_ID)*
+;
+
+terminal SEPARATOR:
+	'---' ('-')*
 ;
 
 terminal UPPERCASE_ID:

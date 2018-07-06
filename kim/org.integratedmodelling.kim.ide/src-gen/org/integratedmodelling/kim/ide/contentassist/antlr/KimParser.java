@@ -56,6 +56,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getClassifierRHSWithIdAccess().getAlternatives_1_4(), "rule__ClassifierRHSWithId__Alternatives_1_4");
 					put(grammarAccess.getClassifierRHSWithIdAccess().getIdAlternatives_6_0(), "rule__ClassifierRHSWithId__IdAlternatives_6_0");
 					put(grammarAccess.getUrnAccess().getNameAlternatives_0(), "rule__Urn__NameAlternatives_0");
+					put(grammarAccess.getHeaderRowAccess().getElementsAlternatives_0_0(), "rule__HeaderRow__ElementsAlternatives_0_0");
+					put(grammarAccess.getHeaderRowAccess().getElementsAlternatives_1_1_0(), "rule__HeaderRow__ElementsAlternatives_1_1_0");
 					put(grammarAccess.getTableClassifierAccess().getAlternatives(), "rule__TableClassifier__Alternatives");
 					put(grammarAccess.getTableClassifierAccess().getAlternatives_0(), "rule__TableClassifier__Alternatives_0");
 					put(grammarAccess.getTableClassifierAccess().getAlternatives_1_1(), "rule__TableClassifier__Alternatives_1_1");
@@ -220,7 +222,10 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getClassifierRHSWithIdAccess().getGroup_7(), "rule__ClassifierRHSWithId__Group_7__0");
 					put(grammarAccess.getLookupTableAccess().getGroup(), "rule__LookupTable__Group__0");
 					put(grammarAccess.getTableAccess().getGroup(), "rule__Table__Group__0");
-					put(grammarAccess.getTableAccess().getGroup_1(), "rule__Table__Group_1__0");
+					put(grammarAccess.getTableAccess().getGroup_0(), "rule__Table__Group_0__0");
+					put(grammarAccess.getTableAccess().getGroup_2(), "rule__Table__Group_2__0");
+					put(grammarAccess.getHeaderRowAccess().getGroup(), "rule__HeaderRow__Group__0");
+					put(grammarAccess.getHeaderRowAccess().getGroup_1(), "rule__HeaderRow__Group_1__0");
 					put(grammarAccess.getTableRowAccess().getGroup(), "rule__TableRow__Group__0");
 					put(grammarAccess.getTableRowAccess().getGroup_1(), "rule__TableRow__Group_1__0");
 					put(grammarAccess.getTableClassifierAccess().getGroup_1(), "rule__TableClassifier__Group_1__0");
@@ -559,8 +564,11 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getClassifierRHSWithIdAccess().getStarAssignment_9(), "rule__ClassifierRHSWithId__StarAssignment_9");
 					put(grammarAccess.getUrnAccess().getNameAssignment(), "rule__Urn__NameAssignment");
 					put(grammarAccess.getLookupTableAccess().getTableAssignment_2(), "rule__LookupTable__TableAssignment_2");
-					put(grammarAccess.getTableAccess().getRowsAssignment_0(), "rule__Table__RowsAssignment_0");
-					put(grammarAccess.getTableAccess().getRowsAssignment_1_1(), "rule__Table__RowsAssignment_1_1");
+					put(grammarAccess.getTableAccess().getHeadersAssignment_0_0(), "rule__Table__HeadersAssignment_0_0");
+					put(grammarAccess.getTableAccess().getRowsAssignment_1(), "rule__Table__RowsAssignment_1");
+					put(grammarAccess.getTableAccess().getRowsAssignment_2_1(), "rule__Table__RowsAssignment_2_1");
+					put(grammarAccess.getHeaderRowAccess().getElementsAssignment_0(), "rule__HeaderRow__ElementsAssignment_0");
+					put(grammarAccess.getHeaderRowAccess().getElementsAssignment_1_1(), "rule__HeaderRow__ElementsAssignment_1_1");
 					put(grammarAccess.getTableRowAccess().getElementsAssignment_0(), "rule__TableRow__ElementsAssignment_0");
 					put(grammarAccess.getTableRowAccess().getElementsAssignment_1_1(), "rule__TableRow__ElementsAssignment_1_1");
 					put(grammarAccess.getTableClassifierAccess().getBooleanAssignment_0_0(), "rule__TableClassifier__BooleanAssignment_0_0");

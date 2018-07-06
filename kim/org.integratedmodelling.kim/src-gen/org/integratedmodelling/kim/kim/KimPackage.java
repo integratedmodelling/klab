@@ -782,13 +782,22 @@ public interface KimPackage extends EPackage
   int TABLE = 10;
 
   /**
+   * The feature id for the '<em><b>Headers</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE__HEADERS = 0;
+
+  /**
    * The feature id for the '<em><b>Rows</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TABLE__ROWS = 0;
+  int TABLE__ROWS = 1;
 
   /**
    * The number of structural features of the '<em>Table</em>' class.
@@ -797,7 +806,35 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int TABLE_FEATURE_COUNT = 1;
+  int TABLE_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.HeaderRowImpl <em>Header Row</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.HeaderRowImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getHeaderRow()
+   * @generated
+   */
+  int HEADER_ROW = 11;
+
+  /**
+   * The feature id for the '<em><b>Elements</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int HEADER_ROW__ELEMENTS = 0;
+
+  /**
+   * The number of structural features of the '<em>Header Row</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int HEADER_ROW_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.TableRowImpl <em>Table Row</em>}' class.
@@ -807,7 +844,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getTableRow()
    * @generated
    */
-  int TABLE_ROW = 11;
+  int TABLE_ROW = 12;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -835,7 +872,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getActionSpecification()
    * @generated
    */
-  int ACTION_SPECIFICATION = 12;
+  int ACTION_SPECIFICATION = 13;
 
   /**
    * The feature id for the '<em><b>Integrated</b></em>' attribute.
@@ -980,7 +1017,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getFunctionOrID()
    * @generated
    */
-  int FUNCTION_OR_ID = 13;
+  int FUNCTION_OR_ID = 14;
 
   /**
    * The feature id for the '<em><b>Function</b></em>' containment reference.
@@ -1017,7 +1054,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getAction()
    * @generated
    */
-  int ACTION = 14;
+  int ACTION = 15;
 
   /**
    * The feature id for the '<em><b>Change</b></em>' attribute.
@@ -1135,7 +1172,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValueAssignment()
    * @generated
    */
-  int VALUE_ASSIGNMENT = 15;
+  int VALUE_ASSIGNMENT = 16;
 
   /**
    * The feature id for the '<em><b>Target</b></em>' attribute.
@@ -1181,7 +1218,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getComputableValue()
    * @generated
    */
-  int COMPUTABLE_VALUE = 16;
+  int COMPUTABLE_VALUE = 17;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1272,7 +1309,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNamespace()
    * @generated
    */
-  int NAMESPACE = 17;
+  int NAMESPACE = 18;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1471,7 +1508,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getOwlImport()
    * @generated
    */
-  int OWL_IMPORT = 18;
+  int OWL_IMPORT = 19;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1508,7 +1545,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getImport()
    * @generated
    */
-  int IMPORT = 19;
+  int IMPORT = 20;
 
   /**
    * The feature id for the '<em><b>Imports</b></em>' containment reference.
@@ -1554,7 +1591,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getObserveStatement()
    * @generated
    */
-  int OBSERVE_STATEMENT = 20;
+  int OBSERVE_STATEMENT = 21;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1591,7 +1628,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getObserveStatementBody()
    * @generated
    */
-  int OBSERVE_STATEMENT_BODY = 21;
+  int OBSERVE_STATEMENT_BODY = 22;
 
   /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
@@ -1691,7 +1728,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getObservableSemantics()
    * @generated
    */
-  int OBSERVABLE_SEMANTICS = 22;
+  int OBSERVABLE_SEMANTICS = 23;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1827,7 +1864,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDependency()
    * @generated
    */
-  int DEPENDENCY = 23;
+  int DEPENDENCY = 24;
 
   /**
    * The feature id for the '<em><b>Model Reference</b></em>' attribute.
@@ -1864,7 +1901,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptDeclaration()
    * @generated
    */
-  int CONCEPT_DECLARATION = 24;
+  int CONCEPT_DECLARATION = 25;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2000,7 +2037,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptReference()
    * @generated
    */
-  int CONCEPT_REFERENCE = 25;
+  int CONCEPT_REFERENCE = 26;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2064,7 +2101,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConcept()
    * @generated
    */
-  int CONCEPT = 26;
+  int CONCEPT = 27;
 
   /**
    * The feature id for the '<em><b>Negated</b></em>' attribute.
@@ -2263,7 +2300,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUpperOntologyDefinition()
    * @generated
    */
-  int UPPER_ONTOLOGY_DEFINITION = 27;
+  int UPPER_ONTOLOGY_DEFINITION = 28;
 
   /**
    * The feature id for the '<em><b>Agent Specifier</b></em>' attribute.
@@ -2336,7 +2373,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptStatement()
    * @generated
    */
-  int CONCEPT_STATEMENT = 28;
+  int CONCEPT_STATEMENT = 29;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2436,7 +2473,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptStatementBody()
    * @generated
    */
-  int CONCEPT_STATEMENT_BODY = 29;
+  int CONCEPT_STATEMENT_BODY = 30;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2860,7 +2897,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getApplicableTarget()
    * @generated
    */
-  int APPLICABLE_TARGET = 30;
+  int APPLICABLE_TARGET = 31;
 
   /**
    * The feature id for the '<em><b>Target</b></em>' containment reference.
@@ -2906,7 +2943,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getIdentityRequirement()
    * @generated
    */
-  int IDENTITY_REQUIREMENT = 31;
+  int IDENTITY_REQUIREMENT = 32;
 
   /**
    * The feature id for the '<em><b>Identities</b></em>' containment reference list.
@@ -2943,7 +2980,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionStatement()
    * @generated
    */
-  int RESTRICTION_STATEMENT = 32;
+  int RESTRICTION_STATEMENT = 33;
 
   /**
    * The feature id for the '<em><b>Rel Type</b></em>' attribute.
@@ -3016,7 +3053,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionDefinition()
    * @generated
    */
-  int RESTRICTION_DEFINITION = 33;
+  int RESTRICTION_DEFINITION = 34;
 
   /**
    * The feature id for the '<em><b>Only</b></em>' attribute.
@@ -3152,7 +3189,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 34;
+  int ANNOTATION = 35;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3189,7 +3226,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getList()
    * @generated
    */
-  int LIST = 35;
+  int LIST = 36;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -3217,7 +3254,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 36;
+  int LITERAL = 37;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -3299,7 +3336,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocumentation()
    * @generated
    */
-  int DOCUMENTATION = 38;
+  int DOCUMENTATION = 39;
 
   /**
    * The number of structural features of the '<em>Documentation</em>' class.
@@ -3318,7 +3355,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMetadata()
    * @generated
    */
-  int METADATA = 37;
+  int METADATA = 38;
 
   /**
    * The feature id for the '<em><b>Ids</b></em>' attribute list.
@@ -3364,7 +3401,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMap()
    * @generated
    */
-  int MAP = 39;
+  int MAP = 40;
 
   /**
    * The feature id for the '<em><b>Entries</b></em>' containment reference list.
@@ -3392,7 +3429,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 40;
+  int MAP_ENTRY = 41;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -3429,7 +3466,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocSelector()
    * @generated
    */
-  int DOC_SELECTOR = 41;
+  int DOC_SELECTOR = 42;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3493,7 +3530,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 42;
+  int KEY_VALUE_PAIR = 43;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3539,7 +3576,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 43;
+  int PARAMETER_LIST = 44;
 
   /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
@@ -3576,7 +3613,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 44;
+  int VALUE = 45;
 
   /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
@@ -3676,7 +3713,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 45;
+  int FUNCTION = 46;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3713,7 +3750,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 46;
+  int UNIT_ELEMENT = 47;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3759,7 +3796,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 47;
+  int REL_OPERATOR = 48;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -3832,7 +3869,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 48;
+  int UNIT = 49;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -3878,7 +3915,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 49;
+  int CURRENCY = 50;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3924,7 +3961,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 50;
+  int NUMBER = 51;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -4006,7 +4043,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 51;
+  int DATA_TYPE = 52;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -4016,7 +4053,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 52;
+  int UNIT_OP = 53;
 
 
   /**
@@ -4768,6 +4805,17 @@ public interface KimPackage extends EPackage
   EClass getTable();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Table#getHeaders <em>Headers</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Headers</em>'.
+   * @see org.integratedmodelling.kim.kim.Table#getHeaders()
+   * @see #getTable()
+   * @generated
+   */
+  EReference getTable_Headers();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Table#getRows <em>Rows</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4777,6 +4825,27 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getTable_Rows();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.HeaderRow <em>Header Row</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Header Row</em>'.
+   * @see org.integratedmodelling.kim.kim.HeaderRow
+   * @generated
+   */
+  EClass getHeaderRow();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.HeaderRow#getElements <em>Elements</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Elements</em>'.
+   * @see org.integratedmodelling.kim.kim.HeaderRow#getElements()
+   * @see #getHeaderRow()
+   * @generated
+   */
+  EAttribute getHeaderRow_Elements();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.TableRow <em>Table Row</em>}'.
@@ -8777,12 +8846,38 @@ public interface KimPackage extends EPackage
     EClass TABLE = eINSTANCE.getTable();
 
     /**
+     * The meta object literal for the '<em><b>Headers</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TABLE__HEADERS = eINSTANCE.getTable_Headers();
+
+    /**
      * The meta object literal for the '<em><b>Rows</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference TABLE__ROWS = eINSTANCE.getTable_Rows();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.HeaderRowImpl <em>Header Row</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.HeaderRowImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getHeaderRow()
+     * @generated
+     */
+    EClass HEADER_ROW = eINSTANCE.getHeaderRow();
+
+    /**
+     * The meta object literal for the '<em><b>Elements</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute HEADER_ROW__ELEMENTS = eINSTANCE.getHeaderRow_Elements();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.TableRowImpl <em>Table Row</em>}' class.

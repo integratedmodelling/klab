@@ -103,7 +103,7 @@ public class ColorScheme {
 		
 		int mapIndex = 0;
 		if (expression != null) {
-			// TODO
+			// TODO - compute the mapIndex passing the state and the locator
 		}
 		
 		if (getNumberColors().size() > 0) {

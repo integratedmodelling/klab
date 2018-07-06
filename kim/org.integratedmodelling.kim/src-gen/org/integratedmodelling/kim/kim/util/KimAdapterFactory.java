@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
+import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KeyValuePair;
@@ -180,6 +181,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseTable(Table object)
       {
         return createTableAdapter();
+      }
+      @Override
+      public Adapter caseHeaderRow(HeaderRow object)
+      {
+        return createHeaderRowAdapter();
       }
       @Override
       public Adapter caseTableRow(TableRow object)
@@ -564,6 +570,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createTableAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.HeaderRow <em>Header Row</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.HeaderRow
+   * @generated
+   */
+  public Adapter createHeaderRowAdapter()
   {
     return null;
   }

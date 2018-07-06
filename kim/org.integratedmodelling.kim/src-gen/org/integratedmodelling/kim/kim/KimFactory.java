@@ -124,6 +124,15 @@ public interface KimFactory extends EFactory
   Table createTable();
 
   /**
+   * Returns a new object of class '<em>Header Row</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Header Row</em>'.
+   * @generated
+   */
+  HeaderRow createHeaderRow();
+
+  /**
    * Returns a new object of class '<em>Table Row</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

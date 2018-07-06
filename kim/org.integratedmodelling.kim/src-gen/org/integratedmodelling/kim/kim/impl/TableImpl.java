@@ -6,6 +6,7 @@ package org.integratedmodelling.kim.kim.impl;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
@@ -13,11 +14,13 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -30,6 +33,7 @@ import org.integratedmodelling.kim.kim.TableRow;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getHeaders <em>Headers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getRows <em>Rows</em>}</li>
  * </ul>
  *
@@ -37,6 +41,16 @@ import org.integratedmodelling.kim.kim.TableRow;
  */
 public class TableImpl extends MinimalEObjectImpl.Container implements Table
 {
+  /**
+   * The cached value of the '{@link #getHeaders() <em>Headers</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getHeaders()
+   * @generated
+   * @ordered
+   */
+  protected HeaderRow headers;
+
   /**
    * The cached value of the '{@link #getRows() <em>Rows</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -73,6 +87,54 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
    * <!-- end-user-doc -->
    * @generated
    */
+  public HeaderRow getHeaders()
+  {
+    return headers;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetHeaders(HeaderRow newHeaders, NotificationChain msgs)
+  {
+    HeaderRow oldHeaders = headers;
+    headers = newHeaders;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.TABLE__HEADERS, oldHeaders, newHeaders);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setHeaders(HeaderRow newHeaders)
+  {
+    if (newHeaders != headers)
+    {
+      NotificationChain msgs = null;
+      if (headers != null)
+        msgs = ((InternalEObject)headers).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.TABLE__HEADERS, null, msgs);
+      if (newHeaders != null)
+        msgs = ((InternalEObject)newHeaders).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.TABLE__HEADERS, null, msgs);
+      msgs = basicSetHeaders(newHeaders, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.TABLE__HEADERS, newHeaders, newHeaders));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<TableRow> getRows()
   {
     if (rows == null)
@@ -92,6 +154,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
+      case KimPackage.TABLE__HEADERS:
+        return basicSetHeaders(null, msgs);
       case KimPackage.TABLE__ROWS:
         return ((InternalEList<?>)getRows()).basicRemove(otherEnd, msgs);
     }
@@ -108,6 +172,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
+      case KimPackage.TABLE__HEADERS:
+        return getHeaders();
       case KimPackage.TABLE__ROWS:
         return getRows();
     }
@@ -125,6 +191,9 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
+      case KimPackage.TABLE__HEADERS:
+        setHeaders((HeaderRow)newValue);
+        return;
       case KimPackage.TABLE__ROWS:
         getRows().clear();
         getRows().addAll((Collection<? extends TableRow>)newValue);
@@ -143,6 +212,9 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
+      case KimPackage.TABLE__HEADERS:
+        setHeaders((HeaderRow)null);
+        return;
       case KimPackage.TABLE__ROWS:
         getRows().clear();
         return;
@@ -160,6 +232,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
   {
     switch (featureID)
     {
+      case KimPackage.TABLE__HEADERS:
+        return headers != null;
       case KimPackage.TABLE__ROWS:
         return rows != null && !rows.isEmpty();
     }
