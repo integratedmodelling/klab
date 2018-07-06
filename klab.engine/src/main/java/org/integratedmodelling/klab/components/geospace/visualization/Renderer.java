@@ -155,7 +155,7 @@ public enum Renderer {
 					if (colorSchemata.containsKey(name)) {
 						
 						ColorScheme scheme = colorSchemata.get(name);
-						Triple<double[], Color[], String[]> result = scheme.computeScheme(state);
+						Triple<double[], Color[], String[]> result = scheme.computeScheme(state, locator);
 
 						values = result.getFirst();
 						colors = result.getSecond();

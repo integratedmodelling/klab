@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.Triple;
 
 /**
@@ -29,7 +32,6 @@ public class ColorScheme {
 	private List<Map<String, List<Integer>>> numberColors = new ArrayList<>();
 	private List<Map<String, List<Integer>>> categoryColors = new ArrayList<>();
 	private boolean relative;
-	private boolean continuous;
 
 	public String getExpression() {
 		return expression;
@@ -78,22 +80,14 @@ public class ColorScheme {
 	public void setCategoryColors(List<Map<String, List<Integer>>> categoryColors) {
 		this.categoryColors = categoryColors;
 	}
-
-	public boolean isContinuous() {
-		return continuous;
-	}
-
-	public void setContinuous(boolean continuous) {
-		this.continuous = continuous;
-	}
-
+	
 	/**
 	 * Compute values, colors and labels for the passed state.
 	 *  
 	 * @param state
 	 * @return
 	 */
-	public Triple<double[], Color[], String[]> computeScheme(IState state) {
+	public Triple<double[], Color[], String[]> computeScheme(IState state, ILocator locator) {
 
 		Triple<double[], Color[], String[]> ret = null;
 		
@@ -128,17 +122,18 @@ public class ColorScheme {
 			String[] labels = new String[map.size()];
 			int i = 0;
 			
+			StateSummary summary = relative ? Observations.INSTANCE.getStateSummary(state, locator) : null;
+			
 			for (String key : map.keySet()) {
 				List<Integer> rgb = map.get(key);
 				double value = Double.parseDouble(key);
 				
 				if (relative) {
-					// TODO!
-				}
-				
-				if (unitFrom != null && !unitFrom.equals(unitTo)) {
+					value = summary.getRange().get(0) + (value * (summary.getRange().get(1) - summary.getRange().get(0)));
+				} else if (unitFrom != null && !unitFrom.equals(unitTo)) {
 					value = unitTo.convert(value, unitFrom).doubleValue();
 				}
+				
 				values[i] = value;
 				colors[i] = new Color(rgb.get(0), rgb.get(1), rgb.get(2));
 				labels[i] = key;
