@@ -7,19 +7,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public abstract class AbstractFilesetImporter implements IResourceImporter {
 
 	private String[] recognizedExtensions;
-	private File directory;
-	private File archiveFile;
 
 	/**
 	 * Try to import the passed file, which matches one of the {@link #recognizedExtensions}. If successful,
@@ -27,39 +24,33 @@ public abstract class AbstractFilesetImporter implements IResourceImporter {
 	 * 
 	 * @param file
 	 * @param userData
+	 * @param monitor
 	 * @return a builder for the resource or null.
 	 */
-	protected abstract Builder importFile(File file, IParameters<String> userData);
+	protected abstract Builder importFile(File file, IParameters<String> userData, IMonitor monitor);
 	
-	protected AbstractFilesetImporter(File directoryOrArchive, String[] recognizedExtensions) {
+	protected AbstractFilesetImporter(String[] recognizedExtensions) {
 		this.recognizedExtensions = recognizedExtensions;
-		if (directoryOrArchive.exists()) {
-			if (directoryOrArchive.isDirectory()) {
-				this.directory = directoryOrArchive;
-			} else {
-				throw new KlabUnimplementedException("importing from archive is still unimplemented");
-			}
-		}
 	}
 
 	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData) {
+	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
 		List<Builder> ret = new ArrayList<>();
-		if (this.directory != null) {
-			scanDirectory(this.directory, userData, ret);
+		File file = getFile(importLocation);
+		if (file != null && file.isDirectory()) {
+			scanDirectory(file, userData, ret, monitor);
 		}
 		return ret;
 	}
 
-	private void scanDirectory(File directory, IParameters<String> userData, List<Builder> ret) {
-		
+	private void scanDirectory(File directory, IParameters<String> userData, List<Builder> ret, IMonitor monitor) {
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
-				scanDirectory(file, userData, ret);
+				scanDirectory(file, userData, ret, monitor);
 			} else if (file.canRead()) {
 				for (String s : recognizedExtensions) {
 					if (MiscUtilities.getFileExtension(file).equals(s)) {
-						Builder builder = importFile(file, userData);
+						Builder builder = importFile(file, userData, monitor);
 						if (builder != null) {
 							ret.add(builder);
 						}
@@ -68,31 +59,35 @@ public abstract class AbstractFilesetImporter implements IResourceImporter {
 			}
 		}
 	}
-
-	@Override
-	public boolean canHandle(String importLocation, IParameters<String> userData) {
+	
+	public File getFile(String importLocation) {
 
 		File file = null;
 		if (importLocation.startsWith("file:")) {
 			try {
 				file = new File(new URL(importLocation).getFile());
 			} catch (MalformedURLException e) {
-				return false;
+				return null;
 			}
 		} else {
 			file = Klab.INSTANCE.resolveFile(importLocation);
 			if (file == null || !file.exists()) {
-				return false;
+				return null;
 			}
 			if (file.exists()) {
 				if (file.isDirectory()) {
-					return true;
+					return file;
 				} else {
 					// TODO check for archive file
 				}
 			}
 		}
-		return false;
+		return file;
+	}
+
+	@Override
+	public boolean canHandle(String importLocation, IParameters<String> userData) {
+		return getFile(importLocation) != null;
 	}
 
 }

@@ -105,8 +105,8 @@ public enum Renderer {
 					screenSize, w2s);
 			RasterSymbolizer rasterSymbolizer = getRasterSymbolizer(state, locator);
 
-			Rectangle imageBounds = new Rectangle(viewport[0], viewport[1]);
-			BufferedImage image = new BufferedImage(viewport[0], viewport[1], BufferedImage.TYPE_INT_ARGB);
+			Rectangle imageBounds = new Rectangle(imagesize[0], imagesize[1]);
+			BufferedImage image = new BufferedImage(imagesize[0], imagesize[1], BufferedImage.TYPE_INT_ARGB);
 		    Graphics2D gr = image.createGraphics();
 		    gr.setPaint(new Color(0f, 0f, 0f, 0f));
 		    gr.fill(imageBounds);

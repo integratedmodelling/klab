@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.raster.wcs.WCSService;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
+import org.integratedmodelling.klab.raster.wcs.WcsImporter;
 import org.integratedmodelling.klab.raster.wcs.WcsPublisher;
 import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 
@@ -102,7 +103,6 @@ public class WcsAdapter implements IResourceAdapter {
 
 	@Override
 	public IResourceImporter getImporter() {
-		// TODO Auto-generated method stub
-		return null;
+		return new WcsImporter();
 	}
 }

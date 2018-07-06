@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
+import org.integratedmodelling.klab.ogc.vector.files.VectorImporter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorPublisher;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 
@@ -70,8 +71,7 @@ public class VectorAdapter implements IResourceAdapter {
 
 	@Override
 	public IResourceImporter getImporter() {
-		// TODO Auto-generated method stub
-		return null;
+		return new VectorImporter();
 	}
 
 }

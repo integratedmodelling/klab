@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.integratedmodelling.klab.raster.files.RasterImporter;
 import org.integratedmodelling.klab.raster.files.RasterPublisher;
 import org.integratedmodelling.klab.raster.files.RasterValidator;
 
@@ -90,8 +91,7 @@ public class RasterAdapter implements IResourceAdapter {
 
 	@Override
 	public IResourceImporter getImporter() {
-		// TODO Auto-generated method stub
-		return null;
+		return new RasterImporter();
 	}
 
 }

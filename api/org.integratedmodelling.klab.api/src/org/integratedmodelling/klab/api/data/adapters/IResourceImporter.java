@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public interface IResourceImporter {
 
@@ -14,9 +15,11 @@ public interface IResourceImporter {
 	 * 
 	 * @param importLocation
 	 * @param userData
+	 * @param monitor 
 	 * @return builders for all found resources, possibly with errors.
 	 */
-	Collection<IResource.Builder> importResources(String importLocation, IParameters<String> userData);
+	Collection<IResource.Builder> importResources(String importLocation, IParameters<String> userData,
+			IMonitor monitor);
 
 	/**
 	 * Check if the passed location (file, URL or whatever) can be handled. In this

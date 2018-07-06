@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
 
@@ -44,7 +45,7 @@ public class List implements ICommand {
 			if (resource == null) {
 				ret += " Error retrieving resource!";
 			} else {
-				ret += "\n   " + StringUtils.leftIndent(JsonUtils.printAsJson(resource), 3);
+				ret += "\n   " + StringUtils.leftIndent(JsonUtils.printAsJson(((Resource)resource).getReference()), 3);
 			}
 		}
 		return ret;
