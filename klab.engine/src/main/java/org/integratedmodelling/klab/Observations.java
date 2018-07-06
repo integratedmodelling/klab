@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -233,9 +234,11 @@ public enum Observations implements IObservationService {
 		
 		if (object instanceof IConcept) {
 			object = Concepts.INSTANCE.getDisplayName((IConcept)object);
+		} else if (object instanceof Number) {
+			object = NumberFormat.getNumberInstance().format(((Number)object).doubleValue());
 		}
 
-		String ret = "" + object;
+		String ret = observable.getLocalName() + ": " + object;
 		
 		if (observable.getUnit() != null) {
 			ret += " " + observable.getUnit();
