@@ -32,6 +32,7 @@ public class HashedWheelTimer implements ScheduledExecutorService {
 	public static final int DEFAULT_WHEEL_SIZE = 512;
 	protected static final String DEFAULT_TIMER_NAME = "hashed-wheel-timer";
 
+	// TODO make this a graph to handle internal dependencies
 	private final Set<Registration<?>>[] wheel;
 	private final int wheelSize;
 	private final long resolution;
