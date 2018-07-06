@@ -36,21 +36,23 @@ public class Run implements ICommand {
 			} else {
 				String ret = "";
 				for (int i = 1; i < arguments.size(); i++) {
-					
+
 					String arg = arguments.get(i).toString();
-					
+
 					if (!arg.endsWith(".kim")) {
 						arg += ".kim";
 					}
-					
+
 					URL url = getClass().getClassLoader().getResource("kim.demos/" + arg);
-					
+
 					if (call.getParameters().get("visualize", false)) {
 						System.setProperty("visualize", "true");
 						System.setProperty("waitForKey", "false");
 					}
-					
-					ret += (ret.isEmpty() ? "" : "\n") + url + " -> " + session.run(url).get();
+
+					String uname = MiscUtilities.getURLBaseName(url.toString());
+					ret += (ret.isEmpty() ? "" : "\n") + "[S " + session.getId() + "] " + uname + " -> "
+							+ session.run(url).get();
 
 					if (call.getParameters().get("visualize", false)) {
 						System.clearProperty("waitForKey");
@@ -87,7 +89,8 @@ public class Run implements ICommand {
 					System.setProperty("visualize", "true");
 				}
 
-				ret += url + " -> " + session.run(url).get();
+				String uname = MiscUtilities.getURLBaseName(url.toString());
+				ret += "[S " + session.getId() + "] " + uname + " -> " + session.run(url).get();
 
 				if (call.getParameters().get("visualize", false)) {
 					System.clearProperty("waitForKey");
