@@ -176,12 +176,12 @@ public class CommandProcessor extends org.integratedmodelling.klab.clitool.contr
 	}
 
 	private Object execute(IServiceCall command, String pack) throws Exception {
-		
+
 		if (CliRuntime.INSTANCE.getSession() == null) {
 			terminal.error("Please wait until a session is established.");
 			return null;
 		}
-		
+
 		Prototype prototype = getPackage(pack).get(command.getName());
 		if (prototype == null || prototype.getExecutorClass() == null
 				|| !ICommand.class.isAssignableFrom(prototype.getExecutorClass())) {

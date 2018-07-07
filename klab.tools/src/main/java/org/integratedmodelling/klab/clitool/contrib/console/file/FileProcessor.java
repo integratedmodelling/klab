@@ -30,126 +30,128 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/** 
+/**
  * Receives a file path and then reads the contents of the file into the proper
  * format and returns the Object back to the caller. This is a static class and
  * should not be instantiated.
+ * 
  * @author Brandon E Buck
  * @version 1.0
  */
 public class FileProcessor {
-    /** 
-     * This method creates a File Object from the given path and then returns
-     * the String that is read by <code>redText(File)</code>.
-     * @param filePath The Absolute or Relative path to the File.
-     * @return The String contents contained within the File.
-     * @throws FileNotFoundException
-     */
-    public static String readText(String filePath) throws FileNotFoundException {
-        return readText(new File(filePath));
-    }
+	/**
+	 * This method creates a File Object from the given path and then returns the
+	 * String that is read by <code>redText(File)</code>.
+	 * 
+	 * @param filePath
+	 *            The Absolute or Relative path to the File.
+	 * @return The String contents contained within the File.
+	 * @throws FileNotFoundException
+	 */
+	public static String readText(String filePath) throws FileNotFoundException {
+		return readText(new File(filePath));
+	}
 
-    /** 
-     * This method will read plain text files and return the contents as a
-     * String value, if the file exists. This method will separate each line
-     * with a "\n\r" as the DragonConsole ignores the character '\r' but this
-     * can still be a useful line separator.
-     * @param file The File that needs to be read.
-     * @return The String contents of the File given.
-     * @throws FileNotFoundException
-     */
-    public static String readText(File file) throws FileNotFoundException {
-        String contents = "";
+	/**
+	 * This method will read plain text files and return the contents as a String
+	 * value, if the file exists. This method will separate each line with a "\n\r"
+	 * as the DragonConsole ignores the character '\r' but this can still be a
+	 * useful line separator.
+	 * 
+	 * @param file
+	 *            The File that needs to be read.
+	 * @return The String contents of the File given.
+	 * @throws FileNotFoundException
+	 */
+	public static String readText(File file) throws FileNotFoundException {
+		String contents = "";
 
-        if (file.exists()) {
-            try {
-                FileReader fread = new FileReader(file);
-                BufferedReader in = new BufferedReader(fread);
+		if (file.exists()) {
+			try {
+				FileReader fread = new FileReader(file);
+				BufferedReader in = new BufferedReader(fread);
 
-                String line = in.readLine();
-                while (line != null) {
-                    contents += line + "\n";
-                    line = in.readLine();
-                }
+				String line = in.readLine();
+				while (line != null) {
+					contents += line + "\n";
+					line = in.readLine();
+				}
 
-                in.close();
-                fread.close();
+				in.close();
+				fread.close();
 
-            } catch(Exception exc) {
-                javax.swing.JOptionPane.showMessageDialog(null,
-                        "Error #0008\n"
-                      + "Failed to read the given File.\n"
-                      + exc.getMessage(),
-                      "Error Caught", javax.swing.JOptionPane.ERROR_MESSAGE);
-            }
+			} catch (Exception exc) {
+				javax.swing.JOptionPane.showMessageDialog(null,
+						"Error #0008\n" + "Failed to read the given File.\n" + exc.getMessage(), "Error Caught",
+						javax.swing.JOptionPane.ERROR_MESSAGE);
+			}
 
-        } else
-            throw new FileNotFoundException("Invalid File Path provided (" + file.getName() + ").");
+		} else
+			throw new FileNotFoundException("Invalid File Path provided (" + file.getName() + ").");
 
-        return contents;
-    }
+		return contents;
+	}
 
-    /** 
-     * This method will read a plain text file in the
-     * "/com/eleet/dragonconsole/resources/" package in the JAR and return its
-     * contents as a String. All files in this directory are help files of
-     * some kind written for the developer using DragonConsole (not the user)
-     * and the License for this Project as well as the License for the Font.
-     * @param file The File in the resources folder in the JAR to read.
-     * @return The String contents of the File with the given name.
-     */
-    public static String readDCResource(String file) {
-        String contents = "";
-        
-        try {
-            InputStream is = FileProcessor.class.getResourceAsStream("/com/eleet/dragonconsole/resources/" + file);
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader in = new BufferedReader(isr);
+	/**
+	 * This method will read a plain text file in the
+	 * "/com/eleet/dragonconsole/resources/" package in the JAR and return its
+	 * contents as a String. All files in this directory are help files of some kind
+	 * written for the developer using DragonConsole (not the user) and the License
+	 * for this Project as well as the License for the Font.
+	 * 
+	 * @param file
+	 *            The File in the resources folder in the JAR to read.
+	 * @return The String contents of the File with the given name.
+	 */
+	public static String readDCResource(String file) {
+		String contents = "";
 
-            String line = in.readLine();
-            while (line != null) {
-                contents += line + "\n";
-                line = in.readLine();
-            }
+		try {
+			InputStream is = FileProcessor.class.getResourceAsStream("/com/eleet/dragonconsole/resources/" + file);
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader in = new BufferedReader(isr);
 
-            in.close();
-            isr.close();
-            is.close();
+			String line = in.readLine();
+			while (line != null) {
+				contents += line + "\n";
+				line = in.readLine();
+			}
 
-        } catch(Exception exc) {
-            javax.swing.JOptionPane.showMessageDialog(null,
-                    "Error #0009\n"
-                  + "Failed to read the file from the jar!\n"
-                  + exc.getMessage(),
-                  "Error Caught", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
+			in.close();
+			isr.close();
+			is.close();
 
-        return contents;
-    }
+		} catch (Exception exc) {
+			javax.swing.JOptionPane.showMessageDialog(null,
+					"Error #0009\n" + "Failed to read the file from the jar!\n" + exc.getMessage(), "Error Caught",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
 
-    /** 
-     * This method will create an InputStream used to load the Font file
-     * stored in the JAR in as a Font object for use with DragonConsole.
-     * @return Font Object created from the Font file in the JAR.
-     */
-    public static Font getConsoleFont() {
-        Font consoleFont = null;
+		return contents;
+	}
 
-        try {
-            InputStream is = FileProcessor.class.getResourceAsStream("/com/eleet/dragonconsole/font/dvsm.ttf");
+	/**
+	 * This method will create an InputStream used to load the Font file stored in
+	 * the JAR in as a Font object for use with DragonConsole.
+	 * 
+	 * @return Font Object created from the Font file in the JAR.
+	 */
+	public static Font getConsoleFont() {
+		Font consoleFont = null;
 
-            consoleFont = Font.createFont(Font.PLAIN, is);
+		try {
+			InputStream is = FileProcessor.class.getResourceAsStream("/com/eleet/dragonconsole/font/dvsm.ttf");
 
-            is.close();
+			consoleFont = Font.createFont(Font.PLAIN, is);
 
-        } catch(Exception exc) {
-            javax.swing.JOptionPane.showMessageDialog(null,
-                    "Error #0010\n"
-                  + "Failed to load the font file from the jar!\n"
-                  + exc.getMessage(),
-                  "Error Caught", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
+			is.close();
 
-        return consoleFont;
-    }
+		} catch (Exception exc) {
+			javax.swing.JOptionPane.showMessageDialog(null,
+					"Error #0010\n" + "Failed to load the font file from the jar!\n" + exc.getMessage(), "Error Caught",
+					javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+
+		return consoleFont;
+	}
 }

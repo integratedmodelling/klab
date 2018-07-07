@@ -24,18 +24,19 @@ package org.integratedmodelling.klab.clitool.console;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus;
-import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.api.IConsole;
+import org.integratedmodelling.klab.clitool.contrib.console.DragonConsole.SearchHandler;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsoleFrame;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 
 public class TermConsole implements IConsole {
@@ -121,6 +122,47 @@ public class TermConsole implements IConsole {
 					terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
 					terminal.setVisible(true);
 					terminal.console.setPrompt(">> ");
+					terminal.console.setSearchHandler(new SearchHandler() {
+						
+						String current = "";
+						
+						@Override
+						public void initializeSearch() {
+							System.out.println("ENTERING SEARCH MODE");
+						}
+						
+						@Override
+						public void handleBackspace() {
+							current = current.isEmpty()? current : current.substring(0, current.length() -1);
+							System.out.println("BACK OFF TO " + current);
+						}
+						
+						@Override
+						public String getResultAndReset() {
+							String ret = current;
+							current = "";
+							System.out.println("ACCEPTING " + ret);
+							return ret;
+							
+						}
+						
+						@Override
+						public String getResult() {
+							return current;
+						}
+						
+						@Override
+						public void cancelSearch() {
+							current = "";
+							System.out.println("CANCELING SEARCH MODE");
+						}
+						
+						@Override
+						public void addCharacter(char character) {
+							current += character;
+							System.out.println("CURRENT IS NOW " + current);
+						}
+					});
 
 					// redirect notifications to console
 					Logging.INSTANCE.setDebugWriter((message) -> debug(message));
@@ -190,7 +232,6 @@ public class TermConsole implements IConsole {
 		terminal.console.repaint();
 	}
 
-	
 	@Override
 	public void info(Object e, String infoClass) {
 

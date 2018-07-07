@@ -35,6 +35,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -51,6 +52,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Keymap;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
+
 import org.integratedmodelling.klab.clitool.api.Interactive;
 import org.integratedmodelling.klab.clitool.api.Interactive.CommandListener;
 import org.integratedmodelling.klab.clitool.console.CommandHistory;
@@ -130,9 +132,19 @@ import org.integratedmodelling.klab.clitool.contrib.console.util.TextColor.Inval
  * @version 3.0.0
  */
 public class DragonConsole extends JPanel implements KeyListener, CaretListener, AdjustmentListener {
+	
+	public interface SearchHandler {
+		void initializeSearch();
+		void cancelSearch();
+		void addCharacter(char character);
+		void handleBackspace();
+		String getResult();
+		String getResultAndReset();
+	}
 
 	volatile Boolean waitingForEnter = false;
 	String inputString = null;
+	SearchHandler searchHandler = null;
 
 	private static final long serialVersionUID = 2172989597124282699L;
 
@@ -430,6 +442,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 	private volatile String response;
 	private String endCommand;
 	private CommandListener commandListener;
+	private boolean inSearchMode;
 
 	/**
 	 * Default Constructor uses all the default values.
@@ -544,6 +557,10 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 		this.printDefaultMessage = printDefaultMessage;
 
 		this.initializeConsole();
+	}
+	
+	public void setSearchHandler(SearchHandler searchHandler) {
+		this.searchHandler = searchHandler;
 	}
 
 	/**
@@ -1717,6 +1734,23 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
+
+		if (inSearchMode) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				inSearchMode = false;
+				searchHandler.cancelSearch();
+				// TODO back to caret when search started
+			} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				inSearchMode = false;
+				// TODO back to beginning
+				append(searchHandler.getResultAndReset());
+			} else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+				searchHandler.handleBackspace();
+			} else if (e.getKeyChar() >= ' ' && e.getKeyChar() <= 'z') {
+				searchHandler.addCharacter(e.getKeyChar());
+			}
+		}
+
 		if (!useInlineInput) {
 			if (alwaysKeepScrollBarMaxed || (!alwaysKeepScrollBarMaxed && isScrollBarAtMax)) {
 				JScrollBar vBar = consoleScrollPane.getVerticalScrollBar();
@@ -1725,11 +1759,19 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 			}
 		}
 
+		if (searchHandler != null && e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) {
+			if (!inSearchMode) {
+				inSearchMode = true;
+				searchHandler.initializeSearch();
+			}
+		}
+
 		if (e.getKeyCode() == KeyEvent.VK_TAB) {
 			e.consume();
 		}
 
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
 			if (!ignoreInput) {
 				if (useInlineInput) {
 					e.consume();

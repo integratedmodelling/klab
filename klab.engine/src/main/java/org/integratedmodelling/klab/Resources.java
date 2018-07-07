@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.annotation.Nullable;
+
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
@@ -37,7 +39,6 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
-import org.integratedmodelling.klab.api.services.IResourceService.Importer;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
@@ -451,7 +452,22 @@ public enum Resources implements IResourceService {
 		// URN so it can be used for basic ops.
 		return null;
 	}
-	
+
+	/**
+	 * One-shot import of several resources from a URL. Uses all the importers that
+	 * declare they can handle the URL unless the adapter type is passed.
+	 * 
+	 * @param source a URL compatible with one or more adapter importers
+	 * @param project the destination project for the local resources built
+	 * @param adapterType
+	 *            optional, pass if needed to resolve ambiguities or prevent
+	 *            excessive calculations.
+	 * @return
+	 */
+	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType) {
+		return null;
+	}
+
 	/**
 	 * Easy programmatic access to resource importer.
 	 * 
@@ -464,13 +480,13 @@ public enum Resources implements IResourceService {
 		Importer importer = Resources.INSTANCE.createImporter(resourceUrl, project);
 		if (parameterKVPs != null) {
 			for (int i = 0; i < parameterKVPs.length; i++) {
-				importer.with(parameterKVPs[i].toString(), parameterKVPs[i+1]);
+				importer.with(parameterKVPs[i].toString(), parameterKVPs[i + 1]);
 				i++;
 			}
 		}
 		return importer.finish();
 	}
-	
+
 	/**
 	 * Extract the OWL assets in the classpath (under /knowledge/**) to the
 	 * specified filesystem directory.
