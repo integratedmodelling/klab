@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.rest;
 
+import org.integratedmodelling.klab.api.auth.ICertificate;
 
 public class NodeAuthenticationRequest {
     
@@ -7,15 +8,8 @@ public class NodeAuthenticationRequest {
     private String userKey;
     private String userType;
     private String certificate;
-    
-    public NodeAuthenticationRequest(String username, String userKey, String userType, String certificate) {
-        super();
-        this.username = username;
-        this.userKey = userKey;
-        this.userType = userType;
-        this.certificate = certificate;
-    }
-
+	private ICertificate.Level level = ICertificate.Level.USER;
+	
     public NodeAuthenticationRequest() {}
     
     public String getUsername() {
@@ -49,6 +43,14 @@ public class NodeAuthenticationRequest {
     public void setCertificate(String certificate) {
         this.certificate = certificate;
     }
+
+	public ICertificate.Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(ICertificate.Level level) {
+		this.level = level;
+	}
 
     @Override
     public int hashCode() {

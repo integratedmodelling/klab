@@ -9,12 +9,14 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.node.auth.NodeAuth;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -30,15 +32,15 @@ public class Node {
 	int port = IConfigurationService.DEFAULT_NODE_PORT;
 	private ConfigurableApplicationContext context;
 	private	String contextPath = "/node";
-
+	private IPartnerIdentity owner;
+	private ICertificate certificate;
+	
 	public Node(ICertificate certificate) {
-		// TODO Auto-generated constructor stub
+		this.certificate = certificate;
+		this.owner = NodeAuth.INSTANCE.authenticate(certificate);
+		// in engine: setRootIdentity(this.owner);
 	}
 	
-	public Node() {
-		
-	}
-
 	public String getLocalAddress() {
 		return "http://127.0.0.1:" + port + contextPath;
 	}
@@ -99,7 +101,7 @@ public class Node {
 		}
 		return true;
 	}
-
+	
 	public void stop() {
 
 //		// shutdown all components

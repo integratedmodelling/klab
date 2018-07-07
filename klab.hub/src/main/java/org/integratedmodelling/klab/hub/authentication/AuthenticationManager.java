@@ -5,16 +5,21 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.auth.Node;
+import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -29,14 +34,13 @@ public class AuthenticationManager {
 	 * Initial simple strategy, good for testing: find all the certificates in the
 	 * classpath and scan them, then index them by content and make them available.
 	 * 
-	 * TODO move this to test packages/dev configuration
-	 * 
-	 * TODO create proxying authenticator for legacy certificates
-	 * 
-	 * TODO use true auth for production
 	 */
 	private Map<String, KlabCertificate> engineCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
+	private Map<String, KlabCertificate> hubCertificates = new HashMap<>();
+
+	@Autowired
+	NetworkManager networkManager;
 
 	/*
 	 * for legacy authentication calls
@@ -49,10 +53,12 @@ public class AuthenticationManager {
 		for (String test : new Reflections(new ResourcesScanner()).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
 			if (certificate.isValid()) {
-				if (certificate.getProperty(KlabCertificate.KEY_CERTIFICATE).equals("NODE")) {
+				if (certificate.getType() == ICertificate.Type.NODE) {
 					nodeCertificates.put(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate);
-				} else {
+				} else if (certificate.getType() == ICertificate.Type.ENGINE) {
 					engineCertificates.put(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate);
+				} else if (certificate.getType() == ICertificate.Type.HUB) {
+					hubCertificates.put(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate);
 				}
 			}
 		}
@@ -65,9 +71,13 @@ public class AuthenticationManager {
 	 * @param cert
 	 * @return
 	 */
-	public IUserIdentity authenticatePreinstalledEngineCertificate(String cert) {
+	public IUserIdentity authenticatePreinstalledEngineCertificate(String cert, String ip) {
 		KlabCertificate certificate = engineCertificates.get(cert);
 		if (certificate != null) {
+			if (!IPUtils.isLocal(ip)) {
+				throw new KlabAuthorizationException(
+						"pre-installed engine certificates are only allowed on local connections");
+			}
 			EngineUser ret = new EngineUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), null);
 			ret.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_EMAIL));
 			return ret;
@@ -81,17 +91,18 @@ public class AuthenticationManager {
 	 * @param request
 	 * @return
 	 */
-	public IUserIdentity authenticateLegacyEngineCertificate(EngineAuthenticationRequest request) {
+	public IUserIdentity authenticateLegacyEngineCertificate(EngineAuthenticationRequest request, String ip) {
 
 		try {
 			HttpEntity<String> httpRequest = new HttpEntity<String>(request.getCertificate());
-			Map<?, ?> response = new RestTemplate().postForObject(LEGACY_AUTHENTICATION_SERVICE, httpRequest, Map.class);
+			Map<?, ?> response = new RestTemplate().postForObject(LEGACY_AUTHENTICATION_SERVICE, httpRequest,
+					Map.class);
 			if (response != null) {
 				Map<?, ?> profile = (Map<?, ?>) response.get("profile");
 				EngineUser ret = new EngineUser(response.get("username").toString(), null);
 				ret.setEmailAddress(profile.get("email").toString());
-				Logging.INSTANCE.info("authenticated user " + response.get("username")
-						+ " through legacy certificate service");
+				Logging.INSTANCE
+						.info("authenticated user " + response.get("username") + " through legacy certificate service");
 				return ret;
 			}
 		} catch (Throwable t) {
@@ -121,7 +132,7 @@ public class AuthenticationManager {
 			}
 			break;
 		case LEGACY:
-			return authenticateLegacyEngineCertificate(request);
+			return authenticateLegacyEngineCertificate(request, ip);
 		case USER:
 		case INSTITUTIONAL:
 			// TODO use JWT authentication
@@ -139,37 +150,32 @@ public class AuthenticationManager {
 	 * network manager, which installs monitors for the node and decides how to
 	 * offer the node to authorized engines.
 	 * 
+	 * @param request
+	 * 
 	 * @param cert
 	 * @return
 	 */
-	public INodeIdentity authenticateNodeCertificate(String cert) {
+	public INodeIdentity authenticateNodeCertificate(EngineAuthenticationRequest request, String ip) {
 
-		KlabCertificate certificate = nodeCertificates.get(cert);
+		INodeIdentity ret = null;
+		KlabCertificate certificate = nodeCertificates.get(request.getCertificate());
 		if (certificate != null) {
-
+			if (!IPUtils.isLocal(ip)) {
+				throw new KlabAuthorizationException(
+						"pre-installed node certificates are only allowed on local connections");
+			}
+			Partner partner = new Partner(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME)); // TODO
+			partner.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
+			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), partner);
+			networkManager.notifyAuthorizedNode(ret);
+			return ret;
 		}
-		throw new KlabAuthorizationException();
 
-		// TODO
-		// else if (KlabCertificate.CERTIFICATE_TYPE_NODE
-		// .equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
-		//
-		// /*
-		// * FIXME - this is obsolete and won't happen - left for future porting to node
-		// * codebase
-		// */
-		// Partner partner = new
-		// Partner(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME)); // TODO
-		// partner.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
-		//
-		// ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME),
-		// partner);
-		// /**
-		// * TODO add authenticated data
-		// */
-		// ((Node) ret).getUrls().add(certificate.getProperty(KlabCertificate.KEY_URL));
-		//
-		// }
+		/*
+		 * TODO proceed with regular authentication
+		 */
+
+		throw new KlabAuthorizationException();
 	}
 
 	/*
