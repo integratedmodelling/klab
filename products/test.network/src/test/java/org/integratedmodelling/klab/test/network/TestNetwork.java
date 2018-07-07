@@ -17,82 +17,85 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author ferdinando.villa
  *
  */
-public class TestNetwork {
+public enum TestNetwork {
 
-	static Map<String, Hub> hubs = new HashMap<>();
-	static Map<String, Node> nodes = new HashMap<>();
-	static Map<String, Engine> engines = new HashMap<>();
-	static boolean started = false;
+	INSTANCE;
+	
+	private Map<String, Hub> hubs = new HashMap<>();
+	private Map<String, Node> nodes = new HashMap<>();
+	private Map<String, Engine> engines = new HashMap<>();
+	private boolean started = false;
 
 	/**
 	 * Start a test network with one hub (on localhost:8284/klab) and one node (on
 	 * localhost:8287/node). The hub will authenticate anything (including an
 	 * anonymous certificate) and provide a network with the node in it.
 	 */
-	public static void start1h1n() {
+	public void start1h1n() {
 
 		if (started) {
 			throw new IllegalStateException("cannot start more than one configuration at the same time.");
 		}
 		started = true;
-
-//		Map<String, Object> hprops = new HashMap<>();
-//		hprops.put("server.port", "8284");
-//		hprops.put("server.servlet.contextPath", "/klab");
-//
-//		SpringApplication hub = new SpringApplicationBuilder(Hub.class)
-//				.properties("SOA.ControllerFactory.enforceProxyCreation=true").build();
-//		hub.setDefaultProperties(hprops);
-//		ConfigurableApplicationContext hcontext = hub.run();
-//
-//		Map<String, Object> nprops = new HashMap<>();
-//		nprops.put("server.port", "8287");
-//		nprops.put("server.servlet.contextPath", "/node");
-
-		hubs.put("hub", startHub(8284));
-
-//		SpringApplication node = new SpringApplicationBuilder(Node.class)
-//				.properties("SOA.ControllerFactory.enforceProxyCreation=true").build();
-//		node.setDefaultProperties(nprops);
-//		ConfigurableApplicationContext ncontext = node.run();
-
-		nodes.put("node", Node.start());
+		Hub hub = startHub(8284);
+		hubs.put("hub", hub);
+		nodes.put("node", startNode(hub, 8287));
 	}
 
-	public static Hub startHub(int port) {
+	/**
+	 * Start a hub on the passed port and return it.
+	 * 
+	 * @param port
+	 * @return the active hub
+	 */
+	public Hub startHub(int port) {
 		return Hub.start();
 	}
 
-	public static Node startNode(Hub hub, int port) {
+	/**
+	 * Start a node on the passed port authenticating with the passed hub.
+	 * 
+	 * @param hub
+	 * @param port
+	 * @return the active node
+	 */
+	public Node startNode(Hub hub, int port) {
 		return Node.start();
 	}
-	
-	public static Engine startEngine(Hub hub, int port) {
+
+	/**
+	 * Start an engine on the passed port authenticating with the passed hub.
+	 * 
+	 * @param hub
+	 * @param port
+	 * @return the active engine.
+	 */
+	public Engine startEngine(Hub hub, int port) {
 		return Engine.start();
 	}
-	
+
 	/**
 	 * Shut down whatever configuration was started.
 	 */
-	public static void shutdown() {
-		
+	public void shutdown() {
+
 		for (Engine engine : engines.values()) {
 			engine.stop();
 		}
-		
+
 		for (Node node : nodes.values()) {
 			node.stop();
 		}
-		
+
 		for (Hub hub : hubs.values()) {
 			hub.stop();
 		}
-		
+
 		nodes.clear();
 		hubs.clear();
 		started = false;
 	}
-	
+
 	/**
 	 * Run the desired configuration, defaulting at 1h1n.
 	 * 
@@ -105,11 +108,11 @@ public class TestNetwork {
 			configuration = args[0];
 		}
 		switch (configuration) {
-		case "1h1n": 
-			start1h1n(); 
+		case "1h1n":
+			INSTANCE.start1h1n();
 			break;
 		}
-		
+
 		while (true) {
 			Thread.sleep(1000);
 		}

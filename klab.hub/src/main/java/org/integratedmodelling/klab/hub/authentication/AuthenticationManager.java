@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.api.auth.ICertificate.Level;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -85,9 +86,10 @@ public class AuthenticationManager {
 	 * Authenticate a 0.10.0 certificate.
 	 * 
 	 * @param cert
+	 * @param level 
 	 * @return
 	 */
-	public IUserIdentity authenticateEngineCertificate(String cert) {
+	public IUserIdentity authenticateEngineCertificate(String cert, Level level) {
 		// TODO
 		return null;
 	}

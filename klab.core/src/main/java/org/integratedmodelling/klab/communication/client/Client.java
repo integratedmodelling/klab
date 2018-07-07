@@ -31,9 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.rest.AuthenticationRequest;
-import org.integratedmodelling.klab.rest.AuthenticationResponse;
-import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
@@ -41,6 +38,11 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
+import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
+import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -109,19 +111,31 @@ public class Client extends RestTemplate {
 	}
 
 	/**
-	 * Send an authentication request.
+	 * Send an authentication request to a hub for an engine.
 	 * 
 	 * @param url
 	 * @param request
 	 * @return the response. If not authenticated, throw a
 	 *         KlabAuthorizationException. If timeout, return null.
 	 */
-	public AuthenticationResponse authenticate(String url, AuthenticationRequest request) {
-		return post(url + API.HUB.AUTHENTICATE_ENGINE, request, AuthenticationResponse.class);
+	public EngineAuthenticationResponse authenticateEngine(String url, EngineAuthenticationRequest request) {
+		return post(url + API.HUB.AUTHENTICATE_ENGINE, request, EngineAuthenticationResponse.class);
 	}
 
 	/**
-	 * Check the engine's heartbeat.
+	 * Send an authentication request to a hub for a node.
+	 * 
+	 * @param url
+	 * @param request
+	 * @return the response. If not authenticated, throw a
+	 *         KlabAuthorizationException. If timeout, return null.
+	 */
+	public NodeAuthenticationResponse authenticateNode(String url, NodeAuthenticationRequest request) {
+		return post(url + API.HUB.AUTHENTICATE_NODE, request, NodeAuthenticationResponse.class);
+	}
+	
+	/**
+	 * Check an engine's heartbeat.
 	 * 
 	 * @param url
 	 *            base engine/node URL

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class AuthenticationResponse {
+public class NodeAuthenticationResponse {
     
     private AuthenticatedIdentity userData;
     private List<NodeReference> nodes = new ArrayList<>();
@@ -44,9 +44,9 @@ public class AuthenticationResponse {
         return result;
     }
     
-    public AuthenticationResponse() {}
+    public NodeAuthenticationResponse() {}
 
-    public AuthenticationResponse(AuthenticatedIdentity userData,
+    public NodeAuthenticationResponse(AuthenticatedIdentity userData,
             Collection<NodeReference> nodes,
             String authenticatingNodeId) {
         super();
@@ -63,7 +63,7 @@ public class AuthenticationResponse {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AuthenticationResponse other = (AuthenticationResponse) obj;
+        NodeAuthenticationResponse other = (NodeAuthenticationResponse) obj;
         if (authenticatingNodeId == null) {
             if (other.authenticatingNodeId != null)
                 return false;
@@ -84,7 +84,7 @@ public class AuthenticationResponse {
 
     @Override
     public String toString() {
-        return "AuthenticationResponse [userData=" + userData + ", nodes=" + nodes + ", authenticatingNodeId="
+        return "EngineAuthenticationResponse [userData=" + userData + ", nodes=" + nodes + ", authenticatingNodeId="
                 + authenticatingNodeId + "]";
     }
 }

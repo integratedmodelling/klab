@@ -6,22 +6,21 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class NetworkTests1h1n extends TestNetwork {
+public class NetworkTests1h1n {
 
 	static Engine engine;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-        EngineStartupOptions options = new EngineStartupOptions();
-        options.setCertificateResource("testengine.cert");
-		start1h1n();
+        EngineStartupOptions options = new EngineStartupOptions("-certResource", "testengine.cert");
+		TestNetwork.INSTANCE.start1h1n();
 		engine = Engine.start(options);
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		engine.stop();
-		shutdown();
+		TestNetwork.INSTANCE.shutdown();
 	}
 
 	@Test

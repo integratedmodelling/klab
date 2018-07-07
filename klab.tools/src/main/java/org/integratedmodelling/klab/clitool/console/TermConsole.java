@@ -185,6 +185,13 @@ public class TermConsole implements IConsole {
 	}
 
 	@Override
+	public void scream(Object e) {
+		terminal.console.append("&w-" + e + "\n");
+		terminal.console.repaint();
+	}
+
+	
+	@Override
 	public void info(Object e, String infoClass) {
 
 		if (e == null || terminal == null || terminal.console == null) {

@@ -1,14 +1,14 @@
 package org.integratedmodelling.klab.rest;
 
 
-public class AuthenticationRequest {
+public class NodeAuthenticationRequest {
     
     private String username;
     private String userKey;
     private String userType;
     private String certificate;
     
-    public AuthenticationRequest(String username, String userKey, String userType, String certificate) {
+    public NodeAuthenticationRequest(String username, String userKey, String userType, String certificate) {
         super();
         this.username = username;
         this.userKey = userKey;
@@ -16,7 +16,7 @@ public class AuthenticationRequest {
         this.certificate = certificate;
     }
 
-    public AuthenticationRequest() {}
+    public NodeAuthenticationRequest() {}
     
     public String getUsername() {
         return username;
@@ -69,7 +69,7 @@ public class AuthenticationRequest {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AuthenticationRequest other = (AuthenticationRequest) obj;
+        NodeAuthenticationRequest other = (NodeAuthenticationRequest) obj;
         if (certificate == null) {
             if (other.certificate != null)
                 return false;

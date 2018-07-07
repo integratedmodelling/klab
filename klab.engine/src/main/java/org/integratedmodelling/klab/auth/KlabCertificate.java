@@ -10,19 +10,15 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-import org.integratedmodelling.klab.Auth;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
-import org.integratedmodelling.klab.rest.AuthenticationResponse;
-import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.joda.time.DateTime;
@@ -38,7 +34,6 @@ import org.springframework.web.client.RestTemplate;
  */
 public class KlabCertificate implements ICertificate {
 
-
 	// just for info
 	public static final String KEY_EXPIRATION = "klab.validuntil";
 
@@ -53,9 +48,10 @@ public class KlabCertificate implements ICertificate {
 	private DateTime expiry;
 	private String worldview = DEFAULT_WORLDVIEW;
 	private Collection<String> worldview_repositories = StringUtils.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
-	private AuthenticationResponse authentication = null;
-//	private IIdentity identity = null;
-	private String certificateType = "UNKNOWN";
+	private EngineAuthenticationResponse authentication = null;
+	// private IIdentity identity = null;
+	private Type type = Type.ENGINE;
+	private Level level = Level.USER;
 
 	/**
 	 * Property key for username
@@ -161,7 +157,8 @@ public class KlabCertificate implements ICertificate {
 				return false;
 			}
 
-			this.certificateType = properties.getProperty(KEY_CERTIFICATE_TYPE, "UNKNOWN");
+			this.type = Type.valueOf(properties.getProperty(KEY_CERTIFICATE_TYPE));
+			this.level = Level.valueOf(properties.getProperty(KEY_CERTIFICATE_LEVEL, Level.USER.name()));
 
 			return true;
 		}
@@ -186,28 +183,33 @@ public class KlabCertificate implements ICertificate {
 				// reauthenticate and produce a new format certificate
 				RestTemplate restTemplate = new RestTemplate();
 				HttpEntity<String> request = new HttpEntity<String>(fileContent);
-				Map<?,?> response = restTemplate.postForObject(LEGACY_AUTHENTICATION_ENDPOINT, request, Map.class);
+				Map<?, ?> response = restTemplate.postForObject(LEGACY_AUTHENTICATION_ENDPOINT, request, Map.class);
+
 				if (response != null) {
-					
-					Map<?,?> profile = (Map<?, ?>) response.get("profile");
-					
-					Logging.INSTANCE.info("upgrading pre-0.10 certificate to new format: new certificate will be saved as klab.cert");
-					
+
+					Map<?, ?> profile = (Map<?, ?>) response.get("profile");
+
+					Logging.INSTANCE.info(
+							"upgrading pre-0.10 certificate to new format: new certificate will be saved as klab.cert");
+
 					this.properties = new Properties();
 					this.properties.setProperty(KEY_CERTIFICATE, fileContent);
 					this.properties.setProperty(KEY_EXPIRATION, response.get("expiration").toString());
-					this.properties.setProperty(KEY_CERTIFICATE_TYPE, this.certificateType = "USER");
 					this.properties.setProperty(KEY_USERNAME, response.get("username").toString());
 					this.properties.setProperty(KEY_EMAIL, profile.get("email").toString());
 					this.properties.setProperty(KEY_SIGNATURE, "legacy certificate");
 					this.properties.setProperty(KEY_PARTNER_NAME, "integratedmodelling.org");
 					this.properties.setProperty(KEY_PARTNER_EMAIL, "info@integratedmodelling.org");
 					this.properties.setProperty(KEY_NODENAME, "im");
+					this.properties.setProperty(KEY_CERTIFICATE_TYPE, Type.ENGINE.name());
+					this.properties.setProperty(KEY_CERTIFICATE_LEVEL, ICertificate.Level.LEGACY.name());
 
-					// TODO add these back afterwards. Not finding them will cause a local server to be used.
-					// this.properties.setProperty(KEY_SERVER, "https://integratedmodelling.org/klab");
+					// TODO add these back afterwards. Not finding them will cause a local server to
+					// be used.
+					// this.properties.setProperty(KEY_SERVER,
+					// "https://integratedmodelling.org/klab");
 					// this.properties.setProperty(KEY_URL, "https://integratedmodelling.org/klab");
-					
+
 					File out = new File(Configuration.INSTANCE.getDataPath() + File.separator + "klab.cert");
 					try (FileOutputStream o = new FileOutputStream(out)) {
 						this.properties.store(o, "Automatically upgraded on " + new Date());
@@ -221,9 +223,9 @@ public class KlabCertificate implements ICertificate {
 						cause = "certificate expired on " + expiry + ". Please obtain a new certificate.";
 						return false;
 					}
-					
+
 					return true;
-					
+
 				} else {
 					Logging.INSTANCE.error("legacy certificate could not be authenticated");
 				}
@@ -281,5 +283,15 @@ public class KlabCertificate implements ICertificate {
 	@Override
 	public String getProperty(String property) {
 		return properties == null ? null : properties.getProperty(property);
+	}
+
+	@Override
+	public Type getType() {
+		return type;
+	}
+
+	@Override
+	public Level getLevel() {
+		return level;
 	}
 }

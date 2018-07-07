@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.services.INetworkService;
-import org.integratedmodelling.klab.rest.AuthenticationResponse;
+import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 
 public enum Network implements INetworkService {
 
@@ -27,7 +27,7 @@ public enum Network implements INetworkService {
 	 * 
 	 * @param authentication
 	 */
-	public void buildNetwork(AuthenticationResponse authentication) {
+	public void buildNetwork(EngineAuthenticationResponse authentication) {
 		// TODO Auto-generated method stub
 
 	}

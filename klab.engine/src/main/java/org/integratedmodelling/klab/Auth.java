@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
@@ -18,9 +19,9 @@ import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Listener;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
-import org.integratedmodelling.klab.rest.AuthenticationRequest;
-import org.integratedmodelling.klab.rest.AuthenticationResponse;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
@@ -141,7 +142,7 @@ public enum Auth implements IAuthenticationService {
 	}
 
 	@Override
-	public IIdentity authenticate(ICertificate certificate) {
+	public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
 		IIdentity ret = null;
 
@@ -160,22 +161,24 @@ public enum Auth implements IAuthenticationService {
 		}
 
 		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME) + " with hub "
-				+ certificate.getProperty(KlabCertificate.KEY_SERVER));
+				+ authenticationServer);
 
 		/*
 		 * Authenticate with server(s). If authentication fails because of a 403,
 		 * invalidate the certificate. If no server can be reached, certificate is valid
 		 * but engine is offline.
 		 */
-		AuthenticationRequest request = new AuthenticationRequest(certificate.getProperty(KlabCertificate.KEY_USERNAME),
+		EngineAuthenticationRequest request = new EngineAuthenticationRequest(
+				certificate.getProperty(KlabCertificate.KEY_USERNAME),
 				certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
+				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE),
+				certificate.getLevel());
 
-		AuthenticationResponse authentication = null;
+		EngineAuthenticationResponse authentication = null;
 
 		try {
-			authentication = Client.create().authenticate(authenticationServer, request);
+			authentication = Client.create().authenticateEngine(authenticationServer, request);
 		} catch (Throwable e) {
 			Logging.INSTANCE.error("authentication failed for user "
 					+ certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
@@ -215,8 +218,7 @@ public enum Auth implements IAuthenticationService {
 		/*
 		 * build the identity
 		 */
-		if (KlabCertificate.CERTIFICATE_TYPE_USER
-				.equals(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE))) {
+		if (certificate.getType() == Type.ENGINE) {
 
 			// if we have connected, insert network session identity
 			if (authentication != null) {
@@ -247,8 +249,8 @@ public enum Auth implements IAuthenticationService {
 			((KlabUser) ret).setOnline(authentication != null);
 
 		} else {
-			throw new KlabUnsupportedFeatureException(
-					"cannot create identity of type " + certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
+			throw new KlabAuthorizationException(
+					"wrong certificate for an engine: cannot create identity of type " + certificate.getType());
 		}
 
 		Network.INSTANCE.buildNetwork(authentication);
@@ -257,6 +259,4 @@ public enum Auth implements IAuthenticationService {
 
 	}
 
-	
-	
 }

@@ -49,6 +49,10 @@ public class NodeStartupOptions implements INodeStartupOptions {
     public NodeStartupOptions() {
     }
 
+    public NodeStartupOptions(String... args) {
+    	initialize(args);
+    }
+
     @Override
     public String[] getArguments(String... additionalArguments) {
     	List<String> args = new ArrayList<>(this.arguments);

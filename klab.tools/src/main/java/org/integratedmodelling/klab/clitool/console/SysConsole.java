@@ -28,6 +28,11 @@ public class SysConsole implements IConsole {
 	public void echo(Object string) {
 		System.out.print(string);
 	}
+	
+	@Override
+	public void scream(Object string) {
+		System.out.print(string);
+	}
 
 	@Override
 	public void outputResult(String input, Object ret) {

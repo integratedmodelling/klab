@@ -34,16 +34,54 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
  */
 public interface ICertificate {
 
-    public static final String DEFAULT_CERTIFICATE_FILENAME = "klab.cert";
+	public static enum Level {
 
-    /*
-     * possible values for the certificate type, determining the type of
-     * authentication.
-     */
-    public static final String CERTIFICATE_TYPE_NODE = "NODE";
-    public static final String CERTIFICATE_TYPE_USER = "USER";
-    public static final String CERTIFICATE_TYPE_PARTNER = "PARTNER";
-    
+		/**
+		 * Anonymous certificate can only authenticate with a locally running hub.
+		 */
+		ANONYMOUS,
+		/**
+		 * Legacy certificate can only be user level
+		 */
+		LEGACY,
+		/**
+		 * Individual user owns the engine (default).
+		 */
+		USER,
+		/**
+		 * Institutional engine. Can be linked to security settings.
+		 */
+		INSTITUTIONAL
+	}
+
+	public static enum Type {
+		/**
+		 * This certificate authorizes an engine, at one of the levels defined by
+		 * {@link Level}.
+		 */
+		ENGINE,
+		/**
+		 * This certificate authorizes a node. The only allowed level is
+		 * {@link Level#INSTITUTIONAL}.
+		 */
+		NODE,
+		/**
+		 * This certificate authorizes a hub. The only allowed level is
+		 * {@link Level#INSTITUTIONAL}.
+		 */
+		HUB
+	}
+
+	public static final String DEFAULT_CERTIFICATE_FILENAME = "klab.cert";
+
+	/*
+	 * possible values for the certificate type, determining the type of
+	 * authentication.
+	 */
+	public static final String CERTIFICATE_TYPE_NODE = "NODE";
+	public static final String CERTIFICATE_TYPE_USER = "USER";
+	public static final String CERTIFICATE_TYPE_PARTNER = "PARTNER";
+
 	/*
 	 * Keys for user properties in certificates or for set operations.
 	 */
@@ -57,54 +95,60 @@ public interface ICertificate {
 	public static final String KEY_PARTNER_EMAIL = "klab.partner.email";
 	public static final String KEY_CERTIFICATE = "klab.certificate";
 	public static final String KEY_CERTIFICATE_TYPE = "klab.certificate.type";
+	public static final String KEY_CERTIFICATE_LEVEL = "klab.certificate.level";
 
-    /**
-     * Create the worldview workspace for this identity and return it (unloaded and
-     * not initialized).
-     *
-     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
-     *         object.
-     */
-    IWorldview getWorldview();
+	/**
+	 * Create the worldview workspace for this identity and return it (unloaded and
+	 * not initialized). Only a hub may return null, signaling that it will handle
+	 * nodes and engines committed to different worldviews.
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
+	 *         object. Can only be null in hub certificates.
+	 */
+	IWorldview getWorldview();
 
-//    /**
-//     * A certificate represents an identity - a partner, a partner node or a k.LAB user. The
-//     * identity returned will reflect the results of authentication: it may have no network
-//     * parent if the user is offline, for example. It should normally descend from a partner,
-//     * node, and network session; the anonymous certificate will return a lonely anonymous
-//     * user.
-//     * 
-//     * @return the {@link org.integratedmodelling.klab.api.auth.IIdentity} that owns this 
-//     * certificate. Never null.
-//     */
-//    IIdentity getIdentity();
+	/**
+	 * The type of this certificate.
+	 * 
+	 * @return the type
+	 */
+	Type getType();
 
-    /**
-     * Validity may depend on expiration date and possibly upstream conditions after
-     * authentication, such as having had a certificate invalidated by an
-     * administrator.
-     *
-     * If this returns true, the certificate exists, is readable and properly encrypted, and is
-     * current.
-     * 
-     * If this returns false, {@link #getInvalidityCause} will contain the reason why.
-     * 
-     * @return true if everything is OK.
-     */
-    boolean isValid();
+	/**
+	 * The level of this certificate. Will mandatorily return
+	 * {@link Level#INSTITUTIONAL} unless in an engine certificate.
+	 * 
+	 * @return the level
+	 */
+	Level getLevel();
 
-    /**
-     * Returns why {@link #isValid()} returned false. Undefined otherwise.
-     * 
-     * @return a description of the cause for invalidity
-     */
-    String getInvalidityCause();
-    
-    /**
-     * Return the named property on a valid certificate.
-     * 
-     * @param property
-     * @return the value of the property, or null.
-     */
-    String getProperty(String property);
+	/**
+	 * Validity may depend on expiration date and possibly upstream conditions after
+	 * authentication, such as having had a certificate invalidated by an
+	 * administrator.
+	 *
+	 * If this returns true, the certificate exists, is readable and properly
+	 * encrypted, and is current.
+	 * 
+	 * If this returns false, {@link #getInvalidityCause} will contain the reason
+	 * why.
+	 * 
+	 * @return true if everything is OK.
+	 */
+	boolean isValid();
+
+	/**
+	 * Returns why {@link #isValid()} returned false. Undefined otherwise.
+	 * 
+	 * @return a description of the cause for invalidity
+	 */
+	String getInvalidityCause();
+
+	/**
+	 * Return the named property on a valid certificate.
+	 * 
+	 * @param property
+	 * @return the value of the property, or null.
+	 */
+	String getProperty(String property);
 }

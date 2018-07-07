@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.services;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 
 /**
  * The {@link IAuthenticationService} provides API access to any identities that
@@ -44,7 +45,8 @@ public interface IAuthenticationService {
 	 * 
 	 * @param certificate
 	 * @return the authenticated identity
+	 * @throws KlabAuthorizationException if authorization is unsuccessful
 	 */
-	IIdentity authenticate(ICertificate certificate);
+	IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException;
 
 }

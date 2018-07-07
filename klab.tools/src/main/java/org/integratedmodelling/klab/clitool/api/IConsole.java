@@ -16,6 +16,8 @@ public interface IConsole extends Interactive {
 
     void echo(Object string);
 
+    void scream(Object string);
+
     void outputResult(String input, Object ret);
 
     void reportCommandResult(String input, boolean ok);

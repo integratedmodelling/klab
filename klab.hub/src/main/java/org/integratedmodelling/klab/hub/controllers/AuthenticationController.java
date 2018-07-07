@@ -4,12 +4,11 @@ import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
-import org.integratedmodelling.klab.rest.AuthenticationRequest;
-import org.integratedmodelling.klab.rest.AuthenticationResponse;
+import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.joda.time.DateTime;
@@ -33,9 +32,9 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = API.HUB.AUTHENTICATE_ENGINE, method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
+	public ResponseEntity<?> authenticate(@RequestBody EngineAuthenticationRequest request) {
 
-		IUserIdentity user = authenticationManager.authenticateEngineCertificate(request.getCertificate());
+		IUserIdentity user = authenticationManager.authenticateEngineCertificate(request.getCertificate(), request.getLevel());
 
 		if (user != null) {
 
@@ -57,8 +56,8 @@ public class AuthenticationController {
 			 * TODO if user is new, propagate to authenticated servers
 			 */
 
-			return new ResponseEntity<AuthenticationResponse>(
-					new AuthenticationResponse(authenticatedIdentity, networkManager.getNodes(user.getGroups()), ""),
+			return new ResponseEntity<EngineAuthenticationResponse>(
+					new EngineAuthenticationResponse(authenticatedIdentity, networkManager.getNodes(user.getGroups()), ""),
 					HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
