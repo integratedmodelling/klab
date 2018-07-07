@@ -13,18 +13,20 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.api.engine;
+package org.integratedmodelling.klab.api.node;
 
 import java.io.File;
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.engine.IStartupOptions;
+
 /**
- * The Interface IEngineStartupOptions.
+ * The Interface IHubStartupOptions.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IEngineStartupOptions extends IStartupOptions {
+public interface INodeStartupOptions extends IStartupOptions {
 
 	public static final String BANNER = "\r\n" + 
 			" ____     _      _               ____   ______   \r\n" + 
@@ -33,23 +35,15 @@ public interface IEngineStartupOptions extends IStartupOptions {
 			"   > > > | |/ / | |      / /\\ \\ |  _ <    > > > >\r\n" + 
 			"  / / /  |   < _| |____ / ____ \\| |_) |  / / / / \r\n" + 
 			" /_/_/   |_|\\_(_)______/_/    \\_\\____/  /_/_/_/  \r\n" + 
-			"                  (_)                            \r\n" + 
-			"   ___ _ __   __ _ _ _ __   ___                  \r\n" + 
-			"  / _ \\ '_ \\ / _` | | '_ \\ / _ \\                 \r\n" + 
-			" |  __/ | | | (_| | | | | |  __/                 \r\n" + 
-			"  \\___|_| |_|\\__, |_|_| |_|\\___|                 \r\n" + 
-			"              __/ |                              \r\n" + 
-			"             |___/                               \r\n" + 
+			"                 | |                             \r\n" + 
+			"  _ __   ___   __| | ___                         \r\n" + 
+			" | '_ \\ / _ \\ / _` |/ _ \\                        \r\n" + 
+			" | | | | (_) | (_| |  __/                        \r\n" + 
+			" |_| |_|\\___/ \\__,_|\\___|                        \r\n" + 
+			"                                                 \r\n" + 
+			"                                                 \r\n" + 
 			"";
 	
-    /**
-     * Tied to -workspace option, locates the local workspace which is monitored for changes and automatically
-     * reloaded as needed. If there is no option, the workspace is in ~/.klab/workspace and is not monitored.
-     *
-     * @return a {@link java.io.File} object.
-     */
-    File getWorkspaceLocation();
-
     /**
      * Tied to -certResource, allows the certificate to be read from the classpath rather than from a file. This should be checked before 
      * {@link #getCertificateFile()} is called. For self-contained embedded servers.
@@ -57,21 +51,6 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * @return the classpath resource with a certificate or null
      */
     String getCertificateResource();
-
-    /**
-     * Tied to <pre>-exit</pre> option, exits the engine after initializing and running any scripts passed on the
-     * command line. REST services are not started.
-     *
-     * @return a boolean.
-     */
-    boolean isExitAfterStartup();
-
-    /**
-     * Return a string description of the options.
-     *
-     * @return usage string
-     */
-    String usage();
 
     /**
      * Return the paths to the components, one by one (not a workspace). The default here is 

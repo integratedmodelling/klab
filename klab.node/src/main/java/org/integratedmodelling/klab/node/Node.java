@@ -1,23 +1,21 @@
 package org.integratedmodelling.klab.node;
 
-import java.util.Arrays;
+import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
-
-import org.integratedmodelling.klab.engine.EngineStartupOptions;
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Logo;
+import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.node.INodeStartupOptions;
+import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
+import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.event.ApplicationStartingEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * This will start a node at http://localhost:8287/node with the default
@@ -26,53 +24,123 @@ import org.springframework.web.client.RestTemplate;
  * @author ferdinando.villa
  * 
  */
-@Component
-@Singleton
-@EnableAutoConfiguration
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.controllers.base" })
-public class Node implements ApplicationListener<ApplicationStartingEvent> {
+public class Node {
 
 	private ConfigurableApplicationContext context;
-	
-//	@Autowired
-	
-	
-	// defaults
-	private static int port = 8287;
-	private static String contextPath = "/node";
+	private	String contextPath = "/node";
 
-	@Bean
-	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
+	public Node(ICertificate certificate) {
+		// TODO Auto-generated constructor stub
 	}
-
-	@Bean
-	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
-		return new RestTemplate(Arrays.asList(hmc));
+	
+	public Node() {
+		
 	}
 
 	public void run(String[] args) {
-		EngineStartupOptions options = new EngineStartupOptions();
+		NodeStartupOptions options = new NodeStartupOptions();
 		options.initialize(args);
-		Map<String, Object> props = new HashMap<>();
-		props.put("server.port", ""+port);
-		props.put("server.servlet.contextPath", contextPath);
-		SpringApplication app = new SpringApplication(Node.class);
-		app.setDefaultProperties(props);
-		this.context = app.run(options.getArguments());
 	}
 
-	@PreDestroy
-	public void shutdown() {
-		// TODO engine shutdown if needed
+	public static Node start() {
+		return start(new NodeStartupOptions());
+	}
+	
+	public static Node start(INodeStartupOptions options) {
+
+		ICertificate certificate = null;
+
+		if (System.getProperty("anonymous") != null) {
+			certificate = new AnonymousEngineCertificate();
+		} else {
+			if (options.getCertificateResource() != null) {
+				certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
+			} else {
+				File certFile = options.getCertificateFile();
+				certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
+						: KlabCertificate.createDefault();
+			}
+		}
+
+		if (!certificate.isValid()) {
+			throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
+		}
+		
+		Node ret = new Node(certificate);
+		
+		if (!ret.boot(options)) {
+			throw new KlabException("node failed to start");
+		}
+		
+		return ret;
 	}
 
-	public static void main(String args[]) {
-		new Node().run(args);
+	private boolean boot(INodeStartupOptions options) {
+		try {
+			Map<String, Object> props = new HashMap<>();
+			props.put("server.port", ""+options.getPort());
+			props.put("spring.main.banner-mode", "off");
+			props.put("server.servlet.contextPath", contextPath);
+			SpringApplication app = new SpringApplication(NodeApplication.class);
+			app.setDefaultProperties(props);
+			this.context = app.run(options.getArguments());
+			System.out.println("\n" + Logo.NODE_BANNER);
+			System.out.println("\nStartup successful: " + "k.LAB node server"  + " v" + Version.CURRENT + " on " + new Date());
+		} catch (Throwable e) {
+			Logging.INSTANCE.error(e);
+			return false;
+		}
+		return true;
 	}
 
-	@Override
-	public void onApplicationEvent(ApplicationStartingEvent arg0) {
+	public void stop() {
+
+//		// shutdown all components
+//		if (this.sessionClosingTask != null) {
+//			this.sessionClosingTask.cancel(true);
+//		}
+//
+//		// shutdown the task executor
+//		if (taskExecutor != null) {
+//			taskExecutor.shutdown();
+//			try {
+//				if (!taskExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+//					taskExecutor.shutdownNow();
+//				}
+//			} catch (InterruptedException e) {
+//				taskExecutor.shutdownNow();
+//			}
+//		}
+//
+//		// shutdown the script executor
+//		if (scriptExecutor != null) {
+//			scriptExecutor.shutdown();
+//			try {
+//				if (!scriptExecutor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+//					scriptExecutor.shutdownNow();
+//				}
+//			} catch (InterruptedException e) {
+//				scriptExecutor.shutdownNow();
+//			}
+//		}
+//
+//		// and the session scheduler
+//		if (scheduler != null) {
+//			scheduler.shutdown();
+//			try {
+//				if (!scheduler.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+//					scheduler.shutdownNow();
+//				}
+//			} catch (InterruptedException e) {
+//				scheduler.shutdownNow();
+//			}
+//		}
+//
+//		// shutdown the runtime
+//		Klab.INSTANCE.getRuntimeProvider().shutdown();
+		
+		context.close();
 	}
 
+	
 }

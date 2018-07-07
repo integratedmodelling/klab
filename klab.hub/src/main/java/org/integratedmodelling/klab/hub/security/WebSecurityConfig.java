@@ -1,14 +1,8 @@
 package org.integratedmodelling.klab.hub.security;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Collection;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,7 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @EnableGlobalMethodSecurity(securedEnabled = true)

@@ -103,7 +103,7 @@ public class KlabCertificate implements ICertificate {
 			return new KlabCertificate(certfile);
 		}
 		if (Configuration.INSTANCE.allowAnonymousUsage()) {
-			return new AnonymousCertificate();
+			return new AnonymousEngineCertificate();
 		}
 		throw new KlabIllegalStatusException("certificate file not found and anonymous usage not allowed");
 	}

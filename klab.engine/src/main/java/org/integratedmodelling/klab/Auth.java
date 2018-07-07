@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
-import org.integratedmodelling.klab.auth.AnonymousCertificate;
+import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.auth.NetworkSession;
@@ -145,7 +145,7 @@ public enum Auth implements IAuthenticationService {
 
 		IIdentity ret = null;
 
-		if (certificate instanceof AnonymousCertificate) {
+		if (certificate instanceof AnonymousEngineCertificate) {
 			// no partner, no node, no token, no nothing. REST calls automatically accept
 			// the
 			// anonymous user when secured as Roles.PUBLIC.

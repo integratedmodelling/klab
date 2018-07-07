@@ -13,13 +13,13 @@ import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.utils.StringUtils;
 
-public class AnonymousCertificate implements ICertificate {
+public class AnonymousEngineCertificate implements ICertificate {
 
     private String worldview = KlabCertificate.DEFAULT_WORLDVIEW;
     private Collection<String> worldview_repositories = StringUtils
             .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES);
 
-    public AnonymousCertificate() {
+    public AnonymousEngineCertificate() {
         // TODO Auto-generated constructor stub
     }
 

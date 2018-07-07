@@ -29,6 +29,11 @@ import org.integratedmodelling.klab.utils.OS;
  */
 public interface IConfigurationService {
 
+	public static final int DEFAULT_ENGINE_PORT = 8283;
+	public static final int DEFAULT_HUB_PORT = 8284;
+	public static final int DEFAULT_NODE_PORT = 8287;
+	
+	
 	/** The Constant KLAB_CLIENT_PROJECTS. */
 	public static final String KLAB_CLIENT_PROJECTS = "klab.client.workspace";
 

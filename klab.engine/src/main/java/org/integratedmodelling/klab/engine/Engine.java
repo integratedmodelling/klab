@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Klab.AnnotationHandler;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -46,7 +47,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.auth.AnonymousCertificate;
+import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
@@ -285,7 +286,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		ICertificate certificate = null;
 
 		if (System.getProperty("anonymous") != null) {
-			certificate = new AnonymousCertificate();
+			certificate = new AnonymousEngineCertificate();
 		} else {
 
 			if (options.getCertificateResource() != null) {
@@ -310,6 +311,9 @@ public class Engine extends Server implements IEngine, UserDetails {
 		if (!ret.boot(options)) {
 			throw new KlabException("engine failed to start");
 		}
+		
+		System.out.println("\n" + Logo.ENGINE_BANNER);
+		System.out.println("\nStartup successful: " + Klab.INSTANCE.getRootMonitor().getIdentity() + " v" + Version.CURRENT + " on " + new Date());
 		
 		return ret;
 	}

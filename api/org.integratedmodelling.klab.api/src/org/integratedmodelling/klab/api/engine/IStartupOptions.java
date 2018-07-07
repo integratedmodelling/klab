@@ -25,6 +25,7 @@ import java.io.File;
  */
 public interface IStartupOptions {
 
+	
     /**
      * Tied to the <pre>-cert</pre> option, provides an alternate certificate file to use when initializing. The
      * default is <pre>{dataDir}/klab.cert</pre>.

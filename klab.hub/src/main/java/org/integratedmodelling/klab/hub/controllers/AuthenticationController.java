@@ -1,10 +1,11 @@
-package org.integratedmodelling.klab.hub.authentication;
+package org.integratedmodelling.klab.hub.controllers;
 
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.communication.client.Client;
+import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.AuthenticationRequest;

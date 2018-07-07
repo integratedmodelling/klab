@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engines.modeler.base;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,17 +34,17 @@ import org.springframework.web.client.RestTemplate;
 		"org.integratedmodelling.klab.engine.rest.controllers.network",
 		"org.integratedmodelling.klab.engine.rest.messaging",
 		"org.integratedmodelling.klab.engine.rest.controllers.resources" })
-public class Modeler implements ApplicationListener<ApplicationReadyEvent> { 
+public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 
 	private static Engine engine;
 	private static boolean networkServicesStarted = false;
 	private ConfigurableApplicationContext context;
 	private static Runnable callback;
-	
+
 	// defaults
 	private static int port = 8283;
 	private static String contextPath = "/modeler";
-	
+
 	@Bean
 	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
 		return new ProtobufHttpMessageConverter();
@@ -55,7 +54,7 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
 		return new RestTemplate(Arrays.asList(hmc));
 	}
-	
+
 	private Modeler() {
 	}
 
@@ -70,10 +69,10 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 			this.context = null;
 		}
 	}
-	
+
 	/**
-	 * Start network services. Like {@link #startNetworkServices()} but allows a 
-	 * callback function to be specified, which is invoked after the network 
+	 * Start network services. Like {@link #startNetworkServices()} but allows a
+	 * callback function to be specified, which is invoked after the network
 	 * services are up.
 	 */
 	public boolean startNetworkServices(Runnable callback) {
@@ -82,8 +81,9 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 	}
 
 	/**
-	 * Start network services. Call if constructed with a previously started engine;
-	 * won't do anything if run() was called before.
+	 * Start network services. In the engine this is optional. Call if constructed
+	 * with a previously started engine; won't do anything if run() was called
+	 * before.
 	 */
 	public boolean startNetworkServices() {
 		if (engine == null) {
@@ -91,7 +91,8 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 		}
 		if (!networkServicesStarted) {
 			Map<String, Object> props = new HashMap<>();
-			props.put("server.port", ""+port);
+			props.put("server.port", "" + port);
+			props.put("spring.main.banner-mode", "off");
 			props.put("server.servlet.contextPath", contextPath);
 			SpringApplication app = new SpringApplication(Modeler.class);
 			app.setDefaultProperties(props);
@@ -105,7 +106,8 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);
 		Map<String, Object> props = new HashMap<>();
-		props.put("server.port", ""+port);
+		props.put("server.port", "" + port);
+		props.put("spring.main.banner-mode", "off");
 		props.put("server.servlet.contextPath", contextPath);
 		engine = Engine.start(options);
 		SpringApplication app = new SpringApplication(Modeler.class);
