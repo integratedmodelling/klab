@@ -160,6 +160,13 @@ public class KlabCertificate implements ICertificate {
 			this.type = Type.valueOf(properties.getProperty(KEY_CERTIFICATE_TYPE));
 			this.level = Level.valueOf(properties.getProperty(KEY_CERTIFICATE_LEVEL, Level.USER.name()));
 
+			if (this.type == Type.NODE || this.type == Type.HUB) {
+				if (properties.getProperty(KEY_URL) == null) {
+					cause = "node or hub certificate must define the public URL for the service (klab.url)";
+					return false;
+				}
+			}
+
 			return true;
 		}
 
@@ -205,11 +212,10 @@ public class KlabCertificate implements ICertificate {
 					this.properties.setProperty(KEY_CERTIFICATE_TYPE, Type.ENGINE.name());
 					this.properties.setProperty(KEY_CERTIFICATE_LEVEL, ICertificate.Level.LEGACY.name());
 
-					// TODO add these back afterwards. Not finding them will cause a local server to
-					// be used.
-					// this.properties.setProperty(KEY_SERVER,
-					// "https://integratedmodelling.org/klab");
-					// this.properties.setProperty(KEY_URL, "https://integratedmodelling.org/klab");
+					/*
+					 * TODO add KEY_SERVER to point to legacy handler hub. For now leave blank,
+					 * which will force it to try a local test hub before going offline.
+					 */
 
 					File out = new File(Configuration.INSTANCE.getDataPath() + File.separator
 							+ ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);

@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,12 +47,18 @@ public class AuthenticationController {
 		if (user != null) {
 
 			/*
+			 * this matches the user to a persistent token signed by this hub and ensures
+			 * all nodes are aware of the user.
+			 */
+			user = authenticationManager.authorizeUser(user);
+
+			/*
 			 * good enough for now. True auth must unencrypt and validate the unencrypted
 			 * certificate with all the clear-text properties and key in addition to produce
 			 * a (persisted) token.
 			 */
 			DateTime now = DateTime.now();
-			DateTime tomorrow = now.plusDays(1);
+			DateTime tomorrow = now.plusDays(90);
 
 			IdentityReference userIdentity = new IdentityReference(user.getUsername(), user.getEmailAddress(),
 					now.toString());
@@ -63,8 +70,10 @@ public class AuthenticationController {
 			 * TODO if user is new, propagate to authenticated servers
 			 */
 
-			return new ResponseEntity<EngineAuthenticationResponse>(new EngineAuthenticationResponse(
-					authenticatedIdentity, networkManager.getNodes(user.getGroups()), ""), HttpStatus.OK);
+			return new ResponseEntity<EngineAuthenticationResponse>(
+					new EngineAuthenticationResponse(authenticatedIdentity, authenticationManager.getHubReference(),
+							networkManager.getNodes(user.getGroups())),
+					HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
 	}
@@ -84,7 +93,7 @@ public class AuthenticationController {
 			 * a (persisted) token.
 			 */
 			DateTime now = DateTime.now();
-			DateTime tomorrow = now.plusDays(1);
+			DateTime tomorrow = now.plusDays(90);
 
 			IdentityReference userIdentity = new IdentityReference(node.getName(),
 					node.getParentIdentity().getEmailAddress(), now.toString());
@@ -92,11 +101,13 @@ public class AuthenticationController {
 					new ArrayList<Group>(), tomorrow.toString(), node.getId());
 
 			Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
-			
+
 			/*
 			 * TODO if user is new, propagate to authenticated servers
 			 */
-			return new ResponseEntity<NodeAuthenticationResponse>(new NodeAuthenticationResponse(authenticatedIdentity, ""), HttpStatus.OK);
+			return new ResponseEntity<NodeAuthenticationResponse>(
+					// TODO send public key to verify user authorizations
+					new NodeAuthenticationResponse(authenticatedIdentity, ""), HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
 	}

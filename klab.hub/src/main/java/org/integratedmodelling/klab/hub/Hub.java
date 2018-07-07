@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -31,13 +32,11 @@ public class Hub {
 	int port = IConfigurationService.DEFAULT_HUB_PORT;
 	private ConfigurableApplicationContext context;
 	private	String contextPath = "/klab";
+	private AuthenticationManager authManager;
+	private ICertificate certificate;
 
 	public Hub(ICertificate certificate) {
-		// TODO Auto-generated constructor stub
-	}
-
-	public Hub() {
-
+		this.certificate = certificate;
 	}
 
 	public String getLocalAddress() {
@@ -92,6 +91,8 @@ public class Hub {
 			SpringApplication app = new SpringApplication(HubApplication.class);
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());
+			this.authManager = this.context.getBean(AuthenticationManager.class);
+			this.authManager.authenticate(this.certificate);
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println("\nStartup successful: " + "k.LAB hub server"  + " v" + Version.CURRENT + " on " + new Date());
 		} catch (Throwable e) {

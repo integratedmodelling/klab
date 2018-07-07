@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.rest;
 
-
 public class IdentityReference {
 
     private String id;
@@ -16,8 +15,7 @@ public class IdentityReference {
         this.lastLogin = lastLogin;
     }
 
-    
-    public String getId() {
+	public String getId() {
         return id;
     }
     

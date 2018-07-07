@@ -6,6 +6,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.integratedmodelling.klab.hub.Hub;
+import org.integratedmodelling.klab.hub.HubStartupOptions;
 import org.integratedmodelling.klab.node.Node;
 import org.integratedmodelling.klab.node.NodeStartupOptions;
 
@@ -27,7 +28,7 @@ public enum TestNetwork {
 
 	/**
 	 * Start a test network with one hub (on localhost:8284/klab) and one node (on
-	 * localhost:8287/node). The hub will authenticate anything (including an
+	 * localhost:8287/node). The hub will authenticate anything local (including an
 	 * anonymous certificate) and provide a network with the node in it.
 	 */
 	public void start1h1n() {
@@ -42,17 +43,17 @@ public enum TestNetwork {
 	}
 
 	/**
-	 * Start a hub on the passed port and return it.
+	 * Start a test hub on the passed port and return it.
 	 * 
 	 * @param port
 	 * @return the active hub
 	 */
 	public Hub startHub(int port) {
-		return Hub.start();
+		return Hub.start(new HubStartupOptions("-certResource", "testhub.cert", "-port", "" + port));
 	}
 
 	/**
-	 * Start a node on the passed port authenticating with the passed hub.
+	 * Start a test node on the passed port authenticating with the passed hub.
 	 * 
 	 * @param hub
 	 * @param port
@@ -64,7 +65,7 @@ public enum TestNetwork {
 	}
 
 	/**
-	 * Start an engine on the passed port authenticating with the passed hub.
+	 * Start a test engine on the passed port authenticating with the passed hub.
 	 * 
 	 * @param hub
 	 * @param port

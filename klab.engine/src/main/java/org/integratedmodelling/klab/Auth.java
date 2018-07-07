@@ -226,15 +226,9 @@ public enum Auth implements IAuthenticationService {
 			// if we have connected, insert network session identity
 			if (authentication != null) {
 
-				NodeReference partnerNode = null;
-				for (NodeReference n : authentication.getNodes()) {
-					if (n.getId().equals(authentication.getAuthenticatingNodeId())) {
-						partnerNode = n;
-						break;
-					}
-				}
-				Partner partner = Auth.INSTANCE.requirePartner(partnerNode.getPartner());
-				Node node = new Node(partnerNode, partner);
+				NodeReference hubNode = authentication.getHub();
+				Partner partner = Auth.INSTANCE.requirePartner(hubNode.getPartner());
+				Node node = new Node(hubNode, partner);
 				node.setOnline(true);
 				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
 						authentication.getNodes(), node);

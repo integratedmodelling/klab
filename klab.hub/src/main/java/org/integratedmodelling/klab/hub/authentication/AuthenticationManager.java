@@ -16,7 +16,10 @@ import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.utils.IPUtils;
+import org.joda.time.DateTime;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,9 @@ public class AuthenticationManager {
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> hubCertificates = new HashMap<>();
 
+	// set after authentication
+	NodeReference hubReference;
+
 	@Autowired
 	NetworkManager networkManager;
 
@@ -47,6 +53,7 @@ public class AuthenticationManager {
 	 */
 	private static final String LEGACY_AUTHENTICATION_SERVICE = "https://integratedmodelling.org/collaboration/authentication/cert-file";
 	Client client = Client.create();
+	private Partner partner;
 
 	public AuthenticationManager() {
 
@@ -101,6 +108,7 @@ public class AuthenticationManager {
 				Map<?, ?> profile = (Map<?, ?>) response.get("profile");
 				EngineUser ret = new EngineUser(response.get("username").toString(), null);
 				ret.setEmailAddress(profile.get("email").toString());
+//				ret.getGroups().addAll()
 				Logging.INSTANCE
 						.info("authenticated user " + response.get("username") + " through legacy certificate service");
 				return ret;
@@ -164,9 +172,8 @@ public class AuthenticationManager {
 				throw new KlabAuthorizationException(
 						"pre-installed node certificates are only allowed on local connections");
 			}
-			Partner partner = new Partner(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME)); // TODO
-			partner.setEmailAddress(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
-			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), partner);
+			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), this.partner);
+			ret.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
 			networkManager.notifyAuthorizedNode(ret);
 			return ret;
 		}
@@ -176,6 +183,52 @@ public class AuthenticationManager {
 		 */
 
 		throw new KlabAuthorizationException();
+	}
+
+	public NodeReference getHubReference() {
+		return this.hubReference;
+	}
+
+	public Partner getPartner() {
+		return this.partner;
+	}
+
+	public void authenticate(ICertificate certificate) {
+
+		this.hubReference = new NodeReference();
+		this.hubReference.setId(certificate.getProperty(ICertificate.KEY_HUBNAME));
+		this.hubReference.setOnline(true);
+		this.hubReference.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
+
+		IdentityReference partnerIdentity = new IdentityReference();
+		partnerIdentity.setId(certificate.getProperty(ICertificate.KEY_PARTNER_NAME));
+		partnerIdentity.setEmail(certificate.getProperty(ICertificate.KEY_PARTNER_EMAIL));
+		partnerIdentity.setLastLogin(DateTime.now().toString());
+
+		// TODO address and stuff
+
+		this.partner = new Partner(partnerIdentity);
+		this.hubReference.setPartner(partnerIdentity);
+
+		if (certificate.getProperty(ICertificate.KEY_SERVER) != null) {
+			/*
+			 * TODO if we have a parent hub, handshake and link its nodes in the network
+			 * manager.
+			 */
+		}
+
+	}
+
+	/**
+	 * Establish the user identity as a hub token and pass the user credentials to
+	 * all nodes.
+	 * 
+	 * @param user
+	 * @return the user identity with local credentials
+	 */
+	public IUserIdentity authorizeUser(IUserIdentity user) throws KlabAuthorizationException {
+		// TODO Auto-generated method stub
+		return user;
 	}
 
 	/*
