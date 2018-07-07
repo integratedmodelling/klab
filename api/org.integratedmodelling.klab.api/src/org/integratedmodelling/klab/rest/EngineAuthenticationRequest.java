@@ -8,6 +8,7 @@ public class EngineAuthenticationRequest {
 	private String userKey;
 	private String userType;
 	private String certificate;
+	private String email;
 	private ICertificate.Level level = ICertificate.Level.USER;
 
 	public EngineAuthenticationRequest(String username, String userKey, String userType, String certificate,
@@ -18,6 +19,14 @@ public class EngineAuthenticationRequest {
 		this.userType = userType;
 		this.certificate = certificate;
 		this.level = level;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public EngineAuthenticationRequest() {

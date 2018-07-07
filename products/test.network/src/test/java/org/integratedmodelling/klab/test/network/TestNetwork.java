@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.integratedmodelling.klab.hub.Hub;
 import org.integratedmodelling.klab.node.Node;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.integratedmodelling.klab.node.NodeStartupOptions;
 
 /**
  * Sets up various test network configurations on the local machine. Run as an
@@ -20,7 +19,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public enum TestNetwork {
 
 	INSTANCE;
-	
+
 	private Map<String, Hub> hubs = new HashMap<>();
 	private Map<String, Node> nodes = new HashMap<>();
 	private Map<String, Engine> engines = new HashMap<>();
@@ -60,7 +59,8 @@ public enum TestNetwork {
 	 * @return the active node
 	 */
 	public Node startNode(Hub hub, int port) {
-		return Node.start();
+		return Node.start(new NodeStartupOptions("-certResource", "testnode.cert", "-hub", hub.getLocalAddress(),
+				"-port", "" + port));
 	}
 
 	/**
@@ -71,7 +71,8 @@ public enum TestNetwork {
 	 * @return the active engine.
 	 */
 	public Engine startEngine(Hub hub, int port) {
-		return Engine.start();
+		return Engine.start(new EngineStartupOptions("-certResource", "testengine.cert", "-hub", hub.getLocalAddress(),
+				"-port", "" + port));
 	}
 
 	/**

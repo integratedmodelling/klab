@@ -114,7 +114,7 @@ public class KlabCertificate implements ICertificate {
 		if (System.getProperty(Configuration.CERTFILE_PROPERTY) != null) {
 			return new File(System.getProperty(Configuration.CERTFILE_PROPERTY));
 		}
-		return new File(Configuration.INSTANCE.getDataPath() + File.separator + DEFAULT_CERTIFICATE_FILENAME);
+		return new File(Configuration.INSTANCE.getDataPath() + File.separator + DEFAULT_ENGINE_CERTIFICATE_FILENAME);
 	}
 
 	/**
@@ -189,8 +189,9 @@ public class KlabCertificate implements ICertificate {
 
 					Map<?, ?> profile = (Map<?, ?>) response.get("profile");
 
-					Logging.INSTANCE.info(
-							"upgrading pre-0.10 certificate to new format: new certificate will be saved as klab.cert");
+					Logging.INSTANCE
+							.info("upgrading pre-0.10 certificate to new format: new certificate will be saved as "
+									+ ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
 
 					this.properties = new Properties();
 					this.properties.setProperty(KEY_CERTIFICATE, fileContent);
@@ -210,7 +211,8 @@ public class KlabCertificate implements ICertificate {
 					// "https://integratedmodelling.org/klab");
 					// this.properties.setProperty(KEY_URL, "https://integratedmodelling.org/klab");
 
-					File out = new File(Configuration.INSTANCE.getDataPath() + File.separator + "klab.cert");
+					File out = new File(Configuration.INSTANCE.getDataPath() + File.separator
+							+ ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
 					try (FileOutputStream o = new FileOutputStream(out)) {
 						this.properties.store(o, "Automatically upgraded on " + new Date());
 					}

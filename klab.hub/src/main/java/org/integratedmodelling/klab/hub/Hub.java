@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -27,6 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class Hub {
 
+	int port = IConfigurationService.DEFAULT_HUB_PORT;
 	private ConfigurableApplicationContext context;
 	private	String contextPath = "/klab";
 
@@ -38,6 +40,10 @@ public class Hub {
 
 	}
 
+	public String getLocalAddress() {
+		return "http://127.0.0.1:" + port + contextPath;
+	}
+	
 	public void run(String[] args) {
 		HubStartupOptions options = new HubStartupOptions();
 		options.initialize(args);
@@ -78,6 +84,7 @@ public class Hub {
 
 	private boolean boot(IHubStartupOptions options) {
 		try {
+			this.port = options.getPort();
 			Map<String, Object> props = new HashMap<>();
 			props.put("server.port", "" + options.getPort());
 			props.put("spring.main.banner-mode", "off");

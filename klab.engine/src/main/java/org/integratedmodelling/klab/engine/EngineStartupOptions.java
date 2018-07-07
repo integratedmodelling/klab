@@ -21,7 +21,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
 
     @Option(
             name = "-cert",
-            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_CERTIFICATE_FILENAME + ")",
+            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME + ")",
             metaVar = "<FILE_PATH>")
     File certificateFile = null;
     
@@ -31,6 +31,12 @@ public class EngineStartupOptions implements IEngineStartupOptions {
             metaVar = "<CLASSPATH_RESOURCE>")
     String certificateResource = null;
 
+    @Option(
+            name = "-hub",
+            usage = "URL of authenticating hub (default set in certificate)",
+            metaVar = "<URL>")
+    String authenticatingHub = null;
+    
     @Option(
             name = "-workspace",
             usage = "monitored workspace directory (default: ~/.klab/workspace, not monitored)",
@@ -107,7 +113,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME);
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }
@@ -192,5 +198,10 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
+
+	@Override
+	public String getHubUrl() {
+		return authenticatingHub;
+	}
 
 }

@@ -21,7 +21,7 @@ public class HubStartupOptions implements IHubStartupOptions {
 
     @Option(
             name = "-cert",
-            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_CERTIFICATE_FILENAME + ")",
+            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_HUB_CERTIFICATE_FILENAME + ")",
             metaVar = "<FILE_PATH>")
     File certificateFile = null;
     
@@ -87,7 +87,7 @@ public class HubStartupOptions implements IHubStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME);
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_HUB_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }

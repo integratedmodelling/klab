@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -26,6 +27,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class Node {
 
+	int port = IConfigurationService.DEFAULT_NODE_PORT;
 	private ConfigurableApplicationContext context;
 	private	String contextPath = "/node";
 
@@ -37,6 +39,10 @@ public class Node {
 		
 	}
 
+	public String getLocalAddress() {
+		return "http://127.0.0.1:" + port + contextPath;
+	}
+	
 	public void run(String[] args) {
 		NodeStartupOptions options = new NodeStartupOptions();
 		options.initialize(args);
@@ -77,6 +83,7 @@ public class Node {
 
 	private boolean boot(INodeStartupOptions options) {
 		try {
+			this.port = options.getPort();
 			Map<String, Object> props = new HashMap<>();
 			props.put("server.port", ""+options.getPort());
 			props.put("spring.main.banner-mode", "off");

@@ -34,7 +34,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
 	  http
 	  // disable automatic session creation to avoid use of cookie session
-	  // and the consequent authentication fails in web ui
+	  // and the consequent authentication failures in web ui
 	  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	  .and()
 	  .addFilterBefore(certFilter(), RequestHeaderAuthenticationFilter.class)

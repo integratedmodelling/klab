@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.hub.controllers;
 
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
@@ -32,9 +34,9 @@ public class AuthenticationController {
 	
 	@RequestMapping(value = API.HUB.AUTHENTICATE_ENGINE, method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<?> authenticate(@RequestBody EngineAuthenticationRequest request) {
+	public ResponseEntity<?> authenticate(@RequestBody EngineAuthenticationRequest request, HttpServletRequest httpRequest) {
 
-		IUserIdentity user = authenticationManager.authenticateEngineCertificate(request.getCertificate(), request.getLevel());
+		IUserIdentity user = authenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
 
 		if (user != null) {
 

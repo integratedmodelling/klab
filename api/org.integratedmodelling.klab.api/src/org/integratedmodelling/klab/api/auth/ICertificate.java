@@ -51,7 +51,12 @@ public interface ICertificate {
 		/**
 		 * Institutional engine. Can be linked to security settings.
 		 */
-		INSTITUTIONAL
+		INSTITUTIONAL,
+
+		/**
+		 * Test certificate. Only free to connect to localhost test networks.
+		 */
+		TEST
 	}
 
 	public static enum Type {
@@ -62,25 +67,19 @@ public interface ICertificate {
 		ENGINE,
 		/**
 		 * This certificate authorizes a node. The only allowed level is
-		 * {@link Level#INSTITUTIONAL}.
+		 * {@link Level#INSTITUTIONAL} or {@link Level#TEST}.
 		 */
 		NODE,
 		/**
 		 * This certificate authorizes a hub. The only allowed level is
-		 * {@link Level#INSTITUTIONAL}.
+		 * {@link Level#INSTITUTIONAL} or {@link Level#TEST}.
 		 */
 		HUB
 	}
 
-	public static final String DEFAULT_CERTIFICATE_FILENAME = "klab.cert";
-
-	/*
-	 * possible values for the certificate type, determining the type of
-	 * authentication.
-	 */
-	public static final String CERTIFICATE_TYPE_NODE = "NODE";
-	public static final String CERTIFICATE_TYPE_USER = "USER";
-	public static final String CERTIFICATE_TYPE_PARTNER = "PARTNER";
+	public static final String DEFAULT_ENGINE_CERTIFICATE_FILENAME = "engine.cert";
+	public static final String DEFAULT_NODE_CERTIFICATE_FILENAME = "node.cert";
+	public static final String DEFAULT_HUB_CERTIFICATE_FILENAME = "hub.cert";
 
 	/*
 	 * Keys for user properties in certificates or for set operations.
@@ -116,7 +115,8 @@ public interface ICertificate {
 
 	/**
 	 * The level of this certificate. Will mandatorily return
-	 * {@link Level#INSTITUTIONAL} unless in an engine certificate.
+	 * {@link Level#INSTITUTIONAL} unless in an engine certificate or in a test
+	 * certificate.
 	 * 
 	 * @return the level
 	 */

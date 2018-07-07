@@ -22,7 +22,7 @@ public class NodeStartupOptions implements INodeStartupOptions {
 
     @Option(
             name = "-cert",
-            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_CERTIFICATE_FILENAME + ")",
+            usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_NODE_CERTIFICATE_FILENAME + ")",
             metaVar = "<FILE_PATH>")
     File certificateFile = null;
     
@@ -32,6 +32,12 @@ public class NodeStartupOptions implements INodeStartupOptions {
             metaVar = "<CLASSPATH_RESOURCE>")
     String certificateResource = null;
 
+    @Option(
+            name = "-hub",
+            usage = "URL of authenticating hub (default set in certificate)",
+            metaVar = "<URL>")
+    String authenticatingHub = null;
+    
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int port = IConfigurationService.DEFAULT_NODE_PORT;
 
@@ -91,7 +97,7 @@ public class NodeStartupOptions implements INodeStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_CERTIFICATE_FILENAME);
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }
@@ -160,5 +166,10 @@ public class NodeStartupOptions implements INodeStartupOptions {
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
+
+	@Override
+	public String getHubUrl() {
+		return authenticatingHub;
+	}
 
 }

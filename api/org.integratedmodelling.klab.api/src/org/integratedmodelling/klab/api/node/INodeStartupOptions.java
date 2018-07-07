@@ -59,4 +59,11 @@ public interface INodeStartupOptions extends IStartupOptions {
      * @return the paths to all components we want to load
      */
     Collection<File> getComponentPaths();
+    
+    /**
+     * URL of the authenticating hub. Default is set in the certificate.
+     * 
+     * @return the URL of the authenticating hub.
+     */
+    String getHubUrl();
 }

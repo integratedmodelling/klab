@@ -9,6 +9,7 @@
 # No commercial use allowed
 # -----------------------------------------------------------------
 klab.certificate.type = NODE
+klab.certificate.level = TEST
 # partner and node certs have more info
 # node certs can also work as application properties
 klab.nodename = testnode
@@ -20,8 +21,8 @@ klab.partner.name = Semantic Web of BS, Inc.
 # email can be modified by the user and override the one in user
 # profile
 klab.partner.email = bs@semanticweb.org
-# Official URL of node
-klab.url = http://127.0.0.1:8281/klab
+# URL of authenticating hub
+klab.url = http://127.0.0.1:8284/klab
 # signature is sent along with certificate and cross-validates 
 # certificate integrity after decryption
 klab.signature = dc8a541b-4c14-4770-9f9d-82a73f44b97d

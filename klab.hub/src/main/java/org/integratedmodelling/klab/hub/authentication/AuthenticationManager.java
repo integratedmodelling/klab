@@ -4,16 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.integratedmodelling.klab.api.auth.ICertificate.Level;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.utils.IPUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AuthenticationManager {
@@ -35,9 +39,9 @@ public class AuthenticationManager {
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
 
 	/*
-	 * for proxying calls
+	 * for legacy authentication calls
 	 */
-	private static final String LEGACY_AUTHENTICATION_SERVICE = "http://integratedmodelling.org/collaboration/authentication/cert-file";
+	private static final String LEGACY_AUTHENTICATION_SERVICE = "https://integratedmodelling.org/collaboration/authentication/cert-file";
 	Client client = Client.create();
 
 	public AuthenticationManager() {
@@ -74,23 +78,58 @@ public class AuthenticationManager {
 	/**
 	 * Use the legacy server to authenticate a previously issued certificate.
 	 * 
-	 * @param cert
+	 * @param request
 	 * @return
 	 */
-	public IUserIdentity authenticateLegacyEngineCertificate(String cert) {
-		// TODO
-		return null;
+	public IUserIdentity authenticateLegacyEngineCertificate(EngineAuthenticationRequest request) {
+
+		try {
+			HttpEntity<String> httpRequest = new HttpEntity<String>(request.getCertificate());
+			Map<?, ?> response = new RestTemplate().postForObject(LEGACY_AUTHENTICATION_SERVICE, httpRequest, Map.class);
+			if (response != null) {
+				Map<?, ?> profile = (Map<?, ?>) response.get("profile");
+				EngineUser ret = new EngineUser(response.get("username").toString(), null);
+				ret.setEmailAddress(profile.get("email").toString());
+				Logging.INSTANCE.info("authenticated user " + response.get("username")
+						+ " through legacy certificate service");
+				return ret;
+			}
+		} catch (Throwable t) {
+			throw new KlabAuthorizationException("legacy authentication failed: " + t.getMessage());
+		}
+		throw new KlabAuthorizationException("legacy authentication failed");
 	}
 
 	/**
-	 * Authenticate a 0.10.0 certificate.
+	 * Authenticate a certificate that wasn't preinstalled.
 	 * 
 	 * @param cert
-	 * @param level 
+	 * @param level
+	 * @param string
 	 * @return
 	 */
-	public IUserIdentity authenticateEngineCertificate(String cert, Level level) {
-		// TODO
+	public IUserIdentity authenticateEngineCertificate(EngineAuthenticationRequest request, String ip) {
+
+		switch (request.getLevel()) {
+		case ANONYMOUS:
+		case TEST:
+			if (IPUtils.isLocal(ip)) {
+				EngineUser ret = new EngineUser(request.getUsername(), null);
+				ret.setEmailAddress(request.getEmail());
+				Logging.INSTANCE.info("authenticated local user " + request.getUsername());
+				return ret;
+			}
+			break;
+		case LEGACY:
+			return authenticateLegacyEngineCertificate(request);
+		case USER:
+		case INSTITUTIONAL:
+			// TODO use JWT authentication
+			break;
+		default:
+			break;
+
+		}
 		return null;
 	}
 

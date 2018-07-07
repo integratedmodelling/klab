@@ -174,7 +174,10 @@ public enum Auth implements IAuthenticationService {
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
 				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE),
 				certificate.getLevel());
-
+		
+		// add email if we have it, so the hub can notify in any case if so configured
+		request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
+		
 		EngineAuthenticationResponse authentication = null;
 
 		try {

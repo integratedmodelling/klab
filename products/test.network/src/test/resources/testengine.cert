@@ -8,7 +8,8 @@
 # k.LAB user certificate released to ferdinando.villa on XXXX
 # No commercial use allowed
 # -----------------------------------------------------------------
-klab.certificate.type = USER
+klab.certificate.type = ENGINE
+klab.certificate.level = TEST
 # partner and node certs have more info
 # node certs can also work as application properties
 klab.username = test.user
