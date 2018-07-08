@@ -83,11 +83,11 @@ public class OntologyUtilities {
     private File file = new File("C:/MechanicalEngineering/MechanicalEngineeringOntology.owl");
 
     private OWLOntologyManager manager;
-    private OWLOntology        ontology;
-    final String               tabString = "    ";
-//    OWLReasonerFactory         reasonerFactory;
-    OWLReasoner                reasoner;
-    private OWLDataFactory     factory;
+    private OWLOntology ontology;
+    final String tabString = "    ";
+    //    OWLReasonerFactory         reasonerFactory;
+    OWLReasoner reasoner;
+    private OWLDataFactory factory;
 
     public OntologyUtilities() {
 
@@ -193,7 +193,9 @@ public class OntologyUtilities {
      * 
      * }
      */
-    public boolean processDataProperties(String individualName, Set<String[]> dataRestrictionCouplesForSelectedIndividual, Set<String[]> objectRestrictionCouplesForSelectedIndividual) {
+    public boolean processDataProperties(String individualName,
+            Set<String[]> dataRestrictionCouplesForSelectedIndividual,
+            Set<String[]> objectRestrictionCouplesForSelectedIndividual) {
         boolean bResult = false;
 
         openOntology(false);
@@ -215,8 +217,7 @@ public class OntologyUtilities {
                 OWLClassExpression superCls = ax.getSuperClass();
                 if (superCls.isAnonymous()) {
                     try {
-                        Set<OWLClassExpression> dess = ((OWLNaryBooleanClassExpression) superCls)
-                                .getOperands();
+                        Set<OWLClassExpression> dess = ((OWLNaryBooleanClassExpression) superCls).getOperands();
                         for (OWLClassExpression annonymousDes : dess) {
                             // OWLClassExpression filler =
                             // ((OWLQuantifiedRestriction<OWLObjectPropertyExpression,
@@ -233,10 +234,8 @@ public class OntologyUtilities {
                 }
             }
 
-            dataRestrictionCouplesForSelectedIndividual
-                    .addAll(restrictionVisitor.getDataRestrictionCouples());
-            objectRestrictionCouplesForSelectedIndividual.addAll(restrictionVisitor
-                    .getObjectRestrictionCouples());
+            dataRestrictionCouplesForSelectedIndividual.addAll(restrictionVisitor.getDataRestrictionCouples());
+            objectRestrictionCouplesForSelectedIndividual.addAll(restrictionVisitor.getObjectRestrictionCouples());
             // dataRestrictionsForSelectedIndividual.addAll(restrictionVisitor.getDataRestrictions());
         }
 
@@ -307,8 +306,8 @@ public class OntologyUtilities {
         // Now create the actual assertion (triple), as an object property
         // assertion axiom
         // matthew --> hasFather --> peter
-        OWLObjectPropertyAssertionAxiom assertion = factory
-                .getOWLObjectPropertyAssertionAxiom(predicate, subject, object);
+        OWLObjectPropertyAssertionAxiom assertion = factory.getOWLObjectPropertyAssertionAxiom(predicate, subject,
+                object);
 
         AddAxiom addAxiom = new AddAxiom(ontology, assertion);
         // We now use the manager to apply the change
@@ -355,8 +354,8 @@ public class OntologyUtilities {
         // Now create the actual assertion (triple), as an object property
         // assertion axiom
         // weight --> hasWeightValue --> 0.10
-        OWLDataPropertyAssertionAxiom assertion = factory
-                .getOWLDataPropertyAssertionAxiom(predicate, subject, stringConstant);
+        OWLDataPropertyAssertionAxiom assertion = factory.getOWLDataPropertyAssertionAxiom(predicate, subject,
+                stringConstant);
 
         AddAxiom addAxiom = new AddAxiom(ontology, assertion);
         // We now use the manager to apply the change
@@ -403,8 +402,8 @@ public class OntologyUtilities {
         // Now create the actual assertion (triple), as an object property
         // assertion axiom
         // weight --> hasWeightValue --> 0.10
-        OWLDataPropertyAssertionAxiom assertion = factory
-                .getOWLDataPropertyAssertionAxiom(predicate, subject, intConstant);
+        OWLDataPropertyAssertionAxiom assertion = factory.getOWLDataPropertyAssertionAxiom(predicate, subject,
+                intConstant);
 
         AddAxiom addAxiom = new AddAxiom(ontology, assertion);
         // We now use the manager to apply the change
@@ -451,8 +450,8 @@ public class OntologyUtilities {
         // Now create the actual assertion (triple), as an object property
         // assertion axiom
         // weight --> hasWeightValue --> 0.10
-        OWLDataPropertyAssertionAxiom assertion = factory
-                .getOWLDataPropertyAssertionAxiom(predicate, subject, doubleConstant);
+        OWLDataPropertyAssertionAxiom assertion = factory.getOWLDataPropertyAssertionAxiom(predicate, subject,
+                doubleConstant);
 
         AddAxiom addAxiom = new AddAxiom(ontology, assertion);
         // We now use the manager to apply the change
@@ -563,7 +562,8 @@ public class OntologyUtilities {
      * }
      */
 
-    public ArrayList<String> getRefinedEVList(String targetIndividualName, String targetEVName, Set<String[]> objectCardinalityRestrictionCouples) {
+    public ArrayList<String> getRefinedEVList(String targetIndividualName, String targetEVName,
+            Set<String[]> objectCardinalityRestrictionCouples) {
         ArrayList<String> inferredSubClassNames = new ArrayList<String>();
         ArrayList<String> refinedEVlist = new ArrayList<String>();
 
@@ -597,13 +597,11 @@ public class OntologyUtilities {
                 // ontology.getSubClassAxiomsForRHS(targetClassOfIndividual);
                 // Set<OWLOntology> onts = new HashSet<OWLOntology>();
                 // onts.add(ontology);
-                RestrictionVisitor restrictionVisitor = new RestrictionVisitor(Collections
-                        .singleton(ontology));
+                RestrictionVisitor restrictionVisitor = new RestrictionVisitor(Collections.singleton(ontology));
                 for (OWLSubClassOfAxiom ax : subClassAxiom) {
                     OWLClassExpression superCls = ax.getSuperClass();
                     if (superCls.isAnonymous()) {
-                        Set<OWLClassExpression> dess = ((OWLNaryBooleanClassExpression) superCls)
-                                .getOperands();
+                        Set<OWLClassExpression> dess = ((OWLNaryBooleanClassExpression) superCls).getOperands();
                         for (OWLClassExpression anonymousDes : dess) {
                             // OWLClassExpression filler =
                             // ((OWLQuantifiedRestriction<OWLObjectPropertyExpression,
@@ -734,50 +732,50 @@ public class OntologyUtilities {
         return subClassNames;
     }
 
-//    public ArrayList<String[]> getWDIndividuals() {
-//
-//        openOntology(true);
-//
-//        ArrayList<String> watchdogNames = new ArrayList<String>();
-//        ArrayList<String[]> invokedWatchdogPairs = new ArrayList<String[]>();
-//
-//        try {
-//            IRI rootClassIRI = IRI.create(ontology.getOntologyID() + "#ApplicationWatchdog");
-//            OWLClass rootClass = factory.getOWLClass(rootClassIRI);
-//
-//            watchdogNames.addAll(getTrimmedList(getTabbedInferredClassList(rootClass, 0)));
-//            // check if any watchdog has inferred individuals.
-//            // if yes, then its corresponding application is functional,
-//            // otherwise ignore.
-//            for (String watchdogName : watchdogNames) {
-//                IRI currentWDIRI = IRI.create(ontology.getOntologyID() + "#" + watchdogName);
-//                OWLClass currentWD = manager.getOWLDataFactory().getOWLClass(currentWDIRI);
-//                // TODO think about this Set in future, may need for further
-//                // use.
-//                NodeSet<OWLNamedIndividual> individualsNodeSet = reasoner.getInstances(currentWD, true);
-//                // The reasoner returns a NodeSet again. This time the NodeSet contains
-//                // individuals.
-//                // Again, we just want the individuals, so get a flattened set.
-//                Set<OWLNamedIndividual> individuals = individualsNodeSet.getFlattened();
-//                if (individuals.size() != 0) {
-//                    for (OWLNamedIndividual WDindividual : individuals) {
-//                        String[] invokedWatchdogName = new String[2];
-//                        invokedWatchdogName[0] = watchdogName;
-//                        invokedWatchdogName[1] = WDindividual.toString();
-//                        invokedWatchdogPairs.add(invokedWatchdogName);
-//                    }
-//                }
-//            }
-//        } catch (OWLException e) {
-//
-//            e.printStackTrace();
-//        }
-//
-//        closeOntology();
-//
-//        return invokedWatchdogPairs;
-//
-//    }
+    //    public ArrayList<String[]> getWDIndividuals() {
+    //
+    //        openOntology(true);
+    //
+    //        ArrayList<String> watchdogNames = new ArrayList<String>();
+    //        ArrayList<String[]> invokedWatchdogPairs = new ArrayList<String[]>();
+    //
+    //        try {
+    //            IRI rootClassIRI = IRI.create(ontology.getOntologyID() + "#ApplicationWatchdog");
+    //            OWLClass rootClass = factory.getOWLClass(rootClassIRI);
+    //
+    //            watchdogNames.addAll(getTrimmedList(getTabbedInferredClassList(rootClass, 0)));
+    //            // check if any watchdog has inferred individuals.
+    //            // if yes, then its corresponding application is functional,
+    //            // otherwise ignore.
+    //            for (String watchdogName : watchdogNames) {
+    //                IRI currentWDIRI = IRI.create(ontology.getOntologyID() + "#" + watchdogName);
+    //                OWLClass currentWD = manager.getOWLDataFactory().getOWLClass(currentWDIRI);
+    //                // TODO think about this Set in future, may need for further
+    //                // use.
+    //                NodeSet<OWLNamedIndividual> individualsNodeSet = reasoner.getInstances(currentWD, true);
+    //                // The reasoner returns a NodeSet again. This time the NodeSet contains
+    //                // individuals.
+    //                // Again, we just want the individuals, so get a flattened set.
+    //                Set<OWLNamedIndividual> individuals = individualsNodeSet.getFlattened();
+    //                if (individuals.size() != 0) {
+    //                    for (OWLNamedIndividual WDindividual : individuals) {
+    //                        String[] invokedWatchdogName = new String[2];
+    //                        invokedWatchdogName[0] = watchdogName;
+    //                        invokedWatchdogName[1] = WDindividual.toString();
+    //                        invokedWatchdogPairs.add(invokedWatchdogName);
+    //                    }
+    //                }
+    //            }
+    //        } catch (OWLException e) {
+    //
+    //            e.printStackTrace();
+    //        }
+    //
+    //        closeOntology();
+    //
+    //        return invokedWatchdogPairs;
+    //
+    //    }
 
     /**
      * this method convert a string to an non-whitespace string, as all entity names used
@@ -794,23 +792,21 @@ public class OntologyUtilities {
         return convertedString;
     }
 
-
-
     /**
      * Visits existential restrictions and collects the properties that are restricted
      */
     public static class RestrictionVisitor extends OWLClassExpressionVisitorAdapter {
 
-        private boolean                                processInherited = true;
-        private Set<OWLClass>                          processedClasses;
-        private Set<OWLObjectPropertyExpression>       restrictedObjectProperties;
-        private Set<OWLDataPropertyExpression>         restrictedDataProperties;
-        private Set<OWLPropertyRange>                  objectPropertyFillers;
-        private Set<OWLPropertyRange>                  dataPropertyFillers;
+        private boolean processInherited = true;
+        private Set<OWLClass> processedClasses;
+        private Set<OWLObjectPropertyExpression> restrictedObjectProperties;
+        private Set<OWLDataPropertyExpression> restrictedDataProperties;
+        private Set<OWLPropertyRange> objectPropertyFillers;
+        private Set<OWLPropertyRange> dataPropertyFillers;
         private Set<OWLQuantifiedRestriction<?, ?, ?>> objectRestrictions;
         private Set<OWLQuantifiedRestriction<?, ?, ?>> dataRestrictions;
-        private Set<String[]>                          objectRestrictionCouples;
-        private Set<String[]>                          dataRestrictionCouples;
+        private Set<String[]> objectRestrictionCouples;
+        private Set<String[]> dataRestrictionCouples;
 
         private Set<OWLOntology> onts;
 

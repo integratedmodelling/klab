@@ -15,68 +15,68 @@ import xerial.larray.japi.LArrayJ;
 
 public class BooleanStorage extends Storage implements IDataArtifact {
 
-	private LBitArray data;
-	private LBitArray mask;
+    private LBitArray data;
+    private LBitArray mask;
 
-	public BooleanStorage(IGeometry scale) {
-		super(scale);
-		this.data = LArrayJ.newLBitArray(scale.size());
-		this.mask = LArrayJ.newLBitArray(scale.size());
-	}
+    public BooleanStorage(IGeometry scale) {
+        super(scale);
+        this.data = LArrayJ.newLBitArray(scale.size());
+        this.mask = LArrayJ.newLBitArray(scale.size());
+    }
 
-	@Override
-	public long size() {
-		return getGeometry().size();
-	}
+    @Override
+    public long size() {
+        return getGeometry().size();
+    }
 
-	@Override
-	public Boolean get(ILocator index) {
-		long offset = getGeometry().getOffset(index);
-		if (offset < 0) {
-			// mediation needed
-			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
-		}
-		return mask.apply(offset) ? data.apply(offset) : null;
-	}
+    @Override
+    public Boolean get(ILocator index) {
+        long offset = getGeometry().getOffset(index);
+        if (offset < 0) {
+            // mediation needed
+            throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
+        }
+        return mask.apply(offset) ? data.apply(offset) : null;
+    }
 
-	@Override
-	public long set(ILocator index, Object value) {
-		long offset = getGeometry().getOffset(index);
-		if (offset < 0) {
-			// mediation needed
-			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
-		}
-		if (value == null) {
-			mask.update(offset, false);
-		} else if (!(value instanceof Boolean)) {
-			throw new IllegalArgumentException("cannot set a boolean state from value " + value);
-		} else {
-			data.update(offset, ((Boolean) value));
-			mask.update(offset, true);
-		}
-		return offset;
-	}
+    @Override
+    public long set(ILocator index, Object value) {
+        long offset = getGeometry().getOffset(index);
+        if (offset < 0) {
+            // mediation needed
+            throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
+        }
+        if (value == null) {
+            mask.update(offset, false);
+        } else if (!(value instanceof Boolean)) {
+            throw new IllegalArgumentException("cannot set a boolean state from value " + value);
+        } else {
+            data.update(offset, ((Boolean) value));
+            mask.update(offset, true);
+        }
+        return offset;
+    }
 
-	@Override
-	protected void finalize() throws Throwable {
-		data.free();
-		mask.free();
-		super.finalize();
-	}
+    @Override
+    protected void finalize() throws Throwable {
+        data.free();
+        mask.free();
+        super.finalize();
+    }
 
-	@Override
-	public <T> T get(ILocator index, Class<T> cls) {
-		return Utils.asType(get(index), cls);
-	}
+    @Override
+    public <T> T get(ILocator index, Class<T> cls) {
+        return Utils.asType(get(index), cls);
+    }
 
-	@Override
-	public Type getType() {
-		return Type.BOOLEAN;
-	}
+    @Override
+    public Type getType() {
+        return Type.BOOLEAN;
+    }
 
-	@Override
-	public IDataKey getDataKey() {
-		return null;
-	}
-	
+    @Override
+    public IDataKey getDataKey() {
+        return null;
+    }
+
 }

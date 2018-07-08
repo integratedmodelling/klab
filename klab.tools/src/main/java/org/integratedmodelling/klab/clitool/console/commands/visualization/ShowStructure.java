@@ -13,22 +13,22 @@ import org.integratedmodelling.klab.utils.graph.Graphs;
 
 public class ShowStructure implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+    @Override
+    public Object execute(IServiceCall call, ISession session) throws Exception {
 
-		IObservation obs = null;
-		if (call.getParameters().get("arguments", List.class).size() == 1) {
-			obs = session.getObservation(call.getParameters().get("arguments", List.class).get(0).toString());
-		}
-		if (obs == null) {
-			throw new KlabValidationException("show::structure requires a valid observation ID as argument");
-		}
-		
-		IRuntimeContext context = ((Observation)obs).getRuntimeContext();
-		
-		Graphs.show(context.getStructure(), "Structure of observation " + obs, Graphs.Layout.HIERARCHICAL);
-		
-		return null;
-	}
+        IObservation obs = null;
+        if (call.getParameters().get("arguments", List.class).size() == 1) {
+            obs = session.getObservation(call.getParameters().get("arguments", List.class).get(0).toString());
+        }
+        if (obs == null) {
+            throw new KlabValidationException("show::structure requires a valid observation ID as argument");
+        }
+
+        IRuntimeContext context = ((Observation) obs).getRuntimeContext();
+
+        Graphs.show(context.getStructure(), "Structure of observation " + obs, Graphs.Layout.HIERARCHICAL);
+
+        return null;
+    }
 
 }

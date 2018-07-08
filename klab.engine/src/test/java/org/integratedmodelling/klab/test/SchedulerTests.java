@@ -8,25 +8,25 @@ import org.junit.Test;
 
 public class SchedulerTests {
 
-	@Test
-	public void testMocktime() {
-		
-		HashedWheelTimer timer = new HashedWheelMockTimer(20000);
-		timer.scheduleAtFixedRate(()-> System.out.println("at 10 every 5"), 10, 5, TimeUnit.SECONDS);
-		timer.scheduleAtFixedRate(()-> System.out.println("at 0 every 15"), 0, 15, TimeUnit.SECONDS);
-		timer.start();
-		
-		while(true) {
-			if (timer.isFinished()) {
-				break;
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+    @Test
+    public void testMocktime() {
+
+        HashedWheelTimer timer = new HashedWheelMockTimer(20000);
+        timer.scheduleAtFixedRate(() -> System.out.println("at 10 every 5"), 10, 5, TimeUnit.SECONDS);
+        timer.scheduleAtFixedRate(() -> System.out.println("at 0 every 15"), 0, 15, TimeUnit.SECONDS);
+        timer.start();
+
+        while (true) {
+            if (timer.isFinished()) {
+                break;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

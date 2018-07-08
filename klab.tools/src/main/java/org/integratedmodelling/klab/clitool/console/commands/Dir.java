@@ -12,27 +12,27 @@ public class Dir implements ICommand {
 
     @Override
     public Object execute(IServiceCall call, ISession session) throws Exception {
-    	boolean recursive = call.getParameters().get("recursive", false);
-    	return listDirectory(Klab.INSTANCE.getWorkDirectory(), "", recursive);
+        boolean recursive = call.getParameters().get("recursive", false);
+        return listDirectory(Klab.INSTANCE.getWorkDirectory(), "", recursive);
     }
 
-	private String listDirectory(File workDirectory, String prefix, boolean recursive) {
-		String ret = "";
-		for (File f : workDirectory.listFiles()) {
-			ret += prefix + fixFilename(f) + "\n";
-			if (recursive && f.isDirectory()) {
-				ret += listDirectory(f, "   ", recursive);
-			}
-		}
-		return ret;
-	}
+    private String listDirectory(File workDirectory, String prefix, boolean recursive) {
+        String ret = "";
+        for (File f : workDirectory.listFiles()) {
+            ret += prefix + fixFilename(f) + "\n";
+            if (recursive && f.isDirectory()) {
+                ret += listDirectory(f, "   ", recursive);
+            }
+        }
+        return ret;
+    }
 
-	private String fixFilename(File f) {
-		String ret = MiscUtilities.getFileName(f.toString());
-		if (f.isDirectory()) {
-			ret += File.separator;
-		}
-		return ret;
-	}
+    private String fixFilename(File f) {
+        String ret = MiscUtilities.getFileName(f.toString());
+        if (f.isDirectory()) {
+            ret += File.separator;
+        }
+        return ret;
+    }
 
 }

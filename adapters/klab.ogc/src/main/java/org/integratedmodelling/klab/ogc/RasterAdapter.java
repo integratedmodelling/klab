@@ -44,54 +44,57 @@ import com.google.common.collect.Sets;
  *  
  * Store range and percent nodata when validating?
  */
-@ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
-		"interpolation", "nodata", "bandmixer" })
+@ResourceAdapter(
+        type = "raster",
+        version = Version.CURRENT,
+        requires = { "fileUrl" },
+        optional = { "band", "interpolation", "nodata", "bandmixer" })
 public class RasterAdapter implements IResourceAdapter {
 
-	/**
-	 * All recognized primary file extensions.
-	 */
-	public static Set<String> fileExtensions = Sets.newHashSet("tif", "tiff");
+    /**
+     * All recognized primary file extensions.
+     */
+    public static Set<String> fileExtensions = Sets.newHashSet("tif", "tiff");
 
-	/**
-	 * All recognized secondary file extensions
-	 */
-	public static Set<String> secondaryFileExtensions = Sets.newHashSet("tfw", "prj", "tif.ovr", "tif.aux.xml", "txt",
-			"pdf");
+    /**
+     * All recognized secondary file extensions
+     */
+    public static Set<String> secondaryFileExtensions = Sets.newHashSet("tfw", "prj", "tif.ovr", "tif.aux.xml", "txt",
+            "pdf");
 
-	/**
-	 * Interpolation type for metadata
-	 */
-	public static final String INTERPOLATION_TYPE_FIELD = "interpolation";
+    /**
+     * Interpolation type for metadata
+     */
+    public static final String INTERPOLATION_TYPE_FIELD = "interpolation";
 
-	/**
-	 * Possible values of interpolation type (JAI classes)
-	 */
-	public static final String[] INTERPOLATION_TYPE_VALUES = { "bilinear", "nearest", "bicubic", "bicubic2" };
+    /**
+     * Possible values of interpolation type (JAI classes)
+     */
+    public static final String[] INTERPOLATION_TYPE_VALUES = { "bilinear", "nearest", "bicubic", "bicubic2" };
 
-	@Override
-	public String getName() {
-		return "raster";
-	}
+    @Override
+    public String getName() {
+        return "raster";
+    }
 
-	@Override
-	public IResourceValidator getValidator() {
-		return new RasterValidator();
-	}
+    @Override
+    public IResourceValidator getValidator() {
+        return new RasterValidator();
+    }
 
-	@Override
-	public IResourcePublisher getPublisher() {
-		return new RasterPublisher();
-	}
+    @Override
+    public IResourcePublisher getPublisher() {
+        return new RasterPublisher();
+    }
 
-	@Override
-	public IResourceEncoder getEncoder() {
-		return new RasterEncoder();
-	}
+    @Override
+    public IResourceEncoder getEncoder() {
+        return new RasterEncoder();
+    }
 
-	@Override
-	public IResourceImporter getImporter() {
-		return new RasterImporter();
-	}
+    @Override
+    public IResourceImporter getImporter() {
+        return new RasterImporter();
+    }
 
 }

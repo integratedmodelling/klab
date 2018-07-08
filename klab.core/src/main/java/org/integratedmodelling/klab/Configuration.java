@@ -36,221 +36,221 @@ import org.integratedmodelling.klab.utils.OS;
  * @version $Id: $Id
  */
 public enum Configuration implements IConfigurationService {
-	
-	INSTANCE;
 
-	private OS os;
+    INSTANCE;
 
-	private Properties properties;
-	private File dataPath;
-	private Level loggingLevel = Level.SEVERE;
-	private Level notificationLevel = Level.INFO;
+    private OS os;
 
-	/** The klab relative work path. */
-	public String KLAB_RELATIVE_WORK_PATH = ".klab";
+    private Properties properties;
+    private File dataPath;
+    private Level loggingLevel = Level.SEVERE;
+    private Level notificationLevel = Level.INFO;
 
-	private Configuration() {
+    /** The klab relative work path. */
+    public String KLAB_RELATIVE_WORK_PATH = ".klab";
 
-		if (System.getProperty(KLAB_DATA_DIRECTORY) != null) {
-			this.dataPath = new File(System.getProperty(KLAB_DATA_DIRECTORY));
-		} else {
-			String home = System.getProperty("user.home");
-			if (System.getProperty(KLAB_WORK_DIRECTORY) != null) {
-				KLAB_RELATIVE_WORK_PATH = System.getProperty(KLAB_WORK_DIRECTORY);
-			}
-			this.dataPath = new File(home + File.separator + KLAB_RELATIVE_WORK_PATH);
+    private Configuration() {
 
-			/*
-			 * make sure it's available for substitution in property files etc.
-			 */
-			System.setProperty(KLAB_DATA_DIRECTORY, this.dataPath.toString());
-		}
+        if (System.getProperty(KLAB_DATA_DIRECTORY) != null) {
+            this.dataPath = new File(System.getProperty(KLAB_DATA_DIRECTORY));
+        } else {
+            String home = System.getProperty("user.home");
+            if (System.getProperty(KLAB_WORK_DIRECTORY) != null) {
+                KLAB_RELATIVE_WORK_PATH = System.getProperty(KLAB_WORK_DIRECTORY);
+            }
+            this.dataPath = new File(home + File.separator + KLAB_RELATIVE_WORK_PATH);
 
-		this.dataPath.mkdirs();
+            /*
+             * make sure it's available for substitution in property files etc.
+             */
+            System.setProperty(KLAB_DATA_DIRECTORY, this.dataPath.toString());
+        }
 
-		// KLAB.info("k.LAB data directory set to " + dataPath);
+        this.dataPath.mkdirs();
 
-		this.properties = new Properties();
-		File pFile = new File(dataPath + File.separator + "klab.properties");
-		if (!pFile.exists()) {
-			try {
-				FileUtils.touch(pFile);
-			} catch (IOException e) {
-				throw new KlabIOException("cannot write to configuration directory");
-			}
-		}
-		try (InputStream input = new FileInputStream(pFile)) {
-			this.properties.load(input);
-		} catch (Exception e) {
-			throw new KlabIOException("cannot read configuration properties");
-		}
-	}
+        // KLAB.info("k.LAB data directory set to " + dataPath);
 
-	/** {@inheritDoc} */
-	@Override
-	public Properties getProperties() {
-		return this.properties;
-	}
+        this.properties = new Properties();
+        File pFile = new File(dataPath + File.separator + "klab.properties");
+        if (!pFile.exists()) {
+            try {
+                FileUtils.touch(pFile);
+            } catch (IOException e) {
+                throw new KlabIOException("cannot write to configuration directory");
+            }
+        }
+        try (InputStream input = new FileInputStream(pFile)) {
+            this.properties.load(input);
+        } catch (Exception e) {
+            throw new KlabIOException("cannot read configuration properties");
+        }
+    }
 
-	/**
-	 * Non-API Save the properties after making changes from outside configuration.
-	 * Should be used only internally, or removed in favor of a painful setting API.
-	 */
-	public void save() {
+    /** {@inheritDoc} */
+    @Override
+    public Properties getProperties() {
+        return this.properties;
+    }
 
-		File td = new File(dataPath + File.separator + "klab.properties");
+    /**
+     * Non-API Save the properties after making changes from outside configuration.
+     * Should be used only internally, or removed in favor of a painful setting API.
+     */
+    public void save() {
 
-		// String[] doNotPersist = new String[] { Project.ORIGINATING_NODE_PROPERTY };
+        File td = new File(dataPath + File.separator + "klab.properties");
 
-		Properties p = new Properties();
-		p.putAll(getProperties());
+        // String[] doNotPersist = new String[] { Project.ORIGINATING_NODE_PROPERTY };
 
-		// for (String dn : doNotPersist) {
-		// p.remove(dn);
-		// }
+        Properties p = new Properties();
+        p.putAll(getProperties());
 
-		try {
-			p.store(new FileOutputStream(td), null);
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
+        // for (String dn : doNotPersist) {
+        // p.remove(dn);
+        // }
 
-	}
+        try {
+            p.store(new FileOutputStream(td), null);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
 
-	/**
-	 * Use reasoner.
-	 *
-	 * @return a boolean.
-	 */
-	public boolean useReasoner() {
-		return true;
-	}
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean useCommonOntology() {
-		return !(getProperties().containsKey(KLAB_USE_COMMON_ONTOLOGY)
-				&& !Boolean.parseBoolean(getProperties().getProperty(KLAB_USE_COMMON_ONTOLOGY)));
-	}
+    /**
+     * Use reasoner.
+     *
+     * @return a boolean.
+     */
+    public boolean useReasoner() {
+        return true;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public OS getOS() {
+    /** {@inheritDoc} */
+    @Override
+    public boolean useCommonOntology() {
+        return !(getProperties().containsKey(KLAB_USE_COMMON_ONTOLOGY)
+                && !Boolean.parseBoolean(getProperties().getProperty(KLAB_USE_COMMON_ONTOLOGY)));
+    }
 
-		if (this.os == null) {
+    /** {@inheritDoc} */
+    @Override
+    public OS getOS() {
 
-			String osd = System.getProperty("os.name").toLowerCase();
+        if (this.os == null) {
 
-			// TODO ALL these checks need careful checking
-			if (osd.contains("windows")) {
-				os = OS.WIN;
-			} else if (osd.contains("mac")) {
-				os = OS.MACOS;
-			} else if (osd.contains("linux") || osd.contains("unix")) {
-				os = OS.UNIX;
-			}
-		}
+            String osd = System.getProperty("os.name").toLowerCase();
 
-		return this.os;
-	}
+            // TODO ALL these checks need careful checking
+            if (osd.contains("windows")) {
+                os = OS.WIN;
+            } else if (osd.contains("mac")) {
+                os = OS.MACOS;
+            } else if (osd.contains("linux") || osd.contains("unix")) {
+                os = OS.UNIX;
+            }
+        }
 
-	/** {@inheritDoc} */
-	@Override
-	public File getDataPath(String subspace) {
+        return this.os;
+    }
 
-		String dpath = dataPath.toString();
-		File ret = dataPath;
+    /** {@inheritDoc} */
+    @Override
+    public File getDataPath(String subspace) {
 
-		String[] paths = subspace.split("/");
-		for (String path : paths) {
-			ret = new File(dpath + File.separator + path);
-			ret.mkdirs();
-			dpath += File.separator + path;
-		}
-		return ret;
-	}
+        String dpath = dataPath.toString();
+        File ret = dataPath;
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean isOffline() {
-		return getProperties().getProperty(KLAB_OFFLINE, "false").equals("true");
-	}
+        String[] paths = subspace.split("/");
+        for (String path : paths) {
+            ret = new File(dpath + File.separator + path);
+            ret.mkdirs();
+            dpath += File.separator + path;
+        }
+        return ret;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean isDebuggingEnabled() {
-		return getProperties().getProperty(KLAB_DEBUG, "false").equals("true");
-	}
+    /** {@inheritDoc} */
+    @Override
+    public boolean isOffline() {
+        return getProperties().getProperty(KLAB_OFFLINE, "false").equals("true");
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public File getDataPath() {
-		return dataPath;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public boolean isDebuggingEnabled() {
+        return getProperties().getProperty(KLAB_DEBUG, "false").equals("true");
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public int getDataflowThreadCount() {
-		// TODO Auto-generated method stub
-		return 10;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public File getDataPath() {
+        return dataPath;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public int getTaskThreadCount() {
-		// TODO Auto-generated method stub
-		return 10;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public int getDataflowThreadCount() {
+        // TODO Auto-generated method stub
+        return 10;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public int getScriptThreadCount() {
-		// TODO Auto-generated method stub
-		return 3;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public int getTaskThreadCount() {
+        // TODO Auto-generated method stub
+        return 10;
+    }
 
-	public int getResourceThreadCount() {
-		// TODO Auto-generated method stub
-		return 3;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public int getScriptThreadCount() {
+        // TODO Auto-generated method stub
+        return 3;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean isRemoteResolutionEnabled() {
-		// TODO tie to option + live setting
-		return true;
-	}
+    public int getResourceThreadCount() {
+        // TODO Auto-generated method stub
+        return 3;
+    }
 
-	@Override
-	public boolean allowAnonymousUsage() {
-		return true;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public boolean isRemoteResolutionEnabled() {
+        // TODO tie to option + live setting
+        return true;
+    }
 
-	@Override
-	public Level getLoggingLevel() {
-		return loggingLevel;
-	}
+    @Override
+    public boolean allowAnonymousUsage() {
+        return true;
+    }
 
-	@Override
-	public Level getNotificationLevel() {
-		return notificationLevel;
-	}
+    @Override
+    public Level getLoggingLevel() {
+        return loggingLevel;
+    }
 
-	@Override
-	public double getAcceptedSubsettingError() {
-		// TODO Auto-generated method stub
-		return 0.15;
-	}
+    @Override
+    public Level getNotificationLevel() {
+        return notificationLevel;
+    }
 
-	@Override
-	public boolean resolveAllInstances() {
-		// TODO tie to engine configuration property
-		return false;
-	}
+    @Override
+    public double getAcceptedSubsettingError() {
+        // TODO Auto-generated method stub
+        return 0.15;
+    }
 
-	@Override
-	public int getMaxLiveObservationContextsPerSession() {
-		// TODO tie to engine configuration property + live setting
-		return 10;
-	}
+    @Override
+    public boolean resolveAllInstances() {
+        // TODO tie to engine configuration property
+        return false;
+    }
+
+    @Override
+    public int getMaxLiveObservationContextsPerSession() {
+        // TODO tie to engine configuration property + live setting
+        return 10;
+    }
 }

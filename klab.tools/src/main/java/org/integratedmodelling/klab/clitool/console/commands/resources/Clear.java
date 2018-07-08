@@ -7,18 +7,18 @@ import org.integratedmodelling.klab.clitool.api.ICommand;
 
 public class Clear implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+    @Override
+    public Object execute(IServiceCall call, ISession session) throws Exception {
 
-		// TODO ask for confirmation
-		
-		if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
-			for (Object urn : call.getParameters().get("arguments", java.util.List.class)) {
-				Resources.INSTANCE.getLocalResourceCatalog().remove(urn.toString());
-			}
-		} else {
-			Resources.INSTANCE.getLocalResourceCatalog().clear();
-		}
-		return null;
-	}
+        // TODO ask for confirmation
+
+        if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
+            for (Object urn : call.getParameters().get("arguments", java.util.List.class)) {
+                Resources.INSTANCE.getLocalResourceCatalog().remove(urn.toString());
+            }
+        } else {
+            Resources.INSTANCE.getLocalResourceCatalog().clear();
+        }
+        return null;
+    }
 }

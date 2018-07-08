@@ -15,31 +15,31 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
  */
 public abstract class MonitoredCallable<T> implements Callable<T> {
 
-  IRuntimeIdentity task;
+    IRuntimeIdentity task;
 
-  public MonitoredCallable(IRuntimeIdentity task) {
-    this.task = task;
-  }
-
-  @Override
-  public final T call() throws Exception {
-    
-    ((Monitor) task.getMonitor()).notifyStart();
-    T result = null;
-    boolean error = false;
-    try {
-      result = run();
-    } catch (Throwable e) {
-      task.getMonitor().error(e);
-      error = true;
-      throw e;
-    } finally {
-      ((Monitor) task.getMonitor()).notifyEnd(error);
+    public MonitoredCallable(IRuntimeIdentity task) {
+        this.task = task;
     }
-      
-    return result;
-  }
 
-  public abstract T run() throws Exception;
+    @Override
+    public final T call() throws Exception {
+
+        ((Monitor) task.getMonitor()).notifyStart();
+        T result = null;
+        boolean error = false;
+        try {
+            result = run();
+        } catch (Throwable e) {
+            task.getMonitor().error(e);
+            error = true;
+            throw e;
+        } finally {
+            ((Monitor) task.getMonitor()).notifyEnd(error);
+        }
+
+        return result;
+    }
+
+    public abstract T run() throws Exception;
 
 }

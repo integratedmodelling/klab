@@ -43,65 +43,64 @@ import org.opengis.coverage.grid.GridCoverage;
  */
 public class WcsEncoder implements IResourceEncoder {
 
-	/**
-	 * The raster encoder that does the actual work after we get our coverage from
-	 * the service.
-	 */
-	RasterEncoder encoder = new RasterEncoder();
+    /**
+     * The raster encoder that does the actual work after we get our coverage from
+     * the service.
+     */
+    RasterEncoder encoder = new RasterEncoder();
 
-	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
-		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
-				Version.create(resource.getParameters().get("wcsVersion", String.class)));
-		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
-		encoder.encodeFromCoverage(resource, getCoverage(layer, resource, geometry), geometry, builder, context);
-	}
+    @Override
+    public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
+        WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
+                Version.create(resource.getParameters().get("wcsVersion", String.class)));
+        WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
+        encoder.encodeFromCoverage(resource, getCoverage(layer, resource, geometry), geometry, builder, context);
+    }
 
-	private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry) {
+    private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry) {
 
-		File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry);
-		
-		if (coverageFile == null) {
+        File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry);
 
-			// forcing v1.0.0 for now, while I figure out the pain of WCS requests
-			URL getCov = layer.getService().buildRetrieveUrl(layer, Version.create("1.0.0"), geometry);
+        if (coverageFile == null) {
 
-			// URLConnection connection = getCov.openConnection();
-			// /*
-			// * set configured timeout
-			// */
-			// if
-			// (KLAB.CONFIG.getProperties().containsKey(IConfiguration.KLAB_CONNECTION_TIMEOUT))
-			// {
-			// int timeout = 1000 * Integer.parseInt(KLAB.CONFIG.getProperties()
-			// .getProperty(IConfiguration.KLAB_CONNECTION_TIMEOUT, "10"));
-			// connection.setConnectTimeout(timeout);
-			// connection.setReadTimeout(timeout);
-			// }
+            // forcing v1.0.0 for now, while I figure out the pain of WCS requests
+            URL getCov = layer.getService().buildRetrieveUrl(layer, Version.create("1.0.0"), geometry);
 
-			try (InputStream input = getCov.openStream()) {
-				coverageFile = File.createTempFile("geo", ".tiff");
-				coverageFile.deleteOnExit();
-				FileUtils.copyInputStreamToFile(input, coverageFile);
-				WcsAdapter.setCachedFile(coverageFile, layer.getIdentifier(), geometry);
-			} catch (Throwable e) {
-				throw new KlabIOException(e);
-			}
-		}
-		return encoder.readCoverage(coverageFile);
-	}
+            // URLConnection connection = getCov.openConnection();
+            // /*
+            // * set configured timeout
+            // */
+            // if
+            // (KLAB.CONFIG.getProperties().containsKey(IConfiguration.KLAB_CONNECTION_TIMEOUT))
+            // {
+            // int timeout = 1000 * Integer.parseInt(KLAB.CONFIG.getProperties()
+            // .getProperty(IConfiguration.KLAB_CONNECTION_TIMEOUT, "10"));
+            // connection.setConnectTimeout(timeout);
+            // connection.setReadTimeout(timeout);
+            // }
 
-	@Override
-	public boolean isOnline(IResource resource) {
+            try (InputStream input = getCov.openStream()) {
+                coverageFile = File.createTempFile("geo", ".tiff");
+                coverageFile.deleteOnExit();
+                FileUtils.copyInputStreamToFile(input, coverageFile);
+                WcsAdapter.setCachedFile(coverageFile, layer.getIdentifier(), geometry);
+            } catch (Throwable e) {
+                throw new KlabIOException(e);
+            }
+        }
+        return encoder.readCoverage(coverageFile);
+    }
 
-		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
-				Version.create(resource.getParameters().get("wcsVersion", String.class)));
-		if (service == null) {
-			return false;
-		}
-		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
-		return layer != null && !layer.isError();
-	}
+    @Override
+    public boolean isOnline(IResource resource) {
 
+        WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
+                Version.create(resource.getParameters().get("wcsVersion", String.class)));
+        if (service == null) {
+            return false;
+        }
+        WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
+        return layer != null && !layer.isError();
+    }
 
 }

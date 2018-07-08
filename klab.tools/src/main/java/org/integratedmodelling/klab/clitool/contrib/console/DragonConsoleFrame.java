@@ -44,47 +44,47 @@ import org.integratedmodelling.klab.clitool.console.CommandHistory;
  */
 public class DragonConsoleFrame extends JFrame {
 
-	private static final long serialVersionUID = 8851272088780841859L;
-	public DragonConsole console;
+    private static final long serialVersionUID = 8851272088780841859L;
+    public DragonConsole console;
 
-	/**
-	 * Default Constructor that uses a default title and creates a basic console.
-	 * This Constructor makes a basic title which is "DragonConsole " plus the
-	 * version number of the Console. It also creates a basic Console and adds it to
-	 * the JFrame.
-	 * 
-	 * @param title
-	 * @param useInlineInput
-	 * @param history
-	 */
-	public DragonConsoleFrame(String title, boolean useInlineInput, CommandHistory history) {
-		this.console = new DragonConsole(useInlineInput, history);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle(title);
-		this.setResizable(true);
-		this.add(console);
-		this.pack();
-		console.setInputFocus();
+    /**
+     * Default Constructor that uses a default title and creates a basic console.
+     * This Constructor makes a basic title which is "DragonConsole " plus the
+     * version number of the Console. It also creates a basic Console and adds it to
+     * the JFrame.
+     * 
+     * @param title
+     * @param useInlineInput
+     * @param history
+     */
+    public DragonConsoleFrame(String title, boolean useInlineInput, CommandHistory history) {
+        this.console = new DragonConsole(useInlineInput, history);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle(title);
+        this.setResizable(true);
+        this.add(console);
+        this.pack();
+        console.setInputFocus();
 
-		try {
-			this.setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("icons/logo_white_64.jpg")));
-		} catch (Throwable e) {
-			// OK, next time.
-			Logging.INSTANCE.warn(e);
-		}
+        try {
+            this.setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("icons/logo_white_64.jpg")));
+        } catch (Throwable e) {
+            // OK, next time.
+            Logging.INSTANCE.warn(e);
+        }
 
-		this.centerWindow();
-	}
+        this.centerWindow();
+    }
 
-	/**
-	 * Centers the window based on screen size and window size. Determines the
-	 * Screen Size and then centers the Window. This can cause funky problems on
-	 * multi-screen display systems.
-	 */
-	private void centerWindow() {
-		Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
-		Dimension screenSize = defaultToolkit.getScreenSize();
-		this.setLocation((int) ((screenSize.getWidth() / 2) - (this.getWidth() / 2)),
-				(int) ((screenSize.getHeight() / 2) - (this.getHeight() / 2)));
-	}
+    /**
+     * Centers the window based on screen size and window size. Determines the
+     * Screen Size and then centers the Window. This can cause funky problems on
+     * multi-screen display systems.
+     */
+    private void centerWindow() {
+        Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = defaultToolkit.getScreenSize();
+        this.setLocation((int) ((screenSize.getWidth() / 2) - (this.getWidth() / 2)),
+                (int) ((screenSize.getHeight() / 2) - (this.getHeight() / 2)));
+    }
 }

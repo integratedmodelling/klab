@@ -23,25 +23,24 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class Component implements IComponent {
 
-    String                  name;
-    boolean                 active;
-    boolean                 initialized;
-    Version                 version;
-    Map<String, IPrototype> services            = new HashMap<>();
+    String name;
+    boolean active;
+    boolean initialized;
+    Version version;
+    Map<String, IPrototype> services = new HashMap<>();
 
-    private String          initMethod          = null;
-    private String          setupMethod         = null;
-    private boolean         isSetupAsynchronous = false;
-    private boolean         binaryAssetsLoaded;
-    private Class<?>        implementingClass;
-    private Object          implementation;
+    private String initMethod = null;
+    private String setupMethod = null;
+    private boolean isSetupAsynchronous = false;
+    private boolean binaryAssetsLoaded;
+    private Class<?> implementingClass;
+    private Object implementation;
 
     public Component() {
         // TODO Auto-generated constructor stub
     }
 
-    public Component(org.integratedmodelling.klab.api.extensions.Component annotation,
-            Class<?> implementation) {
+    public Component(org.integratedmodelling.klab.api.extensions.Component annotation, Class<?> implementation) {
 
         this.name = annotation.id();
         this.version = Version.create(annotation.version());
@@ -62,7 +61,7 @@ public class Component implements IComponent {
         } catch (Exception e) {
             // don't break for now, just deactivate, log the error and move
             // on.
-          Logging.INSTANCE.error(e);
+            Logging.INSTANCE.error(e);
             this.active = false;
         }
     }
@@ -85,8 +84,8 @@ public class Component implements IComponent {
         // }
 
         if (!missing.isEmpty()) {
-            throw new KlabValidationException("component " + name
-                    + " is missing the following exported knowledge IDs: " + missing);
+            throw new KlabValidationException(
+                    "component " + name + " is missing the following exported knowledge IDs: " + missing);
         }
 
         if (initialized) {
@@ -252,8 +251,7 @@ public class Component implements IComponent {
             // active = false;
             // }
 
-            Logging.INSTANCE
-                    .info("component " + name + " loaded  (" + this.services.size() + " services provided)");
+            Logging.INSTANCE.info("component " + name + " loaded  (" + this.services.size() + " services provided)");
         }
     }
 

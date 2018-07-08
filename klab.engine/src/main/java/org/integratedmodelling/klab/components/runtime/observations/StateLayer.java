@@ -15,20 +15,20 @@ import org.integratedmodelling.klab.components.runtime.RuntimeContext;
  */
 public class StateLayer extends State implements IState {
 
-	State delegate;
+    State delegate;
 
-	public StateLayer(State state, IDataArtifact layer) {
-		super(state.getObservable(), state.getScale(), (RuntimeContext) state.getRuntimeContext(), layer);
-		this.delegate = state;
-		// share the same layers map of the original layer
-		this.layers = state.layers;
-	}
+    public StateLayer(State state, IDataArtifact layer) {
+        super(state.getObservable(), state.getScale(), (RuntimeContext) state.getRuntimeContext(), layer);
+        this.delegate = state;
+        // share the same layers map of the original layer
+        this.layers = state.layers;
+    }
 
-	public IState as(org.integratedmodelling.klab.api.provenance.IArtifact.Type type) {
-		if (delegate.getType() == type) {
-			return delegate;
-		}
-		return delegate.as(type);
-	}
+    public IState as(org.integratedmodelling.klab.api.provenance.IArtifact.Type type) {
+        if (delegate.getType() == type) {
+            return delegate;
+        }
+        return delegate.as(type);
+    }
 
 }

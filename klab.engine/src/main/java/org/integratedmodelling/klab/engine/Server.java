@@ -15,6 +15,7 @@ public abstract class Server implements IServerIdentity {
     protected void registerCommonAnnotations() {
 
         Klab.INSTANCE.registerAnnotationHandler(ResourceAdapter.class, new AnnotationHandler() {
+
             @Override
             public void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException {
                 Extensions.INSTANCE.registerResourceAdapter((ResourceAdapter) annotation, cls);
@@ -22,6 +23,7 @@ public abstract class Server implements IServerIdentity {
         });
 
         Klab.INSTANCE.registerAnnotationHandler(Component.class, new AnnotationHandler() {
+
             @Override
             public void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException {
                 Extensions.INSTANCE.registerComponent((Component) annotation, cls);

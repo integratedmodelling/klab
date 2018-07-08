@@ -62,164 +62,163 @@ import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
  */
 public class VectorValidator implements IResourceValidator {
 
-	@Override
-	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+    @Override
+    public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+        IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
 
-		try {
+        try {
 
-			ret.withParameter("fileUrl", url);
-			Map<String, Object> map = new HashMap<>();
-			map.put("url", url);
+            ret.withParameter("fileUrl", url);
+            Map<String, Object> map = new HashMap<>();
+            map.put("url", url);
 
-			if (userData.contains("filter")) {
-				try {
-					ECQL.toFilter(userData.get("filter", String.class));
-				} catch (CQLException e) {
-					ret.addError("CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
-				}
-			}
-			
-			DataStore dataStore = DataStoreFinder.getDataStore(map);
-			String typeName = dataStore.getTypeNames()[0];
-			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
+            if (userData.contains("filter")) {
+                try {
+                    ECQL.toFilter(userData.get("filter", String.class));
+                } catch (CQLException e) {
+                    ret.addError(
+                            "CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
+                }
+            }
 
-			validateCollection(source, ret, userData, monitor);
+            DataStore dataStore = DataStoreFinder.getDataStore(map);
+            String typeName = dataStore.getTypeNames()[0];
+            FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
 
-		} catch (Throwable e) {
-			ret.addError("Error validating " + e.getMessage());
-		}
+            validateCollection(source, ret, userData, monitor);
 
-		return ret;
-	}
+        } catch (Throwable e) {
+            ret.addError("Error validating " + e.getMessage());
+        }
 
-	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
-			IParameters<String> userData, IMonitor monitor) throws IOException {
+        return ret;
+    }
 
-		
-		
-		Filter filter = Filter.INCLUDE;
-		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
+    protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
+            IParameters<String> userData, IMonitor monitor) throws IOException {
 
-		ReferencedEnvelope envelope = source.getBounds();
-		CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
-		if (envelope == null) {
-			// we only do this when importing, so let's go through them
-			envelope = collection.getBounds();
-		}
+        Filter filter = Filter.INCLUDE;
+        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 
-		Map<String, Class<?>> attributeTypes = new HashMap<>();
+        ReferencedEnvelope envelope = source.getBounds();
+        CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
+        if (envelope == null) {
+            // we only do this when importing, so let's go through them
+            envelope = collection.getBounds();
+        }
 
-		int shapeDimension = 0;
-		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-			
-			if (ad.getLocalName().equals("the_geom")) {
-				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
-				if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
-					if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
-						shapeDimension = 1;
-					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
-						shapeDimension = 2;
-					} else {
-						ret.addError("cannot establish geometry dimensionality for vector resource");
-					}
-				} else {
-					ret.addError("cannot establish geometry type for vector resource");
-				}
-			} else {
-				// store attribute ID and type
-				attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
-			}
-		}
-		
-		// TODO if attributes are requested, validate their type and name
-		
-		// TODO if attributes are requested, set the type in the builder accordingly
-		ret.withType(IArtifact.Type.OBJECT);
+        Map<String, Class<?>> attributeTypes = new HashMap<>();
 
-		// Compute union or convex hull if requested
-		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {
-			com.vividsolutions.jts.geom.Geometry geometry = null;
-			try (FeatureIterator<SimpleFeature> features = collection.features()) {
-				while (features.hasNext()) {
-					SimpleFeature feature = features.next();
-					Object shape = feature.getDefaultGeometryProperty().getValue();
-					if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
-						geometry = geometry == null ? (com.vividsolutions.jts.geom.Geometry) shape
-								: geometry.union((com.vividsolutions.jts.geom.Geometry) shape);
-					}
-				}
-			}
-			if (geometry != null) {
-				if (userData.get("computeHull", false)) {
-					geometry = geometry.convexHull();
-				}
-				geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
-				ret.withParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
-			}
-		}
+        int shapeDimension = 0;
+        for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
 
-		String crsCode = null;
-		if (crs == null) {
-			ret.addError("Coverage has no coordinate reference system");
-		} else {
+            if (ad.getLocalName().equals("the_geom")) {
+                // set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
+                if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
+                    if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
+                        shapeDimension = 1;
+                    } else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
+                        shapeDimension = 2;
+                    } else {
+                        ret.addError("cannot establish geometry dimensionality for vector resource");
+                    }
+                } else {
+                    ret.addError("cannot establish geometry type for vector resource");
+                }
+            } else {
+                // store attribute ID and type
+                attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
+            }
+        }
 
-			crsCode = CRS.toSRS(crs);
+        // TODO if attributes are requested, validate their type and name
 
-			monitor.info("Running projection tests...");
+        // TODO if attributes are requested, set the type in the builder accordingly
+        ret.withType(IArtifact.Type.OBJECT);
 
-			try {
+        // Compute union or convex hull if requested
+        if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {
+            com.vividsolutions.jts.geom.Geometry geometry = null;
+            try (FeatureIterator<SimpleFeature> features = collection.features()) {
+                while (features.hasNext()) {
+                    SimpleFeature feature = features.next();
+                    Object shape = feature.getDefaultGeometryProperty().getValue();
+                    if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+                        geometry = geometry == null ? (com.vividsolutions.jts.geom.Geometry) shape
+                                : geometry.union((com.vividsolutions.jts.geom.Geometry) shape);
+                    }
+                }
+            }
+            if (geometry != null) {
+                if (userData.get("computeHull", false)) {
+                    geometry = geometry.convexHull();
+                }
+                geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
+                ret.withParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
+            }
+        }
 
-				monitor.info("Testing reprojection to WGS84...");
+        String crsCode = null;
+        if (crs == null) {
+            ret.addError("Coverage has no coordinate reference system");
+        } else {
 
-				CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
+            crsCode = CRS.toSRS(crs);
 
-				Projection utmProjection = Projection.getUTM(Envelope.create(envelope));
-				if (!crs.equals(utmProjection.getCoordinateReferenceSystem())) {
-					monitor.info("Testing reprojection to best-guess UTM " + utmProjection + "...");
-					CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
-				}
-				String crsId = CRS.lookupIdentifier(crs, true);
-				if (crsId != null && crsId.startsWith("EPSG:")) {
-					// use the simpler identifier
-					crsCode = crsId;
-				}
+            monitor.info("Running projection tests...");
 
-			} catch (Throwable e) {
-				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
-			}
-		}
-		if (!ret.hasErrors()) {
+            try {
 
-			Geometry geometry = Geometry
-					.create("#s" + shapeDimension).withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
-							envelope.getMinimum(1), envelope.getMaximum(1))
-					.withProjection(crsCode).withSpatialShape(collection.size());
+                monitor.info("Testing reprojection to WGS84...");
 
-			ret.withGeometry(geometry);
-		}
+                CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
 
-	}
+                Projection utmProjection = Projection.getUTM(Envelope.create(envelope));
+                if (!crs.equals(utmProjection.getCoordinateReferenceSystem())) {
+                    monitor.info("Testing reprojection to best-guess UTM " + utmProjection + "...");
+                    CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
+                }
+                String crsId = CRS.lookupIdentifier(crs, true);
+                if (crsId != null && crsId.startsWith("EPSG:")) {
+                    // use the simpler identifier
+                    crsCode = crsId;
+                }
 
-	@Override
-	public boolean canHandle(File resource, IParameters<String> parameters) {
+            } catch (Throwable e) {
+                ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
+            }
+        }
+        if (!ret.hasErrors()) {
 
-		if (resource == null) {
-			return false;
-		}
-		String extension = MiscUtilities.getFileExtension(resource);
-		if (extension != null) {
-			return
-			// TODO other raster formats understandable by geotools
-			extension.toLowerCase().equals("shp");
-		}
+            Geometry geometry = Geometry
+                    .create("#s" + shapeDimension).withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
+                            envelope.getMinimum(1), envelope.getMaximum(1))
+                    .withProjection(crsCode).withSpatialShape(collection.size());
 
-		return false;
-	}
+            ret.withGeometry(geometry);
+        }
 
-	@Override
-	public Collection<File> getAllFilesForResource(File file) {
-		return FileUtils.getSidecarFiles(file, VectorAdapter.secondaryFileExtensions);
-	}
+    }
+
+    @Override
+    public boolean canHandle(File resource, IParameters<String> parameters) {
+
+        if (resource == null) {
+            return false;
+        }
+        String extension = MiscUtilities.getFileExtension(resource);
+        if (extension != null) {
+            return
+            // TODO other raster formats understandable by geotools
+            extension.toLowerCase().equals("shp");
+        }
+
+        return false;
+    }
+
+    @Override
+    public Collection<File> getAllFilesForResource(File file) {
+        return FileUtils.getSidecarFiles(file, VectorAdapter.secondaryFileExtensions);
+    }
 }

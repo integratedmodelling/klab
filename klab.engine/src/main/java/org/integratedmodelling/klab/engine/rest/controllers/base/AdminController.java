@@ -23,39 +23,41 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.ADMIN)
 public class AdminController {
 
-	@Autowired
-	ApplicationContext applicationContext;
+    @Autowired
+    ApplicationContext applicationContext;
 
-	public void shutDown(ExitCodeGenerator exitCodeGenerator) {
-		SpringApplication.exit(applicationContext, exitCodeGenerator);
-	}
+    public void shutDown(ExitCodeGenerator exitCodeGenerator) {
+        SpringApplication.exit(applicationContext, exitCodeGenerator);
+    }
 
-	@RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)
-	public int shutdown() {
+    @RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)
+    public int shutdown() {
 
-		int seconds = 2;
-		new Thread() {
+        int seconds = 2;
+        new Thread() {
 
-			int status = 0;
+            int status = 0;
 
-			@Override
-			public void run() {
+            @Override
+            public void run() {
 
-				if (seconds > 0) {
-					try {
-						sleep(seconds * 1000);
-					} catch (InterruptedException e) {
-						status = -1;
-					}
-				}
-				shutDown(new ExitCodeGenerator() {
-					@Override
-					public int getExitCode() {
-						return status;
-					}});
-			}
-		}.start();
+                if (seconds > 0) {
+                    try {
+                        sleep(seconds * 1000);
+                    } catch (InterruptedException e) {
+                        status = -1;
+                    }
+                }
+                shutDown(new ExitCodeGenerator() {
 
-		return 0;
-	}
+                    @Override
+                    public int getExitCode() {
+                        return status;
+                    }
+                });
+            }
+        }.start();
+
+        return 0;
+    }
 }

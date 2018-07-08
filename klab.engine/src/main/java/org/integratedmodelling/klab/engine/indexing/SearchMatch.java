@@ -8,42 +8,42 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 
 public class SearchMatch implements IIndexingService.Match {
 
-	String id;
-	String name;
-	String description;
-	int rank;
-	Type matchType;
-	
-	Set<IKimConcept.Type> conceptType = EnumSet.noneOf(IKimConcept.Type.class);
+    String id;
+    String name;
+    String description;
+    int rank;
+    Type matchType;
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    Set<IKimConcept.Type> conceptType = EnumSet.noneOf(IKimConcept.Type.class);
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public int getRank() {
-		return rank;
-	}
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public Type getMatchType() {
-		return matchType;
-	}
+    @Override
+    public int getRank() {
+        return rank;
+    }
 
-	@Override
-	public Set<org.integratedmodelling.kim.api.IKimConcept.Type> getConceptType() {
-		return conceptType;
-	}
+    @Override
+    public Type getMatchType() {
+        return matchType;
+    }
+
+    @Override
+    public Set<org.integratedmodelling.kim.api.IKimConcept.Type> getConceptType() {
+        return conceptType;
+    }
 
 }

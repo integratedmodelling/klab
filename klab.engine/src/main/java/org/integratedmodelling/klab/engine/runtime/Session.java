@@ -58,277 +58,278 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class Session implements ISession, UserDetails {
 
-	private static final long serialVersionUID = -1571090827271892549L;
+    private static final long serialVersionUID = -1571090827271892549L;
 
-	Monitor monitor;
-	String token = "s" + NameGenerator.shortUUID();
-	IEngineUserIdentity user;
-	List<Listener> listeners = new ArrayList<>();
-	boolean closed = false;
-	Set<GrantedAuthority> authorities = new HashSet<>();
-	long lastActivity = System.currentTimeMillis();
-	long creation = System.currentTimeMillis();
-	long lastJoin = System.currentTimeMillis();
+    Monitor monitor;
+    String token = "s" + NameGenerator.shortUUID();
+    IEngineUserIdentity user;
+    List<Listener> listeners = new ArrayList<>();
+    boolean closed = false;
+    Set<GrantedAuthority> authorities = new HashSet<>();
+    long lastActivity = System.currentTimeMillis();
+    long creation = System.currentTimeMillis();
+    long lastJoin = System.currentTimeMillis();
 
-	SpatialExtent regionOfInterest = null;
+    SpatialExtent regionOfInterest = null;
 
-	/**
-	 * A scheduler to periodically collect observation and task garbage
-	 */
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    /**
+     * A scheduler to periodically collect observation and task garbage
+     */
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-	/*
-	 * Tasks created in this session, managed as task/script start and end. Content
-	 * may be a IScript or a ITask.
-	 */
-	Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
+    /*
+     * Tasks created in this session, managed as task/script start and end. Content
+     * may be a IScript or a ITask.
+     */
+    Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
 
-	/*
-	 * The contexts for all root observations built in this session, up to the
-	 * configured number, most recent first. Synchronized.
-	 */
-	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(
-			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
+    /*
+     * The contexts for all root observations built in this session, up to the
+     * configured number, most recent first. Synchronized.
+     */
+    Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(
+            Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
 
-	public interface Listener {
-		void onClose(ISession session);
-	}
+    public interface Listener {
 
-	public Session(Engine engine, IEngineUserIdentity user) {
-		this.user = user;
-		this.monitor = ((Monitor) engine.getMonitor()).get(this);
-		this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
-		Authentication.INSTANCE.registerSession(this);
-	}
+        void onClose(ISession session);
+    }
 
-	void touch() {
-		this.lastActivity = System.currentTimeMillis();
-	}
+    public Session(Engine engine, IEngineUserIdentity user) {
+        this.user = user;
+        this.monitor = ((Monitor) engine.getMonitor()).get(this);
+        this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
+        Authentication.INSTANCE.registerSession(this);
+    }
 
-	public void addListener(Listener listener) {
-		this.listeners.add(listener);
-	}
+    void touch() {
+        this.lastActivity = System.currentTimeMillis();
+    }
 
-	@Override
-	public String getId() {
-		return token;
-	}
+    public void addListener(Listener listener) {
+        this.listeners.add(listener);
+    }
 
-	@Override
-	public boolean is(Type type) {
-		return type == Type.MODEL_SESSION;
-	}
+    @Override
+    public String getId() {
+        return token;
+    }
 
-	@Override
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return IIdentity.findParent(this, type);
-	}
+    @Override
+    public boolean is(Type type) {
+        return type == Type.MODEL_SESSION;
+    }
 
-	@Override
-	public IEngineUserIdentity getParentIdentity() {
-		return user;
-	}
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-	@Override
-	public Monitor getMonitor() {
-		return monitor;
-	}
+    @Override
+    public IEngineUserIdentity getParentIdentity() {
+        return user;
+    }
 
-	@Override
-	public void close() throws IOException {
-		for (Listener listener : listeners) {
-			listener.onClose(this);
-		}
-		this.closed = true;
-	}
+    @Override
+    public Monitor getMonitor() {
+        return monitor;
+    }
 
-	@Override
-	public Future<ISubject> observe(String urn, String... scenarios) throws KlabException {
-		touch();
-		IKimObject object = Resources.INSTANCE.getModelObject(urn);
-		if (!(object instanceof Observer)) {
-			throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
-		}
-		return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
-	}
+    @Override
+    public void close() throws IOException {
+        for (Listener listener : listeners) {
+            listener.onClose(this);
+        }
+        this.closed = true;
+    }
 
-	public String toString() {
-		// TODO add user
-		return "<session " + getId() + ">";
-	}
+    @Override
+    public Future<ISubject> observe(String urn, String... scenarios) throws KlabException {
+        touch();
+        IKimObject object = Resources.INSTANCE.getModelObject(urn);
+        if (!(object instanceof Observer)) {
+            throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
+        }
+        return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
+    }
 
-	@Override
-	public Set<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
-	}
+    public String toString() {
+        // TODO add user
+        return "<session " + getId() + ">";
+    }
 
-	@Override
-	public String getPassword() {
-		return getId();
-	}
+    @Override
+    public Set<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
-	@Override
-	public String getUsername() {
-		return getId();
-	}
+    @Override
+    public String getPassword() {
+        return getId();
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+    @Override
+    public String getUsername() {
+        return getId();
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return !closed;
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return !closed;
-	}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return !closed;
+    }
 
-	@Override
-	public IGeometry getRegionOfInterest() {
+    @Override
+    public boolean isEnabled() {
+        return !closed;
+    }
 
-		if (regionOfInterest == null) {
-			return Geometry.empty();
-		}
-		return Geometry.create("S1").withBoundingBox(regionOfInterest.getEast(), regionOfInterest.getWest(),
-				regionOfInterest.getSouth(), regionOfInterest.getNorth());
-	}
+    @Override
+    public IGeometry getRegionOfInterest() {
 
-	@Override
-	public IScript run(URL url) throws KlabException {
-		IScript ret = null;
-		if (url.toString().endsWith(".kim")) {
-			return new Script(this, url);
-		}
-		return ret;
-	}
+        if (regionOfInterest == null) {
+            return Geometry.empty();
+        }
+        return Geometry.create("S1").withBoundingBox(regionOfInterest.getEast(), regionOfInterest.getWest(),
+                regionOfInterest.getSouth(), regionOfInterest.getNorth());
+    }
 
-	@Override
-	public IObservation getObservation(String observationId) {
-		// start at the most recent
-		for (IRuntimeContext context : observationContexts) {
-			IObservation ret = context.getObservation(observationId);
-			if (ret != null) {
-				return ret;
-			}
-		}
-		return null;
-	}
+    @Override
+    public IScript run(URL url) throws KlabException {
+        IScript ret = null;
+        if (url.toString().endsWith(".kim")) {
+            return new Script(this, url);
+        }
+        return ret;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends Future<?>> T getTask(String taskId, Class<T> cls) {
-		return (T) tasks.get(taskId);
-	}
+    @Override
+    public IObservation getObservation(String observationId) {
+        // start at the most recent
+        for (IRuntimeContext context : observationContexts) {
+            IObservation ret = context.getObservation(observationId);
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * Register a task. It may be a ITask or a IScript, which only have the Future
-	 * identity in common.
-	 * 
-	 * @param task
-	 * @param monitor2
-	 */
-	public void registerTask(Future<?> task) {
-		String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
-		this.tasks.put(id, task);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends Future<?>> T getTask(String taskId, Class<T> cls) {
+        return (T) tasks.get(taskId);
+    }
 
-	/**
-	 * Interrupt the passed task, notifying its monitor for computations to terminate gracefully. Return true if there was a task to interrupt and it was 
-	 * indeed canceled.
-	 * 
-	 * @param taskId
-	 * @return true if interruption was achieved
-	 */
-	public boolean interruptTask(String taskId, boolean forceInterruption) {
-		Future<?> task = this.tasks.get(taskId);
-		if (task != null) {
-			((Monitor)((IRuntimeIdentity)task).getMonitor()).interrupt();
-			if (task.cancel(forceInterruption)) {
-				unregisterTask(task);
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Register a task. It may be a ITask or a IScript, which only have the Future
+     * identity in common.
+     * 
+     * @param task
+     * @param monitor2
+     */
+    public void registerTask(Future<?> task) {
+        String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
+        this.tasks.put(id, task);
+    }
 
-	/**
-	 * Register a task. It may be a ITask or a IScript, which only have the Future
-	 * identity in common.
-	 * 
-	 * @param task
-	 */
-	public void unregisterTask(Future<?> task) {
-		this.tasks.remove(task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId());
-	}
+    /**
+     * Interrupt the passed task, notifying its monitor for computations to terminate gracefully. Return true if there was a task to interrupt and it was 
+     * indeed canceled.
+     * 
+     * @param taskId
+     * @return true if interruption was achieved
+     */
+    public boolean interruptTask(String taskId, boolean forceInterruption) {
+        Future<?> task = this.tasks.get(taskId);
+        if (task != null) {
+            ((Monitor) ((IRuntimeIdentity) task).getMonitor()).interrupt();
+            if (task.cancel(forceInterruption)) {
+                unregisterTask(task);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Register the runtime context of a new observation. If needed, dispose of the
-	 * oldest observation made.
-	 * 
-	 * @param runtimeContext
-	 */
-	public void registerObservationContext(IRuntimeContext runtimeContext) {
+    /**
+     * Register a task. It may be a ITask or a IScript, which only have the Future
+     * identity in common.
+     * 
+     * @param task
+     */
+    public void unregisterTask(Future<?> task) {
+        this.tasks.remove(task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId());
+    }
 
-		if (!observationContexts.offerFirst(runtimeContext)) {
-			disposeObservation(observationContexts.pollLast());
-			observationContexts.addFirst(runtimeContext);
-		}
-		// this is for human watchers, everything else is done by the runtime
-		monitor.info("new context registered with ID " + runtimeContext.getRootSubject().getId() + " for "
-				+ runtimeContext.getRootSubject());
-	}
+    /**
+     * Register the runtime context of a new observation. If needed, dispose of the
+     * oldest observation made.
+     * 
+     * @param runtimeContext
+     */
+    public void registerObservationContext(IRuntimeContext runtimeContext) {
 
-	private void disposeObservation(IRuntimeContext context) {
-		// TODO dispose of the observation
-		// TODO send a notification through the session monitor that the obs is now out
-		// of scope.
-		Logging.INSTANCE.warn("Disposing of observation " + context.getRootSubject() + ": TODO");
-	}
+        if (!observationContexts.offerFirst(runtimeContext)) {
+            disposeObservation(observationContexts.pollLast());
+            observationContexts.addFirst(runtimeContext);
+        }
+        // this is for human watchers, everything else is done by the runtime
+        monitor.info("new context registered with ID " + runtimeContext.getRootSubject().getId() + " for "
+                + runtimeContext.getRootSubject());
+    }
 
-	/*
-	 * ------------------------------------------------------------------------
-	 * handlers for messages
-	 * ------------------------------------------------------------------------
-	 */
+    private void disposeObservation(IRuntimeContext context) {
+        // TODO dispose of the observation
+        // TODO send a notification through the session monitor that the obs is now out
+        // of scope.
+        Logging.INSTANCE.warn("Disposing of observation " + context.getRootSubject() + ": TODO");
+    }
 
-	@MessageHandler
-	private void setRegionOfInterest(SpatialExtent extent) {
-		// TODO change to monitor.debug
-		System.out.println("setting ROI = " + extent);
-		this.regionOfInterest = extent;
-	}
+    /*
+     * ------------------------------------------------------------------------
+     * handlers for messages
+     * ------------------------------------------------------------------------
+     */
 
-	@MessageHandler
-	private void interruptTask(InterruptTask request) {
-		interruptTask(request.getTaskId(), request.isForceInterruption());
-	}
+    @MessageHandler
+    private void setRegionOfInterest(SpatialExtent extent) {
+        // TODO change to monitor.debug
+        System.out.println("setting ROI = " + extent);
+        this.regionOfInterest = extent;
+    }
 
-	/*
-	 * REST communication
-	 */
-	public SessionReference getSessionReference() {
+    @MessageHandler
+    private void interruptTask(InterruptTask request) {
+        interruptTask(request.getTaskId(), request.isForceInterruption());
+    }
 
-		SessionReference ret = new SessionReference();
+    /*
+     * REST communication
+     */
+    public SessionReference getSessionReference() {
 
-		ret.setTimeEstablished(creation);
-		ret.setTimeLastJoined(lastJoin);
-		ret.setTimeRetrieved(System.currentTimeMillis());
-		ret.setTimeLastActivity(lastActivity);
+        SessionReference ret = new SessionReference();
 
-		for (IRuntimeContext ctx : observationContexts) {
-			ret.getRootObservations().put(ctx.getRootSubject().getId(),
-					Observations.INSTANCE.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0));
-		}
-		return ret;
-	}
+        ret.setTimeEstablished(creation);
+        ret.setTimeLastJoined(lastJoin);
+        ret.setTimeRetrieved(System.currentTimeMillis());
+        ret.setTimeLastActivity(lastActivity);
+
+        for (IRuntimeContext ctx : observationContexts) {
+            ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
+                    .createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0));
+        }
+        return ret;
+    }
 
 }

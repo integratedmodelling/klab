@@ -43,16 +43,15 @@ public class DataflowTests {
         /*
          * parse every file in the kdl/ package, under tests/resources
          */
-        for (String test : new Reflections("kdl", new ResourcesScanner())
-                .getResources(Pattern.compile(".*\\.kdl"))) {
-            
+        for (String test : new Reflections("kdl", new ResourcesScanner()).getResources(Pattern.compile(".*\\.kdl"))) {
+
             try (InputStream stream = getClass().getClassLoader().getResourceAsStream(test)) {
                 IKdlDataflow kdl = Dataflows.INSTANCE.declare(stream);
                 System.out.println("result: " + kdl);
             } catch (Exception e) {
                 throw e;
             }
-            
+
         }
     }
 

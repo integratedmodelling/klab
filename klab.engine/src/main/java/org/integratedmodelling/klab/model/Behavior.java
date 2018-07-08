@@ -22,7 +22,7 @@ public class Behavior implements IBehavior {
 
     List<IAction> actions = new ArrayList<>();
     List<IExtent> extents;
-    IKimBehavior  statement;
+    IKimBehavior statement;
 
     public Behavior(IKimBehavior behavior, IActiveKimObject model) {
         // TODO Auto-generated constructor stub
@@ -53,8 +53,8 @@ public class Behavior implements IBehavior {
             for (IServiceCall extentFunction : statement.getExtentFunctions()) {
                 Object extent = Extensions.INSTANCE.callFunction(extentFunction, monitor);
                 if (!(extent instanceof IExtent)) {
-                    throw new KlabValidationException("function " + extentFunction
-                            + " does not produce a valid extent");
+                    throw new KlabValidationException(
+                            "function " + extentFunction + " does not produce a valid extent");
                 }
                 this.extents.add((IExtent) extent);
             }
@@ -81,7 +81,7 @@ public class Behavior implements IBehavior {
 
     @Override
     public boolean isEmpty() {
-      return actions.isEmpty();
+        return actions.isEmpty();
     }
 
 }

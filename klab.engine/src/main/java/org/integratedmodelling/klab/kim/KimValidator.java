@@ -28,100 +28,100 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KimValidator implements Kim.Validator {
 
-	Monitor monitor;
-	Map<String, Integer> recheckObservationNS = new HashMap<>();
+    Monitor monitor;
+    Map<String, Integer> recheckObservationNS = new HashMap<>();
 
-	public KimValidator(Monitor monitor) {
-		this.monitor = monitor;
-	}
+    public KimValidator(Monitor monitor) {
+        this.monitor = monitor;
+    }
 
-	public static Map<Object, Object> compileMapLiteral(Map<?, ?> mapLiteral) {
+    public static Map<Object, Object> compileMapLiteral(Map<?, ?> mapLiteral) {
 
-		Map<Object, Object> ret = new LinkedHashMap<>();
-		for (Object key : mapLiteral.keySet()) {
-			ret.put(compileLiteral(key), compileLiteral(mapLiteral.get(key)));
-		}
-		return ret;
-	}
+        Map<Object, Object> ret = new LinkedHashMap<>();
+        for (Object key : mapLiteral.keySet()) {
+            ret.put(compileLiteral(key), compileLiteral(mapLiteral.get(key)));
+        }
+        return ret;
+    }
 
-	private static Object compileLiteral(Object value) {
-		if (value instanceof IKimConcept) {
-			value = Concepts.INSTANCE.declare((IKimConcept) value);
-		} else if (value instanceof IKimExpression) {
-			value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
-					((IKimExpression) value).getLanguage());
-		} else if (value instanceof IKimLookupTable) {
-			// TODO table
-		} else if (value instanceof Map) {
-			value = compileMapLiteral((Map<?, ?>) value);
-		}
-		return value;
-	}
+    private static Object compileLiteral(Object value) {
+        if (value instanceof IKimConcept) {
+            value = Concepts.INSTANCE.declare((IKimConcept) value);
+        } else if (value instanceof IKimExpression) {
+            value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
+                    ((IKimExpression) value).getLanguage());
+        } else if (value instanceof IKimLookupTable) {
+            // TODO table
+        } else if (value instanceof Map) {
+            value = compileMapLiteral((Map<?, ?>) value);
+        }
+        return value;
+    }
 
-	@Override
-	public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IArtifact.Type> expectedType) {
-		List<Pair<String, Level>> ret = new ArrayList<>();
-		IPrototype prototype = Extensions.INSTANCE.getPrototype(functionCall.getName());
-		if (prototype != null) {
-			ret.addAll(prototype.validate(functionCall));
-			if (expectedType != null) {
+    @Override
+    public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IArtifact.Type> expectedType) {
+        List<Pair<String, Level>> ret = new ArrayList<>();
+        IPrototype prototype = Extensions.INSTANCE.getPrototype(functionCall.getName());
+        if (prototype != null) {
+            ret.addAll(prototype.validate(functionCall));
+            if (expectedType != null) {
 
-			}
-		} else {
-			ret.add(Pair.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
-		}
-		return ret;
-	}
+            }
+        } else {
+            ret.add(Pair.create("Function " + functionCall.getName() + " is unknown", Level.SEVERE));
+        }
+        return ret;
+    }
 
-	@Override
-	public UrnDescriptor classifyUrn(String urn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public UrnDescriptor classifyUrn(String urn) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
+    @Override
+    public EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType) {
 
-		IConcept coreType = Concepts.INSTANCE.getConcept(string);
-		if (coreType == null) {
-			return EnumSet.noneOf(Type.class);
-		}
-		/*
-		 * TODO check type
-		 */
-		return statedType;
-	}
+        IConcept coreType = Concepts.INSTANCE.getConcept(string);
+        if (coreType == null) {
+            return EnumSet.noneOf(Type.class);
+        }
+        /*
+         * TODO check type
+         */
+        return statedType;
+    }
 
-	@Override
-	public boolean isFunctionKnown(String functionName) {
-		return Extensions.INSTANCE.getPrototype(functionName) != null;
-	}
+    @Override
+    public boolean isFunctionKnown(String functionName) {
+        return Extensions.INSTANCE.getPrototype(functionName) != null;
+    }
 
-	@Override
-	public boolean isAnnotationKnown(String annotationName) {
-		return Annotations.INSTANCE.getPrototype(annotationName) != null;
-	}
+    @Override
+    public boolean isAnnotationKnown(String annotationName) {
+        return Annotations.INSTANCE.getPrototype(annotationName) != null;
+    }
 
-	@Override
-	public List<Pair<String, Level>> validateAnnotation(IServiceCall annotationCall, IKimStatement target) {
-		List<Pair<String, Level>> ret = new ArrayList<>();
-		IPrototype prototype = Annotations.INSTANCE.getPrototype(annotationCall.getName());
-		if (prototype != null) {
-			return prototype.validate(annotationCall);
-		}
-		// Annotations w/o prototype are allowed
-		return ret;
+    @Override
+    public List<Pair<String, Level>> validateAnnotation(IServiceCall annotationCall, IKimStatement target) {
+        List<Pair<String, Level>> ret = new ArrayList<>();
+        IPrototype prototype = Annotations.INSTANCE.getPrototype(annotationCall.getName());
+        if (prototype != null) {
+            return prototype.validate(annotationCall);
+        }
+        // Annotations w/o prototype are allowed
+        return ret;
 
-	}
+    }
 
-	@Override
-	public IPrototype getFunctionPrototype(String functionId) {
-		return Extensions.INSTANCE.getPrototype(functionId);
-	}
+    @Override
+    public IPrototype getFunctionPrototype(String functionId) {
+        return Extensions.INSTANCE.getPrototype(functionId);
+    }
 
-	@Override
-	public IPrototype getAnnotationPrototype(String functionId) {
-		return Annotations.INSTANCE.getPrototype(functionId);
-	}
+    @Override
+    public IPrototype getAnnotationPrototype(String functionId) {
+        return Annotations.INSTANCE.getPrototype(functionId);
+    }
 
 }

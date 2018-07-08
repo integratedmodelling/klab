@@ -9,23 +9,22 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class Help implements ICommand {
 
-  @Override
-  public Object execute(IServiceCall call, ISession session) {
-    String output = "";
-    for (String pack : CliRuntime.INSTANCE.getCommandProcessor().getPackages()) {
-      if (!pack.equals("main")) {
-        output += pack + ":\n" + StringUtils.repeat('-', pack.length() + 1) + "\n\n";
-      }
-      for (IPrototype prototype : CliRuntime.INSTANCE.getCommandProcessor().getPrototypes(pack)) {
-        String synopsis = prototype.getSynopsis();
-        if (!pack.equals("main")) {
-          synopsis = StringUtils.leftIndent(synopsis, 3);
+    @Override
+    public Object execute(IServiceCall call, ISession session) {
+        String output = "";
+        for (String pack : CliRuntime.INSTANCE.getCommandProcessor().getPackages()) {
+            if (!pack.equals("main")) {
+                output += pack + ":\n" + StringUtils.repeat('-', pack.length() + 1) + "\n\n";
+            }
+            for (IPrototype prototype : CliRuntime.INSTANCE.getCommandProcessor().getPrototypes(pack)) {
+                String synopsis = prototype.getSynopsis();
+                if (!pack.equals("main")) {
+                    synopsis = StringUtils.leftIndent(synopsis, 3);
+                }
+                output += "* " + synopsis + "\n";
+            }
         }
-        output += "* " + synopsis + "\n";
-      }
+        return output;
     }
-    return output;
-  }
-
 
 }

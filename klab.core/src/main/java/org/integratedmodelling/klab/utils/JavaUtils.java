@@ -34,7 +34,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public class JavaUtils {
 
-    
     /**
      * Gets the current classpath.
      *
@@ -45,9 +44,9 @@ public class JavaUtils {
         if (!(classloader instanceof URLClassLoader)) {
             return System.getProperty("java.class.path");
         }
-        return StringUtils.joinObjects(((URLClassLoader)classloader).getURLs(), getClasspathSeparator());
+        return StringUtils.joinObjects(((URLClassLoader) classloader).getURLs(), getClasspathSeparator());
     }
-    
+
     /**
      * Gets the classpath separator.
      *
@@ -69,10 +68,10 @@ public class JavaUtils {
      * @return the int
      * @throws KlabException the klab exception
      */
-    public static int exec(Class<?> klass, boolean wait, String ...args) throws KlabException {
+    public static int exec(Class<?> klass, boolean wait, String... args) throws KlabException {
 
         List<String> params = new ArrayList<>();
-        
+
         params.add(getJavaExecutable());
         params.add("-cp");
         params.add(getCurrentClasspath());
@@ -83,19 +82,19 @@ public class JavaUtils {
                 params.add(a);
             }
         }
-        
+
         ProcessBuilder builder = new ProcessBuilder(params.toArray(new String[params.size()]));
         Process process;
         try {
             process = builder.start();
-        if (wait) {
-            process.waitFor();
-            return process.exitValue();
-        }
+            if (wait) {
+                process.waitFor();
+                return process.exitValue();
+            }
         } catch (Exception e) {
-            
+
         }
-        
+
         return 0;
     }
 

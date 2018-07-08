@@ -12,16 +12,16 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
     Collection<String> gitUrls;
     boolean synced;
     boolean skipSync = false;
-    
+
     public MonitorableGitWorkspace(File root, Collection<String> gitUrls, File... overridingProjects) {
-        
+
         delegate = new KimWorkspace(root, overridingProjects) {
 
             private static final long serialVersionUID = -7032365312926466996L;
 
             @Override
             public void readProjects() throws IOException {
-                
+
                 if (!synced && (!skipSync || !root.exists())) {
                     synced = true;
                     for (String url : gitUrls) {
@@ -32,15 +32,15 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                         }
                     }
                 }
-                
+
                 super.readProjects();
             }
         };
         this.gitUrls = gitUrls;
     }
-    
+
     public void setSkipSync(boolean skipSync) {
-      this.skipSync = skipSync;
+        this.skipSync = skipSync;
     }
-    
+
 }

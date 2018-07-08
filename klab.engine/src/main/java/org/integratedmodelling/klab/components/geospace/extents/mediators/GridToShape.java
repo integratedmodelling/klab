@@ -12,31 +12,31 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class GridToShape implements IScaleMediator {
 
-	private Subgrid subgrid;
+    private Subgrid subgrid;
 
-	public GridToShape(Grid grid, Shape shape) {
-		this.subgrid = Subgrid.create(grid, shape);
-	}
+    public GridToShape(Grid grid, Shape shape) {
+        this.subgrid = Subgrid.create(grid, shape);
+    }
 
-	@Override
-	public boolean isConformant() {
-		return false;
-	}
+    @Override
+    public boolean isConformant() {
+        return false;
+    }
 
-	@Override
-	public long mapConformant(long originalOffset) {
-		throw new IllegalStateException("GridToShape called with wrong state: grids and shape cannot be conformant");
-	}
+    @Override
+    public long mapConformant(long originalOffset) {
+        throw new IllegalStateException("GridToShape called with wrong state: grids and shape cannot be conformant");
+    }
 
-	@Override
-	public Collection<Pair<Long, Double>> map(long originalOffset) {
-		
-		List<Pair<Long, Double>> ret = new ArrayList<>();
-		for (Cell cell : subgrid) {
-			Cell originalCell = subgrid.getOriginalCell(cell);
-			ret.add(new Pair<>(originalCell.getOffsetInGrid(), 1.0));
-		}
-		return ret;
-	}
+    @Override
+    public Collection<Pair<Long, Double>> map(long originalOffset) {
+
+        List<Pair<Long, Double>> ret = new ArrayList<>();
+        for (Cell cell : subgrid) {
+            Cell originalCell = subgrid.getOriginalCell(cell);
+            ret.add(new Pair<>(originalCell.getOffsetInGrid(), 1.0));
+        }
+        return ret;
+    }
 
 }

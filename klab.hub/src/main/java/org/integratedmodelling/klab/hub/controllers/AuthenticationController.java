@@ -31,86 +31,94 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthenticationController {
 
-	@Autowired
-	AuthenticationManager authenticationManager;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-	@Autowired
-	NetworkManager networkManager;
+    @Autowired
+    NetworkManager networkManager;
 
-	@RequestMapping(value = API.HUB.AUTHENTICATE_ENGINE, method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	@ResponseBody
-	public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
-			HttpServletRequest httpRequest) {
+    @RequestMapping(
+            value = API.HUB.AUTHENTICATE_ENGINE,
+            method = RequestMethod.POST,
+            consumes = "application/json",
+            produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
+            HttpServletRequest httpRequest) {
 
-		EngineUser user = authenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
+        EngineUser user = authenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
 
-		if (user != null) {
+        if (user != null) {
 
-			/*
-			 * this matches the user to a persistent token signed by this hub and ensures
-			 * all nodes are aware of the user.
-			 */
-			user = authenticationManager.authorizeUser(user);
+            /*
+             * this matches the user to a persistent token signed by this hub and ensures
+             * all nodes are aware of the user.
+             */
+            user = authenticationManager.authorizeUser(user);
 
-			/*
-			 * good enough for now. True auth must unencrypt and validate the unencrypted
-			 * certificate with all the clear-text properties and key in addition to produce
-			 * a (persisted) token.
-			 */
-			DateTime now = DateTime.now();
-			DateTime tomorrow = now.plusDays(90);
+            /*
+             * good enough for now. True auth must unencrypt and validate the unencrypted
+             * certificate with all the clear-text properties and key in addition to produce
+             * a (persisted) token.
+             */
+            DateTime now = DateTime.now();
+            DateTime tomorrow = now.plusDays(90);
 
-			IdentityReference userIdentity = new IdentityReference(user.getUsername(), user.getEmailAddress(),
-					now.toString());
-			AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
-					user.getGroups().stream().map(g -> new Group(g)).collect(Collectors.toSet()), tomorrow.toString(),
-					user.getId());
+            IdentityReference userIdentity = new IdentityReference(user.getUsername(), user.getEmailAddress(),
+                    now.toString());
+            AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
+                    user.getGroups().stream().map(g -> new Group(g)).collect(Collectors.toSet()), tomorrow.toString(),
+                    user.getId());
 
-			/*
-			 * TODO if user is new, propagate to authenticated servers
-			 */
+            /*
+             * TODO if user is new, propagate to authenticated servers
+             */
 
-			return new ResponseEntity<EngineAuthenticationResponse>(
-					new EngineAuthenticationResponse(authenticatedIdentity, authenticationManager.getHubReference(),
-							networkManager.getNodes(user.getGroups())),
-					HttpStatus.OK);
-		}
-		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
-	}
+            return new ResponseEntity<EngineAuthenticationResponse>(
+                    new EngineAuthenticationResponse(authenticatedIdentity, authenticationManager.getHubReference(),
+                            networkManager.getNodes(user.getGroups())),
+                    HttpStatus.OK);
+        }
+        return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
 
-	@RequestMapping(value = API.HUB.AUTHENTICATE_NODE, method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	@ResponseBody
-	public ResponseEntity<?> authenticateNode(@RequestBody EngineAuthenticationRequest request,
-			HttpServletRequest httpRequest) {
+    @RequestMapping(
+            value = API.HUB.AUTHENTICATE_NODE,
+            method = RequestMethod.POST,
+            consumes = "application/json",
+            produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> authenticateNode(@RequestBody EngineAuthenticationRequest request,
+            HttpServletRequest httpRequest) {
 
-		INodeIdentity node = authenticationManager.authenticateNodeCertificate(request, httpRequest.getLocalAddr());
+        INodeIdentity node = authenticationManager.authenticateNodeCertificate(request, httpRequest.getLocalAddr());
 
-		if (node != null) {
+        if (node != null) {
 
-			/*
-			 * good enough for now. True auth must unencrypt and validate the unencrypted
-			 * certificate with all the clear-text properties and key in addition to produce
-			 * a (persisted) token.
-			 */
-			DateTime now = DateTime.now();
-			DateTime tomorrow = now.plusDays(90);
+            /*
+             * good enough for now. True auth must unencrypt and validate the unencrypted
+             * certificate with all the clear-text properties and key in addition to produce
+             * a (persisted) token.
+             */
+            DateTime now = DateTime.now();
+            DateTime tomorrow = now.plusDays(90);
 
-			IdentityReference userIdentity = new IdentityReference(node.getName(),
-					node.getParentIdentity().getEmailAddress(), now.toString());
-			AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
-					new ArrayList<Group>(), tomorrow.toString(), node.getId());
+            IdentityReference userIdentity = new IdentityReference(node.getName(),
+                    node.getParentIdentity().getEmailAddress(), now.toString());
+            AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
+                    new ArrayList<Group>(), tomorrow.toString(), node.getId());
 
-			Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
+            Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
 
-			NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-					authenticationManager.getHubReference().getId(), authenticationManager.getGroups(), KeyManager.INSTANCE.getEncodedPublicKey());
-			
-			networkManager.notifyAuthorizedNode(node);
+            NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
+                    authenticationManager.getHubReference().getId(), authenticationManager.getGroups(),
+                    KeyManager.INSTANCE.getEncodedPublicKey());
 
-			
-			return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);
-		}
-		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
-	}
+            networkManager.notifyAuthorizedNode(node);
+
+            return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);
+        }
+        return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
 
 }

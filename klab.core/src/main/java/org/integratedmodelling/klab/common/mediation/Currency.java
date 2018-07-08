@@ -31,10 +31,10 @@ import org.joda.time.DateTime;
  */
 public class Currency implements ICurrency {
 
-    private String       code;
-    private String       currency;
-    private DateTime     date;
-    private IConcept     concept;
+    private String code;
+    private String currency;
+    private DateTime date;
+    private IConcept concept;
     private Range scale;
 
     private boolean ok = true;
@@ -92,7 +92,7 @@ public class Currency implements ICurrency {
             date = new DateTime(Integer.parseInt(ss[1]), 1, 1, 0, 0);
         } /*else if (code.contains(":")) {
             concept = Concepts.c(code);
-        }*/
+          }*/
     }
 
     /**
@@ -111,7 +111,7 @@ public class Currency implements ICurrency {
      */
     public Currency(IConcept concept) {
         this.concept = concept;
-    }  
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -125,8 +125,8 @@ public class Currency implements ICurrency {
         if (!(scale instanceof ICurrency)) {
             throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
         }
-        if (((Currency)scale).scale != null && scale != null) {
-            return this.scale.convert(d, ((Currency)scale).scale);
+        if (((Currency) scale).scale != null && scale != null) {
+            return this.scale.convert(d, ((Currency) scale).scale);
         }
         // TODO        
         return d;
@@ -166,8 +166,8 @@ public class Currency implements ICurrency {
          * TODO check actual PPP
          */
         if (currency != null && date != null) {
-            return (currency2.currency != null && currency2.currency.equals(currency) &&
-                    currency2.date != null && currency2.date.equals(date));
+            return (currency2.currency != null && currency2.currency.equals(currency) && currency2.date != null
+                    && currency2.date.equals(date));
         }
 
         return true;
@@ -204,7 +204,5 @@ public class Currency implements ICurrency {
         }
         return true;
     }
-    
-    
 
 }

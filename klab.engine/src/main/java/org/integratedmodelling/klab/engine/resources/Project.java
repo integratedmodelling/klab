@@ -12,16 +12,16 @@ import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 
 public class Project implements IProject {
-    
+
     IKimProject delegate;
     IWorkspace workspace;
-   
+
     public Project(IKimProject project) {
         this.delegate = project;
         if (project.getName().equals(Kim.COMMON_PROJECT_ID)) {
-          this.workspace = Resources.INSTANCE.getCommonWorkspace();
+            this.workspace = Resources.INSTANCE.getCommonWorkspace();
         } else {
-          this.workspace = Resources.INSTANCE.getWorkspace(project.getWorkspace().getName());
+            this.workspace = Resources.INSTANCE.getWorkspace(project.getWorkspace().getName());
         }
     }
 

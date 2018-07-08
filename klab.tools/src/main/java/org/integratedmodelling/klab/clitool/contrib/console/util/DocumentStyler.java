@@ -43,133 +43,134 @@ import javax.swing.text.StyledDocument;
  * @version 1.3
  */
 public class DocumentStyler {
-	/**
-	 * Uses the char codes from each TextColor object passed to create a Style name
-	 * and then adds the Style to the StyledDocument with the appropriate foreground
-	 * and background colors supplied by the TextColor objects.
-	 * 
-	 * @param documentToUpdate
-	 *            The StyledDocument the colors will be added to.
-	 * @param styleFont
-	 *            The font for each style to use.
-	 * @param foreground
-	 *            The TextColor that represents the foreground color.
-	 * @param background
-	 *            The TextColor that represents the background color.
-	 * @return The altered StyledDocument with the new Style.
-	 */
-	private static StyledDocument addNewStyle(StyledDocument documentToUpdate, Font styleFont, TextColor foreground,
-			TextColor background) {
-		String styleName = "" + foreground.getCharCode() + background.getCharCode();
 
-		Style parentStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+    /**
+     * Uses the char codes from each TextColor object passed to create a Style name
+     * and then adds the Style to the StyledDocument with the appropriate foreground
+     * and background colors supplied by the TextColor objects.
+     * 
+     * @param documentToUpdate
+     *            The StyledDocument the colors will be added to.
+     * @param styleFont
+     *            The font for each style to use.
+     * @param foreground
+     *            The TextColor that represents the foreground color.
+     * @param background
+     *            The TextColor that represents the background color.
+     * @return The altered StyledDocument with the new Style.
+     */
+    private static StyledDocument addNewStyle(StyledDocument documentToUpdate, Font styleFont, TextColor foreground,
+            TextColor background) {
+        String styleName = "" + foreground.getCharCode() + background.getCharCode();
 
-		Style temp = documentToUpdate.addStyle(styleName, parentStyle);
-		// setStyleFont(temp, styleFont);
-		StyleConstants.setForeground(temp, foreground.getColor());
-		StyleConstants.setBackground(temp, background.getColor());
+        Style parentStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 
-		return documentToUpdate;
-	}
+        Style temp = documentToUpdate.addStyle(styleName, parentStyle);
+        // setStyleFont(temp, styleFont);
+        StyleConstants.setForeground(temp, foreground.getColor());
+        StyleConstants.setBackground(temp, background.getColor());
 
-	/**
-	 * same Font style as newFont. This method is a helper, it sets the
-	 * SimpleAttributeSets Font Family, Font Size, and whether or not the Font is
-	 * Bold and/or Italic.
-	 * 
-	 * @param sas
-	 *            The SimpleAttributeSet the Font style needs to be saved in.
-	 * @param newFont
-	 *            The newFont that needs to be set to the Style object.
-	 * @return The modified SimpleAttributeSet.
-	 */
-	private static SimpleAttributeSet setSASFont(SimpleAttributeSet sas, Font newFont) {
-		StyleConstants.setFontFamily(sas, newFont.getFamily());
-		StyleConstants.setFontSize(sas, newFont.getSize());
-		StyleConstants.setBold(sas, newFont.isBold());
-		StyleConstants.setItalic(sas, newFont.isItalic());
+        return documentToUpdate;
+    }
 
-		return sas;
-	}
+    /**
+     * same Font style as newFont. This method is a helper, it sets the
+     * SimpleAttributeSets Font Family, Font Size, and whether or not the Font is
+     * Bold and/or Italic.
+     * 
+     * @param sas
+     *            The SimpleAttributeSet the Font style needs to be saved in.
+     * @param newFont
+     *            The newFont that needs to be set to the Style object.
+     * @return The modified SimpleAttributeSet.
+     */
+    private static SimpleAttributeSet setSASFont(SimpleAttributeSet sas, Font newFont) {
+        StyleConstants.setFontFamily(sas, newFont.getFamily());
+        StyleConstants.setFontSize(sas, newFont.getSize());
+        StyleConstants.setBold(sas, newFont.isBold());
+        StyleConstants.setItalic(sas, newFont.isItalic());
 
-	/**
-	 * Changes the Font attribute of all styles currently in a Document to a new
-	 * Font, this method is called when the consoleFont is changed.
-	 * 
-	 * @param documentToUpdate
-	 *            The StyledDocument containing the text to be changed.
-	 * @param newFont
-	 *            The new Font to show in the StyledDocument.
-	 */
-	public static StyledDocument changeFont(StyledDocument documentToUpdate, Font newFont) {
-		SimpleAttributeSet newFontStyle = new SimpleAttributeSet();
-		newFontStyle = setSASFont(newFontStyle, newFont);
-		documentToUpdate.setCharacterAttributes(0, documentToUpdate.getLength(), newFontStyle, false);
+        return sas;
+    }
 
-		return documentToUpdate;
-	}
+    /**
+     * Changes the Font attribute of all styles currently in a Document to a new
+     * Font, this method is called when the consoleFont is changed.
+     * 
+     * @param documentToUpdate
+     *            The StyledDocument containing the text to be changed.
+     * @param newFont
+     *            The new Font to show in the StyledDocument.
+     */
+    public static StyledDocument changeFont(StyledDocument documentToUpdate, Font newFont) {
+        SimpleAttributeSet newFontStyle = new SimpleAttributeSet();
+        newFontStyle = setSASFont(newFontStyle, newFont);
+        documentToUpdate.setCharacterAttributes(0, documentToUpdate.getLength(), newFontStyle, false);
 
-	/**
-	 * This methods adds the new color as a foreground color for all available
-	 * background colors as well as a background for all available foreground
-	 * colors. This method should never be called directly, instead it should be
-	 * indirectly called through <code>DragonConsoles</code>
-	 * <code>addTextColor(char, Color)</code> method.
-	 * 
-	 * @param documentToUpdate
-	 *            The StyledDocument the new Color is to be added to.
-	 * @param consoleFont
-	 *            The Font these styles will use.
-	 * @param newColor
-	 *            The TextColor that needs to be added as a foreground and
-	 *            background.
-	 * @param textColors
-	 *            The list of colors already in the Console, used so the newColor
-	 *            can have each background and foreground of previously added
-	 *            colors.
-	 * @return The modified StyledDocument.
-	 */
-	public static StyledDocument addNewColor(StyledDocument documentToUpdate, Font consoleFont, TextColor newColor,
-			ArrayList<TextColor> textColors) {
-		for (int i = 0; i < textColors.size(); i++) {
-			TextColor tc = textColors.get(i);
-			documentToUpdate = addNewStyle(documentToUpdate, consoleFont, newColor, tc); // Give the New Color every
-																							// background
-			documentToUpdate = addNewStyle(documentToUpdate, consoleFont, tc, newColor); // Give Every Color the new
-																							// background
-		}
+        return documentToUpdate;
+    }
 
-		return documentToUpdate;
-	}
+    /**
+     * This methods adds the new color as a foreground color for all available
+     * background colors as well as a background for all available foreground
+     * colors. This method should never be called directly, instead it should be
+     * indirectly called through <code>DragonConsoles</code>
+     * <code>addTextColor(char, Color)</code> method.
+     * 
+     * @param documentToUpdate
+     *            The StyledDocument the new Color is to be added to.
+     * @param consoleFont
+     *            The Font these styles will use.
+     * @param newColor
+     *            The TextColor that needs to be added as a foreground and
+     *            background.
+     * @param textColors
+     *            The list of colors already in the Console, used so the newColor
+     *            can have each background and foreground of previously added
+     *            colors.
+     * @return The modified StyledDocument.
+     */
+    public static StyledDocument addNewColor(StyledDocument documentToUpdate, Font consoleFont, TextColor newColor,
+            ArrayList<TextColor> textColors) {
+        for (int i = 0; i < textColors.size(); i++) {
+            TextColor tc = textColors.get(i);
+            documentToUpdate = addNewStyle(documentToUpdate, consoleFont, newColor, tc); // Give the New Color every
+                                                                                         // background
+            documentToUpdate = addNewStyle(documentToUpdate, consoleFont, tc, newColor); // Give Every Color the new
+                                                                                         // background
+        }
 
-	/**
-	 * This method will remove any and all Styles in the StyledDocument that contain
-	 * it as a foreground or background.
-	 * 
-	 * @param documentToUpdate
-	 *            The document the color should be removed from.
-	 * @param remove
-	 *            The Color that need to be removed.
-	 * @param colors
-	 *            The list of Colors that have been added to the StyledDocument.
-	 * @return The StyledDocument after the colors have been removed.
-	 */
-	public static StyledDocument removeColor(StyledDocument documentToUpdate, TextColor remove,
-			ArrayList<TextColor> colors) {
-		// Remove this here since this will be called after it's been removed from the
-		// list
-		documentToUpdate.removeStyle("" + remove.getCharCode() + remove.getCharCode());
+        return documentToUpdate;
+    }
 
-		for (int i = 0; i < colors.size(); i++) {
-			TextColor temp = colors.get(i);
+    /**
+     * This method will remove any and all Styles in the StyledDocument that contain
+     * it as a foreground or background.
+     * 
+     * @param documentToUpdate
+     *            The document the color should be removed from.
+     * @param remove
+     *            The Color that need to be removed.
+     * @param colors
+     *            The list of Colors that have been added to the StyledDocument.
+     * @return The StyledDocument after the colors have been removed.
+     */
+    public static StyledDocument removeColor(StyledDocument documentToUpdate, TextColor remove,
+            ArrayList<TextColor> colors) {
+        // Remove this here since this will be called after it's been removed from the
+        // list
+        documentToUpdate.removeStyle("" + remove.getCharCode() + remove.getCharCode());
 
-			String s1 = "" + temp.getCharCode() + remove.getCharCode();
-			String s2 = "" + remove.getCharCode() + temp.getCharCode();
+        for (int i = 0; i < colors.size(); i++) {
+            TextColor temp = colors.get(i);
 
-			documentToUpdate.removeStyle(s1);
-			documentToUpdate.removeStyle(s2);
-		}
+            String s1 = "" + temp.getCharCode() + remove.getCharCode();
+            String s2 = "" + remove.getCharCode() + temp.getCharCode();
 
-		return documentToUpdate;
-	}
+            documentToUpdate.removeStyle(s1);
+            documentToUpdate.removeStyle(s2);
+        }
+
+        return documentToUpdate;
+    }
 }

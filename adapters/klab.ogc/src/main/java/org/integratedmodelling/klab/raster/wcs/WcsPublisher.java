@@ -25,10 +25,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public class WcsPublisher implements IResourcePublisher {
 
-  @Override
-  public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

@@ -35,28 +35,29 @@ import javax.annotation.Nullable;
 public class View implements Serializable {
 
     private static final long serialVersionUID = -7468152830954276455L;
-    
+
     /**
      * The Class Observation.
      */
     public static class Observation {
+
         String name;
         String id;
         String description;
     }
-    
+
     /*
      * ID of all observations shown in the view
      */
     private List<String> displayed = new ArrayList<>();
-    
+
     /*
      * Root of observation tree. May be null if we're simply moving the
      * context without making observations. May not be complete as some
      * observation may be loaded on demand.
      */
     private @Nullable Observation root;
-    
+
     /*
      * Type of view. Defines strategy to build interactive view. Do not use an enum for now, maybe later.
      */

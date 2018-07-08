@@ -38,113 +38,113 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public class FutureResource implements IResource, Future<IResource> {
 
-	private static final long serialVersionUID = -923039635832182164L;
+    private static final long serialVersionUID = -923039635832182164L;
 
-	private String urn;
-	private IResource delegate;
-	private long timeout = 1000;
-	private IMonitor monitor;
+    private String urn;
+    private IResource delegate;
+    private long timeout = 1000;
+    private IMonitor monitor;
 
-	public FutureResource(String urn, IMonitor monitor) {
-		this.urn = urn;
-		this.monitor = monitor;
-	}
+    public FutureResource(String urn, IMonitor monitor) {
+        this.urn = urn;
+        this.monitor = monitor;
+    }
 
-	private IResource getDelegate(long timeout) {
-		if (delegate == null) {
-			while (!Resources.INSTANCE.getLocalResourceCatalog().containsKey(urn)) {
-				try {
-					Thread.sleep(timeout);
-				} catch (InterruptedException e) {
-					// boh
-				}
-			}
-			this.delegate = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
-		}
-		return delegate;
-	}
+    private IResource getDelegate(long timeout) {
+        if (delegate == null) {
+            while (!Resources.INSTANCE.getLocalResourceCatalog().containsKey(urn)) {
+                try {
+                    Thread.sleep(timeout);
+                } catch (InterruptedException e) {
+                    // boh
+                }
+            }
+            this.delegate = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+        }
+        return delegate;
+    }
 
-	public String getUrn() {
-		return getDelegate(timeout).getUrn();
-	}
+    public String getUrn() {
+        return getDelegate(timeout).getUrn();
+    }
 
-	public IGeometry getGeometry() {
-		return getDelegate(timeout).getGeometry();
-	}
+    public IGeometry getGeometry() {
+        return getDelegate(timeout).getGeometry();
+    }
 
-	public Version getVersion() {
-		return getDelegate(timeout).getVersion();
-	}
+    public Version getVersion() {
+        return getDelegate(timeout).getVersion();
+    }
 
-	public String getAdapterType() {
-		return getDelegate(timeout).getAdapterType();
-	}
+    public String getAdapterType() {
+        return getDelegate(timeout).getAdapterType();
+    }
 
-	public IMetadata getMetadata() {
-		return getDelegate(timeout).getMetadata();
-	}
+    public IMetadata getMetadata() {
+        return getDelegate(timeout).getMetadata();
+    }
 
-	public List<IResource> getHistory() {
-		return getDelegate(timeout).getHistory();
-	}
+    public List<IResource> getHistory() {
+        return getDelegate(timeout).getHistory();
+    }
 
-	public IParameters<String> getParameters() {
-		return getDelegate(timeout).getParameters();
-	}
+    public IParameters<String> getParameters() {
+        return getDelegate(timeout).getParameters();
+    }
 
-	public long getResourceTimestamp() {
-		return getDelegate(timeout).getResourceTimestamp();
-	}
+    public long getResourceTimestamp() {
+        return getDelegate(timeout).getResourceTimestamp();
+    }
 
-	@Override
-	public boolean hasErrors() {
-		return getDelegate(timeout).hasErrors();
-	}
+    @Override
+    public boolean hasErrors() {
+        return getDelegate(timeout).hasErrors();
+    }
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isCancelled() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public boolean isDone() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isDone() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public IResource get() throws InterruptedException, ExecutionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IResource get() throws InterruptedException, ExecutionException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public IResource get(long timeout, TimeUnit unit)
-			throws InterruptedException, ExecutionException, TimeoutException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IResource get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<String> getLocalPaths() {
-		return getDelegate(timeout).getLocalPaths();
-	}
+    @Override
+    public List<String> getLocalPaths() {
+        return getDelegate(timeout).getLocalPaths();
+    }
 
-	@Override
-	public String getLocalPath() {
-		return getDelegate(timeout).getLocalPath();
-	}
+    @Override
+    public String getLocalPath() {
+        return getDelegate(timeout).getLocalPath();
+    }
 
-	@Override
-	public Type getType() {
-		return getDelegate(timeout).getType();
-	}
+    @Override
+    public Type getType() {
+        return getDelegate(timeout).getType();
+    }
 
 }

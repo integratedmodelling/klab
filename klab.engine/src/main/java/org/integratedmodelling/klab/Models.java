@@ -42,120 +42,120 @@ import com.google.inject.Injector;
 
 public enum Models implements IModelService {
 
-	INSTANCE;
+    INSTANCE;
 
-	private static final String KBOX_NAME = "models";
+    private static final String KBOX_NAME = "models";
 
-	@Inject
-	ParseHelper<Model> modelParser;
+    @Inject
+    ParseHelper<Model> modelParser;
 
-	@Inject
-	IResourceValidator validator;
+    @Inject
+    IResourceValidator validator;
 
-	/*
-	 * index for local models
-	 */
-	private ModelKbox kbox = null;
-	Map<String, Integer> recheckModelNS = new HashMap<>();
+    /*
+     * index for local models
+     */
+    private ModelKbox kbox = null;
+    Map<String, Integer> recheckModelNS = new HashMap<>();
 
-	private Models() {
-		IInjectorProvider injectorProvider = new KimInjectorProvider();
-		Injector injector = injectorProvider.getInjector();
-		if (injector != null) {
-			injector.injectMembers(this);
-		}
-		this.kbox = ModelKbox.create(KBOX_NAME);
-	}
+    private Models() {
+        IInjectorProvider injectorProvider = new KimInjectorProvider();
+        Injector injector = injectorProvider.getInjector();
+        if (injector != null) {
+            injector.injectMembers(this);
+        }
+        this.kbox = ModelKbox.create(KBOX_NAME);
+    }
 
-	@Override
-	public INamespace load(URL url, IMonitor monitor) throws KlabException {
-		try (InputStream stream = url.openStream()) {
-			return load(stream, monitor);
-		} catch (Exception e) {
-			throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
-		}
-	}
+    @Override
+    public INamespace load(URL url, IMonitor monitor) throws KlabException {
+        try (InputStream stream = url.openStream()) {
+            return load(stream, monitor);
+        } catch (Exception e) {
+            throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
+        }
+    }
 
-	@Override
-	public INamespace load(File file, IMonitor monitor) throws KlabException {
-		try (InputStream stream = new FileInputStream(file)) {
-			return load(stream, monitor);
-		} catch (Exception e) {
-			throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
-		}
-	}
+    @Override
+    public INamespace load(File file, IMonitor monitor) throws KlabException {
+        try (InputStream stream = new FileInputStream(file)) {
+            return load(stream, monitor);
+        } catch (Exception e) {
+            throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
+        }
+    }
 
-	@Override
-	public Namespace load(InputStream input, IMonitor monitor) throws KlabException {
+    @Override
+    public Namespace load(InputStream input, IMonitor monitor) throws KlabException {
 
-		Namespace ret = null;
-		try {
-			String definition = IOUtils.toString(input);
-			Model model = modelParser.parse(definition);
+        Namespace ret = null;
+        try {
+            String definition = IOUtils.toString(input);
+            Model model = modelParser.parse(definition);
 
-			if (model != null && model.getNamespace() != null) {
-				List<Issue> issues = validator.validate(model.eResource(), CheckMode.ALL, CancelIndicator.NullImpl);
-				for (Issue issue : issues) {
-					if (issue.getSeverity() == Severity.ERROR) {
-						Kim.INSTANCE.reportLibraryError(issue);
-					}
-				}
+            if (model != null && model.getNamespace() != null) {
+                List<Issue> issues = validator.validate(model.eResource(), CheckMode.ALL, CancelIndicator.NullImpl);
+                for (Issue issue : issues) {
+                    if (issue.getSeverity() == Severity.ERROR) {
+                        Kim.INSTANCE.reportLibraryError(issue);
+                    }
+                }
 
-				// recover the namespace that was parsed
-				IKimNamespace namespace = Kim.INSTANCE.getCommonProject()
-						.getNamespace(EcoreUtil.getURI(model.getNamespace()), model.getNamespace(), true);
+                // recover the namespace that was parsed
+                IKimNamespace namespace = Kim.INSTANCE.getCommonProject()
+                        .getNamespace(EcoreUtil.getURI(model.getNamespace()), model.getNamespace(), true);
 
-				if (namespace != null) {
-					for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
-						if (notifier instanceof KimNotifier) {
-							ret = (Namespace) ((KimNotifier)notifier).with((Monitor) monitor)
-									.synchronizeNamespaceWithRuntime(namespace);
-						}
-					}
-				}
-			}
+                if (namespace != null) {
+                    for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+                        if (notifier instanceof KimNotifier) {
+                            ret = (Namespace) ((KimNotifier) notifier).with((Monitor) monitor)
+                                    .synchronizeNamespaceWithRuntime(namespace);
+                        }
+                    }
+                }
+            }
 
-		} catch (Exception e) {
-			throw e instanceof KlabException ? (KlabException) e : new KlabValidationException(e);
-		}
-		return ret;
-	}
+        } catch (Exception e) {
+            throw e instanceof KlabException ? (KlabException) e : new KlabValidationException(e);
+        }
+        return ret;
+    }
 
-	@Override
-	public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
-		int cmodel = kbox.removeIfOlder(namespace, monitor);
-		if (cmodel > 0) {
-			recheckModelNS.put(namespace.getName(), cmodel);
-		}
-	}
+    @Override
+    public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
+        int cmodel = kbox.removeIfOlder(namespace, monitor);
+        if (cmodel > 0) {
+            recheckModelNS.put(namespace.getName(), cmodel);
+        }
+    }
 
-	@Override
-	public void index(IModel model, IMonitor monitor) throws KlabException {
-		kbox.store(model, monitor);
-	}
+    @Override
+    public void index(IModel model, IMonitor monitor) throws KlabException {
+        kbox.store(model, monitor);
+    }
 
-	@Override
-	public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
-		return kbox.query(observable, (ResolutionScope) scope);
-	}
+    @Override
+    public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
+        return kbox.query(observable, (ResolutionScope) scope);
+    }
 
-	/*
-	 * Non-API - finalize namespace storage in kbox for proper synchronization
-	 * 
-	 * @param namespace
-	 * 
-	 * @param monitor
-	 */
-	public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
+    /*
+     * Non-API - finalize namespace storage in kbox for proper synchronization
+     * 
+     * @param namespace
+     * 
+     * @param monitor
+     */
+    public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
 
-		Integer storingNamespace = recheckModelNS.remove(namespace.getId());
-		if (storingNamespace != null && storingNamespace > 0 && !(namespace.getProject().isRemote())) {
-			try {
-				kbox.store(namespace, monitor);
-			} catch (Exception e) {
-				monitor.error("error storing namespace", e);
-			}
-		}
-	}
+        Integer storingNamespace = recheckModelNS.remove(namespace.getId());
+        if (storingNamespace != null && storingNamespace > 0 && !(namespace.getProject().isRemote())) {
+            try {
+                kbox.store(namespace, monitor);
+            } catch (Exception e) {
+                monitor.error("error storing namespace", e);
+            }
+        }
+    }
 
 }

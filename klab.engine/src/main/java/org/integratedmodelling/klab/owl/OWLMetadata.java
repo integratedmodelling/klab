@@ -42,83 +42,74 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  */
 public class OWLMetadata extends Metadata implements IMetadata {
 
-//  OWLEntity _owl;
-//  OWLOntology _ontology;
+    //  OWLEntity _owl;
+    //  OWLOntology _ontology;
 
-  static HashMap<String, String> _metadataVocabulary = new HashMap<>();
+    static HashMap<String, String> _metadataVocabulary = new HashMap<>();
 
-  static {
-    _metadataVocabulary.put(OWLRDFVocabulary.RDFS_LABEL.getIRI().toString(), IMetadata.DC_LABEL);
-    _metadataVocabulary.put(OWLRDFVocabulary.RDFS_COMMENT.getIRI().toString(),
-        IMetadata.DC_COMMENT);
-    _metadataVocabulary.put("http://protege.stanford.edu/plugins/owl/dc/protege-dc.owl#label",
-        IMetadata.DC_LABEL);
-    _metadataVocabulary.put("http://protege.stanford.edu/plugins/owl/dc/protege-dc.owl#comment",
-        IMetadata.DC_COMMENT);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#baseDeclaration",
-        NS.BASE_DECLARATION);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isAbstract",
-        NS.IS_ABSTRACT);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#unit",
-        NS.SI_UNIT_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isDeniable",
-        NS.DENIABILITY_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#orderingRank",
-        NS.ORDER_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#conceptDefinition",
-        NS.CONCEPT_DEFINITION_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#coreObservable",
-        NS.CORE_OBSERVABLE_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#displayLabel",
-        NS.DISPLAY_LABEL_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#originalTrait",
-        NS.ORIGINAL_TRAIT);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#localAlias",
-        NS.LOCAL_ALIAS_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#authorityId",
-        NS.AUTHORITY_ID_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#restrictingProperty",
-        NS.TRAIT_RESTRICTING_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isTypeDelegate",
-        NS.IS_TYPE_DELEGATE);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#untransformedConceptId",
-        NS.UNTRANSFORMED_CONCEPT_PROPERTY);
-    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isSubjectiveTrait",
-        NS.IS_SUBJECTIVE);
-  }
+    static {
+        _metadataVocabulary.put(OWLRDFVocabulary.RDFS_LABEL.getIRI().toString(), IMetadata.DC_LABEL);
+        _metadataVocabulary.put(OWLRDFVocabulary.RDFS_COMMENT.getIRI().toString(), IMetadata.DC_COMMENT);
+        _metadataVocabulary.put("http://protege.stanford.edu/plugins/owl/dc/protege-dc.owl#label", IMetadata.DC_LABEL);
+        _metadataVocabulary.put("http://protege.stanford.edu/plugins/owl/dc/protege-dc.owl#comment",
+                IMetadata.DC_COMMENT);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#baseDeclaration",
+                NS.BASE_DECLARATION);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isAbstract", NS.IS_ABSTRACT);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#unit", NS.SI_UNIT_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isDeniable",
+                NS.DENIABILITY_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#orderingRank", NS.ORDER_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#conceptDefinition",
+                NS.CONCEPT_DEFINITION_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#coreObservable",
+                NS.CORE_OBSERVABLE_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#displayLabel", NS.DISPLAY_LABEL_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#originalTrait", NS.ORIGINAL_TRAIT);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#localAlias", NS.LOCAL_ALIAS_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#authorityId", NS.AUTHORITY_ID_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#restrictingProperty",
+                NS.TRAIT_RESTRICTING_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isTypeDelegate",
+                NS.IS_TYPE_DELEGATE);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/klab.owl#untransformedConceptId",
+                NS.UNTRANSFORMED_CONCEPT_PROPERTY);
+        _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isSubjectiveTrait",
+                NS.IS_SUBJECTIVE);
+    }
 
-  public OWLMetadata(OWLEntity owl, OWLOntology ontology) {
-    for (OWLAnnotation zio : owl.getAnnotations(ontology)) {
-        OWLAnnotationValue val = zio.getValue();
-        String piri = zio.getProperty().getIRI().toString();
-        String prop = _metadataVocabulary.get(piri);
-        if (prop != null) {
-            this.put(prop, literal2obj(val));
+    public OWLMetadata(OWLEntity owl, OWLOntology ontology) {
+        for (OWLAnnotation zio : owl.getAnnotations(ontology)) {
+            OWLAnnotationValue val = zio.getValue();
+            String piri = zio.getProperty().getIRI().toString();
+            String prop = _metadataVocabulary.get(piri);
+            if (prop != null) {
+                this.put(prop, literal2obj(val));
+            }
         }
     }
-  }
 
-  /*
-   * mah
-   */
-  public static Object literal2obj(OWLAnnotationValue l) {
+    /*
+     * mah
+     */
+    public static Object literal2obj(OWLAnnotationValue l) {
 
-    if (l instanceof OWLLiteral) {
-      if (((OWLLiteral) l).isBoolean())
-        return ((OWLLiteral) l).parseBoolean();
-      else if (((OWLLiteral) l).isInteger())
-        return ((OWLLiteral) l).parseInteger();
-      else if (((OWLLiteral) l).isFloat())
-        return ((OWLLiteral) l).parseFloat();
-      else if (((OWLLiteral) l).isDouble())
-        return ((OWLLiteral) l).parseDouble();
-      else {
-        return ((OWLLiteral) l).getLiteral();
-      }
-    } else if (l instanceof IRI) {
-      return ((IRI) l).toURI().toString();
+        if (l instanceof OWLLiteral) {
+            if (((OWLLiteral) l).isBoolean())
+                return ((OWLLiteral) l).parseBoolean();
+            else if (((OWLLiteral) l).isInteger())
+                return ((OWLLiteral) l).parseInteger();
+            else if (((OWLLiteral) l).isFloat())
+                return ((OWLLiteral) l).parseFloat();
+            else if (((OWLLiteral) l).isDouble())
+                return ((OWLLiteral) l).parseDouble();
+            else {
+                return ((OWLLiteral) l).getLiteral();
+            }
+        } else if (l instanceof IRI) {
+            return ((IRI) l).toURI().toString();
+        }
+        return l.toString();
     }
-    return l.toString();
-  }
 
 }

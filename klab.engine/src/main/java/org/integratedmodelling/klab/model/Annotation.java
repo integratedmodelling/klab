@@ -7,16 +7,16 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 public class Annotation extends Parameters<Object> implements IAnnotation {
 
-	String name;
+    String name;
 
-	public Annotation(IKimAnnotation statement) {
-		this.name = statement.getName();
-		this.putAll(KimValidator.compileMapLiteral(statement.getParameters()));
-	}
+    public Annotation(IKimAnnotation statement) {
+        this.name = statement.getName();
+        this.putAll(KimValidator.compileMapLiteral(statement.getParameters()));
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
 }

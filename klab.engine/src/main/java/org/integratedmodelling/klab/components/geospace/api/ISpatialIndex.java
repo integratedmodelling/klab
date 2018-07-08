@@ -18,11 +18,11 @@ public interface ISpatialIndex {
 
     void add(IDirectObservation observation);
 
-//    double distanceBetween(Scale.Locator position, String objectId);
+    //    double distanceBetween(Scale.Locator position, String objectId);
 
     double distanceBetween(int offset, String objectId);
 
-//    Collection<IPair<String, ISpace>> getNearest(Scale.Locator position, int maxResults);
+    //    Collection<IPair<String, ISpace>> getNearest(Scale.Locator position, int maxResults);
 
     ISpace getExtent();
 
@@ -35,12 +35,12 @@ public interface ISpatialIndex {
      */
     IPair<IDirectObservation, Double> getNearestObject(IDirectObservation obs);
 
-//    /**
-//     * 
-//     * @param sfs
-//     * @return
-//     */
-//    IPair<IDirectObservation, Double> getNearestObject(Scale.Locator sfs);
+    //    /**
+    //     * 
+    //     * @param sfs
+    //     * @return
+    //     */
+    //    IPair<IDirectObservation, Double> getNearestObject(Scale.Locator sfs);
 
     /**
      * Return all objects in the index, sorted according to increasing distance from
@@ -51,20 +51,20 @@ public interface ISpatialIndex {
      */
     List<IPair<IDirectObservation, Double>> getNear(IDirectObservation obs);
 
-//    /**
-//     * Return all objects in the index, sorted according to increasing distance from
-//     * the passed locator. 
-//     * 
-//     * @param sfs
-//     * @return
-//     */
-//    List<IPair<IDirectObservation, Double>> getNear(Scale.Locator sfs);
+    //    /**
+    //     * Return all objects in the index, sorted according to increasing distance from
+    //     * the passed locator. 
+    //     * 
+    //     * @param sfs
+    //     * @return
+    //     */
+    //    List<IPair<IDirectObservation, Double>> getNear(Scale.Locator sfs);
 
     boolean contains(String objectId);
 
     double distanceToNearestObjectFrom(int sfs);
 
-//    double distanceToNearestObjectFrom(Scale.Locator sfs);
+    //    double distanceToNearestObjectFrom(Scale.Locator sfs);
 
     int size();
 }

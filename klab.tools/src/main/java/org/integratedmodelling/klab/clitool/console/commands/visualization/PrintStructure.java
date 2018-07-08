@@ -13,30 +13,30 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class PrintStructure implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+    @Override
+    public Object execute(IServiceCall call, ISession session) throws Exception {
 
-		IObservation obs = null;
-		if (call.getParameters().get("arguments", List.class).size() == 1) {
-			obs = session.getObservation(call.getParameters().get("arguments", List.class).get(0).toString());
-		}
-		if (obs == null) {
-			throw new KlabValidationException("show::structure requires a valid observation ID as argument");
-		}
-		
-		return  "Session " + session.getId() + ":\n" + printStructure(obs, 0);
-	}
+        IObservation obs = null;
+        if (call.getParameters().get("arguments", List.class).size() == 1) {
+            obs = session.getObservation(call.getParameters().get("arguments", List.class).get(0).toString());
+        }
+        if (obs == null) {
+            throw new KlabValidationException("show::structure requires a valid observation ID as argument");
+        }
 
-	private String printStructure(IObservation obs, int level) {
+        return "Session " + session.getId() + ":\n" + printStructure(obs, 0);
+    }
 
-		IRuntimeContext context = ((Observation)obs).getRuntimeContext();
-		
-		String ret = StringUtils.repeat(' ', level) + obs;
-		for (IObservation child : context.getChildrenOf(obs)) {
-			ret += "\n" + printStructure(child, level + 3);
-		}
-		
-		return ret;
-	}
+    private String printStructure(IObservation obs, int level) {
+
+        IRuntimeContext context = ((Observation) obs).getRuntimeContext();
+
+        String ret = StringUtils.repeat(' ', level) + obs;
+        for (IObservation child : context.getChildrenOf(obs)) {
+            ret += "\n" + printStructure(child, level + 3);
+        }
+
+        return ret;
+    }
 
 }

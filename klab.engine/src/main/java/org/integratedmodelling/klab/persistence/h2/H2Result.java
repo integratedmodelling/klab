@@ -51,8 +51,8 @@ import org.integratedmodelling.klab.utils.collections.ImmutableList;
 public class H2Result<T> extends ImmutableList<T> {
 
     List<Long> results;
-    H2Kbox     kbox;
-    IMonitor   monitor;
+    H2Kbox kbox;
+    IMonitor monitor;
     Class<? extends T> cls;
 
     class KboxIterator implements Iterator<T> {
@@ -66,7 +66,7 @@ public class H2Result<T> extends ImmutableList<T> {
 
         @Override
         public T next() {
-            return (T)get(idx++);
+            return (T) get(idx++);
         }
 
         @Override
@@ -74,14 +74,18 @@ public class H2Result<T> extends ImmutableList<T> {
             throw new UnsupportedOperationException("cannot modify read-only kbox iterator");
         }
     }
-    
+
     @Override
     public int size() {
         return results.size();
     }
 
-    public H2Result(H2Kbox kbox, List<Long> res, List<Object> sortingCriteria,
-            Comparator<Object> comparator, Class<? extends T> cls, IMonitor monitor) {
+    public H2Result(H2Kbox kbox,
+            List<Long> res,
+            List<Object> sortingCriteria,
+            Comparator<Object> comparator,
+            Class<? extends T> cls,
+            IMonitor monitor) {
 
         this.kbox = kbox;
         this.cls = cls;
@@ -97,7 +101,7 @@ public class H2Result<T> extends ImmutableList<T> {
     @Override
     public T get(int arg0) {
         try {
-            return (T)kbox.retrieve(results.get(arg0), this.cls);
+            return (T) kbox.retrieve(results.get(arg0), this.cls);
         } catch (Exception e) {
             monitor.error(e);
             return null;

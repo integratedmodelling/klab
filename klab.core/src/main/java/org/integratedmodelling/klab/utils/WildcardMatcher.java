@@ -31,6 +31,7 @@ import java.util.Vector;
  * @version $Id: $Id
  */
 public class WildcardMatcher {
+
     /**
      * String variable for wild card pattern 
      */
@@ -78,9 +79,9 @@ public class WildcardMatcher {
      * @return a boolean.
      */
     public static boolean matches(String string, String pattern) {
-    	return new WildcardMatcher().match(string, pattern);
+        return new WildcardMatcher().match(string, pattern);
     }
-    
+
     /**
      *This is the public method which will be called to match a String
      * with the wild card pattern.

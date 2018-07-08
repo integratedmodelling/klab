@@ -18,65 +18,65 @@ import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 
 public enum NodeAuth {
 
-	INSTANCE;
+    INSTANCE;
 
-	PublicKey publicKey;
-	Set<Group> groups = new HashSet<>();
+    PublicKey publicKey;
+    Set<Group> groups = new HashSet<>();
 
-	IPartnerIdentity rootIdentity;
-	// if this is set, use instead of whatever is in the certificate
-	String authenticatingHub;
-	Client client = Client.create();
-	private String publicKeyBase64;
+    IPartnerIdentity rootIdentity;
+    // if this is set, use instead of whatever is in the certificate
+    String authenticatingHub;
+    Client client = Client.create();
+    private String publicKeyBase64;
 
-	public void setAuthenticatingHub(String url) {
-		this.authenticatingHub = url;
-	}
+    public void setAuthenticatingHub(String url) {
+        this.authenticatingHub = url;
+    }
 
-	public IPartnerIdentity getRootIdentity() {
-		return rootIdentity;
-	}
+    public IPartnerIdentity getRootIdentity() {
+        return rootIdentity;
+    }
 
-	public IPartnerIdentity authenticate(ICertificate certificate) {
+    public IPartnerIdentity authenticate(ICertificate certificate) {
 
-		String serverHub = authenticatingHub;
-		if (serverHub == null) {
-			serverHub = certificate.getProperty(KlabCertificate.KEY_SERVER);
-		}
+        String serverHub = authenticatingHub;
+        if (serverHub == null) {
+            serverHub = certificate.getProperty(KlabCertificate.KEY_SERVER);
+        }
 
-		if (serverHub == null) {
-			throw new KlabAuthorizationException("a node cannot be started without a valid authenticating hub");
-		}
+        if (serverHub == null) {
+            throw new KlabAuthorizationException("a node cannot be started without a valid authenticating hub");
+        }
 
-		NodeAuthenticationRequest request = new NodeAuthenticationRequest();
+        NodeAuthenticationRequest request = new NodeAuthenticationRequest();
 
-		request.setCertificate(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
-		request.setUsername(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME));
-		request.setUserKey(KlabCertificate.KEY_SIGNATURE);
-		request.setLevel(certificate.getLevel());
+        request.setCertificate(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
+        request.setUsername(certificate.getProperty(KlabCertificate.KEY_PARTNER_NAME));
+        request.setUserKey(KlabCertificate.KEY_SIGNATURE);
+        request.setLevel(certificate.getLevel());
 
-		NodeAuthenticationResponse response = client.authenticateNode(serverHub, request);
-		this.publicKeyBase64 =response.getPublicKey();
+        NodeAuthenticationResponse response = client.authenticateNode(serverHub, request);
+        this.publicKeyBase64 = response.getPublicKey();
 
-		try {
-			byte publicKeyData[] = Base64.getDecoder().decode(response.getPublicKey());
-			X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
-			KeyFactory kf = KeyFactory.getInstance("RSA");
-			this.publicKey = kf.generatePublic(spec);
-		} catch (Exception e) {
-			throw new KlabAuthorizationException("invalid public key sent by hub");
-		}
+        try {
+            byte publicKeyData[] = Base64.getDecoder().decode(response.getPublicKey());
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            this.publicKey = kf.generatePublic(spec);
+        } catch (Exception e) {
+            throw new KlabAuthorizationException("invalid public key sent by hub");
+        }
 
-		this.groups.addAll(response.getGroups());
+        this.groups.addAll(response.getGroups());
 
-		return rootIdentity;
-	}
+        return rootIdentity;
+    }
 
-	public String getSecret() {
-		return publicKeyBase64;
-	}
-	
-	public PublicKey getPublicKey() {
-		return publicKey;
-	}
+    public String getSecret() {
+        return publicKeyBase64;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
 }

@@ -19,103 +19,103 @@ import org.integratedmodelling.klab.utils.Range;
 
 public enum GeotoolsUtils {
 
-	INSTANCE;
+    INSTANCE;
 
-	Map<IConcept, Integer> conceptMap = new HashMap<>();
-	GridCoverageFactory rasterFactory = new GridCoverageFactory();
+    Map<IConcept, Integer> conceptMap = new HashMap<>();
+    GridCoverageFactory rasterFactory = new GridCoverageFactory();
 
-	/**
-	 * Turn a state into a grid coverage. TODO not finished (time support)
-	 * 
-	 * @param state
-	 * @return a Geotools grid coverage
-	 * @throws IllegalArgumentException
-	 *             if the state is not suitable for a raster representation.
-	 */
-	public GridCoverage2D stateToCoverage(IState state, ILocator locator) {
-		return stateToCoverage(state.at(locator));
-	}
+    /**
+     * Turn a state into a grid coverage. TODO not finished (time support)
+     * 
+     * @param state
+     * @return a Geotools grid coverage
+     * @throws IllegalArgumentException
+     *             if the state is not suitable for a raster representation.
+     */
+    public GridCoverage2D stateToCoverage(IState state, ILocator locator) {
+        return stateToCoverage(state.at(locator));
+    }
 
-	/**
-	 * Turn a state into a grid coverage.
-	 * 
-	 * FIXME this is oblivious of time.
-	 * 
-	 * @param state
-	 * @return a Geotools grid coverage
-	 * @throws IllegalArgumentException
-	 *             if the state is not suitable for a raster representation.
-	 */
-	public GridCoverage2D stateToCoverage(IState state) {
+    /**
+     * Turn a state into a grid coverage.
+     * 
+     * FIXME this is oblivious of time.
+     * 
+     * @param state
+     * @return a Geotools grid coverage
+     * @throws IllegalArgumentException
+     *             if the state is not suitable for a raster representation.
+     */
+    public GridCoverage2D stateToCoverage(IState state) {
 
-		Space space = (Space) state.getScale().getSpace();
-		if (space == null || !space.getGrid().isPresent()) {
-			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
-		}
-		Grid grid = (Grid) space.getGrid().get();
+        Space space = (Space) state.getScale().getSpace();
+        if (space == null || !space.getGrid().isPresent()) {
+            throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
+        }
+        Grid grid = (Grid) space.getGrid().get();
 
-		/*
-		 * build a coverage
-		 * 
-		 * TODO use a raster of the appropriate type - for now there is apparently a bug
-		 * in geotools that makes it work only with float.
-		 */
-		WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, (int) grid.getXCells(),
-				(int) grid.getYCells(), 1, null);
+        /*
+         * build a coverage
+         * 
+         * TODO use a raster of the appropriate type - for now there is apparently a bug
+         * in geotools that makes it work only with float.
+         */
+        WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, (int) grid.getXCells(),
+                (int) grid.getYCells(), 1, null);
 
-		/*
-		 * TODO raster should be pre-filled with a chosen nodata value TODO use
-		 * activation layer
-		 */
-		// IGridMask act = extent.requireActivationLayer(true);
+        /*
+         * TODO raster should be pre-filled with a chosen nodata value TODO use
+         * activation layer
+         */
+        // IGridMask act = extent.requireActivationLayer(true);
 
-		for (Cell cell : grid) {
-			Object o = state.get(cell);
-			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
-				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) 0);
-			} else if (o instanceof Number) {
-				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) o).floatValue());
-			} else if (o instanceof Boolean) {
-				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) (((Boolean) o) ? 1. : 0.));
-			} else if (o instanceof IConcept) {
-				raster.setSample((int) cell.getX(), (int) cell.getY(), 0,
-						(float) state.getDataKey().reverseLookup((IConcept) o));
-			}
-		}
+        for (Cell cell : grid) {
+            Object o = state.get(cell);
+            if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
+                raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) 0);
+            } else if (o instanceof Number) {
+                raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) o).floatValue());
+            } else if (o instanceof Boolean) {
+                raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) (((Boolean) o) ? 1. : 0.));
+            } else if (o instanceof IConcept) {
+                raster.setSample((int) cell.getX(), (int) cell.getY(), 0,
+                        (float) state.getDataKey().reverseLookup((IConcept) o));
+            }
+        }
 
-		return rasterFactory.create(state.getObservable().getLocalName(), raster, space.getShape().getJTSEnvelope());
+        return rasterFactory.create(state.getObservable().getLocalName(), raster, space.getShape().getJTSEnvelope());
 
-	}
+    }
 
-	public Range getRange(IState state) {
+    public Range getRange(IState state) {
 
-		Range ret = new Range();
+        Range ret = new Range();
 
-		Space space = (Space) state.getScale().getSpace();
-		if (space == null || !space.getGrid().isPresent()) {
-			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
-		}
-		Grid grid = (Grid) space.getGrid().get();
+        Space space = (Space) state.getScale().getSpace();
+        if (space == null || !space.getGrid().isPresent()) {
+            throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
+        }
+        Grid grid = (Grid) space.getGrid().get();
 
-		/*
-		 * TODO raster should be pre-filled with a chosen nodata value TODO use
-		 * activation layer
-		 */
-		// IGrid.Mask act = space.requireActivationLayer(true);
+        /*
+         * TODO raster should be pre-filled with a chosen nodata value TODO use
+         * activation layer
+         */
+        // IGrid.Mask act = space.requireActivationLayer(true);
 
-		for (Cell cell : grid) {
-			Object o = state.get(cell);
-			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
-				// screw it
-			} else if (o instanceof Number) {
-				ret.adapt(((Number) o).doubleValue());
-			} else if (o instanceof Boolean) {
-				ret.adapt(((Boolean) o) ? 1. : 0.);
-			} else if (o instanceof IConcept) {
-				ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
-			}
-		}
+        for (Cell cell : grid) {
+            Object o = state.get(cell);
+            if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
+                // screw it
+            } else if (o instanceof Number) {
+                ret.adapt(((Number) o).doubleValue());
+            } else if (o instanceof Boolean) {
+                ret.adapt(((Boolean) o) ? 1. : 0.);
+            } else if (o instanceof IConcept) {
+                ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
+            }
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 }

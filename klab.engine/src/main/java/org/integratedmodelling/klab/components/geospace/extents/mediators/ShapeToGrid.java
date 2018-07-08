@@ -10,10 +10,10 @@ import org.integratedmodelling.klab.utils.Pair;
 public class ShapeToGrid implements IScaleMediator {
 
     public ShapeToGrid(Shape shape, Grid grid) {
-		// TODO Auto-generated constructor stub
-	}
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
+    @Override
     public boolean isConformant() {
         // TODO Auto-generated method stub
         return false;

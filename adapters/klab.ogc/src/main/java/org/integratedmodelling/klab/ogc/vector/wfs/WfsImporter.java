@@ -9,16 +9,16 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class WfsImporter implements IResourceImporter {
 
-	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public boolean canHandle(String importLocation, IParameters<String> userData) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean canHandle(String importLocation, IParameters<String> userData) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

@@ -1,339 +1,313 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.integratedmodelling</groupId>
-		<artifactId>klab</artifactId>
-		<version>0.10.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>klab.engine</artifactId>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>klab</artifactId>
+        <groupId>org.integratedmodelling</groupId>
+        <version>0.10.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>klab.engine</artifactId>
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
+        <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+            <version>2.33</version>
+        </dependency>
+        <!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
+			<artifactId>kotlin-stdlib</artifactId> <version>${kotlin.version}</version> 
+			</dependency> <dependency> <groupId>com.fasterxml.jackson.module</groupId> 
+			<artifactId>jackson-module-kotlin</artifactId> <version>2.9.5</version> </dependency> -->
+        <!-- JSON schema extraction -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jsonSchema</artifactId>
+            <version>2.9.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>validation-api</artifactId>
+                    <!-- uses 1.1.0, which messes up Spring -->
+                    <groupId>javax.validation</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hermit-reasoner</groupId>
+            <artifactId>org.semanticweb.hermit</artifactId>
+            <version>1.3.8.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kjetland</groupId>
+            <artifactId>mbknor-jackson-jsonschema_2.12</artifactId>
+            <version>1.0.29</version>
+        </dependency>
+        <!-- Actor system (for the default runtime provider) -->
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.12</artifactId>
+            <version>2.5.11</version>
+        </dependency>
+        <!-- ijblob - feature extractor for spatial rasters -->
+        <dependency>
+            <groupId>de.biomedical-imaging.ij</groupId>
+            <artifactId>ij_blob</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-algorithms</artifactId>
+            <version>${jung.version}</version>
+        </dependency>
+        <!-- JUNG for network analysis, generation and I/O. Visualization only 
+			included in test scope. -->
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-graph-impl</artifactId>
+            <version>${jung.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-io</artifactId>
+            <version>${jung.version}</version>
+        </dependency>
+        <!-- TODO temporary! Just to learn the API -->
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-samples</artifactId>
+            <version>${jung.version}</version>
+            <!-- <scope>test</scope> -->
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-visualization</artifactId>
+            <version>${jung.version}</version>
+            <!-- TODO reintegrate! <scope>test</scope> -->
+        </dependency>
+        <!-- OWL and DL reasoning -->
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-distribution</artifactId>
+            <version>3.4.4</version>
+        </dependency>
+        <!-- Lucene for indexing -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>7.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-suggest</artifactId>
+            <version>7.4.0</version>
+        </dependency>
+        <!-- Groovy -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.5.0-beta-2</version>
+        </dependency>
+        <!-- GEOTOOLS mess ends -->
+        <!-- NO2 database (for local storage of file metadata and URN metadata 
+			caching) -->
+        <dependency>
+            <groupId>org.dizitart</groupId>
+            <artifactId>nitrite</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext</artifactId>
+            <version>${xtextVersion}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing 
+			Used in compile scope to provide simple, reentrant parser injector for repeated 
+			calls to declaration parser. -->
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext.testing</artifactId>
+            <version>${xtextVersion}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.util -->
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext.util</artifactId>
+            <version>${xtextVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-brewer</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-extension</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geotiff</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <!-- GEOTOOLS mess starts -->
+        <!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
+			<version>${geotools.version}</version> </dependency> -->
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-referencing</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
+        <!-- for map display with JMapFrame/MapDisplay -->
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-render</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-shapefile</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-swing</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.integratedmodelling</groupId>
+            <artifactId>klab.core</artifactId>
+            <version>0.10.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.integratedmodelling</groupId>
+            <artifactId>org.integratedmodelling.klab.api</artifactId>
+            <version>${klab.version}</version>
+        </dependency>
+        <!-- basic graph API -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-ext</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <!-- default storage based on ND4J, API only; engine packages provide their 
+			own dependency for physical storage -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-api</artifactId>
+            <version>${nd4j.version}</version>
+        </dependency>
+        <!-- spatial H2 database for kboxes -->
+        <dependency>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>h2spatial</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
+			but Spring shouldn't be needed in the embedded engine and the API is better 
+			here. -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>5.0.5.RELEASE</version>
+        </dependency>
+        <!-- Websockets support -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>5.0.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot-version}</version>
+        </dependency>
+        <!-- larray: memory-mapped arrays that support the default storage provider -->
+        <!-- TODO remove when nd4j support is verified -->
+        <dependency>
+            <groupId>org.xerial.larray</groupId>
+            <artifactId>larray_2.12</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+        <!-- native ND4J in test scope only: production engines choose their implementation -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native-platform</artifactId>
+            <version>${nd4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
 					<version>${kotlin.version}</version> <executions> <execution> <id>compile</id> 
 					<goals> <goal>compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/main/java</sourceDir> 
 					</sourceDirs> </configuration> </execution> <execution> <id>test-compile</id> 
 					<goals> <goal>test-compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/test/java</sourceDir> 
 					</sourceDirs> </configuration> </execution> </executions> </plugin> -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
-					<version>3.1</version>
-					<configuration>
-						<compilerId>groovy-eclipse-compiler</compilerId>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.codehaus.groovy</groupId>
-							<artifactId>groovy-eclipse-compiler</artifactId>
-							<version>2.9.2-01</version>
-						</dependency>
-						<!-- for 2.8.0-01 and later you must have an explicit dependency on 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
+                    <version>3.1</version>
+                    <dependencies>
+                        <!-- for 2.8.0-01 and later you must have an explicit dependency on 
 							groovy-eclipse-batch -->
-						<dependency>
-							<groupId>org.codehaus.groovy</groupId>
-							<artifactId>groovy-eclipse-batch</artifactId>
-							<version>2.4.3-01</version>
-							<!-- or choose a different compiler version -->
-							<!-- <version>1.8.6-01</version> -->
-							<!-- <version>1.7.10-06</version> -->
-						</dependency>
-					</dependencies>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-	<dependencies>
-	
-		<!-- Lucene for indexing -->
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>7.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-suggest</artifactId>
-			<version>7.4.0</version>
-		</dependency>
-
-		<!-- JUNG for network analysis, generation and I/O. Visualization only 
-			included in test scope. -->
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-graph-impl</artifactId>
-			<version>${jung.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-algorithms</artifactId>
-			<version>${jung.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-io</artifactId>
-			<version>${jung.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-visualization</artifactId>
-			<version>${jung.version}</version>
-			<!-- TODO reintegrate! <scope>test</scope> -->
-		</dependency>
-		<!-- TODO temporary! Just to learn the API -->
-		<dependency>
-			<groupId>net.sf.jung</groupId>
-			<artifactId>jung-samples</artifactId>
-			<version>${jung.version}</version>
-			<!-- <scope>test</scope> -->
-		</dependency>
-
-		<!-- Websockets support -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-websocket</artifactId>
-			<version>5.0.5.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
-			<version>5.0.5.RELEASE</version>
-		</dependency>
-
-		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
-			<artifactId>kotlin-stdlib</artifactId> <version>${kotlin.version}</version> 
-			</dependency> <dependency> <groupId>com.fasterxml.jackson.module</groupId> 
-			<artifactId>jackson-module-kotlin</artifactId> <version>2.9.5</version> </dependency> -->
-
-		<!-- JSON schema extraction -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jsonSchema</artifactId>
-			<version>2.9.5</version>
-			<exclusions>
-				<exclusion>
-					<!-- uses 1.1.0, which messes up Spring -->
-					<groupId>javax.validation</groupId>
-					<artifactId>validation-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-			<version>${spring-boot-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring-boot-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${spring-boot-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.core</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.klab.api</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->
-		<dependency>
-			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>org.eclipse.xtext</artifactId>
-			<version>${xtextVersion}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.util -->
-		<dependency>
-			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>org.eclipse.xtext.util</artifactId>
-			<version>${xtextVersion}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing 
-			Used in compile scope to provide simple, reentrant parser injector for repeated 
-			calls to declaration parser. -->
-		<dependency>
-			<groupId>org.eclipse.xtext</groupId>
-			<artifactId>org.eclipse.xtext.testing</artifactId>
-			<version>${xtextVersion}</version>
-		</dependency>
-
-
-		<!-- ijblob - feature extractor for spatial rasters -->
-		<dependency>
-			<groupId>de.biomedical-imaging.ij</groupId>
-			<artifactId>ij_blob</artifactId>
-			<version>1.4.9</version>
-		</dependency>
-
-		<!-- default storage based on ND4J, API only; engine packages provide their 
-			own dependency for physical storage -->
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-api</artifactId>
-			<version>${nd4j.version}</version>
-		</dependency>
-		<!-- native ND4J in test scope only: production engines choose their implementation -->
-		<dependency>
-			<groupId>org.nd4j</groupId>
-			<artifactId>nd4j-native-platform</artifactId>
-			<version>${nd4j.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- larray: memory-mapped arrays that support the default storage provider -->
-		<!-- TODO remove when nd4j support is verified -->
-		<dependency>
-			<groupId>org.xerial.larray</groupId>
-			<artifactId>larray_2.12</artifactId>
-			<version>0.4.0</version>
-		</dependency>
-
-		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
-			but Spring shouldn't be needed in the embedded engine and the API is better 
-			here. -->
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.11</version>
-		</dependency>
-
-		<!-- Groovy -->
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.5.0-beta-2</version>
-		</dependency>
-
-		<!-- basic graph API -->
-		<dependency>
-			<groupId>org.jgrapht</groupId>
-			<artifactId>jgrapht-core </artifactId>
-			<version>1.1.0</version>
-		</dependency>
-
-		<!-- OWL and DL reasoning -->
-		<dependency>
-			<groupId>net.sourceforge.owlapi</groupId>
-			<artifactId>owlapi-distribution </artifactId>
-			<version>3.4.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.hermit-reasoner</groupId>
-			<artifactId>org.semanticweb.hermit</artifactId>
-			<version>1.3.8.4</version>
-		</dependency>
-
-		<!-- spatial H2 database for kboxes -->
-		<dependency>
-			<groupId>org.orbisgis</groupId>
-			<artifactId>h2spatial</artifactId>
-			<version>1.2.4</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
-		<dependency>
-			<groupId>args4j</groupId>
-			<artifactId>args4j</artifactId>
-			<version>2.33</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>3.4.0</version>
-		</dependency>
-
-		<!-- GEOTOOLS mess starts -->
-		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
-			<version>${geotools.version}</version> </dependency> -->
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-referencing</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-shapefile</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-geotiff</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-extension</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-brewer</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<!-- GEOTOOLS mess ends -->
-
-		<!-- NO2 database (for local storage of file metadata and URN metadata 
-			caching) -->
-		<dependency>
-			<groupId>org.dizitart</groupId>
-			<artifactId>nitrite</artifactId>
-			<version>3.0.0</version>
-		</dependency>
-
-		<!-- Actor system (for the default runtime provider) -->
-		<dependency>
-			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor_2.12</artifactId>
-			<version>2.5.11</version>
-		</dependency>
-
-		<!-- ENGINE DEBUGGING/VISUALIZATION DEPS -->
-
-		<!-- for map display with JMapFrame/MapDisplay -->
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-render</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-swing</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
-		<dependency>
-			<groupId>org.jgrapht</groupId>
-			<artifactId>jgrapht-ext</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.kjetland</groupId>
-			<artifactId>mbknor-jackson-jsonschema_2.12</artifactId>
-			<version>1.0.29</version>
-		</dependency>
-	</dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-eclipse-batch</artifactId>
+                            <version>2.4.3-01</version>
+                            <!-- or choose a different compiler version -->
+                            <!-- <version>1.8.6-01</version> -->
+                            <!-- <version>1.7.10-06</version> -->
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-eclipse-compiler</artifactId>
+                            <version>2.9.2-01</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <compilerId>groovy-eclipse-compiler</compilerId>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

@@ -20,72 +20,72 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
-	KimWorkspace delegate;
+    KimWorkspace delegate;
 
-	AbstractWorkspace() {
-	}
+    AbstractWorkspace() {
+    }
 
-	public AbstractWorkspace(File root, File... overridingProjects) {
-		delegate = new KimWorkspace(root, overridingProjects);
-	}
+    public AbstractWorkspace(File root, File... overridingProjects) {
+        delegate = new KimWorkspace(root, overridingProjects);
+    }
 
-	@Override
-	public String getName() {
-		return delegate.getName();
-	}
+    @Override
+    public String getName() {
+        return delegate.getName();
+    }
 
-	public Collection<File> getProjectLocations() {
-		return delegate.getProjectLocations();
-	}
+    public Collection<File> getProjectLocations() {
+        return delegate.getProjectLocations();
+    }
 
-	public Collection<String> getProjectNames() {
-		return delegate.getProjectNames();
-	}
+    public Collection<String> getProjectNames() {
+        return delegate.getProjectNames();
+    }
 
-	protected void readProjects() throws IOException {
-		delegate.readProjects();
-	}
+    protected void readProjects() throws IOException {
+        delegate.readProjects();
+    }
 
-	@Override
-	public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
+    @Override
+    public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
 
-		List<INamespace> ret = new ArrayList<>();
-		try {
-			for (IKimNamespace ns : delegate.load(incremental)) {
-				// the validator callback inserts the namespace into the index, all we do is
-				// retrieve it
-				INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
-				if (namespace != null) {
-					ret.add(namespace);
-				}
-			}
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
-		return ret;
-	}
+        List<INamespace> ret = new ArrayList<>();
+        try {
+            for (IKimNamespace ns : delegate.load(incremental)) {
+                // the validator callback inserts the namespace into the index, all we do is
+                // retrieve it
+                INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
+                if (namespace != null) {
+                    ret.add(namespace);
+                }
+            }
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+        return ret;
+    }
 
-	@Override
-	public File getRoot() {
-		return delegate.getRoot();
-	}
+    @Override
+    public File getRoot() {
+        return delegate.getRoot();
+    }
 
-	public void setName(String s) {
-		delegate.setName(s);
-	}
+    public void setName(String s) {
+        delegate.setName(s);
+    }
 
-	public Collection<IProject> getProjects() {
-		List<IProject> ret = new ArrayList<>();
-		for (String projectId : delegate.getProjectNames()) {
-			ret.add(Resources.INSTANCE.retrieveOrCreate(delegate.getProject(projectId)));
-		}
-		return ret;
-	}
-	
-	@Override
-	public IProject getProject(String projectId) {
-		IKimProject ret = delegate.getProject(projectId);
-		return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
-	}
+    public Collection<IProject> getProjects() {
+        List<IProject> ret = new ArrayList<>();
+        for (String projectId : delegate.getProjectNames()) {
+            ret.add(Resources.INSTANCE.retrieveOrCreate(delegate.getProject(projectId)));
+        }
+        return ret;
+    }
+
+    @Override
+    public IProject getProject(String projectId) {
+        IKimProject ret = delegate.getProject(projectId);
+        return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
+    }
 
 }

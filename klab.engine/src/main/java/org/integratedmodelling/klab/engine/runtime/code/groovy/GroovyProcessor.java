@@ -16,85 +16,82 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public enum GroovyProcessor implements ILanguageProcessor {
 
-  INSTANCE;
+    INSTANCE;
 
-  class GroovyDescriptor implements Descriptor {
+    class GroovyDescriptor implements Descriptor {
 
-    String processedCode;
-    Collection<String> identifiers;
-    private Set<String> scalarIds;
-    private Set<String> objectIds;
-    private List<KimNotification> errors;
-    private List<TokenDescriptor> tokens;
-    private IRuntimeContext context;
+        String processedCode;
+        Collection<String> identifiers;
+        private Set<String> scalarIds;
+        private Set<String> objectIds;
+        private List<KimNotification> errors;
+        private List<TokenDescriptor> tokens;
+        private IRuntimeContext context;
 
-    GroovyDescriptor(String expression, IRuntimeContext context) {
-      GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(
-          context.getNamespace(), context.getArtifacts(IState.class).stream()
-              .map(data -> data.getFirst()).collect(Collectors.toSet()),
-          context.getScale());
-      this.processedCode = processor.process(expression);
-      this.identifiers = processor.getIdentifiers();
-      this.scalarIds = processor.getScalarIdentifiers();
-      this.objectIds = processor.getObjectIdentifiers();
-      this.errors = processor.getErrors();
-      this.tokens = processor.tokens;
-      this.context = context;
-    }
-
-    @Override
-    public Collection<String> getIdentifiers() {
-      return identifiers;
-    }
-
-    @Override
-    public boolean isScalar(Collection<String> stateIdentifiers) {
-      for (String id : stateIdentifiers) {
-        if (this.scalarIds.contains(id)) {
-          return true;
+        GroovyDescriptor(String expression, IRuntimeContext context) {
+            GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(context.getNamespace(), context
+                    .getArtifacts(IState.class).stream().map(data -> data.getFirst()).collect(Collectors.toSet()),
+                    context.getScale());
+            this.processedCode = processor.process(expression);
+            this.identifiers = processor.getIdentifiers();
+            this.scalarIds = processor.getScalarIdentifiers();
+            this.objectIds = processor.getObjectIdentifiers();
+            this.errors = processor.getErrors();
+            this.tokens = processor.tokens;
+            this.context = context;
         }
-      }
-      return false;
-    }
 
-    public List<KimNotification> getNotifications() {
-      return errors;
-    }
+        @Override
+        public Collection<String> getIdentifiers() {
+            return identifiers;
+        }
 
-    public boolean hasErrors() {
-      return errors.size() > 0;
+        @Override
+        public boolean isScalar(Collection<String> stateIdentifiers) {
+            for (String id : stateIdentifiers) {
+                if (this.scalarIds.contains(id)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<KimNotification> getNotifications() {
+            return errors;
+        }
+
+        public boolean hasErrors() {
+            return errors.size() > 0;
+        }
+
+        @Override
+        public IExpression compile() {
+            String ret = "";
+            for (TokenDescriptor token : tokens) {
+                ret += token.translate(context);
+            }
+            return new GroovyExpression(ret, true);
+        }
+
+        @Override
+        public boolean isScalar(String identifier) {
+            return scalarIds.contains(identifier);
+        }
     }
 
     @Override
-    public IExpression compile() {
-      String ret = "";
-      for (TokenDescriptor token : tokens) {
-        ret += token.translate(context);
-      }
-      return new GroovyExpression(ret, true);
+    public IExpression compile(String expression, IComputationContext context) throws KlabValidationException {
+        return new GroovyDescriptor(expression, (IRuntimeContext) context).compile();
     }
 
     @Override
-    public boolean isScalar(String identifier) {
-      return scalarIds.contains(identifier);
+    public Descriptor describe(String expression, IComputationContext context) throws KlabValidationException {
+        return new GroovyDescriptor(expression, (IRuntimeContext) context);
     }
-  }
 
-  @Override
-  public IExpression compile(String expression, IComputationContext context)
-      throws KlabValidationException {
-    return new GroovyDescriptor(expression, (IRuntimeContext) context).compile();
-  }
-
-  @Override
-  public Descriptor describe(String expression, IComputationContext context)
-      throws KlabValidationException {
-    return new GroovyDescriptor(expression, (IRuntimeContext) context);
-  }
-
-  @Override
-  public String negate(String expression) {
-    return "!(" + expression + ")";
-  }
+    @Override
+    public String negate(String expression) {
+        return "!(" + expression + ")";
+    }
 
 }

@@ -20,99 +20,97 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public class MediatingState extends Observation implements IState {
 
-	IState delegate;
-	IValueMediator from;
-	IValueMediator to;
+    IState delegate;
+    IValueMediator from;
+    IValueMediator to;
 
-	public MediatingState(IState state, RuntimeContext context, IValueMediator from, IValueMediator to) {
-		super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
-		this.delegate = state;
-		this.from = from;
-		this.to = to;
-	}
+    public MediatingState(IState state, RuntimeContext context, IValueMediator from, IValueMediator to) {
+        super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
+        this.delegate = state;
+        this.from = from;
+        this.to = to;
+    }
 
-	public Object get(ILocator index) {
-		Object val = delegate.get(index);
-		return val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val;
-	}
+    public Object get(ILocator index) {
+        Object val = delegate.get(index);
+        return val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val;
+    }
 
-	@SuppressWarnings("unchecked")
-	public <T> T get(ILocator index, Class<T> cls) {
-		Object val = delegate.get(index, cls);
-		return val instanceof Number && (Number.class.isAssignableFrom(cls))
-				? (T) to.convert(((Number) val).doubleValue(), from)
-				: (T) val;
-	}
+    @SuppressWarnings("unchecked")
+    public <T> T get(ILocator index, Class<T> cls) {
+        Object val = delegate.get(index, cls);
+        return val instanceof Number && (Number.class.isAssignableFrom(cls))
+                ? (T) to.convert(((Number) val).doubleValue(), from) : (T) val;
+    }
 
-	public long set(ILocator index, Object value) {
-		Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
-		return delegate.set(index, val);
-	}
+    public long set(ILocator index, Object value) {
+        Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
+        return delegate.set(index, val);
+    }
 
-	// Remaining functionality is delegated to original state
+    // Remaining functionality is delegated to original state
 
-	public boolean isConstant() {
-		return delegate.isConstant();
-	}
+    public boolean isConstant() {
+        return delegate.isConstant();
+    }
 
-	@Override
-	public long size() {
-		return delegate.size();
-	}
+    @Override
+    public long size() {
+        return delegate.size();
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		return delegate.getType();
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return delegate.getType();
+    }
 
-	@Override
-	public IState as(IArtifact.Type type) {
-		if (delegate.getType() == type) {
-			return this;
-		}
-		return new MediatingState(delegate.as(type), (RuntimeContext) getRuntimeContext(), from, to);
-	}
+    @Override
+    public IState as(IArtifact.Type type) {
+        if (delegate.getType() == type) {
+            return this;
+        }
+        return new MediatingState(delegate.as(type), (RuntimeContext) getRuntimeContext(), from, to);
+    }
 
-	@Override
-	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
-		return DataIterator.create(this, getScale().at(index), cls);
-	}
+    @Override
+    public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+        return DataIterator.create(this, getScale().at(index), cls);
+    }
 
-	@Override
-	public IDataKey getDataKey() {
-		return delegate.getDataKey();
-	}
+    @Override
+    public IDataKey getDataKey() {
+        return delegate.getDataKey();
+    }
 
-	@Override
-	public IState at(ILocator locator) {
-		return new MediatingState((IState) delegate.at(locator), (RuntimeContext) getRuntimeContext(), from, to);
-	}
+    @Override
+    public IState at(ILocator locator) {
+        return new MediatingState((IState) delegate.at(locator), (RuntimeContext) getRuntimeContext(), from, to);
+    }
 
-	@Override
-	public IState in(IValueMediator mediator) {
-		if (mediator.equals(from)) {
-			return delegate;
-		}
-		return getMediator(this, mediator);
-	}
+    @Override
+    public IState in(IValueMediator mediator) {
+        if (mediator.equals(from)) {
+            return delegate;
+        }
+        return getMediator(this, mediator);
+    }
 
-	public static IState getMediator(IState state, IValueMediator to) {
-		
-		IValueMediator from = state.getObservable().getUnit();
-		if (from == null) {
-			from = state.getObservable().getCurrency();
-		}
-		if (from == null) {
-			from = state.getObservable().getCurrency();
-		}
-		if (from == null || !from.isCompatible(to)) {
-			throw new IllegalArgumentException("cannot create a mediating state between "
-					+ (from == null ? "nothing" : from.toString()) + " and " + to.toString());
-		}
-		
-		return from.equals(to)
-				? state
-				: new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
-	}
+    public static IState getMediator(IState state, IValueMediator to) {
+
+        IValueMediator from = state.getObservable().getUnit();
+        if (from == null) {
+            from = state.getObservable().getCurrency();
+        }
+        if (from == null) {
+            from = state.getObservable().getCurrency();
+        }
+        if (from == null || !from.isCompatible(to)) {
+            throw new IllegalArgumentException("cannot create a mediating state between "
+                    + (from == null ? "nothing" : from.toString()) + " and " + to.toString());
+        }
+
+        return from.equals(to) ? state
+                : new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
+    }
 
 }

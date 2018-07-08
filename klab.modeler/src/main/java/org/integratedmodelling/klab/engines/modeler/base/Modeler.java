@@ -28,108 +28,109 @@ import org.springframework.web.client.RestTemplate;
  */
 @Component
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.security",
-		"org.integratedmodelling.klab.engine.rest.controllers.base",
-		"org.integratedmodelling.klab.engine.rest.controllers.engine",
-		"org.integratedmodelling.klab.engine.rest.controllers.network",
-		"org.integratedmodelling.klab.engine.rest.messaging",
-		"org.integratedmodelling.klab.engine.rest.controllers.resources" })
+@ComponentScan(
+        basePackages = { "org.integratedmodelling.klab.engine.rest.security",
+                "org.integratedmodelling.klab.engine.rest.controllers.base",
+                "org.integratedmodelling.klab.engine.rest.controllers.engine",
+                "org.integratedmodelling.klab.engine.rest.controllers.network",
+                "org.integratedmodelling.klab.engine.rest.messaging",
+                "org.integratedmodelling.klab.engine.rest.controllers.resources" })
 public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 
-	private static Engine engine;
-	private static boolean networkServicesStarted = false;
-	private ConfigurableApplicationContext context;
-	private static Runnable callback;
+    private static Engine engine;
+    private static boolean networkServicesStarted = false;
+    private ConfigurableApplicationContext context;
+    private static Runnable callback;
 
-	// defaults
-	private static int port = 8283;
-	private static String contextPath = "/modeler";
+    // defaults
+    private static int port = 8283;
+    private static String contextPath = "/modeler";
 
-	@Bean
-	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
-	}
+    @Bean
+    public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
+        return new ProtobufHttpMessageConverter();
+    }
 
-	@Bean
-	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
-		return new RestTemplate(Arrays.asList(hmc));
-	}
+    @Bean
+    public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
+        return new RestTemplate(Arrays.asList(hmc));
+    }
 
-	private Modeler() {
-	}
+    private Modeler() {
+    }
 
-	public Modeler(Engine engine) {
-		Modeler.engine = engine;
-	}
+    public Modeler(Engine engine) {
+        Modeler.engine = engine;
+    }
 
-	public void stopNetworkServices() {
-		if (this.context != null && this.context.isRunning()) {
-			this.context.close();
-			networkServicesStarted = false;
-			this.context = null;
-		}
-	}
+    public void stopNetworkServices() {
+        if (this.context != null && this.context.isRunning()) {
+            this.context.close();
+            networkServicesStarted = false;
+            this.context = null;
+        }
+    }
 
-	/**
-	 * Start network services. Like {@link #startNetworkServices()} but allows a
-	 * callback function to be specified, which is invoked after the network
-	 * services are up.
-	 */
-	public boolean startNetworkServices(Runnable callback) {
-		Modeler.callback = callback;
-		return startNetworkServices();
-	}
+    /**
+     * Start network services. Like {@link #startNetworkServices()} but allows a
+     * callback function to be specified, which is invoked after the network
+     * services are up.
+     */
+    public boolean startNetworkServices(Runnable callback) {
+        Modeler.callback = callback;
+        return startNetworkServices();
+    }
 
-	/**
-	 * Start network services. In the engine this is optional. Call if constructed
-	 * with a previously started engine; won't do anything if run() was called
-	 * before.
-	 */
-	public boolean startNetworkServices() {
-		if (engine == null) {
-			return false;
-		}
-		if (!networkServicesStarted) {
-			Map<String, Object> props = new HashMap<>();
-			props.put("server.port", "" + port);
-			props.put("spring.main.banner-mode", "off");
-			props.put("server.servlet.contextPath", contextPath);
-			SpringApplication app = new SpringApplication(Modeler.class);
-			app.setDefaultProperties(props);
-			this.context = app.run();
-			networkServicesStarted = true;
-		}
-		return networkServicesStarted;
-	}
+    /**
+     * Start network services. In the engine this is optional. Call if constructed
+     * with a previously started engine; won't do anything if run() was called
+     * before.
+     */
+    public boolean startNetworkServices() {
+        if (engine == null) {
+            return false;
+        }
+        if (!networkServicesStarted) {
+            Map<String, Object> props = new HashMap<>();
+            props.put("server.port", "" + port);
+            props.put("spring.main.banner-mode", "off");
+            props.put("server.servlet.contextPath", contextPath);
+            SpringApplication app = new SpringApplication(Modeler.class);
+            app.setDefaultProperties(props);
+            this.context = app.run();
+            networkServicesStarted = true;
+        }
+        return networkServicesStarted;
+    }
 
-	public void run(String[] args) {
-		EngineStartupOptions options = new EngineStartupOptions();
-		options.initialize(args);
-		Map<String, Object> props = new HashMap<>();
-		props.put("server.port", "" + port);
-		props.put("spring.main.banner-mode", "off");
-		props.put("server.servlet.contextPath", contextPath);
-		engine = Engine.start(options);
-		SpringApplication app = new SpringApplication(Modeler.class);
-		app.setDefaultProperties(props);
-		this.context = app.run(options.getArguments());
-		networkServicesStarted = true;
-	}
+    public void run(String[] args) {
+        EngineStartupOptions options = new EngineStartupOptions();
+        options.initialize(args);
+        Map<String, Object> props = new HashMap<>();
+        props.put("server.port", "" + port);
+        props.put("spring.main.banner-mode", "off");
+        props.put("server.servlet.contextPath", contextPath);
+        engine = Engine.start(options);
+        SpringApplication app = new SpringApplication(Modeler.class);
+        app.setDefaultProperties(props);
+        this.context = app.run(options.getArguments());
+        networkServicesStarted = true;
+    }
 
-	@PreDestroy
-	public void shutdown() {
-		engine.stop();
-	}
+    @PreDestroy
+    public void shutdown() {
+        engine.stop();
+    }
 
-	public static void main(String args[]) {
-		new Modeler().run(args);
-	}
+    public static void main(String args[]) {
+        new Modeler().run(args);
+    }
 
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent arg0) {
-		if (callback != null) {
-			callback.run();
-		}
-	}
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent arg0) {
+        if (callback != null) {
+            callback.run();
+        }
+    }
 
 }

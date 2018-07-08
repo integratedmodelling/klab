@@ -37,69 +37,67 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
  * The Class WfsAdapter.
  */
 @ResourceAdapter(
-		type = "wfs", version = Version.CURRENT, 
-		requires = { "serviceUrl", "wfsIdentifier" }, 
-		optional = {
-				// TODO check out http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
-				// TODO find a way to provide documentation for all these options
-				"wfsVersion", "bufferSize", "serverType", "timeoutSeconds", 
-				"filter", "computeShape", "sanitize"
-		})
+        type = "wfs",
+        version = Version.CURRENT,
+        requires = { "serviceUrl", "wfsIdentifier" },
+        optional = {
+                // TODO check out http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
+                // TODO find a way to provide documentation for all these options
+                "wfsVersion", "bufferSize", "serverType", "timeoutSeconds", "filter", "computeShape", "sanitize" })
 public class WfsAdapter implements IResourceAdapter {
 
-	static Map<String, WFSDataStore> dataStores = new HashMap<>();
+    static Map<String, WFSDataStore> dataStores = new HashMap<>();
 
-	@Override
-	public String getName() {
-		return "wfs";
-	}
+    @Override
+    public String getName() {
+        return "wfs";
+    }
 
-	@Override
-	public IResourceValidator getValidator() {
-		return new WfsValidator();
-	}
+    @Override
+    public IResourceValidator getValidator() {
+        return new WfsValidator();
+    }
 
-	@Override
-	public IResourcePublisher getPublisher() {
-		return new WfsPublisher();
-	}
+    @Override
+    public IResourcePublisher getPublisher() {
+        return new WfsPublisher();
+    }
 
-	@Override
-	public IResourceEncoder getEncoder() {
-		return new WfsEncoder();
-	}
+    @Override
+    public IResourceEncoder getEncoder() {
+        return new WfsEncoder();
+    }
 
-	public static WFSDataStore getDatastore(String serverUrl, Version version) {
+    public static WFSDataStore getDatastore(String serverUrl, Version version) {
 
-		WFSDataStore ret = dataStores.get(serverUrl);
+        WFSDataStore ret = dataStores.get(serverUrl);
 
-		if (ret == null) {
-			String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
-			WFSDataStoreFactory dsf = new WFSDataStoreFactory();
-			try {
-				
-				Map<String, Serializable> connectionParameters = new HashMap<>();
-				connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
-				
-				/*
-				 * TODO all other parameters
-				 */
-				
-				
-				ret = dsf.createDataStore(connectionParameters);
-				dataStores.put(serverUrl, ret);
+        if (ret == null) {
+            String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
+            WFSDataStoreFactory dsf = new WFSDataStoreFactory();
+            try {
 
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+                Map<String, Serializable> connectionParameters = new HashMap<>();
+                connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
 
-		}
-		return ret;
-	}
+                /*
+                 * TODO all other parameters
+                 */
 
-	@Override
-	public IResourceImporter getImporter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+                ret = dsf.createDataStore(connectionParameters);
+                dataStores.put(serverUrl, ret);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return ret;
+    }
+
+    @Override
+    public IResourceImporter getImporter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

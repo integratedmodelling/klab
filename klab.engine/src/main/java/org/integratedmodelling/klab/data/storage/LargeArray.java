@@ -30,17 +30,16 @@ import org.nd4j.linalg.api.ndarray.INDArray;
  */
 public abstract class LargeArray<T> {
 
-	
     class Slice {
 
-		/*
-    	 * Index of the time slice that our data belong to.
-    	 */
-    	int timeIndex;
-    	/*
-    	 * Legitimate array with data for this slice, created by copying the previous data 
-    	 * when a different value needs to be set. If this is not null, use this.
-    	 */
+        /*
+         * Index of the time slice that our data belong to.
+         */
+        int timeIndex;
+        /*
+         * Legitimate array with data for this slice, created by copying the previous data 
+         * when a different value needs to be set. If this is not null, use this.
+         */
         INDArray data;
         /*
          * Pointer to previous slice, not null as long as all set operations on this slice write
@@ -49,14 +48,14 @@ public abstract class LargeArray<T> {
         Slice previousSlice;
 
         Slice(long sliceSize) {
-        	this.timeIndex = 0;
-        	this.data = null; // TODO new with size and proper type based on representation
-		}
-    	
+            this.timeIndex = 0;
+            this.data = null; // TODO new with size and proper type based on representation
+        }
+
         Slice(int timeIndex, INDArray previous) {
-			this.timeIndex = timeIndex;
-			this.data = previous;
-		}
+            this.timeIndex = timeIndex;
+            this.data = previous;
+        }
     }
 
     // this may be higher than the time offset for the passed slice as we only store slices for
@@ -76,7 +75,7 @@ public abstract class LargeArray<T> {
             if (dim.getType() == Type.TIME) {
                 this.timeOffset = i;
             } else {
-            	sliceSize *= dim.size();
+                sliceSize *= dim.size();
             }
             i++;
         }
@@ -93,7 +92,7 @@ public abstract class LargeArray<T> {
 
         long ofs[] = cursor.getElementIndexes(index);
         long tfs = ofs[timeOffset];
-        
+
         // TODO find time offset. If slice isn't there check that time was used before in a set operation.
         // TODO get/reconstruct with non-temporal offset
 
@@ -121,7 +120,7 @@ public abstract class LargeArray<T> {
     protected abstract void setObject(Object value, INDArray data, long offset);
 
     public boolean set(long index, Object value) {
-        
+
         if (timeOffset < 0) {
             setObject(value, data.get(0).data, index);
         }
@@ -129,7 +128,7 @@ public abstract class LargeArray<T> {
         if (get(index).equals(value)) {
             return false;
         }
-        
+
         long ofs[] = cursor.getElementIndexes(index);
         long tfs = ofs[timeOffset];
 
@@ -141,7 +140,7 @@ public abstract class LargeArray<T> {
         if (this.maxTimeOffsetReferenced < tfs) {
             this.maxTimeOffsetReferenced = tfs;
         }
-        
+
         return true;
     }
 

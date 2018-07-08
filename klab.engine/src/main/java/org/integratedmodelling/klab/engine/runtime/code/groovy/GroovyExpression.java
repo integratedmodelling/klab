@@ -50,245 +50,243 @@ import groovy.lang.Script;
 
 public class GroovyExpression extends Expression {
 
-  private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ActionBase";
-  
-  protected String              code;
-  protected boolean             negated        = false;
-  protected Object              object;
-  protected IServiceCall        functionCall;
-  protected IModel              model;
-  protected boolean             isNull         = false;
-  protected boolean             isTrue         = false;
-  private boolean               initialized    = false;
-  private Set<String>           defineIfAbsent = new HashSet<>();
+    private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ActionBase";
 
-  Script                        script;
-  IGeometry                     domain;
-  INamespace                    namespace;
+    protected String code;
+    protected boolean negated = false;
+    protected Object object;
+    protected IServiceCall functionCall;
+    protected IModel model;
+    protected boolean isNull = false;
+    protected boolean isTrue = false;
+    private boolean initialized = false;
+    private Set<String> defineIfAbsent = new HashSet<>();
 
-  private List<KimNotification> errors         = new ArrayList<>();
-  private CompilerConfiguration compiler       = new CompilerConfiguration();
-  private GroovyShell           shell;
-  private String                preprocessed   = null;
+    Script script;
+    IGeometry domain;
+    INamespace namespace;
 
-  /*
-   * used by k.LAB to instantiate Groovy expressions. Will automatically add imports for any
-   * KimImport class.
-   */
-  public GroovyExpression() {
-
-    ImportCustomizer customizer = new ImportCustomizer();
-    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-    }
-    compiler.addCompilationCustomizers(customizer);
-  }
-
-  public boolean hasErrors() {
-    return errors.size() > 0;
-  }
-
-  public List<KimNotification> getErrors() {
-    return errors;
-  }
-
-  /*
-   * used by Thinklab - when using the API use the String constructor. MUST be called in all cases.
-   */
-  public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
-    compile(preprocess(code, inputs, outputs));
-    initialized = true;
-  }
-
-  /**
-   * Simple expression without context or receivers. NOT PREPROCESSED in the context it's in.
-   *
-   * @param code
-   * @param inputs
-   * @param outputs
-   * @param domain
-   */
-  public GroovyExpression(String code, Map<String, IObservable> inputs,
-      Map<String, IObservable> outputs, IGeometry domain) {
-
-    ImportCustomizer customizer = new ImportCustomizer();
-    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-    }
-    compiler.addCompilationCustomizers(customizer);
-
-    this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    this.domain = domain;
-    this.compiler.setScriptBaseClass(getBaseClass());
-    initialize(inputs, outputs);
-  }
-
-  /**
-   * Preprocess with the dependencies of the passed model preset in symbol table.
-   * 
-   * @param code
-   * @param model
-   */
-  GroovyExpression(String code, IModel model) {
-
-    ImportCustomizer customizer = new ImportCustomizer();
-    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-    }
-    compiler.addCompilationCustomizers(customizer);
-
-    this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    Map<String, IObservable> inputs = new HashMap<>();
-    for (IObservable d : model.getDependencies()) {
-      inputs.put(d.getLocalName(), d);
-    }
-    initialize(inputs, null);
-  }
-
-  GroovyExpression(String code, INamespace namespace, IGeometry domain) {
-
-    ImportCustomizer customizer = new ImportCustomizer();
-    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-    }
-    compiler.addCompilationCustomizers(customizer);
-    this.namespace = namespace;
-    this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    this.domain = domain;
-  }
-
-  GroovyExpression(String code) {
-    ImportCustomizer customizer = new ImportCustomizer();
-    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-    }
-    compiler.addCompilationCustomizers(customizer);
-    this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-  }
-  
-  GroovyExpression(String code, boolean preprocessed) {
-    ImportCustomizer customizer = new ImportCustomizer();
-    for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-      customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-    }
-    compiler.addCompilationCustomizers(customizer);
-    this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-    if (preprocessed) {
-      this.preprocessed = this.code;
-    }
-  }
-
-
-  private void compile(String code) {
-    this.compiler.setScriptBaseClass(getBaseClass());
-    this.shell = new GroovyShell(this.getClass().getClassLoader(), new Binding(), compiler);
-    this.script = shell.parse(code);
-  }
-
-  protected String getBaseClass() {
+    private List<KimNotification> errors = new ArrayList<>();
+    private CompilerConfiguration compiler = new CompilerConfiguration();
+    private GroovyShell shell;
+    private String preprocessed = null;
 
     /*
-     * choose proper class according to domains so that the appropriate functions are supported.
+     * used by k.LAB to instantiate Groovy expressions. Will automatically add imports for any
+     * KimImport class.
      */
-    // if (domain != null) {
-    //
-    // if (domain.contains(KLAB.c(NS.SPACE_DOMAIN)) &&
-    // domain.contains(KLAB.c(NS.TIME_DOMAIN))) {
-    // return "org.integratedmodelling.thinklab.actions.SpatioTemporalActionScript";
-    // } else if (domain.contains(KLAB.c(NS.SPACE_DOMAIN))) {
-    // return "org.integratedmodelling.thinklab.actions.SpatialActionScript";
-    // } else if (domain.contains(KLAB.c(NS.TIME_DOMAIN))) {
-    // return "org.integratedmodelling.thinklab.actions.TemporalActionScript";
-    // }
-    // }
-    return BASE_ACTION_CLASS;
-  }
+    public GroovyExpression() {
 
-  public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-
-    if (isTrue) {
-      return true;
+        ImportCustomizer customizer = new ImportCustomizer();
+        for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+            customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+        }
+        compiler.addCompilationCustomizers(customizer);
     }
 
-    if (isNull) {
-      return null;
+    public boolean hasErrors() {
+        return errors.size() > 0;
     }
 
-    if (code != null) {
-
-      if (!initialized) {
-        initialize(new HashMap<>(), new HashMap<>());
-      }
-
-      try {
-        setBindings(script.getBinding(), context, parameters);
-        return script.run();
-      } catch (MissingPropertyException e) {
-        String property = e.getProperty();
-        context.getMonitor().warn("variable " + property
-            + " undefined: check naming. Defining as no-data for future evaluations.");
-        defineIfAbsent.add(property);
-      } catch (Throwable t) {
-        throw new KlabException(t);
-      }
-    } else if (object != null) {
-      return object;
-    } else if (functionCall != null) {
-      return Extensions.INSTANCE.callFunction(functionCall, context);
-    }
-    return null;
-  }
-
-  private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
-
-    for (String key : parameters.keySet()) {
-      binding.setVariable(key, parameters.get(key));
-    }
-    for (String v : defineIfAbsent) {
-      if (!binding.hasVariable(v)) {
-        binding.setVariable(v, null);
-      }
+    public List<KimNotification> getErrors() {
+        return errors;
     }
 
-    binding.setVariable("_p", parameters);
-    binding.setVariable("_ns", context.getNamespace());
-    binding.setVariable("_c", context);
-    binding.setVariable("_monitor", context.getMonitor());
-  }
-
-  private String preprocess(String code, Map<String, IObservable> inputs,
-      Map<String, IObservable> outputs) {
-
-    if (this.preprocessed != null) {
-      return this.preprocessed;
+    /*
+     * used by Thinklab - when using the API use the String constructor. MUST be called in all cases.
+     */
+    public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
+        compile(preprocess(code, inputs, outputs));
+        initialized = true;
     }
 
-    Set<String> knownKeys = new HashSet<>();
-    if (inputs != null) {
-      knownKeys.addAll(inputs.keySet());
+    /**
+     * Simple expression without context or receivers. NOT PREPROCESSED in the context it's in.
+     *
+     * @param code
+     * @param inputs
+     * @param outputs
+     * @param domain
+     */
+    public GroovyExpression(String code,
+            Map<String, IObservable> inputs,
+            Map<String, IObservable> outputs,
+            IGeometry domain) {
+
+        ImportCustomizer customizer = new ImportCustomizer();
+        for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+            customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+        }
+        compiler.addCompilationCustomizers(customizer);
+
+        this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+        this.domain = domain;
+        this.compiler.setScriptBaseClass(getBaseClass());
+        initialize(inputs, outputs);
     }
-    if (outputs != null) {
-      knownKeys.addAll(outputs.keySet());
+
+    /**
+     * Preprocess with the dependencies of the passed model preset in symbol table.
+     * 
+     * @param code
+     * @param model
+     */
+    GroovyExpression(String code, IModel model) {
+
+        ImportCustomizer customizer = new ImportCustomizer();
+        for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+            customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+        }
+        compiler.addCompilationCustomizers(customizer);
+
+        this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+        Map<String, IObservable> inputs = new HashMap<>();
+        for (IObservable d : model.getDependencies()) {
+            inputs.put(d.getLocalName(), d);
+        }
+        initialize(inputs, null);
     }
-    GroovyExpressionPreprocessor processor =
-        new GroovyExpressionPreprocessor(namespace, knownKeys, domain);
-    this.preprocessed = processor.process(code);
-    this.errors.addAll(processor.getErrors());
 
-    return this.preprocessed;
-  }
+    GroovyExpression(String code, INamespace namespace, IGeometry domain) {
 
-  public String toString() {
-    return code;
-  }
+        ImportCustomizer customizer = new ImportCustomizer();
+        for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+            customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+        }
+        compiler.addCompilationCustomizers(customizer);
+        this.namespace = namespace;
+        this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+        this.domain = domain;
+    }
 
-  public void setNegated(boolean negate) {
-    negated = negate;
-  }
+    GroovyExpression(String code) {
+        ImportCustomizer customizer = new ImportCustomizer();
+        for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+            customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+        }
+        compiler.addCompilationCustomizers(customizer);
+        this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+    }
 
-  public boolean isNegated() {
-    return negated;
-  }
+    GroovyExpression(String code, boolean preprocessed) {
+        ImportCustomizer customizer = new ImportCustomizer();
+        for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
+            customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
+        }
+        compiler.addCompilationCustomizers(customizer);
+        this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+        if (preprocessed) {
+            this.preprocessed = this.code;
+        }
+    }
 
+    private void compile(String code) {
+        this.compiler.setScriptBaseClass(getBaseClass());
+        this.shell = new GroovyShell(this.getClass().getClassLoader(), new Binding(), compiler);
+        this.script = shell.parse(code);
+    }
+
+    protected String getBaseClass() {
+
+        /*
+         * choose proper class according to domains so that the appropriate functions are supported.
+         */
+        // if (domain != null) {
+        //
+        // if (domain.contains(KLAB.c(NS.SPACE_DOMAIN)) &&
+        // domain.contains(KLAB.c(NS.TIME_DOMAIN))) {
+        // return "org.integratedmodelling.thinklab.actions.SpatioTemporalActionScript";
+        // } else if (domain.contains(KLAB.c(NS.SPACE_DOMAIN))) {
+        // return "org.integratedmodelling.thinklab.actions.SpatialActionScript";
+        // } else if (domain.contains(KLAB.c(NS.TIME_DOMAIN))) {
+        // return "org.integratedmodelling.thinklab.actions.TemporalActionScript";
+        // }
+        // }
+        return BASE_ACTION_CLASS;
+    }
+
+    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+
+        if (isTrue) {
+            return true;
+        }
+
+        if (isNull) {
+            return null;
+        }
+
+        if (code != null) {
+
+            if (!initialized) {
+                initialize(new HashMap<>(), new HashMap<>());
+            }
+
+            try {
+                setBindings(script.getBinding(), context, parameters);
+                return script.run();
+            } catch (MissingPropertyException e) {
+                String property = e.getProperty();
+                context.getMonitor().warn("variable " + property
+                        + " undefined: check naming. Defining as no-data for future evaluations.");
+                defineIfAbsent.add(property);
+            } catch (Throwable t) {
+                throw new KlabException(t);
+            }
+        } else if (object != null) {
+            return object;
+        } else if (functionCall != null) {
+            return Extensions.INSTANCE.callFunction(functionCall, context);
+        }
+        return null;
+    }
+
+    private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
+
+        for (String key : parameters.keySet()) {
+            binding.setVariable(key, parameters.get(key));
+        }
+        for (String v : defineIfAbsent) {
+            if (!binding.hasVariable(v)) {
+                binding.setVariable(v, null);
+            }
+        }
+
+        binding.setVariable("_p", parameters);
+        binding.setVariable("_ns", context.getNamespace());
+        binding.setVariable("_c", context);
+        binding.setVariable("_monitor", context.getMonitor());
+    }
+
+    private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
+
+        if (this.preprocessed != null) {
+            return this.preprocessed;
+        }
+
+        Set<String> knownKeys = new HashSet<>();
+        if (inputs != null) {
+            knownKeys.addAll(inputs.keySet());
+        }
+        if (outputs != null) {
+            knownKeys.addAll(outputs.keySet());
+        }
+        GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain);
+        this.preprocessed = processor.process(code);
+        this.errors.addAll(processor.getErrors());
+
+        return this.preprocessed;
+    }
+
+    public String toString() {
+        return code;
+    }
+
+    public void setNegated(boolean negate) {
+        negated = negate;
+    }
+
+    public boolean isNegated() {
+        return negated;
+    }
 
 }

@@ -9,5 +9,6 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
  *
  */
 public interface IKeyHolder {
-	void setDataKey(IDataKey key);
+
+    void setDataKey(IDataKey key);
 }

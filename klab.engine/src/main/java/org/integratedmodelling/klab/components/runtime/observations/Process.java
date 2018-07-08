@@ -11,5 +11,5 @@ public class Process extends DirectObservation implements IProcess {
         super(name, observable, scale, context);
         // TODO Auto-generated constructor stub
     }
-    
+
 }

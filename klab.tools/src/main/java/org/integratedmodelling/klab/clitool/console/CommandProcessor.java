@@ -59,266 +59,267 @@ import joptsimple.OptionSpecBuilder;
 
 public class CommandProcessor extends org.integratedmodelling.klab.clitool.contrib.console.CommandProcessor {
 
-	IMonitor monitor;
-	protected IConsole terminal;
-	Map<String, Map<String, Prototype>> packages = new HashMap<>();
-	Stack<String> currentPackage = new Stack<>();
+    IMonitor monitor;
+    protected IConsole terminal;
+    Map<String, Map<String, Prototype>> packages = new HashMap<>();
+    Stack<String> currentPackage = new Stack<>();
 
-	public CommandProcessor(IConsole console, IMonitor monitor) {
+    public CommandProcessor(IConsole console, IMonitor monitor) {
 
-		terminal = console;
-		this.monitor = monitor;
-		this.currentPackage.push("main");
+        terminal = console;
+        this.monitor = monitor;
+        this.currentPackage.push("main");
 
-		for (String kdl : new Reflections(Main.class.getPackage().getName(), new ResourcesScanner())
-				.getResources(Pattern.compile(".*\\.kdl"))) {
-			try (InputStream input = getClass().getClassLoader().getResourceAsStream(kdl)) {
-				IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
-				String namespace = declaration.getPackageName();
-				if (namespace == null) {
-					namespace = "main";
-				}
-				for (IKdlActuator actuator : declaration.getActuators()) {
-					Prototype prototype = new Prototype(actuator, null);
-					Map<String, Prototype> commands = getPackage(namespace);
-					commands.put(prototype.getName(), prototype);
-				}
-			} catch (Exception e) {
-				throw new KlabValidationException("cannot parse command specifications: " + e.getMessage());
-			}
-		}
-	}
+        for (String kdl : new Reflections(Main.class.getPackage().getName(), new ResourcesScanner())
+                .getResources(Pattern.compile(".*\\.kdl"))) {
+            try (InputStream input = getClass().getClassLoader().getResourceAsStream(kdl)) {
+                IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
+                String namespace = declaration.getPackageName();
+                if (namespace == null) {
+                    namespace = "main";
+                }
+                for (IKdlActuator actuator : declaration.getActuators()) {
+                    Prototype prototype = new Prototype(actuator, null);
+                    Map<String, Prototype> commands = getPackage(namespace);
+                    commands.put(prototype.getName(), prototype);
+                }
+            } catch (Exception e) {
+                throw new KlabValidationException("cannot parse command specifications: " + e.getMessage());
+            }
+        }
+    }
 
-	private Map<String, Prototype> getPackage(String namespace) {
-		Map<String, Prototype> ret = packages.get(namespace);
-		if (ret == null) {
-			ret = new HashMap<>();
-			packages.put(namespace, ret);
-		}
-		return ret;
-	}
+    private Map<String, Prototype> getPackage(String namespace) {
+        Map<String, Prototype> ret = packages.get(namespace);
+        if (ret == null) {
+            ret = new HashMap<>();
+            packages.put(namespace, ret);
+        }
+        return ret;
+    }
 
-	@Override
-	public void processCommand(String input) {
+    @Override
+    public void processCommand(String input) {
 
-		input = input.trim();
-		String cpack = getCurrentPackage();
-		boolean inline = false;
+        input = input.trim();
+        String cpack = getCurrentPackage();
+        boolean inline = false;
 
-		// enable one-off package use with package prefix
-		if (input.contains("::") || input.contains(" ")) {
-			String pname = "";
-			for (int i = 0; i < input.length(); i++) {
-				if (input.charAt(i) == ':' || input.charAt(i) == ' ') {
-					break;
-				}
-				pname += input.charAt(i);
-			}
-			if (packages.containsKey(pname)) {
-				cpack = pname;
-				input = input.substring(pname.length() + (input.charAt(pname.length() + 1) == ':' ? 2 : 1)).trim();
-				inline = true;
-			}
-		}
+        // enable one-off package use with package prefix
+        if (input.contains("::") || input.contains(" ")) {
+            String pname = "";
+            for (int i = 0; i < input.length(); i++) {
+                if (input.charAt(i) == ':' || input.charAt(i) == ' ') {
+                    break;
+                }
+                pname += input.charAt(i);
+            }
+            if (packages.containsKey(pname)) {
+                cpack = pname;
+                input = input.substring(pname.length() + (input.charAt(pname.length() + 1) == ':' ? 2 : 1)).trim();
+                inline = true;
+            }
+        }
 
-		/*
-		 * TODO verify if command starts with a first token that is a package name or
-		 * includes <package.command>; in that case, exec the package's command without
-		 * pushing it on the stack.
-		 */
+        /*
+         * TODO verify if command starts with a first token that is a package name or
+         * includes <package.command>; in that case, exec the package's command without
+         * pushing it on the stack.
+         */
 
-		if (input.equals("exit")) {
+        if (input.equals("exit")) {
 
-			if (currentPackage.size() == 1) {
-				System.exit(0);
-			} else {
-				currentPackage.pop();
-				terminal.setPrompt((getCurrentPackage().equals("main") ? ">" : getCurrentPackage()) + "> ");
-			}
+            if (currentPackage.size() == 1) {
+                System.exit(0);
+            } else {
+                currentPackage.pop();
+                terminal.setPrompt((getCurrentPackage().equals("main") ? ">" : getCurrentPackage()) + "> ");
+            }
 
-		} else if (input.equals("quit")) {
+        } else if (input.equals("quit")) {
 
-			System.exit(0);
+            System.exit(0);
 
-		} else if (packages.containsKey(input) && !input.equals("main")) {
+        } else if (packages.containsKey(input) && !input.equals("main")) {
 
-			currentPackage.push(input);
-			terminal.setPrompt(getCurrentPackage() + "> ");
+            currentPackage.push(input);
+            terminal.setPrompt(getCurrentPackage() + "> ");
 
-		} else if (input.length() > 0) {
+        } else if (input.length() > 0) {
 
-			IServiceCall command = null;
-			try {
-				command = parseCommandLine(input, cpack);
-				boolean ok = command != null;
-				if (command == null) {
-					terminal.warning("Command '" + input + "' incorrect or unknown");
-				} else {
-					try {
-						/*
-						 * TODO run asynchronously if command requires it.
-						 */
-						terminal.echo("> " + (cpack.equals("main") ? "" : cpack) + "::" + input);
-						Object ret = execute(command, cpack);
-						terminal.outputResult(input, ret);
-					} catch (Throwable e) {
-						ok = false;
-						terminal.error(e);
-					}
-				}
-				terminal.reportCommandResult((inline ? (cpack + " ") : "") + input, ok);
+            IServiceCall command = null;
+            try {
+                command = parseCommandLine(input, cpack);
+                boolean ok = command != null;
+                if (command == null) {
+                    terminal.warning("Command '" + input + "' incorrect or unknown");
+                } else {
+                    try {
+                        /*
+                         * TODO run asynchronously if command requires it.
+                         */
+                        terminal.echo("> " + (cpack.equals("main") ? "" : cpack) + "::" + input);
+                        Object ret = execute(command, cpack);
+                        terminal.outputResult(input, ret);
+                    } catch (Throwable e) {
+                        ok = false;
+                        terminal.error(e);
+                    }
+                }
+                terminal.reportCommandResult((inline ? (cpack + " ") : "") + input, ok);
 
-			} catch (KlabException e) {
-				terminal.error(e);
-			}
-		}
+            } catch (KlabException e) {
+                terminal.error(e);
+            }
+        }
 
-	}
+    }
 
-	private Object execute(IServiceCall command, String pack) throws Exception {
+    private Object execute(IServiceCall command, String pack) throws Exception {
 
-		if (CliRuntime.INSTANCE.getSession() == null) {
-			terminal.error("Please wait until a session is established.");
-			return null;
-		}
+        if (CliRuntime.INSTANCE.getSession() == null) {
+            terminal.error("Please wait until a session is established.");
+            return null;
+        }
 
-		Prototype prototype = getPackage(pack).get(command.getName());
-		if (prototype == null || prototype.getExecutorClass() == null
-				|| !ICommand.class.isAssignableFrom(prototype.getExecutorClass())) {
-			terminal.error("command " + command.getName() + " unknown or not executable");
-		}
-		ICommand executor = (ICommand) prototype.getExecutorClass().getDeclaredConstructor().newInstance();
-		return executor.execute(command, CliRuntime.INSTANCE.getSession());
-	}
+        Prototype prototype = getPackage(pack).get(command.getName());
+        if (prototype == null || prototype.getExecutorClass() == null
+                || !ICommand.class.isAssignableFrom(prototype.getExecutorClass())) {
+            terminal.error("command " + command.getName() + " unknown or not executable");
+        }
+        ICommand executor = (ICommand) prototype.getExecutorClass().getDeclaredConstructor().newInstance();
+        return executor.execute(command, CliRuntime.INSTANCE.getSession());
+    }
 
-	/**
-	 * Overrides the default output in CommandProcessor to determine if ANSI Colors
-	 * are processed or DCCC and converts accordingly.
-	 * 
-	 * @param s
-	 *            The String to output.
-	 */
-	@Override
-	public void output(String s) {
-		if (getConsole().isUseANSIColorCodes())
-			super.output(convertToANSIColors(s));
-		else
-			super.output(s);
-	}
+    /**
+     * Overrides the default output in CommandProcessor to determine if ANSI Colors
+     * are processed or DCCC and converts accordingly.
+     * 
+     * @param s
+     *            The String to output.
+     */
+    @Override
+    public void output(String s) {
+        if (getConsole().isUseANSIColorCodes())
+            super.output(convertToANSIColors(s));
+        else
+            super.output(s);
+    }
 
-	public List<IPrototype> getPrototypes(String pack) {
-		List<IPrototype> ret = new ArrayList<>(getPackage(pack).values());
-		ret.sort(new Comparator<IPrototype>() {
-			@Override
-			public int compare(IPrototype o1, IPrototype o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+    public List<IPrototype> getPrototypes(String pack) {
+        List<IPrototype> ret = new ArrayList<>(getPackage(pack).values());
+        ret.sort(new Comparator<IPrototype>() {
 
-		return ret;
-	}
+            @Override
+            public int compare(IPrototype o1, IPrototype o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 
-	public IServiceCall parseCommandLine(String line, String pack) throws KlabValidationException {
+        return ret;
+    }
 
-		String[] a = line.split("\\s");
-		IServiceCall ret = null;
+    public IServiceCall parseCommandLine(String line, String pack) throws KlabValidationException {
 
-		if (a.length < 1) {
-			return null;
-		}
+        String[] a = line.split("\\s");
+        IServiceCall ret = null;
 
-		IPrototype prototype = getPackage(pack).get(a[0]);
-		if (prototype == null)
-			return null;
+        if (a.length < 1) {
+            return null;
+        }
 
-		ret = KimServiceCall.create(prototype.getName());
+        IPrototype prototype = getPackage(pack).get(a[0]);
+        if (prototype == null)
+            return null;
 
-		String[] args = new String[a.length - 1];
-		System.arraycopy(a, 1, args, 0, a.length - 1);
+        ret = KimServiceCall.create(prototype.getName());
 
-		OptionParser parser = getOptionParser(prototype);
+        String[] args = new String[a.length - 1];
+        System.arraycopy(a, 1, args, 0, a.length - 1);
 
-		try {
+        OptionParser parser = getOptionParser(prototype);
 
-			OptionSet options = parser.parse(args);
-			for (Argument s : prototype.listArguments()) {
-				if (options.has(s.getName())) {
-					ret.getParameters().put(s.getName(),
-							s.getType() == Type.BOOLEAN ? Boolean.TRUE : options.valueOf(s.getName()));
-				} else if (s.getType() == Type.BOOLEAN) {
-					ret.getParameters().put(s.getName(), Boolean.FALSE);
-				} else if (!s.isOptional()) {
-					throw new KlabValidationException("argument " + s.getName() + " is mandatory");
-				}
-			}
+        try {
 
-			List<Object> aaa = new ArrayList<>(options.nonOptionArguments());
-			ret.getParameters().put("arguments", aaa);
+            OptionSet options = parser.parse(args);
+            for (Argument s : prototype.listArguments()) {
+                if (options.has(s.getName())) {
+                    ret.getParameters().put(s.getName(),
+                            s.getType() == Type.BOOLEAN ? Boolean.TRUE : options.valueOf(s.getName()));
+                } else if (s.getType() == Type.BOOLEAN) {
+                    ret.getParameters().put(s.getName(), Boolean.FALSE);
+                } else if (!s.isOptional()) {
+                    throw new KlabValidationException("argument " + s.getName() + " is mandatory");
+                }
+            }
 
-		} catch (OptionException e) {
-			throw new KlabValidationException(e.getMessage());
-		}
+            List<Object> aaa = new ArrayList<>(options.nonOptionArguments());
+            ret.getParameters().put("arguments", aaa);
 
-		// TODO later
-		// int n = 0;
-		// int argn = 0;
-		// boolean acceptsSubcommand = prototype.getSubcommandNames().size() > 0;
-		// boolean requiresSubcommand = ((Prototype) prototype).getSubcommandMethod("")
-		// == null;
-		// for (Object o : options.nonOptionArguments()) {
-		// // pair with arguments
-		// if (n == 0 && acceptsSubcommand) {
-		// if (prototype.getSubcommandNames().contains(o.toString())) {
-		// ret.setSubcommand(o.toString());
-		// n++;
-		// continue;
-		// } else if (requiresSubcommand) {
-		// throw new KlabValidationException("command " + a[0] + " requires one of "
-		// + StringUtils.join(prototype.getSubcommandNames(), ',') + " as subcommand");
-		// }
-		// }
+        } catch (OptionException e) {
+            throw new KlabValidationException(e.getMessage());
+        }
 
-		// if (prototype.getArguments().size() <= argn) {
-		// throw new KlabValidationException(
-		// "command " + a[0] + " cannot be called with " + (n + 1) + " arguments");
-		// }
-		//
-		// ret.setArgument(prototype.getArgumentNames().get(argn++), o);
-		//
-		// n++;
-		// }
+        // TODO later
+        // int n = 0;
+        // int argn = 0;
+        // boolean acceptsSubcommand = prototype.getSubcommandNames().size() > 0;
+        // boolean requiresSubcommand = ((Prototype) prototype).getSubcommandMethod("")
+        // == null;
+        // for (Object o : options.nonOptionArguments()) {
+        // // pair with arguments
+        // if (n == 0 && acceptsSubcommand) {
+        // if (prototype.getSubcommandNames().contains(o.toString())) {
+        // ret.setSubcommand(o.toString());
+        // n++;
+        // continue;
+        // } else if (requiresSubcommand) {
+        // throw new KlabValidationException("command " + a[0] + " requires one of "
+        // + StringUtils.join(prototype.getSubcommandNames(), ',') + " as subcommand");
+        // }
+        // }
 
-		Extensions.INSTANCE.validateArguments(prototype, ret.getParameters());
+        // if (prototype.getArguments().size() <= argn) {
+        // throw new KlabValidationException(
+        // "command " + a[0] + " cannot be called with " + (n + 1) + " arguments");
+        // }
+        //
+        // ret.setArgument(prototype.getArgumentNames().get(argn++), o);
+        //
+        // n++;
+        // }
 
-		return ret;
-	}
+        Extensions.INSTANCE.validateArguments(prototype, ret.getParameters());
 
-	public OptionParser getOptionParser(IPrototype prototype) {
+        return ret;
+    }
 
-		OptionParser parser = new OptionParser();
+    public OptionParser getOptionParser(IPrototype prototype) {
 
-		for (Argument odesc : prototype.listArguments()) {
+        OptionParser parser = new OptionParser();
 
-			OptionSpecBuilder b = parser.acceptsAll(
-					Arrays.asList(new String[] { odesc.getShortName(), odesc.getName() }), odesc.getDescription());
+        for (Argument odesc : prototype.listArguments()) {
 
-			if (!(odesc.getType().equals(Type.VOID) || odesc.getType().equals(Type.BOOLEAN))) {
-				b.withRequiredArg();
-			}
-		}
-		return parser;
-	}
+            OptionSpecBuilder b = parser.acceptsAll(
+                    Arrays.asList(new String[] { odesc.getShortName(), odesc.getName() }), odesc.getDescription());
 
-	public String getCurrentPackage() {
-		return currentPackage.peek();
-	}
+            if (!(odesc.getType().equals(Type.VOID) || odesc.getType().equals(Type.BOOLEAN))) {
+                b.withRequiredArg();
+            }
+        }
+        return parser;
+    }
 
-	public List<String> getPackages() {
-		List<String> ret = new ArrayList<>(packages.keySet());
-		ret.remove("main");
-		Collections.sort(ret);
-		ret.add(0, "main");
-		return ret;
-	}
+    public String getCurrentPackage() {
+        return currentPackage.peek();
+    }
+
+    public List<String> getPackages() {
+        List<String> ret = new ArrayList<>(packages.keySet());
+        ret.remove("main");
+        Collections.sort(ret);
+        ret.add(0, "main");
+        return ret;
+    }
 
 }

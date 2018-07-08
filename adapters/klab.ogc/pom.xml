@@ -1,35 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.integratedmodelling</groupId>
-		<artifactId>adapters</artifactId>
-		<version>0.10.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>klab.ogc</artifactId>
-	<name>OGC and GIS data adapters for k.LAB (files, WCS and WFS) </name>
-	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.geotools.xsd/gt-xsd-wcs -->
-		<dependency>
-			<groupId>org.geotools.xsd</groupId>
-			<artifactId>gt-xsd-wcs</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-wfs-ng</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.engine</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.klab.api</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-	</dependencies>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>adapters</artifactId>
+        <groupId>org.integratedmodelling</groupId>
+        <version>0.10.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>klab.ogc</artifactId>
+    <name>OGC and GIS data adapters for k.LAB (files, WCS and WFS)</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-wfs-ng</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.geotools.xsd/gt-xsd-wcs -->
+        <dependency>
+            <groupId>org.geotools.xsd</groupId>
+            <artifactId>gt-xsd-wcs</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.integratedmodelling</groupId>
+            <artifactId>klab.engine</artifactId>
+            <version>0.10.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.integratedmodelling</groupId>
+            <artifactId>org.integratedmodelling.klab.api</artifactId>
+            <version>${klab.version}</version>
+        </dependency>
+    </dependencies>
 </project>

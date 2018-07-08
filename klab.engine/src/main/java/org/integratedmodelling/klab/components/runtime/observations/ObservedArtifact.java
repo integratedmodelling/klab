@@ -18,70 +18,70 @@ import org.integratedmodelling.klab.utils.NameGenerator;
  */
 public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
-	private IGeometry geometry;
-	private IRuntimeContext runtimeContext;
-	private IMetadata metadata = new Metadata();
-	private String token = "o" + NameGenerator.shortUUID();
+    private IGeometry geometry;
+    private IRuntimeContext runtimeContext;
+    private IMetadata metadata = new Metadata();
+    private String token = "o" + NameGenerator.shortUUID();
 
-	public ObservedArtifact(IGeometry geometry, IRuntimeContext context) {
-		this.geometry = geometry;
-		this.runtimeContext = context;
-	}
+    public ObservedArtifact(IGeometry geometry, IRuntimeContext context) {
+        this.geometry = geometry;
+        this.runtimeContext = context;
+    }
 
-	public String getId() {
-		return token;
-	}
+    public String getId() {
+        return token;
+    }
 
-	@Override
-	public IGeometry getGeometry() {
-		return geometry;
-	}
+    @Override
+    public IGeometry getGeometry() {
+        return geometry;
+    }
 
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
+    @Override
+    public IMetadata getMetadata() {
+        return metadata;
+    }
 
-	public IRuntimeContext getRuntimeContext() {
-		return this.runtimeContext;
-	}
+    public IRuntimeContext getRuntimeContext() {
+        return this.runtimeContext;
+    }
 
-	public ObservedArtifact getParent() {
-		return null;
-	}
+    public ObservedArtifact getParent() {
+        return null;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((token == null) ? 0 : token.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((token == null) ? 0 : token.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ObservedArtifact other = (ObservedArtifact) obj;
-		if (token == null) {
-			if (other.token != null)
-				return false;
-		} else if (!token.equals(other.token))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ObservedArtifact other = (ObservedArtifact) obj;
+        if (token == null) {
+            if (other.token != null)
+                return false;
+        } else if (!token.equals(other.token))
+            return false;
+        return true;
+    }
 
-	@Override
-	public IProvenance getProvenance() {
-		return getRuntimeContext().getProvenance();
-	}
+    @Override
+    public IProvenance getProvenance() {
+        return getRuntimeContext().getProvenance();
+    }
 
-	protected void setMetadata(IMetadata metadata) {
-		this.metadata = metadata;
-	}
+    protected void setMetadata(IMetadata metadata) {
+        this.metadata = metadata;
+    }
 
 }

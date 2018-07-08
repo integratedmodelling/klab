@@ -29,240 +29,241 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 public enum Authentication implements IAuthenticationService {
 
-	/**
-	 * The global instance singleton.
-	 */
-	INSTANCE;
+    /**
+     * The global instance singleton.
+     */
+    INSTANCE;
 
-	/**
-	 * Local catalog of all partner identities registered from the network.
-	 * 
-	 */
-	Map<String, Partner> partners = Collections.synchronizedMap(new HashMap<>());
+    /**
+     * Local catalog of all partner identities registered from the network.
+     * 
+     */
+    Map<String, Partner> partners = Collections.synchronizedMap(new HashMap<>());
 
-	/**
-	 * All identities available for inspection (sessions, users). The network
-	 * session is a singleton (or a zeroton) so it's not included as its ID
-	 * conflicts with the user holding it.
-	 */
-	Map<String, IIdentity> identities = Collections.synchronizedMap(new HashMap<>());
+    /**
+     * All identities available for inspection (sessions, users). The network
+     * session is a singleton (or a zeroton) so it's not included as its ID
+     * conflicts with the user holding it.
+     */
+    Map<String, IIdentity> identities = Collections.synchronizedMap(new HashMap<>());
 
-	/**
-	 * Status of a user wrt. the network. Starts at UNKNOWN.
-	 */
-	public enum Status {
-		/**
-		 * User is authenticated locally but not online, either for lack of
-		 * authentication or lack of network connection/
-		 */
-		OFFLINE,
-		/**
-		 * User is authenticated and online with the network.
-		 */
-		ONLINE,
-		/**
-		 * User has not been submitted for authentication yet.
-		 */
-		UNKNOWN
-	}
+    /**
+     * Status of a user wrt. the network. Starts at UNKNOWN.
+     */
+    public enum Status {
+        /**
+         * User is authenticated locally but not online, either for lack of
+         * authentication or lack of network connection/
+         */
+        OFFLINE,
+        /**
+         * User is authenticated and online with the network.
+         */
+        ONLINE,
+        /**
+         * User has not been submitted for authentication yet.
+         */
+        UNKNOWN
+    }
 
-	/**
-	 * ID for an anonymous user. Unsurprising.
-	 */
-	public static final String ANONYMOUS_USER_ID = "anonymous";
+    /**
+     * ID for an anonymous user. Unsurprising.
+     */
+    public static final String ANONYMOUS_USER_ID = "anonymous";
 
-	/**
-	 * Id for anonymous user who is connecting from the local host. Will have admin
-	 * privileges.
-	 */
-	public static final String LOCAL_USER_ID = "local";
+    /**
+     * Id for anonymous user who is connecting from the local host. Will have admin
+     * privileges.
+     */
+    public static final String LOCAL_USER_ID = "local";
 
-	private Client client = Client.create();
+    private Client client = Client.create();
 
-	/**
-	 * If the partner mentioned in the response bean is already known, return it,
-	 * otherwise create it.
-	 * 
-	 * @param partner
-	 * @return a partner identity for the passed description
-	 */
-	public Partner requirePartner(IdentityReference partner) {
-		Partner ret = partners.get(partner.getId());
-		if (ret == null) {
-			ret = new Partner(partner);
-			partners.put(partner.getId(), ret);
-		}
-		return ret;
-	}
+    /**
+     * If the partner mentioned in the response bean is already known, return it,
+     * otherwise create it.
+     * 
+     * @param partner
+     * @return a partner identity for the passed description
+     */
+    public Partner requirePartner(IdentityReference partner) {
+        Partner ret = partners.get(partner.getId());
+        if (ret == null) {
+            ret = new Partner(partner);
+            partners.put(partner.getId(), ret);
+        }
+        return ret;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T extends IIdentity> T getIdentity(String id, Class<T> type) {
-		IIdentity ret = identities.get(id);
-		if (ret != null && type.isAssignableFrom(ret.getClass())) {
-			return (T) ret;
-		}
-		return null;
-	}
-	
-	@Override
-	public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
-		return Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(type);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IIdentity> T getIdentity(String id, Class<T> type) {
+        IIdentity ret = identities.get(id);
+        if (ret != null && type.isAssignableFrom(ret.getClass())) {
+            return (T) ret;
+        }
+        return null;
+    }
 
-	/**
-	 * Register a new session and inject a close listener that will de-register it
-	 * on expiration.
-	 * 
-	 * @param session
-	 */
-	public void registerSession(Session session) {
+    @Override
+    public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
+        return Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(type);
+    }
 
-		session.addListener(new Listener() {
-			@Override
-			public void onClose(ISession session) {
-				identities.remove(session.getId());
-			}
-		});
-		identities.put(session.getId(), session);
-	}
+    /**
+     * Register a new session and inject a close listener that will de-register it
+     * on expiration.
+     * 
+     * @param session
+     */
+    public void registerSession(Session session) {
 
-	/**
-	 * Register any new identity with this.
-	 * 
-	 * @param identity
-	 */
-	public void registerIdentity(IIdentity identity) {
-		identities.put(identity.getId(), identity);
-	}
+        session.addListener(new Listener() {
 
-	/**
-	 * Util to extract an identity from the principal of a Spring request. TODO make
-	 * another to return a specific type or throw an authorization exception
-	 * 
-	 * @param principal
-	 * @return the identity or null
-	 */
-	public IIdentity getIdentity(Principal principal) {
-		if (principal instanceof PreAuthenticatedAuthenticationToken
-				&& ((PreAuthenticatedAuthenticationToken) principal).getPrincipal() instanceof IIdentity) {
-			return (IIdentity) ((PreAuthenticatedAuthenticationToken) principal).getPrincipal();
-		}
-		return null;
-	}
+            @Override
+            public void onClose(ISession session) {
+                identities.remove(session.getId());
+            }
+        });
+        identities.put(session.getId(), session);
+    }
 
-	@Override
-	public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
+    /**
+     * Register any new identity with this.
+     * 
+     * @param identity
+     */
+    public void registerIdentity(IIdentity identity) {
+        identities.put(identity.getId(), identity);
+    }
 
-		IIdentity ret = null;
-		EngineAuthenticationResponse authentication = null;
+    /**
+     * Util to extract an identity from the principal of a Spring request. TODO make
+     * another to return a specific type or throw an authorization exception
+     * 
+     * @param principal
+     * @return the identity or null
+     */
+    public IIdentity getIdentity(Principal principal) {
+        if (principal instanceof PreAuthenticatedAuthenticationToken
+                && ((PreAuthenticatedAuthenticationToken) principal).getPrincipal() instanceof IIdentity) {
+            return (IIdentity) ((PreAuthenticatedAuthenticationToken) principal).getPrincipal();
+        }
+        return null;
+    }
 
-		if (certificate instanceof AnonymousEngineCertificate) {
-			// no partner, no node, no token, no nothing. REST calls automatically accept
-			// the
-			// anonymous user when secured as Roles.PUBLIC.
-			return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
-		}
+    @Override
+    public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
-		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
+        IIdentity ret = null;
+        EngineAuthenticationResponse authentication = null;
 
-		if (authenticationServer == null) {
-			Logging.INSTANCE.warn("certificate has no hub address");
-			// try local hub, let fail if not active
-			if (client.ping("http://127.0.0.1:8284/klab")) {
-				authenticationServer = "http://127.0.0.1:8284/klab";
-				Logging.INSTANCE.info("local hub is available: trying local authentication");
-			} else {
-				Logging.INSTANCE.warn("local hub unavailable: continuing offline");
-			}
-		}
+        if (certificate instanceof AnonymousEngineCertificate) {
+            // no partner, no node, no token, no nothing. REST calls automatically accept
+            // the
+            // anonymous user when secured as Roles.PUBLIC.
+            return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
+        }
 
-		if (authenticationServer != null) {
+        String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
 
-			Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
-					+ " with hub " + authenticationServer);
+        if (authenticationServer == null) {
+            Logging.INSTANCE.warn("certificate has no hub address");
+            // try local hub, let fail if not active
+            if (client.ping("http://127.0.0.1:8284/klab")) {
+                authenticationServer = "http://127.0.0.1:8284/klab";
+                Logging.INSTANCE.info("local hub is available: trying local authentication");
+            } else {
+                Logging.INSTANCE.warn("local hub unavailable: continuing offline");
+            }
+        }
 
-			/*
-			 * Authenticate with server(s). If authentication fails because of a 403,
-			 * invalidate the certificate. If no server can be reached, certificate is valid
-			 * but engine is offline.
-			 */
-			EngineAuthenticationRequest request = new EngineAuthenticationRequest(
-					certificate.getProperty(KlabCertificate.KEY_USERNAME),
-					certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
-					certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-					certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel());
+        if (authenticationServer != null) {
 
-			// add email if we have it, so the hub can notify in any case if so configured
-			request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
+            Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
+                    + " with hub " + authenticationServer);
 
-			try {
-				authentication = client.authenticateEngine(authenticationServer, request);
-			} catch (Throwable e) {
-				Logging.INSTANCE.error("authentication failed for user "
-						+ certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
-				// TODO inspect exception; fatal if 403, warn and proceed offline otherwise
-			}
-		}
+            /*
+             * Authenticate with server(s). If authentication fails because of a 403,
+             * invalidate the certificate. If no server can be reached, certificate is valid
+             * but engine is offline.
+             */
+            EngineAuthenticationRequest request = new EngineAuthenticationRequest(
+                    certificate.getProperty(KlabCertificate.KEY_USERNAME),
+                    certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
+                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
+                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel());
 
-		if (authentication != null) {
+            // add email if we have it, so the hub can notify in any case if so configured
+            request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
 
-			DateTime expiry = null;
-			/*
-			 * check expiration
-			 */
-			try {
-				expiry = DateTime.parse(authentication.getUserData().getExpiry());
-			} catch (Throwable e) {
-				Logging.INSTANCE
-						.error("bad date or wrong date format in certificate. Please use latest version of software.");
-				return null;
-			}
-			if (expiry == null) {
-				Logging.INSTANCE.error("certificate has no expiration date. Please obtain a new certificate.");
-				return null;
-			} else if (expiry.isBeforeNow()) {
-				Logging.INSTANCE.error("certificate expired on " + expiry + ". Please obtain a new certificate.");
-				return null;
-			}
-		}
+            try {
+                authentication = client.authenticateEngine(authenticationServer, request);
+            } catch (Throwable e) {
+                Logging.INSTANCE.error("authentication failed for user "
+                        + certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
+                // TODO inspect exception; fatal if 403, warn and proceed offline otherwise
+            }
+        }
 
-		/*
-		 * build the identity
-		 */
-		if (certificate.getType() == Type.ENGINE) {
+        if (authentication != null) {
 
-			// if we have connected, insert network session identity
-			if (authentication != null) {
+            DateTime expiry = null;
+            /*
+             * check expiration
+             */
+            try {
+                expiry = DateTime.parse(authentication.getUserData().getExpiry());
+            } catch (Throwable e) {
+                Logging.INSTANCE
+                        .error("bad date or wrong date format in certificate. Please use latest version of software.");
+                return null;
+            }
+            if (expiry == null) {
+                Logging.INSTANCE.error("certificate has no expiration date. Please obtain a new certificate.");
+                return null;
+            } else if (expiry.isBeforeNow()) {
+                Logging.INSTANCE.error("certificate expired on " + expiry + ". Please obtain a new certificate.");
+                return null;
+            }
+        }
 
-				NodeReference hubNode = authentication.getHub();
-				Partner partner = Authentication.INSTANCE.requirePartner(hubNode.getPartner());
-				Node node = new Node(hubNode, partner);
-				node.setOnline(true);
-				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
-						authentication.getNodes(), node);
+        /*
+         * build the identity
+         */
+        if (certificate.getType() == Type.ENGINE) {
 
-				ret = new KlabUser(authentication.getUserData(), networkSession);
+            // if we have connected, insert network session identity
+            if (authentication != null) {
 
-			} else {
+                NodeReference hubNode = authentication.getHub();
+                Partner partner = Authentication.INSTANCE.requirePartner(hubNode.getPartner());
+                Node node = new Node(hubNode, partner);
+                node.setOnline(true);
+                NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
+                        authentication.getNodes(), node);
 
-				// offline node with no partner
-				Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), null);
-				((Node) node).setOnline(false);
-				ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
-			}
+                ret = new KlabUser(authentication.getUserData(), networkSession);
 
-			((KlabUser) ret).setOnline(authentication != null);
+            } else {
 
-		} else {
-			throw new KlabAuthorizationException(
-					"wrong certificate for an engine: cannot create identity of type " + certificate.getType());
-		}
+                // offline node with no partner
+                Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), null);
+                ((Node) node).setOnline(false);
+                ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
+            }
 
-		Network.INSTANCE.buildNetwork(authentication);
+            ((KlabUser) ret).setOnline(authentication != null);
 
-		return ret;
+        } else {
+            throw new KlabAuthorizationException(
+                    "wrong certificate for an engine: cannot create identity of type " + certificate.getType());
+        }
 
-	}
+        Network.INSTANCE.buildNetwork(authentication);
+
+        return ret;
+
+    }
 
 }

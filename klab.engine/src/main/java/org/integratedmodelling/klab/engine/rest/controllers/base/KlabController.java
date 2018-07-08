@@ -27,38 +27,38 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.PUBLIC)
 public class KlabController {
 
-	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Capabilities capabilities(Principal user) {
-		return Klab.INSTANCE.getCapabilities(Authentication.INSTANCE.getIdentity(user));
-	}
+    @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public Capabilities capabilities(Principal user) {
+        return Klab.INSTANCE.getCapabilities(Authentication.INSTANCE.getIdentity(user));
+    }
 
-	@RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public String resourceSchemata() {
-		return Klab.INSTANCE.getResourceSchema();
-	}
+    @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String resourceSchemata() {
+        return Klab.INSTANCE.getResourceSchema();
+    }
 
-	@RequestMapping(value = API.SCHEMA, params = "resource", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public String resourceSchema(@RequestParam("resource") String what) {
-		return Klab.INSTANCE.getResourceSchema(what);
-	}
+    @RequestMapping(value = API.SCHEMA, params = "resource", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String resourceSchema(@RequestParam("resource") String what) {
+        return Klab.INSTANCE.getResourceSchema(what);
+    }
 
-	@RequestMapping(value = API.SCHEMA, params = "list", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public String resourceSchema() {
-		return Klab.INSTANCE.getResourceSchema("all");
-	}
+    @RequestMapping(value = API.SCHEMA, params = "list", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String resourceSchema() {
+        return Klab.INSTANCE.getResourceSchema("all");
+    }
 
-	@RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD })
-	@ResponseBody
-	public String ping() {
-		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
-		if (engine == null) {
-			return "0";
-		}
-		return "" + (System.currentTimeMillis() - engine.getBootTime().getTime());
-	}
+    @RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD })
+    @ResponseBody
+    public String ping() {
+        Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
+        if (engine == null) {
+            return "0";
+        }
+        return "" + (System.currentTimeMillis() - engine.getBootTime().getTime());
+    }
 
 }

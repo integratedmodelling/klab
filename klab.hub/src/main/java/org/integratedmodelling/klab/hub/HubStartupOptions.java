@@ -24,7 +24,7 @@ public class HubStartupOptions implements IHubStartupOptions {
             usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_HUB_CERTIFICATE_FILENAME + ")",
             metaVar = "<FILE_PATH>")
     File certificateFile = null;
-    
+
     @Option(
             name = "-certResource",
             usage = "certificate classpath resource (default null)",
@@ -46,17 +46,17 @@ public class HubStartupOptions implements IHubStartupOptions {
     }
 
     public HubStartupOptions(String... args) {
-    	initialize(args);
+        initialize(args);
     }
 
     @Override
     public String[] getArguments(String... additionalArguments) {
-    	List<String> args = new ArrayList<>(this.arguments);
-    	if (additionalArguments != null) {
-    		for (String additionalArgument : additionalArguments) {
-    			args.add(additionalArgument);
-    		}
-    	}
+        List<String> args = new ArrayList<>(this.arguments);
+        if (additionalArguments != null) {
+            for (String additionalArgument : additionalArguments) {
+                args.add(additionalArgument);
+            }
+        }
         return args.toArray(new String[args.size()]);
     }
 
@@ -87,7 +87,8 @@ public class HubStartupOptions implements IHubStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_HUB_CERTIFICATE_FILENAME);
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator
+                    + ICertificate.DEFAULT_HUB_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }
@@ -119,30 +120,26 @@ public class HubStartupOptions implements IHubStartupOptions {
         return certificateResource;
     }
 
-    
     public void setDataDir(File dataDir) {
         this.dataDir = dataDir;
     }
 
-    
     public void setCertificateFile(File certificateFile) {
         this.certificateFile = certificateFile;
     }
 
-    
     public void setCertificateResource(String certificateResource) {
         this.certificateResource = certificateResource;
     }
-    
+
     public void setPort(int port) {
         this.port = port;
     }
 
-    
     public void setHelp(boolean help) {
         this.help = help;
     }
-    
+
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }

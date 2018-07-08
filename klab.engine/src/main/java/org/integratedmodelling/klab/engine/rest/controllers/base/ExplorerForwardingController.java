@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class ExplorerForwardingController {
-    
-	@RequestMapping("/ui/{path:[^\\.]+}") // Everithing without point (something.smt is served as is) 
+
+    @RequestMapping("/ui/{path:[^\\.]+}") // Everithing without point (something.smt is served as is) 
     public String forward() {
         return "forward:/ui/index.html";
     }
-	
-	
+
 }

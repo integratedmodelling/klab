@@ -16,18 +16,18 @@ import org.integratedmodelling.klab.api.runtime.ITask;
  */
 public interface ITaskTree<T extends IObservation> extends ITask<T> {
 
-	/**
-	 * Create a child task.
-	 * 
-	 * @return a child task, never null.
-	 */
-	ITaskTree<T> createChild();
+    /**
+     * Create a child task.
+     * 
+     * @return a child task, never null.
+     */
+    ITaskTree<T> createChild();
 
-	/**
-	 * True if this task is the child of another. Use the {@link IIdentity} API to
-	 * navigate the hierarchy.
-	 * 
-	 * @return true if a child
-	 */
-	boolean isChildTask();
+    /**
+     * True if this task is the child of another. Use the {@link IIdentity} API to
+     * navigate the hierarchy.
+     * 
+     * @return true if a child
+     */
+    boolean isChildTask();
 }

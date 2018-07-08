@@ -8,8 +8,8 @@ import org.jgrapht.Graph;
 
 public class ConfigurationDetector implements IConfigurationDetector {
 
-  public ConfigurationDetector(Subject subject, Graph<ISubject, IRelationship> structure) {
-    // TODO Auto-generated constructor stub
-  }
+    public ConfigurationDetector(Subject subject, Graph<ISubject, IRelationship> structure) {
+        // TODO Auto-generated constructor stub
+    }
 
 }

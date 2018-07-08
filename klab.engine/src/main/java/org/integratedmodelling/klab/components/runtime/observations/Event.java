@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class Event extends CountableObservation implements IEvent {
 
-  public Event(String name, Observable observable, Scale scale, RuntimeContext context) {
-    super(name, observable, scale, context);
-  }
+    public Event(String name, Observable observable, Scale scale, RuntimeContext context) {
+        super(name, observable, scale, context);
+    }
 }

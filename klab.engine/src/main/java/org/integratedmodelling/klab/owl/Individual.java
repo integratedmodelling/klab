@@ -29,11 +29,11 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 public class Individual implements IIndividual {
 
     protected OWLIndividual individual;
-    protected IOntology     ontology;
-    protected IConcept      concept;
-    protected Metadata      metadata;
-    protected IObservation  context;
-    protected String        owlName;
+    protected IOntology ontology;
+    protected IConcept concept;
+    protected Metadata metadata;
+    protected IObservation context;
+    protected String owlName;
 
     /*
      * ONLY for bean instantiator: call define() just after.
@@ -90,12 +90,10 @@ public class Individual implements IIndividual {
         List<AddAxiom> axioms = new ArrayList<>();
         ((Ontology) ontology).addImport(concept.getOntology());
         OWLDataFactory factory = ((Ontology) ontology).ontology.getOWLOntologyManager().getOWLDataFactory();
-        this.individual = factory
-                .getOWLNamedIndividual(IRI
-                        .create(((Ontology) this.ontology).getOWLOntology().getOntologyID().getOntologyIRI()
-                                + "#" + name));
-        axioms.add(new AddAxiom(((Ontology) this.ontology).getOWLOntology(), factory
-                .getOWLClassAssertionAxiom(((Concept) concept)._owl, this.individual)));
+        this.individual = factory.getOWLNamedIndividual(
+                IRI.create(((Ontology) this.ontology).getOWLOntology().getOntologyID().getOntologyIRI() + "#" + name));
+        axioms.add(new AddAxiom(((Ontology) this.ontology).getOWLOntology(),
+                factory.getOWLClassAssertionAxiom(((Concept) concept)._owl, this.individual)));
         for (AddAxiom aa : axioms) {
             ((Ontology) this.ontology).getOWLOntology().getOWLOntologyManager().applyChange(aa);
         }
@@ -111,9 +109,8 @@ public class Individual implements IIndividual {
     @Override
     public Collection<IIndividual> getIndividuals(IProperty property) {
         List<IIndividual> ret = new ArrayList<>();
-        for (OWLIndividual ind : individual
-                .getObjectPropertyValues(((Property) property)._owl
-                        .asOWLObjectProperty(), ((Ontology) this.ontology).getOWLOntology())) {
+        for (OWLIndividual ind : individual.getObjectPropertyValues(((Property) property)._owl.asOWLObjectProperty(),
+                ((Ontology) this.ontology).getOWLOntology())) {
             ret.add(new Individual(ind, context, ontology));
         }
         return ret;
@@ -122,9 +119,8 @@ public class Individual implements IIndividual {
     @Override
     public Collection<Object> getData(IProperty property) {
         List<Object> ret = new ArrayList<>();
-        for (OWLLiteral dat : individual
-                .getDataPropertyValues(((Property) property)._owl
-                        .asOWLDataProperty(), ((Ontology) this.ontology).getOWLOntology())) {
+        for (OWLLiteral dat : individual.getDataPropertyValues(((Property) property)._owl.asOWLDataProperty(),
+                ((Ontology) this.ontology).getOWLOntology())) {
             if (dat.isBoolean()) {
                 ret.add(dat.parseBoolean());
             } else if (dat.isBoolean()) {

@@ -42,172 +42,171 @@ import org.integratedmodelling.klab.utils.Parameters;
  */
 public class ResourceBuilder implements IResource.Builder {
 
-	private Metadata metadata = new Metadata();
-	private Parameters<String> parameters = new Parameters<>();
-	private IGeometry geometry;
-	private String localPath;
-	private List<String> resourcePaths = new ArrayList<>();
-	private List<IResource> history = new ArrayList<>();
-	private List<INotification> notifications = new ArrayList<>();
-	private long resourceTimestamp = System.currentTimeMillis();
-	private Version resourceVersion;
-	private boolean error = false;
-	private String adapterType;
-	private IArtifact.Type type;
-	private String projectName;
-	
-	// for importers
-	private String resourceId;
-	private List<File> importedFiles = new ArrayList<>();
+    private Metadata metadata = new Metadata();
+    private Parameters<String> parameters = new Parameters<>();
+    private IGeometry geometry;
+    private String localPath;
+    private List<String> resourcePaths = new ArrayList<>();
+    private List<IResource> history = new ArrayList<>();
+    private List<INotification> notifications = new ArrayList<>();
+    private long resourceTimestamp = System.currentTimeMillis();
+    private Version resourceVersion;
+    private boolean error = false;
+    private String adapterType;
+    private IArtifact.Type type;
+    private String projectName;
 
-	/** {@inheritDoc} */
-	@Override
-	public IResource build(String urn) {
+    // for importers
+    private String resourceId;
+    private List<File> importedFiles = new ArrayList<>();
 
-		Resource ret = new Resource();
-		ret.urn = urn;
-		ret.parameters = this.parameters;
-		ret.metadata = this.metadata;
-		ret.geometry = this.geometry;
-		ret.notifications.addAll(this.notifications);
-		ret.history.addAll(this.history);
-		ret.resourceTimestamp = this.resourceTimestamp;
-		ret.version = this.resourceVersion;
-		ret.adapterType = this.adapterType;
-		ret.localPath = this.localPath;
-		ret.localPaths.addAll(resourcePaths);
-		ret.type = type;
-		ret.projectName = this.projectName;
-		
-		return ret;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public IResource build(String urn) {
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder withMetadata(String key, Object value) {
-		metadata.put(key, value);
-		return this;
-	}
+        Resource ret = new Resource();
+        ret.urn = urn;
+        ret.parameters = this.parameters;
+        ret.metadata = this.metadata;
+        ret.geometry = this.geometry;
+        ret.notifications.addAll(this.notifications);
+        ret.history.addAll(this.history);
+        ret.resourceTimestamp = this.resourceTimestamp;
+        ret.version = this.resourceVersion;
+        ret.adapterType = this.adapterType;
+        ret.localPath = this.localPath;
+        ret.localPaths.addAll(resourcePaths);
+        ret.type = type;
+        ret.projectName = this.projectName;
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder withParameter(String key, Object value) {
-		parameters.put(key, value);
-		return this;
-	}
-	
-	@Override
-	public ResourceBuilder withLocalPath(String localPath) {
-		this.localPath = localPath;
-		return this;
-	}
+        return ret;
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder withMetadata(String key, Object value) {
+        metadata.put(key, value);
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder addError(Object... o) {
-		notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.SEVERE));
-		error = true;
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder withParameter(String key, Object value) {
+        parameters.put(key, value);
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder addWarning(Object... o) {
-		notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.WARNING));
-		return this;
-	}
+    @Override
+    public ResourceBuilder withLocalPath(String localPath) {
+        this.localPath = localPath;
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder addInfo(Object... o) {
-		notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.INFO));
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder addError(Object... o) {
+        notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.SEVERE));
+        error = true;
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder withResourceVersion(Version v) {
-		this.resourceVersion = v;
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder addWarning(Object... o) {
+        notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.WARNING));
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder withResourceTimestamp(long timestamp) {
-		this.resourceTimestamp = timestamp;
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder addInfo(Object... o) {
+        notifications.add(new KimNotification(NotificationUtils.getMessage(o), Level.INFO));
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder addHistory(IResource notification) {
-		this.history.add(notification);
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder withResourceVersion(Version v) {
+        this.resourceVersion = v;
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder withGeometry(IGeometry s) {
-		this.geometry = s;
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder withResourceTimestamp(long timestamp) {
+        this.resourceTimestamp = timestamp;
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean hasErrors() {
-		return error;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder addHistory(IResource notification) {
+        this.history.add(notification);
+        return this;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public ResourceBuilder withAdapterType(String string) {
-		this.adapterType = string;
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder withGeometry(IGeometry s) {
+        this.geometry = s;
+        return this;
+    }
 
-	@Override
-	public Builder addLocalResourcePath(String path) {
-		this.resourcePaths.add(path);
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasErrors() {
+        return error;
+    }
 
-	@Override
-	public Builder withParameters(IParameters<String> parameters) {
-		this.parameters.putAll(parameters);
-		return this;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public ResourceBuilder withAdapterType(String string) {
+        this.adapterType = string;
+        return this;
+    }
 
-	@Override
-	public Builder withType(Type type) {
-		this.type = type;
-		return this;
-	}
+    @Override
+    public Builder addLocalResourcePath(String path) {
+        this.resourcePaths.add(path);
+        return this;
+    }
 
-	@Override
-	public Builder withProjectName(String name) {
-		this.projectName = name;
-		return this;
-	}
+    @Override
+    public Builder withParameters(IParameters<String> parameters) {
+        this.parameters.putAll(parameters);
+        return this;
+    }
 
-	@Override
-	public Collection<File> getImportedFiles() {
-		return importedFiles;
-	}
-	
-	@Override
-	public String getResourceId() {
-		return resourceId;
-	}
+    @Override
+    public Builder withType(Type type) {
+        this.type = type;
+        return this;
+    }
 
-	@Override
-	public void setResourceId(String identifier) {
-		this.resourceId = identifier;
-	}
+    @Override
+    public Builder withProjectName(String name) {
+        this.projectName = name;
+        return this;
+    }
 
-	@Override
-	public void addImportedFile(File file) {
-		this.importedFiles.add(file);
-	}
+    @Override
+    public Collection<File> getImportedFiles() {
+        return importedFiles;
+    }
+
+    @Override
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    @Override
+    public void setResourceId(String identifier) {
+        this.resourceId = identifier;
+    }
+
+    @Override
+    public void addImportedFile(File file) {
+        this.importedFiles.add(file);
+    }
 
 }

@@ -63,7 +63,7 @@ public enum Annotations implements IAnnotationService {
         Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception;
     }
 
-    Map<String, Handler>    handlers   = Collections.synchronizedMap(new HashMap<>());
+    Map<String, Handler> handlers = Collections.synchronizedMap(new HashMap<>());
     Map<String, IPrototype> prototypes = Collections.synchronizedMap(new HashMap<>());
 
     @Override
@@ -77,9 +77,9 @@ public enum Annotations implements IAnnotationService {
         Handler handler = handlers.get(annotation.getName());
         if (handler != null) {
             try {
-              return handler.process(object, annotation, monitor);
+                return handler.process(object, annotation, monitor);
             } catch (Exception e) {
-              monitor.error(e);
+                monitor.error(e);
             }
         }
         return null;
@@ -94,17 +94,15 @@ public enum Annotations implements IAnnotationService {
             IPrototype prototype = new Prototype(actuator, namespace);
             prototypes.put(prototype.getName(), prototype);
             if (prototype.getType() != IArtifact.Type.ANNOTATION) {
-                throw new KlabInternalErrorException("annotation prototype for "
-                        + prototype.getName()
-                        + " does not specify an annotation");
+                throw new KlabInternalErrorException(
+                        "annotation prototype for " + prototype.getName() + " does not specify an annotation");
             } else if (prototype.getExecutorClass() != null) {
                 try {
                     Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();
                     if (handler instanceof Handler) {
-                        handlers.put(prototype.getName(), (Handler)handler);
+                        handlers.put(prototype.getName(), (Handler) handler);
                     } else {
-                        throw new KlabInternalErrorException("error creating handler for "
-                                + prototype.getName()
+                        throw new KlabInternalErrorException("error creating handler for " + prototype.getName()
                                 + ": handler is not an instance of Annotations.Handler");
                     }
                 } catch (Exception e) {
@@ -113,17 +111,17 @@ public enum Annotations implements IAnnotationService {
             }
         }
     }
-    
+
     public void exportPrototypes(File file) {
-      try {
-        ObjectMapper mapper = new ObjectMapper();
-        JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
-        mapper.writerFor(type).writeValue(file, this.prototypes);
-      } catch (IOException e) {
-        Logging.INSTANCE.error(e);
-      }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
+            mapper.writerFor(type).writeValue(file, this.prototypes);
+        } catch (IOException e) {
+            Logging.INSTANCE.error(e);
+        }
     }
-    
+
     /**
      * Collect the annotations from an k.IM object and its semantic lineage, ensuring that
      * downstream annotations of the same name override those upstream.
@@ -132,9 +130,9 @@ public enum Annotations implements IAnnotationService {
      * @return all annotations from upstream
      */
     public Collection<IAnnotation> collectAnnotations(IKimObject object) {
-    	Map<String, IAnnotation> ret = new HashMap<>();
-    	collectAnnotations(object, ret);
-    	return ret.values();
+        Map<String, IAnnotation> ret = new HashMap<>();
+        collectAnnotations(object, ret);
+        return ret.values();
     }
 
     /**
@@ -145,64 +143,64 @@ public enum Annotations implements IAnnotationService {
      * @return all annotations from upstream
      */
     public Collection<IAnnotation> collectAnnotations(ISemantic object) {
-    	Map<String, IAnnotation> ret = new HashMap<>();
-    	collectAnnotations(object, ret);
-    	return ret.values();
+        Map<String, IAnnotation> ret = new HashMap<>();
+        collectAnnotations(object, ret);
+        return ret.values();
     }
 
     private void collectAnnotations(IKimStatement object, Map<String, IAnnotation> collection) {
-	
-    	for (IKimAnnotation annotation : object.getAnnotations()) {
-    		if (!collection.containsKey(annotation.getName())) {
-    			Annotation a = new Annotation(annotation);
-    			collection.put(a.getName(), a);
-    		}
-    	}
-    	
-    	if (object.getParent() != null) {
-    		collectAnnotations(object.getParent(), collection);
-    	}
+
+        for (IKimAnnotation annotation : object.getAnnotations()) {
+            if (!collection.containsKey(annotation.getName())) {
+                Annotation a = new Annotation(annotation);
+                collection.put(a.getName(), a);
+            }
+        }
+
+        if (object.getParent() != null) {
+            collectAnnotations(object.getParent(), collection);
+        }
     }
-    
+
     private void collectAnnotations(IKimObject object, Map<String, IAnnotation> collection) {
 
-    	for (IAnnotation annotation : object.getAnnotations()) {
-    		if (!collection.containsKey(annotation.getName())) {
-    			collection.put(annotation.getName(), annotation);
-    		}
-    	}
-    	
-    	if (object instanceof IModel) {
-    		collectAnnotations(((IModel)object).getObservables().get(0), collection);
-    	} else if (object instanceof IObserver) {
-    		collectAnnotations(((IModel)object).getObservables().get(0), collection);
-    	} else if (object instanceof IConceptDefinition) {
-    		collectAnnotations(((IConceptDefinition)object).getStatement(), collection);
-    	}
-    }
-    
-    private void collectAnnotations(ISemantic object, Map<String, IAnnotation> collection) {
-    	
-    	if (object instanceof IObservable) {
-    	
-    		/*
-    		 * collect from roles, traits and main in this order
-    		 */
-    		for (IConcept role : Roles.INSTANCE.getRoles(((IObservable)object).getType())) {
-        		collectAnnotations(role, collection);
-    		}
-    		for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable)object).getType())) {
-        		collectAnnotations(trait, collection);
-    		}
-    		
-    		collectAnnotations(((IObservable)object).getMain(), collection);
+        for (IAnnotation annotation : object.getAnnotations()) {
+            if (!collection.containsKey(annotation.getName())) {
+                collection.put(annotation.getName(), annotation);
+            }
+        }
 
-    	} else if (object instanceof IConcept) {
-    		IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
-    		if (mobject != null) {
-    			collectAnnotations(mobject, collection);
-    		}
-    	}
+        if (object instanceof IModel) {
+            collectAnnotations(((IModel) object).getObservables().get(0), collection);
+        } else if (object instanceof IObserver) {
+            collectAnnotations(((IModel) object).getObservables().get(0), collection);
+        } else if (object instanceof IConceptDefinition) {
+            collectAnnotations(((IConceptDefinition) object).getStatement(), collection);
+        }
     }
-    
+
+    private void collectAnnotations(ISemantic object, Map<String, IAnnotation> collection) {
+
+        if (object instanceof IObservable) {
+
+            /*
+             * collect from roles, traits and main in this order
+             */
+            for (IConcept role : Roles.INSTANCE.getRoles(((IObservable) object).getType())) {
+                collectAnnotations(role, collection);
+            }
+            for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
+                collectAnnotations(trait, collection);
+            }
+
+            collectAnnotations(((IObservable) object).getMain(), collection);
+
+        } else if (object instanceof IConcept) {
+            IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
+            if (mobject != null) {
+                collectAnnotations(mobject, collection);
+            }
+        }
+    }
+
 }

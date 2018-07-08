@@ -23,61 +23,54 @@ import org.springframework.security.web.authentication.preauth.RequestHeaderAuth
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
-  @Autowired
-  private PreauthenticatedUserDetailsService customUserDetailsService;
 
-  @Autowired
-  private EngineDirectoryAuthenticationProvider authProvider;
-  
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-	  http
-	  // disable automatic session creation to avoid use of cookie session
-	  // and the consequent authentication failures in web ui
-	  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	  .and()
-	  .addFilterBefore(certFilter(), RequestHeaderAuthenticationFilter.class)
-//	  .authorizeRequests().anyRequest().hasAnyRole("ADMIN")
-//      .and()
-      .authorizeRequests().antMatchers("/login**").permitAll()
-      .and()
-      .formLogin().permitAll()
-      .and()
-      .logout().permitAll() 
-      .and()
-      .csrf().disable();
-  }
+    @Autowired
+    private PreauthenticatedUserDetailsService customUserDetailsService;
 
-	@Bean
-	@Override
-	protected AuthenticationManager authenticationManager()  {
-		final List<AuthenticationProvider> providers = new ArrayList<>(2);
-		providers.add(preauthAuthProvider());
-		providers.add(authProvider);
-		return new ProviderManager(providers);
-	}
+    @Autowired
+    private EngineDirectoryAuthenticationProvider authProvider;
 
-  	@Bean(name="certFilter")
-  	PreauthenticationFilter certFilter() {
-  		PreauthenticationFilter ret = new PreauthenticationFilter();
-		ret.setAuthenticationManager(authenticationManager());
-  		return ret;
-  	}
-  
-	@Bean(name = "preAuthProvider")
-	PreAuthenticatedAuthenticationProvider preauthAuthProvider()  {
-		PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-		provider.setPreAuthenticatedUserDetailsService(userDetailsServiceWrapper());
-		return provider;
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                // disable automatic session creation to avoid use of cookie session
+                // and the consequent authentication failures in web ui
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(certFilter(), RequestHeaderAuthenticationFilter.class)
+                //	  .authorizeRequests().anyRequest().hasAnyRole("ADMIN")
+                //      .and()
+                .authorizeRequests().antMatchers("/login**").permitAll().and().formLogin().permitAll().and().logout()
+                .permitAll().and().csrf().disable();
+    }
 
-	@Bean
-	UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> userDetailsServiceWrapper()  {
-		UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> wrapper = new UserDetailsByNameServiceWrapper<>();
-		wrapper.setUserDetailsService(customUserDetailsService);
-		return wrapper;
-	}
+    @Bean
+    @Override
+    protected AuthenticationManager authenticationManager() {
+        final List<AuthenticationProvider> providers = new ArrayList<>(2);
+        providers.add(preauthAuthProvider());
+        providers.add(authProvider);
+        return new ProviderManager(providers);
+    }
 
-    
+    @Bean(name = "certFilter")
+    PreauthenticationFilter certFilter() {
+        PreauthenticationFilter ret = new PreauthenticationFilter();
+        ret.setAuthenticationManager(authenticationManager());
+        return ret;
+    }
+
+    @Bean(name = "preAuthProvider")
+    PreAuthenticatedAuthenticationProvider preauthAuthProvider() {
+        PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+        provider.setPreAuthenticatedUserDetailsService(userDetailsServiceWrapper());
+        return provider;
+    }
+
+    @Bean
+    UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> userDetailsServiceWrapper() {
+        UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> wrapper = new UserDetailsByNameServiceWrapper<>();
+        wrapper.setUserDetailsService(customUserDetailsService);
+        return wrapper;
+    }
+
 }

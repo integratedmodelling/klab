@@ -68,17 +68,12 @@ public class GitUtils {
 
         Logging.INSTANCE.info("cloning Git repository " + url + " branch " + branch + " ...");
 
-        try (Git result = Git.cloneRepository()
-                .setURI(url)
-                .setBranch(branch)
-                .setDirectory(pdir)
-                .call()) {
+        try (Git result = Git.cloneRepository().setURI(url).setBranch(branch).setDirectory(pdir).call()) {
 
             Logging.INSTANCE.info("cloned Git repository: " + result.getRepository());
 
             if (!branch.equals("master")) {
-                result.checkout().setName(branch)
-                        .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+                result.checkout().setName(branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
                         .setStartPoint("origin/" + branch).call();
 
                 Logging.INSTANCE.info("switched repository: " + result.getRepository() + " to branch " + branch);
@@ -102,13 +97,14 @@ public class GitUtils {
         try (Repository localRepo = new FileRepository(localRepository + File.separator + ".git")) {
             try (Git git = new Git(localRepo)) {
 
-              Logging.INSTANCE.info("fetch/merge changes in repository: " + git.getRepository());
+                Logging.INSTANCE.info("fetch/merge changes in repository: " + git.getRepository());
 
                 PullCommand pullCmd = git.pull();
                 pullCmd.call();
 
             } catch (Throwable e) {
-                throw new KlabIOException("error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
+                throw new KlabIOException(
+                        "error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
             }
         } catch (IOException e) {
             throw new KlabIOException(e);
@@ -156,7 +152,7 @@ public class GitUtils {
         return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
                 || string.startsWith("git@");
     }
-    
+
     /**
      * The main method.
      *
@@ -164,7 +160,8 @@ public class GitUtils {
      * @throws Exception the exception
      */
     public static void main(String[] args) throws Exception {
-        String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo", new File(System.getProperty("user.home")));
+        String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo",
+                new File(System.getProperty("user.home")));
         System.out.println("Got repo " + u);
     }
 

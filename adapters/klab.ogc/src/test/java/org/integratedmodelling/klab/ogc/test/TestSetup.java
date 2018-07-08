@@ -8,9 +8,9 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 
 public class TestSetup {
 
-	public IResource importResource(String resource, IProject project, Object... parameterKVPs) {
-		URL resourceUrl = getClass().getClassLoader().getResource(resource);
-		return Resources.INSTANCE.importResource(resourceUrl, project, parameterKVPs);
-	}
-	
+    public IResource importResource(String resource, IProject project, Object... parameterKVPs) {
+        URL resourceUrl = getClass().getClassLoader().getResource(resource);
+        return Resources.INSTANCE.importResource(resourceUrl, project, parameterKVPs);
+    }
+
 }

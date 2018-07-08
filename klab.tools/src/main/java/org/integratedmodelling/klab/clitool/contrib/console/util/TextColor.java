@@ -35,172 +35,174 @@ import java.awt.Color;
  * @author Brandon E Buck
  */
 public class TextColor implements Comparable {
-	private char charCode;
-	private Color color;
 
-	/**
-	 * This Constructor will create a new TextColor with the given Character as the
-	 * code for the Color passed. If '0' (zero) or '-' (hyphen) are passed as the
-	 * Character code then an InvalidCharCodeException is thrown because both of
-	 * those Characters are reserved by the DragonConosle.
-	 * 
-	 * @param charCode
-	 *            The Character Code that represents the given Color.
-	 * @param color
-	 *            The Color represented by this TextColor.
-	 * @throws InvalidCharCodeException
-	 */
-	public TextColor(char charCode, Color color) throws InvalidCharCodeException {
-		if (charCode == '0' || charCode == '-')
-			throw new InvalidCharCodeException("The char \'" + charCode + "\' is reserved and cannot be used.");
+    private char charCode;
+    private Color color;
 
-		this.charCode = charCode;
-		this.color = color;
-	}
+    /**
+     * This Constructor will create a new TextColor with the given Character as the
+     * code for the Color passed. If '0' (zero) or '-' (hyphen) are passed as the
+     * Character code then an InvalidCharCodeException is thrown because both of
+     * those Characters are reserved by the DragonConosle.
+     * 
+     * @param charCode
+     *            The Character Code that represents the given Color.
+     * @param color
+     *            The Color represented by this TextColor.
+     * @throws InvalidCharCodeException
+     */
+    public TextColor(char charCode, Color color) throws InvalidCharCodeException {
+        if (charCode == '0' || charCode == '-')
+            throw new InvalidCharCodeException("The char \'" + charCode + "\' is reserved and cannot be used.");
 
-	/**
-	 * This Constructor is only called from an static method in this class and is
-	 * used for testing purposes only. A TextColor object is created with the given
-	 * Character as a code but the Color is set to null.
-	 * 
-	 * @param charCode
-	 *            The Character Code to use for comparisons.
-	 */
-	private TextColor(char charCode) {
-		this.charCode = charCode;
-		this.color = null;
-	}
+        this.charCode = charCode;
+        this.color = color;
+    }
 
-	/**
-	 * This Constructor is only called from an static method in this class and is
-	 * used for testing purposes only. A TextColor object is created with the given
-	 * Color but the Character Code is set to '-'.
-	 * 
-	 * @param color
-	 *            The Color to use for comparisons.
-	 */
-	private TextColor(Color color) {
-		this.charCode = '-';
-		this.color = color;
-	}
+    /**
+     * This Constructor is only called from an static method in this class and is
+     * used for testing purposes only. A TextColor object is created with the given
+     * Character as a code but the Color is set to null.
+     * 
+     * @param charCode
+     *            The Character Code to use for comparisons.
+     */
+    private TextColor(char charCode) {
+        this.charCode = charCode;
+        this.color = null;
+    }
 
-	/**
-	 * This method creates a dummy TextColor with the specified Character code but
-	 * no Color, this dummy Objects purpose is for making comparisons to other
-	 * TextColor Objects when all you have to compare with is the Character code.
-	 * 
-	 * @param charCode
-	 *            The Character Code to construct the Dummy Object with.
-	 * @return A Dummy TextColor containing the given Character code.
-	 */
-	public static TextColor getTestTextColor(char charCode) {
-		return new TextColor(charCode);
-	}
+    /**
+     * This Constructor is only called from an static method in this class and is
+     * used for testing purposes only. A TextColor object is created with the given
+     * Color but the Character Code is set to '-'.
+     * 
+     * @param color
+     *            The Color to use for comparisons.
+     */
+    private TextColor(Color color) {
+        this.charCode = '-';
+        this.color = color;
+    }
 
-	/**
-	 * This method creates a dummy TextColor with the specified Color but no
-	 * Character code, this dummy Objects purpose is for making comparisons to other
-	 * TextColor Objects when all you have to compare with is the Color.
-	 * 
-	 * @param color
-	 *            The Color to construct the Dummy Object with.
-	 * @return A Dummy TextColor containing the given Color.
-	 */
-	public static TextColor getTestTextColor(Color color) {
-		return new TextColor(color);
-	}
+    /**
+     * This method creates a dummy TextColor with the specified Character code but
+     * no Color, this dummy Objects purpose is for making comparisons to other
+     * TextColor Objects when all you have to compare with is the Character code.
+     * 
+     * @param charCode
+     *            The Character Code to construct the Dummy Object with.
+     * @return A Dummy TextColor containing the given Character code.
+     */
+    public static TextColor getTestTextColor(char charCode) {
+        return new TextColor(charCode);
+    }
 
-	/**
-	 * Returns the Character Code assigned to this TextColor Object.
-	 * 
-	 * @return The Character Code assigned to this TextColor Object.
-	 */
-	public char getCharCode() {
-		return charCode;
-	}
+    /**
+     * This method creates a dummy TextColor with the specified Color but no
+     * Character code, this dummy Objects purpose is for making comparisons to other
+     * TextColor Objects when all you have to compare with is the Color.
+     * 
+     * @param color
+     *            The Color to construct the Dummy Object with.
+     * @return A Dummy TextColor containing the given Color.
+     */
+    public static TextColor getTestTextColor(Color color) {
+        return new TextColor(color);
+    }
 
-	/**
-	 * Returns the Color assigned to this TextColor Object.
-	 * 
-	 * @return The Color assigned to this TextColor Object.
-	 */
-	public Color getColor() {
-		return color;
-	}
+    /**
+     * Returns the Character Code assigned to this TextColor Object.
+     * 
+     * @return The Character Code assigned to this TextColor Object.
+     */
+    public char getCharCode() {
+        return charCode;
+    }
 
-	/**
-	 * Compares a Character or the Character of another TextColor Object to the
-	 * Character code of this TextColor Object and returns their compareTo() result.
-	 * 
-	 * @param o
-	 *            The other Object to compare to, either Character or TextColor.
-	 * @return The compareTo() value of the two Characters.
-	 */
-	@Override
-	public int compareTo(Object o) {
-		if (o instanceof Character) {
-			Character c = new Character(charCode);
+    /**
+     * Returns the Color assigned to this TextColor Object.
+     * 
+     * @return The Color assigned to this TextColor Object.
+     */
+    public Color getColor() {
+        return color;
+    }
 
-			return c.compareTo((Character) o);
-		} else if (o instanceof TextColor) {
-			Character c = new Character(charCode);
-			Character otherC = new Character(((TextColor) o).getCharCode());
+    /**
+     * Compares a Character or the Character of another TextColor Object to the
+     * Character code of this TextColor Object and returns their compareTo() result.
+     * 
+     * @param o
+     *            The other Object to compare to, either Character or TextColor.
+     * @return The compareTo() value of the two Characters.
+     */
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Character) {
+            Character c = new Character(charCode);
 
-			return c.compareTo(otherC);
-		}
+            return c.compareTo((Character) o);
+        } else if (o instanceof TextColor) {
+            Character c = new Character(charCode);
+            Character otherC = new Character(((TextColor) o).getCharCode());
 
-		return 0;
-	}
+            return c.compareTo(otherC);
+        }
 
-	/**
-	 * This method determines if this TextColor is equal to the Object given. This
-	 * method will compare a Character to this TextColors Character Code or compare
-	 * this TextColor to another TextColor. If a Dummy TextColor is given (TextColor
-	 * with just a Character code, or just a Color) then it only compares the
-	 * Character or Color and returns if they are a match. The only requirement for
-	 * <code>true</code> to be returned (excluding a dummy TextColor with just a
-	 * Color) is for the Character Codes to match.
-	 * 
-	 * @param o
-	 *            The Object for equals Comparison, either a Character or TextColor.
-	 * @return <code>true</code> if the two object are equal.
-	 */
-	@Override
-	public boolean equals(Object o) {
+        return 0;
+    }
 
-		if (o instanceof TextColor) {
-			TextColor otc = (TextColor) o;
+    /**
+     * This method determines if this TextColor is equal to the Object given. This
+     * method will compare a Character to this TextColors Character Code or compare
+     * this TextColor to another TextColor. If a Dummy TextColor is given (TextColor
+     * with just a Character code, or just a Color) then it only compares the
+     * Character or Color and returns if they are a match. The only requirement for
+     * <code>true</code> to be returned (excluding a dummy TextColor with just a
+     * Color) is for the Character Codes to match.
+     * 
+     * @param o
+     *            The Object for equals Comparison, either a Character or TextColor.
+     * @return <code>true</code> if the two object are equal.
+     */
+    @Override
+    public boolean equals(Object o) {
 
-			if (otc.getColor() == null || color == null)
-				return ((charCode == otc.getCharCode()));
-			else
-				return ((color.equals(otc.getColor())));
+        if (o instanceof TextColor) {
+            TextColor otc = (TextColor) o;
 
-		} else if (o instanceof Character) {
-			Character oc = (Character) o;
+            if (otc.getColor() == null || color == null)
+                return ((charCode == otc.getCharCode()));
+            else
+                return ((color.equals(otc.getColor())));
 
-			return ((charCode == oc.toString().charAt(0)));
-		} else
-			return false;
-	}
+        } else if (o instanceof Character) {
+            Character oc = (Character) o;
 
-	/**
-	 * This method will display the Character code, and then called the toString()
-	 * method on the Color that it represents. In the case of a dummy TextColor then
-	 * the Character code or the Color (whichever is not used by the Dummy) is
-	 * displayed as "TEST_TextColor".
-	 * 
-	 * @return A String representation of this Object.
-	 */
-	@Override
-	public String toString() {
-		return "Code: " + ((charCode == '-') ? "TEST_TextColor" : charCode) + " = "
-				+ ((color == null) ? "TEST_TextColor" : color.toString());
-	}
+            return ((charCode == oc.toString().charAt(0)));
+        } else
+            return false;
+    }
 
-	public class InvalidCharCodeException extends Exception {
-		public InvalidCharCodeException(String msg) {
-			super(msg);
-		}
-	}
+    /**
+     * This method will display the Character code, and then called the toString()
+     * method on the Color that it represents. In the case of a dummy TextColor then
+     * the Character code or the Color (whichever is not used by the Dummy) is
+     * displayed as "TEST_TextColor".
+     * 
+     * @return A String representation of this Object.
+     */
+    @Override
+    public String toString() {
+        return "Code: " + ((charCode == '-') ? "TEST_TextColor" : charCode) + " = "
+                + ((color == null) ? "TEST_TextColor" : color.toString());
+    }
+
+    public class InvalidCharCodeException extends Exception {
+
+        public InvalidCharCodeException(String msg) {
+            super(msg);
+        }
+    }
 }

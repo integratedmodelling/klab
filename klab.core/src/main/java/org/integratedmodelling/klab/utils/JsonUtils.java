@@ -38,145 +38,144 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class JsonUtils {
 
-	static ObjectMapper defaultMapper = new ObjectMapper();
+    static ObjectMapper defaultMapper = new ObjectMapper();
 
-	/**
-	 * Default conversion for a map object.
-	 *
-	 * @param node
-	 *            the node
-	 * @return the map
-	 */
-	@SuppressWarnings("unchecked")
-	public static Map<String, Object> asMap(JsonNode node) {
-		return defaultMapper.convertValue(node, Map.class);
-	}
+    /**
+     * Default conversion for a map object.
+     *
+     * @param node
+     *            the node
+     * @return the map
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> asMap(JsonNode node) {
+        return defaultMapper.convertValue(node, Map.class);
+    }
 
-	/**
-	 * Default conversion, use within custom deserializers to "normally" deserialize
-	 * an object.
-	 *
-	 * @param <T>
-	 *            the generic type
-	 * @param node
-	 *            the node
-	 * @param cls
-	 *            the cls
-	 * @return the t
-	 */
-	public static <T> T as(JsonNode node, Class<T> cls) {
-		return defaultMapper.convertValue(node, cls);
-	}
+    /**
+     * Default conversion, use within custom deserializers to "normally" deserialize
+     * an object.
+     *
+     * @param <T>
+     *            the generic type
+     * @param node
+     *            the node
+     * @param cls
+     *            the cls
+     * @return the t
+     */
+    public static <T> T as(JsonNode node, Class<T> cls) {
+        return defaultMapper.convertValue(node, cls);
+    }
 
-	/**
-	 * Convert node to list of type T.
-	 *
-	 * @param <T>
-	 *            the generic type
-	 * @param node
-	 *            the node
-	 * @param cls
-	 *            the cls
-	 * @return the list
-	 */
-	public static <T> List<T> asList(JsonNode node, Class<T> cls) {
-		return defaultMapper.convertValue(node, new TypeReference<List<T>>() {
-		});
-	}
+    /**
+     * Convert node to list of type T.
+     *
+     * @param <T>
+     *            the generic type
+     * @param node
+     *            the node
+     * @param cls
+     *            the cls
+     * @return the list
+     */
+    public static <T> List<T> asList(JsonNode node, Class<T> cls) {
+        return defaultMapper.convertValue(node, new TypeReference<List<T>>() {
+        });
+    }
 
-	public static <T> List<T> asList(JsonNode node, Class<T> cls, ObjectMapper mapper) {
-		return mapper.convertValue(node, new TypeReference<List<T>>() {
-		});
-	}
+    public static <T> List<T> asList(JsonNode node, Class<T> cls, ObjectMapper mapper) {
+        return mapper.convertValue(node, new TypeReference<List<T>>() {
+        });
+    }
 
-	/**
-	 * Convert node to list of type T.
-	 *
-	 * @param <T>
-	 *            the generic type
-	 * @param node
-	 *            the node
-	 * @param cls
-	 *            the cls
-	 * @return the sets the
-	 */
-	public static <T> Set<T> asSet(JsonNode node, Class<T> cls) {
-		return defaultMapper.convertValue(node, new TypeReference<Set<T>>() {
-		});
-	}
-	
-	/**
-	 * Load an object from a file.
-	 * 
-	 * @param file
-	 * @param cls
-	 * @return the object
-	 * @throws KlabIOException
-	 */
-	public static <T> T load(File file, Class<T> cls)  throws KlabIOException {
-		try {
-			return defaultMapper.readValue(file, cls);
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
-	}
-	
-	/**
-	 * Load an object from a URL.
-	 * 
-	 * @param url
-	 * @param cls
-	 * @return the object
-	 * @throws KlabIOException
-	 */
-	public static <T> T load(URL url, Class<T> cls)  throws KlabIOException {
-		try {
-			return defaultMapper.readValue(url, cls);
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
-	}
-	
-	
-	/**
-	 * Serialize an object to a file.
-	 * 
-	 * @param object
-	 * @param outFile
-	 * @throws KlabIOException
-	 */
-	public static void save(Object object, File outFile) throws KlabIOException {
-		try {
-			defaultMapper.writeValue(outFile, object);
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
-	}
+    /**
+     * Convert node to list of type T.
+     *
+     * @param <T>
+     *            the generic type
+     * @param node
+     *            the node
+     * @param cls
+     *            the cls
+     * @return the sets the
+     */
+    public static <T> Set<T> asSet(JsonNode node, Class<T> cls) {
+        return defaultMapper.convertValue(node, new TypeReference<Set<T>>() {
+        });
+    }
 
-	/**
-	 * Pretty-print the passed map as a JSON object.
-	 *
-	 * @param object
-	 *            the object
-	 * @return the string
-	 */
-	public static String printAsJson(Object object) {
+    /**
+     * Load an object from a file.
+     * 
+     * @param file
+     * @param cls
+     * @return the object
+     * @throws KlabIOException
+     */
+    public static <T> T load(File file, Class<T> cls) throws KlabIOException {
+        try {
+            return defaultMapper.readValue(file, cls);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
 
-		ObjectMapper om = new ObjectMapper();
-		om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
-		om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
-		om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+    /**
+     * Load an object from a URL.
+     * 
+     * @param url
+     * @param cls
+     * @return the object
+     * @throws KlabIOException
+     */
+    public static <T> T load(URL url, Class<T> cls) throws KlabIOException {
+        try {
+            return defaultMapper.readValue(url, cls);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
 
-		// DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-		// prettyPrinter.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
-		//
-		// String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
+    /**
+     * Serialize an object to a file.
+     * 
+     * @param object
+     * @param outFile
+     * @throws KlabIOException
+     */
+    public static void save(Object object, File outFile) throws KlabIOException {
+        try {
+            defaultMapper.writeValue(outFile, object);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
 
-		try {
-			return om.writeValueAsString(object);
-		} catch (JsonProcessingException e) {
-			throw new IllegalArgumentException("serialization failed: " + e.getMessage());
-		}
-	}
+    /**
+     * Pretty-print the passed map as a JSON object.
+     *
+     * @param object
+     *            the object
+     * @return the string
+     */
+    public static String printAsJson(Object object) {
+
+        ObjectMapper om = new ObjectMapper();
+        om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+        om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
+        om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+
+        // DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+        // prettyPrinter.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
+        //
+        // String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
+
+        try {
+            return om.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("serialization failed: " + e.getMessage());
+        }
+    }
 
 }

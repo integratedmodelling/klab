@@ -21,13 +21,12 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
  * 
  * @author ferdinando.villa
  */
-public class ConceptRestrictionVisitor
-        extends OWLClassExpressionVisitorAdapter {
+public class ConceptRestrictionVisitor extends OWLClassExpressionVisitorAdapter {
 
-    private Set<OWLOntology>                                             onts;
-    private Set<OWLClass>                                                processedClasses = new HashSet<>();
+    private Set<OWLOntology> onts;
+    private Set<OWLClass> processedClasses = new HashSet<>();
     private OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> restriction;
-    private OWLClass                                                     filler;
+    private OWLClass filler;
 
     public OWLQuantifiedRestriction<?, ?, ?> getRestriction() {
         return this.restriction;
@@ -94,8 +93,7 @@ public class ConceptRestrictionVisitor
     public boolean isDenied() {
         if (this.restriction != null) {
             if (this.restriction instanceof OWLObjectExactCardinality) {
-                return ((OWLObjectExactCardinality) this.restriction)
-                        .getCardinality() == 0;
+                return ((OWLObjectExactCardinality) this.restriction).getCardinality() == 0;
             } else if (this.restriction instanceof OWLObjectMaxCardinality) {
                 return ((OWLObjectMaxCardinality) this.restriction).getCardinality() == 0;
             }

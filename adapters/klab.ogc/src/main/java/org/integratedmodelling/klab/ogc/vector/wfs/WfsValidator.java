@@ -38,47 +38,47 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class WfsValidator extends VectorValidator {
 
-	@Override
-	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+    @Override
+    public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
-		if (!canHandle(null, userData)) {
-			throw new IllegalArgumentException("WFS specifications are invalid or incomplete");
-		}
-		
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
-		Version version = Version.create(userData.get("wfsVersion", "1.0.0"));
+        if (!canHandle(null, userData)) {
+            throw new IllegalArgumentException("WFS specifications are invalid or incomplete");
+        }
 
-		try {
+        IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+        Version version = Version.create(userData.get("wfsVersion", "1.0.0"));
 
-			if (userData.contains("filter")) {
-				try {
-					ECQL.toFilter(userData.get("filter", String.class));
-				} catch (CQLException e) {
-					ret.addError(
-							"CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
-				}
-			}
+        try {
 
-			WFSDataStore dataStore = WfsAdapter.getDatastore(userData.get("serviceUrl", String.class), version);
-			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore
-					.getFeatureSource(userData.get("wfsIdentifier", String.class));
+            if (userData.contains("filter")) {
+                try {
+                    ECQL.toFilter(userData.get("filter", String.class));
+                } catch (CQLException e) {
+                    ret.addError(
+                            "CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
+                }
+            }
 
-			validateCollection(source, ret, userData, monitor);
+            WFSDataStore dataStore = WfsAdapter.getDatastore(userData.get("serviceUrl", String.class), version);
+            FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore
+                    .getFeatureSource(userData.get("wfsIdentifier", String.class));
 
-		} catch (Throwable e) {
-			ret.addError("Error validating " + e.getMessage());
-		}
+            validateCollection(source, ret, userData, monitor);
 
-		return ret;
-	}
+        } catch (Throwable e) {
+            ret.addError("Error validating " + e.getMessage());
+        }
 
-	@Override
-	public boolean canHandle(File resource, IParameters<String> parameters) {
-		return resource == null && parameters.contains("serviceUrl") && parameters.contains("wfsIdentifier");
-	}
+        return ret;
+    }
 
-	@Override
-	public Collection<File> getAllFilesForResource(File file) {
-		throw new IllegalStateException("the WFS adapter does not handle files");
-	}
+    @Override
+    public boolean canHandle(File resource, IParameters<String> parameters) {
+        return resource == null && parameters.contains("serviceUrl") && parameters.contains("wfsIdentifier");
+    }
+
+    @Override
+    public Collection<File> getAllFilesForResource(File file) {
+        throw new IllegalStateException("the WFS adapter does not handle files");
+    }
 }

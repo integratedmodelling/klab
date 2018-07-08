@@ -37,22 +37,22 @@ import ch.qos.logback.classic.Logger;
  */
 public enum Logging implements ILoggingService {
 
-	INSTANCE;
+    INSTANCE;
 
-	private Logger logger;
-	private IMessageBus messageBus;
-	private IIdentity rootIdentity;
+    private Logger logger;
+    private IMessageBus messageBus;
+    private IIdentity rootIdentity;
 
-	Consumer<String> infoWriter = (message) -> System.out.println("INFO: " + message);
-	Consumer<String> warningWriter = (message) -> System.err.println("WARN: " + message);
-	Consumer<String> errorWriter = (message) -> System.err.println("ERROR: " + message);
-	Consumer<String> debugWriter = (message) -> System.err.println("DEBUG: " + message);
+    Consumer<String> infoWriter = (message) -> System.out.println("INFO: " + message);
+    Consumer<String> warningWriter = (message) -> System.err.println("WARN: " + message);
+    Consumer<String> errorWriter = (message) -> System.err.println("ERROR: " + message);
+    Consumer<String> debugWriter = (message) -> System.err.println("DEBUG: " + message);
 
-	private Logging() {
-		logger = (Logger) LoggerFactory.getLogger(this.getClass());
-	}
+    private Logging() {
+        logger = (Logger) LoggerFactory.getLogger(this.getClass());
+    }
 
-	/** {@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public void info(Object... o) {
 
@@ -64,114 +64,114 @@ public enum Logging implements ILoggingService {
 
         if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.INFO.intValue()) {
             if (infoWriter != null) {
-            	infoWriter.accept(payload);
+                infoWriter.accept(payload);
             }
             if (logger != null) {
                 logger.info(payload);
-            } 
+            }
         }
 
     }
 
-	/** {@inheritDoc} */
-	@Override
-	public void warn(Object... o) {
+    /** {@inheritDoc} */
+    @Override
+    public void warn(Object... o) {
 
-		String payload = NotificationUtils.getMessage(o);
+        String payload = NotificationUtils.getMessage(o);
 
-		if (messageBus != null
-				&& Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
-			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning, payload));
-		}
+        if (messageBus != null
+                && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning, payload));
+        }
 
-		if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
-			if (warningWriter != null) {
-            	warningWriter.accept(payload);
+        if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
+            if (warningWriter != null) {
+                warningWriter.accept(payload);
             }
-			if (logger != null) {
-				logger.warn(payload);
-            } 
-		}
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void error(Object... o) {
-
-		String payload = NotificationUtils.getMessage(o);
-
-		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
-			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
-		}
-
-		if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
-			if (errorWriter != null) {
-            	errorWriter.accept(payload);
+            if (logger != null) {
+                logger.warn(payload);
             }
-			if (logger != null) {
-				logger.error(payload);
-            } 
-		}
-	}
+        }
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public void debug(Object... o) {
+    /** {@inheritDoc} */
+    @Override
+    public void error(Object... o) {
 
-		String payload = NotificationUtils.getMessage(o);
+        String payload = NotificationUtils.getMessage(o);
 
-		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
-			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Debug, payload));
-		}
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
+        }
 
-		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.FINE.intValue()) {
-			if (debugWriter != null) {
-            	debugWriter.accept(payload);
+        if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
+            if (errorWriter != null) {
+                errorWriter.accept(payload);
             }
-			if (logger != null) {
-				logger.debug(payload);
-            } 
-		}
-	}
+            if (logger != null) {
+                logger.error(payload);
+            }
+        }
+    }
 
-	public void setMessageBus(IMessageBus mbus) {
-		this.messageBus = mbus;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public void debug(Object... o) {
 
-	public void setRootIdentity(IIdentity identity) {
-		this.rootIdentity = identity;
-	}
+        String payload = NotificationUtils.getMessage(o);
 
-	public Consumer<String> getInfoWriter() {
-		return infoWriter;
-	}
+        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
+            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Debug, payload));
+        }
 
-	public void setInfoWriter(Consumer<String> infoWriter) {
-		this.infoWriter = infoWriter;
-	}
+        if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.FINE.intValue()) {
+            if (debugWriter != null) {
+                debugWriter.accept(payload);
+            }
+            if (logger != null) {
+                logger.debug(payload);
+            }
+        }
+    }
 
-	public Consumer<String> getWarningWriter() {
-		return warningWriter;
-	}
+    public void setMessageBus(IMessageBus mbus) {
+        this.messageBus = mbus;
+    }
 
-	public void setWarningWriter(Consumer<String> warningWriter) {
-		this.warningWriter = warningWriter;
-	}
+    public void setRootIdentity(IIdentity identity) {
+        this.rootIdentity = identity;
+    }
 
-	public Consumer<String> getErrorWriter() {
-		return errorWriter;
-	}
+    public Consumer<String> getInfoWriter() {
+        return infoWriter;
+    }
 
-	public void setErrorWriter(Consumer<String> errorWriter) {
-		this.errorWriter = errorWriter;
-	}
+    public void setInfoWriter(Consumer<String> infoWriter) {
+        this.infoWriter = infoWriter;
+    }
 
-	public Consumer<String> getDebugWriter() {
-		return debugWriter;
-	}
+    public Consumer<String> getWarningWriter() {
+        return warningWriter;
+    }
 
-	public void setDebugWriter(Consumer<String> debugWriter) {
-		this.debugWriter = debugWriter;
-	}
-	
+    public void setWarningWriter(Consumer<String> warningWriter) {
+        this.warningWriter = warningWriter;
+    }
+
+    public Consumer<String> getErrorWriter() {
+        return errorWriter;
+    }
+
+    public void setErrorWriter(Consumer<String> errorWriter) {
+        this.errorWriter = errorWriter;
+    }
+
+    public Consumer<String> getDebugWriter() {
+        return debugWriter;
+    }
+
+    public void setDebugWriter(Consumer<String> debugWriter) {
+        this.debugWriter = debugWriter;
+    }
+
 }

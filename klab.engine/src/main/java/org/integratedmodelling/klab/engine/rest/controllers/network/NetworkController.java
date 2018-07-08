@@ -13,5 +13,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Secured(Roles.OWNER)
 public class NetworkController {
- 
+
 }

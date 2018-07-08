@@ -31,34 +31,34 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class ObservableBuilder implements Builder {
 
-    private IMonitor                      monitor;
+    private IMonitor monitor;
 
-    private Ontology                      ontology;
+    private Ontology ontology;
 
-    private Concept                       main;
-    private Concept                       parent;
-    private String                        mainId;
-    private Set<Type>                     type;
-    private boolean                       negated;
-    private IConcept                      inherent;
-    private IConcept                      context;
-    private IConcept                      compresent;
-    private IConcept                      causant;
-    private IConcept                      caused;
-    private IConcept                      goal;
-    private IConcept                      classifier;
-    private IConcept                      downTo;
-    private IConcept                      comparison;
-    private boolean                       optional;
+    private Concept main;
+    private Concept parent;
+    private String mainId;
+    private Set<Type> type;
+    private boolean negated;
+    private IConcept inherent;
+    private IConcept context;
+    private IConcept compresent;
+    private IConcept causant;
+    private IConcept caused;
+    private IConcept goal;
+    private IConcept classifier;
+    private IConcept downTo;
+    private IConcept comparison;
+    private boolean optional;
 
-    private List<IConcept>                traits    = new ArrayList<>();
-    private List<IConcept>                roles     = new ArrayList<>();
-    private List<KlabValidationException> errors    = new ArrayList<>();
+    private List<IConcept> traits = new ArrayList<>();
+    private List<IConcept> roles = new ArrayList<>();
+    private List<KlabValidationException> errors = new ArrayList<>();
 
-    private boolean                       isTrivial = true;
+    private boolean isTrivial = true;
 
     // This is only for reporting
-    private IKimConcept                   declaration;
+    private IKimConcept declaration;
 
     public ObservableBuilder(Concept main, Ontology ontology) {
         this.main = main;
@@ -138,20 +138,20 @@ public class ObservableBuilder implements Builder {
         return this;
     }
 
-//    @Override
-//    public Builder downTo(IConcept concept) {
-//        this.downTo = concept;
-//        isTrivial = false;
-//        return this;
-//    }
-//
-//    @Override
-//    public Builder by(IConcept concept) {
-//        // must be a trait and must be unique
-//        this.classifier = concept;
-//        isTrivial = false;
-//        return this;
-//    }
+    //    @Override
+    //    public Builder downTo(IConcept concept) {
+    //        this.downTo = concept;
+    //        isTrivial = false;
+    //        return this;
+    //    }
+    //
+    //    @Override
+    //    public Builder by(IConcept concept) {
+    //        // must be a trait and must be unique
+    //        this.classifier = concept;
+    //        isTrivial = false;
+    //        return this;
+    //    }
 
     @Override
     public Builder withGoal(IConcept goal) {
@@ -172,7 +172,8 @@ public class ObservableBuilder implements Builder {
         if (participants != null) {
             this.comparison = participants[0];
             if (participants.length > 1) {
-                throw new KlabValidationException("cannot handle more than one participant concept in semantic operator");
+                throw new KlabValidationException(
+                        "cannot handle more than one participant concept in semantic operator");
             }
         }
 
@@ -285,8 +286,7 @@ public class ObservableBuilder implements Builder {
             return null;
         }
 
-        String definition = UnarySemanticOperator.ASSESSMENT.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -303,8 +303,7 @@ public class ObservableBuilder implements Builder {
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
             IConcept ret = ontology.getConcept(conceptId);
@@ -338,8 +337,7 @@ public class ObservableBuilder implements Builder {
          * make a ConceptCount if not there, and ensure it's a continuously quantifiable quality. Must
          * be in same ontology as the original concept.
          */
-        String definition = UnarySemanticOperator.COUNT.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.COUNT.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -354,8 +352,7 @@ public class ObservableBuilder implements Builder {
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
             IConcept ret = ontology.getConcept(conceptId);
@@ -386,8 +383,7 @@ public class ObservableBuilder implements Builder {
         }
 
         String cName = "DistanceTo" + getCleanId(concept);
-        String definition = UnarySemanticOperator.DISTANCE.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.DISTANCE.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -406,7 +402,7 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            
+
             IConcept ret = ontology.getConcept(conceptId);
             /*
              * distance is inherent to the thing that's present.
@@ -430,12 +426,12 @@ public class ObservableBuilder implements Builder {
 
         if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
                 || concept.is(Type.ROLE)) {
-            throw new KlabValidationException("presence can be observed only for subjects, events, processes and relationships");
+            throw new KlabValidationException(
+                    "presence can be observed only for subjects, events, processes and relationships");
         }
 
         String cName = getCleanId(concept) + "Presence";
-        String definition = UnarySemanticOperator.PRESENCE.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.PRESENCE.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -477,12 +473,12 @@ public class ObservableBuilder implements Builder {
     public static Concept makeOccurrence(IConcept concept, boolean addDefinition) {
 
         if (!concept.is(Type.DIRECT_OBSERVABLE)) {
-            throw new KlabValidationException("occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
+            throw new KlabValidationException(
+                    "occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
         }
 
         String cName = getCleanId(concept) + "Occurrence";
-        String definition = UnarySemanticOperator.OCCURRENCE.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.OCCURRENCE.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -528,8 +524,7 @@ public class ObservableBuilder implements Builder {
         }
 
         String cName = getCleanId(concept) + "Observability";
-        String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -548,7 +543,7 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            
+
             IConcept ret = ontology.getConcept(conceptId);
             /*
              * observability is inherent to the thing that's present.
@@ -575,8 +570,7 @@ public class ObservableBuilder implements Builder {
         }
 
         String cName = getCleanId(concept) + "Probability";
-        String definition = UnarySemanticOperator.PROBABILITY.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.PROBABILITY.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -592,8 +586,7 @@ public class ObservableBuilder implements Builder {
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
             IConcept ret = ontology.getConcept(conceptId);
@@ -619,8 +612,7 @@ public class ObservableBuilder implements Builder {
     public static Concept makeUncertainty(IConcept concept, boolean addDefinition) {
 
         String cName = getCleanId(concept) + "Uncertainty";
-        String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0]
-                + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -635,8 +627,7 @@ public class ObservableBuilder implements Builder {
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
-                ax.add(Axiom
-                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
             IConcept ret = ontology.getConcept(conceptId);
@@ -645,8 +636,6 @@ public class ObservableBuilder implements Builder {
              */
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
         }
-
-
 
         return ontology.getConcept(conceptId);
     }
@@ -658,14 +647,11 @@ public class ObservableBuilder implements Builder {
             throw new KlabValidationException("proportion must be of qualities or traits to qualities");
         }
 
-        String cName = getCleanId(concept) + "ProportionIn"
-                + (comparison == null ? "" : getCleanId(comparison));
+        String cName = getCleanId(concept) + "ProportionIn" + (comparison == null ? "" : getCleanId(comparison));
 
-        String definition = UnarySemanticOperator.PROPORTION.declaration[0]
-                + " (" + concept.getDefinition() + ")"
+        String definition = UnarySemanticOperator.PROPORTION.declaration[0] + " (" + concept.getDefinition() + ")"
                 + (comparison == null ? ""
-                        : (UnarySemanticOperator.PROPORTION.declaration[1] + " ("
-                                + comparison.getDefinition() + ")"));
+                        : (UnarySemanticOperator.PROPORTION.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -685,7 +671,7 @@ public class ObservableBuilder implements Builder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            
+
             IConcept ret = ontology.getConcept(conceptId);
             /*
              * proportion is inherent to the thing that's present.
@@ -702,17 +688,15 @@ public class ObservableBuilder implements Builder {
          * accept only two qualities of the same physical nature (TODO)
          */
         if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT)) || !comparison.is(Type.QUALITY)) {
-            throw new KlabValidationException("ratios must be between qualities of the same nature or traits to qualities");
+            throw new KlabValidationException(
+                    "ratios must be between qualities of the same nature or traits to qualities");
         }
 
-        String cName = getCleanId(concept) + "To" + getCleanId(comparison)
-                + "Ratio";
+        String cName = getCleanId(concept) + "To" + getCleanId(comparison) + "Ratio";
 
-        String definition = UnarySemanticOperator.RATIO.declaration[0]
-                + " (" + concept.getDefinition() + ")"
+        String definition = UnarySemanticOperator.RATIO.declaration[0] + " (" + concept.getDefinition() + ")"
                 + (comparison == null ? ""
-                        : (UnarySemanticOperator.RATIO.declaration[1] + " ("
-                                + comparison.getDefinition() + ")"));
+                        : (UnarySemanticOperator.RATIO.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -750,14 +734,11 @@ public class ObservableBuilder implements Builder {
 
     public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
 
-        String cName = "ValueOf" + getCleanId(concept)
-                + (comparison == null ? "" : ("Over" + getCleanId(comparison)));
+        String cName = "ValueOf" + getCleanId(concept) + (comparison == null ? "" : ("Over" + getCleanId(comparison)));
 
-        String definition = UnarySemanticOperator.VALUE.declaration[0]
-                + " (" + concept.getDefinition() + ")"
+        String definition = UnarySemanticOperator.VALUE.declaration[0] + " (" + concept.getDefinition() + ")"
                 + (comparison == null ? ""
-                        : (UnarySemanticOperator.VALUE.declaration[1] + " ("
-                                + comparison.getDefinition() + ")"));
+                        : (UnarySemanticOperator.VALUE.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -779,7 +760,7 @@ public class ObservableBuilder implements Builder {
             concept.getOntology().define(ax);
 
             IConcept ret = ontology.getConcept(conceptId);
-            
+
             /*
              * uncertainty is inherent to the thing that's present.
              */
@@ -798,8 +779,7 @@ public class ObservableBuilder implements Builder {
         }
 
         String traitID = getCleanId(trait) + "Type";
-        String definition = UnarySemanticOperator.TYPE.declaration[0]
-                + " " + trait.getDefinition();
+        String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + trait.getDefinition();
 
         Ontology ontology = (Ontology) trait.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -817,8 +797,7 @@ public class ObservableBuilder implements Builder {
             axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_TYPE_DELEGATE, "true"));
             axioms.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", traitID));
             if (addDefinition) {
-                axioms.add(Axiom
-                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+                axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(axioms);
             IConcept ret = ontology.getConcept(conceptId);
@@ -855,7 +834,8 @@ public class ObservableBuilder implements Builder {
                     }
                 }
                 if (ontology == null) {
-                    errors.add(new KlabValidationException("cannot create a new concept from an ID if the ontology is not specified"));
+                    errors.add(new KlabValidationException(
+                            "cannot create a new concept from an ID if the ontology is not specified"));
                 }
             }
         }
@@ -912,7 +892,7 @@ public class ObservableBuilder implements Builder {
 
         Concept ret = main;
         ArrayList<String> tids = new ArrayList<>();
-//        ArrayList<IConcept> keep = new ArrayList<IConcept>();
+        //        ArrayList<IConcept> keep = new ArrayList<IConcept>();
 
         /*
          * preload any base traits we already have. If any of them is abstract, take notice so we can
@@ -933,17 +913,17 @@ public class ObservableBuilder implements Builder {
         String cId = "";
         String cDs = "";
 
-//        /*
-//         * we also add a non-by, non-down-to concept (untrasformed) if absent, so that we can
-//         * reconstruct an observable without transformations but with all traits and roles if required.
-//         * This is returned by getUntransformedObservable().
-//         * 
-//         * TODO this is related to the observable not being the same as the declared - see what's the
-//         * best way to handle this. Better to build the concept using only the declaration, then create
-//         * the other using the same axioms + by/downto if needed. No need for a special uId - just do it
-//         * after.
-//         */
-//        String uId = "";
+        //        /*
+        //         * we also add a non-by, non-down-to concept (untrasformed) if absent, so that we can
+        //         * reconstruct an observable without transformations but with all traits and roles if required.
+        //         * This is returned by getUntransformedObservable().
+        //         * 
+        //         * TODO this is related to the observable not being the same as the declared - see what's the
+        //         * best way to handle this. Better to build the concept using only the declaration, then create
+        //         * the other using the same axioms + by/downto if needed. No need for a special uId - just do it
+        //         * after.
+        //         */
+        //        String uId = "";
 
         if (traits != null && traits.size() > 0) {
 
@@ -973,9 +953,8 @@ public class ObservableBuilder implements Builder {
                 }
 
                 if (!baseTraits.add(base)) {
-                    throw new KlabValidationException("cannot add trait "
-                            + Concepts.INSTANCE.getDisplayName(t) + " to concept " + main
-                            + " as it already adopts a trait of type "
+                    throw new KlabValidationException("cannot add trait " + Concepts.INSTANCE.getDisplayName(t)
+                            + " to concept " + main + " as it already adopts a trait of type "
                             + Concepts.INSTANCE.getDisplayName(base));
                 }
 
@@ -999,7 +978,7 @@ public class ObservableBuilder implements Builder {
             for (String s : tids) {
                 cId += s;
                 cDs += s;
-//                uId += s;
+                //                uId += s;
             }
         }
 
@@ -1009,7 +988,7 @@ public class ObservableBuilder implements Builder {
         String cleanId = getCleanId(main);
         cId += cleanId;
         cDs += cleanId;
-//        uId += cleanId;
+        //        uId += cleanId;
 
         /*
          * handle context, inherency etc.
@@ -1018,45 +997,42 @@ public class ObservableBuilder implements Builder {
             IConcept other = Observables.INSTANCE.getInherentType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(inherent, other)) {
                 throw new KlabValidationException("cannot add inherent type "
-                        + Concepts.INSTANCE.getDisplayName(inherent)
-                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
-                        + " as it already has an incompatible inherency: "
+                        + Concepts.INSTANCE.getDisplayName(inherent) + " to concept "
+                        + Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible inherency: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
             cleanId = getCleanId(inherent);
             cId += "Of" + cleanId;
             cDs += "Of" + cleanId;
-//            uId += "Of" + cleanId;
+            //            uId += "Of" + cleanId;
         }
 
         if (context != null) {
             IConcept other = Observables.INSTANCE.getContextType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(context, other)) {
-                throw new KlabValidationException("cannot add context "
-                        + Concepts.INSTANCE.getDisplayName(context) + " to concept "
-                        + Concepts.INSTANCE.getDisplayName(main)
-                        + " as it already has an incompatible context: "
-                        + Concepts.INSTANCE.getDisplayName(other));
+                throw new KlabValidationException("cannot add context " + Concepts.INSTANCE.getDisplayName(context)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible context: " + Concepts.INSTANCE.getDisplayName(other));
             }
             cleanId = getCleanId(context);
             cId += "In" + cleanId;
             cDs += "In" + cleanId;
-//            uId += "In" + cleanId;
+            //            uId += "In" + cleanId;
         }
 
         if (compresent != null) {
             IConcept other = Observables.INSTANCE.getCompresentType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(compresent, other)) {
-                throw new KlabValidationException("cannot add compresent "
-                        + Concepts.INSTANCE.getDisplayName(compresent) + " to concept "
-                        + Concepts.INSTANCE.getDisplayName(main)
-                        + " as it already has an incompatible compresent type: "
-                        + Concepts.INSTANCE.getDisplayName(other));
+                throw new KlabValidationException(
+                        "cannot add compresent " + Concepts.INSTANCE.getDisplayName(compresent) + " to concept "
+                                + Concepts.INSTANCE.getDisplayName(main)
+                                + " as it already has an incompatible compresent type: "
+                                + Concepts.INSTANCE.getDisplayName(other));
             }
             cleanId = getCleanId(compresent);
             cId += "With" + cleanId;
             cDs += "With" + cleanId;
-//            uId += "With" + cleanId;
+            //            uId += "With" + cleanId;
         }
 
         if (goal != null) {
@@ -1064,45 +1040,40 @@ public class ObservableBuilder implements Builder {
             IConcept other = Observables.INSTANCE.getGoalType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(goal, other)) {
                 throw new KlabValidationException("cannot add goal " + Concepts.INSTANCE.getDisplayName(goal)
-                        + " to concept "
-                        + Concepts.INSTANCE.getDisplayName(main)
-                        + " as it already has an incompatible goal type: "
-                        + Concepts.INSTANCE.getDisplayName(other));
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible goal type: " + Concepts.INSTANCE.getDisplayName(other));
             }
             cleanId = getCleanId(goal);
             cId += "For" + cleanId;
             cDs += "For" + cleanId;
-//            uId += "For" + cleanId;
+            //            uId += "For" + cleanId;
         }
 
         if (caused != null) {
             IConcept other = Observables.INSTANCE.getCausedType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(caused, other)) {
-                throw new KlabValidationException("cannot add caused "
-                        + Concepts.INSTANCE.getDisplayName(caused) + " to concept "
-                        + Concepts.INSTANCE.getDisplayName(main)
-                        + " as it already has an incompatible caused type: "
-                        + Concepts.INSTANCE.getDisplayName(other));
+                throw new KlabValidationException("cannot add caused " + Concepts.INSTANCE.getDisplayName(caused)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
+                        + " as it already has an incompatible caused type: " + Concepts.INSTANCE.getDisplayName(other));
             }
             cleanId = getCleanId(caused);
             cId += "To" + cleanId;
             cDs += "To" + cleanId;
-//            uId += "To" + cleanId;
+            //            uId += "To" + cleanId;
         }
 
         if (causant != null) {
             IConcept other = Observables.INSTANCE.getCausantType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(causant, other)) {
-                throw new KlabValidationException("cannot add causant "
-                        + Concepts.INSTANCE.getDisplayName(causant) + " to concept "
-                        + Concepts.INSTANCE.getDisplayName(main)
+                throw new KlabValidationException("cannot add causant " + Concepts.INSTANCE.getDisplayName(causant)
+                        + " to concept " + Concepts.INSTANCE.getDisplayName(main)
                         + " as it already has an incompatible causant type: "
                         + Concepts.INSTANCE.getDisplayName(other));
             }
             cleanId = getCleanId(causant);
             cId += "From" + cleanId;
             cDs += "From" + cleanId;
-//            uId += "From" + cleanId;
+            //            uId += "From" + cleanId;
         }
 
         String roleIds = "";
@@ -1149,11 +1120,8 @@ public class ObservableBuilder implements Builder {
          * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
          */
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
-        ret.getOntology().define(Collections.singletonList(Axiom
-                .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration
-                        .getDefinition())));
-
-
+        ret.getOntology().define(Collections.singletonList(
+                Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration.getDefinition())));
 
         if (type.contains(Type.ABSTRACT)) {
             axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_ABSTRACT, "true"));
@@ -1167,20 +1135,16 @@ public class ObservableBuilder implements Builder {
          */
 
         if (identities.size() > 0) {
-            Traits.INSTANCE.restrict(ret, Concepts
-                    .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
+            Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
         }
         if (realms.size() > 0) {
-            Traits.INSTANCE.restrict(ret, Concepts
-                    .p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
+            Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
         }
         if (attributes.size() > 0) {
-            Traits.INSTANCE.restrict(ret, Concepts
-                    .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
+            Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
         }
         if (acceptedRoles.size() > 0) {
-            OWL.INSTANCE.restrictSome(ret, Concepts
-                    .p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
         }
         if (inherent != null) {
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
@@ -1208,7 +1172,6 @@ public class ObservableBuilder implements Builder {
         if (negated) {
             // TODO - add Not to the ids
         }
-        
 
         return ret;
     }

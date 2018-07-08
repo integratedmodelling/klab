@@ -21,13 +21,12 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
  * 
  * @author ferdinando.villa
  */
-public class RestrictionCollector
-        extends OWLClassExpressionVisitorAdapter {
+public class RestrictionCollector extends OWLClassExpressionVisitorAdapter {
 
-    private Set<OWLOntology>                                                  onts;
-    private Set<OWLClass>                                                     processedClasses = new HashSet<>();
-    private Set<OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression>> restrictions     = new HashSet<>();
-    private OWLClass                                                          filler;
+    private Set<OWLOntology> onts;
+    private Set<OWLClass> processedClasses = new HashSet<>();
+    private Set<OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression>> restrictions = new HashSet<>();
+    private OWLClass filler;
 
     public Collection<OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression>> getRestrictions() {
         return this.restrictions;

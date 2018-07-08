@@ -62,188 +62,186 @@ import org.opengis.filter.FilterFactory2;
  */
 public class VectorEncoder implements IResourceEncoder {
 
-	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
-		FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
-		encodeFromFeatures(features, resource, geometry, builder, context);
-	}
+    @Override
+    public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
+        FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
+        encodeFromFeatures(features, resource, geometry, builder, context);
+    }
 
-	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
+    protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
 
-		File mainFile = null;
+        File mainFile = null;
 
-		for (String path : resource.getLocalPaths()) {
-			if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
-				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
-				if (mainFile.exists() && mainFile.canRead()) {
-					break;
-				}
-			}
-		}
+        for (String path : resource.getLocalPaths()) {
+            if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
+                mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
+                if (mainFile.exists() && mainFile.canRead()) {
+                    break;
+                }
+            }
+        }
 
-		if (mainFile == null) {
-			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
-		}
+        if (mainFile == null) {
+            throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
+        }
 
-		Map<String, Object> map = new HashMap<>();
-		try {
-			map.put("url", mainFile.toURI().toURL().toString());
-			DataStore dataStore = DataStoreFinder.getDataStore(map);
-			String typeName = dataStore.getTypeNames()[0];
-			return dataStore.getFeatureSource(typeName);
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map.put("url", mainFile.toURI().toURL().toString());
+            DataStore dataStore = DataStoreFinder.getDataStore(map);
+            String typeName = dataStore.getTypeNames()[0];
+            return dataStore.getFeatureSource(typeName);
 
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
 
-	}
+    }
 
-	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
-			IGeometry geometry, Builder builder, IComputationContext context) {
+    private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
+            IGeometry geometry, Builder builder, IComputationContext context) {
 
-		Filter filter = null;
+        Filter filter = null;
 
-		Map<String, Class<?>> attributes = new HashMap<>();
-		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-			if (!ad.getLocalName().equals("the_geom")) {
-				attributes.put(ad.getLocalName(), ad.getType().getBinding());
-			}
-		}
+        Map<String, Class<?>> attributes = new HashMap<>();
+        for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
+            if (!ad.getLocalName().equals("the_geom")) {
+                attributes.put(ad.getLocalName(), ad.getType().getBinding());
+            }
+        }
 
-		if (resource.getParameters().contains("filter")) {
-			try {
-				filter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
-			} catch (CQLException e) {
-				// shouldn't happen as filter was validated previously
-				throw new KlabValidationException(e);
-			}
-		}
+        if (resource.getParameters().contains("filter")) {
+            try {
+                filter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
+            } catch (CQLException e) {
+                // shouldn't happen as filter was validated previously
+                throw new KlabValidationException(e);
+            }
+        }
 
-		Scale scale = Scale.create(resource.getGeometry());
+        Scale scale = Scale.create(resource.getGeometry());
 
-		FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
-		try {
-			fc = source.getFeatures();
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+        FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
+        try {
+            fc = source.getFeatures();
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
 
-		Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
-		IEnvelope envelopeInOriginalProjection = scale.getSpace().getEnvelope().transform(originalProjection, true);
+        Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
+        IEnvelope envelopeInOriginalProjection = scale.getSpace().getEnvelope().transform(originalProjection, true);
 
-		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
+        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 
-		Filter bbfilter = ff.bbox(ff.property("the_geom"), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
-		if (filter != null) {
-			bbfilter = ff.and(bbfilter, filter);
-		}
+        Filter bbfilter = ff.bbox(ff.property("the_geom"), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
+        if (filter != null) {
+            bbfilter = ff.and(bbfilter, filter);
+        }
 
-		/*
-		 * TODO would be nicer to check the request geometry for the data - which may
-		 * not be the scale of the result! If it's IRREGULAR MULTIPLE we want objects,
-		 * otherwise we want a state. I don't think there is a way to check that at the
-		 * moment - the scale will be that of contextualization, not the geometry for
-		 * the actuator, which may depend on context.
-		 */
-		boolean rasterize = context.getTargetSemantics().is(Type.QUALITY);
+        /*
+         * TODO would be nicer to check the request geometry for the data - which may
+         * not be the scale of the result! If it's IRREGULAR MULTIPLE we want objects,
+         * otherwise we want a state. I don't think there is a way to check that at the
+         * moment - the scale will be that of contextualization, not the geometry for
+         * the actuator, which may depend on context.
+         */
+        boolean rasterize = context.getTargetSemantics().is(Type.QUALITY);
 
-		Rasterizer<Object> rasterizer = null;
-		if (rasterize) {
-			builder = builder.startState(context.getTargetName());
-			// TODO instantiate rasterizer with target artifact
-		}
+        Rasterizer<Object> rasterizer = null;
+        if (rasterize) {
+            builder = builder.startState(context.getTargetName());
+            // TODO instantiate rasterizer with target artifact
+        }
 
-		String nameAttribute = resource.getParameters().get("nameAttribute", String.class);
-		if (nameAttribute == null && attributes.get("NAME") != null) {
-			nameAttribute = "NAME";
-		}
+        String nameAttribute = resource.getParameters().get("nameAttribute", String.class);
+        if (nameAttribute == null && attributes.get("NAME") != null) {
+            nameAttribute = "NAME";
+        }
 
-		int n = 1;
-		FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
-		
-		while (it.hasNext()) {
+        int n = 1;
+        FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
 
-			SimpleFeature feature = it.next();
-			Object shape = feature.getDefaultGeometryProperty().getValue();
-			if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+        while (it.hasNext()) {
 
-				if (resource.getParameters().get("sanitize", false)) {
-					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
-				}
-				
-				if (rasterize) {
-					// TODO compute value for shape
-					// TODO rasterizer.add (shape, function to pass value)
-				} else {
+            SimpleFeature feature = it.next();
+            Object shape = feature.getDefaultGeometryProperty().getValue();
+            if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
 
-					IShape objectShape = 
-							Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
-								.transform(scale.getSpace().getProjection())
-								.intersection(scale.getSpace().getShape());
-					
-					IScale objectScale = Scale.createLike(context.getScale(), objectShape);
-					String objectName = null;
-					if (nameAttribute != null) {
-						Object nattr = feature.getAttribute(nameAttribute);
-						if (nattr == null) {
-							nattr = feature.getAttribute(nameAttribute.toUpperCase());
-						}
-						if (nattr == null) {
-							nattr = feature.getAttribute(nameAttribute.toLowerCase());
-						}
-						if (nattr != null) {
-							objectName = nattr.toString();
-						}
-					}
-					if (objectName /* still */ == null) {
-						objectName = fc.getSchema().getTypeName() + "_" + (n++);
-					}
+                if (resource.getParameters().get("sanitize", false)) {
+                    shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+                }
 
-					builder = builder.startObject(context.getTargetName(), objectName, objectScale);
-					
-					// TODO make object
-					// TODO process from metadata
-					for (String key : attributes.keySet()) {
-						builder.withMetadata(key.toLowerCase(), attributes.get(key));
-					}
-					
-					builder = builder.finishObject();
+                if (rasterize) {
+                    // TODO compute value for shape
+                    // TODO rasterizer.add (shape, function to pass value)
+                } else {
 
-				}
-			}
-		}
+                    IShape objectShape = Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
+                            .transform(scale.getSpace().getProjection()).intersection(scale.getSpace().getShape());
 
-		it.close();
-		
-		if (rasterize) {
-			// TODO rasterizer.finish(call builder)
-			builder = builder.finishState();
-		}
+                    IScale objectScale = Scale.createLike(context.getScale(), objectShape);
+                    String objectName = null;
+                    if (nameAttribute != null) {
+                        Object nattr = feature.getAttribute(nameAttribute);
+                        if (nattr == null) {
+                            nattr = feature.getAttribute(nameAttribute.toUpperCase());
+                        }
+                        if (nattr == null) {
+                            nattr = feature.getAttribute(nameAttribute.toLowerCase());
+                        }
+                        if (nattr != null) {
+                            objectName = nattr.toString();
+                        }
+                    }
+                    if (objectName /* still */ == null) {
+                        objectName = fc.getSchema().getTypeName() + "_" + (n++);
+                    }
 
-	}
+                    builder = builder.startObject(context.getTargetName(), objectName, objectScale);
 
-	@Override
-	public boolean isOnline(IResource resource) {
+                    // TODO make object
+                    // TODO process from metadata
+                    for (String key : attributes.keySet()) {
+                        builder.withMetadata(key.toLowerCase(), attributes.get(key));
+                    }
 
-		File base = null;
-		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-			base = Resources.INSTANCE.getLocalWorkspace().getRoot();
-		} else {
-			// TODO
-		}
+                    builder = builder.finishObject();
 
-		if (base == null) {
-			return false;
-		}
+                }
+            }
+        }
 
-		for (String s : resource.getLocalPaths()) {
-			File rfile = new File(base + File.separator + s);
-			if (!rfile.exists() || !rfile.canRead()) {
-				return false;
-			}
-		}
+        it.close();
 
-		return true;
-	}
+        if (rasterize) {
+            // TODO rasterizer.finish(call builder)
+            builder = builder.finishState();
+        }
+
+    }
+
+    @Override
+    public boolean isOnline(IResource resource) {
+
+        File base = null;
+        if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+            base = Resources.INSTANCE.getLocalWorkspace().getRoot();
+        } else {
+            // TODO
+        }
+
+        if (base == null) {
+            return false;
+        }
+
+        for (String s : resource.getLocalPaths()) {
+            File rfile = new File(base + File.separator + s);
+            if (!rfile.exists() || !rfile.canRead()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 }

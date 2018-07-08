@@ -16,78 +16,78 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public abstract class AbstractFilesetImporter implements IResourceImporter {
 
-	private String[] recognizedExtensions;
+    private String[] recognizedExtensions;
 
-	/**
-	 * Try to import the passed file, which matches one of the {@link #recognizedExtensions}. If successful,
-	 * return a builder for the correspondent resource. Otherwise return null.
-	 * 
-	 * @param file
-	 * @param userData
-	 * @param monitor
-	 * @return a builder for the resource or null.
-	 */
-	protected abstract Builder importFile(File file, IParameters<String> userData, IMonitor monitor);
-	
-	protected AbstractFilesetImporter(String[] recognizedExtensions) {
-		this.recognizedExtensions = recognizedExtensions;
-	}
+    /**
+     * Try to import the passed file, which matches one of the {@link #recognizedExtensions}. If successful,
+     * return a builder for the correspondent resource. Otherwise return null.
+     * 
+     * @param file
+     * @param userData
+     * @param monitor
+     * @return a builder for the resource or null.
+     */
+    protected abstract Builder importFile(File file, IParameters<String> userData, IMonitor monitor);
 
-	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
-		List<Builder> ret = new ArrayList<>();
-		File file = getFile(importLocation);
-		if (file != null && file.isDirectory()) {
-			scanDirectory(file, userData, ret, monitor);
-		}
-		return ret;
-	}
+    protected AbstractFilesetImporter(String[] recognizedExtensions) {
+        this.recognizedExtensions = recognizedExtensions;
+    }
 
-	private void scanDirectory(File directory, IParameters<String> userData, List<Builder> ret, IMonitor monitor) {
-		for (File file : directory.listFiles()) {
-			if (file.isDirectory()) {
-				scanDirectory(file, userData, ret, monitor);
-			} else if (file.canRead()) {
-				for (String s : recognizedExtensions) {
-					if (MiscUtilities.getFileExtension(file).equals(s)) {
-						Builder builder = importFile(file, userData, monitor);
-						if (builder != null) {
-							ret.add(builder);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	public File getFile(String importLocation) {
+    @Override
+    public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+        List<Builder> ret = new ArrayList<>();
+        File file = getFile(importLocation);
+        if (file != null && file.isDirectory()) {
+            scanDirectory(file, userData, ret, monitor);
+        }
+        return ret;
+    }
 
-		File file = null;
-		if (importLocation.startsWith("file:")) {
-			try {
-				file = new File(new URL(importLocation).getFile());
-			} catch (MalformedURLException e) {
-				return null;
-			}
-		} else {
-			file = Klab.INSTANCE.resolveFile(importLocation);
-			if (file == null || !file.exists()) {
-				return null;
-			}
-			if (file.exists()) {
-				if (file.isDirectory()) {
-					return file;
-				} else {
-					// TODO check for archive file
-				}
-			}
-		}
-		return file;
-	}
+    private void scanDirectory(File directory, IParameters<String> userData, List<Builder> ret, IMonitor monitor) {
+        for (File file : directory.listFiles()) {
+            if (file.isDirectory()) {
+                scanDirectory(file, userData, ret, monitor);
+            } else if (file.canRead()) {
+                for (String s : recognizedExtensions) {
+                    if (MiscUtilities.getFileExtension(file).equals(s)) {
+                        Builder builder = importFile(file, userData, monitor);
+                        if (builder != null) {
+                            ret.add(builder);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean canHandle(String importLocation, IParameters<String> userData) {
-		return getFile(importLocation) != null;
-	}
+    public File getFile(String importLocation) {
+
+        File file = null;
+        if (importLocation.startsWith("file:")) {
+            try {
+                file = new File(new URL(importLocation).getFile());
+            } catch (MalformedURLException e) {
+                return null;
+            }
+        } else {
+            file = Klab.INSTANCE.resolveFile(importLocation);
+            if (file == null || !file.exists()) {
+                return null;
+            }
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    return file;
+                } else {
+                    // TODO check for archive file
+                }
+            }
+        }
+        return file;
+    }
+
+    @Override
+    public boolean canHandle(String importLocation, IParameters<String> userData) {
+        return getFile(importLocation) != null;
+    }
 
 }

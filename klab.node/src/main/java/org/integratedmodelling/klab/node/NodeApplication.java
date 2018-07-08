@@ -16,27 +16,26 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Singleton
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { 
-		"org.integratedmodelling.klab.node.security",
-		"org.integratedmodelling.klab.node.controllers"
-})
+@ComponentScan(
+        basePackages = { "org.integratedmodelling.klab.node.security",
+                "org.integratedmodelling.klab.node.controllers" })
 public class NodeApplication {
 
-	@PreDestroy
-	public void shutdown() {
-		// TODO engine shutdown if needed
-	}
+    @PreDestroy
+    public void shutdown() {
+        // TODO engine shutdown if needed
+    }
 
-	@Bean
-	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
-	}
+    @Bean
+    public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
+        return new ProtobufHttpMessageConverter();
+    }
 
-	@Bean
-	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
-		return new RestTemplate(Arrays.asList(hmc));
-	}
-	
+    @Bean
+    public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
+        return new RestTemplate(Arrays.asList(hmc));
+    }
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();

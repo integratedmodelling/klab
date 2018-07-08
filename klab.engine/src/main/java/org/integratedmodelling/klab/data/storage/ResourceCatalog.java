@@ -38,202 +38,206 @@ import org.integratedmodelling.klab.utils.JsonUtils;
  */
 public class ResourceCatalog implements IResourceCatalog {
 
-	Nitrite db;
-	ObjectRepository<ResourceReference> resources;
+    Nitrite db;
+    ObjectRepository<ResourceReference> resources;
 
-	/**
-	 * Create a new resource catalog.
-	 * 
-	 * @param name
-	 * @param localPath
-	 */
-	public ResourceCatalog(String name) {
-		this.db = Nitrite.builder()// .compressed() TODO may reintegrate in production
-				.filePath(Configuration.INSTANCE.getDataPath() + File.separator + name + ".db")
-				.openOrCreate("user", "password");
-		this.resources = db.getRepository(ResourceReference.class);
-	}
+    /**
+     * Create a new resource catalog.
+     * 
+     * @param name
+     * @param localPath
+     */
+    public ResourceCatalog(String name) {
+        this.db = Nitrite.builder()// .compressed() TODO may reintegrate in production
+                .filePath(Configuration.INSTANCE.getDataPath() + File.separator + name + ".db")
+                .openOrCreate("user", "password");
+        this.resources = db.getRepository(ResourceReference.class);
+    }
 
-	@Override
-	public int size() {
-		return (int) resources.size();
-	}
+    @Override
+    public int size() {
+        return (int) resources.size();
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return resources.size() == 0;
-	}
+    @Override
+    public boolean isEmpty() {
+        return resources.size() == 0;
+    }
 
-	@Override
-	public boolean containsKey(Object key) {
-		return resources.find(eq("urn", key)).hasMore();
-	}
+    @Override
+    public boolean containsKey(Object key) {
+        return resources.find(eq("urn", key)).hasMore();
+    }
 
-	@Override
-	public boolean containsValue(Object value) {
-		return value instanceof IResource && containsKey(((IResource) value).getUrn());
-	}
+    @Override
+    public boolean containsValue(Object value) {
+        return value instanceof IResource && containsKey(((IResource) value).getUrn());
+    }
 
-	@Override
-	public IResource get(Object key) {
-		ResourceReference ref = resources.find(eq("urn", key)).firstOrDefault();
-		return ref == null ? null : new Resource(ref);
-	}
+    @Override
+    public IResource get(Object key) {
+        ResourceReference ref = resources.find(eq("urn", key)).firstOrDefault();
+        return ref == null ? null : new Resource(ref);
+    }
 
-	@Override
-	public IResource put(String key, IResource value) {
+    @Override
+    public IResource put(String key, IResource value) {
 
-		((Resource) value).validate(Resources.INSTANCE);
-		
-		IResource ret = get(value.getUrn());
-		if (ret != null) {
-			removeDefinition(value.getUrn());
-		}
-		
-		ResourceReference ref = ((Resource) value).getReference();
-		resources.insert(ref);
+        ((Resource) value).validate(Resources.INSTANCE);
 
-		if (value.getLocalPath() != null) {
-			/*
-			 * Save resource data as JSON in resource path
-			 */
-			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + value.getLocalPath());
-			resourcePath.mkdir();
-			try {
-				FileUtils.writeStringToFile(new File(resourcePath + File.separator + "resource.json"),
-						JsonUtils.printAsJson(ref));
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-		}
-		
-		db.commit();
+        IResource ret = get(value.getUrn());
+        if (ret != null) {
+            removeDefinition(value.getUrn());
+        }
 
-		return ret;
-	}
+        ResourceReference ref = ((Resource) value).getReference();
+        resources.insert(ref);
 
-	public IResource removeDefinition(Object key) {
-		IResource ret = get(key);
-		resources.remove(eq("urn", key));
-		db.commit();
-		return ret;
-	}
-	
-	@Override
-	public IResource remove(Object key) {
-		IResource ret = get(key);
-		resources.remove(eq("urn", key));
-		if (ret != null && ret.getLocalPath() != null) {
-			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + ret.getLocalPath());
-			if (resourcePath.exists()) {
-				try {
-					FileUtils.deleteDirectory(resourcePath);
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
-		}
-		db.commit();
-		return ret;
-	}
+        if (value.getLocalPath() != null) {
+            /*
+             * Save resource data as JSON in resource path
+             */
+            File resourcePath = new File(
+                    Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + value.getLocalPath());
+            resourcePath.mkdir();
+            try {
+                FileUtils.writeStringToFile(new File(resourcePath + File.separator + "resource.json"),
+                        JsonUtils.printAsJson(ref));
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+        }
 
-	@Override
-	public void putAll(Map<? extends String, ? extends IResource> m) {
-		for (String key : m.keySet()) {
-			put(key, m.get(key));
-		}
-	}
+        db.commit();
 
-	@Override
-	public void clear() {
-		for (IResource resource : values()) {
-			if (resource.getLocalPath() != null) {
-				File respath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + resource.getLocalPath());
-				if (respath.isDirectory()) {
-					try {
-						FileUtils.deleteDirectory(respath);
-					} catch (IOException e) {
-						throw new KlabIOException(e);
-					}
-				}
-			}
-		}
-		resources.remove((ObjectFilter) null);
-		db.commit();
-	}
+        return ret;
+    }
 
-	@Override
-	public Set<String> keySet() {
-		Set<String> ret = new HashSet<>();
-		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
-			ret.add(r.next().getUrn());
-		}
-		return ret;
-	}
+    public IResource removeDefinition(Object key) {
+        IResource ret = get(key);
+        resources.remove(eq("urn", key));
+        db.commit();
+        return ret;
+    }
 
-	@Override
-	public Collection<IResource> values() {
-		List<IResource> ret = new ArrayList<>();
-		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
-			ret.add(new Resource(r.next()));
-		}
-		return ret;
-	}
+    @Override
+    public IResource remove(Object key) {
+        IResource ret = get(key);
+        resources.remove(eq("urn", key));
+        if (ret != null && ret.getLocalPath() != null) {
+            File resourcePath = new File(
+                    Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + ret.getLocalPath());
+            if (resourcePath.exists()) {
+                try {
+                    FileUtils.deleteDirectory(resourcePath);
+                } catch (IOException e) {
+                    throw new KlabIOException(e);
+                }
+            }
+        }
+        db.commit();
+        return ret;
+    }
 
-	@Override
-	public Set<Entry<String, IResource>> entrySet() {
-		Set<Entry<String, IResource>> ret = new HashSet<>();
-		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
-			final ResourceReference rr = r.next();
-			ret.add(new Entry<String, IResource>() {
-				@Override
-				public String getKey() {
-					return rr.getUrn();
-				}
+    @Override
+    public void putAll(Map<? extends String, ? extends IResource> m) {
+        for (String key : m.keySet()) {
+            put(key, m.get(key));
+        }
+    }
 
-				@Override
-				public IResource getValue() {
-					return new Resource(rr);
-				}
+    @Override
+    public void clear() {
+        for (IResource resource : values()) {
+            if (resource.getLocalPath() != null) {
+                File respath = new File(
+                        Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + resource.getLocalPath());
+                if (respath.isDirectory()) {
+                    try {
+                        FileUtils.deleteDirectory(respath);
+                    } catch (IOException e) {
+                        throw new KlabIOException(e);
+                    }
+                }
+            }
+        }
+        resources.remove((ObjectFilter) null);
+        db.commit();
+    }
 
-				@Override
-				public IResource setValue(IResource value) {
-					put(value.getUrn(), value);
-					return new Resource(rr);
-				}
-			});
-		}
-		return ret;
-	}
+    @Override
+    public Set<String> keySet() {
+        Set<String> ret = new HashSet<>();
+        for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
+            ret.add(r.next().getUrn());
+        }
+        return ret;
+    }
 
-	public static void main(String args[]) {
+    @Override
+    public Collection<IResource> values() {
+        List<IResource> ret = new ArrayList<>();
+        for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
+            ret.add(new Resource(r.next()));
+        }
+        return ret;
+    }
 
-		ResourceCatalog catalog = new ResourceCatalog("test");
-		IResource resource = new ResourceBuilder().withResourceVersion(Version.getCurrent()).withAdapterType("wcs")
-				.withGeometry(Geometry.empty()).build("zio:cane:test:hostia");
+    @Override
+    public Set<Entry<String, IResource>> entrySet() {
+        Set<Entry<String, IResource>> ret = new HashSet<>();
+        for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
+            final ResourceReference rr = r.next();
+            ret.add(new Entry<String, IResource>() {
 
-		catalog.put(resource.getUrn(), resource);
-		IResource retrieved = catalog.get(resource.getUrn());
-		System.out.println("Retrieved: " + retrieved);
-	}
+                @Override
+                public String getKey() {
+                    return rr.getUrn();
+                }
 
-	@Override
-	public void clearOnly(Object... objects) {
-		if (objects != null) {
-			for (Object object : objects) {
-				if (object instanceof IProject) {
-					resources.remove(eq("projectName", ((IProject)object).getName()));
-				} else if (object instanceof IResource) {
-					resources.remove(eq("urn", ((IResource)object).getUrn()));
-				} else if (object instanceof String) {
-					resources.remove(eq("urn", (String)object));
-				} else {
-					throw new IllegalArgumentException("cannot remove resources corresponding to selector " + object);
-				}
-			}
-		}
-		
-		db.commit();
-	}
+                @Override
+                public IResource getValue() {
+                    return new Resource(rr);
+                }
+
+                @Override
+                public IResource setValue(IResource value) {
+                    put(value.getUrn(), value);
+                    return new Resource(rr);
+                }
+            });
+        }
+        return ret;
+    }
+
+    public static void main(String args[]) {
+
+        ResourceCatalog catalog = new ResourceCatalog("test");
+        IResource resource = new ResourceBuilder().withResourceVersion(Version.getCurrent()).withAdapterType("wcs")
+                .withGeometry(Geometry.empty()).build("zio:cane:test:hostia");
+
+        catalog.put(resource.getUrn(), resource);
+        IResource retrieved = catalog.get(resource.getUrn());
+        System.out.println("Retrieved: " + retrieved);
+    }
+
+    @Override
+    public void clearOnly(Object... objects) {
+        if (objects != null) {
+            for (Object object : objects) {
+                if (object instanceof IProject) {
+                    resources.remove(eq("projectName", ((IProject) object).getName()));
+                } else if (object instanceof IResource) {
+                    resources.remove(eq("urn", ((IResource) object).getUrn()));
+                } else if (object instanceof String) {
+                    resources.remove(eq("urn", (String) object));
+                } else {
+                    throw new IllegalArgumentException("cannot remove resources corresponding to selector " + object);
+                }
+            }
+        }
+
+        db.commit();
+    }
 
 }

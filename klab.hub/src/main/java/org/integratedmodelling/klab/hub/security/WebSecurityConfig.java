@@ -19,7 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -49,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     protected PublicKey publicKey;
 
-//    @Autowired
-//    TokenHeaderProcessingFilter tokenHeaderProcessingFilter;
+    //    @Autowired
+    //    TokenHeaderProcessingFilter tokenHeaderProcessingFilter;
 
     /**
      * this is necessary so that AuthenticationManager injection points can be populated.
@@ -67,56 +66,56 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
         http.csrf().disable();
 
-//        logger.info("HTTP config: configuring token header authentication filter...");
-//        http.addFilterBefore(tokenHeaderProcessingFilter, UsernamePasswordAuthenticationFilter.class);
+        //        logger.info("HTTP config: configuring token header authentication filter...");
+        //        http.addFilterBefore(tokenHeaderProcessingFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-//    public abstract Collection<UserData> getInitialUsers();
-//
-//    public abstract String getIssuer();
+    //    public abstract Collection<UserData> getInitialUsers();
+    //
+    //    public abstract String getIssuer();
 
-//    /**
-//     * A map of issuer > URL
-//     * (where issuer is identical to what would be returned in the 'iss' claim of a JWT token)
-//     * for all partner authentication issuers that have been approved by this node
-//     */
-//    public abstract Map<String, String> getJwksEndpointsByIssuer();
-//
-//    public Key getJwtPrivateKey() {
-//        if (privateKey == null) {
-//            try {
-//                loadPrivateKey();
-//            } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException | URISyntaxException e) {
-//                String msg = "Failed to load private key";
-//                logger.error(msg, e);
-//                throw new CorruptOrBadDataException(msg, e);
-//            }
-//        }
-//        return privateKey;
-//    }
-//
-//    public abstract String getJwtPrivateKeyId();
-//
-//    public PublicKey getJwtPublicKey() {
-//        if (publicKey == null) {
-//            try {
-//                loadPublicKey();
-//            } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException | URISyntaxException e) {
-//                String msg = "Failed to load public key";
-//                logger.error(msg, e);
-//                throw new CorruptOrBadDataException(msg, e);
-//            }
-//        }
-//        return publicKey;
-//    }
+    //    /**
+    //     * A map of issuer > URL
+    //     * (where issuer is identical to what would be returned in the 'iss' claim of a JWT token)
+    //     * for all partner authentication issuers that have been approved by this node
+    //     */
+    //    public abstract Map<String, String> getJwksEndpointsByIssuer();
+    //
+    //    public Key getJwtPrivateKey() {
+    //        if (privateKey == null) {
+    //            try {
+    //                loadPrivateKey();
+    //            } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException | URISyntaxException e) {
+    //                String msg = "Failed to load private key";
+    //                logger.error(msg, e);
+    //                throw new CorruptOrBadDataException(msg, e);
+    //            }
+    //        }
+    //        return privateKey;
+    //    }
+    //
+    //    public abstract String getJwtPrivateKeyId();
+    //
+    //    public PublicKey getJwtPublicKey() {
+    //        if (publicKey == null) {
+    //            try {
+    //                loadPublicKey();
+    //            } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException | URISyntaxException e) {
+    //                String msg = "Failed to load public key";
+    //                logger.error(msg, e);
+    //                throw new CorruptOrBadDataException(msg, e);
+    //            }
+    //        }
+    //        return publicKey;
+    //    }
 
-//    public Role getMappedRole(String role) {
-//        return null;
-//    }
-//
-//    protected abstract void loadPrivateKey()
-//            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, URISyntaxException;
-//
-//    protected abstract void loadPublicKey()
-//            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, URISyntaxException;
+    //    public Role getMappedRole(String role) {
+    //        return null;
+    //    }
+    //
+    //    protected abstract void loadPrivateKey()
+    //            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, URISyntaxException;
+    //
+    //    protected abstract void loadPublicKey()
+    //            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, URISyntaxException;
 }

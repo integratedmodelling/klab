@@ -7,21 +7,21 @@ import org.junit.Test;
 
 public class LocalResourceTests {
 
-	static Engine engine;
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		engine = SetupResources.startAndLoad(false);
-	}
+    static Engine engine;
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		engine.stop();
-	}
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        engine = SetupResources.startAndLoad(false);
+    }
 
-	@Test
-	public void testWcs1() throws Exception {
-		engine.run(getClass().getClassLoader().getResource("kim.data.local/test1.kim")).get();
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        engine.stop();
+    }
+
+    @Test
+    public void testWcs1() throws Exception {
+        engine.run(getClass().getClassLoader().getResource("kim.data.local/test1.kim")).get();
+    }
 
 }

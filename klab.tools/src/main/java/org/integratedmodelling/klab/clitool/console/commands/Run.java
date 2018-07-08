@@ -16,93 +16,93 @@ import org.reflections.scanners.ResourcesScanner;
 
 public class Run implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+    @Override
+    public Object execute(IServiceCall call, ISession session) throws Exception {
 
-		List<?> arguments = call.getParameters().get("arguments", List.class);
-		String visProp = System.getProperty("visualize");
+        List<?> arguments = call.getParameters().get("arguments", List.class);
+        String visProp = System.getProperty("visualize");
 
-		if (arguments.size() > 0 && arguments.get(0).toString().equals("demo")) {
-			if (arguments.size() == 1) {
-				String ret = "";
-				for (String test : new Reflections("kim.demos", new ResourcesScanner())
-						.getResources(Pattern.compile(".*\\.kim"))) {
-					if (test.endsWith(".kim")) {
-						ret += (ret.isEmpty() ? "" : "\n") + "   " + MiscUtilities.getURLBaseName(test) + " (" + test
-								+ ")";
-					}
-				}
-				return "Available demos:\n" + ret;
-			} else {
-				String ret = "";
-				for (int i = 1; i < arguments.size(); i++) {
+        if (arguments.size() > 0 && arguments.get(0).toString().equals("demo")) {
+            if (arguments.size() == 1) {
+                String ret = "";
+                for (String test : new Reflections("kim.demos", new ResourcesScanner())
+                        .getResources(Pattern.compile(".*\\.kim"))) {
+                    if (test.endsWith(".kim")) {
+                        ret += (ret.isEmpty() ? "" : "\n") + "   " + MiscUtilities.getURLBaseName(test) + " (" + test
+                                + ")";
+                    }
+                }
+                return "Available demos:\n" + ret;
+            } else {
+                String ret = "";
+                for (int i = 1; i < arguments.size(); i++) {
 
-					String arg = arguments.get(i).toString();
+                    String arg = arguments.get(i).toString();
 
-					if (!arg.endsWith(".kim")) {
-						arg += ".kim";
-					}
+                    if (!arg.endsWith(".kim")) {
+                        arg += ".kim";
+                    }
 
-					URL url = getClass().getClassLoader().getResource("kim.demos/" + arg);
+                    URL url = getClass().getClassLoader().getResource("kim.demos/" + arg);
 
-					if (call.getParameters().get("visualize", false)) {
-						System.setProperty("visualize", "true");
-						System.setProperty("waitForKey", "false");
-					}
+                    if (call.getParameters().get("visualize", false)) {
+                        System.setProperty("visualize", "true");
+                        System.setProperty("waitForKey", "false");
+                    }
 
-					String uname = MiscUtilities.getURLBaseName(url.toString());
-					ret += (ret.isEmpty() ? "" : "\n") + "[S " + session.getId() + "] " + uname + " -> "
-							+ session.run(url).get();
+                    String uname = MiscUtilities.getURLBaseName(url.toString());
+                    ret += (ret.isEmpty() ? "" : "\n") + "[S " + session.getId() + "] " + uname + " -> "
+                            + session.run(url).get();
 
-					if (call.getParameters().get("visualize", false)) {
-						System.clearProperty("waitForKey");
-						if (visProp == null) {
-							System.clearProperty("visualize");
-						} else {
-							System.setProperty("visualize", visProp);
-						}
-					}
-				}
-				return ret;
-			}
-		}
+                    if (call.getParameters().get("visualize", false)) {
+                        System.clearProperty("waitForKey");
+                        if (visProp == null) {
+                            System.clearProperty("visualize");
+                        } else {
+                            System.setProperty("visualize", visProp);
+                        }
+                    }
+                }
+                return ret;
+            }
+        }
 
-		String ret = "";
-		for (Object resource : arguments) {
+        String ret = "";
+        for (Object resource : arguments) {
 
-			URL url = null;
-			if (resource.toString().contains("://")) {
-				url = new URL(resource.toString());
-			} else {
-				File file = Klab.INSTANCE.resolveFile(resource.toString());
-				if (file != null) {
-					url = file.toURI().toURL();
-				} else {
-					throw new KlabIOException("file " + resource + " was not found");
-				}
-			}
+            URL url = null;
+            if (resource.toString().contains("://")) {
+                url = new URL(resource.toString());
+            } else {
+                File file = Klab.INSTANCE.resolveFile(resource.toString());
+                if (file != null) {
+                    url = file.toURI().toURL();
+                } else {
+                    throw new KlabIOException("file " + resource + " was not found");
+                }
+            }
 
-			if (url != null) {
+            if (url != null) {
 
-				if (call.getParameters().get("visualize", false)) {
-					System.setProperty("waitForKey", "false");
-					System.setProperty("visualize", "true");
-				}
+                if (call.getParameters().get("visualize", false)) {
+                    System.setProperty("waitForKey", "false");
+                    System.setProperty("visualize", "true");
+                }
 
-				String uname = MiscUtilities.getURLBaseName(url.toString());
-				ret += "[S " + session.getId() + "] " + uname + " -> " + session.run(url).get();
+                String uname = MiscUtilities.getURLBaseName(url.toString());
+                ret += "[S " + session.getId() + "] " + uname + " -> " + session.run(url).get();
 
-				if (call.getParameters().get("visualize", false)) {
-					System.clearProperty("waitForKey");
-					if (visProp == null) {
-						System.clearProperty("visualize");
-					} else {
-						System.setProperty("visualize", visProp);
-					}
-				}
-			}
-		}
-		return ret;
-	}
+                if (call.getParameters().get("visualize", false)) {
+                    System.clearProperty("waitForKey");
+                    if (visProp == null) {
+                        System.clearProperty("visualize");
+                    } else {
+                        System.setProperty("visualize", visProp);
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
 }

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class Modeler {
 
     Engine engine;
-    
+
     public void run(String[] args) {
         EngineStartupOptions options = new EngineStartupOptions();
         options.setCertificateResource("testengine.cert");
@@ -34,7 +34,7 @@ public class Modeler {
         engine = Engine.start(options);
         SpringApplication.run(Modeler.class, options.getArguments());
     }
-    
+
     @PreDestroy
     public void shutdown() {
         engine.stop();

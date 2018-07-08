@@ -12,40 +12,39 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 public class LocalData implements IKlabData {
 
-	IState state;
-	IDirectObservation object;
-	List<INotification> notifications = new ArrayList<>();
-	boolean error = false;
-	
-	public LocalData(LocalDataBuilder builder) {
-		if (builder.state != null) {
-			this.state = builder.state;
-		} 
-		if (builder.observation != null) {
-			this.object = builder.observation;
-		}
-		for (INotification notification : builder.notifications) {
-			if (notification.getLevel().equals(Level.SEVERE)) {
-				error = true;
-			}
-			notifications.add(notification);
-		}
-	}
-	
-	@Override
-	public List<INotification> getNotifications() {
-		return notifications;
-	}
+    IState state;
+    IDirectObservation object;
+    List<INotification> notifications = new ArrayList<>();
+    boolean error = false;
 
-	@Override
-	public IArtifact getArtifact() {
-		return state == null ? object : state;
-	}
+    public LocalData(LocalDataBuilder builder) {
+        if (builder.state != null) {
+            this.state = builder.state;
+        }
+        if (builder.observation != null) {
+            this.object = builder.observation;
+        }
+        for (INotification notification : builder.notifications) {
+            if (notification.getLevel().equals(Level.SEVERE)) {
+                error = true;
+            }
+            notifications.add(notification);
+        }
+    }
 
-	@Override
-	public boolean hasErrors() {
-		return error;
-	}
+    @Override
+    public List<INotification> getNotifications() {
+        return notifications;
+    }
 
-	
+    @Override
+    public IArtifact getArtifact() {
+        return state == null ? object : state;
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return error;
+    }
+
 }

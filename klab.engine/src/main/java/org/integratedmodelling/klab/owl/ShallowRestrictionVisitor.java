@@ -26,14 +26,13 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
  * 
  * @author ferdinando.villa
  */
-public class ShallowRestrictionVisitor
-        extends OWLClassExpressionVisitorAdapter {
+public class ShallowRestrictionVisitor extends OWLClassExpressionVisitorAdapter {
 
-    private Set<OWLOntology>     onts;
-    private Set<OWLClass>        processedClasses = new HashSet<>();
-    private boolean              done             = false;
-    private OWLEntity            property;
-    private Collection<IConcept> result           = null;
+    private Set<OWLOntology> onts;
+    private Set<OWLClass> processedClasses = new HashSet<>();
+    private boolean done = false;
+    private OWLEntity property;
+    private Collection<IConcept> result = null;
 
     public Collection<IConcept> getResult() {
         return result == null ? new HashSet<>() : result;

@@ -31,113 +31,115 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression {
 
-	static final public String FUNCTION_ID = "klab.runtime.exec";
+    static final public String FUNCTION_ID = "klab.runtime.exec";
 
-	IExpression expression = null;
-	IExpression condition = null;
-	IGeometry geometry = null;
-	boolean isScalar;
+    IExpression expression = null;
+    IExpression condition = null;
+    IGeometry geometry = null;
+    boolean isScalar;
 
-	// don't remove - only used as expression
-	public ExpressionResolver() {
-	}
+    // don't remove - only used as expression
+    public ExpressionResolver() {
+    }
 
-	public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context) {
-		this.geometry = context.getScale();
-		this.expression = descriptor.compile();
-		if (condition != null) {
-			this.condition = condition.compile();
-		}
-	}
+    public ExpressionResolver(Descriptor descriptor,
+            Descriptor condition,
+            IParameters<String> parameters,
+            IComputationContext context) {
+        this.geometry = context.getScale();
+        this.expression = descriptor.compile();
+        if (condition != null) {
+            this.condition = condition.compile();
+        }
+    }
 
-	public static IServiceCall getServiceCall(IComputableResource resource) {
+    public static IServiceCall getServiceCall(IComputableResource resource) {
 
-		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
-		ret.getParameters().put("code", resource.getExpression());
-		if (resource.getCondition().isPresent()) {
-			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition",
-					resource.getCondition().get());
-		}
-		return ret;
-	}
+        IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
+        ret.getParameters().put("code", resource.getExpression());
+        if (resource.getCondition().isPresent()) {
+            ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition",
+                    resource.getCondition().get());
+        }
+        return ret;
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+    @Override
+    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 
-		ILanguageProcessor processor = Extensions.INSTANCE
-				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
+        ILanguageProcessor processor = Extensions.INSTANCE
+                .getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		Descriptor descriptor = processor.describe(parameters.get("code", String.class), context);
-		Descriptor condition = null;
-		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
-			String condCode = parameters.get("ifcondition", String.class);
-			if (condCode == null) {
-				condCode = processor.negate(parameters.get("unlesscondition", String.class));
-			}
-			condition = processor.describe(condCode, context);
-		}
+        Descriptor descriptor = processor.describe(parameters.get("code", String.class), context);
+        Descriptor condition = null;
+        if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
+            String condCode = parameters.get("ifcondition", String.class);
+            if (condCode == null) {
+                condCode = processor.negate(parameters.get("unlesscondition", String.class));
+            }
+            condition = processor.describe(condCode, context);
+        }
 
-		/**
-		 * If we're computing a quality and there is any scalar usage of the known
-		 * non-scalar quantities, create a distributed state resolver.
-		 */
-		boolean scalar = false;
-		if (context.getArtifactType() == Type.QUALITY) {
-			Collection<String> distributedStateIds = getDistributedStateIds(context);
-			scalar = descriptor.isScalar(distributedStateIds);
-			if (!scalar && condition != null) {
-				scalar = condition.isScalar(distributedStateIds);
-			}
-		}
+        /**
+         * If we're computing a quality and there is any scalar usage of the known
+         * non-scalar quantities, create a distributed state resolver.
+         */
+        boolean scalar = false;
+        if (context.getArtifactType() == Type.QUALITY) {
+            Collection<String> distributedStateIds = getDistributedStateIds(context);
+            scalar = descriptor.isScalar(distributedStateIds);
+            if (!scalar && condition != null) {
+                scalar = condition.isScalar(distributedStateIds);
+            }
+        }
 
-		if (scalar) {
-			return new ExpressionStateResolver(descriptor, condition, parameters, context);
-		}
+        if (scalar) {
+            return new ExpressionStateResolver(descriptor, condition, parameters, context);
+        }
 
-		/**
-		 * otherwise just a single-shot expression resolver
-		 */
-		return new ExpressionResolver(descriptor, condition, parameters, context);
-	}
+        /**
+         * otherwise just a single-shot expression resolver
+         */
+        return new ExpressionResolver(descriptor, condition, parameters, context);
+    }
 
-	private Collection<String> getDistributedStateIds(IComputationContext context) {
-		Set<String> ret = new HashSet<>();
-		for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
-			if (!state.getSecond().isConstant()) {
-				ret.add(state.getFirst());
-			}
-		}
-		return ret;
-	}
+    private Collection<String> getDistributedStateIds(IComputationContext context) {
+        Set<String> ret = new HashSet<>();
+        for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
+            if (!state.getSecond().isConstant()) {
+                ret.add(state.getFirst());
+            }
+        }
+        return ret;
+    }
 
-	@Override
-	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+    @Override
+    public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
 
-		boolean ok = true;
-		if (condition != null) {
-			Object cond = condition.eval(context, context);
-			ok = cond instanceof Boolean && ((Boolean) cond);
-		}
-		if (ok) {
-			Object o = expression.eval(context, context);
-			if (o instanceof IDataArtifact) {
-				ret = (IDataArtifact) o;
-			}
-		}
-		return ret;
-	}
+        boolean ok = true;
+        if (condition != null) {
+            Object cond = condition.eval(context, context);
+            ok = cond instanceof Boolean && ((Boolean) cond);
+        }
+        if (ok) {
+            Object o = expression.eval(context, context);
+            if (o instanceof IDataArtifact) {
+                ret = (IDataArtifact) o;
+            }
+        }
+        return ret;
+    }
 
-	@Override
-	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IGeometry getGeometry() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		// we can't really know
-		return IArtifact.Type.VALUE;
-	}
+    @Override
+    public IArtifact.Type getType() {
+        // we can't really know
+        return IArtifact.Type.VALUE;
+    }
 
 }

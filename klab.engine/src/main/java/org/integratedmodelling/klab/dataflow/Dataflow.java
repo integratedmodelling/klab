@@ -38,123 +38,123 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
-	String description;
-	private DirectObservation context;
-	IResolutionScope scope;
+    String description;
+    private DirectObservation context;
+    IResolutionScope scope;
 
-	@Override
-	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
+    @Override
+    public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
-		if (actuators.size() == 0) {
-			return Artifact.empty();
-		}
+        if (actuators.size() == 0) {
+            return Artifact.empty();
+        }
 
-		/*
-		 * Children at the dataflow level run in parallel, so have the runtime start
-		 * futures for each child and chain the results when they come.
-		 */
-		IArtifact ret = null;
-		for (IActuator actuator : actuators) {
-			try {
+        /*
+         * Children at the dataflow level run in parallel, so have the runtime start
+         * futures for each child and chain the results when they come.
+         */
+        IArtifact ret = null;
+        for (IActuator actuator : actuators) {
+            try {
 
-				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor)
-						.get();
+                IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor)
+                        .get();
 
-				if (ret == null) {
-					ret = data;
-				} else {
-					((ObservedArtifact) ret).chain(data);
-				}
-			} catch (InterruptedException e) {
-				return null;
-			} catch (ExecutionException e) {
-				throw new KlabContextualizationException(e);
-			}
-		}
+                if (ret == null) {
+                    ret = data;
+                } else {
+                    ((ObservedArtifact) ret).chain(data);
+                }
+            } catch (InterruptedException e) {
+                return null;
+            } catch (ExecutionException e) {
+                throw new KlabContextualizationException(e);
+            }
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	@Override
-	protected String encode(int offset) {
+    @Override
+    protected String encode(int offset) {
 
-		String ret = "";
+        String ret = "";
 
-		if (offset == 0) {
-			ret += "@klab " + Version.CURRENT + "\n";
-			// UNCOMMENT IF SEMANTICS MUST BE OUTPUT BY ACTUATOR
-			// ret += "@worldview " + Workspaces.INSTANCE.getWorldview().getName() + "\n";
-			ret += "@dataflow " + getName() + "\n";
-			ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
-			if (getContext() != null) {
-				ret += "@context " + getContext().getUrn() + "\n";
-			}
-			if (coverage != null && coverage.getExtentCount() > 0) {
-				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
-				if (!scaleSpecs.isEmpty()) {
-					ret += "@coverage";
-					for (int i = 0; i < scaleSpecs.size(); i++) {
-						ret += " " + scaleSpecs.get(i).getSourceCode()
-								+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
-					}
-					ret += "\n";
-				}
-			}
-			ret += "\n";
-		}
+        if (offset == 0) {
+            ret += "@klab " + Version.CURRENT + "\n";
+            // UNCOMMENT IF SEMANTICS MUST BE OUTPUT BY ACTUATOR
+            // ret += "@worldview " + Workspaces.INSTANCE.getWorldview().getName() + "\n";
+            ret += "@dataflow " + getName() + "\n";
+            ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
+            if (getContext() != null) {
+                ret += "@context " + getContext().getUrn() + "\n";
+            }
+            if (coverage != null && coverage.getExtentCount() > 0) {
+                List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
+                if (!scaleSpecs.isEmpty()) {
+                    ret += "@coverage";
+                    for (int i = 0; i < scaleSpecs.size(); i++) {
+                        ret += " " + scaleSpecs.get(i).getSourceCode()
+                                + ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+                    }
+                    ret += "\n";
+                }
+            }
+            ret += "\n";
+        }
 
-		for (IActuator actuator : actuators) {
-			ret += ((Actuator) actuator).encode(offset) + "\n";
-		}
+        for (IActuator actuator : actuators) {
+            ret += ((Actuator) actuator).encode(offset) + "\n";
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	/**
-	 * Return the source code of the dataflow.
-	 * 
-	 * @return the source code as a string.
-	 */
-	@Override
-	public String getKdlCode() {
-		return encode(0);
-	}
+    /**
+     * Return the source code of the dataflow.
+     * 
+     * @return the source code as a string.
+     */
+    @Override
+    public String getKdlCode() {
+        return encode(0);
+    }
 
-	/**
-	 * Called by tasks
-	 * 
-	 * @param name
-	 * @param description
-	 */
-	public void setName(String name, String description) {
-		this.name = name;
-		this.description = description;
-	}
+    /**
+     * Called by tasks
+     * 
+     * @param name
+     * @param description
+     */
+    public void setName(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
-	@Override
-	public ICoverage getCoverage() {
-		return scope.getCoverage();
-	}
+    @Override
+    public ICoverage getCoverage() {
+        return scope.getCoverage();
+    }
 
-	public DirectObservation getContext() {
-		return context;
-	}
+    public DirectObservation getContext() {
+        return context;
+    }
 
-	public void setContext(DirectObservation context) {
-		this.context = context;
-	}
+    public void setContext(DirectObservation context) {
+        this.context = context;
+    }
 
-	public void setResolutionScope(IResolutionScope scope) {
-		this.scope = scope;
-	}
+    public void setResolutionScope(IResolutionScope scope) {
+        this.scope = scope;
+    }
 
-	public static IDataflow<IArtifact> empty() {
-		return new Dataflow();
-	}
+    public static IDataflow<IArtifact> empty() {
+        return new Dataflow();
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return actuators.size() == 0;
-	}
+    @Override
+    public boolean isEmpty() {
+        return actuators.size() == 0;
+    }
 
 }

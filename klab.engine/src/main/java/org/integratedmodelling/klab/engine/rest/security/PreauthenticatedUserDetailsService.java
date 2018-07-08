@@ -58,7 +58,7 @@ public class PreauthenticatedUserDetailsService implements UserDetailsService {
         for (String role : roles) {
             authorities.add(new SimpleGrantedAuthority(role));
         }
-        
+
         // anonymous or local user
         return new KlabUser(username, NameGenerator.newName(), authorities);
     }

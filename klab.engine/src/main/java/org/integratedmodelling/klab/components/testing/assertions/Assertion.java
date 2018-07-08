@@ -13,6 +13,6 @@ import org.integratedmodelling.klab.utils.Parameters;
  */
 public interface Assertion {
 
-  public boolean evaluate(ISubject context, Parameters<String> parameters) throws Exception;
-  
+    public boolean evaluate(ISubject context, Parameters<String> parameters) throws Exception;
+
 }

@@ -46,206 +46,206 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public enum Observations implements IObservationService {
 
-	INSTANCE;
+    INSTANCE;
 
-	@Override
-	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
-		return Resolver.INSTANCE.resolve(urn, session, scenarios);
-	}
+    @Override
+    public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
+        return Resolver.INSTANCE.resolve(urn, session, scenarios);
+    }
 
-	@Override
-	public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
-		return Resolver.INSTANCE.resolve(urn, context, scenarios);
-	}
+    @Override
+    public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
+        return Resolver.INSTANCE.resolve(urn, context, scenarios);
+    }
 
-	@Override
-	public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
-		// TODO remove all artifacts from local kbox
-	}
+    @Override
+    public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
+        // TODO remove all artifacts from local kbox
+    }
 
-	@Override
-	public void index(IObserver observer, IMonitor monitor) throws KlabException {
-		// TODO
-	}
+    @Override
+    public void index(IObserver observer, IMonitor monitor) throws KlabException {
+        // TODO
+    }
 
-	@Override
-	public IState getStateView(IState state, IScale scale, IComputationContext context) {
-		return new RescalingState(state, (Scale) scale, (IRuntimeContext) context);
-	}
+    @Override
+    public IState getStateView(IState state, IScale scale, IComputationContext context) {
+        return new RescalingState(state, (Scale) scale, (IRuntimeContext) context);
+    }
 
-	/**
-	 * Return the summary for the data in a state, computing it if necessary.
-	 * 
-	 * @param state
-	 *            a state
-	 * @param locator
-	 *            the subsetting locator for the wanted data, or null if global
-	 *            summaries are required.
-	 * @return the state summary
-	 */
-	public StateSummary getStateSummary(IState state, ILocator locator) {
+    /**
+     * Return the summary for the data in a state, computing it if necessary.
+     * 
+     * @param state
+     *            a state
+     * @param locator
+     *            the subsetting locator for the wanted data, or null if global
+     *            summaries are required.
+     * @return the state summary
+     */
+    public StateSummary getStateSummary(IState state, ILocator locator) {
 
-//		if (state.getMetadata().containsKey(State.STATE_SUMMARY_METADATA_KEY + locator)) {
-//			return state.getMetadata().get(State.STATE_SUMMARY_METADATA_KEY, StateSummary.class);
-//		}
+        //		if (state.getMetadata().containsKey(State.STATE_SUMMARY_METADATA_KEY + locator)) {
+        //			return state.getMetadata().get(State.STATE_SUMMARY_METADATA_KEY, StateSummary.class);
+        //		}
 
-		StateSummary ret = computeStateSummary(state, locator);
+        StateSummary ret = computeStateSummary(state, locator);
 
-//		state.getMetadata().put(State.STATE_SUMMARY_METADATA_KEY + locator, ret);
+        //		state.getMetadata().put(State.STATE_SUMMARY_METADATA_KEY + locator, ret);
 
-		return ret;
-	}
+        return ret;
+    }
 
-	private StateSummary computeStateSummary(IState state, ILocator locator) {
+    private StateSummary computeStateSummary(IState state, ILocator locator) {
 
-		StateSummary ret = new StateSummary();
+        StateSummary ret = new StateSummary();
 
-		int ndata = 0;
-		int nndat = 0;
+        int ndata = 0;
+        int nndat = 0;
 
-		SummaryStatistics statistics = new SummaryStatistics();
+        SummaryStatistics statistics = new SummaryStatistics();
 
-		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
-			Double d = it.next();
-			if (d != null) {
-				ndata++;
-				statistics.addValue(d);
-			} else {
-				nndat++;
-			}
-		}
+        for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
+            Double d = it.next();
+            if (d != null) {
+                ndata++;
+                statistics.addValue(d);
+            } else {
+                nndat++;
+            }
+        }
 
-		ret.setNodataPercentage((double) nndat / (double) ndata);
-		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
-		ret.setValueCount(ndata + nndat);
+        ret.setNodataPercentage((double) nndat / (double) ndata);
+        ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
+        ret.setValueCount(ndata + nndat);
 
-		if (ret.getNodataPercentage() > 0) {
-			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
-					state.getDataKey() == null ? 10 : state.getDataKey().size());
-			for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
-				Double d = it.next();
-				if (d != null) {
-					histogram.add(d);
-				}
-			}
-			ret.setHistogram(histogram.build());
-		}
+        if (ret.getNodataPercentage() > 0) {
+            Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
+                    state.getDataKey() == null ? 10 : state.getDataKey().size());
+            for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
+                Double d = it.next();
+                if (d != null) {
+                    histogram.add(d);
+                }
+            }
+            ret.setHistogram(histogram.build());
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	/*
-	 * Non-API - sync namespace. TODO check equivalent in Models.
-	 */
-	public void registerNamespace(Namespace ns, Monitor monitor) {
-		// TODO Auto-generated method stub
-	}
+    /*
+     * Non-API - sync namespace. TODO check equivalent in Models.
+     */
+    public void registerNamespace(Namespace ns, Monitor monitor) {
+        // TODO Auto-generated method stub
+    }
 
-	public static Aggregation getAggregator(IObservable observable) {
-		Aggregation ret = Aggregation.MAJORITY;
-		if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
-			ret = Aggregation.AVERAGE;
-			if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
-				ret = Aggregation.SUM;
-			}
-		}
-		return ret;
-	}
+    public static Aggregation getAggregator(IObservable observable) {
+        Aggregation ret = Aggregation.MAJORITY;
+        if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
+            ret = Aggregation.AVERAGE;
+            if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
+                ret = Aggregation.SUM;
+            }
+        }
+        return ret;
+    }
 
-	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel) {
+    public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
+            ILocator locator, int childLevel) {
 
-		ObservationReference ret = new ObservationReference();
+        ObservationReference ret = new ObservationReference();
 
-		if (observation instanceof ISubject) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.SUBJECT);
-		} else if (observation instanceof IState) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.STATE);
-		} else if (observation instanceof IProcess) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.PROCESS);
-		} else if (observation instanceof IEvent) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.EVENT);
-		} else if (observation instanceof IConfiguration) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.CONFIGURATION);
-		} else if (observation instanceof IRelationship) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.RELATIONSHIP);
-		}
-		
-		if (locator != null) {
-			observation = observation.at(locator);
-		}
+        if (observation instanceof ISubject) {
+            ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.SUBJECT);
+        } else if (observation instanceof IState) {
+            ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.STATE);
+        } else if (observation instanceof IProcess) {
+            ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.PROCESS);
+        } else if (observation instanceof IEvent) {
+            ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.EVENT);
+        } else if (observation instanceof IConfiguration) {
+            ret.setObservationType(
+                    org.integratedmodelling.klab.rest.ObservationReference.ObservationType.CONFIGURATION);
+        } else if (observation instanceof IRelationship) {
+            ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.RELATIONSHIP);
+        }
 
-		ret.setId(observation.getId());
-		ret.setUrn(observation.getUrn());
-		ret.setParentId(parent == null ? null : parent.getId());
-		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-				: observation.getObservable().getLocalName());
-		ret.setObservable(observation.getObservable().getType().getDefinition());
-		ret.setSiblingCount(observation.groupSize());
-		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
+        if (locator != null) {
+            observation = observation.at(locator);
+        }
 
-		ISpace space = ((IScale) observation.getGeometry()).getSpace();
-		ITime time = ((IScale) observation.getGeometry()).getTime();
+        ret.setId(observation.getId());
+        ret.setUrn(observation.getUrn());
+        ret.setParentId(parent == null ? null : parent.getId());
+        ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
+                : observation.getObservable().getLocalName());
+        ret.setObservable(observation.getObservable().getType().getDefinition());
+        ret.setSiblingCount(observation.groupSize());
+        ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
-		// fill in spatio/temporal info and mode of visualization
-		if (space != null) {
+        ISpace space = ((IScale) observation.getGeometry()).getSpace();
+        ITime time = ((IScale) observation.getGeometry()).getTime();
 
-			ret.setShapeType(space.getShape().getGeometryType());
+        // fill in spatio/temporal info and mode of visualization
+        if (space != null) {
 
-			String shape = space.getShape().toString();
-			String pcode = null;
-			if (shape.startsWith("EPSG:") || shape.startsWith("urn:")) {
-				int n = shape.indexOf(' ');
-				pcode = shape.substring(0, n);
-				shape = shape.substring(n + 1);
-			}
-			ret.setEncodedShape(shape);
-			ret.setSpatialProjection(pcode);
+            ret.setShapeType(space.getShape().getGeometryType());
 
-			GeometryType gtype = GeometryType.SHAPE;
-			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
-				gtype = GeometryType.RASTER;
-			}
-			ret.getGeometryTypes().add(gtype);
-		}
+            String shape = space.getShape().toString();
+            String pcode = null;
+            if (shape.startsWith("EPSG:") || shape.startsWith("urn:")) {
+                int n = shape.indexOf(' ');
+                pcode = shape.substring(0, n);
+                shape = shape.substring(n + 1);
+            }
+            ret.setEncodedShape(shape);
+            ret.setSpatialProjection(pcode);
 
-		if (time != null) {
-			// TODO
-		}
+            GeometryType gtype = GeometryType.SHAPE;
+            if (observation instanceof IState && space.isRegular() && space.size() > 1) {
+                gtype = GeometryType.RASTER;
+            }
+            ret.getGeometryTypes().add(gtype);
+        }
 
-		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
-			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
-				ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
-						childLevel > 0 ? childLevel-- : childLevel));
-			}
-		}
+        if (time != null) {
+            // TODO
+        }
 
-		if (observation instanceof IState && observation.getScale().size() == 1) {
-			ret.setLiteralValue(formatValue(observation.getObservable(),
-					((IState) observation).get(observation.getScale().getLocator(0))));
-		}
+        if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
+            for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
+                ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
+                        childLevel > 0 ? childLevel-- : childLevel));
+            }
+        }
 
-		return ret;
-	}
-	
+        if (observation instanceof IState && observation.getScale().size() == 1) {
+            ret.setLiteralValue(formatValue(observation.getObservable(),
+                    ((IState) observation).get(observation.getScale().getLocator(0))));
+        }
 
-	public String formatValue(IObservable observable, Object object) {
-		
-		if (object instanceof IConcept) {
-			object = Concepts.INSTANCE.getDisplayName((IConcept)object);
-		} else if (object instanceof Number) {
-			object = NumberFormat.getNumberInstance().format(((Number)object).doubleValue());
-		}
+        return ret;
+    }
 
-		String ret = observable.getLocalName() + ": " + object;
-		
-		if (observable.getUnit() != null) {
-			ret += " " + observable.getUnit();
-		} else if (observable.getCurrency() != null) {
-			ret += " " + observable.getCurrency();
-		}
-		
-		return ret;
-	}
+    public String formatValue(IObservable observable, Object object) {
+
+        if (object instanceof IConcept) {
+            object = Concepts.INSTANCE.getDisplayName((IConcept) object);
+        } else if (object instanceof Number) {
+            object = NumberFormat.getNumberInstance().format(((Number) object).doubleValue());
+        }
+
+        String ret = observable.getLocalName() + ": " + object;
+
+        if (observable.getUnit() != null) {
+            ret += " " + observable.getUnit();
+        } else if (observable.getCurrency() != null) {
+            ret += " " + observable.getCurrency();
+        }
+
+        return ret;
+    }
 
 }

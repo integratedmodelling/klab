@@ -23,34 +23,34 @@ import org.springframework.stereotype.Component;
 @Component
 public class EngineDirectoryAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication)
-			throws AuthenticationException {
+    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication)
+            throws AuthenticationException {
 
-		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
-		IEngineUserIdentity user = engine.authenticateUser(new IUserCredentials() {
+        Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
+        IEngineUserIdentity user = engine.authenticateUser(new IUserCredentials() {
 
-			@Override
-			public String getUsername() {
-				return username;
-			}
+            @Override
+            public String getUsername() {
+                return username;
+            }
 
-			@Override
-			public String getPassword() {
-				return authentication.getCredentials().toString();
-			}
-		});
+            @Override
+            public String getPassword() {
+                return authentication.getCredentials().toString();
+            }
+        });
 
-		if (user != null && !(user instanceof UserDetails)) {
-			throw new KlabInternalErrorException(
-					"internal: user was authenticated successfully but is not understandable by the security stack");
-		}
+        if (user != null && !(user instanceof UserDetails)) {
+            throw new KlabInternalErrorException(
+                    "internal: user was authenticated successfully but is not understandable by the security stack");
+        }
 
-		return (UserDetails) user;
-	}
+        return (UserDetails) user;
+    }
 
-	@Override
-	protected void additionalAuthenticationChecks(UserDetails userDetails,
-			UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-		// TODO
-	}
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails,
+            UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        // TODO
+    }
 }
