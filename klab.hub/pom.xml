@@ -18,7 +18,13 @@
 			<artifactId>bcmail-jdk15</artifactId>
 			<version>1.46</version>
 		</dependency>
-
+        <!-- JWT token generation -->
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.6.3</version>
+        </dependency>
+        
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>

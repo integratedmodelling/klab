@@ -3,12 +3,12 @@ package org.integratedmodelling.klab.auth;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
-import org.integratedmodelling.klab.rest.Group;
-import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -116,6 +116,10 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
         return groups;
     }
 
+    public void setToken(String token) {
+    	this.token = token;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.hub.authentication;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -25,6 +27,11 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
+import org.jose4j.lang.JoseException;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +41,10 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AuthenticationManager {
-
-	/**
+	
+    private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
+	
+    /**
 	 * Authenticate an engine certificate. This may be a USER or a PARTNER
 	 * certificate.
 	 * 
@@ -248,8 +257,45 @@ public class AuthenticationManager {
 	 * @return the user identity with local credentials
 	 */
 	public EngineUser authorizeUser(EngineUser user) throws KlabAuthorizationException {
-		// TODO Auto-generated method stub
+		
+	       JwtClaims claims = new JwtClaims();
+	        //        String tokenClass = token.getClass().getSimpleName();
+	        //        if (!tokenClass.equals(DEFAULT_TOKEN_CLASS)) {
+	        //            claims.setStringClaim(JWT_CLAIM_TOKEN_TYPE, tokenClass);
+	        //        }
 
+	        claims.setIssuer(hubReference.getId());
+	        claims.setSubject(user.getUsername());
+
+//	        NumericDate issuedAt = DateTimeUtil.utcLocalToUtcNumeric(DateTimeUtil.utcNow());
+	        claims.setIssuedAtToNow();
+	        claims.setExpirationTimeMinutesInTheFuture(60 * 24 * 10);
+	        //        NumericDate expiration = DateTimeUtil.utcLocalToUtcNumeric(token.getExpiration());
+	        //        claims.setExpirationTime(expiration);
+
+	        claims.setGeneratedJwtId();
+
+	        List<String> roleStrings = new ArrayList<>();
+	        for (String role : user.getGroups()) {
+	            roleStrings.add(role);
+	        }
+	        claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
+
+	        JsonWebSignature jws = new JsonWebSignature();
+	        jws.setPayload(claims.toJson());
+	        jws.setKey(KeyManager.INSTANCE.getPrivateKey());
+	        //        jws.setKeyIdHeaderValue(webSecurityConfig.getJwtPrivateKeyId());
+	        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+	        String token;
+	        try {
+	            token = jws.getCompactSerialization();
+	        } catch (JoseException e) {
+	            token = null;
+	            Logging.INSTANCE
+	                    .error(String.format("Failed to generate JWT token string for user '%s': ", user.getUsername()), e);
+	        }
+
+	        user.setToken(token);
 		return user;
 	}
 
