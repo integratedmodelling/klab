@@ -59,8 +59,8 @@ public enum Urns {
 		return urn.startsWith(LOCAL_URN_PREFIX) || urn.startsWith("local:") || urn.startsWith(LOCAL_FILE_PREFIX);
 	}
 
-	public String getLocalUrn(String resourceId, IProject project) {
-		return LOCAL_URN_PREFIX + /* TODO ADD USER */ project.getName() + ":" + resourceId;
+	public String getLocalUrn(String resourceId, IProject project, String owner) {
+		return "local:" + owner + ":" + project.getName() + ":" + resourceId;
 	}
 
 }

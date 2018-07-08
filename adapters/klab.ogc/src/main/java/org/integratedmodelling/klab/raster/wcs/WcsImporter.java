@@ -43,7 +43,7 @@ public class WcsImporter implements IResourceImporter {
 					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
 
 					if (builder != null) {
-						builder.setResourceId(layer.getIdentifier().toLowerCase());
+						builder.setResourceId(layer.getIdentifier().toLowerCase().replaceAll("__", "."));
 						ret.add(builder);
 					}
 

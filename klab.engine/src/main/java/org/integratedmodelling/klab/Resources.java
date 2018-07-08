@@ -510,9 +510,13 @@ public enum Resources implements IResourceService {
 					}
 				}
 
+				String owner = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(IUserIdentity.class)
+						.getUsername();
+				
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
 						.withProjectName(project.getName()).withParameters(parameters).withAdapterType(adapterType)
-						.withLocalPath(project.getName() + "/resources/" + builder.getResourceId()).build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project));
+						.withLocalPath(project.getName() + "/resources/" + builder.getResourceId())
+						.build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project, owner));
 
 				if (resource != null && !resource.hasErrors()) {
 					getLocalResourceCatalog().put(resource.getUrn(), resource);

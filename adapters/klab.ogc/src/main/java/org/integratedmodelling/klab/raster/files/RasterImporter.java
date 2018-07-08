@@ -26,7 +26,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 			Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
 
 			if (builder != null) {
-				builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase().replaceAll("__", "."));
+				builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase());
 				for (File f : validator.getAllFilesForResource(file)) {
 					builder.addImportedFile(f);
 				}

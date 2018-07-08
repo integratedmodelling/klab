@@ -106,6 +106,8 @@ public class ResourceCatalog implements IResourceCatalog {
 				throw new KlabIOException(e);
 			}
 		}
+		
+		db.commit();
 
 		return ret;
 	}
@@ -113,6 +115,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	public IResource removeDefinition(Object key) {
 		IResource ret = get(key);
 		resources.remove(eq("urn", key));
+		db.commit();
 		return ret;
 	}
 	
@@ -130,6 +133,7 @@ public class ResourceCatalog implements IResourceCatalog {
 				}
 			}
 		}
+		db.commit();
 		return ret;
 	}
 
@@ -155,6 +159,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			}
 		}
 		resources.remove((ObjectFilter) null);
+		db.commit();
 	}
 
 	@Override
@@ -227,6 +232,8 @@ public class ResourceCatalog implements IResourceCatalog {
 				}
 			}
 		}
+		
+		db.commit();
 	}
 
 }
