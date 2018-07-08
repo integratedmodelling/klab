@@ -15,6 +15,12 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!-- JWT token generation -->
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.6.3</version>
+        </dependency>
         <dependency>
             <groupId>org.integratedmodelling</groupId>
             <artifactId>klab.engine</artifactId>
