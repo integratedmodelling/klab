@@ -93,6 +93,8 @@ public class Client extends RestTemplate {
 	ObjectMapper objectMapper;
 	String authToken;
 
+	RestTemplate basicTemplate = new RestTemplate();
+	
 	private static ClientHttpRequestFactory factory;
 
 	public static Client create() {
@@ -143,7 +145,7 @@ public class Client extends RestTemplate {
 	 */
 	public boolean ping(String url) {
 		try {
-			ResponseEntity<Object> response = exchange(url + API.PING, HttpMethod.HEAD,
+			ResponseEntity<Object> response = basicTemplate.exchange(url + "/actuator/health", HttpMethod.GET,
 					new HttpEntity<Object>(null, null), Object.class);
 			return response.getStatusCodeValue() == 200;
 		} catch (Throwable e) {

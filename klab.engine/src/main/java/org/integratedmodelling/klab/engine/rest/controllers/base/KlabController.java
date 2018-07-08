@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import java.security.Principal;
 
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
@@ -31,7 +31,7 @@ public class KlabController {
     @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Capabilities capabilities(Principal user) {
-        return Klab.INSTANCE.getCapabilities(Auth.INSTANCE.getIdentity(user));
+        return Klab.INSTANCE.getCapabilities(Authentication.INSTANCE.getIdentity(user));
     }
 
     @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")

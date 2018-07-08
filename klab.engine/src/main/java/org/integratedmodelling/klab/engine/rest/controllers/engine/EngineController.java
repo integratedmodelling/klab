@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.rest.controllers.engine;
 
 import java.security.Principal;
 
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -33,14 +33,14 @@ public class EngineController {
 	@ResponseBody
 	public AuthorizeSessionResponse openSession(@RequestParam(name = "join") String previousToJoin, Principal principal) {
 
-		IIdentity user = Auth.INSTANCE.getIdentity(principal);
+		IIdentity user = Authentication.INSTANCE.getIdentity(principal);
 		Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
 		if (engine == null) {
 			throw new IllegalAccessError("engine is not present: cannot create a session");
 		}
 
 		String info = null;
-		ISession session = Auth.INSTANCE.getIdentity(previousToJoin, ISession.class);
+		ISession session = Authentication.INSTANCE.getIdentity(previousToJoin, ISession.class);
 		if (session == null) {
 			// TODO must do it for the user that owns the context!
 			session = engine.createSession();
@@ -59,7 +59,7 @@ public class EngineController {
 
 		ISession session = null;
 		Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
-		IIdentity user = Auth.INSTANCE.getIdentity(principal);
+		IIdentity user = Authentication.INSTANCE.getIdentity(principal);
 
 		if (engine == null) {
 			throw new IllegalAccessError("engine is not present: cannot create a session");

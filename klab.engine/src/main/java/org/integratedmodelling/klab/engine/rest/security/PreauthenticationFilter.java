@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.rest.security;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.springframework.http.HttpHeaders;
@@ -15,15 +15,15 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 		String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
 		if (auth != null) {
 		    // send anything already known downstream
-			if (Auth.INSTANCE.getIdentity(auth, IIdentity.class) != null) {
+			if (Authentication.INSTANCE.getIdentity(auth, IIdentity.class) != null) {
 			    return auth;
 			}
 			return null;
 		}
 		if (IPUtils.isLocal(request.getRemoteAddr())) {
-			return Auth.LOCAL_USER_ID;
+			return Authentication.LOCAL_USER_ID;
 		}
-		return Auth.ANONYMOUS_USER_ID;
+		return Authentication.ANONYMOUS_USER_ID;
 	}
 
 	@Override

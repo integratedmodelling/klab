@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.engine.rest.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.auth.KlabUser;
@@ -34,19 +34,19 @@ public class PreauthenticatedUserDetailsService implements UserDetailsService {
 
         boolean authorize = false;
 
-        if (Auth.ANONYMOUS_USER_ID.equals(username)) {
+        if (Authentication.ANONYMOUS_USER_ID.equals(username)) {
             authorize = true;
-        } else if (Auth.LOCAL_USER_ID.equals(username)) {
+        } else if (Authentication.LOCAL_USER_ID.equals(username)) {
             authorize = true;
             roles.add(Roles.ADMIN);
         } else {
-            IIdentity identity = Auth.INSTANCE.getIdentity(username, IIdentity.class);
+            IIdentity identity = Authentication.INSTANCE.getIdentity(username, IIdentity.class);
             // known k.LAB identities are UserDetails and have established roles
             if (identity instanceof UserDetails) {
                 return (UserDetails) identity;
             } else if (identity != null) {
                 throw new KlabInternalErrorException(
-                        "internal error: non-conformant identity in Auth catalog! " + identity);
+                        "internal error: non-conformant identity in Authentication catalog! " + identity);
             }
         }
 

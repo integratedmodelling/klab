@@ -23,7 +23,7 @@ import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Annotations;
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -214,7 +214,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	public Engine(ICertificate certificate) {
 		this.certificate = certificate;
-		this.owner = Auth.INSTANCE.authenticate(certificate);
+		this.owner = Authentication.INSTANCE.authenticate(certificate);
 		Klab.INSTANCE.setRootIdentity(this.owner);
 	}
 
@@ -507,7 +507,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * establish engine authority
 			 */
 			this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
-			Auth.INSTANCE.registerIdentity(this);
+			Authentication.INSTANCE.registerIdentity(this);
 
 			/*
 			 * boot time is now

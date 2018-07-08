@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-public enum Auth implements IAuthenticationService {
+public enum Authentication implements IAuthenticationService {
 
 	/**
 	 * The global instance singleton.
@@ -76,6 +76,8 @@ public enum Auth implements IAuthenticationService {
 	 * privileges.
 	 */
 	public static final String LOCAL_USER_ID = "local";
+
+	private Client client = Client.create();
 
 	/**
 	 * If the partner mentioned in the response bean is already known, return it,
@@ -145,47 +147,54 @@ public enum Auth implements IAuthenticationService {
 	public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
 		IIdentity ret = null;
+		EngineAuthenticationResponse authentication = null;
 
 		if (certificate instanceof AnonymousEngineCertificate) {
 			// no partner, no node, no token, no nothing. REST calls automatically accept
 			// the
 			// anonymous user when secured as Roles.PUBLIC.
-			return new KlabUser(Auth.ANONYMOUS_USER_ID, null);
+			return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
 		}
 
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
+		
 		if (authenticationServer == null) {
-			Logging.INSTANCE.warn("certificate has no hub address: trying a local hub");
+			Logging.INSTANCE.warn("certificate has no hub address");
 			// try local hub, let fail if not active
-			authenticationServer = "http://127.0.0.1:8284/klab";
+			if (client.ping("http://127.0.0.1:8284/klab")) {
+				authenticationServer = "http://127.0.0.1:8284/klab";
+				Logging.INSTANCE.info("local hub is available: trying local authentication");
+			} else {
+				Logging.INSTANCE.warn("local hub unavailable: continuing offline");
+			}
 		}
 
-		Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME) + " with hub "
-				+ authenticationServer);
+		if (authenticationServer != null) {
+			
+			Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
+					+ " with hub " + authenticationServer);
 
-		/*
-		 * Authenticate with server(s). If authentication fails because of a 403,
-		 * invalidate the certificate. If no server can be reached, certificate is valid
-		 * but engine is offline.
-		 */
-		EngineAuthenticationRequest request = new EngineAuthenticationRequest(
-				certificate.getProperty(KlabCertificate.KEY_USERNAME),
-				certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
-				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-				certificate.getProperty(KlabCertificate.KEY_CERTIFICATE),
-				certificate.getLevel());
-		
-		// add email if we have it, so the hub can notify in any case if so configured
-		request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
-		
-		EngineAuthenticationResponse authentication = null;
+			/*
+			 * Authenticate with server(s). If authentication fails because of a 403,
+			 * invalidate the certificate. If no server can be reached, certificate is valid
+			 * but engine is offline.
+			 */
+			EngineAuthenticationRequest request = new EngineAuthenticationRequest(
+					certificate.getProperty(KlabCertificate.KEY_USERNAME),
+					certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
+					certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
+					certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel());
 
-		try {
-			authentication = Client.create().authenticateEngine(authenticationServer, request);
-		} catch (Throwable e) {
-			Logging.INSTANCE.error("authentication failed for user "
-					+ certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
-			// TODO inspect exception; fatal if 403, warn and proceed offline otherwise
+			// add email if we have it, so the hub can notify in any case if so configured
+			request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
+
+			try {
+				authentication = client.authenticateEngine(authenticationServer, request);
+			} catch (Throwable e) {
+				Logging.INSTANCE.error("authentication failed for user "
+						+ certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
+				// TODO inspect exception; fatal if 403, warn and proceed offline otherwise
+			}
 		}
 
 		if (authentication != null) {
@@ -208,14 +217,6 @@ public enum Auth implements IAuthenticationService {
 				Logging.INSTANCE.error("certificate expired on " + expiry + ". Please obtain a new certificate.");
 				return null;
 			}
-		} else {
-
-			/*
-			 * user is offline
-			 */
-			Logging.INSTANCE.error("authentication unsuccessful for "
-					+ certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": continuing offline");
-
 		}
 
 		/*
@@ -227,7 +228,7 @@ public enum Auth implements IAuthenticationService {
 			if (authentication != null) {
 
 				NodeReference hubNode = authentication.getHub();
-				Partner partner = Auth.INSTANCE.requirePartner(hubNode.getPartner());
+				Partner partner = Authentication.INSTANCE.requirePartner(hubNode.getPartner());
 				Node node = new Node(hubNode, partner);
 				node.setOnline(true);
 				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),

@@ -84,7 +84,7 @@ public enum Logging implements ILoggingService {
 			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning, payload));
 		}
 
-		if (Configuration.INSTANCE.getLoggingLevel().intValue() <= Level.WARNING.intValue()) {
+		if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
 			if (warningWriter != null) {
             	warningWriter.accept(payload);
             }
@@ -104,7 +104,7 @@ public enum Logging implements ILoggingService {
 			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
 		}
 
-		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
+		if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
 			if (errorWriter != null) {
             	errorWriter.accept(payload);
             }

@@ -15,7 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
@@ -98,7 +98,7 @@ public class Session implements ISession, UserDetails {
 		this.user = user;
 		this.monitor = ((Monitor) engine.getMonitor()).get(this);
 		this.authorities.add(new SimpleGrantedAuthority(Roles.SESSION));
-		Auth.INSTANCE.registerSession(this);
+		Authentication.INSTANCE.registerSession(this);
 	}
 
 	void touch() {

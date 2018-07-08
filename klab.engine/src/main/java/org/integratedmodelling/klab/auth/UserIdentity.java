@@ -6,7 +6,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.joda.time.DateTime;
@@ -54,7 +54,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
 
     @Override
     public boolean isAnonymous() {
-        return username.equals(Auth.ANONYMOUS_USER_ID);
+        return username.equals(Authentication.ANONYMOUS_USER_ID);
     }
 
     @Override

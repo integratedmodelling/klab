@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 
-import org.integratedmodelling.klab.Auth;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
@@ -145,7 +145,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 		 * specific payload type. If so, turn the payload into that and dispatch it.
 		 */
 
-		IIdentity identity = Auth.INSTANCE.getIdentity(message.getIdentity(), IIdentity.class);
+		IIdentity identity = Authentication.INSTANCE.getIdentity(message.getIdentity(), IIdentity.class);
 		if (identity != null) {
 			dispatchMessage(message, identity);
 		}
