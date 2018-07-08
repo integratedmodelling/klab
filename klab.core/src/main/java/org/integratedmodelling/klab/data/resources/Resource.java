@@ -110,6 +110,7 @@ public class Resource implements IResource {
 		ret.getLocalPaths().addAll(this.localPaths);
 		ret.setResourceTimestamp(this.resourceTimestamp);
 		ret.setProjectName(this.projectName);
+		ret.setType(this.type);
 		
 		for (IResource h : this.history) {
 			ret.getHistory().add(((Resource) h).getReference());

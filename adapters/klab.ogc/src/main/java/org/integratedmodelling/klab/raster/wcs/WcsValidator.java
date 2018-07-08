@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -43,7 +44,7 @@ public class WcsValidator implements IResourceValidator {
 		}
 
 		int band = userData.get("band", 0);
-		
+
 		WCSService service = WcsAdapter.getService(userData.get("serviceUrl", String.class),
 				Version.create(userData.get("wcsVersion", String.class)));
 
@@ -51,29 +52,31 @@ public class WcsValidator implements IResourceValidator {
 		if (service.TRANSLATE_DOUBLEUNDERSCORE_TO_NAMESPACE_SEPARATOR) {
 			layerId = layerId.replaceAll(":", "__");
 		}
-		
+
 		WCSLayer layer = service.getLayer(layerId);
 		if (layer == null) {
-			throw new KlabResourceNotFoundException("WCS layer " + userData.get("wcsIdentifier") + " not found on server");
+			throw new KlabResourceNotFoundException(
+					"WCS layer " + userData.get("wcsIdentifier") + " not found on server");
 		}
-		
+
 		/*
-		 * Substitute user identifier with official one from layer, validating the layer at the
-		 * same time.
+		 * Substitute user identifier with official one from layer, validating the layer
+		 * at the same time.
 		 */
 		String identifier = layer.getIdentifier();
 
 		if (layer.isError()) {
-			throw new KlabResourceNotFoundException("WCS layer " + userData.get("wcsIdentifier") + " is available but has errors");
+			throw new KlabResourceNotFoundException(
+					"WCS layer " + userData.get("wcsIdentifier") + " is available but has errors");
 		}
-		
+
 		userData.put("wcsIdentifier", identifier);
 		if (!layer.getNodata(band).isEmpty()) {
 			userData.put("nodata", layer.getNodata(band).iterator().next());
 		}
 		IGeometry geometry = layer.getGeometry();
-		
-		return new ResourceBuilder().withParameters(userData).withGeometry(geometry);
+
+		return new ResourceBuilder().withParameters(userData).withType(Type.NUMBER).withGeometry(geometry);
 	}
 
 	@Override

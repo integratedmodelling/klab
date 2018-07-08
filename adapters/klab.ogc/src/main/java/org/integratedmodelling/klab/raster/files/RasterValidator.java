@@ -124,6 +124,7 @@ public class RasterValidator implements IResourceValidator {
 						.withSpatialShape((long) grid.getGridRange().getSpan(0), (long) grid.getGridRange().getSpan(1));
 
 				ret.withGeometry(geometry);
+				
 			} else {
 				monitor.info("Raster file is invalid; resource has errors");
 			}
