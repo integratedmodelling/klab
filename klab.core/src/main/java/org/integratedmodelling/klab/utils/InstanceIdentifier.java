@@ -25,35 +25,35 @@ package org.integratedmodelling.klab.utils;
  */
 public class InstanceIdentifier {
 
-    static long __ID = 0L;
+  static long __ID = 0L;
 
-    // Returns the current thread's unique ID, assigning it if necessary
-    private synchronized static long nextId() {
-        return __ID++;
-    }
+  // Returns the current thread's unique ID, assigning it if necessary
+  private synchronized static long nextId() {
+    return __ID++;
+  }
 
-    protected Long __id = nextId();
+  protected Long __id = nextId();
 
-    /**
-     * <p>hashCode.</p>
-     *
-     * @return a int.
-     */
-    public int hashCode() {
-        return __id.hashCode();
-    }
+  /**
+   * <p>hashCode.</p>
+   *
+   * @return a int.
+   */
+  public int hashCode() {
+    return __id.hashCode();
+  }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object o) {
-        return o instanceof InstanceIdentifier && __id == ((InstanceIdentifier) o).__id;
-    }
+  /** {@inheritDoc} */
+  public boolean equals(Object o) {
+    return o instanceof InstanceIdentifier && __id == ((InstanceIdentifier) o).__id;
+  }
 
-    /**
-     * Gets the value.
-     *
-     * @return the value
-     */
-    public long getValue() {
-        return __id;
-    }
+  /**
+   * Gets the value.
+   *
+   * @return the value
+   */
+  public long getValue() {
+    return __id;
+  }
 }

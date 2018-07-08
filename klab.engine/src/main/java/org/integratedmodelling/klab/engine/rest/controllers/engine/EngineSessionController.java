@@ -24,20 +24,21 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.SESSION)
 public class EngineSessionController {
 
-    @RequestMapping(value = API.ENGINE.SESSION.INFO, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public SessionReference describeObservation(Principal principal) {
-        ISession session = getSession(principal);
-        return ((Session) session).getSessionReference();
-    }
+	@RequestMapping(value = API.ENGINE.SESSION.INFO, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public SessionReference describeObservation(Principal principal) {
+		ISession session = getSession(principal);
+		return ((Session)session).getSessionReference();
+	}
 
-    public static ISession getSession(Principal principal) {
-        if (principal instanceof PreAuthenticatedAuthenticationToken
-                || !(((PreAuthenticatedAuthenticationToken) principal).getPrincipal() instanceof ISession)) {
-            return (ISession) ((PreAuthenticatedAuthenticationToken) principal).getPrincipal();
-        }
-        throw new IllegalStateException(
-                "request was not authenticated using a session token or did not use preauthentication");
-    }
+	public static ISession getSession(Principal principal) {
+		if (principal instanceof PreAuthenticatedAuthenticationToken
+				|| !(((PreAuthenticatedAuthenticationToken) principal).getPrincipal() instanceof ISession)) {
+			return (ISession) ((PreAuthenticatedAuthenticationToken) principal).getPrincipal();
+		}
+		throw new IllegalStateException(
+				"request was not authenticated using a session token or did not use preauthentication");
+	}
+
 
 }

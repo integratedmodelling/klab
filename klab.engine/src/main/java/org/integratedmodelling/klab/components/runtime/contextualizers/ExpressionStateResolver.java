@@ -14,37 +14,35 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ExpressionStateResolver implements IStateResolver {
 
-    IExpression expression;
-    IExpression condition;
+	IExpression expression;
+	IExpression condition;
 
-    public ExpressionStateResolver(Descriptor descriptor,
-            Descriptor condition,
-            IParameters<String> parameters,
-            IComputationContext context) {
-        this.expression = descriptor.compile();
-        if (condition != null) {
-            this.condition = condition.compile();
-        }
-    }
+	public ExpressionStateResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
+			IComputationContext context) {
+		this.expression = descriptor.compile();
+		if (condition != null) {
+			this.condition = condition.compile();
+		}
+	}
 
-    @Override
-    public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
-        boolean ok = true;
-        if (condition != null) {
-            Object ret = condition.eval(context, context);
-            ok = ret instanceof Boolean && ((Boolean) ret);
-        }
-        return ok ? expression.eval(context, context) : null;
-    }
+	@Override
+	public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
+		boolean ok = true;
+		if (condition != null) {
+			Object ret = condition.eval(context, context);
+			ok = ret instanceof Boolean && ((Boolean) ret);
+		}
+		return ok ? expression.eval(context, context) : null;
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.scalar();
-    }
+	@Override
+	public IGeometry getGeometry() {
+		return Geometry.scalar();
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return Type.VALUE;
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return Type.VALUE;
+	}
 
 }

@@ -74,230 +74,230 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class RasterEncoder implements IResourceEncoder {
 
-    @Override
-    public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder,
-            IComputationContext context) {
-        encodeFromCoverage(resource, getCoverage(resource, geometry), geometry, builder, context);
-    }
+	@Override
+	public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder,
+			IComputationContext context) {
+		encodeFromCoverage(resource, getCoverage(resource, geometry), geometry, builder, context);
+	}
 
-    /**
-     * Take a Geotools coverage and do the rest. Separated so that WCS can use it as
-     * is.
-     * 
-     * @param resource
-     * @param coverage
-     * @param geometry
-     * @param builder
-     * @param context
-     */
-    public void encodeFromCoverage(IResource resource, GridCoverage coverage, IGeometry geometry,
-            IKlabData.Builder builder, IComputationContext context) {
+	/**
+	 * Take a Geotools coverage and do the rest. Separated so that WCS can use it as
+	 * is.
+	 * 
+	 * @param resource
+	 * @param coverage
+	 * @param geometry
+	 * @param builder
+	 * @param context
+	 */
+	public void encodeFromCoverage(IResource resource, GridCoverage coverage, IGeometry geometry,
+			IKlabData.Builder builder, IComputationContext context) {
 
-        /*
-         * Set the data from the transformed coverage
-         */
-        RenderedImage image = coverage.getRenderedImage();
-        RandomIter iterator = RandomIterFactory.create(image, null);
-        Dimension space = geometry.getDimension(Type.SPACE);
-        int band = resource.getParameters().get("band", 0);
-        Set<Double> nodata = getNodata(resource, coverage, band);
+		/*
+		 * Set the data from the transformed coverage
+		 */
+		RenderedImage image = coverage.getRenderedImage();
+		RandomIter iterator = RandomIterFactory.create(image, null);
+		Dimension space = geometry.getDimension(Type.SPACE);
+		int band = resource.getParameters().get("band", 0);
+		Set<Double> nodata = getNodata(resource, coverage, band);
 
-        /*
-         * TODO support band mixer if set in resource
-         */
+		/*
+		 * TODO support band mixer if set in resource
+		 */
 
-        /*
-         * if so configured, cache the transformed coverage for the space dimension
-         * signature
-         * 
-         * TODO use different methods for non-doubles TODO support multi-band
-         * expressions
-         */
+		/*
+		 * if so configured, cache the transformed coverage for the space dimension
+		 * signature
+		 * 
+		 * TODO use different methods for non-doubles TODO support multi-band
+		 * expressions
+		 */
 
-        builder = builder.startState(((IRuntimeContext) context).getTargetName());
+		builder = builder.startState(((IRuntimeContext) context).getTargetName());
 
-        for (long ofs = 0; ofs < space.size(); ofs++) {
+		for (long ofs = 0; ofs < space.size(); ofs++) {
 
-            long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-            double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+			long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
+			double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
 
-            // this is cheeky but will catch most of the nodata and
-            // none of the good data
-            // FIXME see if this is really necessary
-            if (value < -1.0E35 || value > 1.0E35) {
-                value = Double.NaN;
-            }
+			// this is cheeky but will catch most of the nodata and
+			// none of the good data
+			// FIXME see if this is really necessary
+			if (value < -1.0E35 || value > 1.0E35) {
+				value = Double.NaN;
+			}
 
-            for (double nd : nodata) {
-                if (NumberUtils.equal(value, nd)) {
-                    value = Double.NaN;
-                    break;
-                }
-            }
+			for (double nd : nodata) {
+				if (NumberUtils.equal(value, nd)) {
+					value = Double.NaN;
+					break;
+				}
+			}
 
-            // if (!Double.isNaN(value)) {
-            // System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
-            // = " + ofs + ")");
-            // }
+			// if (!Double.isNaN(value)) {
+			// System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
+			// = " + ofs + ")");
+			// }
 
-            builder.add(value);
-        }
-        builder = builder.finishState();
-    }
+			builder.add(value);
+		}
+		builder = builder.finishState();
+	}
 
-    private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
-        Set<Double> ret = new HashSet<>();
-        SampleDimension sdim = coverage.getSampleDimension(band);
-        for (double d : sdim.getNoDataValues()) {
-            ret.add(d);
-        }
-        if (resource.getParameters().contains("nodata")) {
-            ret.add(resource.getParameters().get("nodata", Double.class));
-        }
-        return ret;
-    }
+	private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
+		Set<Double> ret = new HashSet<>();
+		SampleDimension sdim = coverage.getSampleDimension(band);
+		for (double d : sdim.getNoDataValues()) {
+			ret.add(d);
+		}
+		if (resource.getParameters().contains("nodata")) {
+			ret.add(resource.getParameters().get("nodata", Double.class));
+		}
+		return ret;
+	}
 
-    private CoordinateReferenceSystem getCrs(IGeometry geometry) {
+	private CoordinateReferenceSystem getCrs(IGeometry geometry) {
 
-        if (geometry instanceof Scale) {
-            ISpace space = ((Scale) geometry).getSpace();
-            return ((Projection) space.getProjection()).getCoordinateReferenceSystem();
-        }
+		if (geometry instanceof Scale) {
+			ISpace space = ((Scale) geometry).getSpace();
+			return ((Projection) space.getProjection()).getCoordinateReferenceSystem();
+		}
 
-        Dimension space = geometry.getDimension(Type.SPACE);
-        String epsg = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
-        if (epsg != null) {
-            try {
-                return CRS.decode(epsg);
-            } catch (Exception e) {
-                // fall back to later exception
-            }
-        }
+		Dimension space = geometry.getDimension(Type.SPACE);
+		String epsg = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+		if (epsg != null) {
+			try {
+				return CRS.decode(epsg);
+			} catch (Exception e) {
+				// fall back to later exception
+			}
+		}
 
-        throw new KlabInternalErrorException("raster encoder: cannot create projection from geometry");
-    }
+		throw new KlabInternalErrorException("raster encoder: cannot create projection from geometry");
+	}
 
-    private Interpolation getInterpolation(IMetadata metadata) {
+	private Interpolation getInterpolation(IMetadata metadata) {
 
-        String method = metadata.get(RasterAdapter.INTERPOLATION_TYPE_FIELD, String.class);
-        if (method != null) {
-            if (method.equals("bilinear")) {
-                return new InterpolationBilinear();
-            } else if (method.equals("nearest")) {
-                return new InterpolationNearest();
-            } else if (method.equals("bicubic")) {
-                // TODO CHECK BITS
-                return new InterpolationBicubic(8);
-            } else if (method.equals("bicubic2")) {
-                // TODO CHECK BITS
-                return new InterpolationBicubic2(8);
-            }
-        }
-        return new InterpolationNearest();
-    }
+		String method = metadata.get(RasterAdapter.INTERPOLATION_TYPE_FIELD, String.class);
+		if (method != null) {
+			if (method.equals("bilinear")) {
+				return new InterpolationBilinear();
+			} else if (method.equals("nearest")) {
+				return new InterpolationNearest();
+			} else if (method.equals("bicubic")) {
+				// TODO CHECK BITS
+				return new InterpolationBicubic(8);
+			} else if (method.equals("bicubic2")) {
+				// TODO CHECK BITS
+				return new InterpolationBicubic2(8);
+			}
+		}
+		return new InterpolationNearest();
+	}
 
-    private ReferencedEnvelope getEnvelope(IGeometry geometry, CoordinateReferenceSystem crs) {
-        if (geometry instanceof Scale) {
-            ISpace space = ((Scale) geometry).getSpace();
-            return ((Envelope) space.getEnvelope()).getJTSEnvelope();
-        }
-        return null;
-    }
+	private ReferencedEnvelope getEnvelope(IGeometry geometry, CoordinateReferenceSystem crs) {
+		if (geometry instanceof Scale) {
+			ISpace space = ((Scale) geometry).getSpace();
+			return ((Envelope) space.getEnvelope()).getJTSEnvelope();
+		}
+		return null;
+	}
 
-    private GridGeometry2D getGridGeometry(IGeometry geometry, ReferencedEnvelope envelope) {
+	private GridGeometry2D getGridGeometry(IGeometry geometry, ReferencedEnvelope envelope) {
 
-        Dimension space = geometry.getDimension(Type.SPACE);
-        if (space.shape().length != 2 || !space.isRegular()) {
-            throw new KlabInternalErrorException(
-                    "raster encoder: cannot create grid for raster projection: shape is not a grid");
-        }
-        GeneralGridEnvelope gridRange = new GeneralGridEnvelope(new int[] { 0, 0 },
-                new int[] { (int) space.shape()[0], (int) space.shape()[1] }, false);
+		Dimension space = geometry.getDimension(Type.SPACE);
+		if (space.shape().length != 2 || !space.isRegular()) {
+			throw new KlabInternalErrorException(
+					"raster encoder: cannot create grid for raster projection: shape is not a grid");
+		}
+		GeneralGridEnvelope gridRange = new GeneralGridEnvelope(new int[] { 0, 0 },
+				new int[] { (int) space.shape()[0], (int) space.shape()[1] }, false);
 
-        return new GridGeometry2D(gridRange, envelope);
-    }
+		return new GridGeometry2D(gridRange, envelope);
+	}
 
-    /**
-     * Coverages with caching. We keep a configurable total of coverages in memory
-     * using the session cache, including their transformations indexed by geometry.
-     * 
-     * @param resource
-     * @return a coverage for the untransformed data. Never null
-     */
-    private GridCoverage getCoverage(IResource resource, IGeometry geometry) {
+	/**
+	 * Coverages with caching. We keep a configurable total of coverages in memory
+	 * using the session cache, including their transformations indexed by geometry.
+	 * 
+	 * @param resource
+	 * @return a coverage for the untransformed data. Never null
+	 */
+	private GridCoverage getCoverage(IResource resource, IGeometry geometry) {
 
-        GridCoverage coverage = getOriginalCoverage(resource);
+		GridCoverage coverage = getOriginalCoverage(resource);
 
-        // TODO if we have it in the cache for the principal file + space signature,
-        // return that
+		// TODO if we have it in the cache for the principal file + space signature,
+		// return that
 
-        /*
-         * build the needed Geotools context and the interpolation method
-         */
-        CoordinateReferenceSystem crs = getCrs(geometry);
-        ReferencedEnvelope envelope = getEnvelope(geometry, crs);
-        GridGeometry2D gridGeometry = getGridGeometry(geometry, envelope);
-        Interpolation interpolation = getInterpolation(resource.getMetadata());
+		/*
+		 * build the needed Geotools context and the interpolation method
+		 */
+		CoordinateReferenceSystem crs = getCrs(geometry);
+		ReferencedEnvelope envelope = getEnvelope(geometry, crs);
+		GridGeometry2D gridGeometry = getGridGeometry(geometry, envelope);
+		Interpolation interpolation = getInterpolation(resource.getMetadata());
 
-        /*
-         * subset first
-         */
-        GridCoverage transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(coverage, envelope,
-                interpolation);
+		/*
+		 * subset first
+		 */
+		GridCoverage transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(coverage, envelope,
+				interpolation);
 
-        /*
-         * then resample
-         */
-        transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(transformedCoverage, crs, gridGeometry,
-                interpolation);
+		/*
+		 * then resample
+		 */
+		transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(transformedCoverage, crs, gridGeometry,
+				interpolation);
 
-        return transformedCoverage;
-    }
+		return transformedCoverage;
+	}
 
-    private GridCoverage getOriginalCoverage(IResource resource) {
+	private GridCoverage getOriginalCoverage(IResource resource) {
 
-        File mainFile = null;
+		File mainFile = null;
 
-        for (String path : resource.getLocalPaths()) {
-            if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
-                mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
-                if (mainFile.exists() && mainFile.canRead()) {
-                    break;
-                }
-            }
-        }
+		for (String path : resource.getLocalPaths()) {
+			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
+				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
+				if (mainFile.exists() && mainFile.canRead()) {
+					break;
+				}
+			}
+		}
 
-        if (mainFile == null) {
-            throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
-        }
+		if (mainFile == null) {
+			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
+		}
 
-        return readCoverage(mainFile);
-    }
+		return readCoverage(mainFile);
+	}
 
-    public GridCoverage readCoverage(File mainFile) {
+	public GridCoverage readCoverage(File mainFile) {
 
-        GridCoverage2D ret = null;
-        AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
-        // this is a bit hacky but does make more geotiffs work
-        Hints hints = new Hints();
-        if (format instanceof GeoTiffFormat) {
-            hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-        }
-        GridCoverage2DReader reader = format.getReader(mainFile, hints);
-        try {
-            ret = reader.read(null);
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
+		GridCoverage2D ret = null;
+		AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
+		// this is a bit hacky but does make more geotiffs work
+		Hints hints = new Hints();
+		if (format instanceof GeoTiffFormat) {
+			hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+		}
+		GridCoverage2DReader reader = format.getReader(mainFile, hints);
+		try {
+			ret = reader.read(null);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
 
-        // TODO caching?
+		// TODO caching?
 
-        return ret;
-    }
+		return ret;
+	}
 
-    @Override
-    public boolean isOnline(IResource resource) {
-        return true;// NetUtilities.urlResponds(resource.getParameters().get("serviceUrl", String.class));
-    }
+	@Override
+	public boolean isOnline(IResource resource) {
+		return true;// NetUtilities.urlResponds(resource.getParameters().get("serviceUrl", String.class));
+	}
 
 }

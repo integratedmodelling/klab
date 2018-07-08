@@ -21,44 +21,44 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 public class UrnInstantiator implements IExpression, IInstantiator {
 
-    public final static String FUNCTION_ID = "klab.runtime.instantiate";
+	public final static String FUNCTION_ID = "klab.runtime.instantiate";
 
-    private IResource resource;
+	private IResource resource;
 
-    // don't remove - only used as expression
-    public UrnInstantiator() {
-    }
+	// don't remove - only used as expression
+	public UrnInstantiator() {
+	}
 
-    public UrnInstantiator(String urn) {
-        this.resource = Resources.INSTANCE.resolveResource(urn);
-        if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
-            throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
-        }
-    }
+	public UrnInstantiator(String urn) {
+		this.resource = Resources.INSTANCE.resolveResource(urn);
+		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
+		}
+	}
 
-    public static IServiceCall getServiceCall(String urn) {
-        return KimServiceCall.create(FUNCTION_ID, "urn", urn);
-    }
+	public static IServiceCall getServiceCall(String urn) {
+		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
+	}
 
-    @Override
-    public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
-        IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
-        return Collections.singletonList((IObjectArtifact) data.getArtifact());
-    }
+	@Override
+	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+		IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
+		return Collections.singletonList((IObjectArtifact)data.getArtifact());
+	}
 
-    @Override
-    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-        return new UrnInstantiator(parameters.get("urn", String.class));
-    }
+	@Override
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		return new UrnInstantiator(parameters.get("urn", String.class));
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        return resource.getGeometry();
-    }
+	@Override
+	public IGeometry getGeometry() {
+		return resource.getGeometry();
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return resource.getType();
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return resource.getType();
+	}
 
 }

@@ -10,10 +10,9 @@ package org.integratedmodelling.klab.clitool.api;
 public interface Interactive {
 
     public static interface CommandListener {
-
         Object execute(String input);
     }
-
+    
     /**
      * Grab the command line, deactivating the command executor and simply returning commands typed
      * until the end command is typed.

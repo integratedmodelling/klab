@@ -20,133 +20,131 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class Script implements IScript {
 
-    URL scriptUrl;
-    FutureTask<ISubject> delegate;
-    IMonitor monitor;
-    Session session;
-    String token = NameGenerator.shortUUID();
+	URL scriptUrl;
+	FutureTask<ISubject> delegate;
+	IMonitor monitor;
+	Session session;
+	String token = NameGenerator.shortUUID();
 
-    public Script(Session session, URL resource) {
+	public Script(Session session, URL resource) {
 
-        this.scriptUrl = resource;
-        final Engine engine = session.getParentIdentity(Engine.class);
-        delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
+		this.scriptUrl = resource;
+		final Engine engine = session.getParentIdentity(Engine.class);
+		delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
 
-            @Override
-            public ISubject call() throws Exception {
+			@Override
+			public ISubject call() throws Exception {
 
-                /*
-                 * Unregister the task
-                 */
-                session.unregisterTask(Script.this);
+				/*
+				 * Unregister the task
+				 */
+				session.unregisterTask(Script.this);
+				
+				ISubject ret = null;
+				try {
+					ListenerImpl listener = new ListenerImpl();
+					Script.this.session = session;
+					Script.this.monitor = (session.getMonitor()).get(Script.this);
+					((Monitor)Script.this.monitor).addListener(listener);
+					Models.INSTANCE.load(resource, Script.this.monitor);
+					/*
+					 * Unregister the task
+					 */
+					session.unregisterTask(Script.this);
+					ret = listener.subject;
+					
+				} catch (Exception e) {
+					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+				}
+				return ret;
+			}
+		});
 
-                ISubject ret = null;
-                try {
-                    ListenerImpl listener = new ListenerImpl();
-                    Script.this.session = session;
-                    Script.this.monitor = (session.getMonitor()).get(Script.this);
-                    ((Monitor) Script.this.monitor).addListener(listener);
-                    Models.INSTANCE.load(resource, Script.this.monitor);
-                    /*
-                     * Unregister the task
-                     */
-                    session.unregisterTask(Script.this);
-                    ret = listener.subject;
+		engine.getScriptExecutor().execute(delegate);
+	}
 
-                } catch (Exception e) {
-                    throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
-                }
-                return ret;
-            }
-        });
+	public Script(Engine engine, URL resource) {
 
-        engine.getScriptExecutor().execute(delegate);
-    }
+		this.scriptUrl = resource;
+		delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
 
-    public Script(Engine engine, URL resource) {
+			@Override
+			public ISubject call() throws Exception {
 
-        this.scriptUrl = resource;
-        delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
+				ISubject ret = null;
+				try (Session session = engine.createSession()) {
+					ListenerImpl listener = new ListenerImpl();
+					Script.this.session = session;
+					Script.this.monitor = (session.getMonitor()).get(Script.this);
+					((Monitor)Script.this.monitor).addListener(listener);
+					Models.INSTANCE.load(resource, monitor);
+					ret = listener.subject;
+				} catch (Exception e) {
+					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+				}
+				return ret;
+			}
+		});
 
-            @Override
-            public ISubject call() throws Exception {
+		engine.getScriptExecutor().execute(delegate);
+	}
 
-                ISubject ret = null;
-                try (Session session = engine.createSession()) {
-                    ListenerImpl listener = new ListenerImpl();
-                    Script.this.session = session;
-                    Script.this.monitor = (session.getMonitor()).get(Script.this);
-                    ((Monitor) Script.this.monitor).addListener(listener);
-                    Models.INSTANCE.load(resource, monitor);
-                    ret = listener.subject;
-                } catch (Exception e) {
-                    throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
-                }
-                return ret;
-            }
-        });
+	@Override
+	public String getId() {
+		return token;
+	}
 
-        engine.getScriptExecutor().execute(delegate);
-    }
+	@Override
+	public boolean is(Type type) {
+		return type == Type.SCRIPT;
+	}
 
-    @Override
-    public String getId() {
-        return token;
-    }
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		return IIdentity.findParent(this, type);
+	}
 
-    @Override
-    public boolean is(Type type) {
-        return type == Type.SCRIPT;
-    }
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		return delegate.cancel(mayInterruptIfRunning);
+	}
 
-    @Override
-    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-        return IIdentity.findParent(this, type);
-    }
+	@Override
+	public boolean isCancelled() {
+		return delegate.isCancelled();
+	}
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        return delegate.cancel(mayInterruptIfRunning);
-    }
+	@Override
+	public boolean isDone() {
+		return delegate.isDone();
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return delegate.isCancelled();
-    }
+	@Override
+	public ISubject get() throws InterruptedException, ExecutionException {
+		return delegate.get();
+	}
 
-    @Override
-    public boolean isDone() {
-        return delegate.isDone();
-    }
+	@Override
+	public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		return delegate.get(timeout, unit);
+	}
 
-    @Override
-    public ISubject get() throws InterruptedException, ExecutionException {
-        return delegate.get();
-    }
+	@Override
+	public IEngineSessionIdentity getParentIdentity() {
+		return session;
+	}
 
-    @Override
-    public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return delegate.get(timeout, unit);
-    }
-
-    @Override
-    public IEngineSessionIdentity getParentIdentity() {
-        return session;
-    }
-
-    @Override
-    public IMonitor getMonitor() {
-        return monitor;
-    }
-
-    class ListenerImpl implements IMonitor.Listener {
-
-        ISubject subject;
-
-        @Override
-        public void notifyRootContext(ISubject subject) {
-            this.subject = subject;
-        }
-    }
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
+	
+	class ListenerImpl implements IMonitor.Listener {
+		ISubject subject;
+		@Override
+		public void notifyRootContext(ISubject subject) {
+			this.subject = subject;
+		}
+	}
 
 }

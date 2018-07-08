@@ -24,62 +24,61 @@ import org.integratedmodelling.klab.engine.runtime.Session;
  */
 public class AppRunner implements Annotations.Handler {
 
-    @Override
-    public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
+  @Override
+  public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
 
-        if (!(arguments.get("observations") instanceof List)) {
-            monitor.warn("run annotation does not specify observations");
-            return null;
-        }
-
-        List<IObservation> result = new ArrayList<>();
-
-        List<?> observations = arguments.get("observations", List.class);
-        /* only run the context if we are in a script */
-        if (monitor.getIdentity().is(Type.SCRIPT)) {
-
-            // safe cast as the annotation is limited to observers
-            IObserver observer = (IObserver) target;
-            Session session = monitor.getIdentity().getParentIdentity(Session.class);
-
-            if (session != null && observer != null) {
-                ISubject subject = session.observe(observer.getName()).get();
-                if (subject != null) {
-                    for (Object o : observations) {
-                        IObservation ret = subject.observe(o.toString()).get();
-                        if (ret == null) {
-                            monitor.warn(
-                                    "observation of " + o + " in context " + subject.getName() + " was unsuccessful");
-                        } else {
-                            result.add(ret);
-                        }
-                    }
-                } else {
-                    monitor.warn("observation of " + observer.getName() + " was unsuccessful");
-                }
-
-                if (subject != null && arguments.get("visualize", false)) {
-                    if (subject.getScale().isSpatiallyDistributed()) {
-                        SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
-                        for (IState state : subject.getStates()) {
-                            display.add(state);
-                        }
-                        display.show();
-                    }
-                }
-
-                if (subject != null && monitor instanceof Monitor) {
-                    for (Monitor.Listener listener : ((Monitor) monitor).getListeners()) {
-                        listener.notifyRootContext(subject);
-                    }
-                }
-
-            } else {
-                monitor.error("errors in retrieving observer or session");
-            }
-        }
-
-        return result;
+    if (!(arguments.get("observations") instanceof List)) {
+        monitor.warn("run annotation does not specify observations");
+        return null;
     }
+    
+    List<IObservation> result = new ArrayList<>();
+    
+    List<?> observations = arguments.get("observations", List.class);
+    /* only run the context if we are in a script */
+    if (monitor.getIdentity().is(Type.SCRIPT)) {
+
+      // safe cast as the annotation is limited to observers
+      IObserver observer = (IObserver) target;
+      Session session = monitor.getIdentity().getParentIdentity(Session.class);
+
+      if (session != null && observer != null) {
+        ISubject subject = session.observe(observer.getName()).get();
+        if (subject != null) {
+          for (Object o : observations) {
+            IObservation ret = subject.observe(o.toString()).get();
+            if (ret == null) {
+              monitor.warn("observation of " + o + " in context " + subject.getName() + " was unsuccessful");
+            } else {
+              result.add(ret);
+            }
+          }
+        } else {
+          monitor.warn("observation of " + observer.getName() + " was unsuccessful");
+        }
+        
+        if (subject != null && arguments.get("visualize", false)) {
+          if (subject.getScale().isSpatiallyDistributed()) {
+            SpatialDisplay display = new SpatialDisplay(subject.getScale().getSpace());
+            for (IState state : subject.getStates()) {
+              display.add(state);
+            }
+            display.show();
+          }
+        }
+        
+        if (subject != null && monitor instanceof Monitor) {
+        	for (Monitor.Listener listener : ((Monitor)monitor).getListeners()) {
+        		listener.notifyRootContext(subject);
+        	}
+        }
+        
+      } else {
+        monitor.error("errors in retrieving observer or session");
+      }
+    }
+
+    return result;
+  }
 
 }

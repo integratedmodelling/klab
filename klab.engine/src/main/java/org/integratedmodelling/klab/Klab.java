@@ -35,6 +35,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
+
 /**
  * Runtime would be a better name for this, but it makes it awkward to code with as it conflicts
  * with Java's Runtime which is imported by default.
@@ -286,13 +287,12 @@ public enum Klab implements IRuntimeService {
     }
 
     class RootMonitor implements IMonitor {
-
+        
         int errors = 0;
 
         @Override
         public void info(Object... info) {
-            if (messageBus != null
-                    && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Info,
                         NotificationUtils.getMessage(info)));
             } else {
@@ -302,8 +302,7 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void warn(Object... o) {
-            if (messageBus != null
-                    && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Warning,
                         NotificationUtils.getMessage(o)));
             } else {
@@ -313,9 +312,8 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void error(Object... o) {
-            errors++;
-            if (messageBus != null
-                    && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
+            errors ++;
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Error,
                         NotificationUtils.getMessage(o)));
             } else {
@@ -325,8 +323,7 @@ public enum Klab implements IRuntimeService {
 
         @Override
         public void debug(Object... o) {
-            if (messageBus != null
-                    && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
+            if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
                 messageBus.post(Message.create(getIdentity().getId(), MessageClass.Notification, Type.Debug,
                         NotificationUtils.getMessage(o)));
             } else {
@@ -357,10 +354,10 @@ public enum Klab implements IRuntimeService {
             return errors > 0;
         }
 
-        @Override
-        public boolean isInterrupted() {
-            return false;
-        }
+		@Override
+		public boolean isInterrupted() {
+			return false;
+		}
     }
 
     @Override
@@ -447,11 +444,11 @@ public enum Klab implements IRuntimeService {
      */
     public File resolveFile(String filename) {
 
-        if (filename.startsWith("~")) {
-            filename = System.getProperty("user.home") + filename.substring(1);
-        }
-
-        File ret = new File(filename);
+    	if (filename.startsWith("~")) {
+    		filename = System.getProperty("user.home") + filename.substring(1);
+    	}
+    	
+    	File ret = new File(filename);
         if (ret.exists()) {
             return ret;
         }
@@ -488,6 +485,7 @@ public enum Klab implements IRuntimeService {
         return SchemaExtractor.getSchema(REST_RESOURCES_PACKAGE_ID, resourceId);
     }
 
+    
     /**
      * Retrieve runtime capabilities. TODO flesh out.
      * 

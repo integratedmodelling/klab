@@ -17,79 +17,80 @@ import org.integratedmodelling.klab.owl.Observable;
 
 public class Observer extends KimObject implements IObserver {
 
-    private static final long serialVersionUID = 2777161073171784334L;
+  private static final long serialVersionUID = 2777161073171784334L;
 
-    private Observable observable;
-    private String name;
-    private Namespace namespace;
-    private Behavior behavior;
-    private List<IObservable> states = new ArrayList<>();
+  private Observable        observable;
+  private String            name;
+  private Namespace         namespace;
+  private Behavior          behavior;
+  private List<IObservable> states           = new ArrayList<>();
 
-    public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
-        super(statement);
-        this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
-        /*
-         * resolving the observable for an acknowledged observation is always optional.
-         */
-        this.observable.setOptional(true);
-        this.namespace = namespace;
-        this.name = statement.getName();
-        this.behavior = new Behavior(statement.getBehavior(), this);
+  public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
+    super(statement);
+    this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
+    /*
+     * resolving the observable for an acknowledged observation is always optional.
+     */
+    this.observable.setOptional(true);
+    this.namespace = namespace;
+    this.name = statement.getName();
+    this.behavior = new Behavior(statement.getBehavior(), this);
+  }
+
+  public String toString() {
+    return "[" + getName() + "]";
+  }
+
+  @Override
+  public String getId() {
+    return name;
+  }
+
+  @Override
+  public String getName() {
+    return namespace.getId() + "." + getId();
+  }
+
+  @Override
+  public Namespace getNamespace() {
+    return namespace;
+  }
+
+  @Override
+  public Behavior getBehavior() {
+    return behavior;
+  }
+
+  @Override
+  public Observable getObservable() {
+    return observable;
+  }
+
+  @Override
+  public List<IObservable> getStates() {
+    return states;
+  }
+
+  @Override
+  public int hashCode() {
+    return getName().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof Observer && ((Observer) obj).getName().equals(getName());
+  }
+
+  @Override
+  public List<IComputableResource> getComputation(ILocator transition) {
+    List<IComputableResource> ret = new ArrayList<>();
+    for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
+      for (IAction action : behavior.getActions(trigger)) {
+        ret.addAll(action.getComputation(transition));
+      }
     }
+    return ret;
+  }
 
-    public String toString() {
-        return "[" + getName() + "]";
-    }
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public String getName() {
-        return namespace.getId() + "." + getId();
-    }
-
-    @Override
-    public Namespace getNamespace() {
-        return namespace;
-    }
-
-    @Override
-    public Behavior getBehavior() {
-        return behavior;
-    }
-
-    @Override
-    public Observable getObservable() {
-        return observable;
-    }
-
-    @Override
-    public List<IObservable> getStates() {
-        return states;
-    }
-
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Observer && ((Observer) obj).getName().equals(getName());
-    }
-
-    @Override
-    public List<IComputableResource> getComputation(ILocator transition) {
-        List<IComputableResource> ret = new ArrayList<>();
-        for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
-            for (IAction action : behavior.getActions(trigger)) {
-                ret.addAll(action.getComputation(transition));
-            }
-        }
-        return ret;
-    }
 
 }

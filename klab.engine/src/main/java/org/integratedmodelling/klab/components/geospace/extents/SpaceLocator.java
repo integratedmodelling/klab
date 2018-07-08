@@ -41,8 +41,8 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  */
 public class SpaceLocator /* extends AbstractLocator */ {
 
-    public int x = -1;
-    public int y = -1;
+    public int    x   = -1;
+    public int    y   = -1;
     public double lon = 0;
     public double lat = 0;
 
@@ -109,7 +109,7 @@ public class SpaceLocator /* extends AbstractLocator */ {
         return new SpaceLocator(-1, -1);
     }
 
-    //    @Override
+//    @Override
     public boolean isAll() {
         return x == -1 && y == -1;
     }
@@ -118,12 +118,12 @@ public class SpaceLocator /* extends AbstractLocator */ {
         return x == -3;
     }
 
-    //    @Override
+//    @Override
     public int getDimensionCount() {
         return 2;
     }
 
-    //    @Override
+//    @Override
     public IConcept getExtent() {
         return Concepts.c(NS.SPACE_DOMAIN);
     }

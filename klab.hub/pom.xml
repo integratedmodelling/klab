@@ -1,41 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>klab</artifactId>
-        <groupId>org.integratedmodelling</groupId>
-        <version>0.10.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>klab.hub</artifactId>
-    <name>k.LAB hub</name>
-    <description>k.LAB authentication and collaboration server hub</description>
-    <dependencies>
-        <!-- JWT token generation -->
-        <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-            <version>0.6.3</version>
-        </dependency>
-        <!-- key storage -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk15</artifactId>
-            <version>1.46</version>
-        </dependency>
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>klab.engine</artifactId>
-            <version>${klab.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>klab.ogc</artifactId>
-            <version>${klab.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>org.integratedmodelling.klab.api</artifactId>
-            <version>${klab.version}</version>
-        </dependency>
-    </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.integratedmodelling</groupId>
+		<artifactId>klab</artifactId>
+		<version>0.10.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>klab.hub</artifactId>
+	<name>k.LAB hub</name>
+	<description>k.LAB authentication and collaboration server hub</description>
+	<dependencies>
+
+		<!-- key storage -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcmail-jdk15</artifactId>
+			<version>1.46</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.ogc</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.engine</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+	</dependencies>
 </project>

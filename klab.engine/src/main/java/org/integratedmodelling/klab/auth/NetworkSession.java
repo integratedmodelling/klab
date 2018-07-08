@@ -30,7 +30,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
     String token;
     List<INodeIdentity> nodes = new ArrayList<>();
     Set<GrantedAuthority> authorities = new HashSet<>();
-
+    
     public NetworkSession(String token, List<NodeReference> nodes, Node node) {
         this.token = token;
         this.parent = node;
@@ -49,6 +49,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
     public boolean is(Type type) {
         return type == Type.NETWORK_SESSION;
     }
+
 
     @Override
     public <T extends IIdentity> T getParentIdentity(Class<T> type) {

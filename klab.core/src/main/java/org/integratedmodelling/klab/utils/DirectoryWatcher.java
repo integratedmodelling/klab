@@ -42,15 +42,15 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class DirectoryWatcher {
 
-    private WatchService watcher = null;
-    private Map<WatchKey, Path> keys = new HashMap<>();
-    private Map<Path, WatchKey> keypaths = new HashMap<>();
-
+    private WatchService                      watcher    = null;
+    private Map<WatchKey, Path>               keys       = new HashMap<>();
+    private Map<Path, WatchKey>               keypaths   = new HashMap<>();
+    
     private boolean isRelevant(Path file) {
         // TODO use configuration
         return true;
     }
-
+    
     /*
      * do not make this private.
      */
@@ -106,6 +106,8 @@ public class DirectoryWatcher {
         }
     }
 
+
+
     /**
      * Problem: on fast machines, resource info can be null due to asyncronicity, and namespaces do
      * not get notified. That does not happen when debugging.
@@ -117,50 +119,50 @@ public class DirectoryWatcher {
 
         // System.out.println("FE: init");
 
-        //        ResourceInfo rinfo = resourceInfo.get(path.toFile());
-        //        if (rinfo != null) {
-        //            // System.out.println("FE: rinfo != null");
-        //            if (rinfo.namespace != null) {
-        //                // System.out.println("FE: namespace != null");
-        //
-        //                for (IProjectLifecycleListener listener : listeners) {
-        //                    if (lastEvent.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-        //                        listener.namespaceModified(rinfo.namespace
-        //                                .getId(), rinfo.project);
-        //                    } else if (lastEvent.equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-        //                        listener.namespaceDeleted(rinfo.namespace.getId(), rinfo.project);
-        //                    }
-        //                }
-        //            }
-        //        } else {
-        //
-        //            // System.out.println("FE: rinfo == null");
-        //
-        //            /*
-        //             * TODO may be a properties file event or a new namespace created.
-        //             */
-        //            IProject project = getProjectForPath(path);
-        //            if (project != null) {
-        //                for (IProjectLifecycleListener listener : listeners) {
-        //                    if (path.toString().contains("klab.properties")
-        //                            || path.toString().endsWith(".project")) {
-        //                        listener.projectPropertiesModified(project, path.toFile());
-        //                    } else {
-        //                        if (lastEvent.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-        //                            listener.fileModified(project, path.toFile());
-        //                        } else if (lastEvent
-        //                                .equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-        //                            listener.fileDeleted(project, path.toFile());
-        //                        } else if (lastEvent
-        //                                .equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-        //                            listener.fileCreated(project, path.toFile());
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
+//        ResourceInfo rinfo = resourceInfo.get(path.toFile());
+//        if (rinfo != null) {
+//            // System.out.println("FE: rinfo != null");
+//            if (rinfo.namespace != null) {
+//                // System.out.println("FE: namespace != null");
+//
+//                for (IProjectLifecycleListener listener : listeners) {
+//                    if (lastEvent.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+//                        listener.namespaceModified(rinfo.namespace
+//                                .getId(), rinfo.project);
+//                    } else if (lastEvent.equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+//                        listener.namespaceDeleted(rinfo.namespace.getId(), rinfo.project);
+//                    }
+//                }
+//            }
+//        } else {
+//
+//            // System.out.println("FE: rinfo == null");
+//
+//            /*
+//             * TODO may be a properties file event or a new namespace created.
+//             */
+//            IProject project = getProjectForPath(path);
+//            if (project != null) {
+//                for (IProjectLifecycleListener listener : listeners) {
+//                    if (path.toString().contains("klab.properties")
+//                            || path.toString().endsWith(".project")) {
+//                        listener.projectPropertiesModified(project, path.toFile());
+//                    } else {
+//                        if (lastEvent.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+//                            listener.fileModified(project, path.toFile());
+//                        } else if (lastEvent
+//                                .equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+//                            listener.fileDeleted(project, path.toFile());
+//                        } else if (lastEvent
+//                                .equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+//                            listener.fileCreated(project, path.toFile());
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
-
+    
     class FileMonitor extends Thread {
 
         @Override
@@ -250,7 +252,8 @@ public class DirectoryWatcher {
 
             synchronized (fileEvents) {
                 boolean isNew = !fileEvents.containsKey(child);
-                fileEvents.put(child, new Pair<Long, WatchEvent.Kind<?>>(time, event.kind()));
+                fileEvents.put(child, new Pair<Long, WatchEvent.Kind<?>>(time, event
+                        .kind()));
                 if (isNew) {
                     new FileChangeActuator(child, 500).start();
                 }
@@ -259,6 +262,7 @@ public class DirectoryWatcher {
         }
     }
 
+    
     /**
      * Instantiates a new directory watcher.
      */
@@ -272,9 +276,9 @@ public class DirectoryWatcher {
     private void watchProjectDirectory(final Path start) throws IOException {
         // register directory and sub-directories
         Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
-
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                    throws IOException {
                 watch(dir);
                 return FileVisitResult.CONTINUE;
             }
@@ -289,7 +293,6 @@ public class DirectoryWatcher {
     private void unwatchProjectDirectory(final Path start) throws IOException {
         // register directory and sub-directories
         Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
-
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 try {
@@ -310,8 +313,8 @@ public class DirectoryWatcher {
      */
     public void watch(Path dir) throws IOException {
 
-        WatchKey key = dir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE,
-                StandardWatchEventKinds.ENTRY_MODIFY);
+        WatchKey key = dir
+                .register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
         keys.put(key, dir);
         keypaths.put(dir, key);
     }
@@ -331,7 +334,7 @@ public class DirectoryWatcher {
             keys.remove(key);
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     private static <T> WatchEvent<T> cast(WatchEvent<?> event) {
         return (WatchEvent<T>) event;

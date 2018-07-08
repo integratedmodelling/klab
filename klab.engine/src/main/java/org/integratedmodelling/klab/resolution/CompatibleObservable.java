@@ -17,24 +17,24 @@ import org.integratedmodelling.klab.owl.Observable;
  */
 public class CompatibleObservable extends Observable {
 
-    public CompatibleObservable(Observable observable) {
-        super(observable);
-    }
+  public CompatibleObservable(Observable observable) {
+    super(observable);
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((observable == null) ? 0 : observable.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((observable == null) ? 0 : observable.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Observable) {
-            return this.observable.equals(((Observable) obj).getObservable());
-        }
-        return false;
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Observable) {
+      return this.observable.equals(((Observable) obj).getObservable());
     }
+    return false;
+  }
 
 }

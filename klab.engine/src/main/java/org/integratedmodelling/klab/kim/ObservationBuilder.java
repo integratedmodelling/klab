@@ -6,9 +6,9 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 
 public enum ObservationBuilder {
-
+    
     INSTANCE;
-
+    
     /**
      * Build an observer from its parsed, syntax-error-free representation coming
      * from the k.IM validator. May add logical errors, which are reported back when this

@@ -43,11 +43,11 @@ import org.semanticweb.owlapi.util.Version;
  */
 public class KlabReasoner {
 
-    boolean on;
-    boolean synchronizing = false;
-    Ontology overall;
+    boolean     on;
+    boolean     synchronizing = false;
+    Ontology    overall;
     OWLReasoner reasoner;
-
+    
     private static String ONTOLOGY_ID = "k";
 
     public synchronized void addOntology(IOntology o) {
@@ -70,7 +70,8 @@ public class KlabReasoner {
             Namespaces.INSTANCE.registerNamespace(new Namespace(ONTOLOGY_ID, null, overall), monitor);
         }
         if (Configuration.INSTANCE.useReasoner()) {
-            this.reasoner = new Reasoner.ReasonerFactory().createReasoner(overall.getOWLOntology());
+            this.reasoner = new Reasoner.ReasonerFactory()
+                    .createReasoner(overall.getOWLOntology());
             on = true;
         }
     }
@@ -78,7 +79,7 @@ public class KlabReasoner {
     public IOntology getOntology() {
         return overall;
     }
-
+    
     /**
      * {@link IKnowledge#is(ISemantic)} will only
      * check for direct subsumption. This one defaults to that when the reasoner is not
@@ -105,16 +106,23 @@ public class KlabReasoner {
 
         } else if (c1 instanceof IProperty && c2 instanceof IProperty) {
 
-            if (reasoner == null || (((IProperty) c1).isAnnotation() && ((IProperty) c2).isAnnotation())) {
+            if (reasoner == null || (((IProperty) c1).isAnnotation()
+                    && ((IProperty) c2).isAnnotation())) {
                 return ((IProperty) c1).is(c2);
             }
 
-            if (((IProperty) c1).isObjectProperty() && ((IProperty) c2).isObjectProperty()) {
-                return getSubObjectProperties(((Property) c2).getOWLEntity().asOWLObjectProperty(), false)
-                        .containsEntity(((Property) c1).getOWLEntity().asOWLObjectProperty());
-            } else if (((IProperty) c1).isLiteralProperty() && ((IProperty) c2).isLiteralProperty()) {
-                return getSubDataProperties(((Property) c2).getOWLEntity().asOWLDataProperty(), false)
-                        .containsEntity(((Property) c1).getOWLEntity().asOWLDataProperty());
+            if (((IProperty) c1).isObjectProperty()
+                    && ((IProperty) c2).isObjectProperty()) {
+                return getSubObjectProperties(((Property) c2).getOWLEntity()
+                        .asOWLObjectProperty(), false)
+                                .containsEntity(((Property) c1).getOWLEntity()
+                                        .asOWLObjectProperty());
+            } else if (((IProperty) c1).isLiteralProperty()
+                    && ((IProperty) c2).isLiteralProperty()) {
+                return getSubDataProperties(((Property) c2).getOWLEntity()
+                        .asOWLDataProperty(), false)
+                                .containsEntity(((Property) c1).getOWLEntity()
+                                        .asOWLDataProperty());
             }
         }
 
@@ -142,7 +150,8 @@ public class KlabReasoner {
     public Set<IConcept> getParentClosure(IConcept main) {
         Set<IConcept> ret = new HashSet<>();
         if (reasoner != null) {
-            for (OWLClass cls : getSuperClasses(((Concept) main.getType()).getOWLClass(), false).getFlattened()) {
+            for (OWLClass cls : getSuperClasses(((Concept) main.getType()).getOWLClass(), false)
+                    .getFlattened()) {
                 if (cls.isBottomEntity() || cls.isTopEntity()) {
                     continue;
                 }
@@ -169,7 +178,8 @@ public class KlabReasoner {
     public Set<IConcept> getSemanticClosure(IConcept main) {
         if (reasoner != null) {
             Set<IConcept> ret = new HashSet<>();
-            for (OWLClass cls : getSubClasses(((Concept) main.getType()).getOWLClass(), false).getFlattened()) {
+            for (OWLClass cls : getSubClasses(((Concept) main.getType()).getOWLClass(), false)
+                    .getFlattened()) {
                 if (cls.isBottomEntity() || cls.isTopEntity()) {
                     continue;
                 }
@@ -194,84 +204,97 @@ public class KlabReasoner {
     }
 
     public NodeSet<OWLClass> getDataPropertyDomains(OWLDataProperty arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getDataPropertyDomains(arg0, arg1);
     }
 
     public Set<OWLLiteral> getDataPropertyValues(OWLNamedIndividual arg0, OWLDataProperty arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getDataPropertyValues(arg0, arg1);
     }
 
     public NodeSet<OWLNamedIndividual> getDifferentIndividuals(OWLNamedIndividual arg0)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getDifferentIndividuals(arg0);
     }
 
-    public NodeSet<OWLClass> getDisjointClasses(OWLClassExpression arg0) throws ReasonerInterruptedException,
+    public NodeSet<OWLClass> getDisjointClasses(OWLClassExpression arg0)
+            throws ReasonerInterruptedException,
             TimeOutException, FreshEntitiesException, InconsistentOntologyException {
         return reasoner.getDisjointClasses(arg0);
     }
 
     public NodeSet<OWLDataProperty> getDisjointDataProperties(OWLDataPropertyExpression arg0)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getDisjointDataProperties(arg0);
     }
 
     public NodeSet<OWLObjectPropertyExpression> getDisjointObjectProperties(OWLObjectPropertyExpression arg0)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getDisjointObjectProperties(arg0);
     }
 
     public Node<OWLClass> getEquivalentClasses(OWLClassExpression arg0)
-            throws InconsistentOntologyException, ClassExpressionNotInProfileException, FreshEntitiesException,
-            ReasonerInterruptedException, TimeOutException {
+            throws InconsistentOntologyException, ClassExpressionNotInProfileException,
+            FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
         return reasoner.getEquivalentClasses(arg0);
     }
 
-    public Node<OWLDataProperty> getEquivalentDataProperties(OWLDataProperty arg0) throws InconsistentOntologyException,
-            FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
+    public Node<OWLDataProperty> getEquivalentDataProperties(OWLDataProperty arg0)
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
+            TimeOutException {
         return reasoner.getEquivalentDataProperties(arg0);
     }
 
     public Node<OWLObjectPropertyExpression> getEquivalentObjectProperties(OWLObjectPropertyExpression arg0)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getEquivalentObjectProperties(arg0);
     }
 
     public NodeSet<OWLNamedIndividual> getInstances(OWLClassExpression arg0, boolean arg1)
-            throws InconsistentOntologyException, ClassExpressionNotInProfileException, FreshEntitiesException,
-            ReasonerInterruptedException, TimeOutException {
+            throws InconsistentOntologyException, ClassExpressionNotInProfileException,
+            FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
         return reasoner.getInstances(arg0, arg1);
     }
 
     public Node<OWLObjectPropertyExpression> getInverseObjectProperties(OWLObjectPropertyExpression arg0)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getInverseObjectProperties(arg0);
     }
 
     public NodeSet<OWLClass> getObjectPropertyDomains(OWLObjectPropertyExpression arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getObjectPropertyDomains(arg0, arg1);
     }
 
     public NodeSet<OWLClass> getObjectPropertyRanges(OWLObjectPropertyExpression arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getObjectPropertyRanges(arg0, arg1);
     }
 
-    public NodeSet<OWLNamedIndividual> getObjectPropertyValues(OWLNamedIndividual arg0,
-            OWLObjectPropertyExpression arg1) throws InconsistentOntologyException, FreshEntitiesException,
-            ReasonerInterruptedException, TimeOutException {
+    public NodeSet<OWLNamedIndividual> getObjectPropertyValues(OWLNamedIndividual arg0, OWLObjectPropertyExpression arg1)
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
+            TimeOutException {
         return reasoner.getObjectPropertyValues(arg0, arg1);
     }
 
@@ -283,8 +306,10 @@ public class KlabReasoner {
         return reasoner.getReasonerVersion();
     }
 
-    public Node<OWLNamedIndividual> getSameIndividuals(OWLNamedIndividual arg0) throws InconsistentOntologyException,
-            FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
+    public Node<OWLNamedIndividual> getSameIndividuals(OWLNamedIndividual arg0)
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
+            TimeOutException {
         return reasoner.getSameIndividuals(arg0);
     }
 
@@ -295,31 +320,35 @@ public class KlabReasoner {
     }
 
     public NodeSet<OWLDataProperty> getSubDataProperties(OWLDataProperty arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getSubDataProperties(arg0, arg1);
     }
 
     public NodeSet<OWLObjectPropertyExpression> getSubObjectProperties(OWLObjectPropertyExpression arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getSubObjectProperties(arg0, arg1);
     }
 
     public NodeSet<OWLClass> getSuperClasses(OWLClassExpression arg0, boolean arg1)
-            throws InconsistentOntologyException, ClassExpressionNotInProfileException, FreshEntitiesException,
-            ReasonerInterruptedException, TimeOutException {
+            throws InconsistentOntologyException, ClassExpressionNotInProfileException,
+            FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
         return reasoner.getSuperClasses(arg0, arg1);
     }
 
     public NodeSet<OWLDataProperty> getSuperDataProperties(OWLDataProperty arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getSuperDataProperties(arg0, arg1);
     }
 
     public NodeSet<OWLObjectPropertyExpression> getSuperObjectProperties(OWLObjectPropertyExpression arg0, boolean arg1)
-            throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException,
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
             TimeOutException {
         return reasoner.getSuperObjectProperties(arg0, arg1);
     }
@@ -328,13 +357,16 @@ public class KlabReasoner {
         return reasoner.getTimeOut();
     }
 
-    public NodeSet<OWLClass> getTypes(OWLNamedIndividual arg0, boolean arg1) throws InconsistentOntologyException,
-            FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
+    public NodeSet<OWLClass> getTypes(OWLNamedIndividual arg0, boolean arg1)
+            throws InconsistentOntologyException, FreshEntitiesException,
+            ReasonerInterruptedException,
+            TimeOutException {
         return reasoner.getTypes(arg0, arg1);
     }
 
     public Node<OWLClass> getUnsatisfiableClasses()
-            throws ReasonerInterruptedException, TimeOutException, InconsistentOntologyException {
+            throws ReasonerInterruptedException, TimeOutException,
+            InconsistentOntologyException {
         return reasoner.getUnsatisfiableClasses();
     }
 
@@ -346,14 +378,19 @@ public class KlabReasoner {
         return reasoner.isConsistent();
     }
 
-    public boolean isEntailed(OWLAxiom arg0) throws ReasonerInterruptedException, UnsupportedEntailmentTypeException,
-            TimeOutException, AxiomNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+    public boolean isEntailed(OWLAxiom arg0)
+            throws ReasonerInterruptedException, UnsupportedEntailmentTypeException,
+            TimeOutException,
+            AxiomNotInProfileException, FreshEntitiesException,
+            InconsistentOntologyException {
         return reasoner.isEntailed(arg0);
     }
 
     public boolean isEntailed(Set<? extends OWLAxiom> arg0)
-            throws ReasonerInterruptedException, UnsupportedEntailmentTypeException, TimeOutException,
-            AxiomNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+            throws ReasonerInterruptedException, UnsupportedEntailmentTypeException,
+            TimeOutException,
+            AxiomNotInProfileException, FreshEntitiesException,
+            InconsistentOntologyException {
         return reasoner.isEntailed(arg0);
     }
 
@@ -365,8 +402,10 @@ public class KlabReasoner {
         return reasoner.isPrecomputed(arg0);
     }
 
-    public boolean isSatisfiable(OWLClassExpression arg0) throws ReasonerInterruptedException, TimeOutException,
-            ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+    public boolean isSatisfiable(OWLClassExpression arg0)
+            throws ReasonerInterruptedException, TimeOutException,
+            ClassExpressionNotInProfileException,
+            FreshEntitiesException, InconsistentOntologyException {
         return reasoner.isSatisfiable(arg0);
     }
 

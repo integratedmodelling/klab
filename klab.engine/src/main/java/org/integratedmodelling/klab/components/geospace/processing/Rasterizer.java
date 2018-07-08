@@ -77,268 +77,268 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class Rasterizer<T> {
 
-    private BufferedImage raster = null;
-    private IGrid extent;
-    private Class<?> valueClass = null;
+	private BufferedImage raster = null;
+	private IGrid extent;
+	private Class<?> valueClass = null;
 
-    private HashMap<T, Long> objectToId;
-    private HashMap<Long, T> idToObject;
-    private long maxId = 0;
+	private HashMap<T, Long> objectToId;
+	private HashMap<Long, T> idToObject;
+	private long maxId = 0;
 
-    private Graphics2D graphics;
+	private Graphics2D graphics;
 
-    // this is used only for the getCoordinates() operation
-    private BufferedImage coordinateRaster = null;
-    private Graphics2D coordinateGraphics;
+	// this is used only for the getCoordinates() operation
+	private BufferedImage coordinateRaster = null;
+	private Graphics2D coordinateGraphics;
 
-    private GeometryFactory geoFactory = new GeometryFactory();
+	private GeometryFactory geoFactory = new GeometryFactory();
 
-    /**
-     * 
-     * @param grid
-     *            The grid we rasterize to
-     * @param encoder
-     * @param setter
-     */
-    public Rasterizer(IGrid grid) {
-        this.extent = grid;
-        this.raster = new BufferedImage((int) grid.getXCells(), (int) grid.getYCells(), BufferedImage.TYPE_INT_ARGB);
-        this.raster.setAccelerationPriority(1.0f);
-        this.graphics = this.raster.createGraphics();
-        this.graphics.setPaintMode();
-        graphics.setComposite(AlphaComposite.Src);
-    }
+	/**
+	 * 
+	 * @param grid
+	 *            The grid we rasterize to
+	 * @param encoder
+	 * @param setter
+	 */
+	public Rasterizer(IGrid grid) {
+		this.extent = grid;
+		this.raster = new BufferedImage((int) grid.getXCells(), (int) grid.getYCells(), BufferedImage.TYPE_INT_ARGB);
+		this.raster.setAccelerationPriority(1.0f);
+		this.graphics = this.raster.createGraphics();
+		this.graphics.setPaintMode();
+		graphics.setComposite(AlphaComposite.Src);
+	}
 
-    /**
-     * Return the world coordinates of all points covered by the passed shape. Each
-     * call is independent and won't affect the state of the rasterizer that is set
-     * with {@link #add(IShape, Function)}. An internal binary buffer is created on
-     * demand and cleared at every subsequent call.
-     * 
-     * @param shape
-     * @return
-     */
-    public Collection<Coordinate> getCoordinates(IShape shape) {
+	/**
+	 * Return the world coordinates of all points covered by the passed shape. Each
+	 * call is independent and won't affect the state of the rasterizer that is set
+	 * with {@link #add(IShape, Function)}. An internal binary buffer is created on
+	 * demand and cleared at every subsequent call.
+	 * 
+	 * @param shape
+	 * @return
+	 */
+	public Collection<Coordinate> getCoordinates(IShape shape) {
 
-        Set<Coordinate> ret = new HashSet<>();
-        if (coordinateRaster == null) {
-            this.coordinateRaster = new BufferedImage((int) extent.getXCells(), (int) extent.getYCells(),
-                    BufferedImage.TYPE_BYTE_BINARY);
-            this.coordinateRaster.setAccelerationPriority(1.0f);
-            this.coordinateGraphics = this.raster.createGraphics();
-            this.coordinateGraphics.setPaintMode();
-        } else {
-            this.coordinateGraphics.setColor(new Color(0, 0, 0));
-            this.coordinateGraphics.fillRect(0, 0, (int) extent.getXCells(), (int) extent.getYCells());
-        }
+		Set<Coordinate> ret = new HashSet<>();
+		if (coordinateRaster == null) {
+			this.coordinateRaster = new BufferedImage((int) extent.getXCells(), (int) extent.getYCells(),
+					BufferedImage.TYPE_BYTE_BINARY);
+			this.coordinateRaster.setAccelerationPriority(1.0f);
+			this.coordinateGraphics = this.raster.createGraphics();
+			this.coordinateGraphics.setPaintMode();
+		} else {
+			this.coordinateGraphics.setColor(new Color(0, 0, 0));
+			this.coordinateGraphics.fillRect(0, 0, (int) extent.getXCells(), (int) extent.getYCells());
+		}
 
-        Geometry geometry = ((Shape) shape).getJTSGeometry();
-        Color valueColor = new Color(255, 255, 255);
-        Color holeColor = new Color(0, 0, 0);
+		Geometry geometry = ((Shape) shape).getJTSGeometry();
+		Color valueColor = new Color(255, 255, 255);
+		Color holeColor = new Color(0, 0, 0);
 
-        draw(geometry, valueColor, holeColor);
+		draw(geometry, valueColor, holeColor);
 
-        int[] xy = new int[2];
-        for (int x = 0; x < this.raster.getWidth(); x++) {
-            for (int y = 0; y < this.raster.getHeight(); y++) {
-                xy[0] = x;
-                xy[1] = y;
-                if (raster.getRGB(x, y) == valueColor.getRGB()) {
-                    double[] wxy = extent.getWorldCoordinatesAt(xy[0], xy[1]);
-                    ret.add(new Coordinate(wxy[0], wxy[1]));
-                }
-            }
-        }
+		int[] xy = new int[2];
+		for (int x = 0; x < this.raster.getWidth(); x++) {
+			for (int y = 0; y < this.raster.getHeight(); y++) {
+				xy[0] = x;
+				xy[1] = y;
+				if (raster.getRGB(x, y) == valueColor.getRGB()) {
+					double[] wxy = extent.getWorldCoordinatesAt(xy[0], xy[1]);
+					ret.add(new Coordinate(wxy[0], wxy[1]));
+				}
+			}
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    /**
-     * Rasterize a single shape. Call as many times as necessary.
-     * 
-     * @param shape
-     *            the shape we want to rasterize. No check is made that the
-     *            projection is the same as the original grid, so ensure this is
-     *            called properly.
-     * @param encoder
-     *            a function that takes a shape and returns its value for the grid
-     * @throw IllegalArgumentException if the encoder returns a value of a class
-     *        that is incompatible with a previously used one.
-     */
-    public void add(IShape shape, Function<IShape, T> encoder) {
+	/**
+	 * Rasterize a single shape. Call as many times as necessary.
+	 * 
+	 * @param shape
+	 *            the shape we want to rasterize. No check is made that the
+	 *            projection is the same as the original grid, so ensure this is
+	 *            called properly.
+	 * @param encoder
+	 *            a function that takes a shape and returns its value for the grid
+	 * @throw IllegalArgumentException if the encoder returns a value of a class
+	 *        that is incompatible with a previously used one.
+	 */
+	public void add(IShape shape, Function<IShape, T> encoder) {
 
-        T value = encoder.apply(shape);
-        Geometry geometry = ((Shape) shape).getJTSGeometry();
+		T value = encoder.apply(shape);
+		Geometry geometry = ((Shape) shape).getJTSGeometry();
 
-        int rgbVal = floatBitsToInt(encodeToFloat(value));
-        int holeVal = floatBitsToInt(Float.NaN);
-        Color valueColor = new Color(rgbVal, true);
-        Color holeColor = new Color(holeVal, true);
+		int rgbVal = floatBitsToInt(encodeToFloat(value));
+		int holeVal = floatBitsToInt(Float.NaN);
+		Color valueColor = new Color(rgbVal, true);
+		Color holeColor = new Color(holeVal, true);
 
-        draw(geometry, valueColor, holeColor);
-    }
+		draw(geometry, valueColor, holeColor);
+	}
 
-    private void draw(Geometry geometry, Color valueColor, Color holeColor) {
+	private void draw(Geometry geometry, Color valueColor, Color holeColor) {
 
-        if (geometry.intersects(((Grid) extent).getShape().getJTSGeometry())) {
+		if (geometry.intersects(((Grid) extent).getShape().getJTSGeometry())) {
 
-            if (geometry.getClass().equals(MultiPolygon.class) || geometry.getClass().equals(Polygon.class)) {
+			if (geometry.getClass().equals(MultiPolygon.class) || geometry.getClass().equals(Polygon.class)) {
 
-                for (int i = 0; i < geometry.getNumGeometries(); i++) {
-                    Polygon poly = (Polygon) geometry.getGeometryN(i);
-                    LinearRing lr = geoFactory.createLinearRing(poly.getExteriorRing().getCoordinates());
-                    Polygon part = geoFactory.createPolygon(lr, null);
-                    drawGeometry(part, valueColor);
-                    for (int j = 0; j < poly.getNumInteriorRing(); j++) {
-                        lr = geoFactory.createLinearRing(poly.getInteriorRingN(j).getCoordinates());
-                        part = geoFactory.createPolygon(lr, null);
-                        drawGeometry(part, holeColor);
-                    }
-                }
-            } else if (geometry.getClass().equals(MultiLineString.class)) {
-                MultiLineString mp = (MultiLineString) geometry;
-                for (int n = 0; n < mp.getNumGeometries(); n++) {
-                    drawGeometry(mp.getGeometryN(n), valueColor);
-                }
-            } else if (geometry.getClass().equals(MultiPoint.class)) {
-                MultiPoint mp = (MultiPoint) geometry;
-                for (int n = 0; n < mp.getNumGeometries(); n++) {
-                    drawGeometry(mp.getGeometryN(n), valueColor);
-                }
-            } else {
-                drawGeometry(geometry, valueColor);
-            }
-        }
-    }
+				for (int i = 0; i < geometry.getNumGeometries(); i++) {
+					Polygon poly = (Polygon) geometry.getGeometryN(i);
+					LinearRing lr = geoFactory.createLinearRing(poly.getExteriorRing().getCoordinates());
+					Polygon part = geoFactory.createPolygon(lr, null);
+					drawGeometry(part, valueColor);
+					for (int j = 0; j < poly.getNumInteriorRing(); j++) {
+						lr = geoFactory.createLinearRing(poly.getInteriorRingN(j).getCoordinates());
+						part = geoFactory.createPolygon(lr, null);
+						drawGeometry(part, holeColor);
+					}
+				}
+			} else if (geometry.getClass().equals(MultiLineString.class)) {
+				MultiLineString mp = (MultiLineString) geometry;
+				for (int n = 0; n < mp.getNumGeometries(); n++) {
+					drawGeometry(mp.getGeometryN(n), valueColor);
+				}
+			} else if (geometry.getClass().equals(MultiPoint.class)) {
+				MultiPoint mp = (MultiPoint) geometry;
+				for (int n = 0; n < mp.getNumGeometries(); n++) {
+					drawGeometry(mp.getGeometryN(n), valueColor);
+				}
+			} else {
+				drawGeometry(geometry, valueColor);
+			}
+		}
+	}
 
-    /**
-     * Produce the final output in an arbitrary collection that exposes a method to
-     * set value V at [x, y].
-     * <p>
-     * Example:
-     * 
-     * <pre>
-     * class Collection {
-     *
-     *   void set(T value, int x, int y) {
-     * 	  // set value at x = xy[0], y = xy[1]
-     *   }
-     * }
-     * 
-     * Rasterizer rasterizer = new Rasterizer(...);
-     * 
-     * //... add shapes
-     * 
-     * // produce the final collection
-     * final Collector collector = new Collector();
-     * rasterizer.finish((value, xy) -> collector.set(value, xy[0], xy[1]);
-     * </pre>
-     * 
-     * The value passed for nodata is null; boolean encoders will have false where
-     * no object data are found.
-     * 
-     * @param setter
-     *            the method that gets each value from the rasterizer and the (x,y)
-     *            grid offsets to put it in
-     * @return the same object passed as collector
-     */
-    public void finish(BiConsumer<T, int[]> setter) {
+	/**
+	 * Produce the final output in an arbitrary collection that exposes a method to
+	 * set value V at [x, y].
+	 * <p>
+	 * Example:
+	 * 
+	 * <pre>
+	 * class Collection {
+	 *
+	 *   void set(T value, int x, int y) {
+	 * 	  // set value at x = xy[0], y = xy[1]
+	 *   }
+	 * }
+	 * 
+	 * Rasterizer rasterizer = new Rasterizer(...);
+	 * 
+	 * //... add shapes
+	 * 
+	 * // produce the final collection
+	 * final Collector collector = new Collector();
+	 * rasterizer.finish((value, xy) -> collector.set(value, xy[0], xy[1]);
+	 * </pre>
+	 * 
+	 * The value passed for nodata is null; boolean encoders will have false where
+	 * no object data are found.
+	 * 
+	 * @param setter
+	 *            the method that gets each value from the rasterizer and the (x,y)
+	 *            grid offsets to put it in
+	 * @return the same object passed as collector
+	 */
+	public void finish(BiConsumer<T, int[]> setter) {
 
-        int[] xy = new int[2];
-        for (int x = 0; x < this.raster.getWidth(); x++) {
-            for (int y = 0; y < this.raster.getHeight(); y++) {
-                xy[0] = x;
-                xy[1] = y;
-                setter.accept(decodeFloat(Float.intBitsToFloat(raster.getRGB(x, y))), xy);
-            }
-        }
-    }
+		int[] xy = new int[2];
+		for (int x = 0; x < this.raster.getWidth(); x++) {
+			for (int y = 0; y < this.raster.getHeight(); y++) {
+				xy[0] = x;
+				xy[1] = y;
+				setter.accept(decodeFloat(Float.intBitsToFloat(raster.getRGB(x, y))), xy);
+			}
+		}
+	}
 
-    // ------------------------------------------------------------------
-    // internals
-    // ------------------------------------------------------------------
+	// ------------------------------------------------------------------
+	// internals
+	// ------------------------------------------------------------------
 
-    private T decodeFloat(float fval) {
-        T ret = null;
-        Object val = fval;
-        if (this.valueClass != null && !Float.isNaN(fval)) {
-            if (idToObject != null) {
-                val = idToObject.get((long) fval);
-            }
-            ret = Utils.asType(val, valueClass);
-        }
-        return ret;
-    }
+	private T decodeFloat(float fval) {
+		T ret = null;
+		Object val = fval;
+		if (this.valueClass != null && !Float.isNaN(fval)) {
+			if (idToObject != null) {
+				val = idToObject.get((long) fval);
+			}
+			ret = Utils.asType(val, valueClass);
+		}
+		return ret;
+	}
 
-    private float encodeToFloat(T value) {
-        if (value != null) {
-            if (this.valueClass == null) {
-                this.valueClass = value.getClass();
-            } else if (!this.valueClass.isAssignableFrom(value.getClass())) {
-                throw new IllegalArgumentException(
-                        "cannot use value " + value + " in rasterization: incompatible values were assigned earlier");
-            }
+	private float encodeToFloat(T value) {
+		if (value != null) {
+			if (this.valueClass == null) {
+				this.valueClass = value.getClass();
+			} else if (!this.valueClass.isAssignableFrom(value.getClass())) {
+				throw new IllegalArgumentException(
+						"cannot use value " + value + " in rasterization: incompatible values were assigned earlier");
+			}
 
-            if (value instanceof Number) {
-                return ((Number) value).floatValue();
-            } else if (value instanceof Boolean) {
-                return ((Boolean) value) ? 1 : 0;
-            } else {
+			if (value instanceof Number) {
+				return ((Number) value).floatValue();
+			} else if (value instanceof Boolean) {
+				return ((Boolean) value) ? 1 : 0;
+			} else {
 
-                if (idToObject == null) {
-                    idToObject = new HashMap<>();
-                    objectToId = new HashMap<>();
-                }
+				if (idToObject == null) {
+					idToObject = new HashMap<>();
+					objectToId = new HashMap<>();
+				}
 
-                Long id = objectToId.get(value);
-                if (id == null) {
-                    id = maxId++;
-                    objectToId.put(value, id);
-                    idToObject.put(id, value);
-                }
+				Long id = objectToId.get(value);
+				if (id == null) {
+					id = maxId++;
+					objectToId.put(value, id);
+					idToObject.put(id, value);
+				}
 
-                return id.floatValue();
+				return id.floatValue();
 
-            }
-        }
-        return Float.NaN;
-    }
+			}
+		}
+		return Float.NaN;
+	}
 
-    private int[] coordGridX = new int[3500];
-    private int[] coordGridY = new int[3500];
+	private int[] coordGridX = new int[3500];
+	private int[] coordGridY = new int[3500];
 
-    private void drawGeometry(Geometry geometry, Color color) {
+	private void drawGeometry(Geometry geometry, Color color) {
 
-        graphics.setColor(color);
+		graphics.setColor(color);
 
-        Coordinate[] coords = geometry.getCoordinates();
+		Coordinate[] coords = geometry.getCoordinates();
 
-        // enlarge if needed
-        if (coords.length > coordGridX.length) {
-            coordGridX = new int[coords.length];
-            coordGridY = new int[coords.length];
-        }
-        for (int n = 0; n < coords.length; n++) {
-            coordGridX[n] = (int) (((coords[n].x - extent.getWest()) / extent.getCellWidth()));
-            coordGridY[n] = this.raster.getHeight()
-                    - (int) (((coords[n].y - extent.getSouth()) / extent.getCellHeight()));
-        }
+		// enlarge if needed
+		if (coords.length > coordGridX.length) {
+			coordGridX = new int[coords.length];
+			coordGridY = new int[coords.length];
+		}
+		for (int n = 0; n < coords.length; n++) {
+			coordGridX[n] = (int) (((coords[n].x - extent.getWest()) / extent.getCellWidth()));
+			coordGridY[n] = this.raster.getHeight()
+					- (int) (((coords[n].y - extent.getSouth()) / extent.getCellHeight()));
+		}
 
-        if (geometry.getClass().equals(Polygon.class)) {
-            graphics.fillPolygon(coordGridX, coordGridY, coords.length);
-        } else if (geometry.getClass().equals(LinearRing.class)) {
-            graphics.drawPolyline(coordGridX, coordGridY, coords.length);
-        } else if (geometry.getClass().equals(LineString.class)) {
-            graphics.drawPolyline(coordGridX, coordGridY, coords.length);
-        } else if (geometry.getClass().equals(Point.class)) {
-            graphics.drawLine(coordGridX[0], coordGridY[0], coordGridX[0], coordGridY[0]);
-        }
-    }
+		if (geometry.getClass().equals(Polygon.class)) {
+			graphics.fillPolygon(coordGridX, coordGridY, coords.length);
+		} else if (geometry.getClass().equals(LinearRing.class)) {
+			graphics.drawPolyline(coordGridX, coordGridY, coords.length);
+		} else if (geometry.getClass().equals(LineString.class)) {
+			graphics.drawPolyline(coordGridX, coordGridY, coords.length);
+		} else if (geometry.getClass().equals(Point.class)) {
+			graphics.drawLine(coordGridX[0], coordGridY[0], coordGridX[0], coordGridY[0]);
+		}
+	}
 
-    private int floatBitsToInt(float f) {
-        ByteBuffer conv = ByteBuffer.allocate(4);
-        conv.putFloat(0, f);
-        return conv.getInt(0);
-    }
+	private int floatBitsToInt(float f) {
+		ByteBuffer conv = ByteBuffer.allocate(4);
+		conv.putFloat(0, f);
+		return conv.getInt(0);
+	}
 
 }

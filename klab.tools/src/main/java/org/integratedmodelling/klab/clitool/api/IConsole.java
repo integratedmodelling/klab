@@ -24,8 +24,8 @@ public interface IConsole extends Interactive {
 
     void setPrompt(String s);
 
-    void enableInput();
+	void enableInput();
 
-    void disableInput();
+	void disableInput();
 
 }

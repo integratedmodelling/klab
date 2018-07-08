@@ -38,8 +38,8 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
  */
 public interface ITessellation extends Iterable<IExtent> {
 
-    int size();
+  int size();
 
-    IShape getFeature(long stateIndex);
-
+  IShape getFeature(long stateIndex);
+  
 }

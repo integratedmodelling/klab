@@ -116,10 +116,6 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
         return groups;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

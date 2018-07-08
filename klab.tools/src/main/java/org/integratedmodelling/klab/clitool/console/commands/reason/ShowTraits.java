@@ -24,7 +24,8 @@ public class ShowTraits implements ICommand {
         }
         String ret = "";
         for (IConcept c : Traits.INSTANCE.getTraits(concept.getType())) {
-            ret += (ret.isEmpty() ? "" : "\n") + "" + Traits.INSTANCE.getBaseParentTrait(c) + ": " + c.getType();
+            ret += (ret.isEmpty() ? "" : "\n") + ""
+                    + Traits.INSTANCE.getBaseParentTrait(c) + ": " + c.getType();
         }
         return ret;
     }

@@ -23,23 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Secured(Roles.SESSION)
 public class EngineTaskController {
-
-    /**
-     * Interrupt passed task, notifying any computation through the monitor.
-     * 
-     * @param principal
-     * @param task
-     * @param force
-     * @return true if interruption was achieved
-     */
-    @RequestMapping(
-            value = API.ENGINE.OBSERVATION.TASK.INTERRUPT,
-            method = RequestMethod.GET,
-            produces = "application/json")
-    @ResponseBody
-    public boolean describeObservation(Principal principal, @PathVariable String task,
-            @RequestParam(required = false) Boolean force) {
-        ISession session = EngineSessionController.getSession(principal);
-        return ((Session) session).interruptTask(task, force);
-    }
+	
+	/**
+	 * Interrupt passed task, notifying any computation through the monitor.
+	 * 
+	 * @param principal
+	 * @param task
+	 * @param force
+	 * @return true if interruption was achieved
+	 */
+	@RequestMapping(value = API.ENGINE.OBSERVATION.TASK.INTERRUPT, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public boolean describeObservation(Principal principal, @PathVariable String task,
+			@RequestParam(required = false) Boolean force) {
+		ISession session = EngineSessionController.getSession(principal);
+		return ((Session)session).interruptTask(task, force);
+	}
 }

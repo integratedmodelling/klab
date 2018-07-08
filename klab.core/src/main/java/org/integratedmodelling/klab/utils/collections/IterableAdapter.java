@@ -26,22 +26,22 @@ import java.util.Iterator;
  * @param <T> the generic type
  */
 public class IterableAdapter<T> implements Iterable<T> {
+  
+  private Iterable<?> iterable;
 
-    private Iterable<?> iterable;
+  /**
+   * Instantiates a new iterable adapter.
+   *
+   * @param iterable the iterable
+   */
+  public IterableAdapter(Iterable<?> iterable) {
+    this.iterable = iterable;
+  }
 
-    /**
-     * Instantiates a new iterable adapter.
-     *
-     * @param iterable the iterable
-     */
-    public IterableAdapter(Iterable<?> iterable) {
-        this.iterable = iterable;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Iterator<T> iterator() {
-        return new IteratorAdapter<T>(iterable.iterator());
-    }
+  /** {@inheritDoc} */
+  @Override
+  public Iterator<T> iterator() {
+    return new IteratorAdapter<T>(iterable.iterator());
+  } 
 
 }

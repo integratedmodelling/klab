@@ -16,54 +16,53 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 public class Import implements ICommand {
 
-    @Override
-    public Object execute(IServiceCall call, ISession session) throws Exception {
+	@Override
+	public Object execute(IServiceCall call, ISession session) throws Exception {
 
-        String adapter = call.getParameters().get("adapter", String.class);
-        String projectId = call.getParameters().get("project", String.class);
-        Parameters<String> parameters = new Parameters<>();
-        IProject project = Resources.INSTANCE.getLocalWorkspace().getProject(projectId);
+		String adapter = call.getParameters().get("adapter", String.class);
+		String projectId = call.getParameters().get("project", String.class);
+		Parameters<String> parameters = new Parameters<>();
+		IProject project = Resources.INSTANCE.getLocalWorkspace().getProject(projectId);
 
-        if (project == null) {
-            throw new KlabValidationException(
-                    "resource::create: project " + projectId + " does not exist in local workspace");
-        }
+		if (project == null) {
+			throw new KlabValidationException(
+					"resource::create: project " + projectId + " does not exist in local workspace");
+		}
 
-        File file = null;
-        for (Object arg : (List<?>) call.getParameters().get("arguments")) {
-            String argument = arg.toString();
-            if (argument.contains("=")) {
-                String[] ss = argument.split("\\=");
-                if (ss.length != 2) {
-                    throw new KlabValidationException("arguments following the URN must be in the form key=value");
-                }
-                parameters.put(ss[0], ss[1]);
-            } else {
-                if (file != null) {
-                    throw new KlabValidationException(
-                            "the resource::create command only supports one file argument: " + argument);
-                }
-                file = Klab.INSTANCE.resolveFile(argument);
-                if (file == null || !file.exists()) {
-                    throw new KlabValidationException("resource::create: file " + argument + " can't be read");
-                }
-            }
-        }
+		File file = null;
+		for (Object arg : (List<?>) call.getParameters().get("arguments")) {
+			String argument = arg.toString();
+			if (argument.contains("=")) {
+				String[] ss = argument.split("\\=");
+				if (ss.length != 2) {
+					throw new KlabValidationException("arguments following the URN must be in the form key=value");
+				}
+				parameters.put(ss[0], ss[1]);
+			} else {
+				if (file != null) {
+					throw new KlabValidationException(
+							"the resource::create command only supports one file argument: " + argument);
+				}
+				file = Klab.INSTANCE.resolveFile(argument);
+				if (file == null || !file.exists()) {
+					throw new KlabValidationException("resource::create: file " + argument + " can't be read");
+				}
+			}
+		}
 
-        String id = parameters.get("id", String.class);
-        if (id == null && file != null) {
-            id = MiscUtilities.getFileBaseName(file);
-        }
-        if (id == null) {
-            throw new KlabValidationException(
-                    "resource::create: file is null and the parameters do not contain an 'id' field");
-        }
+		String id = parameters.get("id", String.class);
+		if (id == null && file != null) {
+			id = MiscUtilities.getFileBaseName(file);
+		}
+		if (id == null) {
+			throw new KlabValidationException(
+					"resource::create: file is null and the parameters do not contain an 'id' field");
+		}
 
-        IResource ret = Resources.INSTANCE.createLocalResource(id, file, parameters, project, adapter, true, false,
-                session.getMonitor());
-
-        return ret.getUrn() + " [v" + ret.getVersion() + "; adapter=" + ret.getAdapterType() + "]\n   Geometry: "
-                + ret.getGeometry();
-    }
+		IResource ret = Resources.INSTANCE.createLocalResource(id, file, parameters, project, adapter, true, false,
+				session.getMonitor());
+		
+		return ret.getUrn() + " [v" + ret.getVersion() + "; adapter=" + ret.getAdapterType() + "]\n   Geometry: " + ret.getGeometry();
+	}
 
 }

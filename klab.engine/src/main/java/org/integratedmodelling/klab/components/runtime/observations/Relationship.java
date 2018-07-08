@@ -7,18 +7,18 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class Relationship extends CountableObservation implements IRelationship {
 
-    public Relationship(String name, Observable observable, Scale scale, RuntimeContext context) {
-        super(name, observable, scale, context);
-    }
+	public Relationship(String name, Observable observable, Scale scale, RuntimeContext context) {
+		super(name, observable, scale, context);
+	}
 
-    @Override
-    public Subject getSource() {
-        return (Subject) getRuntimeContext().getSourceSubject(this);
-    }
+	@Override
+	public Subject getSource() {
+		return (Subject) getRuntimeContext().getSourceSubject(this);
+	}
 
-    @Override
-    public Subject getTarget() {
-        return (Subject) getRuntimeContext().getTargetSubject(this);
-    }
+	@Override
+	public Subject getTarget() {
+		return (Subject) getRuntimeContext().getTargetSubject(this);
+	}
 
 }

@@ -13,31 +13,31 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class RasterImporter extends AbstractFilesetImporter {
 
-    RasterValidator validator = new RasterValidator();
+	RasterValidator validator = new RasterValidator();
 
-    public RasterImporter() {
-        super(RasterAdapter.fileExtensions.toArray(new String[RasterAdapter.fileExtensions.size()]));
-    }
+	public RasterImporter() {
+		super(RasterAdapter.fileExtensions.toArray(new String[RasterAdapter.fileExtensions.size()]));
+	}
 
-    @Override
-    protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
-        try {
+	@Override
+	protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
+		try {
 
-            Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
+			Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
 
-            if (builder != null) {
-                builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase());
-                for (File f : validator.getAllFilesForResource(file)) {
-                    builder.addImportedFile(f);
-                }
-            }
+			if (builder != null) {
+				builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase());
+				for (File f : validator.getAllFilesForResource(file)) {
+					builder.addImportedFile(f);
+				}
+			}
 
-            return builder;
+			return builder;
 
-        } catch (MalformedURLException e) {
-            Logging.INSTANCE.error(e);
-            return null;
-        }
-    }
+		} catch (MalformedURLException e) {
+			Logging.INSTANCE.error(e);
+			return null;
+		}
+	}
 
 }

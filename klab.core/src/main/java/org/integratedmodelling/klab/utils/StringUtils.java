@@ -37,12 +37,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /** The Constant WHITESPACE. */
     public static final int WHITESPACE = 0x0001;
-
+    
     /** The Constant NONLETTERS. */
     public static final int NONLETTERS = 0x0002;
-
+    
     /** The Constant UPPERCASE. */
-    public static final int UPPERCASE = 0x0004;
+    public static final int UPPERCASE  = 0x0004;
 
     /**
      * Split into lines and indent each by the given amount.
@@ -54,13 +54,13 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static String leftIndent(String s, int indent) {
         String pad = spaces(indent);
         String[] strings = s.split("\n");
-        StringBuffer buf = new StringBuffer(s.length() + (indent * strings.length));
+        StringBuffer buf = new StringBuffer(s.length() + (indent*strings.length));
         for (String ss : strings) {
             buf.append(pad + ss.trim() + "\n");
         }
         return buf.toString();
     }
-
+    
     /**
      * Convert from UTF 8.
      *
@@ -77,7 +77,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         }
         return out;
     }
-
+ 
     /**
      * Convert to UTF 8.
      *
@@ -94,7 +94,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         }
         return out;
     }
-
+    
     /**
      * Use this for simple API. Also replicated in our StringUtils extension as matchWildcards().
      *
@@ -103,7 +103,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      * @return a boolean.
      */
     public static boolean matchWildcards(String string, String pattern) {
-        return new WildcardMatcher().match(string, pattern);
+    	return new WildcardMatcher().match(string, pattern);
     }
 
     /**
@@ -179,7 +179,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
         return ret.toString();
     }
-
+    
     /**
      * Gets the leading whitespace.
      *
@@ -191,12 +191,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         for (int i = 0; i < s.length(); i++) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 break;
-            }
+            } 
             ret.append(s.charAt(i));
         }
         return ret.toString();
     }
-
+    
     /**
      * Gets the trailing whitespace.
      *
@@ -208,7 +208,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         for (int i = s.length() - 1; i >= 0; i--) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 break;
-            }
+            } 
             ret.append(s.charAt(i));
         }
         return ret.toString();
@@ -530,8 +530,8 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      * @return the paragraph size
      */
     public static int[] getParagraphSize(String text) {
-        int[] ret = new int[] { 0, 0 };
-
+        int[] ret = new int[] {0,0};
+        
         int llen = 0;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -542,11 +542,12 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 llen = 0;
                 ret[1] = ret[1] + 1;
             }
-            llen++;
+            llen ++;
         }
-
+        
         return ret;
     }
+    
 
     /**
      * Return the collection of strings that contains the passed pattern within the passed
@@ -567,22 +568,21 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 matches.add(new Pair<>(n, s));
             }
         }
-
-        Collections.sort(matches, new Comparator<Pair<Integer, String>>() {
-
+        
+        Collections.sort(matches, new Comparator<Pair<Integer,String>>(){
             @Override
             public int compare(Pair<Integer, String> arg0, Pair<Integer, String> arg1) {
                 return arg0.getFirst().compareTo(arg1.getFirst());
             }
         });
-
+        
         List<String> ret = new ArrayList<>();
         for (Pair<Integer, String> p : matches) {
             ret.add(p.getSecond());
         }
         return ret;
     }
-
+    
     /**
      * Compute the initial part that does not change in the string representation of the passed
      * objects.
@@ -591,16 +591,16 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      * @return the string
      */
     public static String computeInvariantPrefix(Collection<?> strings) {
-
+        
         String ret = null;
         for (Object o : strings) {
-
+            
             if (o == null) {
                 continue;
             }
-
+            
             String str = o.toString();
-
+            
             if (ret == null) {
                 ret = str;
             } else {
@@ -608,7 +608,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 while (!str.startsWith(ret) && !ret.isEmpty()) {
                     ret = chop(ret);
                 }
-
+                
                 if (ret.isEmpty()) {
                     return ret;
                 }

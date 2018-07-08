@@ -1,127 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>klab</artifactId>
-        <groupId>org.integratedmodelling</groupId>
-        <version>0.10.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>klab.core</artifactId>
-    <dependencies>
-        <!-- for @Nullable and the like -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>24.1-jre</version>
-        </dependency>
-        <dependency>
-            <groupId>com.verhas</groupId>
-            <artifactId>license3j</artifactId>
-            <version>1.0.7</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.9</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${joda-time-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-exec</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <version>2.2</version>
-        </dependency>
-        <!-- CLIENT DEPENDENCIES -->
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-invoker</artifactId>
-            <version>2.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit</artifactId>
-            <version>4.4.0.201606070830-r</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
-        <!-- https://mvnrepository.com/artifact/org.integratedmodelling/jscience -->
-        <!-- TODO find a way to use the official Maven package, which contains 
-			OGC implementations incompatible with Geotool's -->
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>jscience</artifactId>
-            <version>4.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>org.integratedmodelling.kdl</artifactId>
-            <version>${klab.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>org.integratedmodelling.kim</artifactId>
-            <version>${klab.version}</version>
-        </dependency>
-        <!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
-			<artifactId>kotlin-stdlib-jdk8</artifactId> <version>${kotlin.version}</version> 
-			</dependency> -->
-        <dependency>
-            <groupId>org.integratedmodelling</groupId>
-            <artifactId>org.integratedmodelling.klab.api</artifactId>
-            <version>${klab.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot-version}</version>
-        </dependency>
-        <!-- <dependency> <groupId>org.jetbrains.kotlin</groupId> <artifactId>kotlin-stdlib</artifactId> 
-			<version>${kotlin.version}</version> </dependency> <dependency> <groupId>org.jetbrains.kotlin</groupId> 
-			<artifactId>kotlin-test</artifactId> <version>${kotlin.version}</version> 
-			<scope>test</scope> </dependency> -->
-    </dependencies>
-    <!-- 	<properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.integratedmodelling</groupId>
+		<artifactId>klab</artifactId>
+		<version>0.10.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>klab.core</artifactId>
+
+<!-- 	<properties>
 		<kotlin.version>1.2.40</kotlin.version>
 	</properties> -->
-    <build>
-        <pluginManagement>
-            <plugins>
-                <!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
 					<version>${kotlin.version}</version> <executions> <execution> <id>compile</id> 
 					<goals> <goal>compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/main/kotlin</sourceDir> 
 					<sourceDir>${project.basedir}/src/main/java</sourceDir> </sourceDirs> </configuration> 
@@ -129,59 +24,175 @@
 					</goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/test/kotlin</sourceDir> 
 					<sourceDir>${project.basedir}/src/test/java</sourceDir> </sourceDirs> </configuration> 
 					</execution> </executions> </plugin> -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5.1</version>
-                    <executions>
-                        <!-- Replacing default-compile as it is treated specially by maven -->
-                        <execution>
-                            <id>default-compile</id>
-                            <phase>none</phase>
-                        </execution>
-                        <!-- Replacing default-testCompile as it is treated specially by maven -->
-                        <execution>
-                            <id>default-testCompile</id>
-                            <phase>none</phase>
-                        </execution>
-                        <execution>
-                            <id>java-compile</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>java-test-compile</id>
-                            <phase>test-compile</phase>
-                            <goals>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <!-- <plugin> <groupId>org.jetbrains.kotlin</groupId> <artifactId>kotlin-maven-plugin</artifactId> 
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.5.1</version>
+					<executions>
+						<!-- Replacing default-compile as it is treated specially by maven -->
+						<execution>
+							<id>default-compile</id>
+							<phase>none</phase>
+						</execution>
+						<!-- Replacing default-testCompile as it is treated specially by maven -->
+						<execution>
+							<id>default-testCompile</id>
+							<phase>none</phase>
+						</execution>
+						<execution>
+							<id>java-compile</id>
+							<phase>compile</phase>
+							<goals>
+								<goal>compile</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>java-test-compile</id>
+							<phase>test-compile</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<!-- <plugin> <groupId>org.jetbrains.kotlin</groupId> <artifactId>kotlin-maven-plugin</artifactId> 
 				<version>${kotlin.version}</version> <executions> <execution> <id>compile</id> 
 				<phase>compile</phase> <goals> <goal>compile</goal> </goals> </execution> 
 				<execution> <id>test-compile</id> <phase>test-compile</phase> <goals> <goal>test-compile</goal> 
 				</goals> </execution> </executions> </plugin> -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>24.1-jre</version>
+		</dependency>
+
+		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
+			<artifactId>kotlin-stdlib-jdk8</artifactId> <version>${kotlin.version}</version> 
+			</dependency> -->
+
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.kim</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.kdl</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.verhas</groupId>
+			<artifactId>license3j</artifactId>
+			<version>1.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec </groupId>
+			<artifactId>commons-codec </artifactId>
+			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+
+		<!-- for @Nullable and the like -->
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>4.4.0.201606070830-r</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time-version}</version>
+		</dependency>
+
+		<!-- CLIENT DEPENDENCIES -->
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-invoker </artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
+		<!-- https://mvnrepository.com/artifact/org.integratedmodelling/jscience -->
+		<!-- TODO find a way to use the official Maven package, which contains 
+			OGC implementations incompatible with Geotool's -->
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>jscience</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.jetbrains.kotlin</groupId> <artifactId>kotlin-stdlib</artifactId> 
+			<version>${kotlin.version}</version> </dependency> <dependency> <groupId>org.jetbrains.kotlin</groupId> 
+			<artifactId>kotlin-test</artifactId> <version>${kotlin.version}</version> 
+			<scope>test</scope> </dependency> -->
+	</dependencies>
 </project>

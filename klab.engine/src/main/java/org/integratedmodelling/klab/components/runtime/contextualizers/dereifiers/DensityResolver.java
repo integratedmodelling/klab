@@ -23,44 +23,44 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 
-    static final public String FUNCTION_ID = "klab.runtime.dereifiers.density";
+	static final public String FUNCTION_ID = "klab.runtime.dereifiers.density";
 
-    // don't remove - only used as expression
-    public DensityResolver() {
-    }
+	// don't remove - only used as expression
+	public DensityResolver() {
+	}
 
-    public DensityResolver(IParameters parameters, IComputationContext context) {
-        // TODO Auto-generated constructor stub
-    }
+	public DensityResolver(IParameters parameters, IComputationContext context) {
+		// TODO Auto-generated constructor stub
+	}
 
-    public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
-        IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
-        ret.getParameters().put("artifact", availableType.getLocalName());
-        if (desiredObservation.getUnit() != null) {
-            ret.getParameters().put("unit", desiredObservation.getUnit().toString());
-        }
-        return ret;
-    }
+	public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
+		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
+		ret.getParameters().put("artifact", availableType.getLocalName());
+		if (desiredObservation.getUnit() != null) {
+			ret.getParameters().put("unit", desiredObservation.getUnit().toString());
+		}
+		return ret;
+	}
 
-    @Override
-    public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
-        return new DensityResolver(parameters, context);
-    }
+	@Override
+	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+		return new DensityResolver(parameters, context);
+	}
 
-    @Override
-    public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+	@Override
+	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
 
-        return ret;
-    }
+		return ret;
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.create("S2");
-    }
+	@Override
+	public IGeometry getGeometry() {
+		return Geometry.create("S2");
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return Type.NUMBER;
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return Type.NUMBER;
+	}
 
 }

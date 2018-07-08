@@ -7,12 +7,12 @@ import org.integratedmodelling.klab.owl.Ontology;
 
 public enum Ontologies implements IOntologyService {
     INSTANCE;
-
+    
     @Override
     public Ontology require(String name) {
-        return OWL.INSTANCE.requireOntology(name, OWL.INTERNAL_ONTOLOGY_PREFIX);
+        return OWL.INSTANCE.requireOntology(name, OWL.INTERNAL_ONTOLOGY_PREFIX);    
     }
-
+    
     @Override
     public void release(IOntology ontology) {
         OWL.INSTANCE.releaseOntology(ontology);

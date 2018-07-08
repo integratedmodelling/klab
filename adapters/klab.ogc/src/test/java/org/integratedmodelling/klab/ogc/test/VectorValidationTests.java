@@ -27,46 +27,46 @@ import org.junit.Test;
  */
 public class VectorValidationTests extends TestSetup {
 
-    static Engine engine;
-    static IProject testProject;
+	static Engine engine;
+	static IProject testProject;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        engine = Engine.start();
-        testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.vector");
-        if (testProject == null) {
-            testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.vector");
-        }
-        Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
-    }
+	@BeforeClass
+	public static void setUp() throws Exception {
+		engine = Engine.start();
+		testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.vector");
+		if (testProject == null) {
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.vector");
+		}
+		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
+	}
 
-    /**
-     * Tear down.
-     *
-     * @throws Exception
-     *             the exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        engine.stop();
-    }
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		engine.stop();
+	}
 
-    @Test
-    public void importStatesShp() {
-        System.out.println(JsonUtils
-                .printAsJson(((Resource) importResource("data.vector/states.shp", testProject)).getReference()));
-    }
+	@Test
+	public void importStatesShp() {
+		System.out.println(JsonUtils
+				.printAsJson(((Resource) importResource("data.vector/states.shp", testProject)).getReference()));
+	}
 
-    @Test
-    public void importArchsites() {
-        System.out.println(JsonUtils
-                .printAsJson(((Resource) importResource("data.vector/archsites.shp", testProject)).getReference()));
-    }
+	@Test
+	public void importArchsites() {
+		System.out.println(JsonUtils
+				.printAsJson(((Resource) importResource("data.vector/archsites.shp", testProject)).getReference()));
+	}
 
-    @Test
-    public void importTigerRoads() {
-        System.out.println(JsonUtils
-                .printAsJson(((Resource) importResource("data.vector/tiger_roads.shp", testProject)).getReference()));
-    }
+	@Test
+	public void importTigerRoads() {
+		System.out.println(JsonUtils
+				.printAsJson(((Resource) importResource("data.vector/tiger_roads.shp", testProject)).getReference()));
+	}
 
 }

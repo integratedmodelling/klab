@@ -15,10 +15,11 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
-public class SuggestProducts {
-
+public class SuggestProducts
+{
     // Get suggestions given a prefix and a region.
-    private static void lookup(AnalyzingInfixSuggester suggester, String name, String region) {
+    private static void lookup(AnalyzingInfixSuggester suggester, String name,
+                               String region) {
         try {
             List<Lookup.LookupResult> results;
             HashSet<BytesRef> contexts = new HashSet<BytesRef>();
@@ -40,7 +41,8 @@ public class SuggestProducts {
     }
 
     // Deserialize a Product from a LookupResult payload.
-    private static Product getProduct(Lookup.LookupResult result) {
+    private static Product getProduct(Lookup.LookupResult result)
+    {
         try {
             BytesRef payload = result.payload;
             if (payload != null) {
@@ -51,7 +53,7 @@ public class SuggestProducts {
             } else {
                 return null;
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException|ClassNotFoundException e) {
             throw new Error("Could not decode payload :(");
         }
     }
@@ -64,14 +66,30 @@ public class SuggestProducts {
 
             // Create our list of products.
             ArrayList<Product> products = new ArrayList<Product>();
-            products.add(new Product("Electric Guitar", "http://images.example/electric-guitar.jpg",
-                    new String[] { "US", "CA" }, 100));
             products.add(
-                    new Product("Electric Train", "http://images.example/train.jpg", new String[] { "US", "CA" }, 100));
-            products.add(new Product("Acoustic Guitar", "http://images.example/acoustic-guitar.jpg",
-                    new String[] { "US", "ZA" }, 80));
+                new Product(
+                    "Electric Guitar",
+                    "http://images.example/electric-guitar.jpg",
+                    new String[]{"US", "CA"},
+                    100));
             products.add(
-                    new Product("Guarana Soda", "http://images.example/soda.jpg", new String[] { "ZA", "IE" }, 130));
+                new Product(
+                    "Electric Train",
+                    "http://images.example/train.jpg",
+                    new String[]{"US", "CA"},
+                    100));
+            products.add(
+                new Product(
+                    "Acoustic Guitar",
+                    "http://images.example/acoustic-guitar.jpg",
+                    new String[]{"US", "ZA"},
+                    80));
+            products.add(
+                new Product(
+                    "Guarana Soda",
+                    "http://images.example/soda.jpg",
+                    new String[]{"ZA", "IE"},
+                    130));
 
             // Index the products with the suggester.
             suggester.build(new ProductIterator(products.iterator()));

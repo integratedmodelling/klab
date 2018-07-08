@@ -14,26 +14,27 @@ import akka.actor.Props;
  */
 public class ObservationActor extends AbstractActor {
 
-    static public ActorRef create(IObservation observation) {
-        // context = (get context from runtime context)
-        // return context.actorOf(ObservationActor.props(observation), observation.getId());
-        return null;
-    }
 
-    static Props props(IObservation observation) {
-        return Props.create(ObservationActor.class, () -> new ObservationActor(observation));
-    }
+	static public ActorRef create(IObservation observation) {
+		// context = (get context from runtime context)
+		// return context.actorOf(ObservationActor.props(observation), observation.getId());
+		return null;
+	}
+	
+	static Props props(IObservation observation) {
+		return Props.create(ObservationActor.class, () -> new ObservationActor(observation));
+	}
 
-    private final IObservation observation;
+	private final IObservation observation;
 
-    public ObservationActor(IObservation observation) {
-        this.observation = observation;
-    }
+	public ObservationActor(IObservation observation) {
+		this.observation = observation;
+	}
 
-    @Override
-    public Receive createReceive() {
-        // TODO Auto-generated method stub
-        return null; // receiveBuilder().match();
-    }
+	@Override
+	public Receive createReceive() {
+		// TODO Auto-generated method stub
+		return null; // receiveBuilder().match();
+	}
 
 }

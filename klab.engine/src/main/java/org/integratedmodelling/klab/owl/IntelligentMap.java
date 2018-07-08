@@ -46,7 +46,7 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class IntelligentMap<T> implements Map<IConcept, T> {
 
-    Hashtable<IConcept, T> _data = new Hashtable<IConcept, T>();
+    Hashtable<IConcept, T>     _data       = new Hashtable<IConcept, T>();
     ArrayList<Pair<String, T>> _unresolved = new ArrayList<Pair<String, T>>();
 
     public T get(IConcept concept) {
@@ -56,7 +56,7 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
         class Matcher<TYPE> implements ConceptVisitor.ConceptMatcher {
 
             Hashtable<IConcept, TYPE> coll;
-            TYPE ret = null;
+            TYPE                      ret = null;
 
             public Matcher(Hashtable<IConcept, TYPE> c) {
                 coll = c;

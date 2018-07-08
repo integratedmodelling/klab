@@ -30,96 +30,95 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public class State extends Observation implements IState, IKeyHolder {
 
-    public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
+	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
+	
+	IDataArtifact storage;
+	IDataKey dataKey;
+	Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
 
-    IDataArtifact storage;
-    IDataKey dataKey;
-    Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
+	public State(Observable observable, Scale scale, RuntimeContext context, IDataArtifact data) {
+		super(observable, scale, context);
+		this.storage = data;
+		this.layers.put(data.getType(), data);
+	}
+	
+	@Override
+	public boolean isConstant() {
+		return false;
+	}
 
-    public State(Observable observable, Scale scale, RuntimeContext context, IDataArtifact data) {
-        super(observable, scale, context);
-        this.storage = data;
-        this.layers.put(data.getType(), data);
-    }
+	@Override
+	public IState as(IArtifact.Type type) {
 
-    @Override
-    public boolean isConstant() {
-        return false;
-    }
+		if (type == storage.getType() || type == IArtifact.Type.VALUE) {
+			return this;
+		}
+		
+		IDataArtifact layer = layers.get(type);
+		if (layer == null) {
+			layers.put(type, layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getRuntimeContext()));
+		}
 
-    @Override
-    public IState as(IArtifact.Type type) {
+		return new StateLayer(this, layer);
+	}
 
-        if (type == storage.getType() || type == IArtifact.Type.VALUE) {
-            return this;
-        }
+	public Object get(ILocator index) {
+		return storage.get(index);
+	}
 
-        IDataArtifact layer = layers.get(type);
-        if (layer == null) {
-            layers.put(type,
-                    layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getRuntimeContext()));
-        }
+	public long set(ILocator index, Object value) {
+		return storage.set(index, value);
+	}
 
-        return new StateLayer(this, layer);
-    }
+	public IGeometry getGeometry() {
+		return storage.getGeometry();
+	}
 
-    public Object get(ILocator index) {
-        return storage.get(index);
-    }
+	public IMetadata getMetadata() {
+		return storage.getMetadata();
+	}
 
-    public long set(ILocator index, Object value) {
-        return storage.set(index, value);
-    }
+	public long size() {
+		return storage.size();
+	}
 
-    public IGeometry getGeometry() {
-        return storage.getGeometry();
-    }
+	@Override
+	public <T> T get(ILocator index, Class<T> cls) {
+		return storage.get(index, cls);
+	}
 
-    public IMetadata getMetadata() {
-        return storage.getMetadata();
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return storage.getType();
+	}
 
-    public long size() {
-        return storage.size();
-    }
+	@Override
+	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+		return DataIterator.create(this, getScale().at(index), cls);
+	}
 
-    @Override
-    public <T> T get(ILocator index, Class<T> cls) {
-        return storage.get(index, cls);
-    }
+	@Override
+	public IDataKey getDataKey() {
+		return dataKey;
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return storage.getType();
-    }
+	@Override
+	public void setDataKey(IDataKey key) {
+		this.dataKey = key;
+		if (this.storage instanceof IKeyHolder) {
+			((IKeyHolder)this.storage).setDataKey(key);
+		}
+	}
 
-    @Override
-    public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
-        return DataIterator.create(this, getScale().at(index), cls);
-    }
+	@Override
+	public IState at(ILocator locator) {
+		IScale scale = getScale().at(locator);
+		return scale == getScale() ? this : new RescalingState(this, (Scale)scale, getRuntimeContext());
+	}
 
-    @Override
-    public IDataKey getDataKey() {
-        return dataKey;
-    }
-
-    @Override
-    public void setDataKey(IDataKey key) {
-        this.dataKey = key;
-        if (this.storage instanceof IKeyHolder) {
-            ((IKeyHolder) this.storage).setDataKey(key);
-        }
-    }
-
-    @Override
-    public IState at(ILocator locator) {
-        IScale scale = getScale().at(locator);
-        return scale == getScale() ? this : new RescalingState(this, (Scale) scale, getRuntimeContext());
-    }
-
-    @Override
-    public IState in(IValueMediator mediator) {
-        return MediatingState.getMediator(this, mediator);
-    }
+	@Override
+	public IState in(IValueMediator mediator) {
+		return MediatingState.getMediator(this, mediator);
+	}
 
 }

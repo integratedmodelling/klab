@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.scale.Scale;
 public abstract class DirectObservation extends Observation implements IDirectObservation {
 
     String name;
-
+    
     protected DirectObservation(String name, Observable observable, Scale scale, RuntimeContext context) {
         super(observable, scale, context);
         this.name = name;
@@ -23,24 +23,24 @@ public abstract class DirectObservation extends Observation implements IDirectOb
     public String getName() {
         return name;
     }
-
+    
     @Override
     public Collection<IState> getStates() {
-        return getRuntimeContext().getChildren(this, IState.class);
+      return getRuntimeContext().getChildren(this, IState.class);
     }
 
     @Override
     public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
         return getRuntimeContext().getChildren(this, cls);
     }
-
+    
     @Override
     public IArtifact.Type getType() {
-        return IArtifact.Type.OBJECT;
+    	return IArtifact.Type.OBJECT;
     }
-
+    
     public IDirectObservation at(ILocator locator) {
-        //    	Logging.INSTANCE.warn("RELOCATION OF DIRECT OBSERVATION IS UNIMPLEMENTED!");
-        return this;
+//    	Logging.INSTANCE.warn("RELOCATION OF DIRECT OBSERVATION IS UNIMPLEMENTED!");
+    	return this;
     }
 }

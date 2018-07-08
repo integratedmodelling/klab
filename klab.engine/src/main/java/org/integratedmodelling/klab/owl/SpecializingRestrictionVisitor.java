@@ -25,14 +25,15 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
  * 
  * @author ferdinando.villa
  */
-public class SpecializingRestrictionVisitor extends OWLClassExpressionVisitorAdapter {
+public class SpecializingRestrictionVisitor
+        extends OWLClassExpressionVisitorAdapter {
 
-    private Set<OWLOntology> onts;
-    private Set<OWLClass> processedClasses = new HashSet<>();
-    private IProperty property;
-    private Collection<IConcept> result = null;
-    private IConcept concept;
-    private boolean useSuperproperties = false;
+    private Set<OWLOntology>     onts;
+    private Set<OWLClass>        processedClasses   = new HashSet<>();
+    private IProperty            property;
+    private Collection<IConcept> result             = null;
+    private IConcept             concept;
+    private boolean              useSuperproperties = false;
     private OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> restriction;
 
     public Collection<IConcept> getResult() {
@@ -42,8 +43,9 @@ public class SpecializingRestrictionVisitor extends OWLClassExpressionVisitorAda
     public OWLQuantifiedRestriction<?, ?, ?> getRestriction() {
         return this.restriction;
     }
-
-    public SpecializingRestrictionVisitor(IConcept concept, IProperty property, boolean useSuperProperties) {
+    
+    public SpecializingRestrictionVisitor(IConcept concept, IProperty property,
+            boolean useSuperProperties) {
         this.onts = OWL.INSTANCE.manager.getOntologies();
         this.property = property;
         this.concept = concept;
@@ -72,14 +74,18 @@ public class SpecializingRestrictionVisitor extends OWLClassExpressionVisitorAda
 
     private void visitRestriction(OWLQuantifiedRestriction<?, ?, ? extends OWLClassExpression> desc) {
         if (useSuperproperties) {
-            if (OWL.INSTANCE.getPropertyFor((OWLProperty<?, ?>) desc.getProperty()).is(property)) {
+            if (OWL.INSTANCE
+                    .getPropertyFor((OWLProperty<?, ?>) desc.getProperty())
+                    .is(property)) {
                 if (addNew(OWL.INSTANCE.unwrap(desc.getFiller()))) {
                     // keep it for inspection at the end
                     this.restriction = desc;
                 }
             }
         } else {
-            if (OWL.INSTANCE.getPropertyFor((OWLProperty<?, ?>) desc.getProperty()).equals(property)) {
+            if (OWL.INSTANCE
+                    .getPropertyFor((OWLProperty<?, ?>) desc.getProperty())
+                    .equals(property)) {
                 if (addNew(OWL.INSTANCE.unwrap(desc.getFiller()))) {
                     // keep the restriction 
                     this.restriction = desc;
@@ -92,7 +98,7 @@ public class SpecializingRestrictionVisitor extends OWLClassExpressionVisitorAda
      * return whether the restriction was used.
      */
     private boolean addNew(Collection<IConcept> collection) {
-
+        
         if (result == null) {
             result = collection;
             return !collection.isEmpty();

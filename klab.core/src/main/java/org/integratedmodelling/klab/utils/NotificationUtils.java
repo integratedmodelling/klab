@@ -25,14 +25,14 @@ import org.integratedmodelling.kim.api.IKimScope;
  * @version $Id: $Id
  */
 public class NotificationUtils {
-
+    
     /**
      * Gets the message.
      *
      * @param objects the objects
      * @return the message
      */
-    public static String getMessage(Object... objects) {
+    public static String getMessage(Object ...objects) {
 
         StringBuffer ret = new StringBuffer(256);
 
@@ -40,13 +40,13 @@ public class NotificationUtils {
             if (o instanceof String) {
                 ret.append((ret.length() == 0 ? "" : " ") + o);
             } else if (o instanceof Throwable) {
-                ret.append((ret.length() == 0 ? "" : " ") + ((Throwable) o).getLocalizedMessage());
+                ret.append((ret.length() == 0 ? "" : " ") + ((Throwable)o).getLocalizedMessage());
             } else if (o instanceof IKimScope) {
-                ret.insert(0, ((IKimScope) o).getLocationDescriptor() + ": ");
+                ret.insert(0, ((IKimScope)o).getLocationDescriptor() + ": ");
             }
             // TODO continue
         }
-
+        
         return ret.toString();
     }
 

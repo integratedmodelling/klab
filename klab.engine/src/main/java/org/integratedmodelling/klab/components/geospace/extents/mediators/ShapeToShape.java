@@ -9,10 +9,10 @@ import org.integratedmodelling.klab.utils.Pair;
 public class ShapeToShape implements IScaleMediator {
 
     public ShapeToShape(Shape shape, Shape shape2) {
-        // TODO Auto-generated constructor stub
-    }
+		// TODO Auto-generated constructor stub
+	}
 
-    @Override
+	@Override
     public boolean isConformant() {
         // TODO Auto-generated method stub
         return false;

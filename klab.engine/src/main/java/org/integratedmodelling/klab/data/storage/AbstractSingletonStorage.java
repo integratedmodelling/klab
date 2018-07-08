@@ -17,65 +17,65 @@ import org.integratedmodelling.klab.utils.Utils;
 
 public abstract class AbstractSingletonStorage<T> extends Artifact implements IDataArtifact {
 
-    IObservable semantics;
-    // we only store the scale to enable promotion to regular if needed
-    Scale scale;
-    T value;
-    Metadata metadata = new Metadata();
-    IDataArtifact delegate = null;
-    // value was set
-    boolean initialized = false;
-    IObjectArtifact parent;
+	IObservable semantics;
+	// we only store the scale to enable promotion to regular if needed
+	Scale scale;
+	T value;
+	Metadata metadata = new Metadata();
+	IDataArtifact delegate = null;
+	// value was set
+	boolean initialized = false;
+	IObjectArtifact parent;
 
-    protected AbstractSingletonStorage(IObservable observable, Scale scale) {
-        this.semantics = observable;
-        this.scale = scale;
-    }
+	protected AbstractSingletonStorage(IObservable observable, Scale scale) {
+		this.semantics = observable;
+		this.scale = scale;
+	}
 
-    // @Override
-    public IObservable getSemantics() {
-        return semantics;
-    }
+	// @Override
+	public IObservable getSemantics() {
+		return semantics;
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.scalar();
-    }
+	@Override
+	public IGeometry getGeometry() {
+		return Geometry.scalar();
+	}
 
-    @Override
-    public IMetadata getMetadata() {
-        return metadata;
-    }
+	@Override
+	public IMetadata getMetadata() {
+		return metadata;
+	}
 
-    @Override
-    public T get(ILocator index) {
-        return value;
-    }
+	@Override
+	public T get(ILocator index) {
+		return value;
+	}
 
-    @Override
-    public long set(ILocator index, Object value) {
-        if (this.initialized && !Objects.equals(this.value, value)) {
-            // TODO the first different value should trigger promotion. Hard because we
-            // don't know what was set so far.
-            // this.delegate = Klab.INSTANCE.getStorageProvider().createStorage(observable,
-            // scale);
-            // this.delegate.set(index, value);
-        }
-        this.value = setValue(value);
-        // this.initialized = true;
-        return 0;
-    }
+	@Override
+	public long set(ILocator index, Object value) {
+		if (this.initialized && !Objects.equals(this.value, value)) {
+			// TODO the first different value should trigger promotion. Hard because we
+			// don't know what was set so far.
+			// this.delegate = Klab.INSTANCE.getStorageProvider().createStorage(observable,
+			// scale);
+			// this.delegate.set(index, value);
+		}
+		this.value = setValue(value);
+		// this.initialized = true;
+		return 0;
+	}
 
-    protected abstract T setValue(Object value);
+	protected abstract T setValue(Object value);
 
-    @Override
-    public long size() {
-        return scale.size();
-    }
+	@Override
+	public long size() {
+		return scale.size();
+	}
 
-    @Override
-    public <K> K get(ILocator index, Class<K> cls) {
-        return Utils.asType(get(index), cls);
-    }
+	@Override
+	public <K> K get(ILocator index, Class<K> cls) {
+		return Utils.asType(get(index), cls);
+	}
 
 }

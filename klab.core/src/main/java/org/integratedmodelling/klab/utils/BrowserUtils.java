@@ -48,7 +48,14 @@ public class BrowserUtils {
 
                 // Do a best guess on unix until we get a platform independent way
                 // Build a list of browsers to try, in this order.
-                String[] browsers = { "epiphany", "firefox", "mozilla", "konqueror", "netscape", "opera", "links",
+                String[] browsers = {
+                        "epiphany",
+                        "firefox",
+                        "mozilla",
+                        "konqueror",
+                        "netscape",
+                        "opera",
+                        "links",
                         "lynx" };
 
                 // Build a command string which looks like "browser1 "url" || browser2 "url" ||..."

@@ -100,19 +100,18 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * @return the original file and all sidecar files
      */
     public static Collection<File> getSidecarFiles(File original, Collection<String> extensions) {
-        Set<File> ret = new HashSet<>();
-        ret.add(original);
-        String base = MiscUtilities.getFilePath(original.toString()) + File.separator
-                + MiscUtilities.getFileBaseName(original);
-        for (String extension : extensions) {
-            File sidecar = new File(base + "." + extension);
-            if (sidecar.exists() && sidecar.isFile()) {
-                ret.add(sidecar);
-            }
-        }
-        return ret;
+    	Set<File> ret = new HashSet<>();
+    	ret.add(original);
+    	String base = MiscUtilities.getFilePath(original.toString()) + File.separator + MiscUtilities.getFileBaseName(original);
+    	for (String extension : extensions) {
+    		File sidecar = new File(base + "." + extension);
+    		if (sidecar.exists() && sidecar.isFile()) {
+    			ret.add(sidecar);
+    		}
+    	}
+    	return ret;
     }
-
+    
     /**
      * The main method.
      *

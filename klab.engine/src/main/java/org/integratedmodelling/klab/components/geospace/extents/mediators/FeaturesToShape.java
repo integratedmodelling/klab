@@ -10,10 +10,10 @@ import org.integratedmodelling.klab.utils.Pair;
 public class FeaturesToShape implements IScaleMediator {
 
     public FeaturesToShape(ITessellation features, Shape shape) {
-        // TODO Auto-generated constructor stub
-    }
+		// TODO Auto-generated constructor stub
+	}
 
-    @Override
+	@Override
     public boolean isConformant() {
         // TODO Auto-generated method stub
         return false;

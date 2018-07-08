@@ -14,10 +14,10 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public abstract class CountableObservation extends DirectObservation {
 
-    protected CountableObservation(String name, Observable observable, Scale scale, RuntimeContext context) {
-        super(name, observable, scale, context);
-        // resolving the observable is always optional
-        observable.setOptional(true);
-    }
+  protected CountableObservation(String name, Observable observable, Scale scale, RuntimeContext context) {
+    super(name, observable, scale, context);
+    // resolving the observable is always optional
+    observable.setOptional(true);
+  }
 
 }

@@ -45,268 +45,268 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
  */
 public interface IGrid extends Iterable<Cell> {
 
-    public interface Cell extends ISpace {
+	public interface Cell extends ISpace {
 
-        Cell N();
+		Cell N();
 
-        Cell S();
+		Cell S();
 
-        Cell E();
+		Cell E();
 
-        Cell W();
+		Cell W();
 
-        Cell NE();
+		Cell NE();
 
-        Cell NW();
+		Cell NW();
 
-        Cell SE();
+		Cell SE();
 
-        Cell SW();
+		Cell SW();
 
-        Collection<Cell> getNeighbors();
+		Collection<Cell> getNeighbors();
 
-        Cell getNeighbor(Orientation orientation);
+		Cell getNeighbor(Orientation orientation);
 
-        long getX();
+		long getX();
 
-        long getY();
+		long getY();
 
-        /**
-         * Create a new cell in a position offset by the passed number of cells in each
-         * dimension; return null if cell is off the grid or inactive.
-         * 
-         * @param xOfs
-         * @param yOfs
-         * @return moved cell
-         */
-        Cell move(long xOfs, long yOfs);
+		/**
+		 * Create a new cell in a position offset by the passed number of cells in each
+		 * dimension; return null if cell is off the grid or inactive.
+		 * 
+		 * @param xOfs
+		 * @param yOfs
+		 * @return moved cell
+		 */
+		Cell move(long xOfs, long yOfs);
 
-        double getEast();
+		double getEast();
 
-        double getWest();
+		double getWest();
 
-        double getSouth();
+		double getSouth();
 
-        double getNorth();
+		double getNorth();
 
-        Long getOffsetInGrid();
+		Long getOffsetInGrid();
 
-        boolean isAdjacent(Cell cell);
+		boolean isAdjacent(Cell cell);
 
-        /**
-         * World coordinates of center, horizontal-first.
-         * 
-         * @return world coordinates of center
-         */
-        double[] getCenter();
+		/**
+		 * World coordinates of center, horizontal-first.
+		 * 
+		 * @return world coordinates of center
+		 */
+		double[] getCenter();
 
-        IShape getShape();
+		IShape getShape();
 
-    }
+	}
 
-    /**
-     * A grid mask defines the active or inactive state of each cell. It is used by
-     * the cell iterator to skip inactive cells. Masks with inactive cells result
-     * from grids created with shapes that don't cover the entire rectangular grid.
-     * 
-     * @author ferdinando.villa
-     *
-     */
-    public interface Mask {
+	/**
+	 * A grid mask defines the active or inactive state of each cell. It is used by
+	 * the cell iterator to skip inactive cells. Masks with inactive cells result
+	 * from grids created with shapes that don't cover the entire rectangular grid.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public interface Mask {
 
-        /**
-         * Merge with another mask. Changes the contents of the mask.
-         * 
-         * @param other
-         *            another mask of the same shape. No check is made for compatibility
-         *            and exceptions will only be thrown if the total size is different.
-         * @param connector
-         *            only {@link LogicalConnector#UNION} and
-         *            {@link LogicalConnector#INTERSECTION} are supported.
-         */
-        void merge(Mask other, LogicalConnector connector);
+		/**
+		 * Merge with another mask. Changes the contents of the mask.
+		 * 
+		 * @param other
+		 *            another mask of the same shape. No check is made for compatibility
+		 *            and exceptions will only be thrown if the total size is different.
+		 * @param connector
+		 *            only {@link LogicalConnector#UNION} and
+		 *            {@link LogicalConnector#INTERSECTION} are supported.
+		 */
+		void merge(Mask other, LogicalConnector connector);
 
-        /**
-         * Check status of cell
-         * 
-         * @param x
-         * @param y
-         * @return true if cell at x,y is active
-         */
-        boolean isActive(long x, long y);
+		/**
+		 * Check status of cell
+		 * 
+		 * @param x
+		 * @param y
+		 * @return true if cell at x,y is active
+		 */
+		boolean isActive(long x, long y);
 
-        /**
-         * Activate the cell at x, y
-         * 
-         * @param x
-         * @param y
-         */
-        void activate(long x, long y);
+		/**
+		 * Activate the cell at x, y
+		 * 
+		 * @param x
+		 * @param y
+		 */
+		void activate(long x, long y);
 
-        /**
-         * Deactivate the cell at x,y
-         * 
-         * @param x
-         * @param y
-         */
-        void deactivate(long x, long y);
+		/**
+		 * Deactivate the cell at x,y
+		 * 
+		 * @param x
+		 * @param y
+		 */
+		void deactivate(long x, long y);
 
-        /**
-         * Total active cells
-         * 
-         * @return number of active cells
-         */
-        long totalActiveCells();
+		/**
+		 * Total active cells
+		 * 
+		 * @return number of active cells
+		 */
+		long totalActiveCells();
 
-        /**
-         * Next active cell at or above the passed offset, <strong>including</strong>
-         * the passed offset.
-         * 
-         * @param fromOffset
-         * @return the next active offset using the natural ordering, or -1
-         */
-        long nextActiveOffset(long fromOffset);
+		/**
+		 * Next active cell at or above the passed offset, <strong>including</strong>
+		 * the passed offset.
+		 * 
+		 * @param fromOffset
+		 * @return the next active offset using the natural ordering, or -1
+		 */
+		long nextActiveOffset(long fromOffset);
 
-        /**
-         * Invert the status of each cell
-         */
-        void invert();
+		/**
+		 * Invert the status of each cell
+		 */
+		void invert();
 
-        /**
-         * Set every flag to inactive;
-         */
-        void deactivate();
+		/**
+		 * Set every flag to inactive;
+		 */
+		void deactivate();
 
-        /**
-         * Set every cell to active;
-         */
-        void activate();
+		/**
+		 * Set every cell to active;
+		 */
+		void activate();
 
-    }
+	}
 
-    /**
-     * 
-     * @param xCoordinate
-     * @param direction
-     * @return the new X coordinate
-     */
-    double snapX(double xCoordinate, Direction direction);
+	/**
+	 * 
+	 * @param xCoordinate
+	 * @param direction
+	 * @return the new X coordinate
+	 */
+	double snapX(double xCoordinate, Direction direction);
 
-    /**
-     * 
-     * @param yCoordinate
-     * @param direction
-     * @return the new Y coordinate
-     */
-    double snapY(double yCoordinate, Direction direction);
+	/**
+	 * 
+	 * @param yCoordinate
+	 * @param direction
+	 * @return the new Y coordinate
+	 */
+	double snapY(double yCoordinate, Direction direction);
 
-    /**
-     * Number of cells on horizontal (W-E) axis.
-     * 
-     * @return Y cells
-     */
-    long getYCells();
+	/**
+	 * Number of cells on horizontal (W-E) axis.
+	 * 
+	 * @return Y cells
+	 */
+	long getYCells();
 
-    /**
-     * Number of cells on vertical (S-N) axis.
-     * 
-     * @return X cells
-     */
-    long getXCells();
+	/**
+	 * Number of cells on vertical (S-N) axis.
+	 * 
+	 * @return X cells
+	 */
+	long getXCells();
 
-    /**
-     * Total number of cells.
-     * 
-     * @return total cells
-     */
-    long getCellCount();
+	/**
+	 * Total number of cells.
+	 * 
+	 * @return total cells
+	 */
+	long getCellCount();
 
-    /**
-     * Return the cell area in a SI unit for area (compatible with square meters).
-     * 
-     * @param unit
-     *            area unit.
-     *
-     * @return the cell area
-     */
-    double getCellArea(IUnit unit);
+	/**
+	 * Return the cell area in a SI unit for area (compatible with square meters).
+	 * 
+	 * @param unit
+	 *            area unit.
+	 *
+	 * @return the cell area
+	 */
+	double getCellArea(IUnit unit);
 
-    /**
-     * Convert to linear index.
-     * 
-     * @param x
-     * @param y
-     * @return linear offset
-     */
-    long getOffset(long x, long y);
+	/**
+	 * Convert to linear index.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return linear offset
+	 */
+	long getOffset(long x, long y);
 
-    /**
-     * Return whether the grid cell at the passed coordinates is part of the active
-     * area of the grid.
-     * 
-     * @param x
-     * @param y
-     * @return true if active
-     */
-    boolean isActive(long x, long y);
+	/**
+	 * Return whether the grid cell at the passed coordinates is part of the active
+	 * area of the grid.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return true if active
+	 */
+	boolean isActive(long x, long y);
 
-    double getEast();
+	double getEast();
 
-    double getWest();
+	double getWest();
 
-    double getSouth();
+	double getSouth();
 
-    double getNorth();
+	double getNorth();
 
-    /**
-     * Get the linear index of the cell where the passed point is located, using
-     * world coordinates in the projection we're in. Use w-e, s-n coordinates no
-     * matter the projection.
-     * 
-     * @param lon
-     * @param lat
-     * @return linear offset
-     */
-    long getOffsetFromWorldCoordinates(double lon, double lat);
+	/**
+	 * Get the linear index of the cell where the passed point is located, using
+	 * world coordinates in the projection we're in. Use w-e, s-n coordinates no
+	 * matter the projection.
+	 * 
+	 * @param lon
+	 * @param lat
+	 * @return linear offset
+	 */
+	long getOffsetFromWorldCoordinates(double lon, double lat);
 
-    /**
-     * Convert from linear index.
-     * 
-     * @param index
-     * @return xy offsets from linear
-     */
-    long[] getXYOffsets(long index);
+	/**
+	 * Convert from linear index.
+	 * 
+	 * @param index
+	 * @return xy offsets from linear
+	 */
+	long[] getXYOffsets(long index);
 
-    /**
-     * Get the most accurate geospatial coordinates (w-e, s-n) for the linear offset
-     * passed, corresponding to the center of the correspondent cell. Use current
-     * coordinate reference system.
-     * 
-     * @param index
-     * @return world coordinates for linear offset
-     */
-    double[] getCoordinates(long index);
+	/**
+	 * Get the most accurate geospatial coordinates (w-e, s-n) for the linear offset
+	 * passed, corresponding to the center of the correspondent cell. Use current
+	 * coordinate reference system.
+	 * 
+	 * @param index
+	 * @return world coordinates for linear offset
+	 */
+	double[] getCoordinates(long index);
 
-    // /**
-    // * Get a locator for the passed grid coordinates. Use this instead of creating
-    // a
-    // * locator from scratch, to ensure that the grid coordinates conform to the
-    // * arrangement of this grid.
-    // *
-    // * @param x
-    // * @param y
-    // * @return locator for x,y cell
-    // */
-    // IScale.Locator getLocator(long x, long y);
+	// /**
+	// * Get a locator for the passed grid coordinates. Use this instead of creating
+	// a
+	// * locator from scratch, to ensure that the grid coordinates conform to the
+	// * arrangement of this grid.
+	// *
+	// * @param x
+	// * @param y
+	// * @return locator for x,y cell
+	// */
+	// IScale.Locator getLocator(long x, long y);
 
-    double getCellWidth();
+	double getCellWidth();
 
-    double getCellHeight();
+	double getCellHeight();
 
-    double[] getWorldCoordinatesAt(long x, long y);
+	double[] getWorldCoordinatesAt(long x, long y);
 
-    long[] getGridCoordinatesAt(double x, double y);
+	long[] getGridCoordinatesAt(double x, double y);
 
-    IProjection getProjection();
+	IProjection getProjection();
 
 }

@@ -48,120 +48,120 @@ import org.integratedmodelling.klab.utils.collections.ImmutableList;
  */
 public class CommandHistory extends ImmutableList<String> {
 
-    List<String> history = new ArrayList<>();
-    HashSet<String> commands = new HashSet<>();
-    File historyFile;
-    int currentPosition = -1;
+	List<String> history = new ArrayList<>();
+	HashSet<String> commands = new HashSet<>();
+	File historyFile;
+	int currentPosition = -1;
 
-    /**
-     * Return the current position (0 = most recent) or -1 if there is no history.
-     * 
-     * @return
-     */
-    int getPosition() {
-        return currentPosition;
-    }
+	/**
+	 * Return the current position (0 = most recent) or -1 if there is no history.
+	 * 
+	 * @return
+	 */
+	int getPosition() {
+		return currentPosition;
+	}
 
-    public CommandHistory() {
-        historyFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "client-history.txt");
-        if (historyFile.exists()) {
-            readHistory();
-        }
-    }
+	public CommandHistory() {
+		historyFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + "client-history.txt");
+		if (historyFile.exists()) {
+			readHistory();
+		}
+	}
 
-    /**
-     * Pass the file name for the history (will be put in SHOME/.thinklab).
-     * 
-     * @param fileName
-     */
-    public CommandHistory(String fileName) {
-        historyFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + fileName);
-        if (historyFile.exists()) {
-            readHistory();
-        }
-    }
+	/**
+	 * Pass the file name for the history (will be put in SHOME/.thinklab).
+	 * 
+	 * @param fileName
+	 */
+	public CommandHistory(String fileName) {
+		historyFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + fileName);
+		if (historyFile.exists()) {
+			readHistory();
+		}
+	}
 
-    private void readHistory() {
-        try {
-            history = FileUtils.readLines(historyFile);
-            for (String h : history) {
-                commands.add(h);
-            }
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
+	private void readHistory() {
+		try {
+			history = FileUtils.readLines(historyFile);
+			for (String h : history) {
+				commands.add(h);
+			}
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-    private void writeHistory() {
-        try {
-            FileUtils.writeLines(historyFile, history);
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
+	private void writeHistory() {
+		try {
+			FileUtils.writeLines(historyFile, history);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-    /**
-     * Add a line or bring it to the forefront if it already exists, saving the
-     * resulting history right away.
-     * 
-     * @param line
-     */
-    public void append(String line) {
+	/**
+	 * Add a line or bring it to the forefront if it already exists, saving the
+	 * resulting history right away.
+	 * 
+	 * @param line
+	 */
+	public void append(String line) {
 
-        line = line.trim();
+		line = line.trim();
 
-        if (commands.contains(line)) {
-            List<String> ll = new ArrayList<>();
-            for (String s : history) {
-                if (!s.equals(line)) {
-                    ll.add(s);
-                }
-            }
-            history = ll;
-        } else {
-            commands.add(line);
-        }
-        history.add(0, line);
-        currentPosition = -1;
-        writeHistory();
-    }
+		if (commands.contains(line)) {
+			List<String> ll = new ArrayList<>();
+			for (String s : history) {
+				if (!s.equals(line)) {
+					ll.add(s);
+				}
+			}
+			history = ll;
+		} else {
+			commands.add(line);
+		}
+		history.add(0, line);
+		currentPosition = -1;
+		writeHistory();
+	}
 
-    @Override
-    public int size() {
-        return history.size();
-    }
+	@Override
+	public int size() {
+		return history.size();
+	}
 
-    @Override
-    public boolean contains(Object o) {
-        return history.contains(o);
-    }
+	@Override
+	public boolean contains(Object o) {
+		return history.contains(o);
+	}
 
-    @Override
-    public Iterator<String> iterator() {
-        return history.iterator();
-    }
+	@Override
+	public Iterator<String> iterator() {
+		return history.iterator();
+	}
 
-    @Override
-    public Object[] toArray() {
-        return history.toArray();
-    }
+	@Override
+	public Object[] toArray() {
+		return history.toArray();
+	}
 
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return history.toArray(a);
-    }
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return history.toArray(a);
+	}
 
-    @Override
-    public String get(int index) {
-        return history.get(index);
-    }
+	@Override
+	public String get(int index) {
+		return history.get(index);
+	}
 
-    public String getPrevious() {
-        return currentPosition > 0 ? history.get(--currentPosition) : null;
-    }
+	public String getPrevious() {
+		return currentPosition > 0 ? history.get(--currentPosition) : null;
+	}
 
-    public String getNext() {
-        return currentPosition < (history.size() - 1) ? history.get(++currentPosition) : null;
-    }
+	public String getNext() {
+		return currentPosition < (history.size() - 1) ? history.get(++currentPosition) : null;
+	}
 
 }

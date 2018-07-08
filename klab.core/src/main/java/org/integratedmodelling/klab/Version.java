@@ -81,9 +81,9 @@ public class Version implements Comparable<Version>, Serializable {
         return result;
     }
 
-    private transient int major;
-    private transient int minor;
-    private transient int build;
+    private transient int    major;
+    private transient int    minor;
+    private transient int    build;
     private transient String name;
     private transient String asString;
 
@@ -103,20 +103,21 @@ public class Version implements Comparable<Version>, Serializable {
     public Version(String version) {
         parseString(version);
     }
-
+    
     public Version(Version version) {
-        this.major = version.major;
-        this.minor = version.minor;
-        this.build = version.build;
-        this.name = version.name;
+    	this.major = version.major;
+    	this.minor = version.minor;
+    	this.build = version.build;
+    	this.name = version.name;
     }
+    
 
     private void parseString(final String str) {
 
         major = 0;
         minor = 0;
         build = 0;
-        name = "";
+        name = ""; 
         StringTokenizer st = new StringTokenizer(str, "" + SEPARATOR, false);
         // major segment
         if (!st.hasMoreTokens()) {
@@ -182,7 +183,7 @@ public class Version implements Comparable<Version>, Serializable {
         major = aMajor;
         minor = aMinor;
         build = aBuild;
-        name = (aName == null) ? "" : aName;
+        name = (aName == null) ? "" : aName; 
     }
 
     /**
@@ -425,28 +426,28 @@ public class Version implements Comparable<Version>, Serializable {
         return currentVersion;
     }
 
-    public Version withMinor(int i) {
-        Version ret = new Version(this);
-        ret.minor = i;
-        return ret;
-    }
+	public Version withMinor(int i) {
+		Version ret = new Version(this);
+		ret.minor = i;
+		return ret;
+	}
 
-    public Version withBuild(int i) {
-        Version ret = new Version(this);
-        ret.build = i;
-        return ret;
-    }
+	public Version withBuild(int i) {
+		Version ret = new Version(this);
+		ret.build = i;
+		return ret;
+	}
 
-    public Version withName(String name) {
-        Version ret = new Version(this);
-        ret.name = name;
-        return ret;
-    }
+	public Version withName(String name) {
+		Version ret = new Version(this);
+		ret.name = name;
+		return ret;
+	}
 
-    public Version withMajor(int i) {
-        Version ret = new Version(this);
-        ret.major = i;
-        return ret;
-    }
+	public Version withMajor(int i) {
+		Version ret = new Version(this);
+		ret.major = i;
+		return ret;
+	}
 
 }

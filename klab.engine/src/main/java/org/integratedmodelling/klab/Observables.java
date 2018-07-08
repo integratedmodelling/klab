@@ -50,428 +50,428 @@ import com.google.inject.Injector;
 
 public enum Observables implements IObservableService {
 
-    INSTANCE;
+	INSTANCE;
 
-    @Inject
-    ParseHelper<Model> observableParser;
+	@Inject
+	ParseHelper<Model> observableParser;
 
-    private Observables() {
-        IInjectorProvider injectorProvider = new KimInjectorProvider();
-        Injector injector = injectorProvider.getInjector();
-        if (injector != null) {
-            injector.injectMembers(this);
-        }
-    }
+	private Observables() {
+		IInjectorProvider injectorProvider = new KimInjectorProvider();
+		Injector injector = injectorProvider.getInjector();
+		if (injector != null) {
+			injector.injectMembers(this);
+		}
+	}
 
-    @Override
-    public IObservable declare(String declaration) {
+	@Override
+	public IObservable declare(String declaration) {
 
-        IMonitor monitor = Klab.INSTANCE.getRootMonitor();
-        try {
-            ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
-            KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-            return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
-        } catch (Exception e) {
-            monitor.error(e, declaration);
-        }
+		IMonitor monitor = Klab.INSTANCE.getRootMonitor();
+		try {
+			ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
+			KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
+			return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
+		} catch (Exception e) {
+			monitor.error(e, declaration);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public Observable declare(IKimObservable observable, IMonitor monitor) {
-        return KimKnowledgeProcessor.INSTANCE.declare(observable, monitor);
-    }
+	@Override
+	public Observable declare(IKimObservable observable, IMonitor monitor) {
+		return KimKnowledgeProcessor.INSTANCE.declare(observable, monitor);
+	}
 
-    @Override
-    public @Nullable IConcept getInherentType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
-        return cls.isEmpty() ? null : cls.iterator().next();
-    }
+	@Override
+	public @Nullable IConcept getInherentType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
-    @Override
-    public @Nullable IConcept getCompresentType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
-        return cls.isEmpty() ? null : cls.iterator().next();
-    }
+	@Override
+	public @Nullable IConcept getCompresentType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
-    @Override
-    public @Nullable IConcept getCausantType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_CAUSANT_PROPERTY));
-        return cls.isEmpty() ? null : cls.iterator().next();
-    }
+	@Override
+	public @Nullable IConcept getCausantType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.HAS_CAUSANT_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
-    @Override
-    public @Nullable IConcept getCausedType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_CAUSED_PROPERTY));
-        return cls.isEmpty() ? null : cls.iterator().next();
-    }
+	@Override
+	public @Nullable IConcept getCausedType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.HAS_CAUSED_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
-    @Override
-    public @Nullable IConcept getGoalType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_PURPOSE_PROPERTY));
-        return cls.isEmpty() ? null : cls.iterator().next();
-    }
+	@Override
+	public @Nullable IConcept getGoalType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.HAS_PURPOSE_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
 
-    /**
-     * Get the context ('within') for the passed quality or trait. If the passed
-     * concept is an attribute, configuration, class or realm, the context is the
-     * one specified for the quality/configuration under "describes". For identities
-     * and processes, context is found in 'applies to'. If the context is not
-     * specified but there is an inherent concept, the context of the inherent, if
-     * any, is returned.
-     * 
-     * @param concept
-     * @return the context type, or null.
-     */
-    @Override
-    public @Nullable IConcept getContextType(IConcept concept) {
-        return getContextType(concept, true);
-    }
+	/**
+	 * Get the context ('within') for the passed quality or trait. If the passed
+	 * concept is an attribute, configuration, class or realm, the context is the
+	 * one specified for the quality/configuration under "describes". For identities
+	 * and processes, context is found in 'applies to'. If the context is not
+	 * specified but there is an inherent concept, the context of the inherent, if
+	 * any, is returned.
+	 * 
+	 * @param concept
+	 * @return the context type, or null.
+	 */
+	@Override
+	public @Nullable IConcept getContextType(IConcept concept) {
+		return getContextType(concept, true);
+	}
 
-    /*
-     * FIXME logics should be revised. Check documentation in
-     * docs/concepts/introduction.rst too.
-     * 
-     * @param concept
-     * 
-     * @param recurse
-     * 
-     * @return
-     */
-    private IConcept getContextType(IConcept concept, boolean recurse) {
+	/*
+	 * FIXME logics should be revised. Check documentation in
+	 * docs/concepts/introduction.rst too.
+	 * 
+	 * @param concept
+	 * 
+	 * @param recurse
+	 * 
+	 * @return
+	 */
+	private IConcept getContextType(IConcept concept, boolean recurse) {
 
-        IConcept ret = null;
-        if (recurse && (concept.is(Type.ATTRIBUTE) || concept.is(Type.REALM) || concept.is(Type.CLASS)
-                || concept.is(Type.CONFIGURATION))) {
+		IConcept ret = null;
+		if (recurse && (concept.is(Type.ATTRIBUTE) || concept.is(Type.REALM) || concept.is(Type.CLASS)
+				|| concept.is(Type.CONFIGURATION))) {
 
-            List<IConcept> contexts = new ArrayList<>();
-            for (IConcept described : getDescribedQualities(concept)) {
-                ret = described == null ? null : getContextType(described, false);
-            }
-            ret = contexts.size() > 0 ? Concepts.INSTANCE.getLeastGeneralCommonConcept(contexts) : null;
+			List<IConcept> contexts = new ArrayList<>();
+			for (IConcept described : getDescribedQualities(concept)) {
+				ret = described == null ? null : getContextType(described, false);
+			}
+			ret = contexts.size() > 0 ? Concepts.INSTANCE.getLeastGeneralCommonConcept(contexts) : null;
 
-        } else if (recurse && (concept.is(Type.IDENTITY) || concept.is(Type.PROCESS))) {
-            Collection<IConcept> contexts = getApplicableObservables(concept);
-            ret = contexts.size() > 0 ? Concepts.INSTANCE.getLeastGeneralCommonConcept(contexts) : null;
-        } else {
+		} else if (recurse && (concept.is(Type.IDENTITY) || concept.is(Type.PROCESS))) {
+			Collection<IConcept> contexts = getApplicableObservables(concept);
+			ret = contexts.size() > 0 ? Concepts.INSTANCE.getLeastGeneralCommonConcept(contexts) : null;
+		} else {
 
-            Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                    Concepts.p(NS.HAS_CONTEXT_PROPERTY));
-            ret = cls.isEmpty() ? null : cls.iterator().next();
-        }
+			Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+					Concepts.p(NS.HAS_CONTEXT_PROPERTY));
+			ret = cls.isEmpty() ? null : cls.iterator().next();
+		}
 
-        if (ret == null && concept.is(Type.OBSERVABLE)) {
-            IConcept inherent = getInherentType(concept);
-            if (inherent != null) {
-                ret = getContextType(inherent, false);
-            }
-        }
+		if (ret == null && concept.is(Type.OBSERVABLE)) {
+			IConcept inherent = getInherentType(concept);
+			if (inherent != null) {
+				ret = getContextType(inherent, false);
+			}
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    public Collection<IConcept> getDescribedQualities(IConcept configuration) {
-        List<IConcept> ret = new ArrayList<>();
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DESCRIBES_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.PROPORTIONAL_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration,
-                Concepts.p(NS.INVERSELY_PROPORTIONAL_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.CLASSIFIES_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DISCRETIZES_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.MARKS_QUALITY_PROPERTY)));
-        return ret;
-    }
+	public Collection<IConcept> getDescribedQualities(IConcept configuration) {
+		List<IConcept> ret = new ArrayList<>();
+		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DESCRIBES_QUALITY_PROPERTY)));
+		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.PROPORTIONAL_QUALITY_PROPERTY)));
+		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration,
+				Concepts.p(NS.INVERSELY_PROPORTIONAL_QUALITY_PROPERTY)));
+		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.CLASSIFIES_QUALITY_PROPERTY)));
+		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DISCRETIZES_QUALITY_PROPERTY)));
+		ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.MARKS_QUALITY_PROPERTY)));
+		return ret;
+	}
 
-    public Collection<IConcept> getDescribedQualities(IConcept configuration, DescriptionType type) {
-        return OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(getDescriptionProperty(type)));
-    }
+	public Collection<IConcept> getDescribedQualities(IConcept configuration, DescriptionType type) {
+		return OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(getDescriptionProperty(type)));
+	}
 
-    private String getDescriptionProperty(DescriptionType type) {
-        String ret = null;
-        switch (type) {
-        case CLASSIFIES:
-            ret = NS.CLASSIFIES_QUALITY_PROPERTY;
-            break;
-        case DECREASES_WITH:
-            ret = NS.INVERSELY_PROPORTIONAL_QUALITY_PROPERTY;
-            break;
-        case DESCRIBES:
-            ret = NS.CLASSIFIES_QUALITY_PROPERTY;
-            break;
-        case DISCRETIZES:
-            ret = NS.DISCRETIZES_QUALITY_PROPERTY;
-            break;
-        case INCREASES_WITH:
-            ret = NS.PROPORTIONAL_QUALITY_PROPERTY;
-            break;
-        case MARKS:
-            ret = NS.MARKS_QUALITY_PROPERTY;
-            break;
-        }
+	private String getDescriptionProperty(DescriptionType type) {
+		String ret = null;
+		switch (type) {
+		case CLASSIFIES:
+			ret = NS.CLASSIFIES_QUALITY_PROPERTY;
+			break;
+		case DECREASES_WITH:
+			ret = NS.INVERSELY_PROPORTIONAL_QUALITY_PROPERTY;
+			break;
+		case DESCRIBES:
+			ret = NS.CLASSIFIES_QUALITY_PROPERTY;
+			break;
+		case DISCRETIZES:
+			ret = NS.DISCRETIZES_QUALITY_PROPERTY;
+			break;
+		case INCREASES_WITH:
+			ret = NS.PROPORTIONAL_QUALITY_PROPERTY;
+			break;
+		case MARKS:
+			ret = NS.MARKS_QUALITY_PROPERTY;
+			break;
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    @Override
-    public boolean isCompatible(IConcept o1, IConcept o2) {
-        return isCompatible(o1, o2, 0);
-    }
+	@Override
+	public boolean isCompatible(IConcept o1, IConcept o2) {
+		return isCompatible(o1, o2, 0);
+	}
 
-    @Override
-    public boolean isCompatible(IConcept o1, IConcept o2, int flags) {
+	@Override
+	public boolean isCompatible(IConcept o1, IConcept o2, int flags) {
 
-        boolean mustBeSameCoreType = (flags & REQUIRE_SAME_CORE_TYPE) != 0;
-        boolean useRoleParentClosure = (flags & USE_ROLE_PARENT_CLOSURE) != 0;
-        // boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
+		boolean mustBeSameCoreType = (flags & REQUIRE_SAME_CORE_TYPE) != 0;
+		boolean useRoleParentClosure = (flags & USE_ROLE_PARENT_CLOSURE) != 0;
+		// boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
 
-        // TODO unsupported
-        boolean useTraitParentClosure = (flags & USE_TRAIT_PARENT_CLOSURE) != 0;
+		// TODO unsupported
+		boolean useTraitParentClosure = (flags & USE_TRAIT_PARENT_CLOSURE) != 0;
 
-        if ((!o1.is(Type.OBSERVABLE) || !o2.is(Type.OBSERVABLE))
-                && !(o1.is(Type.CONFIGURATION) && o2.is(Type.CONFIGURATION))) {
-            return false;
-        }
+		if ((!o1.is(Type.OBSERVABLE) || !o2.is(Type.OBSERVABLE))
+				&& !(o1.is(Type.CONFIGURATION) && o2.is(Type.CONFIGURATION))) {
+			return false;
+		}
 
-        IConcept core1 = getCoreObservable(o1);
-        IConcept core2 = getCoreObservable(o2);
+		IConcept core1 = getCoreObservable(o1);
+		IConcept core2 = getCoreObservable(o2);
 
-        if (core1 == null || core2 == null || !(mustBeSameCoreType ? core1.equals(core2) : core1.is(core2))) {
-            return false;
-        }
+		if (core1 == null || core2 == null || !(mustBeSameCoreType ? core1.equals(core2) : core1.is(core2))) {
+			return false;
+		}
 
-        IConcept cc1 = getContextType(o1.getType());
-        IConcept cc2 = getContextType(o2);
+		IConcept cc1 = getContextType(o1.getType());
+		IConcept cc2 = getContextType(o2);
 
-        if ((cc1 == null && cc1 != null) || (cc1 != null && cc2 == null)) {
-            return false;
-        }
-        if (cc1 != null && cc1 != null) {
-            if (!isCompatible(cc1, cc2, ACCEPT_REALM_DIFFERENCES)) {
-                return false;
-            }
-        }
+		if ((cc1 == null && cc1 != null) || (cc1 != null && cc2 == null)) {
+			return false;
+		}
+		if (cc1 != null && cc1 != null) {
+			if (!isCompatible(cc1, cc2, ACCEPT_REALM_DIFFERENCES)) {
+				return false;
+			}
+		}
 
-        IConcept ic1 = getInherentType(o1);
-        IConcept ic2 = getInherentType(o2);
+		IConcept ic1 = getInherentType(o1);
+		IConcept ic2 = getInherentType(o2);
 
-        if ((ic1 == null && ic1 != null) || (ic1 != null && ic2 == null)) {
-            return false;
-        }
-        if (ic1 != null && ic1 != null) {
-            if (!isCompatible(ic1, ic2)) {
-                return false;
-            }
-        }
+		if ((ic1 == null && ic1 != null) || (ic1 != null && ic2 == null)) {
+			return false;
+		}
+		if (ic1 != null && ic1 != null) {
+			if (!isCompatible(ic1, ic2)) {
+				return false;
+			}
+		}
 
-        for (IConcept t : Traits.INSTANCE.getTraits(o2)) {
-            boolean ok = Traits.INSTANCE.hasTrait(o1, t);
-            if (!ok && useTraitParentClosure) {
-                ok = Traits.INSTANCE.hasParentTrait(o1, t);
-            }
-            if (!ok) {
-                return false;
-            }
-        }
+		for (IConcept t : Traits.INSTANCE.getTraits(o2)) {
+			boolean ok = Traits.INSTANCE.hasTrait(o1, t);
+			if (!ok && useTraitParentClosure) {
+				ok = Traits.INSTANCE.hasParentTrait(o1, t);
+			}
+			if (!ok) {
+				return false;
+			}
+		}
 
-        for (IConcept t : Roles.INSTANCE.getRoles(o2)) {
-            boolean ok = Roles.INSTANCE.hasRole(o1, t);
-            if (!ok && useRoleParentClosure) {
-                ok = Roles.INSTANCE.hasParentRole(o1, t);
-            }
-            if (!ok) {
-                return false;
-            }
-        }
+		for (IConcept t : Roles.INSTANCE.getRoles(o2)) {
+			boolean ok = Roles.INSTANCE.hasRole(o1, t);
+			if (!ok && useRoleParentClosure) {
+				ok = Roles.INSTANCE.hasParentRole(o1, t);
+			}
+			if (!ok) {
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public IConcept getCoreObservable(IConcept c) {
-        String def = c.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
-        return def == null ? c : Concepts.c(def);
-    }
+	@Override
+	public IConcept getCoreObservable(IConcept c) {
+		String def = c.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
+		return def == null ? c : Concepts.c(def);
+	}
 
-    @Override
-    public Collection<IConcept> getApplicableObservables(IConcept main) {
-        return OWL.INSTANCE.getRestrictedClasses((IConcept) main, Concepts.p(NS.APPLIES_TO_PROPERTY));
-    }
+	@Override
+	public Collection<IConcept> getApplicableObservables(IConcept main) {
+		return OWL.INSTANCE.getRestrictedClasses((IConcept) main, Concepts.p(NS.APPLIES_TO_PROPERTY));
+	}
 
-    @Override
-    public Class<? extends IObservation> getObservationClass(IObservable observable) {
-        if (observable.getType().is(Type.SUBJECT)) {
-            return ISubject.class;
-        } else if (observable.getType().is(Type.QUALITY)) {
-            return IState.class;
-        } else if (observable.getType().is(Type.EVENT)) {
-            return IEvent.class;
-        } else if (observable.getType().is(Type.PROCESS)) {
-            return IProcess.class;
-        } else if (observable.getType().is(Type.RELATIONSHIP)) {
-            return IRelationship.class;
-        } else if (observable.getType().is(Type.CONFIGURATION)) {
-            return IConfiguration.class;
-        }
-        return null;
-    }
+	@Override
+	public Class<? extends IObservation> getObservationClass(IObservable observable) {
+		if (observable.getType().is(Type.SUBJECT)) {
+			return ISubject.class;
+		} else if (observable.getType().is(Type.QUALITY)) {
+			return IState.class;
+		} else if (observable.getType().is(Type.EVENT)) {
+			return IEvent.class;
+		} else if (observable.getType().is(Type.PROCESS)) {
+			return IProcess.class;
+		} else if (observable.getType().is(Type.RELATIONSHIP)) {
+			return IRelationship.class;
+		} else if (observable.getType().is(Type.CONFIGURATION)) {
+			return IConfiguration.class;
+		}
+		return null;
+	}
 
-    @Override
-    public Class<? extends IObservation> getObservationClass(IResolvable resolvable) {
-        if (resolvable instanceof IObservable) {
-            return getObservationClass((IObservable) resolvable);
-        } else if (resolvable instanceof IObserver) {
-            return getObservationClass(((IObserver) resolvable).getObservable());
-        } else if (resolvable instanceof IModel) {
-            return getObservationClass(((IModel) resolvable).getObservables().get(0));
-        }
-        return null;
-    }
+	@Override
+	public Class<? extends IObservation> getObservationClass(IResolvable resolvable) {
+		if (resolvable instanceof IObservable) {
+			return getObservationClass((IObservable) resolvable);
+		} else if (resolvable instanceof IObserver) {
+			return getObservationClass(((IObserver) resolvable).getObservable());
+		} else if (resolvable instanceof IModel) {
+			return getObservationClass(((IModel) resolvable).getObservables().get(0));
+		}
+		return null;
+	}
 
-    @Override
-    public List<IComputableResource> computeMediators(IObservable from, IObservable to) {
+	@Override
+	public List<IComputableResource> computeMediators(IObservable from, IObservable to) {
 
-        if (!((Observable) to).canResolve((Observable) from)) {
-            throw new IllegalArgumentException(
-                    "cannot compute mediators from an observable to another that does not resolve it: " + from
-                            + " does not mediate to " + to);
-        }
+		if (!((Observable) to).canResolve((Observable) from)) {
+			throw new IllegalArgumentException(
+					"cannot compute mediators from an observable to another that does not resolve it: " + from
+							+ " does not mediate to " + to);
+		}
 
-        List<IComputableResource> ret = new ArrayList<>();
-        IObservable current = from;
+		List<IComputableResource> ret = new ArrayList<>();
+		IObservable current = from;
 
-        // TODO resolve any conceptual issues (downTo etc) and redefine current until
-        // the current observable has the same core type as the target
+		// TODO resolve any conceptual issues (downTo etc) and redefine current until
+		// the current observable has the same core type as the target
 
-        if (current.getType().equals(to.getType())) {
+		if (current.getType().equals(to.getType())) {
 
-            /*
-             * can only be a mediator issue, and if we get here, mediators are compatible
-             */
-            if (current.getUnit() != null && to.getUnit() != null && !current.getUnit().equals(to.getUnit())) {
-                ret.add(new ComputableResource(current.getUnit(), to.getUnit()));
-            }
-            if (current.getCurrency() != null && to.getCurrency() != null
-                    && !current.getCurrency().equals(to.getCurrency())) {
-                ret.add(new ComputableResource(current.getCurrency(), to.getCurrency()));
-            }
-            if (current.getRange() != null && to.getRange() != null && !current.getRange().equals(to.getRange())) {
-                ret.add(new ComputableResource(current.getRange(), to.getRange()));
-            }
-        }
-        return ret;
-    }
+			/*
+			 * can only be a mediator issue, and if we get here, mediators are compatible
+			 */
+			if (current.getUnit() != null && to.getUnit() != null && !current.getUnit().equals(to.getUnit())) {
+				ret.add(new ComputableResource(current.getUnit(), to.getUnit()));
+			}
+			if (current.getCurrency() != null && to.getCurrency() != null
+					&& !current.getCurrency().equals(to.getCurrency())) {
+				ret.add(new ComputableResource(current.getCurrency(), to.getCurrency()));
+			}
+			if (current.getRange() != null && to.getRange() != null && !current.getRange().equals(to.getRange())) {
+				ret.add(new ComputableResource(current.getRange(), to.getRange()));
+			}
+		}
+		return ret;
+	}
 
-    @Override
-    public Type getObservableType(IObservable observable) {
-        EnumSet<Type> type = EnumSet.copyOf(((Observable) observable).getTypeSet());
-        type.retainAll(IKimConcept.BASE_OBSERVABLE_TYPES);
-        if (type.size() != 1) {
-            throw new IllegalArgumentException(
-                    "trying to extract the observable type from non-observable " + observable);
-        }
-        return type.iterator().next();
-    }
+	@Override
+	public Type getObservableType(IObservable observable) {
+		EnumSet<Type> type = EnumSet.copyOf(((Observable) observable).getTypeSet());
+		type.retainAll(IKimConcept.BASE_OBSERVABLE_TYPES);
+		if (type.size() != 1) {
+			throw new IllegalArgumentException(
+					"trying to extract the observable type from non-observable " + observable);
+		}
+		return type.iterator().next();
+	}
 
-    @Override
-    public IConcept getRelationshipSource(IConcept relationship) {
-        Collection<IConcept> ret = getRelationshipSources(relationship);
-        return ret.size() == 0 ? null : ret.iterator().next();
-    }
+	@Override
+	public IConcept getRelationshipSource(IConcept relationship) {
+		Collection<IConcept> ret = getRelationshipSources(relationship);
+		return ret.size() == 0 ? null : ret.iterator().next();
+	}
 
-    @Override
-    public IConcept getRelationshipTarget(IConcept relationship) {
-        Collection<IConcept> ret = getRelationshipTargets(relationship);
-        return ret.size() == 0 ? null : ret.iterator().next();
-    }
+	@Override
+	public IConcept getRelationshipTarget(IConcept relationship) {
+		Collection<IConcept> ret = getRelationshipTargets(relationship);
+		return ret.size() == 0 ? null : ret.iterator().next();
+	}
 
-    @Override
-    public Collection<IConcept> getRelationshipSources(IConcept relationship) {
-        return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY));
-    }
+	@Override
+	public Collection<IConcept> getRelationshipSources(IConcept relationship) {
+		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY));
+	}
 
-    @Override
-    public Collection<IConcept> getRelationshipTargets(IConcept relationship) {
-        return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY));
-    }
+	@Override
+	public Collection<IConcept> getRelationshipTargets(IConcept relationship) {
+		return OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY));
+	}
 
-    /**
-     * Set the "applied to" clause for a trait or observable. Should also validate.
-     * 
-     * @param type
-     * @param applicables
-     */
-    public void setApplicableObservables(IConcept type, List<IConcept> applicables) {
-        // TODO validate
-        OWL.INSTANCE.restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables);
-    }
+	/**
+	 * Set the "applied to" clause for a trait or observable. Should also validate.
+	 * 
+	 * @param type
+	 * @param applicables
+	 */
+	public void setApplicableObservables(IConcept type, List<IConcept> applicables) {
+		// TODO validate
+		OWL.INSTANCE.restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables);
+	}
 
-    public void defineRelationship(Concept relationship, IConcept source, IConcept target) {
-        IProperty hasSource = Concepts.p(NS.IMPLIES_SOURCE_PROPERTY);
-        IProperty hasTarget = Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY);
-        OWL.INSTANCE.restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source));
-        OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target));
-    }
+	public void defineRelationship(Concept relationship, IConcept source, IConcept target) {
+		IProperty hasSource = Concepts.p(NS.IMPLIES_SOURCE_PROPERTY);
+		IProperty hasTarget = Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY);
+		OWL.INSTANCE.restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source));
+		OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target));
+	}
 
-    /**
-     * Copy all the observation logical context (inherent, context, caused, ...
-     * including traits and roles) from a concept to another. Assumes that the
-     * target concept has none of these.
-     * 
-     * @param type
-     * @param target
-     */
-    public void copyContext(IConcept type, IConcept target) {
+	/**
+	 * Copy all the observation logical context (inherent, context, caused, ...
+	 * including traits and roles) from a concept to another. Assumes that the
+	 * target concept has none of these.
+	 * 
+	 * @param type
+	 * @param target
+	 */
+	public void copyContext(IConcept type, IConcept target) {
 
-        IConcept inherent = getInherentType(type);
-        IConcept context = getContextType(type);
-        IConcept goal = getGoalType(type);
-        IConcept causant = getCausantType(type);
-        IConcept caused = getCausedType(type);
-        IConcept compresent = getCompresentType(type);
+		IConcept inherent = getInherentType(type);
+		IConcept context = getContextType(type);
+		IConcept goal = getGoalType(type);
+		IConcept causant = getCausantType(type);
+		IConcept caused = getCausedType(type);
+		IConcept compresent = getCompresentType(type);
 
-        if (inherent != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
-        }
-        if (context == null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
-        }
-        if (caused != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused);
-        }
-        if (causant != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant);
-        }
-        if (compresent != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent);
-        }
-        if (goal != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal);
-        }
+		if (inherent != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+		}
+		if (context == null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+		}
+		if (caused != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused);
+		}
+		if (causant != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant);
+		}
+		if (compresent != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent);
+		}
+		if (goal != null) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal);
+		}
 
-        Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
-        Collection<IConcept> realms = Traits.INSTANCE.getRealms(type);
-        Collection<IConcept> attributes = Traits.INSTANCE.getAttributes(type);
-        Collection<IConcept> acceptedRoles = Roles.INSTANCE.getRoles(type);
+		Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
+		Collection<IConcept> realms = Traits.INSTANCE.getRealms(type);
+		Collection<IConcept> attributes = Traits.INSTANCE.getAttributes(type);
+		Collection<IConcept> acceptedRoles = Roles.INSTANCE.getRoles(type);
 
-        if (identities.size() > 0) {
-            Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
-        }
-        if (realms.size() > 0) {
-            Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
-        }
-        if (attributes.size() > 0) {
-            Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
-        }
-        if (acceptedRoles.size() > 0) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
-        }
+		if (identities.size() > 0) {
+			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
+		}
+		if (realms.size() > 0) {
+			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
+		}
+		if (attributes.size() > 0) {
+			Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
+		}
+		if (acceptedRoles.size() > 0) {
+			OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
+		}
 
-    }
+	}
 
 }

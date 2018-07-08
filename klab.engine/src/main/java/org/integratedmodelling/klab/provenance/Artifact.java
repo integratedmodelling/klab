@@ -27,150 +27,149 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
  */
 public abstract class Artifact implements IArtifact {
 
-    List<IAnnotation> annotations = new ArrayList<>();
+	List<IAnnotation> annotations = new ArrayList<>();
+	
+	// all observation data in a group share the same list and contain their index
+	// in it; established
+	// at chain()
+	List<IArtifact> group = null;
+	// first observation in a group has idx = -1; the others have their own index
+	int idx = -1;
+	boolean empty;
+	long timestamp = System.currentTimeMillis();
 
-    // all observation data in a group share the same list and contain their index
-    // in it; established
-    // at chain()
-    List<IArtifact> group = null;
-    // first observation in a group has idx = -1; the others have their own index
-    int idx = -1;
-    boolean empty;
-    long timestamp = System.currentTimeMillis();
+	public void chain(IArtifact data) {
+		if (group == null) {
+			group = new ArrayList<>();
+		}
+		group.add(data);
+		((Artifact) data).group = group;
+		((Artifact) data).idx = group.size() - 1;
+	}
 
-    public void chain(IArtifact data) {
-        if (group == null) {
-            group = new ArrayList<>();
-        }
-        group.add(data);
-        ((Artifact) data).group = group;
-        ((Artifact) data).idx = group.size() - 1;
-    }
+	@Override
+	public long getTimestamp() {
+		return timestamp;
+	}
 
-    @Override
-    public long getTimestamp() {
-        return timestamp;
-    }
+	@Override
+	public Collection<IAnnotation> getAnnotations() {
+		return annotations;
+	}
+	
+	@Override
+	public IProvenance getProvenance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Collection<IAnnotation> getAnnotations() {
-        return annotations;
-    }
+	@Override
+	public boolean isEmpty() {
+		return empty;
+	}
 
-    @Override
-    public IProvenance getProvenance() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getUrn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean isEmpty() {
-        return empty;
-    }
+	@Override
+	public IAgent getConsumer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getUrn() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IAgent getOwner() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IAgent getConsumer() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Collection<IArtifact> getAntecedents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IAgent getOwner() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Collection<IArtifact> getConsequents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Collection<IArtifact> getAntecedents() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IArtifact trace(IConcept concept) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Collection<IArtifact> getConsequents() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Collection<IArtifact> collect(IConcept concept) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IArtifact trace(IConcept concept) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IArtifact trace(IConcept role, IDirectObservation roleContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Collection<IArtifact> collect(IConcept concept) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IArtifact trace(IConcept role, IDirectObservation roleContext) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IMetadata getMetadata() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Iterator<IArtifact> iterator() {
 
-    @Override
-    public IMetadata getMetadata() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		if (empty) {
+			return new ArrayList<IArtifact>().iterator();
+		}
 
-    @Override
-    public Iterator<IArtifact> iterator() {
+		List<IArtifact> list = new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
+		list.add(this);
+		if (group != null) {
+			for (int i = (idx < 0 ? 0 : idx); i < group.size(); i++) {
+				list.add(group.get(i));
+			}
+		}
 
-        if (empty) {
-            return new ArrayList<IArtifact>().iterator();
-        }
+		return list.iterator();
+	}
 
-        List<IArtifact> list = new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
-        list.add(this);
-        if (group != null) {
-            for (int i = (idx < 0 ? 0 : idx); i < group.size(); i++) {
-                list.add(group.get(i));
-            }
-        }
+	@Override
+	public int groupSize() {
+		return empty ? 0 : (1 + (group == null ? 0 : group.size()));
+	}
 
-        return list.iterator();
-    }
+	protected void setEmpty(boolean b) {
+		this.empty = b;
+	}
 
-    @Override
-    public int groupSize() {
-        return empty ? 0 : (1 + (group == null ? 0 : group.size()));
-    }
-
-    protected void setEmpty(boolean b) {
-        this.empty = b;
-    }
-
-    public static IArtifact empty() {
-        Artifact ret = new Artifact() {
-
-            @Override
-            public Type getType() {
-                return Type.VOID;
-            }
-        };
-        ret.empty = true;
-        return ret;
-    }
+	public static IArtifact empty() {
+		Artifact ret = new Artifact() {
+			@Override
+			public Type getType() {
+				return Type.VOID;
+			}
+		};
+		ret.empty = true;
+		return ret;
+	}
 
 }

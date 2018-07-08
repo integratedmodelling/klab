@@ -9,17 +9,17 @@ import org.kohsuke.args4j.Option;
 
 public class CliStartupOptions extends EngineStartupOptions {
 
-    @Option(name = "-output", usage = "output <file.owl>", metaVar = "<FILE_PATH>")
-    File outputFile = null;
+	@Option(name = "-output", usage = "output <file.owl>", metaVar = "<FILE_PATH>")
+	File outputFile = null;
 
-    @Argument(multiValued = true)
-    List<String> args = new ArrayList<>();
+	@Argument(multiValued = true)
+	List<String> args = new ArrayList<>();
 
-    public File getOutputFile() {
-        return outputFile;
-    }
+	public File getOutputFile() {
+		return outputFile;
+	}
 
-    public String[] getArguments() {
-        return args.toArray(new String[args.size()]);
-    }
+	public String[] getArguments() {
+		return args.toArray(new String[args.size()]);
+	}
 }

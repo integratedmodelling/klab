@@ -17,26 +17,26 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
  */
 public class RemoteData implements IKlabData {
 
-    public RemoteData(KlabData data, IRuntimeContext context) {
+	public RemoteData(KlabData data, IRuntimeContext context) {
 
-    }
+	}
 
-    @Override
-    public List<INotification> getNotifications() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<INotification> getNotifications() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean hasErrors() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean hasErrors() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public IArtifact getArtifact() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IArtifact getArtifact() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

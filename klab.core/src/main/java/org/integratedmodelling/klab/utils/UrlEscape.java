@@ -30,18 +30,103 @@ public class UrlEscape {
      * List for all ASCII characters whether it can be part of an
      * URL line.
      */
-    static boolean isacceptable[] = { false, false, false, false, false, false, false, false, // !"#$%&'
-            false, false, true, true, true, true, true, false, // ()*+,-./
-            true, true, true, true, true, true, true, true, // 01234567
-            true, true, true, false, false, false, false, false, // 89:;<=>?
-            true, true, true, true, true, true, true, true, // @ABCDEFG
-            true, true, true, true, true, true, true, true, // HIJKLMNO
-            true, true, true, true, true, true, true, true, // PQRSTUVW
-            true, true, true, false, false, false, false, true, // XYZ[\]^_
-            false, true, true, true, true, true, true, true, // `abcdefg
-            true, true, true, true, true, true, true, true, // hijklmno
-            true, true, true, true, true, true, true, true, // pqrstuvw
-            true, true, true, false, false, false, false, false // xyz{|}~
+    static boolean isacceptable[] = {
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false, // !"#$%&'
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false, // ()*+,-./
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // 01234567
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false, // 89:;<=>?
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // @ABCDEFG
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // HIJKLMNO
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // PQRSTUVW
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true, // XYZ[\]^_
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // `abcdefg
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // hijklmno
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true, // pqrstuvw
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false // xyz{|}~
     };
 
     /**
@@ -121,7 +206,7 @@ public class UrlEscape {
                 }
             }
         } else {
-            Logging.INSTANCE.warn("Unescapeurl -> Bogus parameter");
+          Logging.INSTANCE.warn("Unescapeurl -> Bogus parameter");
         }
         return esc.toString();
     }

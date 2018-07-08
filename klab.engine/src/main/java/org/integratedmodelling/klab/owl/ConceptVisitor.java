@@ -43,7 +43,6 @@ public class ConceptVisitor<T> {
     HashSet<IConcept> concepts = new HashSet<IConcept>();
 
     public interface ConceptMatcher {
-
         abstract boolean match(IConcept c);
     }
 

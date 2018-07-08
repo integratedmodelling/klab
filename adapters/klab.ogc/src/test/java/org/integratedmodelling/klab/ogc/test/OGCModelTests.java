@@ -36,68 +36,72 @@ import org.reflections.scanners.ResourcesScanner;
  */
 public class OGCModelTests {
 
-    static Engine engine;
+	static Engine engine;
 
-    String[] resources = { "local:anonymous:test:utah_landcover", "local:anonymous:test:dem90m",
-            "local:anonymous:test:states", "local:anonymous:test:nyroads" };
+	String[] resources = {
+			"local:anonymous:test:utah_landcover",
+			"local:anonymous:test:dem90m",
+			"local:anonymous:test:states",
+			"local:anonymous:test:nyroads"
+	};
 
-    /**
-     * Start the engine and ensure all our test URNs are present.
-     */
-    @BeforeClass
-    public static void setUp() throws Exception {
+	/**
+	 * Start the engine and ensure all our test URNs are present.
+	 */
+	@BeforeClass
+	public static void setUp() throws Exception {
 
-        engine = Engine.start();
+		engine = Engine.start();
 
-        IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test");
-        if (testProject == null) {
-            testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test");
-        }
+		IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test");
+		if (testProject == null) {
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test");
+		}
+		
+		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
+		
+		/*
+		 * TODO validate and build resources. This should be a set of test cases of its
+		 * own, but there's no way in JUnit to ensure some tests are required to run
+		 * before others, so we'll just use the test cases from another class.
+		 */
+	}
 
-        Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@AfterClass
+	public static void tearDown() throws Exception {
+		engine.stop();
+	}
 
-        /*
-         * TODO validate and build resources. This should be a set of test cases of its
-         * own, but there's no way in JUnit to ensure some tests are required to run
-         * before others, so we'll just use the test cases from another class.
-         */
-    }
+	@Test
+	public void rasterUtmProjection() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test1.kim")).get();
+	}
 
-    /**
-     * Tear down.
-     *
-     * @throws Exception
-     *             the exception
-     */
-    @AfterClass
-    public static void tearDown() throws Exception {
-        engine.stop();
-    }
+	@Test
+	public void simpleWCSTest() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test2.kim")).get();
+	}
 
-    @Test
-    public void rasterUtmProjection() throws Exception {
-        engine.run(getClass().getClassLoader().getResource("kim.raster/test1.kim")).get();
-    }
+	@Test
+	public void simpleVectorTest() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test3.kim")).get();
+	}
 
-    @Test
-    public void simpleWCSTest() throws Exception {
-        engine.run(getClass().getClassLoader().getResource("kim.raster/test2.kim")).get();
-    }
-
-    @Test
-    public void simpleVectorTest() throws Exception {
-        engine.run(getClass().getClassLoader().getResource("kim.raster/test3.kim")).get();
-    }
-
-    @Test
-    public void simpleWFSTest() throws Exception {
-        engine.run(getClass().getClassLoader().getResource("kim.raster/test4.kim")).get();
-    }
-
-    @Test
-    @Ignore
-    // TODO - shape extraction isn't there yet
-    public void simpleWCSTestWithShapeExtraction() throws Exception {
-        engine.run(getClass().getClassLoader().getResource("kim.raster/test5.kim")).get();
-    }
+	@Test
+	public void simpleWFSTest() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test4.kim")).get();
+	}
+	
+	@Test
+	@Ignore
+	// TODO - shape extraction isn't there yet
+	public void simpleWCSTestWithShapeExtraction() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.raster/test5.kim")).get();
+	}
 }

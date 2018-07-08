@@ -25,16 +25,19 @@ public class NodeStartupOptions implements INodeStartupOptions {
             usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_NODE_CERTIFICATE_FILENAME + ")",
             metaVar = "<FILE_PATH>")
     File certificateFile = null;
-
+    
     @Option(
             name = "-certResource",
             usage = "certificate classpath resource (default null)",
             metaVar = "<CLASSPATH_RESOURCE>")
     String certificateResource = null;
 
-    @Option(name = "-hub", usage = "URL of authenticating hub (default set in certificate)", metaVar = "<URL>")
+    @Option(
+            name = "-hub",
+            usage = "URL of authenticating hub (default set in certificate)",
+            metaVar = "<URL>")
     String authenticatingHub = null;
-
+    
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int port = IConfigurationService.DEFAULT_NODE_PORT;
 
@@ -53,17 +56,17 @@ public class NodeStartupOptions implements INodeStartupOptions {
     }
 
     public NodeStartupOptions(String... args) {
-        initialize(args);
+    	initialize(args);
     }
 
     @Override
     public String[] getArguments(String... additionalArguments) {
-        List<String> args = new ArrayList<>(this.arguments);
-        if (additionalArguments != null) {
-            for (String additionalArgument : additionalArguments) {
-                args.add(additionalArgument);
-            }
-        }
+    	List<String> args = new ArrayList<>(this.arguments);
+    	if (additionalArguments != null) {
+    		for (String additionalArgument : additionalArguments) {
+    			args.add(additionalArgument);
+    		}
+    	}
         return args.toArray(new String[args.size()]);
     }
 
@@ -94,8 +97,7 @@ public class NodeStartupOptions implements INodeStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator
-                    + ICertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }
@@ -132,37 +134,42 @@ public class NodeStartupOptions implements INodeStartupOptions {
         return certificateResource;
     }
 
+    
     public void setDataDir(File dataDir) {
         this.dataDir = dataDir;
     }
 
+    
     public void setCertificateFile(File certificateFile) {
         this.certificateFile = certificateFile;
     }
 
+    
     public void setCertificateResource(String certificateResource) {
         this.certificateResource = certificateResource;
     }
-
+    
     public void setPort(int port) {
         this.port = port;
     }
 
+    
     public void setHelp(boolean help) {
         this.help = help;
     }
-
+    
     public void setComponents(List<File> components) {
         this.components = components;
     }
 
+    
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
 
-    @Override
-    public String getHubUrl() {
-        return authenticatingHub;
-    }
+	@Override
+	public String getHubUrl() {
+		return authenticatingHub;
+	}
 
 }

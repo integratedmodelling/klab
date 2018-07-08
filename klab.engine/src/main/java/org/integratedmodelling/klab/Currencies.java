@@ -6,14 +6,14 @@ import org.integratedmodelling.klab.common.mediation.Currency;
 public enum Currencies implements ICurrencyService {
 
     INSTANCE;
-
+    
     Currencies() {
         // TODO Auto-generated constructor stub
     }
 
     @Override
     public Currency getCurrency(String string) {
-        return null;
+      return null;
     }
-
+    
 }

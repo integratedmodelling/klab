@@ -19,60 +19,60 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
  */
 public class EncodingDataBuilder implements IKlabData.Builder {
 
-    IComputationContext context;
+	IComputationContext context;
 
-    public EncodingDataBuilder(IComputationContext context) {
-        this.context = context;
-    }
+	public EncodingDataBuilder(IComputationContext context) {
+		this.context = context;
+	}
 
-    @Override
-    public Builder startState(String name) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Builder startState(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Builder finishState() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Builder finishState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Builder startObject(String artifactName, String objectName, IScale scale) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Builder startObject(String artifactName, String objectName, IScale scale) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Builder finishObject() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Builder finishObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Builder withMetadata(String property, Object object) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Builder withMetadata(String property, Object object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Builder addNotification(INotification notification) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Builder addNotification(INotification notification) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public KlabData buildEncoded() {
-        return null;
-    }
+	public KlabData buildEncoded() {
+		return null;
+	}
 
-    @Override
-    public IKlabData build() {
-        return new RemoteData(buildEncoded(), (IRuntimeContext) context);
-    }
+	@Override
+	public IKlabData build() {
+		return new RemoteData(buildEncoded(), (IRuntimeContext) context);
+	}
 
-    @Override
-    public void add(Object value) {
-        // TODO Auto-generated method stub
+	@Override
+	public void add(Object value) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 }

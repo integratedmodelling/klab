@@ -27,40 +27,40 @@ import org.junit.Test;
  */
 public class RasterValidationTests extends TestSetup {
 
-    static Engine engine;
-    static IProject testProject;
+	static Engine engine;
+	static IProject testProject;
+	
+	@BeforeClass
+	public static void setUp() throws Exception {
+		engine = Engine.start();
+		testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.raster");
+		if (testProject == null) {
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.raster");
+		}
+		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
+	}
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        engine = Engine.start();
-        testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.raster");
-        if (testProject == null) {
-            testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.raster");
-        }
-        Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
-    }
-
-    /**
-     * Tear down.
-     *
-     * @throws Exception
-     *             the exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        engine.stop();
-    }
-
-    @Test
-    public void utahLandcover() {
-        System.out.println(JsonUtils.printAsJson(
-                ((Resource) importResource("data.raster/utah_landcover.tif", testProject)).getReference()));
-    }
-
-    @Test
-    public void utahLandcoverAgain() {
-        System.out.println(JsonUtils.printAsJson(
-                ((Resource) importResource("data.raster/utah_landcover.tif", testProject)).getReference()));
-    }
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		engine.stop();
+	}
+	
+	@Test
+	public void utahLandcover() {
+		System.out.println(JsonUtils
+				.printAsJson(((Resource) importResource("data.raster/utah_landcover.tif", testProject)).getReference()));
+	}
+	
+	@Test
+	public void utahLandcoverAgain() {
+		System.out.println(JsonUtils
+				.printAsJson(((Resource) importResource("data.raster/utah_landcover.tif", testProject)).getReference()));
+	}
 
 }

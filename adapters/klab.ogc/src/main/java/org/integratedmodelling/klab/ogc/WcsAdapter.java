@@ -36,76 +36,73 @@ import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 /**
  * The Class WcsAdapter.
  */
-@ResourceAdapter(
-        type = "wcs",
-        version = Version.CURRENT,
-        requires = { "serviceUrl", "wcsVersion", "wcsIdentifier" },
-        optional = { "namespace" })
+@ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = { "serviceUrl", "wcsVersion", "wcsIdentifier" }, optional = {
+		"namespace" })
 public class WcsAdapter implements IResourceAdapter {
 
-    /**
-     * Map all service URLs encountered to their handlers.
-     * TODO see if we want to cache this.
-     */
-    static Map<String, WCSService> services = new HashMap<>();
-    static Map<String, File> fileCache = new HashMap<>();
+	/**
+	 * Map all service URLs encountered to their handlers.
+	 * TODO see if we want to cache this.
+	 */
+	static Map<String, WCSService> services = new HashMap<>();
+	static Map<String, File> fileCache = new HashMap<>();
+	
+	/**
+	 * Get the service handler for the passed service URL and version. The version is 
+	 * ignored if the service handler was already there with a different one.
+	 * 
+	 * @param serviceUrl
+	 * @param version
+	 * @return a WCS service. Inspect for errors before using.
+	 */
+	public static WCSService getService(String serviceUrl, Version version) {
+		if (services.containsKey(serviceUrl)) {
+			return services.get(serviceUrl);
+		}
+		WCSService ret = new WCSService(serviceUrl, version);
+		if (ret != null) {
+			services.put(serviceUrl, ret);
+		}
+		return ret;
+	}
+	
+	@Override
+	public String getName() {
+		return "wcs";
+	}
 
-    /**
-     * Get the service handler for the passed service URL and version. The version is 
-     * ignored if the service handler was already there with a different one.
-     * 
-     * @param serviceUrl
-     * @param version
-     * @return a WCS service. Inspect for errors before using.
-     */
-    public static WCSService getService(String serviceUrl, Version version) {
-        if (services.containsKey(serviceUrl)) {
-            return services.get(serviceUrl);
-        }
-        WCSService ret = new WCSService(serviceUrl, version);
-        if (ret != null) {
-            services.put(serviceUrl, ret);
-        }
-        return ret;
-    }
+	@Override
+	public IResourceValidator getValidator() {
+		return new WcsValidator();
+	}
 
-    @Override
-    public String getName() {
-        return "wcs";
-    }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new WcsPublisher();
+	}
 
-    @Override
-    public IResourceValidator getValidator() {
-        return new WcsValidator();
-    }
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new WcsEncoder();
+	}
 
-    @Override
-    public IResourcePublisher getPublisher() {
-        return new WcsPublisher();
-    }
+	public static File getCachedFile(String identifier, IGeometry geometry) {
+		String key = identifier + "#" + geometry.toString();
+		File ret = fileCache.get(key);
+		if (ret != null && ret.exists()) {
+			return ret;
+		} 
+		fileCache.remove(key);
+		return null;
+	}
+	
+	public static void setCachedFile(File file, String identifier, IGeometry geometry) {
+		String key = identifier + "#" + geometry.toString();
+		fileCache.put(key, file);
+	}
 
-    @Override
-    public IResourceEncoder getEncoder() {
-        return new WcsEncoder();
-    }
-
-    public static File getCachedFile(String identifier, IGeometry geometry) {
-        String key = identifier + "#" + geometry.toString();
-        File ret = fileCache.get(key);
-        if (ret != null && ret.exists()) {
-            return ret;
-        }
-        fileCache.remove(key);
-        return null;
-    }
-
-    public static void setCachedFile(File file, String identifier, IGeometry geometry) {
-        String key = identifier + "#" + geometry.toString();
-        fileCache.put(key, file);
-    }
-
-    @Override
-    public IResourceImporter getImporter() {
-        return new WcsImporter();
-    }
+	@Override
+	public IResourceImporter getImporter() {
+		return new WcsImporter();
+	}
 }

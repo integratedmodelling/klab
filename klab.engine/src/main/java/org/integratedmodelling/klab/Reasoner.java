@@ -7,11 +7,11 @@ import org.integratedmodelling.klab.api.services.IReasonerService;
 import org.integratedmodelling.klab.owl.KlabReasoner;
 
 public enum Reasoner implements IReasonerService {
-
+    
     INSTANCE;
 
     private KlabReasoner reasoner;
-
+    
     public void setReasoner(KlabReasoner klabReasoner) {
         this.reasoner = klabReasoner;
     }
@@ -38,5 +38,5 @@ public enum Reasoner implements IReasonerService {
     public Set<IConcept> getSemanticClosure(IConcept main) {
         return reasoner.getSemanticClosure(main);
     }
-
+    
 }

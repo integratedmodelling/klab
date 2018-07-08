@@ -11,8 +11,9 @@ import java.util.Set;
 import org.apache.lucene.search.suggest.InputIterator;
 import org.apache.lucene.util.BytesRef;
 
-class ProductIterator implements InputIterator {
 
+class ProductIterator implements InputIterator
+{
     private Iterator<Product> productIterator;
     private Product currentProduct;
 

@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.List;
-
 // TODO: Auto-generated Javadoc
 /**
  * Temp for an ASCII tree visualizer
@@ -55,7 +54,8 @@ public class TreeNode {
             children.get(i).print(prefix + (isTail ? "    " : "│   "), false);
         }
         if (children.size() > 0) {
-            children.get(children.size() - 1).print(prefix + (isTail ? "    " : "│   "), true);
+            children.get(children.size() - 1)
+                    .print(prefix + (isTail ?"    " : "│   "), true);
         }
     }
 }

@@ -33,16 +33,16 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class Prioritizer implements IPrioritizer<ModelReference> {
 
-    ResolutionScope scope;
-    ComparatorChain comparator = null;
-    HashMap<ModelReference, Map<String, Double>> ranks = new HashMap<>();
-    HashMap<ModelReference, double[]> idxss = new HashMap<>();
+    ResolutionScope                     scope;
+    ComparatorChain                     comparator         = null;
+    HashMap<ModelReference, Map<String, Double>> ranks              = new HashMap<>();
+    HashMap<ModelReference, double[]>            idxss              = new HashMap<>();
 
-    List<String> orderedCriteria = new ArrayList<>();
-    List<String> subjectiveCriteria = new ArrayList<>();
+    List<String>                        orderedCriteria      = new ArrayList<>();
+    List<String>                        subjectiveCriteria = new ArrayList<>();
 
-    private static IMetadata defaultStrategy = null;
-    private static HashSet<String> rankingCriteria = new HashSet<>();
+    private static IMetadata            defaultStrategy     = null;
+    private static HashSet<String>      rankingCriteria     = new HashSet<>();
 
     static {
         rankingCriteria.add(NS.LEXICAL_SCOPE);
@@ -65,7 +65,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             _field = field;
         }
 
-        @SuppressWarnings({ "rawtypes" })
+        @SuppressWarnings({ "rawtypes"})
         @Override
         public int compare(Map<String, Object> o1, Map<String, Object> o2) {
             Comparable n1 = (Comparable) o1.get(_field);
@@ -107,7 +107,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
     private void buildComparisonStrategy() {
 
         IMetadata strategy = scope.getResolutionNamespace() == null ? null
-                : scope.getResolutionNamespace().getResolutionCriteria();
+                : scope.getResolutionNamespace()
+                        .getResolutionCriteria();
         if (strategy == null) {
             strategy = getDefaultRankingStrategy();
         }
@@ -144,7 +145,6 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
          */
         orderedCriteria.addAll(tmp.values());
         Collections.sort(orderedCriteria, new Comparator<String>() {
-
             @Override
             public int compare(String arg0, String arg1) {
                 Integer r0 = (Integer) tmp.getKey(arg0);
@@ -171,8 +171,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 
             defaultStrategy = new Metadata();
 
-            String dstrat = Configuration.INSTANCE.getProperties().getProperty(DEFAULT_STRATEGY_PROPERTY_NAME,
-                    DEFAULT_RANKING_STRATEGY);
+            String dstrat = Configuration.INSTANCE.getProperties()
+                    .getProperty(DEFAULT_STRATEGY_PROPERTY_NAME, DEFAULT_RANKING_STRATEGY);
 
             String[] ranking = dstrat.split("\\s+");
 
@@ -228,14 +228,14 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             if (cr.contains(",")) {
                 ret.put(cr, computeCustomAggregation(cr, (ModelReference) model, context));
             } else {
-                ret.put(cr, computeStandardCriterion(cr, (ModelReference) model, (ResolutionScope) context));
+                ret.put(cr, computeStandardCriterion(cr, (ModelReference) model, (ResolutionScope)context));
             }
         }
 
-        //        ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
-        //        ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
-        //        ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
-        //        ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
+//        ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
+//        ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
+//        ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
+//        ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
 
         ranks.put((ModelReference) model, ret);
 
@@ -252,7 +252,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
         Map<String, Double> dt = getRanks(model);
         for (String cr : ddef) {
-            vals.add(new Pair<>(dt.containsKey(cr) ? ((Number) (dt.get(cr))).intValue() : 50, 100));
+            vals.add(new Pair<>(dt.containsKey(cr) ? ((Number) (dt.get(cr))).intValue()
+                    : 50, 100));
         }
         return aggregate(vals);
     }
@@ -275,7 +276,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         INamespace ns = Namespaces.INSTANCE.getNamespace(model.getNamespaceId());
 
         if (ns == null) {
-            Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
+          Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
             return 0;
         }
 
@@ -306,6 +307,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
          */
         return 0;
     }
+    
 
     /*
      * semantic distance. This makes sure that e.g. a matching abstract model is chosen
@@ -319,7 +321,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
          */
         try {
             IConcept provided = model.getObservableConcept();
-            IConcept wanted = context.getObservable() == null ? null : context.getObservable().getType();
+            IConcept wanted =  context.getObservable() == null ? null : context.getObservable().getType();
             if (provided == null || wanted == null) {
                 // TODO should not happen
                 return 100;
@@ -340,7 +342,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         }
         return 50;
     }
-
+    
     /*
      * trait concordance wrt context n = # of traits shared / #. of traits possible,
      * normalized to 100 TODO REIMPLEMENT AS APPROPRIATE - a compatibility rank
@@ -355,7 +357,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
          */
         try {
             IConcept c = model.getObservableConcept(); // getWantedObservable(model,
-                                                       // context);
+                                                         // context);
             if (c == null) {
                 // TODO issues here - just a hack, should not happen
                 return 0;
@@ -409,10 +411,11 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
                  */
                 ISpace space = context.getCoverage().getSpace();
                 if (space != null) {
-                    Geometry cspace = ((Shape) space.getShape()).getStandardizedGeometry();
-                    Geometry intersection = cspace.intersection(((Shape) model.getShape()).getStandardizedGeometry());
-                    specificityS = 100.0
-                            * (intersection.getArea() / ((Shape) model.getShape()).getStandardizedGeometry().getArea());
+                    Geometry cspace = ((Shape)space.getShape()).getStandardizedGeometry();
+                    Geometry intersection = cspace.intersection(((Shape)model.getShape()).getStandardizedGeometry());
+                    specificityS = 100.0 * (intersection.getArea() / ((Shape)model.getShape())
+                            .getStandardizedGeometry()
+                            .getArea());
                     coverageS = 100.0 * (intersection.getArea() / cspace.getArea());
 
                 }
@@ -425,8 +428,11 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
                  */
             }
 
-            idxss.put(model, new double[] { getMin(coverageS, coverageT), getMin(specificityS, specificityT),
-                    getMin(resolutionS, resolutionT) });
+            idxss.put(model, new double[] {
+                    getMin(coverageS, coverageT),
+                    getMin(specificityS, specificityT),
+                    getMin(resolutionS, resolutionT)
+            });
         }
 
         return idxss.get(model);
@@ -491,8 +497,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
      * 
      * @returns chosen concordance metric normalized to 100
      */
-    public double computeSubjectiveConcordance(ModelReference model, IResolutionScope context,
-            List<String> subjectiveCriteria) {
+    public double computeSubjectiveConcordance(ModelReference model, IResolutionScope context, List<String> subjectiveCriteria) {
         ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
         IMetadata nm = context.getResolutionNamespace().getResolutionCriteria();
 
@@ -517,10 +522,12 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
      */
     public double computeEvidence(ModelReference model, IResolutionScope context) {
 
-        if ((model.isHasDirectData() || model.isHasDirectObjects()) && model.getDereifyingAttribute() == null) {
+        if ((model.isHasDirectData() || model.isHasDirectObjects())
+                && model.getDereifyingAttribute() == null) {
             return 100.0;
         }
-        if ((model.isHasDirectData() || model.isHasDirectObjects()) && model.getDereifyingAttribute() != null) {
+        if ((model.isHasDirectData() || model.isHasDirectObjects())
+                && model.getDereifyingAttribute() != null) {
             return 75.0;
         }
         if (model.isResolved()) {
@@ -572,7 +579,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
     public Map<String, Double> getCriteria() {
         Map<String, Double> ret = new HashMap<>();
         IMetadata strategy = scope.getResolutionNamespace() == null ? null
-                : scope.getResolutionNamespace().getResolutionCriteria();
+                : scope.getResolutionNamespace()
+                        .getResolutionCriteria();
         if (strategy == null) {
             strategy = getDefaultRankingStrategy();
         }
@@ -588,7 +596,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
     public String asText() {
         String ret = "";
         IMetadata strategy = scope.getResolutionNamespace() == null ? null
-                : scope.getResolutionNamespace().getResolutionCriteria();
+                : scope.getResolutionNamespace()
+                        .getResolutionCriteria();
         if (strategy == null) {
             strategy = getDefaultRankingStrategy();
         }

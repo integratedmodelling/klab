@@ -17,39 +17,40 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class ClassifyingStateResolver implements IStateResolver, IExpression {
 
-    static final public String FUNCTION_ID = "klab.runtime.classify";
+	static final public String FUNCTION_ID = "klab.runtime.classify";
 
-    private IClassification classification;
+	private IClassification classification;
 
-    // don't remove - only used as expression
-    public ClassifyingStateResolver() {
-    }
+	// don't remove - only used as expression
+	public ClassifyingStateResolver() {
+	}
 
-    public ClassifyingStateResolver(IClassification classification) {
-        this.classification = classification;
-    }
+	public ClassifyingStateResolver(IClassification classification) {
+		this.classification = classification;
+	}
 
-    public static IServiceCall getServiceCall(IClassification classification) throws KlabValidationException {
-        return KimServiceCall.create(FUNCTION_ID, "classification", classification);
-    }
+	public static IServiceCall getServiceCall(IClassification classification)
+			throws KlabValidationException {
+		return KimServiceCall.create(FUNCTION_ID, "classification", classification);
+	}
 
-    @Override
-    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-        return new ClassifyingStateResolver(parameters.get("classification", IClassification.class));
-    }
+	@Override
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		return new ClassifyingStateResolver(parameters.get("classification", IClassification.class));
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.scalar();
-    }
+	@Override
+	public IGeometry getGeometry() {
+		return Geometry.scalar();
+	}
 
-    @Override
-    public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
-        return classification.classify(context.get("self"), context.getMonitor());
-    }
+	@Override
+	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
+		return classification.classify(context.get("self"), context.getMonitor());
+	}
 
-    @Override
-    public IArtifact.Type getType() {
-        return Type.CONCEPT;
-    }
+	@Override
+	public IArtifact.Type getType() {
+		return Type.CONCEPT;
+	}
 }

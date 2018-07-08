@@ -34,47 +34,44 @@ import com.google.common.collect.Sets;
 /**
  * The Class VectorAdapter.
  */
-@ResourceAdapter(
-        type = "vector",
-        version = Version.CURRENT,
-        requires = { "fileUrl" },
-        optional = { "computeUnion", "computeHull", "filter", "nameAttribute", "sanitize" })
+@ResourceAdapter(type = "vector", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "computeUnion",
+		"computeHull", "filter", "nameAttribute", "sanitize" })
 public class VectorAdapter implements IResourceAdapter {
 
-    /**
-     * All recognized primary file extensions.
-     */
-    public static Set<String> fileExtensions = Sets.newHashSet("shp");
+	/**
+	 * All recognized primary file extensions.
+	 */
+	public static Set<String> fileExtensions = Sets.newHashSet("shp");
 
-    /**
-     * All recognized secondary file extensions
-     */
-    public static Set<String> secondaryFileExtensions = Sets.newHashSet("sbx", "prj", "shx", "dbf", "shp.xml", "txt",
-            "pdf");
+	/**
+	 * All recognized secondary file extensions
+	 */
+	public static Set<String> secondaryFileExtensions = Sets.newHashSet("sbx", "prj", "shx", "dbf", "shp.xml", "txt",
+			"pdf");
 
-    @Override
-    public String getName() {
-        return "vector";
-    }
+	@Override
+	public String getName() {
+		return "vector";
+	}
 
-    @Override
-    public IResourceValidator getValidator() {
-        return new VectorValidator();
-    }
+	@Override
+	public IResourceValidator getValidator() {
+		return new VectorValidator();
+	}
 
-    @Override
-    public IResourcePublisher getPublisher() {
-        return new VectorPublisher();
-    }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new VectorPublisher();
+	}
 
-    @Override
-    public IResourceEncoder getEncoder() {
-        return new VectorEncoder();
-    }
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new VectorEncoder();
+	}
 
-    @Override
-    public IResourceImporter getImporter() {
-        return new VectorImporter();
-    }
+	@Override
+	public IResourceImporter getImporter() {
+		return new VectorImporter();
+	}
 
 }

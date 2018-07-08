@@ -47,7 +47,7 @@ public class Time extends Extent implements ITime {
         // TODO Auto-generated method stub
         return false;
     }
-
+    
     @Override
     public long size() {
         // TODO Auto-generated method stub
@@ -117,14 +117,14 @@ public class Time extends Extent implements ITime {
 
     @Override
     public Time getExtent(long stateIndex) {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public IServiceCall getKimSpecification() {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
@@ -147,80 +147,80 @@ public class Time extends Extent implements ITime {
 
     @Override
     public double getCoverage() {
-        // TODO Auto-generated method stub
-        return 0;
+      // TODO Auto-generated method stub
+      return 0;
     }
 
     @Override
     public Type getType() {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public boolean isRegular() {
-        // TODO Auto-generated method stub
-        return false;
+      // TODO Auto-generated method stub
+      return false;
     }
 
     @Override
     public int getDimensionality() {
-        // TODO Auto-generated method stub
-        return 0;
+      // TODO Auto-generated method stub
+      return 0;
     }
 
-    //    @Override
-    //    public long locate(Locator locator) {
-    //      // TODO Auto-generated method stub
-    //      return 0;
-    //    }
+//    @Override
+//    public long locate(Locator locator) {
+//      // TODO Auto-generated method stub
+//      return 0;
+//    }
 
     @Override
     public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public ITime at(ILocator locator) {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public long getOffset(long[] dimOffsets) {
-        // TODO Auto-generated method stub
-        return 0;
+      // TODO Auto-generated method stub
+      return 0;
     }
 
     @Override
     public long[] shape() {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public long getOffset(ILocator index) {
-        // TODO Auto-generated method stub
-        return 0;
+      // TODO Auto-generated method stub
+      return 0;
     }
 
     @Override
     public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public IParameters getParameters() {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public String encode() {
-        // TODO Auto-generated method stub
-        return null;
+      // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
@@ -229,10 +229,10 @@ public class Time extends Extent implements ITime {
         return null;
     }
 
-    @Override
-    public AbstractExtent mergeCoverage(IExtent other, LogicalConnector connector) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public AbstractExtent mergeCoverage(IExtent other, LogicalConnector connector) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

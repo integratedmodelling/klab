@@ -13,27 +13,27 @@ import org.integratedmodelling.klab.engine.EngineStartupOptions;
  */
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
-        CliStartupOptions options = new CliStartupOptions();
-        options.initialize(args);
+		CliStartupOptions options = new CliStartupOptions();
+		options.initialize(args);
 
-        if (options.isHelp()) {
-            System.out.println(new EngineStartupOptions().usage());
-            System.exit(0);
-        }
+		if (options.isHelp()) {
+			System.out.println(new EngineStartupOptions().usage());
+			System.exit(0);
+		}
 
-        if (options.getArguments().length == 0) {
-            TermConsole console = new TermConsole();
-            console.start(options);
-        } else {
-            SysConsole console = new SysConsole();
-            CliRuntime.INSTANCE.initialize(console, options);
-            String command = StringUtils.join(options.getArguments(), ' ');
-            if (!command.trim().isEmpty()) {
-                CliRuntime.INSTANCE.getCommandProcessor().processCommand(command);
-            }
-            CliRuntime.INSTANCE.shutdown();
-        }
-    }
+		if (options.getArguments().length == 0) {
+			TermConsole console = new TermConsole();
+			console.start(options);
+		} else {
+			SysConsole console = new SysConsole();
+			CliRuntime.INSTANCE.initialize(console, options);
+			String command = StringUtils.join(options.getArguments(), ' ');
+			if (!command.trim().isEmpty()) {
+				CliRuntime.INSTANCE.getCommandProcessor().processCommand(command);
+			}
+			CliRuntime.INSTANCE.shutdown();
+		}
+	}
 }

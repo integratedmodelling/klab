@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 public class TestNode {
 
     Engine engine = null;
-
+    
     public void run(String[] args) {
         EngineStartupOptions options = new EngineStartupOptions();
         options.setCertificateResource("testnode.cert");

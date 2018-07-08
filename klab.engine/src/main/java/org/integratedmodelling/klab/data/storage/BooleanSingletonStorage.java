@@ -6,23 +6,23 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class BooleanSingletonStorage extends AbstractSingletonStorage<Boolean> {
 
-    public BooleanSingletonStorage(IObservable observable, Scale scale) {
-        super(observable, scale);
-    }
+	public BooleanSingletonStorage(IObservable observable, Scale scale) {
+		super(observable, scale);
+	}
 
-    @Override
-    protected Boolean setValue(Object value) {
-        return (Boolean) value;
-    }
+	@Override
+	protected Boolean setValue(Object value) {
+		return (Boolean) value;
+	}
 
-    @Override
-    public Type getType() {
-        return Type.BOOLEAN;
-    }
+	@Override
+	public Type getType() {
+		return Type.BOOLEAN;
+	}
 
-    @Override
-    public IDataKey getDataKey() {
-        return null;
-    }
+	@Override
+	public IDataKey getDataKey() {
+		return null;
+	}
 
 }

@@ -41,10 +41,10 @@ import org.integratedmodelling.klab.api.knowledge.IAxiom;
  */
 public class Axiom implements IAxiom {
 
-    private String _type;
+    private String   _type;
     private Object[] _args;
     Set<Type> conceptType;
-
+    
     /**
      * Create a class assertion. The option integer can be used to store additional flags for the
      * concept with the ontology, which will be quicker to retrieve than annotation properties, for
@@ -75,7 +75,7 @@ public class Axiom implements IAxiom {
     static public IAxiom SubAnnotationProperty(String parentProperty, String subProperty) {
         return new Axiom(SUB_ANNOTATION_PROPERTY, parentProperty, subProperty);
     }
-
+    
     static public IAxiom SubDataProperty(String parentProperty, String subProperty) {
         return new Axiom(SUB_DATA_PROPERTY, parentProperty, subProperty);
     }
@@ -132,22 +132,16 @@ public class Axiom implements IAxiom {
         return new Axiom(NO_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller);
     }
 
-    public static IAxiom AtLeastNValuesFrom(String restrictedConcept, String restrictedProperty,
-            String restrictionFiller, int n) {
-        return new Axiom(AT_LEAST_N_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller,
-                n);
+    public static IAxiom AtLeastNValuesFrom(String restrictedConcept, String restrictedProperty, String restrictionFiller, int n) {
+        return new Axiom(AT_LEAST_N_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller, n);
     }
 
-    public static IAxiom AtMostNValuesFrom(String restrictedConcept, String restrictedProperty,
-            String restrictionFiller, int n) {
-        return new Axiom(AT_MOST_N_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller,
-                n);
+    public static IAxiom AtMostNValuesFrom(String restrictedConcept, String restrictedProperty, String restrictionFiller, int n) {
+        return new Axiom(AT_MOST_N_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller, n);
     }
 
-    public static IAxiom ExactlyNValuesFrom(String restrictedConcept, String restrictedProperty,
-            String restrictionFiller, int n) {
-        return new Axiom(EXACTLY_N_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller,
-                n);
+    public static IAxiom ExactlyNValuesFrom(String restrictedConcept, String restrictedProperty, String restrictionFiller, int n) {
+        return new Axiom(EXACTLY_N_VALUES_FROM_RESTRICTION, restrictedConcept, restrictedProperty, restrictionFiller, n);
     }
 
     public static IAxiom HasValue(String concept, String dataProperty, Object value) {

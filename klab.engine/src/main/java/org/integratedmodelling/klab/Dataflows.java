@@ -44,7 +44,7 @@ public enum Dataflows implements IDataflowService {
             injector.injectMembers(this);
         }
     }
-
+    
     @Override
     public IKdlDataflow declare(URL url) throws KlabException {
         try (InputStream stream = url.openStream()) {
@@ -52,8 +52,8 @@ public enum Dataflows implements IDataflowService {
         } catch (Exception e) {
             throw new KlabIOException(e);
         }
-    }
-
+    }    
+    
     @Override
     public IKdlDataflow declare(File file) throws KlabException {
         try (InputStream stream = new FileInputStream(file)) {
@@ -62,12 +62,12 @@ public enum Dataflows implements IDataflowService {
             throw new KlabIOException(e);
         }
     }
-
+    
     @Override
     public IKdlDataflow declare(InputStream file) throws KlabValidationException {
         IKdlDataflow ret = null;
         try {
-            String definition = IOUtils.toString(file);
+            String definition = IOUtils.toString(file); 
             Model model = dataflowParser.parse(definition);
             ret = Kdl.INSTANCE.declare(model);
         } catch (Exception e) {
@@ -77,20 +77,21 @@ public enum Dataflows implements IDataflowService {
     }
 
     @Override
-    public Dataflow compile(String name, IResolutionScope scope) throws KlabException {
+    public Dataflow compile(String name, IResolutionScope scope)
+        throws KlabException {
 
-        DataflowCompiler builder = new DataflowCompiler(name, scope);
+      DataflowCompiler builder = new DataflowCompiler(name, scope);
 
-        if (((ResolutionScope) scope).getObserver() != null) {
-            builder = builder.withResolvable(((ResolutionScope) scope).getObserver());
-        }
+      if (((ResolutionScope)scope).getObserver() != null) {
+        builder = builder.withResolvable(((ResolutionScope)scope).getObserver());
+      }
 
-        for (Link link : ((ResolutionScope) scope).getLinks()) {
-            builder = builder.withResolution(link.getTarget().getResolvable(), link.getSource().getResolvable(),
-                    link.getTarget().getCoverage(), link.getComputation());
-        }
+      for (Link link : ((ResolutionScope)scope).getLinks()) {
+        builder = builder.withResolution(link.getTarget().getResolvable(),
+            link.getSource().getResolvable(), link.getTarget().getCoverage(), link.getComputation());
+      }
 
-        return builder.compile(scope.getMonitor());
+      return builder.compile(scope.getMonitor());
     }
 
     /**
@@ -103,19 +104,19 @@ public enum Dataflows implements IDataflowService {
      * @return all pertaining triggers. Possibly empty, never null.
      */
     public List<Trigger> getActionTriggersFor(ILocator transition) {
-        List<Trigger> ret = new ArrayList<>();
-        // TODO!
-        if (transition.equals(ITime.INITIALIZATION)) {
-            ret.add(Trigger.DEFINITION);
-            ret.add(Trigger.RESOLUTION);
-        } else {
-            ret.add(Trigger.TRANSITION);
-            // FIXME add back
-            //        if (transition.isLast()) {
-            //          ret.add(Trigger.TERMINATION);
-            //        }
-        }
-        return ret;
+      List<Trigger> ret = new ArrayList<>();
+      // TODO!
+      if (transition.equals(ITime.INITIALIZATION)) {
+        ret.add(Trigger.DEFINITION);
+        ret.add(Trigger.RESOLUTION);
+      } else {
+        ret.add(Trigger.TRANSITION);
+        // FIXME add back
+//        if (transition.isLast()) {
+//          ret.add(Trigger.TERMINATION);
+//        }
+      }
+      return ret;
     }
-
+    
 }

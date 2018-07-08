@@ -8,24 +8,24 @@ import org.junit.Test;
 
 public class NetworkTests1h1n {
 
-    static Engine engine;
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+	static Engine engine;
+	
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
         EngineStartupOptions options = new EngineStartupOptions("-certResource", "testengine.cert");
-        SetupNetwork.INSTANCE.start1h1n();
-        engine = Engine.start(options);
-    }
+		SetupNetwork.INSTANCE.start1h1n();
+		engine = Engine.start(options);
+	}
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        engine.stop();
-        SetupNetwork.INSTANCE.shutdown();
-    }
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		engine.stop();
+		SetupNetwork.INSTANCE.shutdown();
+	}
 
-    @Test
-    public void test() {
-        System.out.println("Hola");
-    }
+	@Test
+	public void test() {
+		System.out.println("Hola");
+	}
 
 }

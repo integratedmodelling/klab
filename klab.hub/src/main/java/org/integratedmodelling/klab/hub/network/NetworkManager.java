@@ -14,38 +14,38 @@ import org.springframework.stereotype.Component;
 @Component
 public class NetworkManager {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+	@Autowired
+	AuthenticationManager authenticationManager;
+	
+	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
+	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
+	
+	public Collection<NodeReference> getNodes(Set<String> groups) {
+		Set<NodeReference> ret = new HashSet<>();
+		for (INodeIdentity node : onlineNodes) {
+			ret.add(createNodeReference(node, true));
+		}
+		for (INodeIdentity node : offlineNodes) {
+			ret.add(createNodeReference(node, false));
+		}
+		return ret;
+	}
 
-    private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
-    private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
+	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
+		NodeReference ret = new NodeReference();
 
-    public Collection<NodeReference> getNodes(Set<String> groups) {
-        Set<NodeReference> ret = new HashSet<>();
-        for (INodeIdentity node : onlineNodes) {
-            ret.add(createNodeReference(node, true));
-        }
-        for (INodeIdentity node : offlineNodes) {
-            ret.add(createNodeReference(node, false));
-        }
-        return ret;
-    }
+		ret.setId(node.getId());
+		ret.setOnline(isOnline);
+		ret.getUrls().addAll(node.getUrls());
+		ret.setPartner(authenticationManager.getHubReference().getPartner());
 
-    private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
-        NodeReference ret = new NodeReference();
+		// TODO more
+		
+		return ret;
+	}
 
-        ret.setId(node.getId());
-        ret.setOnline(isOnline);
-        ret.getUrls().addAll(node.getUrls());
-        ret.setPartner(authenticationManager.getHubReference().getPartner());
-
-        // TODO more
-
-        return ret;
-    }
-
-    public void notifyAuthorizedNode(INodeIdentity ret) {
-        onlineNodes.add(ret);
-    }
+	public void notifyAuthorizedNode(INodeIdentity ret) {
+		onlineNodes.add(ret);
+	}
 
 }

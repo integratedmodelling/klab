@@ -13,31 +13,31 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class VectorImporter extends AbstractFilesetImporter {
 
-    VectorValidator validator = new VectorValidator();
+	VectorValidator validator = new VectorValidator();
+	
+	public VectorImporter() {
+		super(VectorAdapter.fileExtensions.toArray(new String[VectorAdapter.fileExtensions.size()]));
+	}
 
-    public VectorImporter() {
-        super(VectorAdapter.fileExtensions.toArray(new String[VectorAdapter.fileExtensions.size()]));
-    }
+	@Override
+	protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
+		try {
+			
+			Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
+			
+			if (builder != null) {
+				builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase());
+				for (File f : validator.getAllFilesForResource(file)) {
+					builder.addImportedFile(f);
+				}
+			}
+			
+			return builder;
 
-    @Override
-    protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
-        try {
-
-            Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
-
-            if (builder != null) {
-                builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase());
-                for (File f : validator.getAllFilesForResource(file)) {
-                    builder.addImportedFile(f);
-                }
-            }
-
-            return builder;
-
-        } catch (MalformedURLException e) {
-            Logging.INSTANCE.error(e);
-            return null;
-        }
-    }
+		} catch (MalformedURLException e) {
+			Logging.INSTANCE.error(e);
+			return null;
+		}
+	}
 
 }

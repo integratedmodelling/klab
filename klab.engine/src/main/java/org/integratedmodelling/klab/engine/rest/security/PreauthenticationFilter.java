@@ -10,27 +10,27 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 
 public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingFilter {
 
-    @Override
-    protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
-        if (auth != null) {
-            // send anything already known downstream
-            if (Authentication.INSTANCE.getIdentity(auth, IIdentity.class) != null) {
-                return auth;
-            }
-            return null;
-        }
-        if (IPUtils.isLocal(request.getRemoteAddr())) {
-            return Authentication.LOCAL_USER_ID;
-        }
-        return Authentication.ANONYMOUS_USER_ID;
-    }
+	@Override
+	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
+		String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
+		if (auth != null) {
+		    // send anything already known downstream
+			if (Authentication.INSTANCE.getIdentity(auth, IIdentity.class) != null) {
+			    return auth;
+			}
+			return null;
+		}
+		if (IPUtils.isLocal(request.getRemoteAddr())) {
+			return Authentication.LOCAL_USER_ID;
+		}
+		return Authentication.ANONYMOUS_USER_ID;
+	}
 
-    @Override
-    protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-        String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
-        // returning null will refuse authentication
-        return auth == null ? "dummycredentials" : auth;
-    }
+	@Override
+	protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
+		String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
+		// returning null will refuse authentication
+		return auth == null ? "dummycredentials" : auth;
+	}
 
 }

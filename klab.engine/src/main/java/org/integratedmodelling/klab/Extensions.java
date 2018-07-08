@@ -41,7 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum Extensions implements IExtensionService {
 
-    /**
+	/**
      * The global instance singleton.
      */
     INSTANCE;

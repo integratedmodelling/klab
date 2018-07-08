@@ -24,16 +24,19 @@ public class EngineStartupOptions implements IEngineStartupOptions {
             usage = "certificate file (default: <dataDir>/" + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME + ")",
             metaVar = "<FILE_PATH>")
     File certificateFile = null;
-
+    
     @Option(
             name = "-certResource",
             usage = "certificate classpath resource (default null)",
             metaVar = "<CLASSPATH_RESOURCE>")
     String certificateResource = null;
 
-    @Option(name = "-hub", usage = "URL of authenticating hub (default set in certificate)", metaVar = "<URL>")
+    @Option(
+            name = "-hub",
+            usage = "URL of authenticating hub (default set in certificate)",
+            metaVar = "<URL>")
     String authenticatingHub = null;
-
+    
     @Option(
             name = "-workspace",
             usage = "monitored workspace directory (default: ~/.klab/workspace, not monitored)",
@@ -59,19 +62,19 @@ public class EngineStartupOptions implements IEngineStartupOptions {
      */
     public EngineStartupOptions() {
     }
-
+    
     public EngineStartupOptions(String... args) {
-        initialize(args);
+    	initialize(args);
     }
-
+    
     @Override
     public String[] getArguments(String... additionalArguments) {
-        List<String> args = new ArrayList<>(this.arguments);
-        if (additionalArguments != null) {
-            for (String additionalArgument : additionalArguments) {
-                args.add(additionalArgument);
-            }
-        }
+    	List<String> args = new ArrayList<>(this.arguments);
+    	if (additionalArguments != null) {
+    		for (String additionalArgument : additionalArguments) {
+    			args.add(additionalArgument);
+    		}
+    	}
         return args.toArray(new String[args.size()]);
     }
 
@@ -110,8 +113,7 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
-            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator
-                    + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
+            certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
         }
         return certificateFile;
     }
@@ -153,45 +155,53 @@ public class EngineStartupOptions implements IEngineStartupOptions {
         return certificateResource;
     }
 
+    
     public void setDataDir(File dataDir) {
         this.dataDir = dataDir;
     }
 
+    
     public void setCertificateFile(File certificateFile) {
         this.certificateFile = certificateFile;
     }
 
+    
     public void setCertificateResource(String certificateResource) {
         this.certificateResource = certificateResource;
     }
 
+    
     public void setWorkspaceLocation(File workspaceLocation) {
         this.workspaceLocation = workspaceLocation;
     }
-
+    
     public void setPort(int port) {
         this.port = port;
     }
 
+    
     public void setHelp(boolean help) {
         this.help = help;
     }
 
+    
     public void setExit(boolean exit) {
         this.exit = exit;
     }
 
+    
     public void setComponents(List<File> components) {
         this.components = components;
     }
 
+    
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
 
-    @Override
-    public String getHubUrl() {
-        return authenticatingHub;
-    }
+	@Override
+	public String getHubUrl() {
+		return authenticatingHub;
+	}
 
 }

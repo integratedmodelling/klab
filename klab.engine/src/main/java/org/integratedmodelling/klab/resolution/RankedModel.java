@@ -29,229 +29,229 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class RankedModel extends Model implements IRankedModel {
 
-    private static final long serialVersionUID = -442006167719783123L;
+	private static final long serialVersionUID = -442006167719783123L;
 
-    String modelUrn;
-    Model delegate;
-    Map<String, Double> ranks;
-    int priority = 0;
+	String modelUrn;
+	Model delegate;
+	Map<String, Double> ranks;
+	int priority = 0;
 
-    private transient ModelReference modelData;
+	private transient ModelReference modelData;
 
-    public RankedModel(ModelReference model, Map<String, Double> ranks, int priority) {
-        this.modelUrn = model.getUrn();
-        this.modelData = model;
-        this.ranks = ranks;
-        this.priority = priority;
-    }
+	public RankedModel(ModelReference model, Map<String, Double> ranks, int priority) {
+		this.modelUrn = model.getUrn();
+		this.modelData = model;
+		this.ranks = ranks;
+		this.priority = priority;
+	}
 
-    private Model getDelegate() {
+	private Model getDelegate() {
 
-        if (delegate == null) {
+		if (delegate == null) {
 
-            /**
-             * TODO handle dereification through modelData
-             */
+			/**
+			 * TODO handle dereification through modelData
+			 */
 
-            IKimObject m = Resources.INSTANCE.getModelObject(modelUrn);
-            if (m instanceof Model) {
-                delegate = (Model) m;
-            }
-        }
-        return delegate;
-    }
+			IKimObject m = Resources.INSTANCE.getModelObject(modelUrn);
+			if (m instanceof Model) {
+				delegate = (Model) m;
+			}
+		}
+		return delegate;
+	}
 
-    /**
-     * Return the underlying model data. These may be ranked again in a different scale.
-     * 
-     * @return
-     */
-    public ModelReference getModelData() {
-        return modelData;
-    }
+	/**
+	 * Return the underlying model data. These may be ranked again in a different scale.
+	 * 
+	 * @return
+	 */
+	public ModelReference getModelData() {
+		return modelData;
+	}
+	
+	public List<IKimObject> getChildren() {
+		return getDelegate().getChildren();
+	}
 
-    public List<IKimObject> getChildren() {
-        return getDelegate().getChildren();
-    }
+	public IKimStatement getStatement() {
+		return getDelegate().getStatement();
+	}
 
-    public IKimStatement getStatement() {
-        return getDelegate().getStatement();
-    }
+	public List<IAnnotation> getAnnotations() {
+		return getDelegate().getAnnotations();
+	}
 
-    public List<IAnnotation> getAnnotations() {
-        return getDelegate().getAnnotations();
-    }
+	public void setMetadata(IMetadata metadata) {
+		getDelegate().setMetadata(metadata);
+	}
 
-    public void setMetadata(IMetadata metadata) {
-        getDelegate().setMetadata(metadata);
-    }
+	public IMetadata getMetadata() {
+		return getDelegate().getMetadata();
+	}
 
-    public IMetadata getMetadata() {
-        return getDelegate().getMetadata();
-    }
+	public boolean isDeprecated() {
+		return getDelegate().isDeprecated();
+	}
 
-    public boolean isDeprecated() {
-        return getDelegate().isDeprecated();
-    }
+	public int hashCode() {
+		return getDelegate().hashCode();
+	}
 
-    public int hashCode() {
-        return getDelegate().hashCode();
-    }
+	public void setDeprecated(boolean deprecated) {
+		getDelegate().setDeprecated(deprecated);
+	}
 
-    public void setDeprecated(boolean deprecated) {
-        getDelegate().setDeprecated(deprecated);
-    }
+	public boolean equals(Object obj) {
+		return getDelegate().equals(obj);
+	}
 
-    public boolean equals(Object obj) {
-        return getDelegate().equals(obj);
-    }
+	public List<IObservable> getObservables() {
+		return getDelegate().getObservables();
+	}
 
-    public List<IObservable> getObservables() {
-        return getDelegate().getObservables();
-    }
+	public Map<String, IObservable> getAttributeObservables() {
+		return getDelegate().getAttributeObservables();
+	}
 
-    public Map<String, IObservable> getAttributeObservables() {
-        return getDelegate().getAttributeObservables();
-    }
+	public String getLocalNameFor(IObservable observable) {
+		return getDelegate().getLocalNameFor(observable);
+	}
 
-    public String getLocalNameFor(IObservable observable) {
-        return getDelegate().getLocalNameFor(observable);
-    }
+	public boolean isResolved() {
+		return getDelegate().isResolved();
+	}
 
-    public boolean isResolved() {
-        return getDelegate().isResolved();
-    }
+	public boolean isInstantiator() {
+		return getDelegate().isInstantiator();
+	}
 
-    public boolean isInstantiator() {
-        return getDelegate().isInstantiator();
-    }
+	public boolean isReinterpreter() {
+		return getDelegate().isReinterpreter();
+	}
 
-    public boolean isReinterpreter() {
-        return getDelegate().isReinterpreter();
-    }
+	public boolean isAvailable() {
+		return getDelegate().isAvailable();
+	}
 
-    public boolean isAvailable() {
-        return getDelegate().isAvailable();
-    }
+	public Optional<IDocumentation> getDocumentation() {
+		return getDelegate().getDocumentation();
+	}
 
-    public Optional<IDocumentation> getDocumentation() {
-        return getDelegate().getDocumentation();
-    }
+	public String getId() {
+		return getDelegate().getId();
+	}
 
-    public String getId() {
-        return getDelegate().getId();
-    }
+	public String getName() {
+		return getDelegate().getName();
+	}
 
-    public String getName() {
-        return getDelegate().getName();
-    }
+	public INamespace getNamespace() {
+		return getDelegate().getNamespace();
+	}
 
-    public INamespace getNamespace() {
-        return getDelegate().getNamespace();
-    }
+	public List<IObservable> getDependencies() {
+		return getDelegate().getDependencies();
+	}
 
-    public List<IObservable> getDependencies() {
-        return getDelegate().getDependencies();
-    }
+	public void setDependencies(List<IObservable> dependencies) {
+		getDelegate().setDependencies(dependencies);
+	}
 
-    public void setDependencies(List<IObservable> dependencies) {
-        getDelegate().setDependencies(dependencies);
-    }
+	public void setDocumentation(Optional<IDocumentation> documentation) {
+		getDelegate().setDocumentation(documentation);
+	}
 
-    public void setDocumentation(Optional<IDocumentation> documentation) {
-        getDelegate().setDocumentation(documentation);
-    }
+	public void setObservables(List<IObservable> observables) {
+		getDelegate().setObservables(observables);
+	}
 
-    public void setObservables(List<IObservable> observables) {
-        getDelegate().setObservables(observables);
-    }
+	public void setAttributeObservables(Map<String, IObservable> attributeObservables) {
+		getDelegate().setAttributeObservables(attributeObservables);
+	}
 
-    public void setAttributeObservables(Map<String, IObservable> attributeObservables) {
-        getDelegate().setAttributeObservables(attributeObservables);
-    }
+	public void setNamespace(INamespace namespace) {
+		getDelegate().setNamespace(namespace);
+	}
 
-    public void setNamespace(INamespace namespace) {
-        getDelegate().setNamespace(namespace);
-    }
+	public Behavior getBehavior() {
+		return getDelegate().getBehavior();
+	}
 
-    public Behavior getBehavior() {
-        return getDelegate().getBehavior();
-    }
+	public boolean isPrivate() {
+		return getDelegate().isPrivate();
+	}
 
-    public boolean isPrivate() {
-        return getDelegate().isPrivate();
-    }
+	public Scale getCoverage(IMonitor monitor) throws KlabException {
+		return getDelegate().getCoverage(monitor);
+	}
 
-    public Scale getCoverage(IMonitor monitor) throws KlabException {
-        return getDelegate().getCoverage(monitor);
-    }
+	public String toString() {
+		return getDelegate().toString()/* + "\n\n" + describeRanks() */;
+	}
 
-    public String toString() {
-        return getDelegate().toString()/* + "\n\n" + describeRanks() */;
-    }
+	public String describeRanks() {
+		return describeRanks(0, 3);
+	}
 
-    public String describeRanks() {
-        return describeRanks(0, 3);
-    }
+	private String describeRanks(int indent, int offset) {
 
-    private String describeRanks(int indent, int offset) {
+		String ret = "";
+		String filler = StringUtils.spaces(indent);
 
-        String ret = "";
-        String filler = StringUtils.spaces(indent);
+		ret += filler + StringUtils.rightPad(offset + ".", 4) + modelData.getName() + " ["
+				+ (modelData.getServerId() == null ? "local" : modelData.getServerId()) + "]\n";
+		for (String s : ranks.keySet()) {
+			ret += filler + "  " + StringUtils.rightPad(s, 25) + " " + ranks.get(s) + "\n";
+		}
 
-        ret += filler + StringUtils.rightPad(offset + ".", 4) + modelData.getName() + " ["
-                + (modelData.getServerId() == null ? "local" : modelData.getServerId()) + "]\n";
-        for (String s : ranks.keySet()) {
-            ret += filler + "  " + StringUtils.rightPad(s, 25) + " " + ranks.get(s) + "\n";
-        }
+		return ret;
+	}
 
-        return ret;
-    }
+	@Override
+	public ICoverage getContextCoverage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public ICoverage getContextCoverage() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Map<String, Double> getRanks() {
+		return ranks;
+	}
 
-    @Override
-    public Map<String, Double> getRanks() {
-        return ranks;
-    }
+	@Override
+	public Observable getCompatibleOutput(Observable observable) {
+		return getDelegate().getCompatibleOutput(observable);
+	}
 
-    @Override
-    public Observable getCompatibleOutput(Observable observable) {
-        return getDelegate().getCompatibleOutput(observable);
-    }
+	@Override
+	public List<IComputableResource> getComputation(ILocator transition) {
+		return getDelegate().getComputation(transition);
+	}
 
-    @Override
-    public List<IComputableResource> getComputation(ILocator transition) {
-        return getDelegate().getComputation(transition);
-    }
+	@Override
+	public Observable getCompatibleInput(Observable observable) {
+		return getDelegate().getCompatibleInput(observable);
+	}
 
-    @Override
-    public Observable getCompatibleInput(Observable observable) {
-        return getDelegate().getCompatibleInput(observable);
-    }
+	@Override
+	public List<IComputableResource> getResources() {
+		return getDelegate().getResources();
+	}
 
-    @Override
-    public List<IComputableResource> getResources() {
-        return getDelegate().getResources();
-    }
+	@Override
+	public IScale getNativeCoverage() {
+		try {
+			return getDelegate().getCoverage(Klab.INSTANCE.getRootMonitor());
+		} catch (KlabException e) {
+			Klab.INSTANCE.getRootMonitor().error(e);
+		}
+		return null;
+	}
 
-    @Override
-    public IScale getNativeCoverage() {
-        try {
-            return getDelegate().getCoverage(Klab.INSTANCE.getRootMonitor());
-        } catch (KlabException e) {
-            Klab.INSTANCE.getRootMonitor().error(e);
-        }
-        return null;
-    }
-
-    @Override
-    public int getPriority() {
-        return priority;
-    }
+	@Override
+	public int getPriority() {
+		return priority;
+	}
 
 }

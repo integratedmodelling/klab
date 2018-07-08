@@ -21,6 +21,8 @@ import java.security.Security;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,159 +42,177 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.jose4j.jws.AlgorithmIdentifiers;
 
 public enum KeyManager {
 
-    INSTANCE;
+	INSTANCE;
 
-    private KeyPair keyPair;
-    private String publicKeyBase64;
-    private String subjectDN;
+	private KeyPair keyPair;
+	private String publicKeyBase64;
+	private String subjectDN;
 
-    public PublicKey getPublicKey() {
-        return keyPair.getPublic();
-    }
+	public PublicKey getPublicKey() {
+		return keyPair.getPublic();
+	}
+	
+	public PrivateKey getPrivateKey() {
+		return keyPair.getPrivate();
+	}
+	
+	public String getEncodedPublicKey() {
+		return publicKeyBase64;
+	}
 
-    public PrivateKey getPrivateKey() {
-        return keyPair.getPrivate();
-    }
+	/** 
+	 * Ensure we have a key pair and it is linked to the server key from the 
+	 * certificate. The key is saves as a certificate so it persists across
+	 * runs.
+	 */
+	public boolean initialize(String serverKey, String subjectDN) {
 
-    public String getEncodedPublicKey() {
-        return publicKeyBase64;
-    }
+		this.subjectDN = subjectDN;
+		boolean ret = false;
+		
+		File directory = Configuration.INSTANCE.getDataPath("hub");
+		File certificate = new File(directory + File.separator + "certificate.pkcs12");
+		char[] password = serverKey.toCharArray();
 
-    /** 
-     * Ensure we have a key pair and it is linked to the server key from the 
-     * certificate. The key is saves as a certificate so it persists across
-     * runs.
-     */
-    public boolean initialize(String serverKey, String subjectDN) {
+		if (certificate.exists()) {
+			try {
+				keyPair = loadFromPKCS12(certificate, password);
+			} catch (Throwable e) {
+				Logging.INSTANCE.error(e);
+				FileUtils.deleteQuietly(certificate);
+				// sorry
+				keyPair = null;
+			}
+		}
 
-        this.subjectDN = subjectDN;
-        boolean ret = false;
+		if (keyPair == null) {
 
-        File directory = Configuration.INSTANCE.getDataPath("hub");
-        File certificate = new File(directory + File.separator + "certificate.pkcs12");
-        char[] password = serverKey.toCharArray();
+			Logging.INSTANCE.info("generating server key pair and storing certificate");
 
-        if (certificate.exists()) {
-            try {
-                keyPair = loadFromPKCS12(certificate, password);
-            } catch (Throwable e) {
-                Logging.INSTANCE.error(e);
-                FileUtils.deleteQuietly(certificate);
-                // sorry
-                keyPair = null;
-            }
-        }
+			keyPair = generateKeyPair();
+			try {
+				storeToPKCS12(certificate, password, keyPair);
+			} catch (Exception e) {
+				throw new KlabInternalErrorException(e);
+			}
+			ret = true;
+		}
 
-        if (keyPair == null) {
+		this.publicKeyBase64 = DatatypeConverter.printBase64Binary(keyPair.getPublic().getEncoded());
+		
+		return ret;
+	}
 
-            Logging.INSTANCE.info("generating server key pair and storing certificate");
+	private KeyPair generateKeyPair() {
+		
+		try {
+			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+			generator.initialize(2048, new SecureRandom());
+			KeyPair pair = generator.generateKeyPair();
+			return pair;
+		} catch (Exception e) {
+			throw new KlabInternalErrorException(e);
+		}
+	}
 
-            keyPair = generateKeyPair();
-            try {
-                storeToPKCS12(certificate, password, keyPair);
-            } catch (Exception e) {
-                throw new KlabInternalErrorException(e);
-            }
-            ret = true;
-        }
+	private Certificate selfSign(KeyPair keyPair, String subjectDN)
+			throws OperatorCreationException, CertificateException, IOException {
+		Provider bcProvider = new BouncyCastleProvider();
+		Security.addProvider(bcProvider);
 
-        this.publicKeyBase64 = DatatypeConverter.printBase64Binary(keyPair.getPublic().getEncoded());
+		long now = System.currentTimeMillis();
+		Date startDate = new Date(now);
 
-        return ret;
-    }
+		X500Name dnName = new X500Name(subjectDN);
 
-    private KeyPair generateKeyPair() {
+		// Using the current timestamp as the certificate serial number
+		BigInteger certSerialNumber = new BigInteger(Long.toString(now));
 
-        try {
-            KeyPairGenerator generator = KeyPairGenerator.getInstance(AlgorithmIdentifiers.RSA_USING_SHA256);
-            generator.initialize(2048, new SecureRandom());
-            KeyPair pair = generator.generateKeyPair();
-            return pair;
-        } catch (Exception e) {
-            throw new KlabInternalErrorException(e);
-        }
-    }
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		// 1 Yr validity
+		calendar.add(Calendar.YEAR, 1);
 
-    private Certificate selfSign(KeyPair keyPair, String subjectDN)
-            throws OperatorCreationException, CertificateException, IOException {
-        Provider bcProvider = new BouncyCastleProvider();
-        Security.addProvider(bcProvider);
+		Date endDate = calendar.getTime();
 
-        long now = System.currentTimeMillis();
-        Date startDate = new Date(now);
+		// Use appropriate signature algorithm based on your keyPair algorithm.
+		String signatureAlgorithm = "SHA256WithRSA";
 
-        X500Name dnName = new X500Name(subjectDN);
+		SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());
 
-        // Using the current timestamp as the certificate serial number
-        BigInteger certSerialNumber = new BigInteger(Long.toString(now));
+		X509v3CertificateBuilder certificateBuilder = new X509v3CertificateBuilder(dnName, certSerialNumber, startDate,
+				endDate, dnName, subjectPublicKeyInfo);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(startDate);
-        // 1 Yr validity
-        calendar.add(Calendar.YEAR, 1);
+		ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(bcProvider)
+				.build(keyPair.getPrivate());
 
-        Date endDate = calendar.getTime();
+		X509CertificateHolder certificateHolder = certificateBuilder.build(contentSigner);
 
-        // Use appropriate signature algorithm based on your keyPair algorithm.
-        String signatureAlgorithm = AlgorithmIdentifiers.RSA_USING_SHA256;
+		Certificate selfSignedCert = new JcaX509CertificateConverter().getCertificate(certificateHolder);
 
-        SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(keyPair.getPublic().getEncoded());
+		return selfSignedCert;
+	}
 
-        X509v3CertificateBuilder certificateBuilder = new X509v3CertificateBuilder(dnName, certSerialNumber, startDate,
-                endDate, dnName, subjectPublicKeyInfo);
+	public static void main(String[] args) throws Exception {
 
-        ContentSigner contentSigner = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(bcProvider)
-                .build(keyPair.getPrivate());
+		KeyPair generatedKeyPair = INSTANCE.generateKeyPair();
 
-        X509CertificateHolder certificateHolder = certificateBuilder.build(contentSigner);
+		File filename = new File("test_gen_self_signed.pkcs12");
+		char[] password = "test".toCharArray();
 
-        Certificate selfSignedCert = new JcaX509CertificateConverter().getCertificate(certificateHolder);
+		INSTANCE.storeToPKCS12(filename, password, generatedKeyPair);
 
-        return selfSignedCert;
-    }
+		KeyPair retrievedKeyPair = INSTANCE.loadFromPKCS12(filename, password);
 
-    private KeyPair loadFromPKCS12(File file, char[] password) throws KeyStoreException, NoSuchAlgorithmException,
-            CertificateException, FileNotFoundException, IOException, UnrecoverableEntryException {
+		// you can validate by generating a signature and verifying it or by
+		// comparing the moduli by first casting to RSAPublicKey, e.g.:
 
-        KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12");
+		RSAPublicKey pubKey = (RSAPublicKey) generatedKeyPair.getPublic();
+		RSAPrivateKey privKey = (RSAPrivateKey) retrievedKeyPair.getPrivate();
+		System.out.println(pubKey.getModulus().equals(privKey.getModulus()));
+	}
 
-        try (FileInputStream fis = new FileInputStream(file);) {
-            pkcs12KeyStore.load(fis, password);
-        }
+	private KeyPair loadFromPKCS12(File file, char[] password) throws KeyStoreException, NoSuchAlgorithmException,
+			CertificateException, FileNotFoundException, IOException, UnrecoverableEntryException {
 
-        KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection(password);
-        Entry entry = pkcs12KeyStore.getEntry(subjectDN, param);
-        if (!(entry instanceof PrivateKeyEntry)) {
-            throw new KlabAuthorizationException("certificate is obsolete or invalid");
-        }
-        PrivateKeyEntry privKeyEntry = (PrivateKeyEntry) entry;
-        PublicKey publicKey = privKeyEntry.getCertificate().getPublicKey();
-        PrivateKey privateKey = privKeyEntry.getPrivateKey();
-        return new KeyPair(publicKey, privateKey);
-    }
+		KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12");
 
-    private void storeToPKCS12(File file, char[] password, KeyPair generatedKeyPair)
-            throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
-            FileNotFoundException, OperatorCreationException {
+		try (FileInputStream fis = new FileInputStream(file);) {
+			pkcs12KeyStore.load(fis, password);
+		}
 
-        Certificate selfSignedCertificate = selfSign(generatedKeyPair, "CN=" + subjectDN);
+		KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection(password);
+		Entry entry = pkcs12KeyStore.getEntry(subjectDN, param);
+		if (!(entry instanceof PrivateKeyEntry)) {
+			throw new KlabAuthorizationException("certificate is obsolete or invalid");
+		}
+		PrivateKeyEntry privKeyEntry = (PrivateKeyEntry) entry;
+		PublicKey publicKey = privKeyEntry.getCertificate().getPublicKey();
+		PrivateKey privateKey = privKeyEntry.getPrivateKey();
+		return new KeyPair(publicKey, privateKey);
+	}
 
-        KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12");
-        pkcs12KeyStore.load(null, null);
+	private void storeToPKCS12(File file, char[] password, KeyPair generatedKeyPair)
+			throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
+			FileNotFoundException, OperatorCreationException {
 
-        KeyStore.Entry entry = new PrivateKeyEntry(generatedKeyPair.getPrivate(),
-                new Certificate[] { selfSignedCertificate });
-        KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection(password);
+		Certificate selfSignedCertificate = selfSign(generatedKeyPair, "CN=" + subjectDN);
 
-        pkcs12KeyStore.setEntry(subjectDN, entry, param);
+		KeyStore pkcs12KeyStore = KeyStore.getInstance("PKCS12");
+		pkcs12KeyStore.load(null, null);
 
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            pkcs12KeyStore.store(fos, password);
-        }
-    }
+		KeyStore.Entry entry = new PrivateKeyEntry(generatedKeyPair.getPrivate(),
+				new Certificate[] { selfSignedCertificate });
+		KeyStore.ProtectionParameter param = new KeyStore.PasswordProtection(password);
+
+		pkcs12KeyStore.setEntry(subjectDN, entry, param);
+
+		try (FileOutputStream fos = new FileOutputStream(file)) {
+			pkcs12KeyStore.store(fos, password);
+		}
+	}
 
 }

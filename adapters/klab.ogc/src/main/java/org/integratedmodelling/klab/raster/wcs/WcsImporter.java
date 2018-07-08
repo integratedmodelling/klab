@@ -20,60 +20,60 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 public class WcsImporter implements IResourceImporter {
 
-    WcsValidator validator = new WcsValidator();
+	WcsValidator validator = new WcsValidator();
 
-    @Override
-    public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
-        List<Builder> ret = new ArrayList<>();
-        // TODO parse from parameter string - for now just force it
-        String wcsVersion = "2.0.1";
-        try {
-            int index = importLocation.indexOf('?');
-            importLocation = importLocation.substring(0, index);
-            WCSService wcs = WcsAdapter.getService(importLocation, Version.create(wcsVersion));
-            for (WCSLayer layer : wcs.getLayers()) {
+	@Override
+	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+		List<Builder> ret = new ArrayList<>();
+		// TODO parse from parameter string - for now just force it
+		String wcsVersion = "2.0.1";
+		try {
+			int index = importLocation.indexOf('?');
+			importLocation = importLocation.substring(0, index);
+			WCSService wcs = WcsAdapter.getService(importLocation, Version.create(wcsVersion));
+			for (WCSLayer layer : wcs.getLayers()) {
 
-                try {
+				try {
+					
+					Parameters<String> parameters = new Parameters<>();
+					parameters.putAll(userData);
+					parameters.put("serviceUrl", importLocation);
+					parameters.put("wcsVersion", wcsVersion);
+					parameters.put("wcsIdentifier", layer.getIdentifier());
+					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
 
-                    Parameters<String> parameters = new Parameters<>();
-                    parameters.putAll(userData);
-                    parameters.put("serviceUrl", importLocation);
-                    parameters.put("wcsVersion", wcsVersion);
-                    parameters.put("wcsIdentifier", layer.getIdentifier());
-                    Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
+					if (builder != null) {
+						builder.setResourceId(layer.getIdentifier().toLowerCase().replaceAll("__", "."));
+						ret.add(builder);
+					}
 
-                    if (builder != null) {
-                        builder.setResourceId(layer.getIdentifier().toLowerCase().replaceAll("__", "."));
-                        ret.add(builder);
-                    }
+					Logging.INSTANCE.info(
+							"importing WCS resource " + layer.getIdentifier() + " from service " + wcs.getServiceUrl());
 
-                    Logging.INSTANCE.info(
-                            "importing WCS resource " + layer.getIdentifier() + " from service " + wcs.getServiceUrl());
+				} catch (KlabResourceNotFoundException e) {
 
-                } catch (KlabResourceNotFoundException e) {
+					Logging.INSTANCE.warn("skipping WCS resource " + layer.getIdentifier() + " from service "
+							+ wcs.getServiceUrl() + ": " + e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+		return ret;
+	}
 
-                    Logging.INSTANCE.warn("skipping WCS resource " + layer.getIdentifier() + " from service "
-                            + wcs.getServiceUrl() + ": " + e.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            throw new KlabIOException(e);
-        }
-        return ret;
-    }
+	@Override
+	public boolean canHandle(String importLocation, IParameters<String> userData) {
 
-    @Override
-    public boolean canHandle(String importLocation, IParameters<String> userData) {
-
-        URL url = null;
-        try {
-            url = new URL(importLocation);
-        } catch (MalformedURLException e) {
-            return false;
-        }
-        String lowurl = importLocation.toLowerCase();
-        return url != null && url.getProtocol().startsWith("http") && lowurl.contains("?")
-                && lowurl.contains("service=wcs") && lowurl.contains("getcapabilities");
-    }
+		URL url = null;
+		try {
+			url = new URL(importLocation);
+		} catch (MalformedURLException e) {
+			return false;
+		}
+		String lowurl = importLocation.toLowerCase();
+		return url != null && url.getProtocol().startsWith("http") && lowurl.contains("?")
+				&& lowurl.contains("service=wcs") && lowurl.contains("getcapabilities");
+	}
 
 }

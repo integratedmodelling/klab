@@ -45,7 +45,8 @@ public class ShowRestrictions implements ICommand {
                 rname = rname.substring(0, rname.length() - 4);
             }
             IProperty property = OWL.INSTANCE.getPropertyFor((OWLProperty<?, ?>) c.getProperty());
-            ret += (ret.isEmpty() ? "" : "\n") + rname + "  " + display(property) + " " + owlToString(c.getFiller());
+            ret += (ret.isEmpty() ? "" : "\n") + rname + "  " + display(property) + " "
+                    + owlToString(c.getFiller());
         }
         return ret;
     }
@@ -69,7 +70,8 @@ public class ShowRestrictions implements ICommand {
                 ret = "(" + ret + ")";
             } else if (owlClassExpression instanceof OWLObjectIntersectionOf) {
                 ret = "";
-                for (OWLClassExpression operand : ((OWLObjectIntersectionOf) owlClassExpression).getOperands()) {
+                for (OWLClassExpression operand : ((OWLObjectIntersectionOf) owlClassExpression)
+                        .getOperands()) {
                     ret += (ret.isEmpty() ? "" : " or ") + owlToString(operand);
                 }
                 ret = "(" + ret + ")";

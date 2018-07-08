@@ -27,28 +27,28 @@ import java.util.Iterator;
  */
 public class IteratorAdapter<T> implements Iterator<T> {
 
-    Iterator<?> iterator;
+  Iterator<?> iterator;
+  
+  /**
+   * Instantiates a new iterator adapter.
+   *
+   * @param iterator the iterator
+   */
+  public IteratorAdapter(Iterator<?> iterator) {
+    this.iterator = iterator;
+  }
+  
+  /** {@inheritDoc} */
+  @Override
+  public boolean hasNext() {
+    return iterator.hasNext();
+  }
 
-    /**
-     * Instantiates a new iterator adapter.
-     *
-     * @param iterator the iterator
-     */
-    public IteratorAdapter(Iterator<?> iterator) {
-        this.iterator = iterator;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasNext() {
-        return iterator.hasNext();
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    @Override
-    public T next() {
-        return (T) iterator.next();
-    }
+  /** {@inheritDoc} */
+  @SuppressWarnings("unchecked")
+  @Override
+  public T next() {
+    return (T)iterator.next();
+  }
 
 }

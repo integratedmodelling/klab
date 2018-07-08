@@ -25,170 +25,169 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public abstract class Scheduler<T> implements IScheduler<T> {
 
-    class DGraph extends DefaultDirectedGraph<T, DefaultEdge> {
+	class DGraph extends DefaultDirectedGraph<T,DefaultEdge> {
 
-        public DGraph(T observation) {
-            super(DefaultEdge.class);
-            addVertex(observation);
-        }
+		public DGraph(T observation) {
+			super(DefaultEdge.class);
+			addVertex(observation);
+		}
 
-        /**
-         * 
-         */
-        private static final long serialVersionUID = -7193783283781551257L;
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7193783283781551257L;
+		
+	}
+	
+	private HashedWheelTimer timer;
+	private Type type;
+	private Map<Long, DGraph> reactors = new HashMap<>();
+	private long startTime = -1;
+	private long endTime = -1;
+	private long interval = -1;
+	private BiConsumer<T, Long> actionHandler;
+	private BiConsumer<T, Long> errorHandler;
 
-    }
+	class TreeNode {
+		TreeNode(T element) {
+			this.element = element;
+		}
 
-    private HashedWheelTimer timer;
-    private Type type;
-    private Map<Long, DGraph> reactors = new HashMap<>();
-    private long startTime = -1;
-    private long endTime = -1;
-    private long interval = -1;
-    private BiConsumer<T, Long> actionHandler;
-    private BiConsumer<T, Long> errorHandler;
+		T element;
+		Deque<T> prerequisites = new LinkedList<>();
+	}
 
-    class TreeNode {
+	protected abstract ITime getTime(T object);
 
-        TreeNode(T element) {
-            this.element = element;
-        }
+	public Scheduler(Type type) {
+		this.type = type;
+	}
 
-        T element;
-        Deque<T> prerequisites = new LinkedList<>();
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public void merge(T temporalObject, T... requiredAntecedents) {
+		
+		ITime time = getTime(temporalObject);
+		if (time == null || time.getStep().isEmpty()) {
+			return;
+		}
 
-    protected abstract ITime getTime(T object);
+		if (startTime < 0 || startTime > time.getStart().getMillis()) {
+			startTime = time.getStart().getMillis();
+		}
+		if (endTime < 0 || endTime < time.getEnd().getMillis()) {
+			endTime = time.getEnd().getMillis();
+		}
 
-    public Scheduler(Type type) {
-        this.type = type;
-    }
+		DGraph graph = null;
+		if (reactors.containsKey(time.getStep().getMilliseconds())) {
+			(graph = reactors.get(time.getStep().getMilliseconds())).addVertex(temporalObject);
+		} else {
+			reactors.put(time.getStep().getMilliseconds(), (graph = new DGraph(temporalObject)));
+		}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void merge(T temporalObject, T... requiredAntecedents) {
+		if (requiredAntecedents != null) {
+			for (T antecedent : requiredAntecedents) {
+				
+				// must have same period and phase
+				
+				graph.addVertex(antecedent);
+				graph.addEdge(antecedent, temporalObject);
+			}
+		}
+	}
 
-        ITime time = getTime(temporalObject);
-        if (time == null || time.getStep().isEmpty()) {
-            return;
-        }
+	@Override
+	public void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler) {
 
-        if (startTime < 0 || startTime > time.getStart().getMillis()) {
-            startTime = time.getStart().getMillis();
-        }
-        if (endTime < 0 || endTime < time.getEnd().getMillis()) {
-            endTime = time.getEnd().getMillis();
-        }
+		this.actionHandler = tickHandler;
+		this.errorHandler = timingErrorHandler;
 
-        DGraph graph = null;
-        if (reactors.containsKey(time.getStep().getMilliseconds())) {
-            (graph = reactors.get(time.getStep().getMilliseconds())).addVertex(temporalObject);
-        } else {
-            reactors.put(time.getStep().getMilliseconds(), (graph = new DGraph(temporalObject)));
-        }
+		if (timer != null) {
+			throw new IllegalStateException("a scheduler can only be started once");
+		}
 
-        if (requiredAntecedents != null) {
-            for (T antecedent : requiredAntecedents) {
+		long[] spans = new long[reactors.size()];
+		int i = 0;
+		for (Long l : reactors.keySet()) {
+			spans[i++] = l;
+		}
+		this.interval = NumberUtils.lcm(spans);
 
-                // must have same period and phase
+		if (type == Type.REAL_TIME) {
+			// for logging
+			startTime = System.currentTimeMillis();
+		}
 
-                graph.addVertex(antecedent);
-                graph.addEdge(antecedent, temporalObject);
-            }
-        }
-    }
+		// adjust the start time to start in phase with the interval (CHECK)
+		long remainder = startTime % interval;
+		if (remainder != 0) {
+			startTime -= (interval - remainder);
+		}
 
-    @Override
-    public void start(BiConsumer<T, Long> tickHandler, BiConsumer<T, Long> timingErrorHandler) {
+		timer = new HashedWheelTimer(
+				type == Type.MOCK_TIME ? TimeUnit.NANOSECONDS.convert(interval, TimeUnit.MILLISECONDS)
+						: TimeUnit.MILLISECONDS.toNanos(10),
+				512, type == Type.MOCK_TIME ? new WaitStrategy() {
+					@Override
+					public void waitUntil(long deadlineNanoseconds) throws InterruptedException {
+						// TODO sleep if necessary until the current time hasn't been reached by all
+						// observations
+					}
+				} : new WaitStrategy.SleepWait());
 
-        this.actionHandler = tickHandler;
-        this.errorHandler = timingErrorHandler;
+		/*
+		 * schedule the main task at the smallest interval
+		 */
+		timer.scheduleWithFixedDelay(() -> {
+			handleTick();
+		}, 0, interval, TimeUnit.MILLISECONDS);
+	}
 
-        if (timer != null) {
-            throw new IllegalStateException("a scheduler can only be started once");
-        }
+	private void handleTick() {
+		this.startTime += this.interval;
+		for (Long key : reactors.keySet()) {
+			if ((this.startTime % key) == 0) {
+				callReactors(reactors.get(key));
+			}
+		}
+	}
 
-        long[] spans = new long[reactors.size()];
-        int i = 0;
-        for (Long l : reactors.keySet()) {
-            spans[i++] = l;
-        }
-        this.interval = NumberUtils.lcm(spans);
+	private void callReactors(DGraph graph) {
 
-        if (type == Type.REAL_TIME) {
-            // for logging
-            startTime = System.currentTimeMillis();
-        }
+		/*
+		 * TODO check that previous executor has finished and wait (if mock time) or
+		 * throw a specific exception (real time) for all the actors that have not
+		 * finished computing, unless configured otherwise, so that it can be caught and
+		 * the actor can be deactivated.
+		 */
 
-        // adjust the start time to start in phase with the interval (CHECK)
-        long remainder = startTime % interval;
-        if (remainder != 0) {
-            startTime -= (interval - remainder);
-        }
+		// call all nodes concurrently, each calling its antecedents in order. The same
+		// antecedent
+		// could be in more than one node and should only be called once.
+		// NO must use an actual dependency graph
+//		for (TreeNode node : list) {
+//			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
+//				// TODO use topological sort. Should be able to enqueue groups in dependency
+//				// order as soon as all deps are done.
+//				System.out.println("Calling for " + this.startTime + ": " + node.element);
+//			}
+//		}
 
-        timer = new HashedWheelTimer(type == Type.MOCK_TIME
-                ? TimeUnit.NANOSECONDS.convert(interval, TimeUnit.MILLISECONDS) : TimeUnit.MILLISECONDS.toNanos(10),
-                512, type == Type.MOCK_TIME ? new WaitStrategy() {
+		// TODO schedule all tasks immediately
+	}
 
-                    @Override
-                    public void waitUntil(long deadlineNanoseconds) throws InterruptedException {
-                        // TODO sleep if necessary until the current time hasn't been reached by all
-                        // observations
-                    }
-                } : new WaitStrategy.SleepWait());
+	@Override
+	public void stop() {
 
-        /*
-         * schedule the main task at the smallest interval
-         */
-        timer.scheduleWithFixedDelay(() -> {
-            handleTick();
-        }, 0, interval, TimeUnit.MILLISECONDS);
-    }
-
-    private void handleTick() {
-        this.startTime += this.interval;
-        for (Long key : reactors.keySet()) {
-            if ((this.startTime % key) == 0) {
-                callReactors(reactors.get(key));
-            }
-        }
-    }
-
-    private void callReactors(DGraph graph) {
-
-        /*
-         * TODO check that previous executor has finished and wait (if mock time) or
-         * throw a specific exception (real time) for all the actors that have not
-         * finished computing, unless configured otherwise, so that it can be caught and
-         * the actor can be deactivated.
-         */
-
-        // call all nodes concurrently, each calling its antecedents in order. The same
-        // antecedent
-        // could be in more than one node and should only be called once.
-        // NO must use an actual dependency graph
-        //		for (TreeNode node : list) {
-        //			if (getTime(node.element).getStart().getMillis() >= (this.startTime - this.interval)) {
-        //				// TODO use topological sort. Should be able to enqueue groups in dependency
-        //				// order as soon as all deps are done.
-        //				System.out.println("Calling for " + this.startTime + ": " + node.element);
-        //			}
-        //		}
-
-        // TODO schedule all tasks immediately
-    }
-
-    @Override
-    public void stop() {
-
-        if (timer != null) {
-            timer.shutdownNow();
-            try {
-                timer.awaitTermination(10, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                Logging.INSTANCE.error(e);
-            }
-        }
-    }
+		if (timer != null) {
+			timer.shutdownNow();
+			try {
+				timer.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				Logging.INSTANCE.error(e);
+			}
+		}
+	}
 
 }
