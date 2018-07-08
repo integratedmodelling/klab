@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
@@ -100,15 +101,15 @@ public class Engine extends Server implements IEngine, UserDetails {
 		private int errorCount = 0;
 		private AtomicBoolean isInterrupted = new AtomicBoolean(false);
 		List<Listener> listeners = new ArrayList<>();
-		
+
 		public List<Listener> getListeners() {
 			return listeners;
 		}
-		
+
 		public void addListener(Listener listener) {
 			this.listeners.add(listener);
 		}
-		
+
 		@Override
 		public void info(Object... info) {
 			String message = NotificationUtils.getMessage(info);
@@ -305,16 +306,18 @@ public class Engine extends Server implements IEngine, UserDetails {
 		if (!certificate.isValid()) {
 			throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
 		}
-		
+
 		Engine ret = new Engine(certificate);
-		
+
 		if (!ret.boot(options)) {
 			throw new KlabException("engine failed to start");
 		}
-		
+
 		System.out.println("\n" + Logo.ENGINE_BANNER);
-		System.out.println("\nStartup successful: " + Klab.INSTANCE.getRootMonitor().getIdentity() + " v" + Version.CURRENT + " on " + new Date());
-		
+		System.out.println(
+				"\nStartup successful: " + Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getId()
+						+ " v" + Version.CURRENT + " on " + new Date());
+
 		return ret;
 	}
 
@@ -531,7 +534,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	protected void closeExpiredSessions() {
 		// TODO Auto-generated method stub
-//		Logging.INSTANCE.info("checking for expired sessions...");
+		// Logging.INSTANCE.info("checking for expired sessions...");
 	}
 
 	private void runJvmChecks() {

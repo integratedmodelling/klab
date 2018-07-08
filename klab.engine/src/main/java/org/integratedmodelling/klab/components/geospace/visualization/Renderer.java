@@ -225,8 +225,15 @@ public enum Renderer {
 						if (pair.getFirst() instanceof IConcept) {
 							labels[i] = Concepts.INSTANCE.getDisplayName((IConcept) pair.getFirst());
 							values[i] = state.getDataKey().reverseLookup((IConcept) pair.getFirst());
-							colors[i] = pair.getSecond();
+						} else if (pair.getFirst() instanceof Number) {
+							values[i] = ((Number)pair.getFirst()).doubleValue();
+							labels[i] = "" + values[i];
+						} else if (pair.getFirst() instanceof Boolean) {
+							values[i] = ((Boolean)pair.getFirst()) ? 1 : 0;
+							labels[i] = state.getObservable().getLocalName() + " " + ((Boolean)pair.getFirst() ? "present" : "absent");
 						}
+
+						colors[i] = pair.getSecond();
 
 						i++;
 					}
@@ -277,7 +284,7 @@ public enum Renderer {
 			}
 		}
 
-		if (colormapType == ColorMap.TYPE_RAMP || colormapType == ColorMap.TYPE_INTERVALS) {
+		if (values == null && (colormapType == ColorMap.TYPE_RAMP || colormapType == ColorMap.TYPE_INTERVALS)) {
 			values = new double[colors.length];
 			labels = new String[colors.length];
 			for (int i = 0; i < colors.length; i++) {

@@ -29,7 +29,7 @@ model geography:Elevation in m
 model geography:Slope in degree_angle 
 	observing geography:Aspect in degree_angle named aspetto,
 	chemistry:Reactivity 0 to 1
-	using gis.terrain(roughness = 0.71, detail = 9, range = 0 to 360);
+	using gis.terrain(roughness = 0.71, detail = 9, range = 0 to 90);
 
 model 10 as geography:Aspect in degree_angle;
 model 5 as chemistry:Reactivity 0 to 10;

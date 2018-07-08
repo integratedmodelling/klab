@@ -15,12 +15,14 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -139,7 +141,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public ActorSystem getActorSystem() {
 		if (rootActorSystem == null) {
 			Logging.INSTANCE.info("Creating root actor system...");
-			rootActorSystem = ActorSystem.create(Klab.INSTANCE.getRootMonitor().getIdentity().getId());
+			rootActorSystem = ActorSystem
+					.create(Authentication.INSTANCE.getAuthenticatedIdentity(IEngine.class).getId());
 		}
 		return rootActorSystem;
 	}

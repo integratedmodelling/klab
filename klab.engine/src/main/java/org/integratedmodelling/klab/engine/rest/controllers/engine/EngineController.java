@@ -34,7 +34,7 @@ public class EngineController {
 	public AuthorizeSessionResponse openSession(@RequestParam(name = "join") String previousToJoin, Principal principal) {
 
 		IIdentity user = Authentication.INSTANCE.getIdentity(principal);
-		Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
+		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
 		if (engine == null) {
 			throw new IllegalAccessError("engine is not present: cannot create a session");
 		}
@@ -58,7 +58,7 @@ public class EngineController {
 	public AuthorizeSessionResponse createSession(Principal principal) {
 
 		ISession session = null;
-		Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
+		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
 		IIdentity user = Authentication.INSTANCE.getIdentity(principal);
 
 		if (engine == null) {

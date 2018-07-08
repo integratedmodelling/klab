@@ -17,4 +17,4 @@ model geography:Elevation in m
 	on definition set to [slope * 12.44];
 
 model geography:Slope in degree_angle 
-	using gis.terrain(roughness = 0.71, detail = 13, range = 0 to 360);
+	using gis.terrain(roughness = 0.71, detail = 13, range = 0 to 90);

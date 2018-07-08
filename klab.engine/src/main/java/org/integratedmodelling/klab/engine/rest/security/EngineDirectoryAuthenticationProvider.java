@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.engine.rest.security;
 
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.engine.Engine;
@@ -26,7 +26,7 @@ public class EngineDirectoryAuthenticationProvider extends AbstractUserDetailsAu
 	protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
 
-		Engine engine = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(Engine.class);
+		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
 		IEngineUserIdentity user = engine.authenticateUser(new IUserCredentials() {
 
 			@Override

@@ -313,7 +313,7 @@ public enum Resources implements IResourceService {
 	public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters, IProject project,
 			String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
 
-		IUserIdentity user = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(IUserIdentity.class);
+		IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
 		if (user == null) {
 			throw new KlabAuthorizationException("cannot establish current user: resources cannot be created");
 		}
@@ -510,9 +510,8 @@ public enum Resources implements IResourceService {
 					}
 				}
 
-				String owner = Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(IUserIdentity.class)
-						.getUsername();
-				
+				String owner = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername();
+
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
 						.withProjectName(project.getName()).withParameters(parameters).withAdapterType(adapterType)
 						.withLocalPath(project.getName() + "/resources/" + builder.getResourceId())

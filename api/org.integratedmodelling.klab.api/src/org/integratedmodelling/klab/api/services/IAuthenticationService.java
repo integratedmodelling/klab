@@ -31,7 +31,18 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 public interface IAuthenticationService {
 
 	/**
-	 * Retrieve the passed identity, validating it as the passed class.
+	 * Return the authenticated identity of the passed type if it exists, or null.
+	 * Can be used to retrieve the network session, the user owning the server, the
+	 * partner etc.
+	 * 
+	 * @param type
+	 * @return the authenticated identity or null
+	 */
+	<T extends IIdentity> T getAuthenticatedIdentity(Class<T> type);
+
+	/**
+	 * Retrieve the passed identity, validating it as the passed class. Used to
+	 * retrieve identities that are ephemeral, such as sessions or tasks.
 	 * 
 	 * @param id
 	 * @param type
@@ -41,11 +52,12 @@ public interface IAuthenticationService {
 
 	/**
 	 * Perform the authentication required for the certificate and return the
-	 * correspondent identity, or null.
+	 * correspondent authenticated identity, or null.
 	 * 
 	 * @param certificate
 	 * @return the authenticated identity
-	 * @throws KlabAuthorizationException if authorization is unsuccessful
+	 * @throws KlabAuthorizationException
+	 *             if authorization is unsuccessful
 	 */
 	IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException;
 

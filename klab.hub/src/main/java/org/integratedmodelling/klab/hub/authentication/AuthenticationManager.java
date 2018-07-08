@@ -108,7 +108,7 @@ public class AuthenticationManager {
 	 * @param request
 	 * @return
 	 */
-	public IUserIdentity authenticateLegacyEngineCertificate(EngineAuthenticationRequest request, String ip) {
+	public EngineUser authenticateLegacyEngineCertificate(EngineAuthenticationRequest request, String ip) {
 
 		try {
 			HttpEntity<String> httpRequest = new HttpEntity<String>(request.getCertificate());
@@ -137,7 +137,7 @@ public class AuthenticationManager {
 	 * @param string
 	 * @return
 	 */
-	public IUserIdentity authenticateEngineCertificate(EngineAuthenticationRequest request, String ip) {
+	public EngineUser authenticateEngineCertificate(EngineAuthenticationRequest request, String ip) {
 
 		switch (request.getLevel()) {
 		case ANONYMOUS:
@@ -241,14 +241,15 @@ public class AuthenticationManager {
 	}
 
 	/**
-	 * Establish the user identity as a hub token and pass the user credentials to
-	 * all nodes.
+	 * Establish the user identity as a JWT token which our nodes can consume with
+	 * our advertised public key.
 	 * 
 	 * @param user
 	 * @return the user identity with local credentials
 	 */
-	public IUserIdentity authorizeUser(IUserIdentity user) throws KlabAuthorizationException {
+	public EngineUser authorizeUser(EngineUser user) throws KlabAuthorizationException {
 		// TODO Auto-generated method stub
+
 		return user;
 	}
 

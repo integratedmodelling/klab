@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.KeyManager;
@@ -42,7 +42,7 @@ public class AuthenticationController {
 	public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
 			HttpServletRequest httpRequest) {
 
-		IUserIdentity user = authenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
+		EngineUser user = authenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
 
 		if (user != null) {
 

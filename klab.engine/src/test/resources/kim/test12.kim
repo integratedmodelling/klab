@@ -9,7 +9,6 @@ worldview im;
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 
-@colormap(values = {im:Low: red, im:Moderate: blue, im:High: green})
 model geography:Elevation by im:Level
 	using gis.terrain()
 	classified into

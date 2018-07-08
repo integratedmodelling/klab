@@ -99,7 +99,15 @@ public enum Authentication implements IAuthenticationService {
 	@Override
 	public <T extends IIdentity> T getIdentity(String id, Class<T> type) {
 		IIdentity ret = identities.get(id);
-		return ret != null && type.isAssignableFrom(ret.getClass()) ? (T) ret : null;
+		if (ret != null && type.isAssignableFrom(ret.getClass())) {
+			return (T) ret;
+		}
+		return null;
+	}
+	
+	@Override
+	public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
+		return Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(type);
 	}
 
 	/**
@@ -157,7 +165,7 @@ public enum Authentication implements IAuthenticationService {
 		}
 
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
-		
+
 		if (authenticationServer == null) {
 			Logging.INSTANCE.warn("certificate has no hub address");
 			// try local hub, let fail if not active
@@ -170,7 +178,7 @@ public enum Authentication implements IAuthenticationService {
 		}
 
 		if (authenticationServer != null) {
-			
+
 			Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
 					+ " with hub " + authenticationServer);
 
