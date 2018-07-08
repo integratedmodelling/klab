@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.hub.authentication;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.Logging;
@@ -15,7 +18,9 @@ import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
+import org.integratedmodelling.klab.hub.security.KeyManager;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.utils.IPUtils;
@@ -41,6 +46,7 @@ public class AuthenticationManager {
 	private Map<String, KlabCertificate> engineCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> hubCertificates = new HashMap<>();
+	private Set<Group> groups = new HashSet<>();
 
 	// set after authentication
 	NodeReference hubReference;
@@ -69,6 +75,10 @@ public class AuthenticationManager {
 				}
 			}
 		}
+
+		/*
+		 * TODO load all groups into group set
+		 */
 	}
 
 	/**
@@ -108,7 +118,7 @@ public class AuthenticationManager {
 				Map<?, ?> profile = (Map<?, ?>) response.get("profile");
 				EngineUser ret = new EngineUser(response.get("username").toString(), null);
 				ret.setEmailAddress(profile.get("email").toString());
-//				ret.getGroups().addAll()
+				// ret.getGroups().addAll()
 				Logging.INSTANCE
 						.info("authenticated user " + response.get("username") + " through legacy certificate service");
 				return ret;
@@ -174,7 +184,6 @@ public class AuthenticationManager {
 			}
 			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), this.partner);
 			ret.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
-			networkManager.notifyAuthorizedNode(ret);
 			return ret;
 		}
 
@@ -193,6 +202,11 @@ public class AuthenticationManager {
 		return this.partner;
 	}
 
+	/**
+	 * Read our own certificate and set the necessary permissions
+	 * 
+	 * @param certificate
+	 */
 	public void authenticate(ICertificate certificate) {
 
 		this.hubReference = new NodeReference();
@@ -217,6 +231,13 @@ public class AuthenticationManager {
 			 */
 		}
 
+		/*
+		 * ensure we have a valid key pair for JWT signing
+		 */
+		if (KeyManager.INSTANCE.initialize(certificate.getProperty(ICertificate.KEY_SIGNATURE),
+				this.hubReference.getId())) {
+			// TODO a new certificate was generated, so any pre-issued tokens are invalid
+		}
 	}
 
 	/**
@@ -229,6 +250,15 @@ public class AuthenticationManager {
 	public IUserIdentity authorizeUser(IUserIdentity user) throws KlabAuthorizationException {
 		// TODO Auto-generated method stub
 		return user;
+	}
+
+	/**
+	 * All groups known to this hub.
+	 * 
+	 * @return
+	 */
+	public Collection<Group> getGroups() {
+		return groups;
 	}
 
 	/*

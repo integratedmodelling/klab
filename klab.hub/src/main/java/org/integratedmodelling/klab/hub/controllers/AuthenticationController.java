@@ -11,13 +11,13 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
+import org.integratedmodelling.klab.hub.security.KeyManager;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
-import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -102,34 +102,15 @@ public class AuthenticationController {
 
 			Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
 
-			/*
-			 * TODO if user is new, propagate to authenticated servers
-			 */
-			return new ResponseEntity<NodeAuthenticationResponse>(
-					// TODO send public key to verify user authorizations
-					new NodeAuthenticationResponse(authenticatedIdentity, ""), HttpStatus.OK);
+			NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
+					authenticationManager.getHubReference().getId(), authenticationManager.getGroups(), KeyManager.INSTANCE.getEncodedPublicKey());
+			
+			networkManager.notifyAuthorizedNode(node);
+
+			
+			return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
 	}
-
-	// This is for node authentication
-	// AuthenticatedIdentity identity = new AuthenticatedIdentity(userIdentity, new
-	// ArrayList<>(),
-	// tomorrow.toString(), NameGenerator.newName());
-	// IPartnerIdentity partner = Klab.INSTANCE.getRootMonitor().getIdentity()
-	// .getParentIdentity(IPartnerIdentity.class);
-	// IdentityReference partnerIdentity = new IdentityReference(partner.getName(),
-	// partner.getEmailAddress(),
-	// now.toString());
-	// INodeIdentity node = new Node("", partner);
-	//
-	// NodeReference thisnode = new NodeReference();
-	//
-	// thisnode.setId(node.getName());
-	// thisnode.setPartner(partnerIdentity);
-	// thisnode.getPermissions().addAll(node.getPermissions());
-	// thisnode.getUrls().addAll(node.getUrls());
-	// thisnode.setOnline(true);
-	// thisnode.setRetryPeriodMinutes(20);
 
 }

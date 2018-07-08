@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class VectorImporter extends AbstractFilesetImporter {
 
@@ -21,7 +22,18 @@ public class VectorImporter extends AbstractFilesetImporter {
 	@Override
 	protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
 		try {
-			return validator.validate(file.toURI().toURL(), userData, monitor);
+			
+			Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
+			
+			if (builder != null) {
+				builder.setResourceId(MiscUtilities.getFileBaseName(file).toLowerCase());
+				for (File f : validator.getAllFilesForResource(file)) {
+					builder.addImportedFile(f);
+				}
+			}
+			
+			return builder;
+
 		} catch (MalformedURLException e) {
 			Logging.INSTANCE.error(e);
 			return null;

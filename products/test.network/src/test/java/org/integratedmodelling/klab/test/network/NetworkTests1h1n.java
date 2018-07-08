@@ -13,14 +13,14 @@ public class NetworkTests1h1n {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
         EngineStartupOptions options = new EngineStartupOptions("-certResource", "testengine.cert");
-		TestNetwork.INSTANCE.start1h1n();
+		SetupNetwork.INSTANCE.start1h1n();
 		engine = Engine.start(options);
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		engine.stop();
-		TestNetwork.INSTANCE.shutdown();
+		SetupNetwork.INSTANCE.shutdown();
 	}
 
 	@Test

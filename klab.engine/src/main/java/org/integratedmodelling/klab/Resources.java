@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -52,6 +53,7 @@ import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -457,15 +459,70 @@ public enum Resources implements IResourceService {
 	 * One-shot import of several resources from a URL. Uses all the importers that
 	 * declare they can handle the URL unless the adapter type is passed.
 	 * 
-	 * @param source a URL compatible with one or more adapter importers
-	 * @param project the destination project for the local resources built
+	 * @param source
+	 *            a URL compatible with one or more adapter importers
+	 * @param project
+	 *            the destination project for the local resources built
 	 * @param adapterType
 	 *            optional, pass if needed to resolve ambiguities or prevent
 	 *            excessive calculations.
 	 * @return
 	 */
 	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType) {
-		return null;
+
+		List<IResourceAdapter> importers = new ArrayList<>();
+		IParameters<String> parameters = new Parameters<String>();
+		for (IResourceAdapter adapter : resourceAdapters.values()) {
+			if ((adapterType == null || adapter.getName().equals(adapterType)) && adapter.getImporter() != null
+					&& adapter.getImporter().canHandle(source.toString(), parameters)) {
+				importers.add(adapter);
+			}
+		}
+
+		List<IResource> ret = new ArrayList<>();
+
+		for (IResourceAdapter adapter : importers) {
+
+			IResourceImporter importer = adapter.getImporter();
+
+			for (Builder builder : importer.importResources(source.toString(), parameters,
+					Klab.INSTANCE.getRootMonitor())) {
+
+				/*
+				 * if no errors, copy files and add notifications to resource; set relative
+				 * paths in resource metadata
+				 */
+				if (!builder.hasErrors()) {
+
+					File resourceDatapath = new File(project.getRoot() + File.separator + "resources" + File.separator
+							+ builder.getResourceId());
+					resourceDatapath.mkdirs();
+
+					for (File f : builder.getImportedFiles()) {
+						try {
+							FileUtils.copyFile(f,
+									new File(resourceDatapath + File.separator + MiscUtilities.getFileName(f)));
+						} catch (IOException e) {
+							throw new KlabIOException(e);
+						}
+						builder.addLocalResourcePath(project.getName() + "/resources/" + builder.getResourceId() + "/"
+								+ MiscUtilities.getFileName(f));
+					}
+				}
+
+				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
+						.withProjectName(project.getName()).withParameters(parameters).withAdapterType(adapterType)
+						.withLocalPath(project.getName() + "/resources/" + builder.getResourceId()).build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project));
+
+				if (resource != null && !resource.hasErrors()) {
+					getLocalResourceCatalog().put(resource.getUrn(), resource);
+					ret.add(resource);
+				}
+
+			}
+		}
+
+		return ret;
 	}
 
 	/**

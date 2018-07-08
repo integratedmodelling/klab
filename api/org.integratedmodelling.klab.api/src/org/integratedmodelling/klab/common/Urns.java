@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
@@ -56,6 +57,10 @@ public enum Urns {
 
 	public boolean isLocal(String urn) {
 		return urn.startsWith(LOCAL_URN_PREFIX) || urn.startsWith("local:") || urn.startsWith(LOCAL_FILE_PREFIX);
+	}
+
+	public String getLocalUrn(String resourceId, IProject project) {
+		return LOCAL_URN_PREFIX + /* TODO ADD USER */ project.getName() + ":" + resourceId;
 	}
 
 }

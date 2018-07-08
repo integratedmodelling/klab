@@ -7,11 +7,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -30,14 +32,28 @@ public class WcsImporter implements IResourceImporter {
 			importLocation = importLocation.substring(0, index);
 			WCSService wcs = WcsAdapter.getService(importLocation, Version.create(wcsVersion));
 			for (WCSLayer layer : wcs.getLayers()) {
-				Parameters<String> parameters = new Parameters<>();
-				parameters.putAll(userData);
-				parameters.put("serviceUrl", importLocation);
-				parameters.put("wcsVersion", wcsVersion);
-				parameters.put("wcsIdentifier", layer.getIdentifier());
-				Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
-				if (builder != null) {
-					ret.add(builder);
+
+				try {
+					
+					Parameters<String> parameters = new Parameters<>();
+					parameters.putAll(userData);
+					parameters.put("serviceUrl", importLocation);
+					parameters.put("wcsVersion", wcsVersion);
+					parameters.put("wcsIdentifier", layer.getIdentifier());
+					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
+
+					if (builder != null) {
+						builder.setResourceId(layer.getIdentifier().toLowerCase());
+						ret.add(builder);
+					}
+
+					Logging.INSTANCE.info(
+							"importing WCS resource " + layer.getIdentifier() + " from service " + wcs.getServiceUrl());
+
+				} catch (KlabResourceNotFoundException e) {
+
+					Logging.INSTANCE.warn("skipping WCS resource " + layer.getIdentifier() + " from service "
+							+ wcs.getServiceUrl() + ": " + e.getMessage());
 				}
 			}
 		} catch (Exception e) {

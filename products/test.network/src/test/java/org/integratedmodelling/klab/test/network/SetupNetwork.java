@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.node.NodeStartupOptions;
  * @author ferdinando.villa
  *
  */
-public enum TestNetwork {
+public enum SetupNetwork {
 
 	INSTANCE;
 

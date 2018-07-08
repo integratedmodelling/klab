@@ -87,7 +87,7 @@ public interface ICertificate {
 	public static final String KEY_EMAIL = "klab.user.email";
 	public static final String KEY_USERNAME = "klab.username";
 	public static final String KEY_NODENAME = "klab.nodename";
-	public static final String KEY_HUBNAME = "klab.nodename";
+	public static final String KEY_HUBNAME = "klab.hubname";
 	public static final String KEY_URL = "klab.url";
 	public static final String KEY_SIGNATURE = "klab.signature";
 	public static final String KEY_SERVER = "klab.partner.hub";

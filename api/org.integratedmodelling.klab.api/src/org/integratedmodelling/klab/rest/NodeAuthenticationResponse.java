@@ -1,9 +1,22 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Sent by a hub to a node upon authentication. Communicates all groups and the
+ * public key for JWT authorization.
+ * 
+ * @author Ferd
+ *
+ */
 public class NodeAuthenticationResponse {
 
 	private AuthenticatedIdentity userData;
 	private String authenticatingNodeId;
+	private String publicKey;
+	private Set<Group> groups = new HashSet<>();
 
 	public AuthenticatedIdentity getUserData() {
 		return userData;
@@ -21,46 +34,33 @@ public class NodeAuthenticationResponse {
 		this.authenticatingNodeId = authenticatingNodeId;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((authenticatingNodeId == null) ? 0 : authenticatingNodeId.hashCode());
-		result = prime * result + ((userData == null) ? 0 : userData.hashCode());
-		return result;
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
+
+	public Set<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
 	}
 
 	public NodeAuthenticationResponse() {
 	}
 
-	public NodeAuthenticationResponse(AuthenticatedIdentity userData, String authenticatingNodeId) {
+	public NodeAuthenticationResponse(AuthenticatedIdentity userData, String authenticatingNodeId, Collection<Group> groups, String publicKey) {
 		super();
 		this.userData = userData;
 		this.authenticatingNodeId = authenticatingNodeId;
+		this.publicKey = publicKey;
+		this.groups.addAll(groups);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		NodeAuthenticationResponse other = (NodeAuthenticationResponse) obj;
-		if (authenticatingNodeId == null) {
-			if (other.authenticatingNodeId != null)
-				return false;
-		} else if (!authenticatingNodeId.equals(other.authenticatingNodeId))
-			return false;
-		if (userData == null) {
-			if (other.userData != null)
-				return false;
-		} else if (!userData.equals(other.userData))
-			return false;
-		return true;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "EngineAuthenticationResponse [userData=" + userData + "]";

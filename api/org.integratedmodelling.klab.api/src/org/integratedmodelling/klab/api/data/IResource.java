@@ -13,7 +13,9 @@
  */
 package org.integratedmodelling.klab.api.data;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -265,13 +267,55 @@ public interface IResource extends Serializable {
 
 		/**
 		 * Set the project name. Only for local resources. Project name enters the local
-		 * URN but is not exposed by the IResource API. Stored to enable easier management 
-		 * and retrieval.
+		 * URN but is not exposed by the IResource API. Stored to enable easier
+		 * management and retrieval.
 		 * 
 		 * @param name
 		 * @return the builder itself
 		 */
 		Builder withProjectName(String name);
+
+		/**
+		 * Return all the files that compose this resource in their original locations.
+		 * <p>
+		 * This is only called on builders created by importers.
+		 * 
+		 * @return
+		 */
+		Collection<File> getImportedFiles();
+
+		/**
+		 * Return a suitable local ID for this resource.
+		 * <p>
+		 * This is only called on builders created by importers.
+		 * 
+		 * @return
+		 */
+		String getResourceId();
+
+		/**
+		 * Exclusively for use by importers. Resource IDs become part of URNs and are
+		 * normally handled externally unless we import in batch. Resource IDs don't
+		 * need to check for uniqueness (the importer will change suitably) but unique
+		 * IDs should be set when possible, as the unique-fied built externally can be
+		 * ugly.
+		 * 
+		 * @param identifier
+		 *            an identifier describing the resource, suitable for use as part of
+		 *            a URN (so no colons, punctuation, uppercase characters or anything
+		 *            but underscores as separators).
+		 */
+		void setResourceId(String identifier);
+
+		/**
+		 * Exclusively for use by importers that use physical files. All files set in
+		 * here are copied to the resource directory and exported when published.
+		 * 
+		 * @param file
+		 *            original, existing file (will be copied to final location by
+		 *            import handler)
+		 */
+		void addImportedFile(File file);
 
 	}
 

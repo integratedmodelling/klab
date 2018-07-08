@@ -5,14 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -31,18 +29,20 @@ public class Hub {
 
 	int port = IConfigurationService.DEFAULT_HUB_PORT;
 	private ConfigurableApplicationContext context;
-	private	String contextPath = "/klab";
+	private String contextPath = "/klab";
 	private AuthenticationManager authManager;
 	private ICertificate certificate;
 
 	public Hub(ICertificate certificate) {
 		this.certificate = certificate;
+		// cert is prevalidated and we are the top consumers, so no further
+		// authentication needed
 	}
 
 	public String getLocalAddress() {
 		return "http://127.0.0.1:" + port + contextPath;
 	}
-	
+
 	public void run(String[] args) {
 		HubStartupOptions options = new HubStartupOptions();
 		options.initialize(args);
@@ -56,16 +56,12 @@ public class Hub {
 
 		ICertificate certificate = null;
 
-		if (System.getProperty("anonymous") != null) {
-			certificate = new AnonymousEngineCertificate();
+		if (options.getCertificateResource() != null) {
+			certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
 		} else {
-			if (options.getCertificateResource() != null) {
-				certificate = KlabCertificate.createFromClasspath(options.getCertificateResource());
-			} else {
-				File certFile = options.getCertificateFile();
-				certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
-						: KlabCertificate.createDefault();
-			}
+			File certFile = options.getCertificateFile();
+			certificate = certFile.exists() ? KlabCertificate.createFromFile(certFile)
+					: KlabCertificate.createDefault();
 		}
 
 		if (!certificate.isValid()) {
@@ -94,7 +90,8 @@ public class Hub {
 			this.authManager = this.context.getBean(AuthenticationManager.class);
 			this.authManager.authenticate(this.certificate);
 			System.out.println("\n" + Logo.HUB_BANNER);
-			System.out.println("\nStartup successful: " + "k.LAB hub server"  + " v" + Version.CURRENT + " on " + new Date());
+			System.out.println(
+					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e);
 			return false;

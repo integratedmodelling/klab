@@ -10,6 +10,14 @@
 	<artifactId>klab.node</artifactId>
 	<name>k.LAB node server</name>
 	<dependencies>
+
+		<!-- JJwt for JWT authorization -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>

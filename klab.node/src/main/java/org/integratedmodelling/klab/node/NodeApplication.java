@@ -6,19 +6,21 @@ import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.event.ApplicationStartingEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 @Singleton
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.controllers.base" })
-public class NodeApplication implements ApplicationListener<ApplicationStartingEvent> {
+@ComponentScan(basePackages = { 
+		"org.integratedmodelling.klab.node.security",
+		"org.integratedmodelling.klab.node.controllers"
+})
+public class NodeApplication {
 
 	@PreDestroy
 	public void shutdown() {
@@ -34,9 +36,10 @@ public class NodeApplication implements ApplicationListener<ApplicationStartingE
 	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
 		return new RestTemplate(Arrays.asList(hmc));
 	}
-
-	@Override
-	public void onApplicationEvent(ApplicationStartingEvent arg0) {
-	}
+	
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }

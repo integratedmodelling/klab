@@ -91,6 +91,9 @@ public class WCSService {
 
 		class Band {
 			public Band(Map<?, ?> data) {
+				if (data.containsKey("field")) {
+					data = (Map<?, ?>) data.get("field");
+				}
 				this.name = data.get("name").toString();
 				Map<?, ?> quantity = (Map<?, ?>) data.get("Quantity");
 				if (quantity.containsKey("constraint")) {
@@ -303,7 +306,14 @@ public class WCSService {
 			for (Iterator<?> it = context.iterate(RANGE_TYPE); it.hasNext();) {
 				Object next = it.next();
 				if (next instanceof Map && !((Map<?, ?>) next).isEmpty()) {
-					bands.add(new Band((Map<?, ?>) next));
+					if (((Map<?, ?>) next).containsKey("field")) {
+						List<?> bandefs = (List<?>)((Map<?, ?>) next).get("field");
+						for (Object o : bandefs) {
+							bands.add(new Band((Map<?, ?>) o));
+						}
+					} else if (((Map<?, ?>) next).containsKey("name")) {
+						bands.add(new Band((Map<?, ?>) next));
+					}
 				}
 			}
 
@@ -408,7 +418,7 @@ public class WCSService {
 		if (space.shape().length != 2 || !space.isRegular()) {
 			throw new IllegalArgumentException("cannot retrieve a grid dataset from WCS in a non-grid context");
 		}
-		
+
 		String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
 		Projection crs = Projection.create(rcrs);
 		double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);

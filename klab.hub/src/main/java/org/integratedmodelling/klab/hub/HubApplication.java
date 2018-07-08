@@ -42,16 +42,6 @@ public class HubApplication implements ApplicationListener<ApplicationReadyEvent
 	private static int port = 8284;
 	private static String contextPath = "/klab";
 
-	@Bean
-	public ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
-	}
-
-	@Bean
-	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
-		return new RestTemplate(Arrays.asList(hmc));
-	}
-
 	public void run(String[] args) {
 		EngineStartupOptions options = new EngineStartupOptions();
 		options.initialize(args);

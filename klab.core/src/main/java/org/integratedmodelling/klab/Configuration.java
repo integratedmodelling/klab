@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.utils.OS;
  * @version $Id: $Id
  */
 public enum Configuration implements IConfigurationService {
+	
 	INSTANCE;
 
 	private OS os;
@@ -51,9 +52,7 @@ public enum Configuration implements IConfigurationService {
 	private Configuration() {
 
 		if (System.getProperty(KLAB_DATA_DIRECTORY) != null) {
-
 			this.dataPath = new File(System.getProperty(KLAB_DATA_DIRECTORY));
-
 		} else {
 			String home = System.getProperty("user.home");
 			if (System.getProperty(KLAB_WORK_DIRECTORY) != null) {

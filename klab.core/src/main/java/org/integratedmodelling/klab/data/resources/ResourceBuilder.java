@@ -15,7 +15,9 @@
  */
 package org.integratedmodelling.klab.data.resources;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -53,6 +55,10 @@ public class ResourceBuilder implements IResource.Builder {
 	private String adapterType;
 	private IArtifact.Type type;
 	private String projectName;
+	
+	// for importers
+	private String resourceId;
+	private List<File> importedFiles = new ArrayList<>();
 
 	/** {@inheritDoc} */
 	@Override
@@ -182,6 +188,26 @@ public class ResourceBuilder implements IResource.Builder {
 	public Builder withProjectName(String name) {
 		this.projectName = name;
 		return this;
+	}
+
+	@Override
+	public Collection<File> getImportedFiles() {
+		return importedFiles;
+	}
+	
+	@Override
+	public String getResourceId() {
+		return resourceId;
+	}
+
+	@Override
+	public void setResourceId(String identifier) {
+		this.resourceId = identifier;
+	}
+
+	@Override
+	public void addImportedFile(File file) {
+		this.importedFiles.add(file);
 	}
 
 }
