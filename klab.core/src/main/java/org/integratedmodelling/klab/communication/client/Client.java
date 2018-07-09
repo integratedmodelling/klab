@@ -372,7 +372,7 @@ public class Client extends RestTemplate {
 	 * @param urlVariables
 	 * @return the deserialized result
 	 */
-	<T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
+	public <T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
 		return get(addParameters(url, urlVariables), cls);
 	}
 

@@ -40,7 +40,7 @@ public class Parameters<T> implements IParameters<T> {
 		if (ret == null) {
 			return defaultValue;
 		}
-		return Utils.asType(ret, defaultValue.getClass());
+		return defaultValue == null ? null : Utils.asType(ret, defaultValue.getClass());
 	}
 
 	@Override

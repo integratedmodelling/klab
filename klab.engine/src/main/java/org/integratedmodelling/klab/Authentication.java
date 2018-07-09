@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
@@ -104,7 +105,7 @@ public enum Authentication implements IAuthenticationService {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
 		return Klab.INSTANCE.getRootMonitor().getIdentity().getParentIdentity(type);
@@ -161,6 +162,8 @@ public enum Authentication implements IAuthenticationService {
 			// no partner, no node, no token, no nothing. REST calls automatically accept
 			// the
 			// anonymous user when secured as Roles.PUBLIC.
+			Logging.INSTANCE.info("No user certificate: continuing in anonymous offline mode");
+
 			return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
 		}
 
@@ -236,13 +239,15 @@ public enum Authentication implements IAuthenticationService {
 			if (authentication != null) {
 
 				NodeReference hubNode = authentication.getHub();
-				Partner partner = Authentication.INSTANCE.requirePartner(hubNode.getPartner());
-				Node node = new Node(hubNode, partner);
+				Node node = new Node(hubNode);
 				node.setOnline(true);
 				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
 						authentication.getNodes(), node);
 
 				ret = new KlabUser(authentication.getUserData(), networkSession);
+
+				Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub "
+						+ hubNode.getId() + " owned by " + hubNode.getPartner());
 
 			} else {
 
@@ -250,6 +255,8 @@ public enum Authentication implements IAuthenticationService {
 				Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), null);
 				((Node) node).setOnline(false);
 				ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
+				
+				Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " activated in offline mode");
 			}
 
 			((KlabUser) ret).setOnline(authentication != null);

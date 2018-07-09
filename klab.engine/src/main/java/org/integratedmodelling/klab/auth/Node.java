@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
@@ -34,8 +35,12 @@ public class Node implements INodeIdentity {
         this.parent = owner;
     }
 
-    public Node(NodeReference partnerNode, Partner partner) {
-
+    public Node(NodeReference node) {
+		Partner partner = Authentication.INSTANCE.requirePartner(node.getPartner());
+		this.name = node.getId();
+		this.urls.addAll(node.getUrls());
+		this.parent = partner;
+		// TODO permissions
     }
 
     /**

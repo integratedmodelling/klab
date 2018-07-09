@@ -6,12 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.klab.rest.NodeReference;
-import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.rest.NodeReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,7 +34,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
         this.token = token;
         this.parent = node;
         for (NodeReference n : nodes) {
-            this.nodes.add(new Node(n, Authentication.INSTANCE.requirePartner(n.getPartner())));
+            this.nodes.add(new Node(n));
         }
         this.authorities.add(new SimpleGrantedAuthority(Roles.NETWORK_SESSION));
     }

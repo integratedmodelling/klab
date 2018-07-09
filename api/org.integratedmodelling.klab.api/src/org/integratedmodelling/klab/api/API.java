@@ -115,13 +115,76 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/hub/authenticate/engine";
+		public static final String AUTHENTICATE_ENGINE = "/authenticate/engine";
 
 		/**
-		 * Called by nodes on hubs when authenticating with them. Parameters like 
-		 * the engine version.
+		 * Called by nodes on hubs when authenticating with them. Parameters like the
+		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/hub/authenticate/node";
+		public static final String AUTHENTICATE_NODE = "/authenticate/node";
+
+	}
+
+	public static interface NODE {
+
+		public static interface RESOURCE {
+
+			/**
+			 * Add a resource to the local catalog by uploading zipped contents from a valid
+			 * resource import. Return URN after validation.
+			 * 
+			 * PUT
+			 */
+			public static final String SUBMIT = "/resource/submit";
+
+			/**
+			 * Publish a local resource to the public catalog of this node. Return the final
+			 * URN and status (which may be 'ongoing', i.e. the resource may not be
+			 * available yet).
+			 * 
+			 * POST
+			 */
+			public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
+
+			/**
+			 * Modify resource data. Triggers revalidation.
+			 * 
+			 * PATCH
+			 */
+			public static final String UPDATE_URN = "/resource/update/" + P_URN;
+
+			/**
+			 * Delete resource.
+			 * 
+			 * DELETE
+			 */
+			public static final String DELETE_URN = "/resource/delete/" + P_URN;
+
+			/**
+			 * Retrieve raw observation data for passed URN in passed scale. If resource has
+			 * time geometry, the response at initialization contains an individual token
+			 * for repeated requests at transitions.
+			 * 
+			 * GET
+			 */
+			public static final String GET_URN = "/resource/get/" + P_URN;
+
+			/**
+			 * Get URN data for passed URN. Includes expiration to control cacheing.
+			 * 
+			 * GET
+			 */
+			public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
+			
+			/**
+			 * List all resources available to the requesting engine. Parameterize for
+			 * verbose or short return.
+			 *  
+			 * GET
+			 */
+			public static final String LIST = "/resource/list";
+
+		}
 
 	}
 
@@ -283,60 +346,6 @@ public interface API {
 	}
 
 	/**
-	 * Handle non-semantic assets - data, data services and remote computations.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public interface RESOURCE {
-
-		/**
-		 * Add a resource to the local catalog by uploading zipped contents from a valid
-		 * resource import. Return URN after validation.
-		 * 
-		 * PUT
-		 */
-		public static final String SUBMIT = "/resource/submit";
-
-		/**
-		 * Publish a local resource to the public catalog of this or another server.
-		 * 
-		 * POST
-		 */
-		public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
-
-		/**
-		 * Modify resource data. Triggers revalidation.
-		 * 
-		 * PATCH
-		 */
-		public static final String UPDATE_URN = "/resource/update/" + P_URN;
-
-		/**
-		 * Delete resource data.
-		 * 
-		 * DELETE
-		 */
-		public static final String DELETE_URN = "/resource/delete/" + P_URN;
-
-		/**
-		 * Retrieve raw observation data for passed URN in passed scale. If resource has
-		 * time geometry, the response at initialization contains an individual token
-		 * for repeated requests at transitions.
-		 * 
-		 * GET
-		 */
-		public static final String GET_URN = "/resource/get/" + P_URN;
-
-		/**
-		 * Get URN data for passed URN. Includes expiration to control cacheing.
-		 * 
-		 * GET
-		 */
-		public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
-	}
-
-	/**
 	 * Endpoints to open sessions and control observation tasks in them.
 	 * 
 	 * @author ferdinando.villa
@@ -459,6 +468,17 @@ public interface API {
 				 * Get the data for a state in directly useable form, as values or images
 				 */
 				public static final String GET_DATA_OBSERVATION = "/engine/session/view/data/" + P_OBSERVATION;
+
+			}
+
+			/**
+			 * Handle engine-local non-semantic assets - import of resources or multiple
+			 * resource sources, inquiry.
+			 * 
+			 * @author ferdinando.villa
+			 *
+			 */
+			public interface RESOURCE {
 
 			}
 		}

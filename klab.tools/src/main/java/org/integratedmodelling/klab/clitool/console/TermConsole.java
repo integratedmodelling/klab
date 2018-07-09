@@ -240,7 +240,7 @@ public class TermConsole implements IConsole {
 			return;
 		}
 
-		String color = "&l-";
+		String color = "&c-";
 		if (infoClass != null) {
 			switch (infoClass) {
 			case "TASK":

@@ -18,12 +18,16 @@ import javax.imageio.ImageIO;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
 import org.geotools.styling.ColorMap;
+import org.geotools.styling.ContrastEnhancement;
 import org.geotools.styling.RasterSymbolizer;
+import org.geotools.styling.ShadedRelief;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
@@ -46,6 +50,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
+import org.opengis.style.ContrastMethod;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
@@ -65,6 +70,7 @@ public enum Renderer {
 	private Map<String, Style> styles = new HashMap<>();
 	private StyleBuilder styleBuilder = new StyleBuilder();
 	private ColorBrewer colorBrewer = new ColorBrewer();
+	private StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 
 	Renderer() {
 		/*
@@ -140,6 +146,11 @@ public enum Renderer {
 		int colormapType = state.getDataKey() == null ? ColorMap.TYPE_RAMP
 				: (state.getDataKey().isOrdered() ? ColorMap.TYPE_INTERVALS : ColorMap.TYPE_VALUES);
 
+		double shadedRelief = 0.0;
+		boolean shadedReliefBrightnessOnly = false;
+		String contrastEnhancement = null;
+		double gamma = 1.0;
+
 		// TODO parameters for shaded relief and contrast enhancement
 
 		for (IAnnotation annotation : state.getAnnotations()) {
@@ -151,18 +162,23 @@ public enum Renderer {
 					name = annotation.get("name", String.class);
 				}
 
+				gamma = annotation.get("gamma", 1.0);
+				shadedRelief = annotation.get("shading", 0.0);
+				contrastEnhancement = annotation.get("contrast", (String) null);
+				shadedReliefBrightnessOnly = annotation.get("brighten", false);
+
 				if (name != null) {
 					if (colorSchemata.containsKey(name)) {
-						
+
 						ColorScheme scheme = colorSchemata.get(name);
 						Triple<double[], Color[], String[]> result = scheme.computeScheme(state, locator);
 
 						values = result.getFirst();
 						colors = result.getSecond();
 						labels = result.getThird();
-												
+
 					} else {
-						
+
 						colors = getColormap(name, opacity);
 						if (colors == null && colorBrewer.hasPalette(name)) {
 							BrewerPalette palette = colorBrewer.getPalette(name);
@@ -176,7 +192,7 @@ public enum Renderer {
 								}
 							}
 						}
-						
+
 					}
 				} else if (annotation.containsKey("values")) {
 
@@ -226,11 +242,12 @@ public enum Renderer {
 							labels[i] = Concepts.INSTANCE.getDisplayName((IConcept) pair.getFirst());
 							values[i] = state.getDataKey().reverseLookup((IConcept) pair.getFirst());
 						} else if (pair.getFirst() instanceof Number) {
-							values[i] = ((Number)pair.getFirst()).doubleValue();
+							values[i] = ((Number) pair.getFirst()).doubleValue();
 							labels[i] = "" + values[i];
 						} else if (pair.getFirst() instanceof Boolean) {
-							values[i] = ((Boolean)pair.getFirst()) ? 1 : 0;
-							labels[i] = state.getObservable().getLocalName() + " " + ((Boolean)pair.getFirst() ? "present" : "absent");
+							values[i] = ((Boolean) pair.getFirst()) ? 1 : 0;
+							labels[i] = state.getObservable().getLocalName() + " "
+									+ ((Boolean) pair.getFirst() ? "present" : "absent");
 						}
 
 						colors[i] = pair.getSecond();
@@ -254,9 +271,7 @@ public enum Renderer {
 				if (annotation.containsKey("midpoint")) {
 					midpoint = annotation.get("midpoint", Number.class).floatValue();
 				}
-
-				// check for modifiers
-
+				
 			} else if (annotation.getName().equals("color")) {
 
 				// must be boolean
@@ -299,7 +314,43 @@ public enum Renderer {
 		}
 
 		ColorMap colorMap = styleBuilder.createColorMap(labels, values, colors, colormapType);
-		return styleBuilder.createRasterSymbolizer(colorMap, opacity);
+
+		RasterSymbolizer ret = styleBuilder.createRasterSymbolizer(colorMap, opacity);
+
+		if (contrastEnhancement != null || gamma != 1.0) {
+			
+			ContrastEnhancement cen = styleFactory.createContrastEnhancement();
+			cen.setGammaValue(styleBuilder.literalExpression(gamma));
+			if (cen != null) {
+				switch (contrastEnhancement) {
+				case "none":
+					cen.setMethod(ContrastMethod.NONE);
+					break;
+				case "logarithmic":
+					cen.setMethod(ContrastMethod.LOGARITHMIC);
+					break;
+				case "exponential":
+					cen.setMethod(ContrastMethod.EXPONENTIAL);
+					break;
+				case "histogram":
+					cen.setMethod(ContrastMethod.HISTOGRAM);
+					break;
+				case "normalize":
+					cen.setMethod(ContrastMethod.NORMALIZE);
+					break;
+				}
+			}
+
+			ret.setContrastEnhancement(cen);
+		}
+
+		if (shadedRelief != 0.0) {
+			ShadedRelief srl = styleFactory.createShadedRelief(styleBuilder.literalExpression(shadedRelief));
+			srl.setBrightnessOnly(shadedReliefBrightnessOnly);
+			ret.setShadedRelief(srl);
+		}
+		
+		return ret;
 	}
 
 	private Color parseColor(Object o) {
