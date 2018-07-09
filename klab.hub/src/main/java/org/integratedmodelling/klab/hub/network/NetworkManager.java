@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.hub.network;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
@@ -16,10 +18,11 @@ public class NetworkManager {
 
 	@Autowired
 	AuthenticationManager authenticationManager;
-	
+
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
-	
+	private Map<String, NodeReference> allNodes = new HashMap<>();
+
 	public Collection<NodeReference> getNodes(Set<String> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
@@ -40,12 +43,17 @@ public class NetworkManager {
 		ret.setPartner(authenticationManager.getHubReference().getPartner());
 
 		// TODO more
-		
+
 		return ret;
 	}
 
 	public void notifyAuthorizedNode(INodeIdentity ret) {
 		onlineNodes.add(ret);
+		allNodes.put(ret.getName(), createNodeReference(ret, true));
+	}
+
+	public NodeReference getNode(String nodeName) {
+		return allNodes.get(nodeName);
 	}
 
 }

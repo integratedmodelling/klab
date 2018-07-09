@@ -1,0 +1,12 @@
+worldview im;
+
+@test(
+	name = "tests.core.wcs.localresource.2",
+	description  = "Consume local WCS resource from remote OGC server",
+	observations = ("geography:Slope")
+)
+observe earth:Terrestrial earth:Region named tanzania-grr
+	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="100 m");
+
+model local:anonymous:test.network:global.slope90m as geography:Slope in degree_angle;
+

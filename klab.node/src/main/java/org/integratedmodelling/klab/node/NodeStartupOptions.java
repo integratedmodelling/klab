@@ -33,6 +33,12 @@ public class NodeStartupOptions implements INodeStartupOptions {
     String certificateResource = null;
 
     @Option(
+            name = "-name",
+            usage = "node name (overrides name in certificate)",
+            metaVar = "<SIMPLE_STRING>")
+    String nodeName = null;
+    
+    @Option(
             name = "-hub",
             usage = "URL of authenticating hub (default set in certificate)",
             metaVar = "<URL>")
@@ -59,6 +65,11 @@ public class NodeStartupOptions implements INodeStartupOptions {
     	initialize(args);
     }
 
+    @Override
+    public String getNodeName() {
+    	return nodeName;
+    }
+    
     @Override
     public String[] getArguments(String... additionalArguments) {
     	List<String> args = new ArrayList<>(this.arguments);

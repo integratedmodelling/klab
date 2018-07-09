@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class AuthenticationController {
 
 	@RequestMapping(value = API.HUB.AUTHENTICATE_NODE, method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<?> authenticateNode(@RequestBody EngineAuthenticationRequest request,
+	public ResponseEntity<?> authenticateNode(@RequestBody NodeAuthenticationRequest request,
 			HttpServletRequest httpRequest) {
 
 		INodeIdentity node = authenticationManager.authenticateNodeCertificate(request, httpRequest.getLocalAddr());

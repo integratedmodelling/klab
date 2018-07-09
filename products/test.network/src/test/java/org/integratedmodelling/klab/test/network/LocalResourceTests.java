@@ -24,4 +24,9 @@ public class LocalResourceTests {
 		engine.run(getClass().getClassLoader().getResource("kim.data.local/test1.kim")).get();
 	}
 
+	@Test
+	public void testWcs2() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim.data.local/test2.kim")).get();
+	}
+
 }

@@ -155,26 +155,7 @@ public enum KeyManager {
 
 		return selfSignedCert;
 	}
-
-	public static void main(String[] args) throws Exception {
-
-		KeyPair generatedKeyPair = INSTANCE.generateKeyPair();
-
-		File filename = new File("test_gen_self_signed.pkcs12");
-		char[] password = "test".toCharArray();
-
-		INSTANCE.storeToPKCS12(filename, password, generatedKeyPair);
-
-		KeyPair retrievedKeyPair = INSTANCE.loadFromPKCS12(filename, password);
-
-		// you can validate by generating a signature and verifying it or by
-		// comparing the moduli by first casting to RSAPublicKey, e.g.:
-
-		RSAPublicKey pubKey = (RSAPublicKey) generatedKeyPair.getPublic();
-		RSAPrivateKey privKey = (RSAPrivateKey) retrievedKeyPair.getPrivate();
-		System.out.println(pubKey.getModulus().equals(privKey.getModulus()));
-	}
-
+	
 	private KeyPair loadFromPKCS12(File file, char[] password) throws KeyStoreException, NoSuchAlgorithmException,
 			CertificateException, FileNotFoundException, IOException, UnrecoverableEntryException {
 

@@ -66,4 +66,11 @@ public interface INodeStartupOptions extends IStartupOptions {
      * @return the URL of the authenticating hub.
      */
     String getHubUrl();
+
+    /**
+     * Name of this hub. Tied to -name. Default is in the certificate.
+     * 
+     * @return the alternative node name
+     */
+	String getNodeName();
 }

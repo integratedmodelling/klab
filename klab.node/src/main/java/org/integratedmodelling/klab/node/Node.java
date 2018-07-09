@@ -35,9 +35,9 @@ public class Node {
 	private IPartnerIdentity owner;
 	private ICertificate certificate;
 
-	public Node(ICertificate certificate) {
+	public Node(INodeStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
-		this.owner = NodeAuth.INSTANCE.authenticate(certificate);
+		this.owner = NodeAuth.INSTANCE.authenticate(certificate, options);
 		// in engine: setRootIdentity(this.owner);
 	}
 
@@ -73,7 +73,7 @@ public class Node {
 		/*
 		 * This authenticates with the hub
 		 */
-		Node ret = new Node(certificate);
+		Node ret = new Node(options, certificate);
 
 		if (!ret.boot(options)) {
 			throw new KlabException("node failed to start");

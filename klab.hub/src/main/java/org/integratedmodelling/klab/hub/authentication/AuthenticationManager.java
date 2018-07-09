@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.hub.IHubStartupOptions;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Node;
@@ -24,13 +25,13 @@ import org.integratedmodelling.klab.hub.security.KeyManager;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -41,10 +42,10 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AuthenticationManager {
-	
-    private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
-	
-    /**
+
+	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
+
+	/**
 	 * Authenticate an engine certificate. This may be a USER or a PARTNER
 	 * certificate.
 	 * 
@@ -62,6 +63,8 @@ public class AuthenticationManager {
 
 	@Autowired
 	NetworkManager networkManager;
+
+	String hubName;
 
 	/*
 	 * for legacy authentication calls
@@ -182,7 +185,7 @@ public class AuthenticationManager {
 	 * @param cert
 	 * @return
 	 */
-	public INodeIdentity authenticateNodeCertificate(EngineAuthenticationRequest request, String ip) {
+	public INodeIdentity authenticateNodeCertificate(NodeAuthenticationRequest request, String ip) {
 
 		INodeIdentity ret = null;
 		KlabCertificate certificate = nodeCertificates.get(request.getCertificate());
@@ -191,7 +194,13 @@ public class AuthenticationManager {
 				throw new KlabAuthorizationException(
 						"pre-installed node certificates are only allowed on local connections");
 			}
-			ret = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), this.partner);
+
+			if (networkManager.getNode(request.getNodeName()) != null) {
+				throw new KlabAuthorizationException("node names must be unique: a node named "
+						+ request.getCertificate() + " was already authorized");
+			}
+
+			ret = new Node(request.getNodeName(), this.partner);
 			ret.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
 			return ret;
 		}
@@ -216,10 +225,13 @@ public class AuthenticationManager {
 	 * 
 	 * @param certificate
 	 */
-	public void authenticate(ICertificate certificate) {
+	public void authenticate(IHubStartupOptions options, ICertificate certificate) {
+
+		this.hubName = options.getHubName() == null ? certificate.getProperty(ICertificate.KEY_HUBNAME)
+				: options.getHubName();
 
 		this.hubReference = new NodeReference();
-		this.hubReference.setId(certificate.getProperty(ICertificate.KEY_HUBNAME));
+		this.hubReference.setId(this.hubName);
 		this.hubReference.setOnline(true);
 		this.hubReference.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
 
@@ -257,45 +269,47 @@ public class AuthenticationManager {
 	 * @return the user identity with local credentials
 	 */
 	public EngineUser authorizeUser(EngineUser user) throws KlabAuthorizationException {
-		
-	       JwtClaims claims = new JwtClaims();
-	        //        String tokenClass = token.getClass().getSimpleName();
-	        //        if (!tokenClass.equals(DEFAULT_TOKEN_CLASS)) {
-	        //            claims.setStringClaim(JWT_CLAIM_TOKEN_TYPE, tokenClass);
-	        //        }
 
-	        claims.setIssuer(hubReference.getId());
-	        claims.setSubject(user.getUsername());
+		JwtClaims claims = new JwtClaims();
+		// String tokenClass = token.getClass().getSimpleName();
+		// if (!tokenClass.equals(DEFAULT_TOKEN_CLASS)) {
+		// claims.setStringClaim(JWT_CLAIM_TOKEN_TYPE, tokenClass);
+		// }
 
-//	        NumericDate issuedAt = DateTimeUtil.utcLocalToUtcNumeric(DateTimeUtil.utcNow());
-	        claims.setIssuedAtToNow();
-	        claims.setExpirationTimeMinutesInTheFuture(60 * 24 * 10);
-	        //        NumericDate expiration = DateTimeUtil.utcLocalToUtcNumeric(token.getExpiration());
-	        //        claims.setExpirationTime(expiration);
+		claims.setIssuer(hubReference.getId());
+		claims.setSubject(user.getUsername());
 
-	        claims.setGeneratedJwtId();
+		// NumericDate issuedAt =
+		// DateTimeUtil.utcLocalToUtcNumeric(DateTimeUtil.utcNow());
+		claims.setIssuedAtToNow();
+		claims.setExpirationTimeMinutesInTheFuture(60 * 24 * 10);
+		// NumericDate expiration =
+		// DateTimeUtil.utcLocalToUtcNumeric(token.getExpiration());
+		// claims.setExpirationTime(expiration);
 
-	        List<String> roleStrings = new ArrayList<>();
-	        for (String role : user.getGroups()) {
-	            roleStrings.add(role);
-	        }
-	        claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
+		claims.setGeneratedJwtId();
 
-	        JsonWebSignature jws = new JsonWebSignature();
-	        jws.setPayload(claims.toJson());
-	        jws.setKey(KeyManager.INSTANCE.getPrivateKey());
-	        //        jws.setKeyIdHeaderValue(webSecurityConfig.getJwtPrivateKeyId());
-	        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-	        String token;
-	        try {
-	            token = jws.getCompactSerialization();
-	        } catch (JoseException e) {
-	            token = null;
-	            Logging.INSTANCE
-	                    .error(String.format("Failed to generate JWT token string for user '%s': ", user.getUsername()), e);
-	        }
+		List<String> roleStrings = new ArrayList<>();
+		for (String role : user.getGroups()) {
+			roleStrings.add(role);
+		}
+		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
 
-	        user.setToken(token);
+		JsonWebSignature jws = new JsonWebSignature();
+		jws.setPayload(claims.toJson());
+		jws.setKey(KeyManager.INSTANCE.getPrivateKey());
+		// jws.setKeyIdHeaderValue(webSecurityConfig.getJwtPrivateKeyId());
+		jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+		String token;
+		try {
+			token = jws.getCompactSerialization();
+		} catch (JoseException e) {
+			token = null;
+			Logging.INSTANCE
+					.error(String.format("Failed to generate JWT token string for user '%s': ", user.getUsername()), e);
+		}
+
+		user.setToken(token);
 		return user;
 	}
 
@@ -306,6 +320,15 @@ public class AuthenticationManager {
 	 */
 	public Collection<Group> getGroups() {
 		return groups;
+	}
+
+	/**
+	 * Our official name (from certificate or overridden in startup options).
+	 * 
+	 * @return this hub's name.
+	 */
+	public String getHubName() {
+		return hubName;
 	}
 
 	/*

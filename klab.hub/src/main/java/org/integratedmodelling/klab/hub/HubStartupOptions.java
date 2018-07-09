@@ -31,6 +31,12 @@ public class HubStartupOptions implements IHubStartupOptions {
             metaVar = "<CLASSPATH_RESOURCE>")
     String certificateResource = null;
 
+    @Option(
+            name = "-name",
+            usage = "hub name (overrides name in certificate)",
+            metaVar = "<SIMPLE_STRING>")
+    String hubName = null;
+    
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int port = IConfigurationService.DEFAULT_HUB_PORT;
 
@@ -146,5 +152,10 @@ public class HubStartupOptions implements IHubStartupOptions {
     public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
+
+	@Override
+	public String getHubName() {
+		return hubName;
+	}
 
 }

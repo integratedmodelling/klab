@@ -48,5 +48,12 @@ public interface IHubStartupOptions extends IStartupOptions {
      * @return the classpath resource with a certificate or null
      */
     String getCertificateResource();
-
+   
+    /**
+     * Tied to -name: name of this hub, overriding the one in the certificate.
+     * 
+     * @return the name 
+     */
+    String getHubName();
+   
 }

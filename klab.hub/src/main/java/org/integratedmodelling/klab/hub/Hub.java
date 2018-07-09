@@ -33,7 +33,7 @@ public class Hub {
 	private AuthenticationManager authManager;
 	private ICertificate certificate;
 
-	public Hub(ICertificate certificate) {
+	public Hub(IHubStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		// cert is prevalidated and we are the top consumers, so no further
 		// authentication needed
@@ -68,7 +68,7 @@ public class Hub {
 			throw new KlabAuthorizationException("certificate is invalid: " + certificate.getInvalidityCause());
 		}
 
-		Hub ret = new Hub(certificate);
+		Hub ret = new Hub(options, certificate);
 
 		if (!ret.boot(options)) {
 			throw new KlabException("node failed to start");
@@ -88,7 +88,7 @@ public class Hub {
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());
 			this.authManager = this.context.getBean(AuthenticationManager.class);
-			this.authManager.authenticate(this.certificate);
+			this.authManager.authenticate(options, this.certificate);
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
