@@ -286,7 +286,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		ICertificate certificate = null;
 
-		if (System.getProperty("anonymous") != null) {
+		if (options.isAnonymous()) {
 			certificate = new AnonymousEngineCertificate();
 		} else {
 
@@ -315,7 +315,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		System.out.println("\n" + Logo.ENGINE_BANNER);
 		System.out.println(
-				"\nStartup successful: " + Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getId()
+				"\nStartup successful: " + Authentication.INSTANCE.getAuthenticatedIdentity(IIdentity.class).getId()
 						+ " v" + Version.CURRENT + " on " + new Date());
 
 		return ret;

@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.EngineStartupOptions;
 
 public class SetupResources {
 
@@ -27,7 +28,8 @@ public class SetupResources {
 
 	/**
 	 * Call to obtain an engine with preloaded resources, loading if necessary or
-	 * when requested.
+	 * when requested. Engne is started in anonymous mode so that the URNs are
+	 * stable.
 	 * 
 	 * @param clearResources
 	 *            clear the resource catalog, forcing reload.
@@ -36,7 +38,7 @@ public class SetupResources {
 	 */
 	public static Engine startAndLoad(boolean clearResources) throws Exception {
 
-		Engine engine = Engine.start();
+		Engine engine = Engine.start(new EngineStartupOptions("-anonymous"));
 		if (clearResources) {
 			Resources.INSTANCE.getLocalResourceCatalog().clear();
 		}

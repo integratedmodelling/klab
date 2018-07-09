@@ -21,8 +21,6 @@ import java.security.Security;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.Date;
 

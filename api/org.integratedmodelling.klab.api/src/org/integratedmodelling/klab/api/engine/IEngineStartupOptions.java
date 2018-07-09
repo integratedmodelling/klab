@@ -87,4 +87,12 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * @return the URL of the authenticating hub.
      */
     String getHubUrl();
+
+    /**
+     * True if forced anonymous (offline) mode has been requested. Linked to
+     * -anonymous.
+     * 
+     * @return true if forcing anonymous mode
+     */
+	boolean isAnonymous();
 }

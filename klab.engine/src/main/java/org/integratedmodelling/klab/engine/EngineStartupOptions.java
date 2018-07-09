@@ -46,6 +46,9 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int port = 8183;
 
+    @Option(name = "-anonymous", usage = "force anonymous mode")
+    boolean anonymous;
+    
     @Option(name = "-help", usage = "print command line options and exit")
     boolean help;
 
@@ -140,6 +143,11 @@ public class EngineStartupOptions implements IEngineStartupOptions {
         return help;
     }
 
+    @Override
+    public boolean isAnonymous() {
+    	return anonymous;
+    }
+    
     @Override
     public boolean isExitAfterStartup() {
         return exit;
