@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { 
 		"org.integratedmodelling.klab.node.security",
+		"org.integratedmodelling.klab.node.resources",
 		"org.integratedmodelling.klab.node.controllers"
 })
 public class NodeApplication {
