@@ -83,7 +83,8 @@ public enum GeotoolsUtils {
 			}
 		}
 
-		return rasterFactory.create(state.getObservable().getLocalName(), raster, space.getShape().getJTSEnvelope());
+		return rasterFactory.create(state.getObservable().getLocalName(), raster,
+				space.getShape().getJTSEnvelope() /* TODO add GridSampleDimension[] with nodata value */);
 
 	}
 
