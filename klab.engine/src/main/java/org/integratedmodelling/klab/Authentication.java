@@ -246,6 +246,8 @@ public enum Authentication implements IAuthenticationService {
 
 				ret = new KlabUser(authentication.getUserData(), networkSession);
 
+				Network.INSTANCE.buildNetwork(authentication);
+
 				Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub "
 						+ hubNode.getId() + " owned by " + hubNode.getPartner());
 
@@ -265,8 +267,6 @@ public enum Authentication implements IAuthenticationService {
 			throw new KlabAuthorizationException(
 					"wrong certificate for an engine: cannot create identity of type " + certificate.getType());
 		}
-
-		Network.INSTANCE.buildNetwork(authentication);
 
 		return ret;
 

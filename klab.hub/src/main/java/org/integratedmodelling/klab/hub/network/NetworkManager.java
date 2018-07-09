@@ -35,6 +35,7 @@ public class NetworkManager {
 	}
 
 	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
+		
 		NodeReference ret = new NodeReference();
 
 		ret.setId(node.getId());
