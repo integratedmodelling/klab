@@ -25,7 +25,7 @@ public enum GeotoolsUtils {
     GridCoverageFactory rasterFactory = new GridCoverageFactory();
 
     /**
-     * Turn a state into a grid coverage. TODO not finished (time support)
+     * Turn a state into a grid coverage.
      * 
      * @param state
      * @return a Geotools grid coverage
@@ -37,9 +37,7 @@ public enum GeotoolsUtils {
     }
 
     /**
-     * Turn a state into a grid coverage.
-     * 
-     * FIXME this is oblivious of time.
+     * Turn a state into a grid coverage. Assumes the state is scaled so that all the values will be spatial.
      * 
      * @param state
      * @return a Geotools grid coverage
