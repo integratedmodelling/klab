@@ -9,5 +9,13 @@
             uri="fragment.e4xmi">
       </fragment>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.integratedmodelling.klab.ide.perspective.KlabPerspective"
+            id="org.integratedmodelling.klab.ide.perspective.KlabPerspective"
+            name="k.LAB">
+      </perspective>
+   </extension>
 
 </plugin>

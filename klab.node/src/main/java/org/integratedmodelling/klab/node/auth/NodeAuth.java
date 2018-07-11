@@ -97,7 +97,7 @@ public enum NodeAuth {
 			throw new KlabAuthorizationException("a node cannot be started without a valid authenticating hub");
 		}
 
-		this.nodeName = options.getNodeName() == null ? certificate.getProperty(KlabCertificate.KEY_CERTIFICATE)
+		this.nodeName = options.getNodeName() == null ? certificate.getProperty(KlabCertificate.KEY_NODENAME)
 				: options.getNodeName();
 		
 		NodeAuthenticationRequest request = new NodeAuthenticationRequest();
