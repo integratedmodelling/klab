@@ -24,9 +24,9 @@ import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.KeyManager;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
-import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -59,7 +59,7 @@ public class AuthenticationManager {
 	private Set<Group> groups = new HashSet<>();
 
 	// set after authentication
-	NodeReference hubReference;
+	HubReference hubReference;
 
 	@Autowired
 	NetworkManager networkManager;
@@ -212,7 +212,7 @@ public class AuthenticationManager {
 		throw new KlabAuthorizationException();
 	}
 
-	public NodeReference getHubReference() {
+	public HubReference getHubReference() {
 		return this.hubReference;
 	}
 
@@ -230,7 +230,7 @@ public class AuthenticationManager {
 		this.hubName = options.getHubName() == null ? certificate.getProperty(ICertificate.KEY_HUBNAME)
 				: options.getHubName();
 
-		this.hubReference = new NodeReference();
+		this.hubReference = new HubReference();
 		this.hubReference.setId(this.hubName);
 		this.hubReference.setOnline(true);
 		this.hubReference.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));

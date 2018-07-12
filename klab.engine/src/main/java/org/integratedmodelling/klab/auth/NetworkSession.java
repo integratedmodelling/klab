@@ -30,9 +30,9 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
     List<INodeIdentity> nodes = new ArrayList<>();
     Set<GrantedAuthority> authorities = new HashSet<>();
     
-    public NetworkSession(String token, List<NodeReference> nodes, Node node) {
+    public NetworkSession(String token, List<NodeReference> nodes, Hub hub) {
         this.token = token;
-        this.parent = node;
+        this.parent = hub;
         for (NodeReference n : nodes) {
             this.nodes.add(new Node(n));
         }

@@ -106,7 +106,7 @@ public class AuthenticationController {
 			NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
 					authenticationManager.getHubReference().getId(), authenticationManager.getGroups(), KeyManager.INSTANCE.getEncodedPublicKey());
 			
-			networkManager.notifyAuthorizedNode(node);
+			networkManager.notifyAuthorizedNode(node, authenticationManager.getHubReference(), true);
 
 			
 			return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);

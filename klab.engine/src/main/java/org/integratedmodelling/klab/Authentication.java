@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
+import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.auth.NetworkSession;
@@ -23,8 +24,8 @@ import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.rest.NodeReference;
 import org.joda.time.DateTime;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -238,8 +239,8 @@ public enum Authentication implements IAuthenticationService {
 			// if we have connected, insert network session identity
 			if (authentication != null) {
 
-				NodeReference hubNode = authentication.getHub();
-				Node node = new Node(hubNode);
+				HubReference hubNode = authentication.getHub();
+				Hub node = new Hub(hubNode);
 				node.setOnline(true);
 				NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
 						authentication.getNodes(), node);

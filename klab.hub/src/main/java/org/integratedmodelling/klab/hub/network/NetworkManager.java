@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
+import org.integratedmodelling.klab.rest.HubReference;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,15 +28,15 @@ public class NetworkManager {
 	public Collection<NodeReference> getNodes(Set<String> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
-			ret.add(createNodeReference(node, true));
+			ret.add(createNodeReference(node, authenticationManager.getHubReference(), true));
 		}
 		for (INodeIdentity node : offlineNodes) {
-			ret.add(createNodeReference(node, false));
+			ret.add(createNodeReference(node, authenticationManager.getHubReference(), false));
 		}
 		return ret;
 	}
 
-	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
+	private NodeReference createNodeReference(INodeIdentity node, HubReference hub, boolean isOnline) {
 		
 		NodeReference ret = new NodeReference();
 
@@ -48,9 +50,9 @@ public class NetworkManager {
 		return ret;
 	}
 
-	public void notifyAuthorizedNode(INodeIdentity ret) {
+	public void notifyAuthorizedNode(INodeIdentity ret, HubReference authorizingHub, boolean online) {
 		onlineNodes.add(ret);
-		allNodes.put(ret.getName(), createNodeReference(ret, true));
+		allNodes.put(ret.getName(), createNodeReference(ret, authorizingHub, online));
 	}
 
 	public NodeReference getNode(String nodeName) {

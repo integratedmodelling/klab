@@ -7,7 +7,7 @@ import java.util.List;
 public class EngineAuthenticationResponse {
 
 	private AuthenticatedIdentity userData;
-	private NodeReference hub;
+	private HubReference hub;
 	private List<NodeReference> nodes = new ArrayList<>();
 
 	public AuthenticatedIdentity getUserData() {
@@ -26,18 +26,18 @@ public class EngineAuthenticationResponse {
 		this.nodes = nodes;
 	}
 	
-	public NodeReference getHub() {
+	public HubReference getHub() {
 		return hub;
 	}
 
-	public void setHub(NodeReference hub) {
+	public void setHub(HubReference hub) {
 		this.hub = hub;
 	}
 
 	public EngineAuthenticationResponse() {
 	}
 
-	public EngineAuthenticationResponse(AuthenticatedIdentity userData, NodeReference hub,
+	public EngineAuthenticationResponse(AuthenticatedIdentity userData, HubReference hub,
 			Collection<NodeReference> nodes) {
 		super();
 		this.userData = userData;

@@ -13,10 +13,10 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
-import org.integratedmodelling.klab.rest.NodeReference;
+import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
-public class Node implements INodeIdentity {
+public class Hub implements INodeIdentity {
 
     String name;
     IPartnerIdentity parent;
@@ -30,19 +30,17 @@ public class Node implements INodeIdentity {
 
     static Client client = Client.create();
 
-    public Node(String name, IPartnerIdentity owner) {
+    public Hub(String name, IPartnerIdentity owner) {
         this.name = name;
         this.parent = owner;
     }
-    
-    public Node(NodeReference node) {
-		Partner partner = Authentication.INSTANCE.requirePartner(node.getPartner());
-		this.name = node.getId();
-		this.urls.addAll(node.getUrls());
-		this.parent = partner;
-		// TODO permissions
-    }
 
+    public Hub(HubReference hub) {
+		Partner partner = Authentication.INSTANCE.requirePartner(hub.getPartner());
+		this.name = hub.getId();
+		this.urls.addAll(hub.getUrls());
+		this.parent = partner;
+    }
 
     /**
      * Force a check for online status, set the online flag and 
