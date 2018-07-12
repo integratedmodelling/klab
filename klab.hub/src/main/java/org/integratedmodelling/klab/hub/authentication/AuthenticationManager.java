@@ -32,6 +32,7 @@ import org.joda.time.DateTime;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -44,6 +45,7 @@ import org.springframework.web.client.RestTemplate;
 public class AuthenticationManager {
 
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
+	private static final String ENGINE_AUDIENCE = "engine";
 
 	/**
 	 * Authenticate an engine certificate. This may be a USER or a PARTNER
@@ -70,6 +72,7 @@ public class AuthenticationManager {
 	 * for legacy authentication calls
 	 */
 	private static final String LEGACY_AUTHENTICATION_SERVICE = "https://integratedmodelling.org/collaboration/authentication/cert-file";
+	private static final int EXPIRATION_DAYS = 10;
 	Client client = Client.create();
 	private Partner partner;
 
@@ -271,24 +274,16 @@ public class AuthenticationManager {
 	public EngineUser authorizeUser(EngineUser user) throws KlabAuthorizationException {
 
 		JwtClaims claims = new JwtClaims();
-		// String tokenClass = token.getClass().getSimpleName();
-		// if (!tokenClass.equals(DEFAULT_TOKEN_CLASS)) {
-		// claims.setStringClaim(JWT_CLAIM_TOKEN_TYPE, tokenClass);
-		// }
 
 		claims.setIssuer(hubReference.getId());
 		claims.setSubject(user.getUsername());
+		claims.setAudience(ENGINE_AUDIENCE);
 
-		// NumericDate issuedAt =
-		// DateTimeUtil.utcLocalToUtcNumeric(DateTimeUtil.utcNow());
 		claims.setIssuedAtToNow();
-		claims.setExpirationTimeMinutesInTheFuture(60 * 24 * 10);
-		// NumericDate expiration =
-		// DateTimeUtil.utcLocalToUtcNumeric(token.getExpiration());
-		// claims.setExpirationTime(expiration);
-
+		claims.setExpirationTimeMinutesInTheFuture(60 * 24 * EXPIRATION_DAYS);
 		claims.setGeneratedJwtId();
 
+		// TODO add email
 		List<String> roleStrings = new ArrayList<>();
 		for (String role : user.getGroups()) {
 			roleStrings.add(role);

@@ -230,15 +230,17 @@ public class Client extends RestTemplate {
 	 */
 	public Client with(IIdentity authorizer) {
 
-		/*
-		 * TODO handle the chain of authorization properly. Tokens are only issued for
-		 * engines, network sessions and sessions. The rest should set parameters for
-		 * calls.
-		 */
-
 		Client ret = new Client();
 		ret.objectMapper = this.objectMapper;
 		ret.authToken = authorizer.getId();
+		return ret;
+	}
+	
+	public Client with(String authorization) {
+
+		Client ret = new Client();
+		ret.objectMapper = this.objectMapper;
+		ret.authToken = authorization;
 		return ret;
 	}
 

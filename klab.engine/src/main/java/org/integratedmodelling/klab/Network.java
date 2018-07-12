@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeReference;
 
@@ -42,13 +44,24 @@ public enum Network implements INetworkService {
 	/**
 	 * Build the network based on the result of authentication.
 	 * 
-	 * @param authentication
+	 * @param authorization
 	 */
-	public void buildNetwork(EngineAuthenticationResponse authentication) {
+	public void buildNetwork(EngineAuthenticationResponse authorization) {
 
-		for (NodeReference node : authentication.getNodes()) {
+		Client client = Client.create();
+
+		for (NodeReference node : authorization.getNodes()) {
 			Node identity = new Node(node);
 			onlineNodes.put(identity.getName(), identity);
+
+			try {
+				Capabilities nodeCapabilities = client.with(authorization.getUserData().getToken()).get(chooseUrl(node.getUrls()) + API.CAPABILITIES,
+					Capabilities.class);
+			} catch (Exception e) {
+				// TODO set the node offline or remove it if unauthorized.
+				Logging.INSTANCE.error(e);
+			}
+			
 		}
 
 	}

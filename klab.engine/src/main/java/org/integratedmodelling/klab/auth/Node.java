@@ -18,14 +18,14 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
 public class Node implements INodeIdentity {
 
-    String name;
-    IPartnerIdentity parent;
-    List<String> urls = new ArrayList<>();
-    Set<Permission> permissions = new HashSet<>();
-    Date bootTime = new Date();
-    boolean online;
-    int retryPeriod = 15;
-
+	private String name;
+	private IPartnerIdentity parent;
+    private String authenticatingHub;
+    private List<String> urls = new ArrayList<>();
+    private Set<Permission> permissions = new HashSet<>();
+    private Date bootTime = new Date();
+    private boolean online;
+    private int retryPeriod = 15;
     private long lastCheck = System.currentTimeMillis();
 
     static Client client = Client.create();
@@ -121,4 +121,62 @@ public class Node implements INodeIdentity {
     public void setOnline(boolean b) {
         this.online = b;
     }
+
+	public IPartnerIdentity getParent() {
+		return parent;
+	}
+
+	public void setParent(IPartnerIdentity parent) {
+		this.parent = parent;
+	}
+
+	public String getAuthenticatingHub() {
+		return authenticatingHub;
+	}
+
+	public void setAuthenticatingHub(String authenticatingHub) {
+		this.authenticatingHub = authenticatingHub;
+	}
+
+	public int getRetryPeriod() {
+		return retryPeriod;
+	}
+
+	public void setRetryPeriod(int retryPeriod) {
+		this.retryPeriod = retryPeriod;
+	}
+
+	public long getLastCheck() {
+		return lastCheck;
+	}
+
+	public void setLastCheck(long lastCheck) {
+		this.lastCheck = lastCheck;
+	}
+
+	public static Client getClient() {
+		return client;
+	}
+
+	public static void setClient(Client client) {
+		Node.client = client;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setUrls(List<String> urls) {
+		this.urls = urls;
+	}
+
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
+
+	public void setBootTime(Date bootTime) {
+		this.bootTime = bootTime;
+	}
+    
+    
 }

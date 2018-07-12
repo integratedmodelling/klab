@@ -11,5 +11,6 @@ worldview im;
 )
 observe earth:Region named test
    over space(shape = "EPSG:4326 POLYGON ((-124.73142200000001 24.955967, -66.969849 24.955967, -66.969849 49.371735, -124.73142200000001 49.371735, -124.73142200000001 24.955967))");
-    
-model each local:anonymous:test:states as policy:State earth:Region;
+
+@index(name=[id], description=description) // this for making the objects available to search    
+model each im.glob:ariesteam:geography.political.us:states as policy:State earth:Region;

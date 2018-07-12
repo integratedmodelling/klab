@@ -49,7 +49,39 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
-	
+
+		<!-- zip resources for publishing -->
+		<dependency>
+			<groupId>net.lingala.zip4j</groupId>
+			<artifactId>zip4j</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<!-- Open Provenance toolkit. Older stuff, must exclude gson to avoid messing 
+			up Spring. -->
+		<dependency>
+			<groupId>org.openprovenance.prov</groupId>
+			<artifactId>prov-model</artifactId>
+			<version>0.7.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.openprovenance.prov</groupId>
+			<artifactId>prov-interop</artifactId>
+			<version>0.7.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- Lucene for indexing -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
