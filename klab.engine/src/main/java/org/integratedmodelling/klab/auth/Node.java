@@ -24,6 +24,7 @@ public class Node implements INodeIdentity {
     private List<String> urls = new ArrayList<>();
     private Set<Permission> permissions = new HashSet<>();
     private Date bootTime = new Date();
+    private String token;
     private boolean online;
     private int retryPeriod = 15;
     private long lastCheck = System.currentTimeMillis();
@@ -35,11 +36,12 @@ public class Node implements INodeIdentity {
         this.parent = owner;
     }
     
-    public Node(NodeReference node) {
+    public Node(NodeReference node, String token) {
 		Partner partner = Authentication.INSTANCE.requirePartner(node.getPartner());
 		this.name = node.getId();
 		this.urls.addAll(node.getUrls());
 		this.parent = partner;
+		this.token = token;
 		// TODO permissions
     }
 
@@ -81,8 +83,7 @@ public class Node implements INodeIdentity {
 
     @Override
     public String getId() {
-        // TODO Auto-generated method stub
-        return null;
+        return token;
     }
 
     @Override

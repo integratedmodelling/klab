@@ -4,7 +4,9 @@ package org.integratedmodelling.klab.rest;
 public class Group {
 	
     private String id;
-
+    private String description;
+    // TODO add owner and possibly more authentication
+    
     public Group() {}
     
     public Group(String id) {
@@ -19,8 +21,15 @@ public class Group {
         this.id = id;
     }
 
+    public String getDescription() {
+		return description;
+	}
 
-    @Override
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

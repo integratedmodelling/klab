@@ -15,7 +15,6 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
@@ -35,21 +34,6 @@ public interface INodeIdentity extends IServerIdentity {
     /** {@inheritDoc} */
     @Override
     IPartnerIdentity getParentIdentity();
-
-    /**
-     * The node official URL. If the node represents a cluster of servers, multiple URLs may
-     * be returned.
-     * 
-     * @return the URL(s) where this node can be reached.
-     */
-    Collection<String> getUrls();
-
-    /**
-     * Nodes should be periodically checked for online status.
-     * 
-     * @return true if online at the time of calling (or the most recent check).
-     */
-    boolean isOnline();
 
     /**
      * All the permissions available.

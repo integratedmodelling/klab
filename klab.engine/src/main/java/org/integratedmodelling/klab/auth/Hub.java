@@ -3,25 +3,22 @@ package org.integratedmodelling.klab.auth;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.api.auth.IServerIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.rest.HubReference;
-import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
-public class Hub implements INodeIdentity {
+public class Hub implements IServerIdentity {
 
     String name;
     IPartnerIdentity parent;
     List<String> urls = new ArrayList<>();
-    Set<Permission> permissions = new HashSet<>();
     Date bootTime = new Date();
     boolean online;
     int retryPeriod = 15;
@@ -104,11 +101,6 @@ public class Hub implements INodeIdentity {
             return ping();
         }
         return this.online;
-    }
-
-    @Override
-    public Set<Permission> getPermissions() {
-        return permissions;
     }
 
     @Override

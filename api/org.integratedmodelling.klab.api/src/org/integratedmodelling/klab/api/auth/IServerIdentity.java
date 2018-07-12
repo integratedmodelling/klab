@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -24,18 +25,37 @@ import java.util.Date;
  * @version $Id: $Id
  */
 public abstract interface IServerIdentity extends IRuntimeIdentity {
-    
+
+	/**
+	 * <p>
+	 * getName.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getName();
+
+	/**
+	 * <p>
+	 * getBootTime.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
+	Date getBootTime();
+
+	/**
+	 * The node official URL. If the node represents a cluster of servers or has
+	 * mirrors, multiple URLs may be returned.
+	 * 
+	 * @return the URL(s) where this node can be reached.
+	 */
+	Collection<String> getUrls();
+	
     /**
-     * <p>getName.</p>
-     *
-     * @return a {@link java.lang.String} object.
+     * Servers should be periodically checked for online status.
+     * 
+     * @return true if online at the time of calling (or the most recent check).
      */
-    String getName();
-    
-    /**
-     * <p>getBootTime.</p>
-     *
-     * @return a {@link java.util.Date} object.
-     */
-    Date getBootTime();
+    boolean isOnline();
 }

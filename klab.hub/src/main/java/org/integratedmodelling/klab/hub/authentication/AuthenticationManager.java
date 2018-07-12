@@ -32,7 +32,6 @@ import org.joda.time.DateTime;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;

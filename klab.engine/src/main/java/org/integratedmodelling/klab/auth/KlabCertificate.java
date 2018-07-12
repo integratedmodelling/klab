@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
-import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.joda.time.DateTime;
@@ -48,8 +47,6 @@ public class KlabCertificate implements ICertificate {
 	private DateTime expiry;
 	private String worldview = DEFAULT_WORLDVIEW;
 	private Collection<String> worldview_repositories = StringUtils.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
-	private EngineAuthenticationResponse authentication = null;
-	// private IIdentity identity = null;
 	private Type type = Type.ENGINE;
 	private Level level = Level.USER;
 

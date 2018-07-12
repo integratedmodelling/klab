@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
+import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -209,7 +210,7 @@ public enum NodeAuth {
 
 		return result;
 	}
-
+	
 	private Set<Group> filterGroups(List<String> groupStrings) {
 		Set<Group> ret = new HashSet<>();
 		for (String groupId : groupStrings) {

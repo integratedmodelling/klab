@@ -9,6 +9,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.auth.IServerIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,7 +26,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
 
     private static final long serialVersionUID = -6806989886331624218L;
 
-    INodeIdentity parent;
+    IServerIdentity parent;
     String token;
     List<INodeIdentity> nodes = new ArrayList<>();
     Set<GrantedAuthority> authorities = new HashSet<>();
@@ -34,7 +35,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
         this.token = token;
         this.parent = hub;
         for (NodeReference n : nodes) {
-            this.nodes.add(new Node(n));
+            this.nodes.add(new Node(n, token));
         }
         this.authorities.add(new SimpleGrantedAuthority(Roles.NETWORK_SESSION));
     }
@@ -56,7 +57,7 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
     }
 
     @Override
-    public INodeIdentity getParentIdentity() {
+    public IServerIdentity getParentIdentity() {
         return parent;
     }
 

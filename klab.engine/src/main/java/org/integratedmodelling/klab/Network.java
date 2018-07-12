@@ -14,7 +14,6 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
@@ -51,38 +50,34 @@ public enum Network implements INetworkService {
 		Client client = Client.create();
 
 		for (NodeReference node : authorization.getNodes()) {
-			Node identity = new Node(node);
-			onlineNodes.put(identity.getName(), identity);
+			Node identity = new Node(node, authorization.getUserData().getToken());
 
 			try {
-				Capabilities nodeCapabilities = client.with(authorization.getUserData().getToken()).get(chooseUrl(node.getUrls()) + API.CAPABILITIES,
-					Capabilities.class);
+				mergeCapabilities(identity, client.with(authorization.getUserData().getToken())
+						.get(chooseUrl(node.getUrls()) + API.CAPABILITIES, Capabilities.class));
+				onlineNodes.put(identity.getName(), identity);
 			} catch (Exception e) {
-				// TODO set the node offline or remove it if unauthorized.
-				Logging.INSTANCE.error(e);
+				offlineNodes.put(identity.getName(), identity);
 			}
-			
 		}
 
+	}
+
+	private void mergeCapabilities(Node node, Capabilities capabilities) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public <T, K> T broadcastGet(Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
 			IMonitor monitor, Object... urlVariables) {
 
-		INetworkSessionIdentity session = Authentication.INSTANCE
-				.getAuthenticatedIdentity(INetworkSessionIdentity.class);
-
-		if (session == null) {
-			throw new IllegalStateException("cannot use the k.LAB network: engine is offline");
-		}
-
 		Collection<Callable<K>> tasks = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			tasks.add(new Callable<K>() {
 				@Override
 				public K call() throws Exception {
-					return client.with(session).get(chooseUrl(node.getUrls()), individualResponseType,
+					return client.with(node).get(chooseUrl(node.getUrls()), individualResponseType,
 							makeParameterMap(urlVariables));
 				}
 			});
@@ -134,19 +129,12 @@ public enum Network implements INetworkService {
 	public <T, K, V> T broadcastPost(V request, Class<? extends K> individualResponseType,
 			Function<Collection<K>, T> merger, IMonitor monitor) {
 
-		INetworkSessionIdentity session = Authentication.INSTANCE
-				.getAuthenticatedIdentity(INetworkSessionIdentity.class);
-
-		if (session == null) {
-			throw new IllegalStateException("cannot use the k.LAB network: engine is offline");
-		}
-
 		Collection<Callable<K>> tasks = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			tasks.add(new Callable<K>() {
 				@Override
 				public K call() throws Exception {
-					return client.with(session).post(chooseUrl(node.getUrls()), request, individualResponseType);
+					return client.with(node).post(chooseUrl(node.getUrls()), request, individualResponseType);
 				}
 			});
 		}

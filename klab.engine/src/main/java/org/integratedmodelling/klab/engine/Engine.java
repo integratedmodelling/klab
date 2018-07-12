@@ -697,4 +697,16 @@ public class Engine extends Server implements IEngine, UserDetails {
 		return true;
 	}
 
+	@Override
+	public Collection<String> getUrls() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isOnline() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
