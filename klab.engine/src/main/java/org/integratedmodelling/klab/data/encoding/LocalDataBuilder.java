@@ -88,7 +88,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		}
 		if (parent.state == null) {
 			parent.state = this.state;
-		} else {
+		} else if (!parent.state.equals(this.state)) {
 			((Artifact) parent.state).chain(this.state);
 		}
 		return parent;

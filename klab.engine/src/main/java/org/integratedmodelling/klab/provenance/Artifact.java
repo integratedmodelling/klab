@@ -28,23 +28,23 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
-	
-	// all observation data in a group share the same list and contain their index
-	// in it; established
-	// at chain()
-	List<IArtifact> group = null;
-	// first observation in a group has idx = -1; the others have their own index
-	int idx = -1;
+
+	/*
+	 * all observation data in a group share the same list; the pre-build object is
+	 * thrown away at chain(). Saving the constructor call is not worth the
+	 * additional logics.
+	 */
+	List<IArtifact> group = new ArrayList<>();
 	boolean empty;
 	long timestamp = System.currentTimeMillis();
 
+	protected Artifact() {
+		group.add(this);
+	}
+
 	public void chain(IArtifact data) {
-		if (group == null) {
-			group = new ArrayList<>();
-		}
 		group.add(data);
 		((Artifact) data).group = group;
-		((Artifact) data).idx = group.size() - 1;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public abstract class Artifact implements IArtifact {
 	public Collection<IAnnotation> getAnnotations() {
 		return annotations;
 	}
-	
+
 	@Override
 	public IProvenance getProvenance() {
 		// TODO Auto-generated method stub
@@ -141,20 +141,21 @@ public abstract class Artifact implements IArtifact {
 			return new ArrayList<IArtifact>().iterator();
 		}
 
-		List<IArtifact> list = new ArrayList<>(1 + (group == null ? 0 : (group.size() - (idx < 0 ? 0 : idx))));
-		list.add(this);
-		if (group != null) {
-			for (int i = (idx < 0 ? 0 : idx); i < group.size(); i++) {
-				list.add(group.get(i));
-			}
-		}
+		// List<IArtifact> list = new ArrayList<>(1 + (group == null ? 0 : (group.size()
+		// - (idx < 0 ? 0 : idx))));
+		// list.add(this);
+		// if (group != null) {
+		// for (int i = (idx < 0 ? 0 : idx); i < group.size(); i++) {
+		// list.add(group.get(i));
+		// }
+		// }
 
-		return list.iterator();
+		return group.iterator();
 	}
 
 	@Override
 	public int groupSize() {
-		return empty ? 0 : (1 + (group == null ? 0 : group.size()));
+		return empty ? 0 : group.size();
 	}
 
 	protected void setEmpty(boolean b) {

@@ -248,8 +248,10 @@ public class Actuator implements IActuator {
 			ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 			session.getMonitor()
 					.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-							IMessage.Type.NewObservation, Observations.INSTANCE.createArtifactDescriptor(
-									(IObservation) ret, ctx.getContextObservation(), ITime.INITIALIZATION, -1)));
+							IMessage.Type.NewObservation,
+							Observations.INSTANCE.createArtifactDescriptor((IObservation) ret,
+									ctx.getContextObservation().equals(ret) ? null : ctx.getContextObservation(),
+									ITime.INITIALIZATION, -1)));
 		}
 
 		/*

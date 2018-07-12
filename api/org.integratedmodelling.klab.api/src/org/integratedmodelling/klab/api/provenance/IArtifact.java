@@ -217,6 +217,8 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 	IAgent getOwner();
 
 	/**
+	 * Antecedents are the sources of a 'derivedBy' relationship.
+	 * 
 	 * <p>
 	 * getAntecedents.
 	 * </p>
@@ -226,6 +228,8 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 	Collection<IArtifact> getAntecedents();
 
 	/**
+	 * Consequents are the targets of a 'derivedBy' relationship.
+	 * 
 	 * <p>
 	 * getConsequents.
 	 * </p>
