@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
-import org.integratedmodelling.klab.rest.HubReference;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class NetworkManager {
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Map<String, NodeReference> allNodes = new HashMap<>();
 
-	public Collection<NodeReference> getNodes(Set<String> groups) {
+	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
 			ret.add(createNodeReference(node, authenticationManager.getHubReference(), true));

@@ -22,7 +22,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
     protected String token;
     protected DateTime lastLogin = DateTime.now();
     protected DateTime expiryDate;
-    protected Set<String> groups = new HashSet<>();
+    protected Set<Group> groups = new HashSet<>();
     protected Set<GrantedAuthority> authorities = new HashSet<>();
 
     public UserIdentity(String username) {
@@ -41,7 +41,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
         this(identity.getIdentity());
         this.token = identity.getToken();
         for (Group group : identity.getGroups()) {
-            this.groups.add(group.getId());
+            this.groups.add(group);
         }
         this.expiryDate = DateTime.parse(identity.getExpiry());
     }
@@ -112,7 +112,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails {
     }
 
     @Override
-    public Set<String> getGroups() {
+    public Set<Group> getGroups() {
         return groups;
     }
 

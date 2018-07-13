@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,14 +8,9 @@ import javax.annotation.PreDestroy;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * This will start a hub at http://localhost:8284/klab with the default security
@@ -33,10 +27,7 @@ import org.springframework.web.client.RestTemplate;
 		"org.integratedmodelling.klab.hub.network",
 		"org.integratedmodelling.klab.hub.controllers"
 		})
-public class HubApplication implements ApplicationListener<ApplicationReadyEvent> {
-
-	private static Runnable callback;
-	private ConfigurableApplicationContext context;
+public class HubApplication {
 
 	// defaults
 	private static int port = 8284;
@@ -50,7 +41,7 @@ public class HubApplication implements ApplicationListener<ApplicationReadyEvent
 		props.put("server.servlet.contextPath", contextPath);
 		SpringApplication app = new SpringApplication(HubApplication.class);
 		app.setDefaultProperties(props);
-		this.context = app.run(options.getArguments());
+		/*this.context = */app.run(options.getArguments());
 
 	}
 
@@ -60,13 +51,6 @@ public class HubApplication implements ApplicationListener<ApplicationReadyEvent
 
 	public static void main(String args[]) {
 		new HubApplication().run(args);
-	}
-
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent arg0) {
-		if (callback != null) {
-			callback.run();
-		}
 	}
 
 }

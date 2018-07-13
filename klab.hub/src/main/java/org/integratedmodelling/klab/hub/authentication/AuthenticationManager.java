@@ -1,12 +1,9 @@
 package org.integratedmodelling.klab.hub.authentication;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.Logging;
@@ -57,13 +54,15 @@ public class AuthenticationManager {
 	private Map<String, KlabCertificate> engineCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> nodeCertificates = new HashMap<>();
 	private Map<String, KlabCertificate> hubCertificates = new HashMap<>();
-	private Set<Group> groups = new HashSet<>();
 
 	// set after authentication
 	HubReference hubReference;
 
 	@Autowired
 	NetworkManager networkManager;
+	
+	@Autowired
+	GroupManager groupManager;
 
 	String hubName;
 
@@ -132,7 +131,12 @@ public class AuthenticationManager {
 				Map<?, ?> profile = (Map<?, ?>) response.get("profile");
 				EngineUser ret = new EngineUser(response.get("username").toString(), null);
 				ret.setEmailAddress(profile.get("email").toString());
-				// ret.getGroups().addAll()
+				for (Object group : (List<?>)profile.get("groups")) {
+					Group g = groupManager.getGroup(group.toString());
+					if (g != null) {
+						ret.getGroups().add(g);
+					}
+				}
 				Logging.INSTANCE
 						.info("authenticated user " + response.get("username") + " through legacy certificate service");
 				return ret;
@@ -159,7 +163,7 @@ public class AuthenticationManager {
 			if (IPUtils.isLocal(ip)) {
 				EngineUser ret = new EngineUser(request.getUsername(), null);
 				ret.setEmailAddress(request.getEmail());
-				Logging.INSTANCE.info("authenticated local user " + request.getUsername());
+				Logging.INSTANCE.info("authenticated unprivileged local user " + request.getUsername());
 				return ret;
 			}
 			break;
@@ -284,8 +288,8 @@ public class AuthenticationManager {
 
 		// TODO add email
 		List<String> roleStrings = new ArrayList<>();
-		for (String role : user.getGroups()) {
-			roleStrings.add(role);
+		for (Group role : user.getGroups()) {
+			roleStrings.add(role.getId());
 		}
 		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
 
@@ -307,14 +311,6 @@ public class AuthenticationManager {
 		return user;
 	}
 
-	/**
-	 * All groups known to this hub.
-	 * 
-	 * @return
-	 */
-	public Collection<Group> getGroups() {
-		return groups;
-	}
 
 	/**
 	 * Our official name (from certificate or overridden in startup options).

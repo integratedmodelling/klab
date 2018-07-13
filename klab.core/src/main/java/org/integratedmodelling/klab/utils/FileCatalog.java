@@ -69,6 +69,22 @@ public class FileCatalog<T> extends HashMap<String, T> {
 	}
 
 	/**
+	 * Creates a new catalog from a URL.
+	 *
+	 * @param <T>
+	 *            the main type for the collection
+	 * @param url
+	 *            the URL containing the JSON data catalog
+	 * @param implementationClass
+	 *            the type of the object returned
+	 * @return a new URL-based catalog
+	 */
+	public static <T> FileCatalog<T> create(URL url, Class<T> implementationClass) {
+		return new FileCatalog<T>(url, implementationClass, implementationClass);
+	}
+
+	
+	/**
 	 * Creates a new catalog from a file.
 	 *
 	 * @param <T>

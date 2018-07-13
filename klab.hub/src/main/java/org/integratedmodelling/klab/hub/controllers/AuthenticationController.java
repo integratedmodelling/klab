@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.controllers;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +9,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
+import org.integratedmodelling.klab.hub.authentication.GroupManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.KeyManager;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
@@ -37,6 +37,9 @@ public class AuthenticationController {
 
 	@Autowired
 	NetworkManager networkManager;
+	
+	@Autowired
+	GroupManager groupManager;
 
 	@RequestMapping(value = API.HUB.AUTHENTICATE_ENGINE, method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -63,9 +66,8 @@ public class AuthenticationController {
 
 			IdentityReference userIdentity = new IdentityReference(user.getUsername(), user.getEmailAddress(),
 					now.toString());
-			AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
-					user.getGroups().stream().map(g -> new Group(g)).collect(Collectors.toSet()), tomorrow.toString(),
-					user.getId());
+			AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, user.getGroups(),
+					tomorrow.toString(), user.getId());
 
 			/*
 			 * TODO if user is new, propagate to authenticated servers
@@ -104,11 +106,11 @@ public class AuthenticationController {
 			Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
 
 			NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-					authenticationManager.getHubReference().getId(), authenticationManager.getGroups(), KeyManager.INSTANCE.getEncodedPublicKey());
-			
+					authenticationManager.getHubReference().getId(), groupManager.getGroups(),
+					KeyManager.INSTANCE.getEncodedPublicKey());
+
 			networkManager.notifyAuthorizedNode(node, authenticationManager.getHubReference(), true);
 
-			
 			return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);

@@ -18,6 +18,8 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.Date;
 import java.util.Set;
 
+import org.integratedmodelling.klab.rest.Group;
+
 /**
  * The Interface IUserIdentity.
  *
@@ -38,7 +40,7 @@ public abstract interface IUserIdentity extends IIdentity {
      *
      * @return a set of group names
      */
-    Set<String> getGroups();
+    Set<Group> getGroups();
 
     /**
      * Anonymous users cannot access the network and get a default worldview. Intended for system
