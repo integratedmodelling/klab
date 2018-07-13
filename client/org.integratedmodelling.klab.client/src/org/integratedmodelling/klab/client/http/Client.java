@@ -96,11 +96,6 @@ public class Client extends RestTemplate {
 
 	private static ClientHttpRequestFactory factory;
 
-//	public class BeanDescriptor {
-//		String packageName;
-//		List<String> classes;
-//	}
-
 	public static Client create(String url) {
 
 		if (factory == null) {
@@ -131,25 +126,6 @@ public class Client extends RestTemplate {
 		}
 	}
 
-//	/**
-//	 * Retrieve the list of POJO types from the schema endpoint.
-//	 * 
-//	 * @return the POJO descriptors
-//	 */
-//	public BeanDescriptor getPOJOClasses() {
-//
-//		List<String> classes = new ArrayList<>();
-//		Map<?, ?> map = get(url + API.SCHEMA + "?list", Map.class);
-//		String packageName = map.get("package").toString();
-//		for (Object o : (List<?>) map.get("schemata")) {
-//			classes.add(o.toString());
-//		}
-//		BeanDescriptor ret = new BeanDescriptor();
-//		ret.packageName = packageName;
-//		ret.classes = classes;
-//		return ret;
-//	}
-
 	/**
 	 * Open a session with the engine.
 	 * 
@@ -158,9 +134,11 @@ public class Client extends RestTemplate {
 	 *         rejoin was successful)
 	 */
 	public String openSession(@Nullable String rejoinSession) {
+		
 		AuthorizeSessionResponse response = get(
 				url + API.ENGINE.SESSION.AUTHORIZE + (rejoinSession == null ? "" : ("?join=" + rejoinSession)),
 				AuthorizeSessionResponse.class);
+		
 		if (monitor != null) {
 			if (response.getInfo() != null) {
 				monitor.warn(response.getInfo());
@@ -168,6 +146,7 @@ public class Client extends RestTemplate {
 				// TODO send info about session rejoined.
 			}
 		}
+		
 		return response.getSessionId();
 	}
 
@@ -459,7 +438,7 @@ public class Client extends RestTemplate {
 	}
 
 	/**
-	 * Create a GET URL from a base url and a set of parameters. Yes I know I can
+	 * Create a GET URL from a base url and a set of parameters. Yes, I know I can
 	 * use URIComponentsBuilder etc.
 	 * 
 	 * @param url

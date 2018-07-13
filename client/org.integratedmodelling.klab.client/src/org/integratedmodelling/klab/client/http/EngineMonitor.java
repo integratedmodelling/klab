@@ -30,7 +30,6 @@ public class EngineMonitor {
 	protected long recheckSecondsWhenOffline = 15;
 	long uptime = -1;
 	Client client;
-	// KlabPOJOGenerator pojoGenerator;
 	StompMessageBus messageBus;
 	String sessionId;
 
@@ -114,6 +113,10 @@ public class EngineMonitor {
 
 		/*
 		 * TODO if engine is not local, must authenticate with stored username/password
+		 */
+		
+		/*
+		 * TODO must tune the UI on the session
 		 */
 		
 		this.sessionId = client.openSession(this.sessionId);

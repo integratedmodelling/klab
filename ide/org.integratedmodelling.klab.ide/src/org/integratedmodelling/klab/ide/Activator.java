@@ -106,6 +106,8 @@ public class Activator extends AbstractUIPlugin {
 
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId);
+		
+		this.engineStatusMonitor.start();
 
 	}
 

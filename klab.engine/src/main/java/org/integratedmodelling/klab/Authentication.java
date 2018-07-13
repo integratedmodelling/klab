@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
@@ -250,7 +251,11 @@ public enum Authentication implements IAuthenticationService {
 				Network.INSTANCE.buildNetwork(authentication);
 
 				Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub "
-						+ hubNode.getId() + " owned by " + hubNode.getPartner());
+						+ hubNode.getId() + " owned by " + hubNode.getPartner().getId());
+				Logging.INSTANCE.info("The following nodes are available:");
+				for (INodeIdentity n : Network.INSTANCE.getNodes()) {
+					Logging.INSTANCE.info("   " + n.getName() + " online since " + n.getBootTime());
+				}
 
 			} else {
 

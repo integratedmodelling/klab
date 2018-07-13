@@ -14,6 +14,9 @@ public class KlabPerspective implements IPerspectiveFactory {
         addFastViews(layout);
         addViewShortcuts(layout);
         addPerspectiveShortcuts(layout);
+    	layout.addView("org.integratedmodelling.thinkcap.ide.navigator", IPageLayout.LEFT, 0.24f, IPageLayout.ID_EDITOR_AREA);
+    	layout.addView("org.integratedmodelling.klab.ide.views.RuntimeView", IPageLayout.RIGHT, 0.72f, IPageLayout.ID_EDITOR_AREA);
+    	layout.addView("org.integratedmodelling.klab.ide.views.ContextView", IPageLayout.BOTTOM, 0.73f, "org.integratedmodelling.thinkcap.ide.navigator");
     }
 
     /**

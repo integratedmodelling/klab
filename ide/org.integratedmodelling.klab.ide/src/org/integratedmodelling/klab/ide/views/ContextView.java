@@ -3,8 +3,6 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -28,7 +26,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,15 +40,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.part.ViewPart;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.PopupSpaceChooser;
-import org.integratedmodelling.klab.ide.PopupTimeChooser;
 import org.integratedmodelling.klab.ide.ResourceManager;
 import org.integratedmodelling.klab.ide.SWTResourceManager;
-import org.omg.CORBA.Environment;
 
-public class ContextView {
+public class ContextView extends ViewPart {
 
 	private Composite container;
     private Button searchModeButton;
@@ -66,8 +61,8 @@ public class ContextView {
     private CLabel temporalContext;
     private Button btnNewButtonT;
 
-    @PostConstruct
-	public void postConstruct(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
 
         container = new Composite(parent, SWT.NONE);
         GridLayout gl_container = new GridLayout(1, false);
@@ -588,6 +583,12 @@ public class ContextView {
         }
 
     }
+
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

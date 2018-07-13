@@ -271,7 +271,7 @@ public enum Renderer {
 				if (annotation.containsKey("midpoint")) {
 					midpoint = annotation.get("midpoint", Number.class).floatValue();
 				}
-				
+
 			} else if (annotation.getName().equals("color")) {
 
 				// must be boolean
@@ -290,7 +290,9 @@ public enum Renderer {
 					colors = new Color[state.getDataKey().size()];
 					Color[] jetcolors = jet(1.0f);
 					for (int i = 0; i < state.getDataKey().size(); i++) {
-						colors[i] = jetcolors[i * (jetcolors.length/state.getDataKey().size())];
+						int index = (int) (((double) (i + 1) / (double) state.getDataKey().size())
+								* (double) (jetcolors.length - 1));
+						colors[i] = jetcolors[index];
 					}
 				} else {
 					if (state.getDataKey().size() <= random20.length) {
@@ -323,7 +325,7 @@ public enum Renderer {
 		RasterSymbolizer ret = styleBuilder.createRasterSymbolizer(colorMap, opacity);
 
 		if (contrastEnhancement != null || gamma != 1.0) {
-			
+
 			ContrastEnhancement cen = styleFactory.createContrastEnhancement();
 			cen.setGammaValue(styleBuilder.literalExpression(gamma));
 			if (cen != null) {
@@ -354,7 +356,7 @@ public enum Renderer {
 			srl.setBrightnessOnly(shadedReliefBrightnessOnly);
 			ret.setShadedRelief(srl);
 		}
-		
+
 		return ret;
 	}
 

@@ -17,5 +17,21 @@
             name="k.LAB">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.RuntimeView"
+            id="org.integratedmodelling.klab.ide.views.RuntimeView"
+            name="k.LAB Runtime">
+      </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.ContextView"
+            id="org.integratedmodelling.klab.ide.views.ContextView"
+            name="Context"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

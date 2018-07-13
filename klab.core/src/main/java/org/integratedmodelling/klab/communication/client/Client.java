@@ -251,7 +251,7 @@ public class Client extends RestTemplate {
 		headers.set("Accept", "application/json");
 		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
-			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 
 		HttpEntity<Object> entity = new HttpEntity<>(data, headers);
@@ -294,7 +294,10 @@ public class Client extends RestTemplate {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
 		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
+		}
+		
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 
 		// HttpHeaders headers = new HttpHeaders();
@@ -339,7 +342,7 @@ public class Client extends RestTemplate {
 		headers.set("Accept", "application/json");
 		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
-			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);

@@ -22,6 +22,4 @@ model earth:Mountain
 
 model geography:Elevation in m
 	using gis.terrain(roughness = 0.88, range = 0 to 3500)
-	with metadata {
-		gis 330.0
-	};
+;
