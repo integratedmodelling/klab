@@ -286,7 +286,12 @@ public enum Renderer {
 
 				// establish if we have an ordering
 				if (state.getDataKey().isOrdered()) {
-					// TODO intervals
+					// TODO intervals! This is a PLACEHOLDER ONLY
+					colors = new Color[state.getDataKey().size()];
+					Color[] jetcolors = jet(1.0f);
+					for (int i = 0; i < state.getDataKey().size(); i++) {
+						colors[i] = jetcolors[i * (jetcolors.length/state.getDataKey().size())];
+					}
 				} else {
 					if (state.getDataKey().size() <= random20.length) {
 						colors = Arrays.copyOf(random20, state.getDataKey().size());

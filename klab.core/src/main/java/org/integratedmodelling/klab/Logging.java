@@ -100,11 +100,11 @@ public enum Logging implements ILoggingService {
 
 		String payload = NotificationUtils.getMessage(o);
 
-		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
+		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
 			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
 		}
 
-		if (Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.SEVERE.intValue()) {
+		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
 			if (errorWriter != null) {
             	errorWriter.accept(payload);
             }
