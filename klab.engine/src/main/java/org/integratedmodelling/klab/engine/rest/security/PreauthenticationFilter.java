@@ -12,7 +12,7 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 
 	@Override
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-		String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
+		String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
 		if (auth != null) {
 		    // send anything already known downstream
 			if (Authentication.INSTANCE.getIdentity(auth, IIdentity.class) != null) {
@@ -28,7 +28,7 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 
 	@Override
 	protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-		String auth = request.getHeader(HttpHeaders.WWW_AUTHENTICATE);
+		String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
 		// returning null will refuse authentication
 		return auth == null ? "dummycredentials" : auth;
 	}

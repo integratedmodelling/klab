@@ -186,7 +186,7 @@ public class Client extends RestTemplate {
 			headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
 			headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 			if (authToken != null) {
-				headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+				headers.set(HttpHeaders.AUTHORIZATION, authToken);
 			}
 			return execution.execute(requestWrapper, body);
 		}

@@ -23,7 +23,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        String tokenString = req.getHeader(HttpHeaders.WWW_AUTHENTICATE);
+        String tokenString = req.getHeader(HttpHeaders.AUTHORIZATION);
         if (tokenString != null) {
             try {
                 AuthenticationToken token = NodeAuth.INSTANCE.validateJwt(tokenString);

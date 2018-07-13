@@ -20,24 +20,25 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IModelArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
  * An Artifact can be any of the first-class products of a k.LAB task: a
- * non-semantic
- * {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} or
- * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, a
- * semantic {@link org.integratedmodelling.klab.api.observations.IObservation}
- * (as produced by most activities in k.LAB) or a {@link IKimModel k.IM model
- * description} when the model has been produced by an observation activity,
- * such as a learning model.
+ * non-semantic {@link IDataArtifact} or {@link IObjectArtifact}, a semantic
+ * {@link IObservation} (as produced by most activities in k.LAB) or a
+ * {@link IKimModel k.IM model description} when the model has been produced by
+ * an observation activity, such as a learning model.
  * <p>
  * By implementing {@link java.lang.Iterable}, we also allow Artifacts to
  * represent groups of artifacts (e.g. all the {@link ISubject subjects}
@@ -49,9 +50,7 @@ import org.integratedmodelling.klab.utils.Range;
  * tasks to simply return an {@code IArtifact} and provide full information on
  * what happened.
  * <p>
- * The API to use a {@link org.integratedmodelling.kim.api.IKimModel} as an
- * artifact
- * ({@link org.integratedmodelling.klab.api.data.artifacts.IModelArtifact}) is
+ * The API to use a {@link IKimModel} as an artifact ({@link IModelArtifact}) is
  * not fully developed yet.
  * <p>
  *
@@ -61,8 +60,8 @@ import org.integratedmodelling.klab.utils.Range;
 public interface IArtifact extends Node, Iterable<IArtifact> {
 
 	/**
-	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now, should
-	 * be integrated with it.
+	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now, should be
+	 * integrated with it.
 	 * 
 	 * @author ferdinando.villa
 	 *
@@ -134,33 +133,33 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 		 * Only for service prototypes returning contextualizers
 		 */
 		CONTEXTUALIZER,
-		
+
 		/**
-		 * Tables are supersets of maps so map literals are valid tables. A table
-		 * is a valid literal for an OBJECT input.
+		 * Tables are supersets of maps so map literals are valid tables. A table is a
+		 * valid literal for an OBJECT input.
 		 */
 		TABLE;
-		
-	    /**
-	     * Classify a POD type producing the type that represents it.
-	     * 
-	     * @param o
-	     * @return a type for o. If o == null, VALUE is returned.
-	     */
-	    public static Type classify(Object o) {
-	      if (o instanceof Number) {
-	        return NUMBER;
-	      } else if (o instanceof Boolean) {
-	        return BOOLEAN;
-	      } else if (o instanceof String) {
-	        return TEXT;
-	      } else if (o instanceof Range) {
-	        return RANGE;
-	      } else if (o instanceof List) {
-	        return LIST;
-	      }
-	      return VALUE;
-	    }
+
+		/**
+		 * Classify a POD type producing the type that represents it.
+		 * 
+		 * @param o
+		 * @return a type for o. If o == null, VALUE is returned.
+		 */
+		public static Type classify(Object o) {
+			if (o instanceof Number) {
+				return NUMBER;
+			} else if (o instanceof Boolean) {
+				return BOOLEAN;
+			} else if (o instanceof String) {
+				return TEXT;
+			} else if (o instanceof Range) {
+				return RANGE;
+			} else if (o instanceof List) {
+				return LIST;
+			}
+			return VALUE;
+		}
 	}
 
 	/**
@@ -186,11 +185,11 @@ public interface IArtifact extends Node, Iterable<IArtifact> {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getUrn();
-	
+
 	/**
-	 * All the annotations proceeding from the k.IM lineage of this artifact (from the
-	 * model that produced it, the concepts it incarnates, etc.). Never null, possibly
-	 * empty.
+	 * All the annotations proceeding from the k.IM lineage of this artifact (from
+	 * the model that produced it, the concepts it incarnates, etc.). Never null,
+	 * possibly empty.
 	 * <p>
 	 * When artifacts are persisted, these may or may not be preserved.
 	 * 

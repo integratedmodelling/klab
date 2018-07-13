@@ -30,11 +30,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.AuthorizeSessionResponse;
 import org.integratedmodelling.klab.utils.Escape;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -54,6 +57,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.lang.Nullable;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -92,10 +96,10 @@ public class Client extends RestTemplate {
 
 	private static ClientHttpRequestFactory factory;
 
-	public class BeanDescriptor {
-		String packageName;
-		List<String> classes;
-	}
+//	public class BeanDescriptor {
+//		String packageName;
+//		List<String> classes;
+//	}
 
 	public static Client create(String url) {
 
@@ -110,19 +114,6 @@ public class Client extends RestTemplate {
 		return url;
 	}
 
-	//
-	// /**
-	// * Send an authentication request.
-	// * @param url
-	// * @param request
-	// * @return the response. If not authenticated, throw a
-	// KlabAuthorizationException. If timeout, return null.
-	// */
-	// public EngineAuthenticationResponse authenticate(String url, EngineAuthenticationRequest
-	// request) {
-	// return post(url + API.AUTHENTICATE, request, EngineAuthenticationResponse.class);
-	// }
-	//
 	/**
 	 * Quickly check the engine's heartbeat.
 	 * 
@@ -140,24 +131,24 @@ public class Client extends RestTemplate {
 		}
 	}
 
-	/**
-	 * Retrieve the list of POJO types from the schema endpoint.
-	 * 
-	 * @return the POJO descriptors
-	 */
-	public BeanDescriptor getPOJOClasses() {
-
-		List<String> classes = new ArrayList<>();
-		Map<?, ?> map = get(url + API.SCHEMA + "?list", Map.class);
-		String packageName = map.get("package").toString();
-		for (Object o : (List<?>) map.get("schemata")) {
-			classes.add(o.toString());
-		}
-		BeanDescriptor ret = new BeanDescriptor();
-		ret.packageName = packageName;
-		ret.classes = classes;
-		return ret;
-	}
+//	/**
+//	 * Retrieve the list of POJO types from the schema endpoint.
+//	 * 
+//	 * @return the POJO descriptors
+//	 */
+//	public BeanDescriptor getPOJOClasses() {
+//
+//		List<String> classes = new ArrayList<>();
+//		Map<?, ?> map = get(url + API.SCHEMA + "?list", Map.class);
+//		String packageName = map.get("package").toString();
+//		for (Object o : (List<?>) map.get("schemata")) {
+//			classes.add(o.toString());
+//		}
+//		BeanDescriptor ret = new BeanDescriptor();
+//		ret.packageName = packageName;
+//		ret.classes = classes;
+//		return ret;
+//	}
 
 	/**
 	 * Open a session with the engine.
@@ -213,7 +204,7 @@ public class Client extends RestTemplate {
 			// headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
 			// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 			if (authToken != null) {
-				headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+				headers.set(HttpHeaders.AUTHORIZATION, authToken);
 			}
 			return execution.execute(requestWrapper, body);
 		}
@@ -226,8 +217,6 @@ public class Client extends RestTemplate {
 		MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
 		StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
 		FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
-		// ByteArrayHttpMessageConverter byteConverter = new
-		// ByteArrayHttpMessageConverter();
 		jsonMessageConverter.setObjectMapper(objectMapper);
 
 		setErrorHandler(new JSONResponseErrorHandler());
@@ -236,6 +225,7 @@ public class Client extends RestTemplate {
 		messageConverters.add(formHttpMessageConverter);
 		// messageConverters.add(byteConverter);
 		setMessageConverters(messageConverters);
+		
 		this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
 	}
 
@@ -279,7 +269,7 @@ public class Client extends RestTemplate {
 		headers.set("Accept", "application/json");
 		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
-			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
 
 		HttpEntity<Object> entity = new HttpEntity<>(data, headers);
@@ -291,9 +281,9 @@ public class Client extends RestTemplate {
 			switch (response.getStatusCodeValue()) {
 			case 302:
 			case 403:
-				throw new RuntimeException("unauthorized request " + url);
+				throw new KlabAuthorizationException("unauthorized request " + url);
 			case 404:
-				throw new RuntimeException("internal: request " + url + " was not accepted");
+				throw new IllegalStateException("internal: request " + url + " was not accepted");
 			}
 
 			if (response.getBody() == null) {
@@ -314,7 +304,7 @@ public class Client extends RestTemplate {
 		}
 	}
 
-	public boolean getDownload(String url, File output) {
+	public boolean download(String url, File output) {
 
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
@@ -334,9 +324,9 @@ public class Client extends RestTemplate {
 		switch (response.getStatusCodeValue()) {
 		case 302:
 		case 403:
-			throw new RuntimeException("unauthorized request " + url);
+			throw new KlabAuthorizationException("unauthorized request " + url);
 		case 404:
-			throw new RuntimeException("internal: request " + url + " was not accepted");
+			throw new IllegalStateException("internal: request " + url + " was not accepted");
 		}
 
 		if (response.getBody() == null) {
@@ -351,6 +341,68 @@ public class Client extends RestTemplate {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Upload contents from a URL/file and return the response after upload is
+	 * complete. Blocking, so meant for small payloads.
+	 * 
+	 * @param url
+	 * @param contents
+	 * @param responseType
+	 * @return
+	 */
+	public <T> T upload(String url, File contents, Class<T> responseType) {
+		
+		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("file", new FileSystemResource(contents));
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new    HttpEntity<LinkedMultiValueMap<String, Object>>(
+		                    map, headers);
+		ResponseEntity<T> result = exchange(url, HttpMethod.POST, requestEntity, responseType);
+		return result.getBody();
+	}
+
+	/**
+	 * Upload contents from a URL/file with asynchronous treatment of the upload.
+	 * Will periodically recheck the upload status, invoking the passed consumer
+	 * with the response after the upload is complete. Meant to work with services
+	 * that return 201 and 203 and task endpoints. Should be used with compliant
+	 * remote endpoints when the payload is not small.
+	 * 
+	 * @param url
+	 * @param contents
+	 * @param responseType
+	 * @param responseConsumer
+	 * @param errorConsumer
+	 * @return
+	 */
+	public <T> void uploadAsynchronous(String url, File contents, Class<T> responseType, Consumer<T> responseConsumer,
+			@Nullable Consumer<String> errorConsumer) {
+		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("file", new FileSystemResource(contents));
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new    HttpEntity<LinkedMultiValueMap<String, Object>>(
+		                    map, headers);
+		ResponseEntity<T> response = exchange(url, HttpMethod.POST, requestEntity, responseType);
+		switch (response.getStatusCodeValue()) {
+		case 200:
+			responseConsumer.accept(response.getBody());
+			break;
+		case 201:
+			break;
+		case 203:
+			break;
+		case 302:
+		case 403:
+			throw new KlabAuthorizationException("unauthorized request " + url);
+		case 404:
+			throw new IllegalStateException("internal: request " + url + " was not accepted");
+		}
 	}
 
 	/**
@@ -375,7 +427,7 @@ public class Client extends RestTemplate {
 		switch (response.getStatusCodeValue()) {
 		case 302:
 		case 403:
-			throw new RuntimeException("unauthorized request " + url);
+			throw new KlabAuthorizationException("unauthorized request " + url);
 		case 404:
 			throw new RuntimeException("internal: request " + url + " was not accepted");
 		}
