@@ -101,7 +101,7 @@ public class AuthenticationController {
 			IdentityReference userIdentity = new IdentityReference(node.getName(),
 					node.getParentIdentity().getEmailAddress(), now.toString());
 			AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity,
-					new ArrayList<Group>(), tomorrow.toString(), node.getId());
+					/* TODO groups */new ArrayList<Group>(), tomorrow.toString(), node.getId());
 
 			Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
 

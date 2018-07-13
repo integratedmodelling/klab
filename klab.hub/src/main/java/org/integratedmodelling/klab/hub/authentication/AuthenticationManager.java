@@ -206,7 +206,7 @@ public class AuthenticationManager {
 						+ request.getCertificate() + " was already authorized");
 			}
 
-			ret = new Node(request.getNodeName(), this.partner);
+			ret = new Node(this.hubName + "." + request.getNodeName(), this.partner);
 			ret.getUrls().add(certificate.getProperty(ICertificate.KEY_URL));
 			return ret;
 		}

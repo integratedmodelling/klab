@@ -40,7 +40,7 @@ public class NetworkManager {
 		
 		NodeReference ret = new NodeReference();
 
-		ret.setId(node.getId());
+		ret.setId(node.getName());
 		ret.setOnline(isOnline);
 		ret.getUrls().addAll(node.getUrls());
 		ret.setPartner(authenticationManager.getHubReference().getPartner());
