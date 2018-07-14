@@ -26,6 +26,7 @@ public class Observer extends KimObject implements IObserver {
   private List<IObservable> states           = new ArrayList<>();
 
   public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
+      
     super(statement);
     this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
     /*

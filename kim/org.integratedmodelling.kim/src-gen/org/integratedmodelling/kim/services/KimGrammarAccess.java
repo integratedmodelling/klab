@@ -239,79 +239,81 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cCommaKeyword_2_1_1_0 = (Keyword)cGroup_2_1_1.eContents().get(0);
 		private final Assignment cObservablesAssignment_2_1_1_1 = (Assignment)cGroup_2_1_1.eContents().get(1);
 		private final RuleCall cObservablesObservableSemanticsParserRuleCall_2_1_1_1_0 = (RuleCall)cObservablesAssignment_2_1_1_1.eContents().get(0);
-		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Keyword cObservingKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final Assignment cDependenciesAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cDependenciesDependencyParserRuleCall_3_1_0 = (RuleCall)cDependenciesAssignment_3_1.eContents().get(0);
-		private final Group cGroup_3_2 = (Group)cGroup_3.eContents().get(2);
-		private final Keyword cCommaKeyword_3_2_0 = (Keyword)cGroup_3_2.eContents().get(0);
-		private final Assignment cDependenciesAssignment_3_2_1 = (Assignment)cGroup_3_2.eContents().get(1);
-		private final RuleCall cDependenciesDependencyParserRuleCall_3_2_1_0 = (RuleCall)cDependenciesAssignment_3_2_1.eContents().get(0);
+		private final Assignment cDocstringAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cDocstringSTRINGTerminalRuleCall_3_0 = (RuleCall)cDocstringAssignment_3.eContents().get(0);
 		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cUsingKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cContextualizersAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cContextualizersValueExecutionParserRuleCall_4_1_0 = (RuleCall)cContextualizersAssignment_4_1.eContents().get(0);
+		private final Keyword cObservingKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Assignment cDependenciesAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cDependenciesDependencyParserRuleCall_4_1_0 = (RuleCall)cDependenciesAssignment_4_1.eContents().get(0);
 		private final Group cGroup_4_2 = (Group)cGroup_4.eContents().get(2);
 		private final Keyword cCommaKeyword_4_2_0 = (Keyword)cGroup_4_2.eContents().get(0);
-		private final Assignment cContextualizersAssignment_4_2_1 = (Assignment)cGroup_4_2.eContents().get(1);
-		private final RuleCall cContextualizersValueExecutionParserRuleCall_4_2_1_0 = (RuleCall)cContextualizersAssignment_4_2_1.eContents().get(0);
-		private final Alternatives cAlternatives_5 = (Alternatives)cGroup.eContents().get(5);
-		private final Group cGroup_5_0 = (Group)cAlternatives_5.eContents().get(0);
-		private final Alternatives cAlternatives_5_0_0 = (Alternatives)cGroup_5_0.eContents().get(0);
-		private final Keyword cClassifiedKeyword_5_0_0_0 = (Keyword)cAlternatives_5_0_0.eContents().get(0);
-		private final Assignment cDiscretizationAssignment_5_0_0_1 = (Assignment)cAlternatives_5_0_0.eContents().get(1);
-		private final Keyword cDiscretizationDiscretizedKeyword_5_0_0_1_0 = (Keyword)cDiscretizationAssignment_5_0_0_1.eContents().get(0);
-		private final Group cGroup_5_0_1 = (Group)cGroup_5_0.eContents().get(1);
-		private final Keyword cIntoKeyword_5_0_1_0 = (Keyword)cGroup_5_0_1.eContents().get(0);
-		private final Assignment cClassificationAssignment_5_0_1_1 = (Assignment)cGroup_5_0_1.eContents().get(1);
-		private final RuleCall cClassificationClassificationParserRuleCall_5_0_1_1_0 = (RuleCall)cClassificationAssignment_5_0_1_1.eContents().get(0);
-		private final Group cGroup_5_1 = (Group)cAlternatives_5.eContents().get(1);
-		private final Keyword cAccordingKeyword_5_1_0 = (Keyword)cGroup_5_1.eContents().get(0);
-		private final Keyword cToKeyword_5_1_1 = (Keyword)cGroup_5_1.eContents().get(1);
-		private final Assignment cClassificationPropertyAssignment_5_1_2 = (Assignment)cGroup_5_1.eContents().get(2);
-		private final RuleCall cClassificationPropertyPropertyIdParserRuleCall_5_1_2_0 = (RuleCall)cClassificationPropertyAssignment_5_1_2.eContents().get(0);
-		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
-		private final Keyword cLookupKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
-		private final Group cGroup_6_1 = (Group)cGroup_6.eContents().get(1);
-		private final Keyword cLeftParenthesisKeyword_6_1_0 = (Keyword)cGroup_6_1.eContents().get(0);
-		private final Assignment cLookupTableArgsAssignment_6_1_1 = (Assignment)cGroup_6_1.eContents().get(1);
-		private final Alternatives cLookupTableArgsAlternatives_6_1_1_0 = (Alternatives)cLookupTableArgsAssignment_6_1_1.eContents().get(0);
-		private final RuleCall cLookupTableArgsLOWERCASE_IDTerminalRuleCall_6_1_1_0_0 = (RuleCall)cLookupTableArgsAlternatives_6_1_1_0.eContents().get(0);
-		private final Keyword cLookupTableArgsQuestionMarkKeyword_6_1_1_0_1 = (Keyword)cLookupTableArgsAlternatives_6_1_1_0.eContents().get(1);
-		private final Keyword cLookupTableArgsAsteriskKeyword_6_1_1_0_2 = (Keyword)cLookupTableArgsAlternatives_6_1_1_0.eContents().get(2);
-		private final Group cGroup_6_1_2 = (Group)cGroup_6_1.eContents().get(2);
-		private final Keyword cCommaKeyword_6_1_2_0 = (Keyword)cGroup_6_1_2.eContents().get(0);
-		private final Assignment cLookupTableArgsAssignment_6_1_2_1 = (Assignment)cGroup_6_1_2.eContents().get(1);
-		private final Alternatives cLookupTableArgsAlternatives_6_1_2_1_0 = (Alternatives)cLookupTableArgsAssignment_6_1_2_1.eContents().get(0);
-		private final RuleCall cLookupTableArgsLOWERCASE_IDTerminalRuleCall_6_1_2_1_0_0 = (RuleCall)cLookupTableArgsAlternatives_6_1_2_1_0.eContents().get(0);
-		private final Keyword cLookupTableArgsQuestionMarkKeyword_6_1_2_1_0_1 = (Keyword)cLookupTableArgsAlternatives_6_1_2_1_0.eContents().get(1);
-		private final Keyword cLookupTableArgsAsteriskKeyword_6_1_2_1_0_2 = (Keyword)cLookupTableArgsAlternatives_6_1_2_1_0.eContents().get(2);
-		private final Keyword cRightParenthesisKeyword_6_1_3 = (Keyword)cGroup_6_1.eContents().get(3);
-		private final Keyword cIntoKeyword_6_2 = (Keyword)cGroup_6.eContents().get(2);
-		private final Alternatives cAlternatives_6_3 = (Alternatives)cGroup_6.eContents().get(3);
-		private final Assignment cLookupTableAssignment_6_3_0 = (Assignment)cAlternatives_6_3.eContents().get(0);
-		private final RuleCall cLookupTableTableParserRuleCall_6_3_0_0 = (RuleCall)cLookupTableAssignment_6_3_0.eContents().get(0);
-		private final Assignment cLookupTableIdAssignment_6_3_1 = (Assignment)cAlternatives_6_3.eContents().get(1);
-		private final RuleCall cLookupTableIdLOWERCASE_IDTerminalRuleCall_6_3_1_0 = (RuleCall)cLookupTableIdAssignment_6_3_1.eContents().get(0);
-		private final Assignment cActionsAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final RuleCall cActionsActionSpecificationParserRuleCall_7_0 = (RuleCall)cActionsAssignment_7.eContents().get(0);
-		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
-		private final Keyword cWithKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
-		private final Keyword cMetadataKeyword_8_1 = (Keyword)cGroup_8.eContents().get(1);
-		private final Assignment cMetadataAssignment_8_2 = (Assignment)cGroup_8.eContents().get(2);
-		private final RuleCall cMetadataMetadataParserRuleCall_8_2_0 = (RuleCall)cMetadataAssignment_8_2.eContents().get(0);
+		private final Assignment cDependenciesAssignment_4_2_1 = (Assignment)cGroup_4_2.eContents().get(1);
+		private final RuleCall cDependenciesDependencyParserRuleCall_4_2_1_0 = (RuleCall)cDependenciesAssignment_4_2_1.eContents().get(0);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cUsingKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cContextualizersAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cContextualizersValueExecutionParserRuleCall_5_1_0 = (RuleCall)cContextualizersAssignment_5_1.eContents().get(0);
+		private final Group cGroup_5_2 = (Group)cGroup_5.eContents().get(2);
+		private final Keyword cCommaKeyword_5_2_0 = (Keyword)cGroup_5_2.eContents().get(0);
+		private final Assignment cContextualizersAssignment_5_2_1 = (Assignment)cGroup_5_2.eContents().get(1);
+		private final RuleCall cContextualizersValueExecutionParserRuleCall_5_2_1_0 = (RuleCall)cContextualizersAssignment_5_2_1.eContents().get(0);
+		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
+		private final Group cGroup_6_0 = (Group)cAlternatives_6.eContents().get(0);
+		private final Alternatives cAlternatives_6_0_0 = (Alternatives)cGroup_6_0.eContents().get(0);
+		private final Keyword cClassifiedKeyword_6_0_0_0 = (Keyword)cAlternatives_6_0_0.eContents().get(0);
+		private final Assignment cDiscretizationAssignment_6_0_0_1 = (Assignment)cAlternatives_6_0_0.eContents().get(1);
+		private final Keyword cDiscretizationDiscretizedKeyword_6_0_0_1_0 = (Keyword)cDiscretizationAssignment_6_0_0_1.eContents().get(0);
+		private final Group cGroup_6_0_1 = (Group)cGroup_6_0.eContents().get(1);
+		private final Keyword cIntoKeyword_6_0_1_0 = (Keyword)cGroup_6_0_1.eContents().get(0);
+		private final Assignment cClassificationAssignment_6_0_1_1 = (Assignment)cGroup_6_0_1.eContents().get(1);
+		private final RuleCall cClassificationClassificationParserRuleCall_6_0_1_1_0 = (RuleCall)cClassificationAssignment_6_0_1_1.eContents().get(0);
+		private final Group cGroup_6_1 = (Group)cAlternatives_6.eContents().get(1);
+		private final Keyword cAccordingKeyword_6_1_0 = (Keyword)cGroup_6_1.eContents().get(0);
+		private final Keyword cToKeyword_6_1_1 = (Keyword)cGroup_6_1.eContents().get(1);
+		private final Assignment cClassificationPropertyAssignment_6_1_2 = (Assignment)cGroup_6_1.eContents().get(2);
+		private final RuleCall cClassificationPropertyPropertyIdParserRuleCall_6_1_2_0 = (RuleCall)cClassificationPropertyAssignment_6_1_2.eContents().get(0);
+		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
+		private final Keyword cLookupKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final Group cGroup_7_1 = (Group)cGroup_7.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_7_1_0 = (Keyword)cGroup_7_1.eContents().get(0);
+		private final Assignment cLookupTableArgsAssignment_7_1_1 = (Assignment)cGroup_7_1.eContents().get(1);
+		private final Alternatives cLookupTableArgsAlternatives_7_1_1_0 = (Alternatives)cLookupTableArgsAssignment_7_1_1.eContents().get(0);
+		private final RuleCall cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_1_0_0 = (RuleCall)cLookupTableArgsAlternatives_7_1_1_0.eContents().get(0);
+		private final Keyword cLookupTableArgsQuestionMarkKeyword_7_1_1_0_1 = (Keyword)cLookupTableArgsAlternatives_7_1_1_0.eContents().get(1);
+		private final Keyword cLookupTableArgsAsteriskKeyword_7_1_1_0_2 = (Keyword)cLookupTableArgsAlternatives_7_1_1_0.eContents().get(2);
+		private final Group cGroup_7_1_2 = (Group)cGroup_7_1.eContents().get(2);
+		private final Keyword cCommaKeyword_7_1_2_0 = (Keyword)cGroup_7_1_2.eContents().get(0);
+		private final Assignment cLookupTableArgsAssignment_7_1_2_1 = (Assignment)cGroup_7_1_2.eContents().get(1);
+		private final Alternatives cLookupTableArgsAlternatives_7_1_2_1_0 = (Alternatives)cLookupTableArgsAssignment_7_1_2_1.eContents().get(0);
+		private final RuleCall cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_2_1_0_0 = (RuleCall)cLookupTableArgsAlternatives_7_1_2_1_0.eContents().get(0);
+		private final Keyword cLookupTableArgsQuestionMarkKeyword_7_1_2_1_0_1 = (Keyword)cLookupTableArgsAlternatives_7_1_2_1_0.eContents().get(1);
+		private final Keyword cLookupTableArgsAsteriskKeyword_7_1_2_1_0_2 = (Keyword)cLookupTableArgsAlternatives_7_1_2_1_0.eContents().get(2);
+		private final Keyword cRightParenthesisKeyword_7_1_3 = (Keyword)cGroup_7_1.eContents().get(3);
+		private final Keyword cIntoKeyword_7_2 = (Keyword)cGroup_7.eContents().get(2);
+		private final Alternatives cAlternatives_7_3 = (Alternatives)cGroup_7.eContents().get(3);
+		private final Assignment cLookupTableAssignment_7_3_0 = (Assignment)cAlternatives_7_3.eContents().get(0);
+		private final RuleCall cLookupTableTableParserRuleCall_7_3_0_0 = (RuleCall)cLookupTableAssignment_7_3_0.eContents().get(0);
+		private final Assignment cLookupTableIdAssignment_7_3_1 = (Assignment)cAlternatives_7_3.eContents().get(1);
+		private final RuleCall cLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0 = (RuleCall)cLookupTableIdAssignment_7_3_1.eContents().get(0);
+		private final Assignment cActionsAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cActionsActionSpecificationParserRuleCall_8_0 = (RuleCall)cActionsAssignment_8.eContents().get(0);
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
 		private final Keyword cWithKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
-		private final Keyword cDocumentationKeyword_9_1 = (Keyword)cGroup_9.eContents().get(1);
-		private final Assignment cDocumentationAssignment_9_2 = (Assignment)cGroup_9.eContents().get(2);
-		private final RuleCall cDocumentationDocumentationParserRuleCall_9_2_0 = (RuleCall)cDocumentationAssignment_9_2.eContents().get(0);
+		private final Keyword cMetadataKeyword_9_1 = (Keyword)cGroup_9.eContents().get(1);
+		private final Assignment cMetadataAssignment_9_2 = (Assignment)cGroup_9.eContents().get(2);
+		private final RuleCall cMetadataMetadataParserRuleCall_9_2_0 = (RuleCall)cMetadataAssignment_9_2.eContents().get(0);
+		private final Group cGroup_10 = (Group)cGroup.eContents().get(10);
+		private final Keyword cWithKeyword_10_0 = (Keyword)cGroup_10.eContents().get(0);
+		private final Keyword cDocumentationKeyword_10_1 = (Keyword)cGroup_10.eContents().get(1);
+		private final Assignment cDocumentationAssignment_10_2 = (Assignment)cGroup_10.eContents().get(2);
+		private final RuleCall cDocumentationDocumentationParserRuleCall_10_2_0 = (RuleCall)cDocumentationAssignment_10_2.eContents().get(0);
 		
 		//ModelBodyStatement:
 		//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
 		//	concept=SimpleObservableSemantics) 'as')? (name=LOWERCASE_ID | observables+=ObservableSemantics (','
-		//	observables+=ObservableSemantics)*) ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
-		//	contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
-		//	discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
+		//	observables+=ObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
+		//	dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		//	(('classified' | discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
 		//	classificationProperty=PropertyId)? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
 		//	actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
@@ -320,9 +322,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
 		//concept=SimpleObservableSemantics) 'as')? (name=LOWERCASE_ID | observables+=ObservableSemantics (','
-		//observables+=ObservableSemantics)*) ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
-		//contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
-		//discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
+		//observables+=ObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
+		//dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		//(('classified' | discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
 		//classificationProperty=PropertyId)? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
 		//actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
@@ -430,205 +432,211 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ObservableSemantics
 		public RuleCall getObservablesObservableSemanticsParserRuleCall_2_1_1_1_0() { return cObservablesObservableSemanticsParserRuleCall_2_1_1_1_0; }
 		
+		//docstring=STRING?
+		public Assignment getDocstringAssignment_3() { return cDocstringAssignment_3; }
+		
+		//STRING
+		public RuleCall getDocstringSTRINGTerminalRuleCall_3_0() { return cDocstringSTRINGTerminalRuleCall_3_0; }
+		
 		//('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)?
-		public Group getGroup_3() { return cGroup_3; }
-		
-		//'observing'
-		public Keyword getObservingKeyword_3_0() { return cObservingKeyword_3_0; }
-		
-		//dependencies+=Dependency
-		public Assignment getDependenciesAssignment_3_1() { return cDependenciesAssignment_3_1; }
-		
-		//Dependency
-		public RuleCall getDependenciesDependencyParserRuleCall_3_1_0() { return cDependenciesDependencyParserRuleCall_3_1_0; }
-		
-		//(',' dependencies+=Dependency)*
-		public Group getGroup_3_2() { return cGroup_3_2; }
-		
-		//','
-		public Keyword getCommaKeyword_3_2_0() { return cCommaKeyword_3_2_0; }
-		
-		//dependencies+=Dependency
-		public Assignment getDependenciesAssignment_3_2_1() { return cDependenciesAssignment_3_2_1; }
-		
-		//Dependency
-		public RuleCall getDependenciesDependencyParserRuleCall_3_2_1_0() { return cDependenciesDependencyParserRuleCall_3_2_1_0; }
-		
-		//('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		public Group getGroup_4() { return cGroup_4; }
 		
-		//'using'
-		public Keyword getUsingKeyword_4_0() { return cUsingKeyword_4_0; }
+		//'observing'
+		public Keyword getObservingKeyword_4_0() { return cObservingKeyword_4_0; }
 		
-		//contextualizers+=ValueExecution
-		public Assignment getContextualizersAssignment_4_1() { return cContextualizersAssignment_4_1; }
+		//dependencies+=Dependency
+		public Assignment getDependenciesAssignment_4_1() { return cDependenciesAssignment_4_1; }
 		
-		//ValueExecution
-		public RuleCall getContextualizersValueExecutionParserRuleCall_4_1_0() { return cContextualizersValueExecutionParserRuleCall_4_1_0; }
+		//Dependency
+		public RuleCall getDependenciesDependencyParserRuleCall_4_1_0() { return cDependenciesDependencyParserRuleCall_4_1_0; }
 		
-		//(',' contextualizers+=ValueExecution)*
+		//(',' dependencies+=Dependency)*
 		public Group getGroup_4_2() { return cGroup_4_2; }
 		
 		//','
 		public Keyword getCommaKeyword_4_2_0() { return cCommaKeyword_4_2_0; }
 		
+		//dependencies+=Dependency
+		public Assignment getDependenciesAssignment_4_2_1() { return cDependenciesAssignment_4_2_1; }
+		
+		//Dependency
+		public RuleCall getDependenciesDependencyParserRuleCall_4_2_1_0() { return cDependenciesDependencyParserRuleCall_4_2_1_0; }
+		
+		//('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+		public Group getGroup_5() { return cGroup_5; }
+		
+		//'using'
+		public Keyword getUsingKeyword_5_0() { return cUsingKeyword_5_0; }
+		
 		//contextualizers+=ValueExecution
-		public Assignment getContextualizersAssignment_4_2_1() { return cContextualizersAssignment_4_2_1; }
+		public Assignment getContextualizersAssignment_5_1() { return cContextualizersAssignment_5_1; }
 		
 		//ValueExecution
-		public RuleCall getContextualizersValueExecutionParserRuleCall_4_2_1_0() { return cContextualizersValueExecutionParserRuleCall_4_2_1_0; }
+		public RuleCall getContextualizersValueExecutionParserRuleCall_5_1_0() { return cContextualizersValueExecutionParserRuleCall_5_1_0; }
+		
+		//(',' contextualizers+=ValueExecution)*
+		public Group getGroup_5_2() { return cGroup_5_2; }
+		
+		//','
+		public Keyword getCommaKeyword_5_2_0() { return cCommaKeyword_5_2_0; }
+		
+		//contextualizers+=ValueExecution
+		public Assignment getContextualizersAssignment_5_2_1() { return cContextualizersAssignment_5_2_1; }
+		
+		//ValueExecution
+		public RuleCall getContextualizersValueExecutionParserRuleCall_5_2_1_0() { return cContextualizersValueExecutionParserRuleCall_5_2_1_0; }
 		
 		//(('classified' | discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
 		//classificationProperty=PropertyId)?
-		public Alternatives getAlternatives_5() { return cAlternatives_5; }
+		public Alternatives getAlternatives_6() { return cAlternatives_6; }
 		
 		//('classified' | discretization?='discretized') ('into' classification=Classification)
-		public Group getGroup_5_0() { return cGroup_5_0; }
+		public Group getGroup_6_0() { return cGroup_6_0; }
 		
 		//'classified' | discretization?='discretized'
-		public Alternatives getAlternatives_5_0_0() { return cAlternatives_5_0_0; }
+		public Alternatives getAlternatives_6_0_0() { return cAlternatives_6_0_0; }
 		
 		//'classified'
-		public Keyword getClassifiedKeyword_5_0_0_0() { return cClassifiedKeyword_5_0_0_0; }
+		public Keyword getClassifiedKeyword_6_0_0_0() { return cClassifiedKeyword_6_0_0_0; }
 		
 		//discretization?='discretized'
-		public Assignment getDiscretizationAssignment_5_0_0_1() { return cDiscretizationAssignment_5_0_0_1; }
+		public Assignment getDiscretizationAssignment_6_0_0_1() { return cDiscretizationAssignment_6_0_0_1; }
 		
 		//'discretized'
-		public Keyword getDiscretizationDiscretizedKeyword_5_0_0_1_0() { return cDiscretizationDiscretizedKeyword_5_0_0_1_0; }
+		public Keyword getDiscretizationDiscretizedKeyword_6_0_0_1_0() { return cDiscretizationDiscretizedKeyword_6_0_0_1_0; }
 		
 		//'into' classification=Classification
-		public Group getGroup_5_0_1() { return cGroup_5_0_1; }
+		public Group getGroup_6_0_1() { return cGroup_6_0_1; }
 		
 		//'into'
-		public Keyword getIntoKeyword_5_0_1_0() { return cIntoKeyword_5_0_1_0; }
+		public Keyword getIntoKeyword_6_0_1_0() { return cIntoKeyword_6_0_1_0; }
 		
 		//classification=Classification
-		public Assignment getClassificationAssignment_5_0_1_1() { return cClassificationAssignment_5_0_1_1; }
+		public Assignment getClassificationAssignment_6_0_1_1() { return cClassificationAssignment_6_0_1_1; }
 		
 		//Classification
-		public RuleCall getClassificationClassificationParserRuleCall_5_0_1_1_0() { return cClassificationClassificationParserRuleCall_5_0_1_1_0; }
+		public RuleCall getClassificationClassificationParserRuleCall_6_0_1_1_0() { return cClassificationClassificationParserRuleCall_6_0_1_1_0; }
 		
 		//'according' 'to' classificationProperty=PropertyId
-		public Group getGroup_5_1() { return cGroup_5_1; }
+		public Group getGroup_6_1() { return cGroup_6_1; }
 		
 		//'according'
-		public Keyword getAccordingKeyword_5_1_0() { return cAccordingKeyword_5_1_0; }
+		public Keyword getAccordingKeyword_6_1_0() { return cAccordingKeyword_6_1_0; }
 		
 		//'to'
-		public Keyword getToKeyword_5_1_1() { return cToKeyword_5_1_1; }
+		public Keyword getToKeyword_6_1_1() { return cToKeyword_6_1_1; }
 		
 		//classificationProperty=PropertyId
-		public Assignment getClassificationPropertyAssignment_5_1_2() { return cClassificationPropertyAssignment_5_1_2; }
+		public Assignment getClassificationPropertyAssignment_6_1_2() { return cClassificationPropertyAssignment_6_1_2; }
 		
 		//PropertyId
-		public RuleCall getClassificationPropertyPropertyIdParserRuleCall_5_1_2_0() { return cClassificationPropertyPropertyIdParserRuleCall_5_1_2_0; }
+		public RuleCall getClassificationPropertyPropertyIdParserRuleCall_6_1_2_0() { return cClassificationPropertyPropertyIdParserRuleCall_6_1_2_0; }
 		
 		//('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 		//'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
-		public Group getGroup_6() { return cGroup_6; }
+		public Group getGroup_7() { return cGroup_7; }
 		
 		//'lookup'
-		public Keyword getLookupKeyword_6_0() { return cLookupKeyword_6_0; }
+		public Keyword getLookupKeyword_7_0() { return cLookupKeyword_7_0; }
 		
 		//('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
-		public Group getGroup_6_1() { return cGroup_6_1; }
+		public Group getGroup_7_1() { return cGroup_7_1; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_6_1_0() { return cLeftParenthesisKeyword_6_1_0; }
+		public Keyword getLeftParenthesisKeyword_7_1_0() { return cLeftParenthesisKeyword_7_1_0; }
 		
 		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*')
-		public Assignment getLookupTableArgsAssignment_6_1_1() { return cLookupTableArgsAssignment_6_1_1; }
+		public Assignment getLookupTableArgsAssignment_7_1_1() { return cLookupTableArgsAssignment_7_1_1; }
 		
 		//(LOWERCASE_ID | '?' | '*')
-		public Alternatives getLookupTableArgsAlternatives_6_1_1_0() { return cLookupTableArgsAlternatives_6_1_1_0; }
+		public Alternatives getLookupTableArgsAlternatives_7_1_1_0() { return cLookupTableArgsAlternatives_7_1_1_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getLookupTableArgsLOWERCASE_IDTerminalRuleCall_6_1_1_0_0() { return cLookupTableArgsLOWERCASE_IDTerminalRuleCall_6_1_1_0_0; }
+		public RuleCall getLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_1_0_0() { return cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_1_0_0; }
 		
 		//'?'
-		public Keyword getLookupTableArgsQuestionMarkKeyword_6_1_1_0_1() { return cLookupTableArgsQuestionMarkKeyword_6_1_1_0_1; }
+		public Keyword getLookupTableArgsQuestionMarkKeyword_7_1_1_0_1() { return cLookupTableArgsQuestionMarkKeyword_7_1_1_0_1; }
 		
 		//'*'
-		public Keyword getLookupTableArgsAsteriskKeyword_6_1_1_0_2() { return cLookupTableArgsAsteriskKeyword_6_1_1_0_2; }
+		public Keyword getLookupTableArgsAsteriskKeyword_7_1_1_0_2() { return cLookupTableArgsAsteriskKeyword_7_1_1_0_2; }
 		
 		//(',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))*
-		public Group getGroup_6_1_2() { return cGroup_6_1_2; }
+		public Group getGroup_7_1_2() { return cGroup_7_1_2; }
 		
 		//','
-		public Keyword getCommaKeyword_6_1_2_0() { return cCommaKeyword_6_1_2_0; }
+		public Keyword getCommaKeyword_7_1_2_0() { return cCommaKeyword_7_1_2_0; }
 		
 		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*')
-		public Assignment getLookupTableArgsAssignment_6_1_2_1() { return cLookupTableArgsAssignment_6_1_2_1; }
+		public Assignment getLookupTableArgsAssignment_7_1_2_1() { return cLookupTableArgsAssignment_7_1_2_1; }
 		
 		//(LOWERCASE_ID | '?' | '*')
-		public Alternatives getLookupTableArgsAlternatives_6_1_2_1_0() { return cLookupTableArgsAlternatives_6_1_2_1_0; }
+		public Alternatives getLookupTableArgsAlternatives_7_1_2_1_0() { return cLookupTableArgsAlternatives_7_1_2_1_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getLookupTableArgsLOWERCASE_IDTerminalRuleCall_6_1_2_1_0_0() { return cLookupTableArgsLOWERCASE_IDTerminalRuleCall_6_1_2_1_0_0; }
+		public RuleCall getLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_2_1_0_0() { return cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_2_1_0_0; }
 		
 		//'?'
-		public Keyword getLookupTableArgsQuestionMarkKeyword_6_1_2_1_0_1() { return cLookupTableArgsQuestionMarkKeyword_6_1_2_1_0_1; }
+		public Keyword getLookupTableArgsQuestionMarkKeyword_7_1_2_1_0_1() { return cLookupTableArgsQuestionMarkKeyword_7_1_2_1_0_1; }
 		
 		//'*'
-		public Keyword getLookupTableArgsAsteriskKeyword_6_1_2_1_0_2() { return cLookupTableArgsAsteriskKeyword_6_1_2_1_0_2; }
+		public Keyword getLookupTableArgsAsteriskKeyword_7_1_2_1_0_2() { return cLookupTableArgsAsteriskKeyword_7_1_2_1_0_2; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_6_1_3() { return cRightParenthesisKeyword_6_1_3; }
+		public Keyword getRightParenthesisKeyword_7_1_3() { return cRightParenthesisKeyword_7_1_3; }
 		
 		//'into'
-		public Keyword getIntoKeyword_6_2() { return cIntoKeyword_6_2; }
+		public Keyword getIntoKeyword_7_2() { return cIntoKeyword_7_2; }
 		
 		//lookupTable=Table | lookupTableId=LOWERCASE_ID
-		public Alternatives getAlternatives_6_3() { return cAlternatives_6_3; }
+		public Alternatives getAlternatives_7_3() { return cAlternatives_7_3; }
 		
 		//lookupTable=Table
-		public Assignment getLookupTableAssignment_6_3_0() { return cLookupTableAssignment_6_3_0; }
+		public Assignment getLookupTableAssignment_7_3_0() { return cLookupTableAssignment_7_3_0; }
 		
 		//Table
-		public RuleCall getLookupTableTableParserRuleCall_6_3_0_0() { return cLookupTableTableParserRuleCall_6_3_0_0; }
+		public RuleCall getLookupTableTableParserRuleCall_7_3_0_0() { return cLookupTableTableParserRuleCall_7_3_0_0; }
 		
 		//lookupTableId=LOWERCASE_ID
-		public Assignment getLookupTableIdAssignment_6_3_1() { return cLookupTableIdAssignment_6_3_1; }
+		public Assignment getLookupTableIdAssignment_7_3_1() { return cLookupTableIdAssignment_7_3_1; }
 		
 		//LOWERCASE_ID
-		public RuleCall getLookupTableIdLOWERCASE_IDTerminalRuleCall_6_3_1_0() { return cLookupTableIdLOWERCASE_IDTerminalRuleCall_6_3_1_0; }
+		public RuleCall getLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0() { return cLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0; }
 		
 		//actions+=ActionSpecification*
-		public Assignment getActionsAssignment_7() { return cActionsAssignment_7; }
+		public Assignment getActionsAssignment_8() { return cActionsAssignment_8; }
 		
 		//ActionSpecification
-		public RuleCall getActionsActionSpecificationParserRuleCall_7_0() { return cActionsActionSpecificationParserRuleCall_7_0; }
+		public RuleCall getActionsActionSpecificationParserRuleCall_8_0() { return cActionsActionSpecificationParserRuleCall_8_0; }
 		
 		//('with' 'metadata' metadata=Metadata)?
-		public Group getGroup_8() { return cGroup_8; }
-		
-		//'with'
-		public Keyword getWithKeyword_8_0() { return cWithKeyword_8_0; }
-		
-		//'metadata'
-		public Keyword getMetadataKeyword_8_1() { return cMetadataKeyword_8_1; }
-		
-		//metadata=Metadata
-		public Assignment getMetadataAssignment_8_2() { return cMetadataAssignment_8_2; }
-		
-		//Metadata
-		public RuleCall getMetadataMetadataParserRuleCall_8_2_0() { return cMetadataMetadataParserRuleCall_8_2_0; }
-		
-		//('with' 'documentation' documentation=Documentation)?
 		public Group getGroup_9() { return cGroup_9; }
 		
 		//'with'
 		public Keyword getWithKeyword_9_0() { return cWithKeyword_9_0; }
 		
+		//'metadata'
+		public Keyword getMetadataKeyword_9_1() { return cMetadataKeyword_9_1; }
+		
+		//metadata=Metadata
+		public Assignment getMetadataAssignment_9_2() { return cMetadataAssignment_9_2; }
+		
+		//Metadata
+		public RuleCall getMetadataMetadataParserRuleCall_9_2_0() { return cMetadataMetadataParserRuleCall_9_2_0; }
+		
+		//('with' 'documentation' documentation=Documentation)?
+		public Group getGroup_10() { return cGroup_10; }
+		
+		//'with'
+		public Keyword getWithKeyword_10_0() { return cWithKeyword_10_0; }
+		
 		//'documentation'
-		public Keyword getDocumentationKeyword_9_1() { return cDocumentationKeyword_9_1; }
+		public Keyword getDocumentationKeyword_10_1() { return cDocumentationKeyword_10_1; }
 		
 		//documentation=Documentation
-		public Assignment getDocumentationAssignment_9_2() { return cDocumentationAssignment_9_2; }
+		public Assignment getDocumentationAssignment_10_2() { return cDocumentationAssignment_10_2; }
 		
 		//Documentation
-		public RuleCall getDocumentationDocumentationParserRuleCall_9_2_0() { return cDocumentationDocumentationParserRuleCall_9_2_0; }
+		public RuleCall getDocumentationDocumentationParserRuleCall_10_2_0() { return cDocumentationDocumentationParserRuleCall_10_2_0; }
 	}
 	public class AttributeIdentifierElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.AttributeIdentifier");
@@ -8976,9 +8984,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//ModelBodyStatement:
 	//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
 	//	concept=SimpleObservableSemantics) 'as')? (name=LOWERCASE_ID | observables+=ObservableSemantics (','
-	//	observables+=ObservableSemantics)*) ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
-	//	contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
-	//	discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
+	//	observables+=ObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
+	//	dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
+	//	(('classified' | discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
 	//	classificationProperty=PropertyId)? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
 	//	actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'

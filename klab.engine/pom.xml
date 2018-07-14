@@ -93,6 +93,11 @@
 			<artifactId>lucene-suggest</artifactId>
 			<version>7.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-spatial</artifactId>
+			<version>7.4.0</version>
+		</dependency>
 
 		<!-- JUNG for network analysis, generation and I/O. Visualization only 
 			included in test scope. -->

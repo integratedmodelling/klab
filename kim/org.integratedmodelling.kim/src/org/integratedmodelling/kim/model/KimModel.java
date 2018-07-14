@@ -42,6 +42,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	private List<IKimObservable> dependencies = new ArrayList<>();
 	private IKimConcept reinterpretingRole = null;
 	private IKimBehavior behavior = new KimBehavior();
+	private String docstring;
 
 	// next four represent the datasource/inline value/URN given before 'as
 	// <observable>'. They are
@@ -212,5 +213,13 @@ public class KimModel extends KimStatement implements IKimModel {
 	public List<IComputableResource> getContextualization() {
 		return contextualization;
 	}
+
+    public String getDocstring() {
+        return docstring;
+    }
+
+    public void setDocstring(String docstring) {
+        this.docstring = docstring;
+    }
 
 }

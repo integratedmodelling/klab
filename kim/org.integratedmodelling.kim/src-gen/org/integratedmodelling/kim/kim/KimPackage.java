@@ -307,13 +307,22 @@ public interface KimPackage extends EPackage
   int MODEL_BODY_STATEMENT__OBSERVABLES = 7;
 
   /**
+   * The feature id for the '<em><b>Docstring</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__DOCSTRING = 8;
+
+  /**
    * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DEPENDENCIES = 8;
+  int MODEL_BODY_STATEMENT__DEPENDENCIES = 9;
 
   /**
    * The feature id for the '<em><b>Contextualizers</b></em>' containment reference list.
@@ -322,7 +331,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 9;
+  int MODEL_BODY_STATEMENT__CONTEXTUALIZERS = 10;
 
   /**
    * The feature id for the '<em><b>Discretization</b></em>' attribute.
@@ -331,7 +340,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DISCRETIZATION = 10;
+  int MODEL_BODY_STATEMENT__DISCRETIZATION = 11;
 
   /**
    * The feature id for the '<em><b>Classification</b></em>' containment reference.
@@ -340,7 +349,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CLASSIFICATION = 11;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION = 12;
 
   /**
    * The feature id for the '<em><b>Classification Property</b></em>' attribute.
@@ -349,7 +358,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 12;
+  int MODEL_BODY_STATEMENT__CLASSIFICATION_PROPERTY = 13;
 
   /**
    * The feature id for the '<em><b>Lookup Table Args</b></em>' attribute list.
@@ -358,7 +367,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 13;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS = 14;
 
   /**
    * The feature id for the '<em><b>Lookup Table</b></em>' containment reference.
@@ -367,7 +376,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 14;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE = 15;
 
   /**
    * The feature id for the '<em><b>Lookup Table Id</b></em>' attribute.
@@ -376,7 +385,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 15;
+  int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 16;
 
   /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference list.
@@ -385,7 +394,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__ACTIONS = 16;
+  int MODEL_BODY_STATEMENT__ACTIONS = 17;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -394,7 +403,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__METADATA = 17;
+  int MODEL_BODY_STATEMENT__METADATA = 18;
 
   /**
    * The feature id for the '<em><b>Documentation</b></em>' containment reference.
@@ -403,7 +412,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__DOCUMENTATION = 18;
+  int MODEL_BODY_STATEMENT__DOCUMENTATION = 19;
 
   /**
    * The number of structural features of the '<em>Model Body Statement</em>' class.
@@ -412,7 +421,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 19;
+  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.AttributeIdentifierImpl <em>Attribute Identifier</em>}' class.
@@ -4315,6 +4324,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getModelBodyStatement_Observables();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocstring <em>Docstring</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Docstring</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#getDocstring()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_Docstring();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDependencies <em>Dependencies</em>}'.
@@ -8470,6 +8490,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference MODEL_BODY_STATEMENT__OBSERVABLES = eINSTANCE.getModelBodyStatement_Observables();
+
+    /**
+     * The meta object literal for the '<em><b>Docstring</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__DOCSTRING = eINSTANCE.getModelBodyStatement_Docstring();
 
     /**
      * The meta object literal for the '<em><b>Dependencies</b></em>' containment reference list feature.

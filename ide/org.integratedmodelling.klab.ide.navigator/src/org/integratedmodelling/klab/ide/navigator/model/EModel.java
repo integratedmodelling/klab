@@ -87,5 +87,10 @@ public class EModel extends EKimObject implements IKimModel {
 
 	public List<IComputableResource> getContextualization() {
 		return delegate.getContextualization();
-	}	
+	}
+
+    @Override
+    public String getDocstring() {
+        return delegate.getDocstring();
+    }	
 }

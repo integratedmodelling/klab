@@ -50,6 +50,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getObservables <em>Observables</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDependencies <em>Dependencies</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getContextualizers <em>Contextualizers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isDiscretization <em>Discretization</em>}</li>
@@ -176,6 +177,26 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected EList<ObservableSemantics> observables;
+
+  /**
+   * The default value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocstring()
+   * @generated
+   * @ordered
+   */
+  protected static final String DOCSTRING_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocstring()
+   * @generated
+   * @ordered
+   */
+  protected String docstring = DOCSTRING_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getDependencies() <em>Dependencies</em>}' containment reference list.
@@ -584,6 +605,29 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getDocstring()
+  {
+    return docstring;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDocstring(String newDocstring)
+  {
+    String oldDocstring = docstring;
+    docstring = newDocstring;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__DOCSTRING, oldDocstring, docstring));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<Dependency> getDependencies()
   {
     if (dependencies == null)
@@ -960,6 +1004,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getName();
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
         return getObservables();
+      case KimPackage.MODEL_BODY_STATEMENT__DOCSTRING:
+        return getDocstring();
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         return getDependencies();
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
@@ -1022,6 +1068,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
         getObservables().clear();
         getObservables().addAll((Collection<? extends ObservableSemantics>)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__DOCSTRING:
+        setDocstring((String)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
@@ -1098,6 +1147,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
         getObservables().clear();
         return;
+      case KimPackage.MODEL_BODY_STATEMENT__DOCSTRING:
+        setDocstring(DOCSTRING_EDEFAULT);
+        return;
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         getDependencies().clear();
         return;
@@ -1161,6 +1213,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
         return observables != null && !observables.isEmpty();
+      case KimPackage.MODEL_BODY_STATEMENT__DOCSTRING:
+        return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
         return dependencies != null && !dependencies.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__CONTEXTUALIZERS:
@@ -1204,6 +1258,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     result.append(boolean_);
     result.append(", name: ");
     result.append(name);
+    result.append(", docstring: ");
+    result.append(docstring);
     result.append(", discretization: ");
     result.append(discretization);
     result.append(", classificationProperty: ");

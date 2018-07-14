@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -132,6 +133,7 @@ public enum Models implements IModelService {
 	@Override
 	public void index(IModel model, IMonitor monitor) throws KlabException {
 		kbox.store(model, monitor);
+		Indexer.INSTANCE.index(model.getStatement());
 	}
 
 	@Override

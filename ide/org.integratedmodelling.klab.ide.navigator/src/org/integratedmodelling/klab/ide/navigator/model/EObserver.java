@@ -38,4 +38,9 @@ public class EObserver extends EKimObject implements IKimObserver {
 		return delegate.getStates();
 	}
 
+    @Override
+    public String getDocstring() {
+        return delegate.getDocstring();
+    }
+
 }

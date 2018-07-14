@@ -349,6 +349,7 @@ class KimValidator extends AbstractKimValidator {
 				descriptor.observables.addAll(observables)
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator
+				descriptor.docstring = model.docstring
 				if (interpretedRole !== null) {
 					descriptor.interpreter = true
 					descriptor.reinterpretingRole = interpretedRole.main
@@ -518,6 +519,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				ret = new KimObserver(observation, semantics, parent)
+				ret.docstring = observation.docstring
 			}
 		}
 

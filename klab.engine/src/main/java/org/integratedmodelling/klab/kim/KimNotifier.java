@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
@@ -87,6 +88,8 @@ public class KimNotifier implements Kim.Notifier {
 						(ConceptStatement) object, monitor);
 				if (concept == null) {
 					object = null;
+				} else {
+                    Concepts.INSTANCE.index((IKimConceptStatement) statement, monitor);
 				}
 			} else if (statement instanceof IKimModel) {
 				object = Model.create((IKimModel) statement, ns, monitor);

@@ -33,6 +33,11 @@ public class EngineController {
 	@ResponseBody
 	public Capabilities capabilities(Principal user) {
 		Capabilities ret = new Capabilities();
+		
+		// synchronized projects
+		// components
+		// online and offline resources
+		
 		return ret;
 	}
 }

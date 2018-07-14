@@ -33,4 +33,11 @@ public interface IKimObserver extends IKimActiveStatement {
      */
     List<IKimObservable> getStates();
 
+    /**
+     * Docstring if any.
+     * 
+     * @return the docstring
+     */
+    String getDocstring();
+
 }

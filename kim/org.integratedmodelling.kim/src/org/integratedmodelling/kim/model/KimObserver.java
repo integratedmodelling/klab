@@ -11,14 +11,15 @@ import org.integratedmodelling.kim.api.IKimStatement;
 
 public class KimObserver extends KimStatement implements IKimObserver {
 
-    private static final long    serialVersionUID = -4175718293425086114L;
+    private static final long serialVersionUID = -4175718293425086114L;
 
-    private IKimObservable       observable;
+    private IKimObservable observable;
     // Name will be the same as the observable's
-    private String               name;
+    private String name;
     // States must have a value set
-    private List<IKimObservable> states           = new ArrayList<>();
-    private IKimBehavior         behavior         = new KimBehavior();
+    private List<IKimObservable> states = new ArrayList<>();
+    private IKimBehavior behavior = new KimBehavior();
+    private String docstring;
 
     public KimObserver(EObject statement, IKimObservable observable, IKimStatement parent) {
         super(statement, parent);
@@ -69,6 +70,14 @@ public class KimObserver extends KimStatement implements IKimObserver {
 
     public void setBehavior(IKimBehavior behavior) {
         this.behavior = behavior;
+    }
+
+    public String getDocstring() {
+        return docstring;
+    }
+
+    public void setDocstring(String docstring) {
+        this.docstring = docstring;
     }
 
 }

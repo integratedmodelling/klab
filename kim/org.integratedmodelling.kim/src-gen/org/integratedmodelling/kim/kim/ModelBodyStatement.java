@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getObservables <em>Observables</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDependencies <em>Dependencies</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getContextualizers <em>Contextualizers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isDiscretization <em>Discretization</em>}</li>
@@ -231,6 +232,32 @@ public interface ModelBodyStatement extends EObject
    * @generated
    */
   EList<ObservableSemantics> getObservables();
+
+  /**
+   * Returns the value of the '<em><b>Docstring</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Docstring</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Docstring</em>' attribute.
+   * @see #setDocstring(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Docstring()
+   * @model
+   * @generated
+   */
+  String getDocstring();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocstring <em>Docstring</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Docstring</em>' attribute.
+   * @see #getDocstring()
+   * @generated
+   */
+  void setDocstring(String value);
 
   /**
    * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.

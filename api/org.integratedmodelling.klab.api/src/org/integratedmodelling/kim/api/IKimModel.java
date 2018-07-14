@@ -47,4 +47,6 @@ public interface IKimModel extends IKimActiveStatement {
      * @return computables or an empty list
      */
     List<IComputableResource> getContextualization();
+
+    String getDocstring();
 }

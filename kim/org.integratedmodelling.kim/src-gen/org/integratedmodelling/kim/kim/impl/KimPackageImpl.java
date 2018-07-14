@@ -761,9 +761,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModelBodyStatement_Dependencies()
+  public EAttribute getModelBodyStatement_Docstring()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -771,7 +771,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModelBodyStatement_Contextualizers()
+  public EReference getModelBodyStatement_Dependencies()
   {
     return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(9);
   }
@@ -781,9 +781,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getModelBodyStatement_Contextualizers()
+  {
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getModelBodyStatement_Discretization()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -793,7 +803,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getModelBodyStatement_Classification()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(11);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -803,7 +813,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getModelBodyStatement_ClassificationProperty()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -813,7 +823,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getModelBodyStatement_LookupTableArgs()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -823,7 +833,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getModelBodyStatement_LookupTable()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(14);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -833,7 +843,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getModelBodyStatement_LookupTableId()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -843,7 +853,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getModelBodyStatement_Actions()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(16);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -853,7 +863,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getModelBodyStatement_Metadata()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(17);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -863,7 +873,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getModelBodyStatement_Documentation()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(18);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -4433,6 +4443,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__CONCEPT);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__NAME);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__OBSERVABLES);
+    createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__DOCSTRING);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__DEPENDENCIES);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__CONTEXTUALIZERS);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__DISCRETIZATION);
@@ -4906,6 +4917,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getModelBodyStatement_Concept(), this.getObservableSemantics(), null, "concept", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelBodyStatement_Name(), ecorePackage.getEString(), "name", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Observables(), this.getObservableSemantics(), null, "observables", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getModelBodyStatement_Docstring(), ecorePackage.getEString(), "docstring", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Dependencies(), this.getDependency(), null, "dependencies", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Contextualizers(), this.getValueAssignment(), null, "contextualizers", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelBodyStatement_Discretization(), ecorePackage.getEBoolean(), "discretization", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

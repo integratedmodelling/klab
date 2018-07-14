@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -65,7 +66,7 @@ public enum Observations implements IObservationService {
 
 	@Override
 	public void index(IObserver observer, IMonitor monitor) throws KlabException {
-		// TODO
+	    Indexer.INSTANCE.index(observer.getStatement());
 	}
 
 	@Override

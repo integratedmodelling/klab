@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -14,106 +15,116 @@ import org.integratedmodelling.kim.api.IKimConcept;
  */
 public interface IIndexingService {
 
-	/**
-	 * The context of the search, starting empty and built as new matches
-	 * are accepted.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public interface Context {
+    /**
+     * The context of the search, starting empty and built as new matches
+     * are accepted.
+     * 
+     * @author Ferd
+     *
+     */
+    public interface Context {
 
-		boolean isEmpty();
-		
-		/**
-		 * Notify the choice of a match and adjust the context to it.
-		 * 
-		 * @param match
-		 * @return an index for the match in the context
-		 */
-		int accept(Match match);
+        boolean isEmpty();
 
-		/**
-		 * Return true if the current context admits further search.
-		 * 
-		 * @return true if we can take more matches.
-		 */
-		boolean canChooseMore();
+        /**
+         * Notify the choice of a match and adjust the context to it.
+         * 
+         * @param match
+         * @return an index for the match in the context
+         */
+        int accept(Match match);
 
-		/**
-		 * Return the URN of the choice, another string that will enable its
-		 * reconstruction (such as a concept declaration), or null.
-		 * 
-		 * @return the chosen URN.
-		 */
-		String getUrn();
+        /**
+         * Return true if the current context admits further search.
+         * 
+         * @return true if we can take more matches.
+         */
+        boolean canChooseMore();
 
-		/**
-		 * Remove the match indexed by the passed integer.
-		 * 
-		 * @param matchIndex
-		 */
-		void remove(int matchIndex);
-	}
+        /**
+         * Return the URN of the choice, another string that will enable its
+         * reconstruction (such as a concept declaration), or null.
+         * 
+         * @return the chosen URN.
+         */
+        String getUrn();
 
-	/**
-	 * Match from query.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public interface Match {
+        /**
+         * Remove the match indexed by the passed integer.
+         * 
+         * @param matchIndex
+         */
+        void remove(int matchIndex);
+    }
 
-		public enum Type {
-			CONCEPT, OPERATOR, OBSERVATION, MODEL
-		}
+    /**
+     * Match from query.
+     * 
+     * @author Ferd
+     *
+     */
+    public interface Match {
 
-		/**
-		 * 
-		 * @return
-		 */
-		String getId();
+        public enum Type {
+            CONCEPT,
+            OPERATOR,
+            OBSERVATION,
+            MODEL
+        }
 
-		/**
-		 * 
-		 * @return
-		 */
-		String getName();
+        /**
+         * 
+         * @return
+         */
+        String getId();
 
-		/**
-		 * 
-		 * @return
-		 */
-		String getDescription();
+        /**
+         * 
+         * @return
+         */
+        String getName();
 
-		/**
-		 * 
-		 * @return
-		 */
-		int getRank();
-		
-		/**
-		 * 
-		 * @return
-		 */
-		Type getMatchType();
-		
-		/**
-		 * If {@link #getMatchType()} returned {@link Type#CONCEPT}, return the full type of
-		 * the concept.
-		 * 
-		 * @return
-		 */
-		Set<IKimConcept.Type> getConceptType();
-	}
+        /**
+         * 
+         * @return
+         */
+        String getDescription();
 
-	/**
-	 * Pass a search string and a context to define the possible matches.
-	 * 
-	 * @param currentTerm
-	 * @param context
-	 * @return a valid iterator for matches that will return the best matches first.
-	 *         Never null.
-	 */
-	public Iterator<Match> query(String currentTerm, Context context);
+        /**
+         * 
+         * @return
+         */
+        int getRank();
+
+        /**
+         * 
+         * @return
+         */
+        Type getMatchType();
+
+        /**
+         * If {@link #getMatchType()} returned {@link Type#CONCEPT}, return the full type of
+         * the concept.
+         * 
+         * @return
+         */
+        Set<IKimConcept.Type> getConceptType();
+
+        /**
+         * Named indexable fields besides name and description.
+         * 
+         * @return
+         */
+        Map<String, String> getIndexableFields();
+    }
+
+    /**
+     * Pass a search string and a context to define the possible matches.
+     * 
+     * @param currentTerm
+     * @param context
+     * @return a valid iterator for matches that will return the best matches first.
+     *         Never null.
+     */
+    public Iterator<Match> query(String currentTerm, Context context);
 }

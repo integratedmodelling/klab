@@ -432,6 +432,7 @@ public class KimValidator extends AbstractKimValidator {
             descriptor.getObservables().addAll(observables);
             descriptor.getDependencies().addAll(dependencies);
             descriptor.setInstantiator(model.isInstantiator());
+            descriptor.setDocstring(model.getDocstring());
             if ((interpretedRole != null)) {
               descriptor.setInterpreter(true);
               descriptor.setReinterpretingRole(interpretedRole.getMain());
@@ -690,6 +691,7 @@ public class KimValidator extends AbstractKimValidator {
       } else {
         KimObserver _kimObserver = new KimObserver(observation, semantics, parent);
         ret = _kimObserver;
+        ret.setDocstring(observation.getDocstring());
       }
     }
     EList<ObserveStatementBody> _observations = observation.getObservations();

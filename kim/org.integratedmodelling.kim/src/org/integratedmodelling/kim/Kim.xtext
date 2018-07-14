@@ -40,6 +40,7 @@ ModelBodyStatement:
 		 * If the observable is a single role, then concept must be the actual observable and we're reinterpreting it.
 		 */
 		 ( name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
+		 (docstring=STRING)?
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
 		 ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		 (('classified' | discretization?='discretized') ('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId))?
