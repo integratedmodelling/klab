@@ -133,7 +133,9 @@ public enum Models implements IModelService {
 	@Override
 	public void index(IModel model, IMonitor monitor) throws KlabException {
 		kbox.store(model, monitor);
-		Indexer.INSTANCE.index(model.getStatement());
+		if (!model.isPrivate()) {
+		    Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
+		}
 	}
 
 	@Override

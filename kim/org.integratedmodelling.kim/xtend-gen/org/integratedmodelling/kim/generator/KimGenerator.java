@@ -43,7 +43,11 @@ public class KimGenerator extends AbstractGenerator {
         final Throwable e = (Throwable)_t;
         String _message = e.getMessage();
         String _plus = ("PPORCO: " + _message);
-        InputOutput.<String>println(_plus);
+        String _plus_1 = (_plus + " [");
+        String _canonicalName = e.getClass().getCanonicalName();
+        String _plus_2 = (_plus_1 + _canonicalName);
+        String _plus_3 = (_plus_2 + "]");
+        InputOutput.<String>println(_plus_3);
       } else {
         throw Exceptions.sneakyThrow(_t);
       }

@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -288,8 +289,12 @@ public enum Concepts implements IConceptService {
         return (d1 < 0 || d2 < 0) ? Integer.MIN_VALUE : d1 - d2;
     }
 
-    public void index(IKimConceptStatement object, IMonitor monitor) {
-        Indexer.INSTANCE.index(object);
+    public void index(IKimConceptStatement object, String namespaceId, IMonitor monitor) {
+        if (monitor.getIdentity().getParentIdentity(IScript.class) == null) {
+            // check should be unnecessary as scripts can't declare concepts, but there may
+            // be exceptions
+            Indexer.INSTANCE.index(object, namespaceId);
+        }
     }
 
 }

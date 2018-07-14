@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -76,7 +77,10 @@ public class KimNotifier implements Kim.Notifier {
 
 		/*
 		 * these should never throw exceptions; instead they should notify any errors,
-		 * no matter how internal, through the monitor
+		 * no matter how internal, through the monitor.
+		 * 
+		 * Indexing is called only if the objects are not private, which includes anything 
+		 * in scripts.
 		 */
 		for (IKimScope statement : namespace.getChildren()) {
 
@@ -89,7 +93,7 @@ public class KimNotifier implements Kim.Notifier {
 				if (concept == null) {
 					object = null;
 				} else {
-                    Concepts.INSTANCE.index((IKimConceptStatement) statement, monitor);
+                    Concepts.INSTANCE.index((IKimConceptStatement) statement, namespace.getName(), monitor);
 				}
 			} else if (statement instanceof IKimModel) {
 				object = Model.create((IKimModel) statement, ns, monitor);
@@ -108,7 +112,7 @@ public class KimNotifier implements Kim.Notifier {
 						Observations.INSTANCE.index((IObserver) object, monitor);
 					} catch (KlabException e) {
 						monitor.error(
-								"error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
+								"error storing valid model " + ((IObserver) object).getName() + ": " + e.getMessage());
 					}
 				}
 			}

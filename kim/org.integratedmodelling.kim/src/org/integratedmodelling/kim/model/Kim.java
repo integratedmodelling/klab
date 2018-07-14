@@ -1225,4 +1225,19 @@ public enum Kim {
 		return new KimObservable(name, type);
 	}
 
+    public Type getFundamentalType(Set<Type> type) {
+
+        EnumSet<Type> t = EnumSet.copyOf(type);
+        t.retainAll(IKimConcept.DECLARABLE_TYPES);
+        if (t.size() == 1) {
+            return t.iterator().next();
+        }
+        t = EnumSet.copyOf(type);
+        t.retainAll(IKimConcept.TRAIT_TYPES);
+        if (t.size() == 1) {
+            return t.iterator().next();
+        }
+        return null;
+    }
+
 }

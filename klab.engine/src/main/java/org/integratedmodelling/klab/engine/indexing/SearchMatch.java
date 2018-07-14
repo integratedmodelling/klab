@@ -12,11 +12,12 @@ public class SearchMatch implements IIndexingService.Match {
 
     String id;
     String name;
-    String description;
+    String description = "";
     int rank;
     Type matchType;
     Map<String, String> indexableFields = new HashMap<>();
     Set<IKimConcept.Type> conceptType = EnumSet.noneOf(IKimConcept.Type.class);
+    boolean isAbstract = false;
 
     public SearchMatch() {
     }
@@ -70,7 +71,7 @@ public class SearchMatch implements IIndexingService.Match {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description == null ? "" : description;
     }
 
     public void setRank(int rank) {
@@ -87,6 +88,14 @@ public class SearchMatch implements IIndexingService.Match {
 
     public void setConceptType(Set<IKimConcept.Type> conceptType) {
         this.conceptType = conceptType;
+    }
+
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public void setAbstract(boolean isAbstract) {
+        this.isAbstract = isAbstract;
     }
 
 }

@@ -14,460 +14,459 @@ import java.util.List;
  */
 public interface IKimConcept extends IKimStatement {
 
-  /**
-   * Visitor allows traversing all concept declarations and references.
-   * 
-   */
-  public static interface Visitor {
+    /**
+     * Visitor allows traversing all concept declarations and references.
+     * 
+     */
+    public static interface Visitor {
 
-    void onAuthority(String authority, String term);
+        void onAuthority(String authority, String term);
 
-    void onDeclaration(IKimConcept declaration);
+        void onDeclaration(IKimConcept declaration);
 
-    void onReference(String conceptName, EnumSet<Type> type, IKimConcept validParent);
-  }
+        void onReference(String conceptName, EnumSet<Type> type, IKimConcept validParent);
+    }
 
-  enum Expression {
-    SINGLETON, UNION, INTERSECTION
-  }
+    enum Expression {
+        SINGLETON,
+        UNION,
+        INTERSECTION
+    }
 
-  /**
-   * Fundamental concept types for rapid classification.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  enum Type {
     /**
-     * 
-     */
-    OBSERVABLE,
-    /**
-     * 
-     */
-    QUALITY,
-    /**
-     * 
-     */
-    PROCESS,
-    /**
-     * 
-     */
-    SUBJECT,
-    /**
-     * 
-     */
-    EVENT,
-    /**
-     * 
-     */
-    RELATIONSHIP,
-    /**
-     * 
-     */
-    EXTENSIVE_PROPERTY,
-    /**
-     * 
-     */
-    INTENSIVE_PROPERTY,
-    /**
-     * 
-     */
-    TRAIT,
-    /**
-     * 
-     */
-    IDENTITY,
-    /**
-     * 
-     */
-    ATTRIBUTE,
-    /**
-     * 
-     */
-    REALM,
-    /**
-     * 
-     */
-    SUBJECTIVE,
-    /**
-     * 
-     */
-    INTERNAL,
-    /**
-     * 
-     */
-    ROLE,
-    /**
-     * 
-     */
-    DENIABLE,
-    /**
-     * 
-     */
-    CONFIGURATION,
-    /**
-     * 
-     */
-    ABSTRACT,
-    /**
-     * 
-     */
-    NOTHING,
-    /**
-     * 
-     */
-    ORDERING,
-    /**
-     * 
-     */
-    CLASS,
-    /**
-     * 
-     */
-    QUANTITY,
-    /**
-     * 
-     */
-    DOMAIN,
-    /**
-     * 
-     */
-    ENERGY,
-    /**
-     * 
-     */
-    ENTROPY,
-    /**
-     * 
-     */
-    LENGTH,
-    /**
-     * 
-     */
-    MASS,
-    /**
-     * 
-     */
-    VOLUME,
-    /**
-     * 
-     */
-    WEIGHT,
-    /**
-     * 
-     */
-    MONEY,
-    /**
-     * 
-     */
-    DURATION,
-    /**
-     * 
-     */
-    AREA,
-    /**
-     * 
-     */
-    ACCELERATION,
-    /**
-     * 
-     */
-    PRIORITY,
-    /**
-     * 
-     */
-    ELECTRIC_POTENTIAL,
-    /**
-     * 
-     */
-    CHARGE, RESISTANCE,
-    /**
-     * 
-     */
-    RESISTIVITY,
-    /**
-     * 
-     */
-    PRESSURE,
-    /**
-     * 
-     */
-    ANGLE,
-    /**
-     * 
-     */
-    VELOCITY,
-    /**
-     * 
-     */
-    TEMPERATURE,
-    /**
-     * 
-     */
-    VISCOSITY,
-    /**
-     * 
-     */
-    AGENT,
-    /**
-     * 
-     */
-    FUNCTIONAL,
-    /**
-     * 
-     */
-    STRUCTURAL,
-    /**
-     * 
-     */
-    BIDIRECTIONAL,
-    /**
-     * 
-     */
-    UNIDIRECTIONAL,
-    /**
-     * 
-     */
-    DELIBERATIVE,
-    /**
-     * 
-     */
-    INTERACTIVE,
-    /**
-     * 
-     */
-    REACTIVE,
-    /**
-     * 
-     */
-    DIRECT_OBSERVABLE,
-    /**
-     * 
-     */
-    COUNTABLE,
-    /**
-     * 
-     */
-    UNCERTAINTY,
-    /**
-     * 
-     */
-    PROBABILITY,
-    /**
-     * 
-     */
-    PROPORTION,
-    /**
-     * 
-     */
-    NUMEROSITY,
-    /**
-     * 
-     */
-    DISTANCE,
-    /**
-     * 
-     */
-    RATIO,
-    /**
-     * 
-     */
-    VALUE,
-    /**
-     * 
-     */
-    OCCURRENCE,
-    /**
-     * 
-     */
-    PRESENCE,
-    /**
-     * 
-     */
-    EXTENT,
-    /**
-     * 
-     */
-    MACRO,
-    /**
-     * 
-     */
-    AMOUNT,
-    /**
-     * 
-     */
-    ASSESSMENT,
-    /**
-     * 
-     */
-    OBSERVABILITY,
-    /**
-     * Only for concept peers of non-semantic types: this should never appear in a declared concept
-     */
-    CATEGORY
-  }
+     * Fundamental concept types for rapid classification.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    enum Type {
+        /**
+         * 
+         */
+        OBSERVABLE,
+        /**
+         * 
+         */
+        QUALITY,
+        /**
+         * 
+         */
+        PROCESS,
+        /**
+         * 
+         */
+        SUBJECT,
+        /**
+         * 
+         */
+        EVENT,
+        /**
+         * 
+         */
+        RELATIONSHIP,
+        /**
+         * 
+         */
+        EXTENSIVE_PROPERTY,
+        /**
+         * 
+         */
+        INTENSIVE_PROPERTY,
+        /**
+         * 
+         */
+        TRAIT,
+        /**
+         * 
+         */
+        IDENTITY,
+        /**
+         * 
+         */
+        ATTRIBUTE,
+        /**
+         * 
+         */
+        REALM,
+        /**
+         * 
+         */
+        SUBJECTIVE,
+        /**
+         * 
+         */
+        INTERNAL,
+        /**
+         * 
+         */
+        ROLE,
+        /**
+         * 
+         */
+        DENIABLE,
+        /**
+         * 
+         */
+        CONFIGURATION,
+        /**
+         * 
+         */
+        ABSTRACT,
+        /**
+         * 
+         */
+        NOTHING,
+        /**
+         * 
+         */
+        ORDERING,
+        /**
+         * 
+         */
+        CLASS,
+        /**
+         * 
+         */
+        QUANTITY,
+        /**
+         * 
+         */
+        DOMAIN,
+        /**
+         * 
+         */
+        ENERGY,
+        /**
+         * 
+         */
+        ENTROPY,
+        /**
+         * 
+         */
+        LENGTH,
+        /**
+         * 
+         */
+        MASS,
+        /**
+         * 
+         */
+        VOLUME,
+        /**
+         * 
+         */
+        WEIGHT,
+        /**
+         * 
+         */
+        MONEY,
+        /**
+         * 
+         */
+        DURATION,
+        /**
+         * 
+         */
+        AREA,
+        /**
+         * 
+         */
+        ACCELERATION,
+        /**
+         * 
+         */
+        PRIORITY,
+        /**
+         * 
+         */
+        ELECTRIC_POTENTIAL,
+        /**
+         * 
+         */
+        CHARGE,
+        RESISTANCE,
+        /**
+         * 
+         */
+        RESISTIVITY,
+        /**
+         * 
+         */
+        PRESSURE,
+        /**
+         * 
+         */
+        ANGLE,
+        /**
+         * 
+         */
+        VELOCITY,
+        /**
+         * 
+         */
+        TEMPERATURE,
+        /**
+         * 
+         */
+        VISCOSITY,
+        /**
+         * 
+         */
+        AGENT,
+        /**
+         * 
+         */
+        FUNCTIONAL,
+        /**
+         * 
+         */
+        STRUCTURAL,
+        /**
+         * 
+         */
+        BIDIRECTIONAL,
+        /**
+         * 
+         */
+        UNIDIRECTIONAL,
+        /**
+         * 
+         */
+        DELIBERATIVE,
+        /**
+         * 
+         */
+        INTERACTIVE,
+        /**
+         * 
+         */
+        REACTIVE,
+        /**
+         * 
+         */
+        DIRECT_OBSERVABLE,
+        /**
+         * 
+         */
+        COUNTABLE,
+        /**
+         * 
+         */
+        UNCERTAINTY,
+        /**
+         * 
+         */
+        PROBABILITY,
+        /**
+         * 
+         */
+        PROPORTION,
+        /**
+         * 
+         */
+        NUMEROSITY,
+        /**
+         * 
+         */
+        DISTANCE,
+        /**
+         * 
+         */
+        RATIO,
+        /**
+         * 
+         */
+        VALUE,
+        /**
+         * 
+         */
+        OCCURRENCE,
+        /**
+         * 
+         */
+        PRESENCE,
+        /**
+         * 
+         */
+        EXTENT,
+        /**
+         * 
+         */
+        MACRO,
+        /**
+         * 
+         */
+        AMOUNT,
+        /**
+         * 
+         */
+        ASSESSMENT,
+        /**
+         * 
+         */
+        OBSERVABILITY,
+        /**
+         * Only for concept peers of non-semantic types: this should never appear in a declared concept
+         */
+        CATEGORY
+    }
 
+    /**
+     * All declarable concept bits set. Each observable AND this must yield a set of size 1.
+     */
+    public static final EnumSet<Type> DECLARABLE_TYPES = EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT, Type.EVENT,
+            Type.CONFIGURATION, Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE, Type.REALM,
+            Type.IDENTITY, Type.ROLE, Type.ASSESSMENT);
 
-  /**
-   * All declarable concept bits set. Each observable AND this must yield a set of size 1.
-   */
-  public static final EnumSet<Type> DECLARABLE_TYPES         =
-      EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT, Type.EVENT, Type.CONFIGURATION,
-          Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE, Type.REALM,
-          Type.IDENTITY, Type.ROLE, Type.ASSESSMENT);
+    /**
+     * Qualities that are naturally inherent and should not be allowed to have explicit inherency
+     * but just context.
+     */
+    public static final EnumSet<Type> INHERENT_QUALITIES = EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE,
+            Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY);
 
-  /**
-   * Qualities that are naturally inherent and should not be allowed to have explicit inherency
-   * but just context.
-   */
-  public static final EnumSet<Type> INHERENT_QUALITIES         =
-	      EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE,
-	          Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY);
-  
-  /**
-   * All quality type bits sets (not QUALITY itself). Each quality AND this must yield a set of size
-   * 1.
-   */
-  public static final EnumSet<Type> QUALITY_TYPES            =
-      EnumSet.of(Type.CLASS, Type.QUANTITY, Type.ENERGY, Type.ENTROPY, Type.LENGTH, Type.MASS,
-          Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
-          Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY,
-          Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY,
-          Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY,
-          Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
+    /**
+     * All quality type bits sets (not QUALITY itself). Each quality AND this must yield a set of size
+     * 1.
+     */
+    public static final EnumSet<Type> QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUANTITY, Type.ENERGY, Type.ENTROPY,
+            Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
+            Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
+            Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
+            Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
 
-  /**
-   * All quality type bits sets including QUALITY itself. Each quality AND this must yield a set of
-   * size 0.
-   */
-  public static final EnumSet<Type> ALL_QUALITY_TYPES        =
-      EnumSet.of(Type.CLASS, Type.QUALITY, Type.QUANTITY, Type.ENERGY, Type.ENTROPY, Type.LENGTH,
-          Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA,
-          Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE,
-          Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE,
-          Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY,
-          Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
+    /**
+     * All quality type bits sets including QUALITY itself. Each quality AND this must yield a set of
+     * size 0.
+     */
+    public static final EnumSet<Type> ALL_QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUALITY, Type.QUANTITY,
+            Type.ENERGY, Type.ENTROPY, Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION,
+            Type.AREA, Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE,
+            Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY,
+            Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE,
+            Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
 
-  /**
-   * All qualities that are expressed through a continuous numeric state.
-   */
-  public static final EnumSet<Type> CONTINUOUS_QUALITY_TYPES =
-      EnumSet.of(Type.QUANTITY, Type.ENERGY, Type.ENTROPY, Type.LENGTH, Type.MASS, Type.VOLUME,
-          Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION, Type.PRIORITY,
-          Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
-          Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO,
-          Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE,
-          Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
+    /**
+     * All qualities that are expressed through a continuous numeric state.
+     */
+    public static final EnumSet<Type> CONTINUOUS_QUALITY_TYPES = EnumSet.of(Type.QUANTITY, Type.ENERGY, Type.ENTROPY,
+            Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
+            Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
+            Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
+            Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
 
-  /**
-   * All direct observables
-   */
-  public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES  =
-      EnumSet.of(Type.DIRECT_OBSERVABLE, Type.SUBJECT, Type.AGENT, Type.EVENT, Type.RELATIONSHIP,
-          Type.PROCESS, Type.COUNTABLE, /* FIXME ??? */Type.ABSTRACT);
+    /**
+     * All direct observables
+     */
+    public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES = EnumSet.of(Type.DIRECT_OBSERVABLE, Type.SUBJECT,
+            Type.AGENT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.COUNTABLE, /* FIXME ??? */Type.ABSTRACT);
 
-  /**
-   * All base observables
-   */
-  public final static EnumSet<Type> BASE_OBSERVABLE_TYPES    =
-      EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.QUALITY);
+    /**
+     * All base observables
+     */
+    public final static EnumSet<Type> BASE_OBSERVABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
+            Type.PROCESS, Type.QUALITY);
 
-  /**
-   * All trait type bits set (not TRAIT itself). Each trait AND this must yield a set of size 1.
-   */
-  public static final EnumSet<Type> TRAIT_TYPES              =
-      EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY);
+    /**
+     * All trait type bits set (not TRAIT itself). Each trait AND this must yield a set of size 1.
+     */
+    public static final EnumSet<Type> TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY);
 
-  /**
-   * All trait type bits set (including TRAIT itself). Each trait AND this must yield a set of size
-   * 1.
-   */
-  public static final EnumSet<Type> ALL_TRAIT_TYPES          =
-      EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY, Type.TRAIT, Type.OBSERVABILITY);
+    /**
+     * All trait type bits set (including TRAIT itself). Each trait AND this must yield a set of size
+     * 1.
+     */
+    public static final EnumSet<Type> ALL_TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY,
+            Type.TRAIT, Type.OBSERVABILITY);
 
+    /**
+     * A leaf declaration contains a name (e.g. 'elevation:Geography'); all others do not. When the
+     * name is not null, there still may be a negation or a semantic operator.
+     * 
+     * @return the concept name or null.
+     */
+    String getName();
 
-  /**
-   * A leaf declaration contains a name (e.g. 'elevation:Geography'); all others do not. When the
-   * name is not null, there still may be a negation or a semantic operator.
-   * 
-   * @return the concept name or null.
-   */
-  String getName();
+    /**
+     * The type contains all declared attributes for the concept. An empty type denotes an
+     * inconsistent concept. The k.IM validator ensures that any non-empty types are internally
+     * consistent.
+     * 
+     * @return the set of types
+     */
+    EnumSet<Type> getType();
 
-  /**
-   * The type contains all declared attributes for the concept. An empty type denotes an
-   * inconsistent concept. The k.IM validator ensures that any non-empty types are internally
-   * consistent.
-   * 
-   * @return the set of types
-   */
-  EnumSet<Type> getType();
+    /**
+     * The main observable, which must be unique. This is null in a leaf declaration, where
+     * {@link #getName()} returns a non-null value.
+     * 
+     * @return the main observable
+     */
+    IKimConcept getObservable();
 
-  /**
-   * The main observable, which must be unique. This is null in a leaf declaration, where
-   * {@link #getName()} returns a non-null value.
-   * 
-   * @return the main observable
-   */
-  IKimConcept getObservable();
+    IKimConcept getContext();
 
-  IKimConcept getContext();
+    IKimConcept getInherent();
 
-  IKimConcept getInherent();
+    IKimConcept getMotivation();
 
-  IKimConcept getMotivation();
+    IKimConcept getCausant();
 
-  IKimConcept getCausant();
+    IKimConcept getCaused();
 
-  IKimConcept getCaused();
+    IKimConcept getCompresent();
 
-  IKimConcept getCompresent();
+    IKimConcept getComparisonConcept();
 
-  IKimConcept getComparisonConcept();
+    String getAuthorityTerm();
 
-  String getAuthorityTerm();
+    String getAuthority();
 
-  String getAuthority();
+    //  IKimConcept getDownTo();
+    //
+    //  IKimConcept getByTrait();
 
-//  IKimConcept getDownTo();
-//
-//  IKimConcept getByTrait();
+    UnarySemanticOperator getObservationType();
 
-  UnarySemanticOperator getObservationType();
+    List<IKimConcept> getTraits();
 
-  List<IKimConcept> getTraits();
+    List<IKimConcept> getRoles();
 
-  List<IKimConcept> getRoles();
+    boolean isTemplate();
 
-  boolean isTemplate();
+    boolean isNegated();
 
-  boolean isNegated();
+    String getDefinition();
 
-  String getDefinition();
+    boolean is(Type type);
 
-  boolean is(Type type);
+    /**
+     * 
+     * @param visitor
+     */
+    void visit(Visitor visitor);
 
-  /**
-   * 
-   * @param visitor
-   */
-  void visit(Visitor visitor);
+    /**
+     * If {@link #getExpressionType()} returns anything other than {@link Expression#SINGLETON}, the
+     * operands are other declarations this is part of a union or intersection with.
+     * 
+     * @return the operands
+     */
+    List<IKimConcept> getOperands();
 
-  /**
-   * If {@link #getExpressionType()} returns anything other than {@link Expression#SINGLETON}, the
-   * operands are other declarations this is part of a union or intersection with.
-   * 
-   * @return the operands
-   */
-  List<IKimConcept> getOperands();
+    /**
+     * Type of expression. If anything other than {@link Expression#SINGLETON}, {@link #getOperands()}
+     * will return a non-empty list.
+     * 
+     * @return the expression type
+     */
+    Expression getExpressionType();
 
-  /**
-   * Type of expression. If anything other than {@link Expression#SINGLETON}, {@link #getOperands()}
-   * will return a non-empty list.
-   * 
-   * @return the expression type
-   */
-  Expression getExpressionType();
+    /**
+     * Get the fundamental type of this concept - one of the concrete trait or observable types, including configuration and extent.
+     * 
+     * @return
+     */
+    Type getFundamentalType();
 
 }

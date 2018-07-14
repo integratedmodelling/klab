@@ -375,7 +375,7 @@ public enum Observables implements IObservableService {
 		}
 		return type.iterator().next();
 	}
-
+	
 	@Override
 	public IConcept getRelationshipSource(IConcept relationship) {
 		Collection<IConcept> ret = getRelationshipSources(relationship);
