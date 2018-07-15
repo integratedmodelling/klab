@@ -34,6 +34,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -53,8 +54,6 @@ import javax.swing.text.Keymap;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyledDocument;
 
-import org.integratedmodelling.klab.api.services.IIndexingService;
-import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.clitool.api.Interactive;
 import org.integratedmodelling.klab.clitool.api.Interactive.CommandListener;
 import org.integratedmodelling.klab.clitool.console.CommandHistory;
@@ -66,6 +65,7 @@ import org.integratedmodelling.klab.clitool.contrib.console.util.PromptPanel;
 import org.integratedmodelling.klab.clitool.contrib.console.util.TextColor;
 import org.integratedmodelling.klab.clitool.contrib.console.util.TextColor.InvalidCharCodeException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
  * DragonConsole is a console mimic designed to give Java programmers a RTF
@@ -146,10 +146,6 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 
         void handleBackspace();
 
-        String getResult();
-
-        String getResultAndReset();
-
         /**
          * Choose the i-th match and return the string to substitute the text with.
          * 
@@ -157,6 +153,8 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
          * @return
          */
         String chooseMatch(int i);
+
+        void cancelLastMatch();
         
         /**
          * Return false if more choices can be made, which will cause the search to
@@ -164,7 +162,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
          * @return
          */
         boolean isFinished();
-        
+
     }
 
     volatile Boolean waitingForEnter = false;
@@ -468,7 +466,10 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
     private String endCommand;
     private CommandListener commandListener;
     private boolean inSearchMode;
+    private int beginLastSearchOffset;
     private int beginSearchOffset;
+    private List<String> searchMatches = new ArrayList<>();
+    private boolean previousBackspace;
 
     /**
      * Default Constructor uses all the default values.
@@ -1773,41 +1774,70 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
         if (inSearchMode) {
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 inSearchMode = false;
+                inputArea.setForeground(defaultForeground);
                 searchHandler.cancelSearch();
                 // TODO back to caret when search started
             } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 inSearchMode = false;
-                // TODO back to beginning
-                append(searchHandler.getResultAndReset());
+                inputArea.setForeground(defaultForeground);
+//                append(searchHandler.getResultAndReset());
             } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                searchHandler.handleBackspace();
-            } else if (e.getKeyChar() >= ' ' && e.getKeyChar() <= 'z') {
-                if (e.isControlDown()) {
-                    if (e.getKeyChar() >= '1' && e.getKeyChar() <= '9') {
-                        String match = searchHandler.chooseMatch(e.getKeyChar() - '0');
-                        if (match != null) {
-                            try {
-                                String text = inputArea.getText(0, beginSearchOffset);
-                                text += match;
-                                inputArea.setText(text + (searchHandler.isFinished() ? "" : " "));
-                                inputArea.setCaretPosition(text.length() + (searchHandler.isFinished() ? 0 : 1));
-                                this.beginSearchOffset = text.length() + (searchHandler.isFinished() ? 0 : 1);
-                            } catch (BadLocationException e1) {
-                                throw new KlabInternalErrorException(e1);
-                            }
-                        } else {
-                            Toolkit.getDefaultToolkit().beep();
-                        }
+                // TODO if it's the second backspace after a space and we have previous accepted matches, 
+                // remove the last match.
+                if (this.searchMatches.size() > 0 && inputArea.getText().endsWith(" ")) {
+                    this.previousBackspace = true;
+                } else if (previousBackspace && this.searchMatches.size() > 0) {
+                    searchHandler.cancelLastMatch();
+                    this.searchMatches.remove(this.searchMatches.size() - 1);
+                    String newText = StringUtils.join(this.searchMatches, ' ');
+                    String text;
+                    try {
+                        text = inputArea.getText(0, beginSearchOffset) + newText + " ";
+                    } catch (BadLocationException e1) {
+                        throw new KlabInternalErrorException(e1);
                     }
+                    inputArea.setText(text);
+                    inputArea.setCaretPosition(text.length());
+                    this.beginLastSearchOffset = text.length();
+                    previousBackspace = false;
+                    e.consume();
+                } else {
+                    searchHandler.handleBackspace();
+                }
+            } else if (e.getKeyChar() == KeyEvent.VK_TAB || (e.getKeyChar() >= ' ' && e.getKeyChar() <= 'z')) {
+
+                if (e.getKeyChar() == KeyEvent.VK_TAB
+                        || (e.isControlDown() && (e.getKeyChar() >= '1' && e.getKeyChar() <= '9'))) {
+
+                    int matchIndex = e.getKeyChar() == KeyEvent.VK_TAB ? 1 : e.getKeyChar() - '0';
+
+                    String match = searchHandler.chooseMatch(matchIndex);
+                    if (match != null) {
+                        try {
+                            this.searchMatches.add(match);
+                            String text = inputArea.getText(0, beginLastSearchOffset);
+                            text += match;
+                            inputArea.setText(text + (searchHandler.isFinished() ? "" : " "));
+                            inputArea.setCaretPosition(text.length() + (searchHandler.isFinished() ? 0 : 1));
+                            this.beginLastSearchOffset = text.length() + (searchHandler.isFinished() ? 0 : 1);
+                        } catch (BadLocationException e1) {
+                            throw new KlabInternalErrorException(e1);
+                        }
+                    } else {
+                        Toolkit.getDefaultToolkit().beep();
+                    }
+                    
                 } else if (e.getKeyChar() == ' ') {
-                  // accept previous or beep if nothing was accepted  
+                    // accept previous or beep if nothing was accepted  
                 } else {
                     searchHandler.addCharacter(e.getKeyChar());
                 }
             }
         }
 
-        if (!useInlineInput) {
+        if (!useInlineInput)
+
+        {
             if (alwaysKeepScrollBarMaxed || (!alwaysKeepScrollBarMaxed && isScrollBarAtMax)) {
                 JScrollBar vBar = consoleScrollPane.getVerticalScrollBar();
                 ignoreAdjustment = true;
@@ -1818,7 +1848,10 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
         if (searchHandler != null && e.getKeyCode() == KeyEvent.VK_S && e.isControlDown()) {
             if (!inSearchMode) {
                 inSearchMode = true;
-                beginSearchOffset = getCurrentCaretPosition();
+                this.searchMatches.clear();
+                previousBackspace = false;
+                inputArea.setForeground(INTENSE_GOLD);
+                beginSearchOffset = beginLastSearchOffset = getCurrentCaretPosition();
                 searchHandler.initializeSearch();
             }
         }

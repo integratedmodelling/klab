@@ -22,10 +22,10 @@ import org.apache.lucene.search.ReferenceManager;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObserver;
@@ -205,15 +205,23 @@ public enum Indexer {
             QueryParser parser = new QueryParser("name", analyzer);
 //            parser.setAllowLeadingWildcard(true);
             Query q = parser.parse("name:" + currentTerm + "*");
+
+            // search and report
             TopDocs docs = searcher.search(q, 9);
             ScoreDoc[] hits = docs.scoreDocs;
             for (ScoreDoc hit : hits) {
+                
                 Document document = searcher.doc(hit.doc);
+                
                 SearchMatch match = new SearchMatch();
+                
                 match.setId(document.get("id"));
                 match.setName(document.get("name"));
                 match.setDescription(document.get("description"));
                 match.setScore(hit.score);
+//                match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("mtype"))]);
+//                match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("ctype"))]);
+
                 ret.add(match);
             }
         } catch (Exception e) {

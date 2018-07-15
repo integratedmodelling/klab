@@ -143,7 +143,6 @@ public class TermConsole implements IConsole {
                         @Override
                         public void initializeSearch() {
                             context = Indexing.INSTANCE.createContext();
-                            System.out.println("ENTERING SEARCH MODE");
                         }
 
                         @Override
@@ -154,35 +153,18 @@ public class TermConsole implements IConsole {
                              * context = context.previous()
                              */
                             search();
-                            System.out.println("BACK OFF TO " + current);
-                        }
-
-                        @Override
-                        public String getResultAndReset() {
-                            String ret = current;
-                            current = "";
-                            System.out.println("ACCEPTING " + ret);
-                            context = null;
-                            return ret;
-
-                        }
-
-                        @Override
-                        public String getResult() {
-                            return current;
                         }
 
                         @Override
                         public void cancelSearch() {
                             current = "";
                             context = null;
-                            System.out.println("CANCELING SEARCH MODE");
                         }
 
                         @Override
                         public String chooseMatch(int i) {
                             if (currentMatches != null && currentMatches.size() >= i) {
-                                System.out.println("CHOOSING " + currentMatches.get(i - 1).getId());
+                                //                                System.out.println("CHOOSING " + currentMatches.get(i - 1).getId());
                                 Match ret = currentMatches.get(i - 1);
                                 context = context.accept(ret);
                                 finished = context.isEnd();
@@ -196,20 +178,23 @@ public class TermConsole implements IConsole {
                         public void addCharacter(char character) {
                             current += character;
                             search();
-                            System.out.println("CURRENT IS NOW " + current);
                         }
 
                         private void search() {
-                            if (current.length() > 2) {
+                            if (current.length() > 1) {
                                 int i = 0;
                                 currentMatches = new ArrayList<>();
                                 for (Match match : Indexer.INSTANCE.query(current, context)) {
                                     if (i == 0) {
-                                        scream("\n=====Search results ====\n");
+                                        scream("\n==== Search results for '" + current + "' ====\n");
                                     }
-                                    scream((++i) + "] " + match.getId() + " ("
-                                            + match.getDescription() + ")");
+                                    scream((++i) + "] " + match.getId() + " (" + match.getDescription() + ")");
                                     currentMatches.add(match);
+                                }
+                                if (currentMatches.size() == 0) {
+                                    scream("No matches for '" + current + "'");
+                                } else {
+                                    echo("\n");
                                 }
                             }
                         }
@@ -218,6 +203,12 @@ public class TermConsole implements IConsole {
                         public boolean isFinished() {
                             return finished;
                         }
+
+                        @Override
+                        public void cancelLastMatch() {
+                            current = "";
+                            context = context.previous();
+                       }
 
                     });
 

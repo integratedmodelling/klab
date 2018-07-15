@@ -34,6 +34,14 @@ public interface IIndexingService {
         Context accept(Match match);
 
         /**
+         * Pop the current context (which becomes invalid) and return the previous one, which becomes
+         * current.
+         * 
+         * @return
+         */
+        Context previous();
+
+        /**
          * Return true if the current context admits further search.
          * 
          * @return true if we can take more matches.

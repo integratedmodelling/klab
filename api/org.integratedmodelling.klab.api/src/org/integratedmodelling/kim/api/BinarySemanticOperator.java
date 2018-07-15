@@ -15,6 +15,7 @@ package org.integratedmodelling.kim.api;
  *
  */
 public enum BinarySemanticOperator {
+    
   // FIXME this should be eliminated in favor of a null operator. Do not use.
   NONE,
   /**
