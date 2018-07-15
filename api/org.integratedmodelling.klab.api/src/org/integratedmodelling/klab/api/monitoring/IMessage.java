@@ -45,7 +45,16 @@ public interface IMessage {
 		/**
 		 * 
 		 */
-		Notification
+		Notification,
+		/**
+		 * Search-class messages are sent by the front end to initiate or continue
+		 * incremental knowledge searches.
+		 */
+		Search,
+		/**
+		 * Query messages are sent by the back end upon receiving Search-class messages.
+		 */
+		Query
 	}
 
 	/**
@@ -65,17 +74,27 @@ public interface IMessage {
 		 * Notification-class types
 		 */
 		Debug, Info, Warning, Error,
-		
+
 		/*
 		 * Observation lifecycle
 		 */
 		NewObservation, ModifiedObservation,
-		
+
 		/*
 		 * Task lifecycle
 		 */
-		TaskStarted, TaskFinished, TaskAborted, DataflowCompiled
+		TaskStarted, TaskFinished, TaskAborted, DataflowCompiled,
 		
+		/*
+		 * Search-class types
+		 */
+		InitializeSearch, SubmitSearch, AcceptMatch, RemoveLastMatch, CancelSearch,
+		
+		/*
+		 * Query-class types
+		 */
+		QueryAccepted, QueryPerformed
+
 	}
 
 	/**
