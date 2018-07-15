@@ -2,27 +2,23 @@ package org.integratedmodelling.klab.engine.indexing;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.ControlledRealTimeReopenThread;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ReferenceManager;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -43,28 +39,14 @@ public enum Indexer {
 
     INSTANCE;
 
-    enum IndexType {
-        OPERATORS,
-        OBSERVATIONS,
-        URNS,
-        CONCEPTS,
-        IDENTITIES,
-        ATTRIBUTES,
-        REALMS,
-        SUBJECTS,
-        PROCESSES,
-        QUALITIES,
-        EVENTS,
-        RELATIONSHIPS
-    }
-
     private Directory index;
-    private Map<String, Lookup> suggesters = new HashMap<>();
     private IndexWriter writer;
     private StandardAnalyzer analyzer;
     private ReferenceManager<IndexSearcher> searcherManager;
-    ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
+    private ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
 
+    public static final int MAX_RESULT_COUNT = 9;
+    
     private Indexer() {
         try {
             this.index = new RAMDirectory(); // new MMapDirectory(Configuration.INSTANCE.getDataPath("index").toPath());
@@ -134,11 +116,13 @@ public enum Indexer {
                 for (String key : ret.getIndexableFields().keySet()) {
                     document.add(new TextField(key, ret.getIndexableFields().get(key), Store.YES));
                 }
-                // type and concepttype as ints
+                // index type and concepttype as ints
                 document.add(new IntPoint("ctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
                 document.add(new IntPoint("mtype", ret.getMatchType().ordinal()));
                 document.add(new IntPoint("abstract", ret.isAbstract() ? 1 : 0));
-
+                // ..store them 
+                document.add(new StoredField("vctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
+                document.add(new StoredField("vmtype", ret.getMatchType().ordinal()));
                 this.writer.addDocument(document);
 
             } catch (Throwable e) {
@@ -196,33 +180,28 @@ public enum Indexer {
         return true;
     }
 
-    public Iterable<Match> query(String currentTerm, Context context) {
+    public Iterable<Match> query(String currentTerm, Context searchContext) {
+        
+        SearchContext context = (SearchContext)searchContext;
         List<Match> ret = new ArrayList<>();
         try {
             IndexSearcher searcher = searcherManager.acquire();
-            
-            // hai voglia
-            QueryParser parser = new QueryParser("name", analyzer);
-//            parser.setAllowLeadingWildcard(true);
-            Query q = parser.parse("name:" + currentTerm + "*");
-
-            // search and report
-            TopDocs docs = searcher.search(q, 9);
+            TopDocs docs = searcher.search(context.buildQuery(currentTerm, this.analyzer), MAX_RESULT_COUNT);
             ScoreDoc[] hits = docs.scoreDocs;
             for (ScoreDoc hit : hits) {
                 
                 Document document = searcher.doc(hit.doc);
                 
                 SearchMatch match = new SearchMatch();
-                
                 match.setId(document.get("id"));
                 match.setName(document.get("name"));
                 match.setDescription(document.get("description"));
                 match.setScore(hit.score);
-//                match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("mtype"))]);
-//                match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("ctype"))]);
-
+                match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("vmtype"))]);
+                match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
+                
                 ret.add(match);
+                
             }
         } catch (Exception e) {
             throw new KlabIOException(e);

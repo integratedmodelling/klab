@@ -26,7 +26,7 @@ public interface IIndexingService {
         boolean isEmpty();
 
         /**
-         * Notify the choice of a match and adjust the context to it.
+         * Notify the choice of a match and return a new search context that can match anything after it.
          * 
          * @param match
          * @return the next context after accepting the choice. 
@@ -42,9 +42,9 @@ public interface IIndexingService {
         Context previous();
 
         /**
-         * Return true if the current context admits further search.
+         * Return true if the current context does not admit further search.
          * 
-         * @return true if we can take more matches.
+         * @return true if we cannot take more matches.
          */
         boolean isEnd();
 
@@ -55,13 +55,6 @@ public interface IIndexingService {
          * @return the chosen URN.
          */
         String getUrn();
-
-        /**
-         * Remove the match indexed by the passed integer.
-         * 
-         * @param matchIndex
-         */
-        void remove(int matchIndex);
 
         /**
          * True if context is not in error, i.e. can produce a valid match.

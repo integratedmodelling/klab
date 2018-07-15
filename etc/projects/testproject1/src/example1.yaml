@@ -1,0 +1,24 @@
+# Documentation for namespace XXX
+# Automatically maintained by k.LAB
+# Do not edit by hand
+# Also, don't take this seriously - probably won't be used
+references:
+    villa2010: This is the Villa2010 reference. Can also be defined at the higher level.
+    
+elevation-contextualizer:
+  definition:
+    methods: |
+      This could be the text to use for documentation in the methods section at initialization. Could use @tags and [expressions].
+      Can span as many lines as required.
+    limitations: |
+      Text for the limitations section.
+  events:
+    behavior-Curse: |
+      results: |
+        This is the text that is added to the result section if a behavior:Curse event artifact exists
+    each-behavior-Curse:
+      results: |
+        This is the text added every time a curse happens  
+  references:
+    villa2011: This is the Villa2010 reference. Can also be defined at the higher level.
+    
