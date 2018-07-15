@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab;
 
-import java.util.Iterator;
-
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.indexing.SearchContext;
@@ -20,7 +18,7 @@ public enum Indexing implements IIndexingService {
 	}
 	
 	@Override
-	public Iterator<Match> query(String currentTerm, Context context) {
+	public Iterable<Match> query(String currentTerm, Context context) {
 		return Indexer.INSTANCE.query(currentTerm, (SearchContext)context);
 	}
 

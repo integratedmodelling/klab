@@ -28,7 +28,7 @@ public class SearchContext implements IIndexingService.Context {
 	@Override
 	public SearchContext accept(Match match) {
 		accepted.add(match);
-		return null; // new context with this as parent, may be end, and constraints for the next match
+		return this; // TODO new context with this as parent, may be end, and constraints for the next match
 	}
 	
 	@Override

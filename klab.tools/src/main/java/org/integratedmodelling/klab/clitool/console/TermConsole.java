@@ -21,9 +21,12 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.clitool.console;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Indexing;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
@@ -31,272 +34,327 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IIndexingService;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsole.SearchHandler;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsoleFrame;
+import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 
 public class TermConsole implements IConsole {
 
-	DragonConsoleFrame terminal;
+    DragonConsoleFrame terminal;
 
-	@Override
-	public void grabCommandLine(String prompt, String endCommand, CommandListener listener) {
-		terminal.console.grabCommandLine(prompt, endCommand, listener);
-	}
+    @Override
+    public void grabCommandLine(String prompt, String endCommand, CommandListener listener) {
+        terminal.console.grabCommandLine(prompt, endCommand, listener);
+    }
 
-	public class Monitor implements IMonitor {
+    public class Monitor implements IMonitor {
 
-		@Override
-		public void send(Object... o) {
-			if (o != null && o.length > 0) {
-				IMessageBus bus = Klab.INSTANCE.getMessageBus();
-				if (bus != null) {
-					if (o.length == 1 && o[0] instanceof IMessage) {
-						bus.post((IMessage) o[0]);
-					} else {
-						bus.post(Message.create(CliRuntime.INSTANCE.getSession().getId(), o));
-					}
-				}
-			}
-		}
+        @Override
+        public void send(Object... o) {
+            if (o != null && o.length > 0) {
+                IMessageBus bus = Klab.INSTANCE.getMessageBus();
+                if (bus != null) {
+                    if (o.length == 1 && o[0] instanceof IMessage) {
+                        bus.post((IMessage) o[0]);
+                    } else {
+                        bus.post(Message.create(CliRuntime.INSTANCE.getSession().getId(), o));
+                    }
+                }
+            }
+        }
 
-		@Override
-		public void info(Object... info) {
-			TermConsole.this.info(NotificationUtils.getMessage(info), null);
-		}
+        @Override
+        public void info(Object... info) {
+            TermConsole.this.info(NotificationUtils.getMessage(info), null);
+        }
 
-		@Override
-		public void warn(Object... o) {
-			TermConsole.this.warning(NotificationUtils.getMessage(o));
-		}
+        @Override
+        public void warn(Object... o) {
+            TermConsole.this.warning(NotificationUtils.getMessage(o));
+        }
 
-		@Override
-		public void error(Object... o) {
-			TermConsole.this.error(NotificationUtils.getMessage(o));
-		}
+        @Override
+        public void error(Object... o) {
+            TermConsole.this.error(NotificationUtils.getMessage(o));
+        }
 
-		@Override
-		public void debug(Object... o) {
-			TermConsole.this.debug(NotificationUtils.getMessage(o));
-		}
+        @Override
+        public void debug(Object... o) {
+            TermConsole.this.debug(NotificationUtils.getMessage(o));
+        }
 
-		@Override
-		public IIdentity getIdentity() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public IIdentity getIdentity() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public boolean hasErrors() {
-			// TODO Auto-generated method stub
-			return false;
-		}
+        @Override
+        public boolean hasErrors() {
+            // TODO Auto-generated method stub
+            return false;
+        }
 
-		@Override
-		public boolean isInterrupted() {
-			return false;
-		}
+        @Override
+        public boolean isInterrupted() {
+            return false;
+        }
 
-	}
+    }
 
-	public void start(CliStartupOptions options) throws Exception {
+    public void start(CliStartupOptions options) throws Exception {
 
-		try {
-			javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-				@Override
-				public void run() {
-					String buildInfo = "";
-					if (!Version.VERSION_BUILD.equals("VERSION_BUILD")) {
-						buildInfo = " build " + Version.VERSION_BUILD + " (" + Version.VERSION_BRANCH + " "
-								+ Version.VERSION_DATE + ")";
-					}
-					terminal = new DragonConsoleFrame("k.LAB v" + Version.CURRENT + buildInfo, false,
-							new CommandHistory());
-					terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
-					terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
-					terminal.console.append("Work directory: " + Klab.INSTANCE.getWorkDirectory() + "\n");
-					terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
-					terminal.setVisible(true);
-					terminal.console.setPrompt(">> ");
-					terminal.console.setSearchHandler(new SearchHandler() {
-						
-						String current = "";
-						
-						@Override
-						public void initializeSearch() {
-							System.out.println("ENTERING SEARCH MODE");
-						}
-						
-						@Override
-						public void handleBackspace() {
-							current = current.isEmpty()? current : current.substring(0, current.length() -1);
-							System.out.println("BACK OFF TO " + current);
-						}
-						
-						@Override
-						public String getResultAndReset() {
-							String ret = current;
-							current = "";
-							System.out.println("ACCEPTING " + ret);
-							return ret;
-							
-						}
-						
-						@Override
-						public String getResult() {
-							return current;
-						}
-						
-						@Override
-						public void cancelSearch() {
-							current = "";
-							System.out.println("CANCELING SEARCH MODE");
-						}
-						
-						@Override
-						public void addCharacter(char character) {
-							current += character;
-							System.out.println("CURRENT IS NOW " + current);
-						}
-					});
+        try {
+            javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
 
-					// redirect notifications to console
-					Logging.INSTANCE.setDebugWriter((message) -> debug(message));
-					Logging.INSTANCE.setInfoWriter((message) -> info(message, null));
-					Logging.INSTANCE.setErrorWriter((message) -> error(message));
-					Logging.INSTANCE.setWarningWriter((message) -> warning(message));
+                @Override
+                public void run() {
+                    String buildInfo = "";
+                    if (!Version.VERSION_BUILD.equals("VERSION_BUILD")) {
+                        buildInfo = " build " + Version.VERSION_BUILD + " (" + Version.VERSION_BRANCH + " "
+                                + Version.VERSION_DATE + ")";
+                    }
+                    terminal = new DragonConsoleFrame("k.LAB v" + Version.CURRENT + buildInfo, false,
+                            new CommandHistory());
+                    terminal.console.setCommandProcessor(new CommandProcessor(TermConsole.this, new Monitor()));
+                    terminal.console.append("k.LAB command line shell v" + new Version().toString() + "\n");
+                    terminal.console.append("Work directory: " + Klab.INSTANCE.getWorkDirectory() + "\n");
+                    terminal.console.append("Enter 'help' for a list of commands; 'exit' quits.\n");
+                    terminal.setVisible(true);
+                    terminal.console.setPrompt(">> ");
+                    terminal.console.setSearchHandler(new SearchHandler() {
 
-					new Thread() {
-						@Override
-						public void run() {
-							CliRuntime.INSTANCE.initialize(TermConsole.this, options);
-							terminal.console.setCommandProcessor(CliRuntime.INSTANCE.getCommandProcessor());
-						}
-					}.start();
-				}
+                        String current = "";
+                        IIndexingService.Context context;
+                        List<Match> currentMatches;
+                        boolean finished;
 
-			});
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
+                        /*
+                         * TODO pass the begin offset (non-Javadoc)
+                         * @see org.integratedmodelling.klab.clitool.contrib.console.DragonConsole.SearchHandler#initializeSearch()
+                         */
+                        @Override
+                        public void initializeSearch() {
+                            context = Indexing.INSTANCE.createContext();
+                            System.out.println("ENTERING SEARCH MODE");
+                        }
 
-	@Override
-	public void error(Object e) {
-		if (e instanceof Throwable) {
-			/*
-			 * TODO log stack trace
-			 */
-			e = ((Throwable) e).getMessage();
-		} else {
-			e = e.toString();
-		}
-		terminal.console.append("&R-" + e + "\n");
-	}
+                        @Override
+                        public void handleBackspace() {
+                            current = current.isEmpty() ? current : current.substring(0, current.length() - 1);
+                            /*
+                             * TODO handle removal of previous context if current has become empty and we're backspacing further
+                             * context = context.previous()
+                             */
+                            search();
+                            System.out.println("BACK OFF TO " + current);
+                        }
 
-	public void debug(Object e) {
-		if (e instanceof Throwable) {
-			/*
-			 * TODO log stack trace
-			 */
-			e = ((Throwable) e).getMessage();
-		} else {
-			e = e.toString();
-		}
-		terminal.console.append("&p-" + e + "\n");
-	}
+                        @Override
+                        public String getResultAndReset() {
+                            String ret = current;
+                            current = "";
+                            System.out.println("ACCEPTING " + ret);
+                            context = null;
+                            return ret;
 
-	@Override
-	public void setPrompt(String s) {
-		terminal.console.setPrompt(s);
-	}
+                        }
 
-	@Override
-	public void warning(Object e) {
-		terminal.console.append("&D-" + e + "\n");
-	}
+                        @Override
+                        public String getResult() {
+                            return current;
+                        }
 
-	@Override
-	public void echo(Object e) {
-		terminal.console.append("&X-" + e + "\n");
-		terminal.console.repaint();
-	}
+                        @Override
+                        public void cancelSearch() {
+                            current = "";
+                            context = null;
+                            System.out.println("CANCELING SEARCH MODE");
+                        }
 
-	@Override
-	public void scream(Object e) {
-		terminal.console.append("&w-" + e + "\n");
-		terminal.console.repaint();
-	}
+                        @Override
+                        public String chooseMatch(int i) {
+                            if (currentMatches != null && currentMatches.size() >= i) {
+                                System.out.println("CHOOSING " + currentMatches.get(i - 1).getId());
+                                Match ret = currentMatches.get(i - 1);
+                                context = context.accept(ret);
+                                finished = context.isEnd();
+                                current = "";
+                                return ret.getId();
+                            }
+                            return null;
+                        }
 
-	@Override
-	public void info(Object e, String infoClass) {
+                        @Override
+                        public void addCharacter(char character) {
+                            current += character;
+                            search();
+                            System.out.println("CURRENT IS NOW " + current);
+                        }
 
-		if (e == null || terminal == null || terminal.console == null) {
-			Logging.INSTANCE.info(e);
-			return;
-		}
+                        private void search() {
+                            if (current.length() > 2) {
+                                int i = 0;
+                                currentMatches = new ArrayList<>();
+                                for (Match match : Indexer.INSTANCE.query(current, context)) {
+                                    if (i == 0) {
+                                        scream("\n=====Search results ====\n");
+                                    }
+                                    scream((++i) + "] " + match.getId() + " ("
+                                            + match.getDescription() + ")");
+                                    currentMatches.add(match);
+                                }
+                            }
+                        }
 
-		String color = "&c-";
-		if (infoClass != null) {
-			switch (infoClass) {
-			case "TASK":
-				color = "&g-";
-				break;
-			case "GENERAL":
-				color = "&p-";
-				break;
-			}
-		}
+                        @Override
+                        public boolean isFinished() {
+                            return finished;
+                        }
 
-		if (terminal.console != null) {
-			terminal.console.append(color + e + "\n");
-		}
-	}
+                    });
 
-	protected void output(Object e) {
-		terminal.console.append("&w-" + e + "\n");
-	}
+                    // redirect notifications to console
+                    Logging.INSTANCE.setDebugWriter((message) -> debug(message));
+                    Logging.INSTANCE.setInfoWriter((message) -> info(message, null));
+                    Logging.INSTANCE.setErrorWriter((message) -> error(message));
+                    Logging.INSTANCE.setWarningWriter((message) -> warning(message));
 
-	@Override
-	public void outputResult(String input, Object ret) {
+                    new Thread() {
 
-		if (ret == null) {
-			return;
-		}
+                        @Override
+                        public void run() {
+                            CliRuntime.INSTANCE.initialize(TermConsole.this, options);
+                            terminal.console.setCommandProcessor(CliRuntime.INSTANCE.getCommandProcessor());
+                        }
+                    }.start();
+                }
 
-		if (ret instanceof Map) {
-			for (Object o : ((Map<?, ?>) ret).keySet()) {
-				output(o + " = " + ((Map<?, ?>) ret).get(o));
-			}
-		} else if (ret instanceof Iterable) {
-			for (Iterator<?> it = ((Iterable<?>) ret).iterator(); it.hasNext();) {
-				output(it.next());
-			}
-		} else {
-			output(ret);
-		}
-	}
+            });
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+    }
 
-	@Override
-	public void reportCommandResult(String input, boolean ok) {
-		// add to history
-		if (terminal.console.getHistory() != null) {
-			terminal.console.getHistory().append(input);
-		}
-	}
+    @Override
+    public void error(Object e) {
+        if (e instanceof Throwable) {
+            /*
+             * TODO log stack trace
+             */
+            e = ((Throwable) e).getMessage();
+        } else {
+            e = e.toString();
+        }
+        terminal.console.append("&R-" + e + "\n");
+    }
 
-	@Override
-	public void enableInput() {
-		terminal.console.setEnabled(true);
-	}
+    public void debug(Object e) {
+        if (e instanceof Throwable) {
+            /*
+             * TODO log stack trace
+             */
+            e = ((Throwable) e).getMessage();
+        } else {
+            e = e.toString();
+        }
+        terminal.console.append("&p-" + e + "\n");
+    }
 
-	@Override
-	public void disableInput() {
-		terminal.console.setEnabled(false);
-	}
+    @Override
+    public void setPrompt(String s) {
+        terminal.console.setPrompt(s);
+    }
+
+    @Override
+    public void warning(Object e) {
+        terminal.console.append("&D-" + e + "\n");
+    }
+
+    @Override
+    public void echo(Object e) {
+        terminal.console.append("&X-" + e + "\n");
+        terminal.console.repaint();
+    }
+
+    @Override
+    public void scream(Object e) {
+        terminal.console.append("&w-" + e + "\n");
+        terminal.console.repaint();
+    }
+
+    @Override
+    public void info(Object e, String infoClass) {
+
+        if (e == null || terminal == null || terminal.console == null) {
+            Logging.INSTANCE.info(e);
+            return;
+        }
+
+        String color = "&c-";
+        if (infoClass != null) {
+            switch (infoClass) {
+            case "TASK":
+                color = "&g-";
+                break;
+            case "GENERAL":
+                color = "&p-";
+                break;
+            }
+        }
+
+        if (terminal.console != null) {
+            terminal.console.append(color + e + "\n");
+        }
+    }
+
+    protected void output(Object e) {
+        terminal.console.append("&w-" + e + "\n");
+    }
+
+    @Override
+    public void outputResult(String input, Object ret) {
+
+        if (ret == null) {
+            return;
+        }
+
+        if (ret instanceof Map) {
+            for (Object o : ((Map<?, ?>) ret).keySet()) {
+                output(o + " = " + ((Map<?, ?>) ret).get(o));
+            }
+        } else if (ret instanceof Iterable) {
+            for (Iterator<?> it = ((Iterable<?>) ret).iterator(); it.hasNext();) {
+                output(it.next());
+            }
+        } else {
+            output(ret);
+        }
+    }
+
+    @Override
+    public void reportCommandResult(String input, boolean ok) {
+        // add to history
+        if (terminal.console.getHistory() != null) {
+            terminal.console.getHistory().append(input);
+        }
+    }
+
+    @Override
+    public void enableInput() {
+        terminal.console.setEnabled(true);
+    }
+
+    @Override
+    public void disableInput() {
+        terminal.console.setEnabled(false);
+    }
 
 }

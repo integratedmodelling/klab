@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.engine.indexing;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -13,26 +14,27 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.ControlledRealTimeReopenThread;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ReferenceManager;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SearcherManager;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.store.RAMDirectory;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -65,7 +67,7 @@ public enum Indexer {
 
     private Indexer() {
         try {
-            this.index = new MMapDirectory(Configuration.INSTANCE.getDataPath("index").toPath());
+            this.index = new RAMDirectory(); // new MMapDirectory(Configuration.INSTANCE.getDataPath("index").toPath());
             this.analyzer = new StandardAnalyzer();
             IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
             this.writer = new IndexWriter(index, config);
@@ -86,18 +88,13 @@ public enum Indexer {
         }
     }
 
-    public Map<String, MatchIterator> indexNetwork() {
-        Map<String, MatchIterator> ret = new HashMap<>();
-        return ret;
-    }
-
     public Match index(IKimStatement object, String namespaceId) {
         SearchMatch ret = null;
         if (object instanceof IKimConceptStatement) {
 
             ret = new SearchMatch(Match.Type.CONCEPT, ((IKimConceptStatement) object).getType());
             ret.setDescription(((IKimConceptStatement) object).getDocstring());
-            ret.setId(((IKimConceptStatement) object).getName());
+            ret.setId(namespaceId + ":" + ((IKimConceptStatement) object).getName());
             ret.setName(((IKimConceptStatement) object).getName());
 
             // concept that 'equals' something should index its definition with high weight
@@ -199,14 +196,29 @@ public enum Indexer {
         return true;
     }
 
-    public Iterator<Match> query(String currentTerm, SearchContext context) {
+    public Iterable<Match> query(String currentTerm, Context context) {
+        List<Match> ret = new ArrayList<>();
         try {
             IndexSearcher searcher = searcherManager.acquire();
-            Query q = new TermQuery(new Term("counter", "1"));
-            TopDocs docs = searcher.search(q, 10);
-        } catch (IOException e) {
+            
+            // hai voglia
+            QueryParser parser = new QueryParser("name", analyzer);
+//            parser.setAllowLeadingWildcard(true);
+            Query q = parser.parse("name:" + currentTerm + "*");
+            TopDocs docs = searcher.search(q, 9);
+            ScoreDoc[] hits = docs.scoreDocs;
+            for (ScoreDoc hit : hits) {
+                Document document = searcher.doc(hit.doc);
+                SearchMatch match = new SearchMatch();
+                match.setId(document.get("id"));
+                match.setName(document.get("name"));
+                match.setDescription(document.get("description"));
+                match.setScore(hit.score);
+                ret.add(match);
+            }
+        } catch (Exception e) {
             throw new KlabIOException(e);
         }
-        return null;
+        return ret;
     }
 }

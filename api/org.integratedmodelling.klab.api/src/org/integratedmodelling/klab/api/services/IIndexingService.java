@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.api.services;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,7 +100,7 @@ public interface IIndexingService {
          * 
          * @return
          */
-        int getRank();
+        float getScore();
 
         /**
          * 
@@ -133,5 +132,5 @@ public interface IIndexingService {
      * @return a valid iterator for matches that will return the best matches first.
      *         Never null.
      */
-    public Iterator<Match> query(String currentTerm, Context context);
+    public Iterable<Match> query(String currentTerm, Context context);
 }

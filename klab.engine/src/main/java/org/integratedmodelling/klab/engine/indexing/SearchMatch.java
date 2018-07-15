@@ -13,7 +13,7 @@ public class SearchMatch implements IIndexingService.Match {
     String id;
     String name;
     String description = "";
-    int rank;
+    float score;
     Type matchType;
     Map<String, String> indexableFields = new HashMap<>();
     Set<IKimConcept.Type> conceptType = EnumSet.noneOf(IKimConcept.Type.class);
@@ -43,8 +43,8 @@ public class SearchMatch implements IIndexingService.Match {
     }
 
     @Override
-    public int getRank() {
-        return rank;
+    public float getScore() {
+        return score;
     }
 
     @Override
@@ -74,8 +74,8 @@ public class SearchMatch implements IIndexingService.Match {
         this.description = description == null ? "" : description;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
+    public void setScore(float score) {
+        this.score = score;
     }
 
     public void setMatchType(Type matchType) {

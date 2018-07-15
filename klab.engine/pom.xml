@@ -98,6 +98,12 @@
 			<artifactId>lucene-spatial</artifactId>
 			<version>7.4.0</version>
 		</dependency>
+		<!-- query parser is just for testing at the moment -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>7.4.0</version>
+		</dependency>
 
 		<!-- JUNG for network analysis, generation and I/O. Visualization only 
 			included in test scope. -->
