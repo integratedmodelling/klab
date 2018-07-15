@@ -88,7 +88,7 @@ public enum KeyManager {
 
 		if (keyPair == null) {
 
-			Logging.INSTANCE.info("generating server key pair and storing certificate");
+			Logging.INSTANCE.info("generating server security keys");
 
 			keyPair = generateKeyPair();
 			try {

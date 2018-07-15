@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
+import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -30,7 +30,7 @@ public class Hub {
 	int port = IConfigurationService.DEFAULT_HUB_PORT;
 	private ConfigurableApplicationContext context;
 	private String contextPath = "/klab";
-	private AuthenticationManager authManager;
+	private HubAuthenticationManager authManager;
 	private ICertificate certificate;
 
 	public Hub(IHubStartupOptions options, ICertificate certificate) {
@@ -87,7 +87,7 @@ public class Hub {
 			SpringApplication app = new SpringApplication(HubApplication.class);
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());
-			this.authManager = this.context.getBean(AuthenticationManager.class);
+			this.authManager = this.context.getBean(HubAuthenticationManager.class);
 			this.authManager.authenticate(options, this.certificate);
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(

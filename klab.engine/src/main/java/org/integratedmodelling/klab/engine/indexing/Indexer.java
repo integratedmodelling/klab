@@ -13,6 +13,14 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.ControlledRealTimeReopenThread;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ReferenceManager;
+import org.apache.lucene.search.SearcherManager;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
@@ -24,6 +32,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -51,6 +60,8 @@ public enum Indexer {
     private Map<String, Lookup> suggesters = new HashMap<>();
     private IndexWriter writer;
     private StandardAnalyzer analyzer;
+    private ReferenceManager<IndexSearcher> searcherManager;
+    ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
 
     private Indexer() {
         try {
@@ -58,6 +69,18 @@ public enum Indexer {
             this.analyzer = new StandardAnalyzer();
             IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
             this.writer = new IndexWriter(index, config);
+
+            this.searcherManager = new SearcherManager(writer, true, true, null);
+
+            /**
+            * Thread supporting near-realtime index background refresh
+            */
+            nrtReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(writer, searcherManager, 1.0, 0.1);
+            nrtReopenThread.setName("NRT Reopen Thread");
+            nrtReopenThread.setPriority(Math.min(Thread.currentThread().getPriority() + 2, Thread.MAX_PRIORITY));
+            nrtReopenThread.setDaemon(true);
+            nrtReopenThread.start();
+
         } catch (IOException e) {
             throw new KlabIOException(e);
         }
@@ -120,7 +143,7 @@ public enum Indexer {
                 document.add(new IntPoint("abstract", ret.isAbstract() ? 1 : 0));
 
                 this.writer.addDocument(document);
-                
+
             } catch (Throwable e) {
                 throw new KlabInternalErrorException(e);
             }
@@ -129,7 +152,42 @@ public enum Indexer {
         return ret;
     }
 
+    public void commitChanges() {
+        try {
+            this.writer.commit();
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+    }
+    
+    public void updateNamespace(INamespace namespace) {
+        
+        Thread writerThread = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    // delete everything within namespace
+                    // reindex namespace
+//                    for (int i = 0; i < 100000; ++i) {
+//                        Document doc = new Document();
+//                        doc.add(new LongPoint("time", System.currentTimeMillis()));
+//                        doc.add(new StringField("counter", "" + i, Field.Store.YES));
+//                        writer.addDocument(doc);
+//                        searcherManager.maybeRefresh();
+//                        Thread.sleep(100);
+//                    }
+//                    writer.commit();
+                } catch (Exception e) {
+                    throw new KlabIOException(e);
+                }
+            }
+        };
+        writerThread.start();
+    }
+
     public boolean ensureClosed() {
+        nrtReopenThread.close();
         if (this.writer.isOpen()) {
             try {
                 this.writer.close();
@@ -142,7 +200,13 @@ public enum Indexer {
     }
 
     public Iterator<Match> query(String currentTerm, SearchContext context) {
-        // TODO Auto-generated method stub
+        try {
+            IndexSearcher searcher = searcherManager.acquire();
+            Query q = new TermQuery(new Term("counter", "1"));
+            TopDocs docs = searcher.search(q, 10);
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
         return null;
     }
 }

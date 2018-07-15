@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
+import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeReference;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class NetworkManager {
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	HubAuthenticationManager hubAuthenticationManager;
 
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
@@ -28,10 +28,10 @@ public class NetworkManager {
 	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
-			ret.add(createNodeReference(node, authenticationManager.getHubReference(), true));
+			ret.add(createNodeReference(node, hubAuthenticationManager.getHubReference(), true));
 		}
 		for (INodeIdentity node : offlineNodes) {
-			ret.add(createNodeReference(node, authenticationManager.getHubReference(), false));
+			ret.add(createNodeReference(node, hubAuthenticationManager.getHubReference(), false));
 		}
 		return ret;
 	}
@@ -43,7 +43,7 @@ public class NetworkManager {
 		ret.setId(node.getName());
 		ret.setOnline(isOnline);
 		ret.getUrls().addAll(node.getUrls());
-		ret.setPartner(authenticationManager.getHubReference().getPartner());
+		ret.setPartner(hubAuthenticationManager.getHubReference().getPartner());
 
 		// TODO more
 

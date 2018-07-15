@@ -1,24 +1,34 @@
 package org.integratedmodelling.klab.engine.indexing;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match.Type;
 
 public class SearchContext implements IIndexingService.Context {
 
 	private List<Match> accepted = new ArrayList<>();
-	Set<IKimConcept.Type> typeFilter = EnumSet.noneOf(IKimConcept.Type.class);
+	// these are in OR - anything matching any of these is acceptable
+	private List<Constraint> constraints = new ArrayList<>();
+	
+	class Condition {
+	    
+	}
+	
+	class Constraint {
+	    
+	    // these are in AND
+	    List<Condition> conditions = new ArrayList<>();
+	    Type type;
+	    
+	}
 	
 	@Override
-	public int accept(Match match) {
+	public SearchContext accept(Match match) {
 		accepted.add(match);
-		resetFilters();
-		return accepted.size() - 1;
+		return null; // new context with this as parent, may be end, and constraints for the next match
 	}
 	
 	@Override
@@ -27,18 +37,25 @@ public class SearchContext implements IIndexingService.Context {
 		resetFilters();
 	}
 	
+	@Override
+	public boolean isEnd() {
+	    return false;
+	}
+	
+	@Override
+	public boolean isConsistent() {
+	    return false;
+	}
+	
+	public SearchContext cancel() {
+	    return null;
+	}
 	
 	private void resetFilters() {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public boolean canChooseMore() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public String getUrn() {
 		// TODO Auto-generated method stub

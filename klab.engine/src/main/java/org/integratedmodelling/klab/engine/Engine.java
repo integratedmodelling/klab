@@ -364,6 +364,9 @@ public class Engine extends Server implements IEngine, UserDetails {
                 scheduler.shutdownNow();
             }
         }
+        
+        // shutdown the indexer
+        Indexer.INSTANCE.commitChanges();
 
         // shutdown the runtime
         Klab.INSTANCE.getRuntimeProvider().shutdown();
@@ -529,10 +532,7 @@ public class Engine extends Server implements IEngine, UserDetails {
             Logging.INSTANCE.error(e);
             ret = false;
         } finally {
-            /*
-            * ensure index is closed
-            */
-            Indexer.INSTANCE.ensureClosed();
+            Indexer.INSTANCE.commitChanges();
         }
 
         return ret;

@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class AuthenticationManager {
+public class HubAuthenticationManager {
 
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
 	private static final String ENGINE_AUDIENCE = "engine";
@@ -74,7 +74,7 @@ public class AuthenticationManager {
 	Client client = Client.create();
 	private Partner partner;
 
-	public AuthenticationManager() {
+	public HubAuthenticationManager() {
 
 		for (String test : new Reflections(new ResourcesScanner()).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
@@ -227,7 +227,7 @@ public class AuthenticationManager {
 	}
 
 	/**
-	 * Read our own certificate and set the necessary permissions
+	 * Read our own certificate and set the necessary permissions.
 	 * 
 	 * @param certificate
 	 */
@@ -253,8 +253,7 @@ public class AuthenticationManager {
 
 		if (certificate.getProperty(ICertificate.KEY_SERVER) != null) {
 			/*
-			 * TODO if we have a parent hub, handshake and link its nodes in the network
-			 * manager.
+			 * TODO if we have a parent hub, handshake so it can serve our nodes.
 			 */
 		}
 

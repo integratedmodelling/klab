@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.hub.authentication.AuthenticationManager;
+import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.authentication.GroupManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.security.KeyManager;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	HubAuthenticationManager hubAuthenticationManager;
 
 	@Autowired
 	NetworkManager networkManager;
@@ -46,7 +46,7 @@ public class AuthenticationController {
 	public ResponseEntity<?> authenticateEngine(@RequestBody EngineAuthenticationRequest request,
 			HttpServletRequest httpRequest) {
 
-		EngineUser user = authenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
+		EngineUser user = hubAuthenticationManager.authenticateEngineCertificate(request, httpRequest.getLocalAddr());
 
 		if (user != null) {
 
@@ -54,7 +54,7 @@ public class AuthenticationController {
 			 * this matches the user to a persistent token signed by this hub and ensures
 			 * all nodes are aware of the user.
 			 */
-			user = authenticationManager.authorizeUser(user);
+			user = hubAuthenticationManager.authorizeUser(user);
 
 			/*
 			 * good enough for now. True auth must unencrypt and validate the unencrypted
@@ -74,7 +74,7 @@ public class AuthenticationController {
 			 */
 
 			return new ResponseEntity<EngineAuthenticationResponse>(
-					new EngineAuthenticationResponse(authenticatedIdentity, authenticationManager.getHubReference(),
+					new EngineAuthenticationResponse(authenticatedIdentity, hubAuthenticationManager.getHubReference(),
 							networkManager.getNodes(user.getGroups())),
 					HttpStatus.OK);
 		}
@@ -86,7 +86,7 @@ public class AuthenticationController {
 	public ResponseEntity<?> authenticateNode(@RequestBody NodeAuthenticationRequest request,
 			HttpServletRequest httpRequest) {
 
-		INodeIdentity node = authenticationManager.authenticateNodeCertificate(request, httpRequest.getLocalAddr());
+		INodeIdentity node = hubAuthenticationManager.authenticateNodeCertificate(request, httpRequest.getLocalAddr());
 
 		if (node != null) {
 
@@ -106,10 +106,10 @@ public class AuthenticationController {
 			Logging.INSTANCE.info("authorized pre-installed node " + node.getName());
 
 			NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
-					authenticationManager.getHubReference().getId(), groupManager.getGroups(),
+					hubAuthenticationManager.getHubReference().getId(), groupManager.getGroups(),
 					KeyManager.INSTANCE.getEncodedPublicKey());
 
-			networkManager.notifyAuthorizedNode(node, authenticationManager.getHubReference(), true);
+			networkManager.notifyAuthorizedNode(node, hubAuthenticationManager.getHubReference(), true);
 
 			return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);
 		}

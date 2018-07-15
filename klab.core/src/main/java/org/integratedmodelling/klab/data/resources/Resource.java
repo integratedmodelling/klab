@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.data.resources;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -74,6 +75,9 @@ public class Resource implements IResource {
 	List<INotification> notifications = new ArrayList<>();
 	String projectName;
 
+	// folder where all the resource files were uploaded, only for the publisher
+	File uploadFolder = null;
+	
 	public Resource(ResourceReference reference) {
 		this.urn = reference.getUrn();
 		this.version = Version.create(reference.getVersion());
@@ -223,6 +227,17 @@ public class Resource implements IResource {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Set the upload folder
+	 * 
+	 * @param uploadFolder
+	 * @return
+	 */
+	public Resource in(File uploadFolder) {
+	    this.uploadFolder = uploadFolder;
+	    return this;
 	}
 
 	public void validate(IResourceService resourceService) {

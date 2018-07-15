@@ -7,8 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.integratedmodelling.klab.node.auth.AuthenticationToken;
-import org.integratedmodelling.klab.node.auth.NodeAuth;
+import org.integratedmodelling.klab.node.auth.EngineAuthorization;
+import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +26,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String tokenString = req.getHeader(HttpHeaders.AUTHORIZATION);
         if (tokenString != null) {
             try {
-                AuthenticationToken token = NodeAuth.INSTANCE.validateJwt(tokenString);
+                EngineAuthorization token = NodeAuthenticationManager.INSTANCE.validateJwt(tokenString);
                 if (token != null && token.isAuthenticated()) {
                     SecurityContextHolder.getContext().setAuthentication(token);
                 }

@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.node.auth.NodeAuth;
+import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -37,7 +37,7 @@ public class Node {
 
 	public Node(INodeStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
-		this.owner = NodeAuth.INSTANCE.authenticate(certificate, options);
+		this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, options);
 		// in engine: setRootIdentity(this.owner);
 	}
 

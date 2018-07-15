@@ -30,16 +30,16 @@ public interface IIndexingService {
          * Notify the choice of a match and adjust the context to it.
          * 
          * @param match
-         * @return an index for the match in the context
+         * @return the next context after accepting the choice. 
          */
-        int accept(Match match);
+        Context accept(Match match);
 
         /**
          * Return true if the current context admits further search.
          * 
          * @return true if we can take more matches.
          */
-        boolean canChooseMore();
+        boolean isEnd();
 
         /**
          * Return the URN of the choice, another string that will enable its
@@ -55,6 +55,13 @@ public interface IIndexingService {
          * @param matchIndex
          */
         void remove(int matchIndex);
+
+        /**
+         * True if context is not in error, i.e. can produce a valid match.
+         * 
+         * @return true if consistent
+         */
+        boolean isConsistent();
     }
 
     /**

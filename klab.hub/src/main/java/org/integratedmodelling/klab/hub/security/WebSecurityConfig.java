@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	};
 	
 	/**
-	 * this is necessary so that AuthenticationManager injection points can be
+	 * this is necessary so that HubAuthenticationManager injection points can be
 	 * populated.
 	 */
 	@Bean
