@@ -1782,7 +1782,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
                 inputArea.setForeground(defaultForeground);
 //                append(searchHandler.getResultAndReset());
             } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                // TODO if it's the second backspace after a space and we have previous accepted matches, 
+                // if it's the second backspace after a space and we have previous accepted matches, 
                 // remove the last match.
                 if (this.searchMatches.size() > 0 && inputArea.getText().endsWith(" ")) {
                     this.previousBackspace = true;
@@ -1792,7 +1792,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
                     String newText = StringUtils.join(this.searchMatches, ' ');
                     String text;
                     try {
-                        text = inputArea.getText(0, beginSearchOffset) + newText + " ";
+                        text = inputArea.getText(0, beginSearchOffset) + newText + (newText.isEmpty() ? "" : " ");
                     } catch (BadLocationException e1) {
                         throw new KlabInternalErrorException(e1);
                     }
