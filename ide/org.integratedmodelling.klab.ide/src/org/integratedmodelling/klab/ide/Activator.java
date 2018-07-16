@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.kim.KlabSession;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.osgi.framework.BundleContext;
 
@@ -126,6 +127,8 @@ public class Activator extends AbstractUIPlugin {
 		String sessionId = this.engineStatusMonitor.getSessionId();
 		((StompMessageBus) this.engineStatusMonitor.bus()).subscribe(sessionId, new KlabSession(sessionId));
 		System.out.println("ENGINE WENT ON");
+		// TODO remove/improve
+		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
 	}
 
 	public void stop(BundleContext context) throws Exception {

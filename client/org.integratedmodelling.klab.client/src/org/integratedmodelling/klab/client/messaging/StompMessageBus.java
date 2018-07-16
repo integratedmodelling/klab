@@ -75,8 +75,11 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
+		
 		Message message = (Message) payload;
-		System.out.println("MESS " + message);
+		
+		System.out.println(message.getClass() + "/" + message.getType() + " message from " + message.getIdentity());
+		
 		if (message.getInResponseTo() != null) {
 			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
 			if (responder != null) {
