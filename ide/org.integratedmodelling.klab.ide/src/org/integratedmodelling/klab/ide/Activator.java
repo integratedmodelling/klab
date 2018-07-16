@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -13,9 +14,13 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
+import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.ide.kim.KlabSession;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.Pair;
 import org.osgi.framework.BundleContext;
 
@@ -49,8 +54,7 @@ public class Activator extends AbstractUIPlugin {
 		Kim.INSTANCE.setValidator(new Validator() {
 
 			@Override
-			public List<Pair<String, Level>> validateFunction(IServiceCall functionCall,
-					Set<IArtifact.Type> expected) {
+			public List<Pair<String, Level>> validateFunction(IServiceCall functionCall, Set<IArtifact.Type> expected) {
 				IPrototype prototype = KimData.INSTANCE.getFunctionPrototype(functionCall.getName());
 				if (prototype != null) {
 					return prototype.validate(functionCall);
@@ -106,7 +110,7 @@ public class Activator extends AbstractUIPlugin {
 
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId);
-		
+
 		this.engineStatusMonitor.start();
 
 	}
@@ -120,10 +124,7 @@ public class Activator extends AbstractUIPlugin {
 	private void engineOn() {
 
 		String sessionId = this.engineStatusMonitor.getSessionId();
-		// TODO save to preferences if so configured
-
-		// TODO create comms channel for session
-		// TODO reassess UI
+		((StompMessageBus) this.engineStatusMonitor.bus()).subscribe(sessionId, new KlabSession(sessionId));
 		System.out.println("ENGINE WENT ON");
 	}
 
@@ -137,8 +138,20 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static Activator get() {
 		return plugin;
+	}
+
+	public void post(Object... object) {
+		if (engineStatusMonitor.isRunning()) {
+			engineStatusMonitor.bus().post(Message.create(engineStatusMonitor.getSessionId(), object));
+		}
+	}
+
+	public void post(Consumer<IMessage> responseHandler, Object... object) {
+		if (engineStatusMonitor.isRunning()) {
+			engineStatusMonitor.bus().post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
+		}
 	}
 
 }

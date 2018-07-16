@@ -25,103 +25,94 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 /**
- * A websockets-driven message bus. The messages to be exchanged should be defined in the k.IM package.
+ * A websockets-driven message bus. The messages to be exchanged should be
+ * defined in the k.IM package.
  * 
  * @author ferdinando.villa
  *
  */
 public class StompMessageBus extends StompSessionHandlerAdapter implements IMessageBus {
 
-    static String URL = "ws://localhost:8283/modeler/message";
+	static String URL = "ws://localhost:8283/modeler/message";
 
-    StompSession session;
-    String sessionId;
-//    SubscriberRegistry registry = new SubscriberRegistry();
-    Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
-    
-    public StompMessageBus(String url, String sessionId) {
-        this.sessionId = sessionId;
-        List<Transport> transports = new ArrayList<>(1);
-        transports.add(new WebSocketTransport( new StandardWebSocketClient()) );
-        WebSocketClient transport = new SockJsClient(transports);
-        WebSocketStompClient stompClient = new WebSocketStompClient(transport);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        try {
-            this.session = stompClient.connect(url, this).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	StompSession session;
+	String sessionId;
+	Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
+	Map<String, Object> subscribers = Collections.synchronizedMap(new HashMap<>());
+	Reactor reactor = new Reactor();
 
-    @Override
-    public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-        this.session = session;
-        session.subscribe("/message/" + sessionId, this);
-    }
+	public StompMessageBus(String url, String sessionId) {
+		this.sessionId = sessionId;
+		List<Transport> transports = new ArrayList<>(1);
+		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
+		WebSocketClient transport = new SockJsClient(transports);
+		WebSocketStompClient stompClient = new WebSocketStompClient(transport);
+		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+		try {
+			this.session = stompClient.connect(url, this).get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Override
-    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
-            Throwable exception) {
-        // TODO
-        System.err.println("Got an exception: " + exception.getMessage());
-    }
+	@Override
+	public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+		this.session = session;
+		session.subscribe("/message/" + sessionId, this);
+	}
 
-    @Override
-    public Type getPayloadType(StompHeaders headers) {
-        return Message.class;
-    }
+	@Override
+	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
+			Throwable exception) {
+		// TODO
+		System.err.println("Got an exception: " + exception.getMessage());
+	}
 
-    @Override
-    public void handleFrame(StompHeaders headers, Object payload) {
-        Message message = (Message) payload;
-        System.out.println("MESS " + message);
-        if (message.getInResponseTo() != null) {
-        	Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
-            if (responder != null) {
-                responder.accept(message);
-                return;
-            }
-        }
-//        for (Receiver receiver : registry.getSubscribers(message)) {
-//            IMessage response = receiver.receive(message);
-//            if (response != null) {
-//                ((Message) response).setInResponseTo(message.getId());
-//                post(response);
-//            }
-//        }
-    }
+	@Override
+	public Type getPayloadType(StompHeaders headers) {
+		return Message.class;
+	}
 
-    @Override
-    public void post(IMessage message) {
-        session.send("/klab/message", message);
-    }
-
-//    @Override
-//    public void subscribe(Receiver receiver, Object... filters) {
-//        registry.subscribe(receiver, filters);
-//    }
-//
-//    @Override
-//    public void unsubscribe(Receiver receiver, Object... filters) {
-//        registry.unsubscribe(receiver, filters);
-//    }
-//    
-    public static void main(String[] args) {
-        StompMessageBus bus = new StompMessageBus(URL, null);
-        bus.post(Message.create(bus.sessionId, "Zio carbonaro", IMessage.MessageClass.Notification, IMessage.Type.Info));
-        while (true) {
-        	try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// poh
+	@Override
+	public void handleFrame(StompHeaders headers, Object payload) {
+		Message message = (Message) payload;
+		System.out.println("MESS " + message);
+		if (message.getInResponseTo() != null) {
+			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
+			if (responder != null) {
+				responder.accept(message);
+				return;
 			}
-        }
-    }
+		}
 
-    @Override
-    public void post(IMessage message, Consumer<IMessage> responder) {
-        responders.put(((Message)message).getId(), responder);
-        post(message);
-    }
+		/*
+		 * If the identity is known at our end, check if it has a handler for our
+		 * specific payload type. If so, turn the payload into that and dispatch it.
+		 */
+		Object identity = getReceiver(message.getIdentity());
+		if (identity != null) {
+			reactor.dispatchMessage(message, identity);
+		}
+	}
+
+	@Override
+	public void post(IMessage message) {
+		session.send("/klab/message", message);
+	}
+
+	@Override
+	public void post(IMessage message, Consumer<IMessage> responder) {
+		responders.put(((Message) message).getId(), responder);
+		post(message);
+	}
+
+	@Override
+	public Object getReceiver(String identity) {
+		return subscribers.get(identity);
+	}
+
+	public void subscribe(String identity, Object receiver) {
+		this.subscribers.put(identity, receiver);
+	}
 
 }

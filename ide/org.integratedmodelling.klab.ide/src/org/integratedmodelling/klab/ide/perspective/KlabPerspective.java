@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.perspective;
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IFolderLayout;
 
 
 public class KlabPerspective implements IPerspectiveFactory {
@@ -16,6 +17,11 @@ public class KlabPerspective implements IPerspectiveFactory {
         addPerspectiveShortcuts(layout);
     	layout.addView("org.integratedmodelling.thinkcap.ide.navigator", IPageLayout.LEFT, 0.24f, IPageLayout.ID_EDITOR_AREA);
     	layout.addView("org.integratedmodelling.klab.ide.views.RuntimeView", IPageLayout.RIGHT, 0.72f, IPageLayout.ID_EDITOR_AREA);
+    	{
+    		IFolderLayout folderLayout = layout.createFolder("folder", IPageLayout.BOTTOM, 0.73f, IPageLayout.ID_EDITOR_AREA);
+    		folderLayout.addView("org.integratedmodelling.klab.ide.views.SearchView");
+    		folderLayout.addView("org.integratedmodelling.klab.ide.views.ResourcesView");
+    	}
     	layout.addView("org.integratedmodelling.klab.ide.views.ContextView", IPageLayout.BOTTOM, 0.73f, "org.integratedmodelling.thinkcap.ide.navigator");
     }
 

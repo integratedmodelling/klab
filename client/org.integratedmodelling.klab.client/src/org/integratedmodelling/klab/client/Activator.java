@@ -14,7 +14,6 @@ public class Activator extends Plugin {
         Dictionary<String,String> props = new Hashtable<>();
         props.put("service.exported.interfaces", "*");
         props.put("service.exported.configs","ecf.generic.server");
-        context.registerService(IKlabService.class, new ClientKlabService(), props);
         super.start(context);
     }
 

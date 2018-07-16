@@ -32,6 +32,18 @@
             name="Context"
             restorable="true">
       </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.ResourcesView"
+            id="org.integratedmodelling.klab.ide.views.ResourcesView"
+            name="Resources">
+      </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.SearchView"
+            id="org.integratedmodelling.klab.ide.views.SearchView"
+            name="Knowledge Search">
+      </view>
    </extension>
 
 </plugin>

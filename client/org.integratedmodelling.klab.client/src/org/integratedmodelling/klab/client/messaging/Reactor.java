@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.rest.messaging;
+package org.integratedmodelling.klab.client.messaging;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -9,36 +9,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import javax.annotation.PostConstruct;
-
-import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
-import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
-import org.integratedmodelling.klab.engine.rest.messaging.WebsocketsMessageBus.ReceiverDescription.MethodDescriptor;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.client.messaging.Reactor.ReceiverDescription.MethodDescriptor;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.utils.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestController
-public class WebsocketsMessageBus implements IMessageBus {
+public class Reactor {
 
-	static public String URL = "ws://localhost:8283/modeler/message";
+	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
+	ObjectMapper objectMapper = new ObjectMapper();
 
 	class ReceiverDescription {
+
+		private Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
 
 		public ReceiverDescription(Class<?> cls) {
 			for (Method method : cls.getDeclaredMethods()) {
@@ -98,60 +86,15 @@ public class WebsocketsMessageBus implements IMessageBus {
 				try {
 					this.method.invoke(identity, params.toArray());
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					Logging.INSTANCE.error("error while dispatching message to handler: " + e.getMessage());
+					// TODO log error
+					System.err.println(e.getStackTrace());
 				}
 			}
 		}
 
-		Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
 	}
-
-	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
-	private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
-
-	@Autowired
-	ObjectMapper objectMapper;
-
-	@Autowired
-	private SimpMessagingTemplate webSocket;
-
-	@PostConstruct
-	public void publishMessageBus() {
-		Logging.INSTANCE.info("Setting up message bus on " + URL);
-		Klab.INSTANCE.setMessageBus(this);
-
-	}
-
-	/**
-	 * This gets messages sent to /klab/message from the javascript side of the
-	 * dataviewer.
-	 * 
-	 * @param message
-	 */
-	@MessageMapping(API.MESSAGE)
-	public void handleTask(Message message) {
-
-		System.out.println(JsonUtils.printAsJson(message));
-
-		if (message.getInResponseTo() != null) {
-			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
-			if (responder != null) {
-				responder.accept(message);
-				return;
-			}
-		}
-
-		/*
-		 * If the identity is known at our end, check if it has a handler for our
-		 * specific payload type. If so, turn the payload into that and dispatch it.
-		 */
-		Object identity = getReceiver(message.getIdentity());
-		if (identity != null) {
-			dispatchMessage(message, identity);
-		}
-	}
-
-	private void dispatchMessage(Message message, Object identity) {
+	
+	public void dispatchMessage(Message message, Object identity) {
 
 		try {
 			/*
@@ -180,26 +123,10 @@ public class WebsocketsMessageBus implements IMessageBus {
 			}
 
 		} catch (Throwable e) {
-			Logging.INSTANCE.error("internal error: converting payload of message " + message.getId()
-					+ "  for payload type " + message.getPayloadClass());
+			// TODO log error
+			System.err.println(e.getStackTrace());
 		}
 
-	}
-
-	@Override
-	public void post(IMessage message) {
-		webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
-	}
-
-	@Override
-	public void post(IMessage message, Consumer<IMessage> responder) {
-		responders.put(((Message) message).getId(), responder);
-		post(message);
-	}
-
-	@Override
-	public Object getReceiver(String identity) {
-		return Authentication.INSTANCE.getIdentity(identity, IIdentity.class);
 	}
 
 }

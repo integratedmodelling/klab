@@ -345,7 +345,7 @@ public class Session implements ISession, UserDetails {
 	}
 
 	@MessageHandler
-	private void handleSearchRequest(SearchRequest request) {
+	private void handleSearchRequest(SearchRequest request, IMessage message) {
 
 		final String contextId = request.getContextId() == null ? NameGenerator.shortUUID() : request.getContextId();
 		if (request.getContextId() == null) {
@@ -385,9 +385,8 @@ public class Session implements ISession, UserDetails {
 						response.getMatches().add(m);
 					}
 					searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
-
 					monitor.send(Message.create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult,
-							response.signalEndTime()));
+							response.signalEndTime()).inResponseTo(message));
 				}
 
 			}.run();
@@ -396,6 +395,17 @@ public class Session implements ISession, UserDetails {
 
 	@MessageHandler
 	private void handleObservationRequest(ObservationRequest request) {
+		
+		/*
+		 * TODO do all this in a thread
+		 */
+		/*
+		 * TODO if we have no context in the request but we have a ROI, create the context from the ROI and
+		 * block the thread until it's observed
+		 */
+		/*
+		 * TODO observe the URN in the request
+		 */
 		System.out.println("Observation request: " + request);
 	}
 

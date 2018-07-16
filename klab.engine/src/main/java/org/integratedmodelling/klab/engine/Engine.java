@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -482,7 +483,7 @@ public class Engine extends Server implements IEngine, UserDetails {
             /*
              * cache all resource schemata before anything asks for them
              */
-            SchemaExtractor.extractResourceSchema(Klab.REST_RESOURCES_PACKAGE_ID);
+            SchemaExtractor.extractResourceSchema(IConfigurationService.REST_RESOURCES_PACKAGE_ID);
 
             /*
              * run any init scripts from configuration

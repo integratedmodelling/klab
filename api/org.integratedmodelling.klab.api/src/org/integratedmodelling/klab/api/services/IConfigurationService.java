@@ -29,11 +29,15 @@ import org.integratedmodelling.klab.utils.OS;
  */
 public interface IConfigurationService {
 
+	/**
+	 * The package containing all REST resource beans.
+	 */
+	static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.rest";
+
 	public static final int DEFAULT_ENGINE_PORT = 8283;
 	public static final int DEFAULT_HUB_PORT = 8284;
 	public static final int DEFAULT_NODE_PORT = 8287;
-	
-	
+
 	/** The Constant KLAB_CLIENT_PROJECTS. */
 	public static final String KLAB_CLIENT_PROJECTS = "klab.client.workspace";
 
@@ -296,8 +300,7 @@ public interface IConfigurationService {
 	boolean resolveAllInstances();
 
 	/**
-	 * The maximum number of root contexts kept alive per session. Defaults at 
-	 * 10. 
+	 * The maximum number of root contexts kept alive per session. Defaults at 10.
 	 * 
 	 * @return the maximum number of live contexts
 	 */

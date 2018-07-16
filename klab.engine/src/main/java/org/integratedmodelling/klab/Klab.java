@@ -48,11 +48,6 @@ public enum Klab implements IRuntimeService {
     INSTANCE;
 
     /**
-     * The package containing all REST resource beans.
-     */
-    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.rest";
-
-    /**
      * This can be set to a runnable that starts the REST services.
      */
     Runnable serviceApplication = null;
@@ -477,12 +472,12 @@ public enum Klab implements IRuntimeService {
 
     @Override
     public String getResourceSchema() {
-        return SchemaExtractor.getSchemata(REST_RESOURCES_PACKAGE_ID);
+        return SchemaExtractor.getSchemata(IConfigurationService.REST_RESOURCES_PACKAGE_ID);
     }
 
     @Override
     public String getResourceSchema(String resourceId) {
-        return SchemaExtractor.getSchema(REST_RESOURCES_PACKAGE_ID, resourceId);
+        return SchemaExtractor.getSchema(IConfigurationService.REST_RESOURCES_PACKAGE_ID, resourceId);
     }
 
     

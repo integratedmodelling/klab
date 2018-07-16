@@ -71,6 +71,15 @@ public class Message implements IMessage, Serializable {
 				}
 			}
 		}
+		
+		// defaults so that we can just post a string
+		if (ret.messageClass == null) {
+			ret.messageClass = MessageClass.Notification;
+			if (ret.type == null) {
+				ret.type = Type.Info;
+			}
+		}
+		
 		return ret;
 	}
 
@@ -82,13 +91,13 @@ public class Message implements IMessage, Serializable {
 	 * @return a new message
 	 */
 	public static IMessage create(INotification notification, String identity) {
-		
+
 		Message ret = new Message();
 		ret.identity = identity;
 		ret.messageClass = MessageClass.Notification;
 		ret.payload = notification.getMessage();
 		ret.payloadClass = "String";
-		
+
 		if (notification.getLevel() == Level.FINE) {
 			ret.type = Type.Debug;
 		} else if (notification.getLevel() == Level.INFO) {
@@ -98,8 +107,13 @@ public class Message implements IMessage, Serializable {
 		} else if (notification.getLevel() == Level.SEVERE) {
 			ret.type = Type.Error;
 		}
-		
+
 		return ret;
+	}
+
+	public Message inResponseTo(IMessage message) {
+		this.inResponseTo = ((Message) message).id;
+		return this;
 	}
 
 	/**

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Path;
 
@@ -190,7 +190,7 @@ public class SchemaExtractor {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getSchemata(Klab.REST_RESOURCES_PACKAGE_ID));
+		System.out.println(getSchemata(IConfigurationService.REST_RESOURCES_PACKAGE_ID));
 	}
 
 	public static String getSchema(String restResourcesPackageId, String resourceId) {
