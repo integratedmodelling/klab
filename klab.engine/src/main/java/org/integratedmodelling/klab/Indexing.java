@@ -1,11 +1,15 @@
 package org.integratedmodelling.klab;
 
+import java.util.List;
+import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.indexing.SearchContext;
 
 public enum Indexing implements IIndexingService {
-	
+
 	INSTANCE;
 
 	/**
@@ -16,10 +20,14 @@ public enum Indexing implements IIndexingService {
 	public Context createContext() {
 		return new SearchContext();
 	}
-	
+
 	@Override
-	public Iterable<Match> query(String currentTerm, Context context) {
-		return Indexer.INSTANCE.query(currentTerm, (SearchContext)context);
+	public List<Match> query(String currentTerm, Context context) {
+		return Indexer.INSTANCE.query(currentTerm, (SearchContext) context);
+	}
+
+	public Context createContext(Set<Match.Type> matchTypes, Set<IKimConcept.Type> semanticTypes) {
+		return new SearchContext(matchTypes, semanticTypes);
 	}
 
 }

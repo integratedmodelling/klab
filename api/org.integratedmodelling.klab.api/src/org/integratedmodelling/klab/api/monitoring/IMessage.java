@@ -66,34 +66,56 @@ public interface IMessage {
 	enum Type {
 
 		/*
-		 * UserContextChange-class types
+		 * UserContextChange-class types.
 		 */
-		RegionOfInterest, PeriodOfInterest,
+		/**
+		 * F->B.
+		 */
+		RegionOfInterest,
+
+		/**
+		 * F->B.
+		 */
+		PeriodOfInterest,
 
 		/*
-		 * Notification-class types
+		 * --- Notification-class types ---
 		 */
 		Debug, Info, Warning, Error,
 
 		/*
-		 * Observation lifecycle
+		 * --- Observation lifecycle ---
 		 */
-		NewObservation, ModifiedObservation,
+		/**
+		 * Request the observation of a URN or logical expression. F->B. If the URN has
+		 * resulted from a search, send the ID of the search so it can be disposed of.
+		 */
+		RequestObservation,
+
+		/**
+		 * A new observation is available. Back->Front.
+		 */
+		NewObservation,
+
+		/**
+		 * A previously reported observation had its contents modified. Back->Front.
+		 */
+		ModifiedObservation,
 
 		/*
-		 * Task lifecycle
+		 * --- Task lifecycle ---
 		 */
 		TaskStarted, TaskFinished, TaskAborted, DataflowCompiled,
-		
+
 		/*
-		 * Search-class types
+		 * --- Search-class types ---
 		 */
-		InitializeSearch, SubmitSearch, AcceptMatch, RemoveLastMatch, CancelSearch,
-		
+		SubmitSearch, AcceptMatch, RemoveLastMatch, CancelSearch,
+
 		/*
-		 * Query-class types
+		 * --- Query-class types ---
 		 */
-		QueryAccepted, QueryPerformed
+		QueryResult
 
 	}
 

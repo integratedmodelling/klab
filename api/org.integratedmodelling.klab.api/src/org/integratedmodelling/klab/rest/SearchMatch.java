@@ -1,0 +1,84 @@
+package org.integratedmodelling.klab.rest;
+
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.api.services.IIndexingService;
+
+
+public class SearchMatch {
+
+	private String name;
+	private String id;
+	private String description;
+	private Set<IKimConcept.Type> semanticType = EnumSet.noneOf(IKimConcept.Type.class);
+	private IIndexingService.Match.Type matchType;
+
+	/**
+	 * Name to show users
+	 * 
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Official fully qualified ID for the URN
+	 * 
+	 * @return
+	 */
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	/**
+	 * Description, one to several lines in length
+	 * 
+	 * @return
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Semantic type of match (one of the fundamental observable types). Can only be
+	 * null in non-semantic URN matches, not the common user case.
+	 * 
+	 * @param semanticType
+	 */
+	public Set<IKimConcept.Type> getSemanticType() {
+		return semanticType;
+	}
+
+	public void setSemanticType(Set<IKimConcept.Type> semanticType) {
+		this.semanticType = semanticType;
+	}
+
+	/**
+	 * Type of match.
+	 * 
+	 * @return
+	 */
+	public IIndexingService.Match.Type getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(IIndexingService.Match.Type matchType) {
+		this.matchType = matchType;
+	}
+
+}

@@ -179,14 +179,18 @@ public enum Indexer {
         }
         return true;
     }
-
-    public Iterable<Match> query(String currentTerm, Context searchContext) {
+    
+    public List<Match> query(String currentTerm, Context searchContext) {
+    	return query(currentTerm, searchContext, MAX_RESULT_COUNT);
+    }
+    
+    public List<Match> query(String currentTerm, Context searchContext, int maxResults) {
         
         SearchContext context = (SearchContext)searchContext;
         List<Match> ret = new ArrayList<>();
         try {
             IndexSearcher searcher = searcherManager.acquire();
-            TopDocs docs = searcher.search(context.buildQuery(currentTerm, this.analyzer), MAX_RESULT_COUNT);
+            TopDocs docs = searcher.search(context.buildQuery(currentTerm, this.analyzer), maxResults);
             ScoreDoc[] hits = docs.scoreDocs;
             for (ScoreDoc hit : hits) {
                 

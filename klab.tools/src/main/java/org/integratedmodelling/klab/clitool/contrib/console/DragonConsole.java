@@ -1789,10 +1789,22 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 				inSearchMode = false;
 				inputArea.setForeground(defaultForeground);
 				searchHandler.cancelSearch();
-				// TODO back to caret when search started
+				
+				// roll back to previous input
+				try {
+					String text = inputArea.getText(0, beginSearchOffset);
+					inputArea.setText(text);
+					inputArea.setCaretPosition(text.length());
+				} catch (BadLocationException e1) {
+					throw new KlabInternalErrorException(e1);
+				}
+				
 			} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				
 				inSearchMode = false;
 				inputArea.setForeground(defaultForeground);
+				// process the enter below to register command
+				
 			} else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 				// if it's the second backspace after a space and we have previous accepted
 				// matches,
@@ -1815,6 +1827,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 					previousBackspace = false;
 					e.consume();
 				} else if (!searchHandler.handleBackspace()) {
+					
 					e.consume();
 					Toolkit.getDefaultToolkit().beep();
 				}
@@ -1838,6 +1851,9 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 							throw new KlabInternalErrorException(e1);
 						}
 					} else {
+						// AGH can't prevent it from being typed
+//						e.setKeyCode(KeyEvent.VK_UNDEFINED);
+						e.consume();
 						Toolkit.getDefaultToolkit().beep();
 					}
 
@@ -1845,9 +1861,12 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 					// accept previous or beep if nothing was accepted
 				} else {
 					if (!searchHandler.addCharacter(e.getKeyChar())) {
-						Toolkit.getDefaultToolkit().beep();
+						// AGH can't prevent it from being typed
 						e.consume();
-						// TODO how do I get this to ignore the character? It gets added even after consume()
+						Toolkit.getDefaultToolkit().beep();
+//						e.setKeyCode(KeyEvent.VK_UNDEFINED);
+						// TODO how do I get this to ignore the character? It gets added even after
+						// consume()
 					}
 				}
 			}

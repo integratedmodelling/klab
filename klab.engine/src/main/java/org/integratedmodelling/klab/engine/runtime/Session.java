@@ -17,6 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Indexing;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -33,6 +35,9 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.api.services.IIndexingService;
+import org.integratedmodelling.klab.api.services.IIndexingService.Context;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -40,11 +45,18 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.InterruptTask;
+import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.SearchMatch;
+import org.integratedmodelling.klab.rest.SearchMatchAction;
+import org.integratedmodelling.klab.rest.SearchRequest;
+import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -89,6 +101,13 @@ public class Session implements ISession, UserDetails {
 	 */
 	Deque<IRuntimeContext> observationContexts = new LinkedBlockingDeque<>(
 			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
+
+	/*
+	 * Support for incremental search from the front-end. Synchronized because
+	 * searches can take arbitrary time although in most cases they will be fast.
+	 */
+	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
+			.synchronizedMap(new HashMap<>());
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -242,7 +261,8 @@ public class Session implements ISession, UserDetails {
 	}
 
 	/**
-	 * Interrupt the passed task, notifying its monitor for computations to terminate gracefully. Return true if there was a task to interrupt and it was 
+	 * Interrupt the passed task, notifying its monitor for computations to
+	 * terminate gracefully. Return true if there was a task to interrupt and it was
 	 * indeed canceled.
 	 * 
 	 * @param taskId
@@ -251,7 +271,7 @@ public class Session implements ISession, UserDetails {
 	public boolean interruptTask(String taskId, boolean forceInterruption) {
 		Future<?> task = this.tasks.get(taskId);
 		if (task != null) {
-			((Monitor)((IRuntimeIdentity)task).getMonitor()).interrupt();
+			((Monitor) ((IRuntimeIdentity) task).getMonitor()).interrupt();
 			if (task.cancel(forceInterruption)) {
 				unregisterTask(task);
 				return true;
@@ -302,14 +322,81 @@ public class Session implements ISession, UserDetails {
 
 	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
-		// TODO change to monitor.debug
-		System.out.println("setting ROI = " + extent);
+		monitor.debug("setting ROI = " + extent);
 		this.regionOfInterest = extent;
 	}
 
 	@MessageHandler
 	private void interruptTask(InterruptTask request) {
 		interruptTask(request.getTaskId(), request.isForceInterruption());
+	}
+
+	@MessageHandler
+	private void handleMatchAction(SearchMatchAction action) {
+
+		final String contextId = action.getContextId();
+		Pair<Context, List<Match>> ctx = searchContexts.get(contextId);
+		if (ctx == null) {
+			throw new IllegalStateException("match action has invalid context ID");
+		}
+		Context newContext = action.getMatchIndex() < 0 ? ctx.getFirst().previous()
+				: ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()));
+		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
+	}
+
+	@MessageHandler
+	private void handleSearchRequest(SearchRequest request) {
+
+		final String contextId = request.getContextId() == null ? NameGenerator.shortUUID() : request.getContextId();
+		if (request.getContextId() == null) {
+			searchContexts.put(contextId,
+					new Pair<>(Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()),
+							new ArrayList<>()));
+		}
+
+		if (request.isCancelSearch()) {
+			/*
+			 * just garbage collect it
+			 */
+			searchContexts.remove(contextId);
+
+		} else {
+
+			/*
+			 * spawn search thread, which will respond when done.
+			 */
+			new Runnable() {
+
+				@Override
+				public void run() {
+					SearchResponse response = new SearchResponse();
+					response.setContextId(contextId);
+					response.setRequestId(request.getRequestId());
+					final Pair<Context, List<Match>> context = searchContexts.get(contextId);
+					List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
+
+					for (Match match : matches) {
+						SearchMatch m = new SearchMatch();
+						m.getSemanticType().addAll(match.getConceptType());
+						m.setMatchType(match.getMatchType());
+						m.setName(match.getName());
+						m.setId(match.getId());
+						m.setDescription(match.getDescription());
+						response.getMatches().add(m);
+					}
+					searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
+
+					monitor.send(Message.create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult,
+							response.signalEndTime()));
+				}
+
+			}.run();
+		}
+	}
+
+	@MessageHandler
+	private void handleObservationRequest(ObservationRequest request) {
+		System.out.println("Observation request: " + request);
 	}
 
 	/*
@@ -325,8 +412,8 @@ public class Session implements ISession, UserDetails {
 		ret.setTimeLastActivity(lastActivity);
 
 		for (IRuntimeContext ctx : observationContexts) {
-			ret.getRootObservations().put(ctx.getRootSubject().getId(),
-					Observations.INSTANCE.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0));
+			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
+					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0));
 		}
 		return ret;
 	}
