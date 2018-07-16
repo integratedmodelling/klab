@@ -28,5 +28,5 @@ public class KlabSession {
 	public void handleSearchResponse(SearchResponse response) {
 		System.out.println("Search response: " + response);
 	}
-
+	
 }

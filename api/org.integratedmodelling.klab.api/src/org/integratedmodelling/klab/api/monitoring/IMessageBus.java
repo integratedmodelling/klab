@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.monitoring;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -20,6 +21,22 @@ import java.util.function.Consumer;
  */
 public interface IMessageBus {
 
+	/**
+	 * Any receiver implementing the Relay interface will relay the messages it gets to
+	 * a set of identities. This can be used by a receiver to let an external receiver 
+	 * serve as a double or snoop on communication.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public interface Relay {
+		
+		/**
+		 * Identities to resend our messages to.
+		 */
+		Collection<String> getRelayIdentities();
+	}
+	
 	/**
 	 * Post a message.
 	 * 
