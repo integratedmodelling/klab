@@ -110,7 +110,7 @@ public interface IMessage {
 		/*
 		 * --- Search-class types ---
 		 */
-		SubmitSearch, AcceptMatch, RemoveLastMatch, CancelSearch,
+		SubmitSearch, MatchAction,
 
 		/*
 		 * --- Query-class types ---
