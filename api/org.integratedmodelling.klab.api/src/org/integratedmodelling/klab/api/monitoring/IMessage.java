@@ -18,6 +18,11 @@ public interface IMessage {
 	 */
 	enum MessageClass {
 
+	    /**
+	     * Only for no-op defaults in the message handler annotation
+	     */
+	    Void,
+	    
 		/**
 		 * 
 		 */
@@ -54,7 +59,12 @@ public interface IMessage {
 		/**
 		 * Query messages are sent by the back end upon receiving Search-class messages.
 		 */
-		Query
+		Query,
+		
+		/**
+		 * Run-class messages start scripts and tests.
+		 */
+		Run,
 	}
 
 	/**
@@ -65,6 +75,11 @@ public interface IMessage {
 	 */
 	enum Type {
 
+	    /**
+	     * Only used as a default for the MessageClass annotation.
+	     */
+	    Void,
+	    
 		/*
 		 * UserContextChange-class types.
 		 */
@@ -115,7 +130,16 @@ public interface IMessage {
 		/*
 		 * --- Query-class types ---
 		 */
-		QueryResult
+		QueryResult,
+		
+		/*
+		 * --- Run-class types
+		 */
+		RunScript, RunTest, DebugScript, DebugTest
+		
+		/*
+		 * 
+		 */
 
 	}
 

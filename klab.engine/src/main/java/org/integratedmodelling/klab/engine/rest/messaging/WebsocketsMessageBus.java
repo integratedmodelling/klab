@@ -56,7 +56,9 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 			Method method;
 			Class<?> payloadType;
-
+            IMessage.MessageClass mclass = null;
+            IMessage.Type mtype = null;
+            
 			public MethodDescriptor(Method method, MessageHandler handler) {
 
 				this.method = method;
@@ -72,6 +74,12 @@ public class WebsocketsMessageBus implements IMessageBus {
 							"wrong usage of @MessageHandler: the annotated method must take a bean from package "
 									+ IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
 				}
+                if (handler.type() != IMessage.Type.Void) {
+                    this.mtype = handler.type();
+                }
+                if (handler.messageClass() != IMessage.MessageClass.Void) {
+                    this.mclass = handler.messageClass();
+                }
 			}
 
 			void handle(Object identity, Object payload, IMessage message) {
@@ -101,6 +109,11 @@ public class WebsocketsMessageBus implements IMessageBus {
 					Logging.INSTANCE.error("error while dispatching message to handler: " + e.getMessage());
 				}
 			}
+			
+            public boolean appliesTo(Message message) {
+                return (mclass == null || mclass == message.getMessageClass())
+                        && (mtype == null || mtype == message.getType());
+            }
 		}
 
 		Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
@@ -173,7 +186,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 			 * 3. If there is a method, invoke it.
 			 */
 			MethodDescriptor mdesc = rdesc.handlers.get(cls);
-			if (mdesc != null) {
+			if (mdesc != null && mdesc.appliesTo(message)) {
 				Object payload = cls == String.class ? message.getPayload().toString()
 						: objectMapper.convertValue(message.getPayload(), cls);
 				mdesc.handle(identity, payload, message);

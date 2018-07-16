@@ -21,112 +21,125 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Reactor {
 
-	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
-	ObjectMapper objectMapper = new ObjectMapper();
+    private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
+    ObjectMapper objectMapper = new ObjectMapper();
 
-	class ReceiverDescription {
+    class ReceiverDescription {
 
-		private Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
+        private Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
 
-		public ReceiverDescription(Class<?> cls) {
-			for (Method method : cls.getDeclaredMethods()) {
-				for (Annotation annotation : method.getDeclaredAnnotations()) {
-					if (annotation instanceof MessageHandler) {
-						MethodDescriptor mdesc = new MethodDescriptor(method, (MessageHandler) annotation);
-						this.handlers.put(mdesc.payloadType, mdesc);
-					}
-				}
-			}
-			receiverTypes.put(cls, this);
-		}
+        public ReceiverDescription(Class<?> cls) {
+            for (Method method : cls.getDeclaredMethods()) {
+                for (Annotation annotation : method.getDeclaredAnnotations()) {
+                    if (annotation instanceof MessageHandler) {
+                        MethodDescriptor mdesc = new MethodDescriptor(method, (MessageHandler) annotation);
+                        this.handlers.put(mdesc.payloadType, mdesc);
+                    }
+                }
+            }
+            receiverTypes.put(cls, this);
+        }
 
-		class MethodDescriptor {
+        class MethodDescriptor {
 
-			Method method;
-			Class<?> payloadType;
+            Method method;
+            Class<?> payloadType;
+            IMessage.MessageClass mclass = null;
+            IMessage.Type mtype = null;
 
-			public MethodDescriptor(Method method, MessageHandler handler) {
+            public MethodDescriptor(Method method, MessageHandler handler) {
 
-				this.method = method;
-				this.method.setAccessible(true);
-				for (Class<?> cls : method.getParameterTypes()) {
-					if (cls.getPackage().getName().startsWith(IConfigurationService.REST_RESOURCES_PACKAGE_ID)) {
-						this.payloadType = cls;
-						break;
-					}
-				}
-				if (this.payloadType == null) {
-					throw new IllegalStateException(
-							"wrong usage of @MessageHandler: the annotated method must take a bean from package "
-									+ IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
-				}
-			}
+                this.method = method;
+                this.method.setAccessible(true);
+                for (Class<?> cls : method.getParameterTypes()) {
+                    if (cls.getPackage().getName().startsWith(IConfigurationService.REST_RESOURCES_PACKAGE_ID)) {
+                        this.payloadType = cls;
+                        break;
+                    }
+                }
+                if (this.payloadType == null) {
+                    throw new IllegalStateException(
+                            "wrong usage of @MessageHandler: the annotated method must take a bean from package "
+                                    + IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
+                }
+                if (handler.type() != IMessage.Type.Void) {
+                    this.mtype = handler.type();
+                }
+                if (handler.messageClass() != IMessage.MessageClass.Void) {
+                    this.mclass = handler.messageClass();
+                }
+            }
 
-			void handle(Object identity, Object payload, IMessage message) {
+            void handle(Object identity, Object payload, IMessage message) {
 
-				List<Object> params = new ArrayList<>();
-				for (Class<?> cls : method.getParameterTypes()) {
-					if (cls.isAssignableFrom(this.payloadType)) {
-						params.add(payload);
-					} else if (cls.isAssignableFrom(IMessage.class)) {
-						params.add(message);
-					} else if (cls.isAssignableFrom(Date.class)) {
-						params.add(new Date(message.getTimestamp()));
-					} else if (cls.isAssignableFrom(MessageClass.class)) {
-						params.add(message.getMessageClass());
-					} else if (cls.isAssignableFrom(IMessage.Type.class)) {
-						params.add(message.getType());
-					} else if (cls.isAssignableFrom(String.class)) {
-						params.add(payload.toString());
-					} else {
-						params.add(null);
-					}
-				}
+                List<Object> params = new ArrayList<>();
+                for (Class<?> cls : method.getParameterTypes()) {
+                    if (cls.isAssignableFrom(this.payloadType)) {
+                        params.add(payload);
+                    } else if (cls.isAssignableFrom(IMessage.class)) {
+                        params.add(message);
+                    } else if (cls.isAssignableFrom(Date.class)) {
+                        params.add(new Date(message.getTimestamp()));
+                    } else if (cls.isAssignableFrom(MessageClass.class)) {
+                        params.add(message.getMessageClass());
+                    } else if (cls.isAssignableFrom(IMessage.Type.class)) {
+                        params.add(message.getType());
+                    } else if (cls.isAssignableFrom(String.class)) {
+                        params.add(payload.toString());
+                    } else {
+                        params.add(null);
+                    }
+                }
 
-				try {
-					this.method.invoke(identity, params.toArray());
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					// TODO log error
-					System.err.println(e.getStackTrace());
-				}
-			}
-		}
+                try {
+                    this.method.invoke(identity, params.toArray());
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    // TODO log error
+                    System.err.println(e.getStackTrace());
+                }
+            }
 
-	}
-	
-	public void dispatchMessage(Message message, Object identity) {
+            public boolean appliesTo(Message message) {
+                return (mclass == null || mclass == message.getMessageClass())
+                        && (mtype == null || mtype == message.getType());
+            }
+        }
 
-		try {
-			/*
-			 * 1. Determine payload type
-			 */
-			Class<?> cls = message.getPayloadClass().equals("String") ? String.class
-					: Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "." + message.getPayloadClass());
+    }
 
-			/*
-			 * 2. Determine if the object has a method to react to it, caching the result
-			 * and the parameter sequence.
-			 */
-			ReceiverDescription rdesc = receiverTypes.get(identity.getClass());
-			if (rdesc == null) {
-				rdesc = new ReceiverDescription(identity.getClass());
-			}
+    public void dispatchMessage(Message message, Object identity) {
 
-			/*
-			 * 3. If there is a method, invoke it.
-			 */
-			MethodDescriptor mdesc = rdesc.handlers.get(cls);
-			if (mdesc != null) {
-				Object payload = cls == String.class ? message.getPayload().toString()
-						: objectMapper.convertValue(message.getPayload(), cls);
-				mdesc.handle(identity, payload, message);
-			}
+        try {
+            /*
+             * 1. Determine payload type
+             */
+            Class<?> cls = message.getPayloadClass().equals("String") ? String.class
+                    : Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "." + message.getPayloadClass());
 
-		} catch (Throwable e) {
-			// TODO log error
-			System.err.println(e.getStackTrace());
-		}
+            /*
+             * 2. Determine if the object has a method to react to it, caching the result
+             * and the parameter sequence.
+             */
+            ReceiverDescription rdesc = receiverTypes.get(identity.getClass());
+            if (rdesc == null) {
+                rdesc = new ReceiverDescription(identity.getClass());
+            }
 
-	}
+            /*
+             * 3. If there is a method, invoke it.
+             */
+            MethodDescriptor mdesc = rdesc.handlers.get(cls);
+            if (mdesc != null && mdesc.appliesTo(message)) {
+                Object payload = cls == String.class ? message.getPayload().toString()
+                        : objectMapper.convertValue(message.getPayload(), cls);
+                mdesc.handle(identity, payload, message);
+            }
+
+        } catch (Throwable e) {
+            // TODO log error
+            System.err.println(e.getStackTrace());
+        }
+
+    }
 
 }

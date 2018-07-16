@@ -21,13 +21,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.services.IAuthenticationService;
 
 /**
- * Used on a {@link IIdentity identity implementation} to handle a message with
- * a specified payload type. A payload type (recognizable based on package or
- * some other means) must be specified as parameter in the method that is
- * annotated.
+ * Used on any class to make its instances able to handle a message with
+ * a specified payload type. In the engine, any identity accessible to 
+ * the {@link IAuthenticationService} is automatically subscribed; in 
+ * clients, objects must be subscribed manually. A payload type 
+ * (recognizable based on package or some other means) must be specified
+ * as parameter in the method that is annotated. Type and message class
+ * can be used as additional filters.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -36,4 +39,19 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface MessageHandler {
+
+    /**
+     * If passed, annotation will apply only to messages with passed class.
+     * 
+     * @return
+     */
+    IMessage.MessageClass messageClass() default IMessage.MessageClass.Void;
+
+    /**
+     * If passed, annotation will apply only to messages with passed type.
+     * 
+     * @return
+     */
+    IMessage.Type type() default IMessage.Type.Void;
+
 }
