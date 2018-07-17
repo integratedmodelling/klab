@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.AuthorizeSessionResponse;
+import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -118,11 +119,28 @@ public class Client extends RestTemplate {
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Content-Type", "text/plain");
-			ResponseEntity<String> response = exchange(url + API.PING, HttpMethod.GET, new HttpEntity<String>(headers),
-					String.class);
-			return response.getStatusCodeValue() == 200 ? Long.parseLong(response.getBody()) : -1;
+			ResponseEntity<PingResponse> response = exchange(url + API.PING, HttpMethod.GET,
+					new HttpEntity<PingResponse>(headers), PingResponse.class);
+			return response.getStatusCodeValue() == 200 ? response.getBody().getUptime() : -1;
 		} catch (Throwable e) {
 			return -1;
+		}
+	}
+
+	/**
+	 * Another ping with a more detailed response.
+	 * 
+	 * @return
+	 */
+	public PingResponse heartbeat() {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", "text/plain");
+			ResponseEntity<PingResponse> response = exchange(url + API.PING, HttpMethod.GET,
+					new HttpEntity<PingResponse>(headers), PingResponse.class);
+			return response.getBody();
+		} catch (Throwable e) {
+			return null;
 		}
 	}
 
@@ -130,15 +148,19 @@ public class Client extends RestTemplate {
 	 * Open a session with the engine.
 	 * 
 	 * @param rejoinSession
+	 * @param relayId the ID of a relay object to receive Explorer messages
 	 * @return a new session ID (possibly same as passed one to rejoin, meaning the
 	 *         rejoin was successful)
 	 */
-	public String openSession(@Nullable String rejoinSession) {
-		
+	public String openSession(@Nullable String rejoinSession, @Nullable String relayId) {
+
 		AuthorizeSessionResponse response = get(
-				url + API.ENGINE.SESSION.AUTHORIZE + (rejoinSession == null ? "" : ("?join=" + rejoinSession)),
+				url 
+					+ API.ENGINE.SESSION.AUTHORIZE 
+					+ (rejoinSession == null ? "" : ("?join=" + rejoinSession))
+					+ (relayId == null ? "" : ((rejoinSession == null? "?relay=" : "&relay=") + relayId)),
 				AuthorizeSessionResponse.class);
-		
+
 		if (monitor != null) {
 			if (response.getInfo() != null) {
 				monitor.warn(response.getInfo());
@@ -146,7 +168,7 @@ public class Client extends RestTemplate {
 				// TODO send info about session rejoined.
 			}
 		}
-		
+
 		return response.getSessionId();
 	}
 
@@ -204,7 +226,7 @@ public class Client extends RestTemplate {
 		messageConverters.add(formHttpMessageConverter);
 		// messageConverters.add(byteConverter);
 		setMessageConverters(messageConverters);
-		
+
 		this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
 	}
 
@@ -332,14 +354,14 @@ public class Client extends RestTemplate {
 	 * @return
 	 */
 	public <T> T upload(String url, File contents, Class<T> responseType) {
-		
+
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new    HttpEntity<LinkedMultiValueMap<String, Object>>(
-		                    map, headers);
+		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
+				map, headers);
 		ResponseEntity<T> result = exchange(url, HttpMethod.POST, requestEntity, responseType);
 		return result.getBody();
 	}
@@ -365,8 +387,8 @@ public class Client extends RestTemplate {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new    HttpEntity<LinkedMultiValueMap<String, Object>>(
-		                    map, headers);
+		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
+				map, headers);
 		ResponseEntity<T> response = exchange(url, HttpMethod.POST, requestEntity, responseType);
 		switch (response.getStatusCodeValue()) {
 		case 200:

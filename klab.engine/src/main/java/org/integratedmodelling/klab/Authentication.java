@@ -155,6 +155,20 @@ public enum Authentication implements IAuthenticationService {
 		return null;
 	}
 
+	/**
+	 * If a session with the default flag was started, return it.
+	 * 
+	 * @return
+	 */
+	public ISession getDefaultSession() {
+		for (IIdentity id : identities.values()) {
+			if (id instanceof Session && ((Session)id).isDefault()) {
+				return (ISession)id;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 

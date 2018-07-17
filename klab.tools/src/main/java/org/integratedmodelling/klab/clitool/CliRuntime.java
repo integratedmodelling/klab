@@ -41,7 +41,7 @@ public enum CliRuntime {
 	public void initialize(IConsole console, IEngineStartupOptions options) {
 		console.disableInput();
 		this.engine = Engine.start(options);
-		this.session = engine.createSession();
+		this.session = engine.createSession().setDefault();
 		this.console = console;
 		this.commandProcessor = new CommandProcessor(console, session.getMonitor());
 

@@ -400,6 +400,17 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			}.run();
 		}
 	}
+	
+	/**
+	 * Flag the session as default. The effect is that engine pings from localhost will receive
+	 * the session ID so they can choose to join it.
+	 * 
+	 * @return
+	 */
+	public Session setDefault() {
+		this.isDefault = true;
+		return this;
+	}
 
 	@MessageHandler
 	private void handleObservationRequest(ObservationRequest request) {
@@ -443,6 +454,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	public void addRelayId(String relayId) {
 		relayIdentities.add(relayId);
+	}
+
+	public boolean isDefault() {
+		return isDefault;
 	}
 
 }

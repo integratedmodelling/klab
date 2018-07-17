@@ -10,12 +10,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
+import org.integratedmodelling.klab.rest.PingResponse;
 
 /**
  * Engine monitor that checks the engine status at regular intervals, notifying
  * of down or up events and handling automatically the opening or rejoining of a
  * session when the engine comes up, exposing a websockets-driven message bus to
- * communicate with the engine.
+ * communicate with the engine. If a relay was installed in the session to
+ * capture messages from the web explorer, adds a bus for that so the
+ * correspondent peers can be notified.
  * 
  * @author ferdinando.villa
  *
@@ -30,13 +33,22 @@ public class EngineMonitor {
 	protected long recheckSecondsWhenOffline = 15;
 	long uptime = -1;
 	Client client;
-	StompMessageBus messageBus;
+	// engine bus
+	StompMessageBus engineBus;
+	// relay bus for the explorer - read only
+	StompMessageBus explorerBus;
 	String sessionId;
 
 	AtomicBoolean stop = new AtomicBoolean(false);
 
 	private Runnable onEngineUp;
 	private Runnable onEngineDown;
+
+	/**
+	 * If passed to start(), the ID of a relay object so that messages from the
+	 * Explorer to the engine can be relayed to it.
+	 */
+	private String relayId;
 
 	public EngineMonitor(String url, Runnable onEngineUp, Runnable onEngineDown, @Nullable String initialSessionId) {
 		engineUrl = url;
@@ -45,14 +57,20 @@ public class EngineMonitor {
 		this.client = Client.create(url);
 		this.sessionId = initialSessionId;
 	}
-	
+
 	/**
-	 * Use in a engineUp handler to store the session ID after the engine was started.
+	 * Use in a engineUp handler to store the session ID after the engine was
+	 * started.
 	 * 
-	 * @return the session ID 
+	 * @return the session ID
 	 */
 	public String getSessionId() {
 		return this.sessionId;
+	}
+
+	public void start(String relayId) {
+		this.relayId = relayId;
+		new RepeatingJob().schedule();
 	}
 
 	public void start() {
@@ -106,23 +124,28 @@ public class EngineMonitor {
 	}
 
 	/**
-	 * Ops performed when an engine appears online. Rejoin of a previous session is automatic within
-	 * an instance, but the sessionId is saved across instances only if configured.
+	 * Ops performed when an engine appears online. Rejoin of a previous session is
+	 * automatic within an instance, but the sessionId is saved across instances
+	 * only if configured.
 	 */
 	private void engineUp() {
 
 		/*
 		 * TODO if engine is not local, must authenticate with stored username/password
 		 */
-		
-		/*
-		 * TODO must tune the UI on the session
-		 */
-		
-		this.sessionId = client.openSession(this.sessionId);
+
+		PingResponse ping = client.heartbeat();
+
+		this.sessionId = client.openSession(this.sessionId != null ? this.sessionId : ping.getLocalSessionId(),
+				relayId);
+
 		if (this.sessionId != null) {
-			this.messageBus = new StompMessageBus(
+			this.engineBus = new StompMessageBus(
 					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId);
+			if (relayId != null) {
+				this.explorerBus = new StompMessageBus(
+						engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", relayId);
+			}
 			/*
 			 * call user notifier
 			 */
@@ -138,24 +161,25 @@ public class EngineMonitor {
 	 * Ops performed when an engine goes down.
 	 */
 	private void engineDown() {
-		// TODO other cleanup ops. Don't null the sessionId as we may be able to reconnect.
+		// TODO other cleanup ops. Don't null the sessionId as we may be able to
+		// reconnect.
 		onEngineDown.run();
 	}
 
 	public IMessageBus bus() {
 
-		if (this.messageBus == null) {
+		if (this.engineBus == null) {
 			if (isRunning() && sessionId != null) {
-				this.messageBus = new StompMessageBus(engineUrl, sessionId);
+				this.engineBus = new StompMessageBus(engineUrl, sessionId);
 			}
 		}
 
-		if (this.messageBus == null) {
+		if (this.engineBus == null) {
 			throw new IllegalAccessError(
 					"EngineMonitor: bus() called with engine not running or before a session was established");
 		}
 
-		return this.messageBus;
+		return this.engineBus;
 	}
 
 }

@@ -22,21 +22,21 @@ import java.util.function.Consumer;
 public interface IMessageBus {
 
 	/**
-	 * Any receiver implementing the Relay interface will relay the messages it gets to
-	 * a set of identities. This can be used by a receiver to let an external receiver 
-	 * serve as a double or snoop on communication.
+	 * Any receiver implementing the Relay interface will relay the messages it gets
+	 * to a set of identities. This can be used by a receiver to let an external
+	 * receiver serve as a double or snoop on communication.
 	 * 
 	 * @author ferdinando.villa
 	 *
 	 */
 	public interface Relay {
-		
+
 		/**
 		 * Identities to resend our messages to.
 		 */
 		Collection<String> getRelayIdentities();
 	}
-	
+
 	/**
 	 * Post a message.
 	 * 
@@ -55,16 +55,26 @@ public interface IMessageBus {
 	void post(IMessage message, Consumer<IMessage> responder);
 
 	/**
-	 * Return an object that correspond to the identity ID set in the message. If
-	 * that object is not null, the implementation will scan the object's class for
-	 * methods that can handle the class of the payload in the message and call them
-	 * accordingly. Such methods can be private or public and must be annotated with
-	 * {@link MessageHandler}. Parameters will be matched according to their
+	 * Return any objects that subscribed with the identity ID set in the message.
+	 * If that object is not null, the implementation will scan the object's class
+	 * for methods that can handle the class of the payload in the message and call
+	 * them accordingly. Such methods can be private or public and must be annotated
+	 * with {@link MessageHandler}. Parameters will be matched according to their
 	 * declaration.
 	 * 
 	 * @param identity
 	 * @return a receiver object, or null.
 	 */
-	Object getReceiver(String identity);
+	Collection<Object> getReceivers(String identity);
+
+	/**
+	 * Explicitly subscribe an object to the message bus. Will use its annotated
+	 * methods and parameters to dispatch messages.
+	 * 
+	 * @param identity
+	 * @param receiver
+	 * @see MessageHandler
+	 */
+	void subscribe(String identity, Object receiver);
 
 }

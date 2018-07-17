@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.PingResponse;
@@ -56,7 +56,7 @@ public class KlabController {
 		return Klab.INSTANCE.getResourceSchema("all");
 	}
 
-	@RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD })
+	@RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD }, produces = "application/json")
 	@ResponseBody
 	public PingResponse ping(Principal user, HttpServletRequest request) {
 
@@ -65,7 +65,10 @@ public class KlabController {
 		ret.setOnline(engine != null);
 		ret.setUptime(System.currentTimeMillis() - engine.getBootTime().getTime());
 		if (IPUtils.isLocal(request.getRemoteAddr())) {
-			
+			ISession session = Authentication.INSTANCE.getDefaultSession();
+			if (session != null) {
+				ret.setLocalSessionId(session.getId());
+			}
 		}
 		
 		return ret;

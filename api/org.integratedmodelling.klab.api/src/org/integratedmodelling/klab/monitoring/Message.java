@@ -71,7 +71,7 @@ public class Message implements IMessage, Serializable {
 				}
 			}
 		}
-		
+
 		// defaults so that we can just post a string
 		if (ret.messageClass == null) {
 			ret.messageClass = MessageClass.Notification;
@@ -79,7 +79,7 @@ public class Message implements IMessage, Serializable {
 				ret.type = Type.Info;
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -204,5 +204,24 @@ public class Message implements IMessage, Serializable {
 
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	/**
+	 * Make an exact copy of this message using a different identity. Used for
+	 * relaying.
+	 * 
+	 * @param relayId
+	 * @return a new message identified by relayId
+	 */
+	public IMessage copyWithIdentity(String relayId) {
+		Message ret = new Message();
+		ret.identity = relayId;
+		ret.messageClass = this.messageClass;
+		ret.payload = this.payload;
+		ret.payloadClass = this.payloadClass;
+		ret.type = this.type;
+		ret.inResponseTo = this.inResponseTo;
+		ret.timestamp = this.timestamp;
+		return ret;
 	}
 }

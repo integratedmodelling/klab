@@ -2,10 +2,13 @@ package org.integratedmodelling.klab.client.messaging;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -28,6 +31,10 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
  * A websockets-driven message bus. The messages to be exchanged should be
  * defined in the k.IM package.
  * 
+ * FIXME this should be revised so that multiple identities can be subscribed. At
+ * the moment it allows subscribers with different identities but only handles
+ * STOMP messages from a single one.
+ * 
  * @author ferdinando.villa
  *
  */
@@ -38,7 +45,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	StompSession session;
 	String sessionId;
 	Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
-	Map<String, Object> subscribers = Collections.synchronizedMap(new HashMap<>());
+	Map<String, Set<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
 	Reactor reactor = new Reactor();
 
 	public StompMessageBus(String url, String sessionId) {
@@ -75,11 +82,11 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
-		
+
 		Message message = (Message) payload;
-		
+
 		System.out.println(message.getClass() + "/" + message.getType() + " message from " + message.getIdentity());
-		
+
 		if (message.getInResponseTo() != null) {
 			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
 			if (responder != null) {
@@ -92,8 +99,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		 * If the identity is known at our end, check if it has a handler for our
 		 * specific payload type. If so, turn the payload into that and dispatch it.
 		 */
-		Object identity = getReceiver(message.getIdentity());
-		if (identity != null) {
+		for (Object identity : getReceivers(message.getIdentity())) {
 			reactor.dispatchMessage(message, identity);
 		}
 	}
@@ -110,12 +116,18 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	}
 
 	@Override
-	public Object getReceiver(String identity) {
-		return subscribers.get(identity);
+	public void subscribe(String identity, Object receiver) {
+		Set<Object> set = subscribers.get(identity);
+		if (set == null) {
+			set = new HashSet<>();
+			subscribers.put(identity, set);
+		}
+		set.add(receiver);
 	}
 
-	public void subscribe(String identity, Object receiver) {
-		this.subscribers.put(identity, receiver);
+	@Override
+	public Collection<Object> getReceivers(String identity) {
+		return subscribers.containsKey(identity) ? subscribers.get(identity) : new HashSet<>();
 	}
 
 }

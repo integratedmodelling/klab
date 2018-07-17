@@ -19,9 +19,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.ide.kim.KlabExplorer;
 import org.integratedmodelling.klab.ide.kim.KlabSession;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.BrowserUtils;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.osgi.framework.BundleContext;
 
@@ -33,6 +35,11 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.integratedmodelling.klab.ide";
 	private static Activator plugin;
 	private EngineMonitor engineStatusMonitor;
+
+	/*
+	 * identity for relaying messages sent from Web UI to session
+	 */
+	String relayId = NameGenerator.shortUUID();
 
 	/**
 	 * The constructor
@@ -112,8 +119,12 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId);
 
-		this.engineStatusMonitor.start();
+		this.engineStatusMonitor.start(relayId);
 
+	}
+
+	public String getRelayId() {
+		return relayId;
 	}
 
 	private void engineOff() {
@@ -125,8 +136,10 @@ public class Activator extends AbstractUIPlugin {
 	private void engineOn() {
 
 		String sessionId = this.engineStatusMonitor.getSessionId();
-		((StompMessageBus) this.engineStatusMonitor.bus()).subscribe(sessionId, new KlabSession(sessionId));
-		System.out.println("ENGINE WENT ON");
+		
+		this.engineStatusMonitor.bus().subscribe(sessionId, new KlabSession(sessionId));
+		this.engineStatusMonitor.bus().subscribe(relayId, new KlabExplorer(relayId));
+
 		// TODO remove/improve
 		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
 	}
