@@ -48,7 +48,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 	static public String URL = "ws://localhost:8283/modeler/message";
 
-	private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
+	private Set<Object> receivers = Collections.synchronizedSet(new HashSet<>());
 
 	class ReceiverDescription {
 
@@ -145,7 +145,6 @@ public class WebsocketsMessageBus implements IMessageBus {
 	public void publishMessageBus() {
 		Logging.INSTANCE.info("Setting up message bus on " + URL);
 		Klab.INSTANCE.setMessageBus(this);
-
 	}
 
 	/**
@@ -171,7 +170,14 @@ public class WebsocketsMessageBus implements IMessageBus {
 		 * If the identity is known at our end, check if it has a handler for our
 		 * specific payload type. If so, turn the payload into that and dispatch it.
 		 */
-		for (Object identity : getReceivers(message.getIdentity())) {
+		IIdentity auth = Authentication.INSTANCE.getIdentity(message.getIdentity(), IIdentity.class);
+		if (auth != null) {
+			dispatchMessage(message, auth);
+		}
+		/*
+		 * Any other subscribed object
+		 */
+		for (Object identity : getReceivers()) {
 			dispatchMessage(message, identity);
 		}
 	}
@@ -228,26 +234,13 @@ public class WebsocketsMessageBus implements IMessageBus {
 	}
 
 	@Override
-	public Collection<Object> getReceivers(String identity) {
-		Set<Object> ret = new HashSet<>();
-		if (receivers.containsKey(identity)) {
-			ret.addAll(receivers.get(identity));
-		}
-		IIdentity o = Authentication.INSTANCE.getIdentity(identity, IIdentity.class);
-		if (o != null) {
-			ret.add(o);
-		}
-		return ret;
+	public Collection<Object> getReceivers() {
+		return receivers;
 	}
 
 	@Override
-	public void subscribe(String identity, Object receiver) {
-		Set<Object> set = receivers.get(identity);
-		if (set == null) {
-			set = new HashSet<>();
-			receivers.put(identity, set);
-		}
-		set.add(receiver);
+	public void subscribe(Object receiver) {
+		receivers.add(receiver);
 	}
 
 }

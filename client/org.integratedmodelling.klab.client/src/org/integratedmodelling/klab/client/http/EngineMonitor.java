@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.client.http;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -8,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.rest.PingResponse;
@@ -33,10 +37,12 @@ public class EngineMonitor {
 	protected long recheckSecondsWhenOffline = 15;
 	long uptime = -1;
 	Client client;
-	// engine bus
-	StompMessageBus engineBus;
-	// relay bus for the explorer - read only
-	StompMessageBus explorerBus;
+
+	/**
+	 * As many buses as identities we're serving
+	 */
+	Map<String, StompMessageBus> buses = new HashMap<>();
+
 	String sessionId;
 
 	AtomicBoolean stop = new AtomicBoolean(false);
@@ -140,11 +146,13 @@ public class EngineMonitor {
 				relayId);
 
 		if (this.sessionId != null) {
-			this.engineBus = new StompMessageBus(
-					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId);
+			buses.put(this.sessionId, new StompMessageBus(
+					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId));
 			if (relayId != null) {
-				this.explorerBus = new StompMessageBus(
-						engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", relayId);
+				buses.put(relayId,
+						new StompMessageBus(
+								engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message",
+								relayId));
 			}
 			/*
 			 * call user notifier
@@ -164,22 +172,28 @@ public class EngineMonitor {
 		// TODO other cleanup ops. Don't null the sessionId as we may be able to
 		// reconnect.
 		onEngineDown.run();
+		buses.clear();
 	}
 
-	public IMessageBus bus() {
+	public void subscribe(String identity, Object object) {
+		getBus(identity).subscribe(object);
+	}
 
-		if (this.engineBus == null) {
-			if (isRunning() && sessionId != null) {
-				this.engineBus = new StompMessageBus(engineUrl, sessionId);
-			}
+	private IMessageBus getBus(String identity) {
+		StompMessageBus bus = buses.get(identity);
+		if (bus == null) {
+			buses.put(identity, bus = new StompMessageBus(
+					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", identity));
 		}
+		return bus;
+	}
 
-		if (this.engineBus == null) {
-			throw new IllegalAccessError(
-					"EngineMonitor: bus() called with engine not running or before a session was established");
-		}
+	public void post(IMessage message) {
+		getBus(message.getIdentity()).post(message);
+	}
 
-		return this.engineBus;
+	public void post(IMessage message, Consumer<IMessage> responseHandler) {
+		getBus(message.getIdentity()).post(message, responseHandler);
 	}
 
 }

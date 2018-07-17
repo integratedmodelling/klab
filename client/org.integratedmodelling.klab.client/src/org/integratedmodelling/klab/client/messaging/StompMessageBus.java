@@ -45,7 +45,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	StompSession session;
 	String sessionId;
 	Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
-	Map<String, Set<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
+	Set<Object> subscribers = Collections.synchronizedSet(new HashSet<>());
 	Reactor reactor = new Reactor();
 
 	public StompMessageBus(String url, String sessionId) {
@@ -84,9 +84,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	public void handleFrame(StompHeaders headers, Object payload) {
 
 		Message message = (Message) payload;
-
-		System.out.println(message.getClass() + "/" + message.getType() + " message from " + message.getIdentity());
-
+		
 		if (message.getInResponseTo() != null) {
 			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
 			if (responder != null) {
@@ -95,11 +93,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 			}
 		}
 
-		/*
-		 * If the identity is known at our end, check if it has a handler for our
-		 * specific payload type. If so, turn the payload into that and dispatch it.
-		 */
-		for (Object identity : getReceivers(message.getIdentity())) {
+		for (Object identity : getReceivers()) {
 			reactor.dispatchMessage(message, identity);
 		}
 	}
@@ -116,18 +110,13 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	}
 
 	@Override
-	public void subscribe(String identity, Object receiver) {
-		Set<Object> set = subscribers.get(identity);
-		if (set == null) {
-			set = new HashSet<>();
-			subscribers.put(identity, set);
-		}
-		set.add(receiver);
+	public void subscribe(Object receiver) {
+		subscribers.add(receiver);
 	}
 
 	@Override
-	public Collection<Object> getReceivers(String identity) {
-		return subscribers.containsKey(identity) ? subscribers.get(identity) : new HashSet<>();
+	public Collection<Object> getReceivers() {
+		return subscribers;
 	}
 
 }

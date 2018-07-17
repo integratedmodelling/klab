@@ -137,8 +137,8 @@ public class Activator extends AbstractUIPlugin {
 
 		String sessionId = this.engineStatusMonitor.getSessionId();
 		
-		this.engineStatusMonitor.bus().subscribe(sessionId, new KlabSession(sessionId));
-		this.engineStatusMonitor.bus().subscribe(relayId, new KlabExplorer(relayId));
+		this.engineStatusMonitor.subscribe(sessionId, new KlabSession(sessionId));
+		this.engineStatusMonitor.subscribe(relayId, new KlabExplorer(relayId));
 
 		// TODO remove/improve
 		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
@@ -160,13 +160,13 @@ public class Activator extends AbstractUIPlugin {
 
 	public void post(Object... object) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.bus().post(Message.create(engineStatusMonitor.getSessionId(), object));
+			engineStatusMonitor.post(Message.create(engineStatusMonitor.getSessionId(), object));
 		}
 	}
 
 	public void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.bus().post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
+			engineStatusMonitor.post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
 		}
 	}
 
