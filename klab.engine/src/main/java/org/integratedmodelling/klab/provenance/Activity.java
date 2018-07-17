@@ -1,9 +1,10 @@
 package org.integratedmodelling.klab.provenance;
 
 import java.util.Optional;
+
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
-import org.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 
 /**
  * One of the concrete activities (Description) in the ODO observation ontology: Computation,
@@ -17,9 +18,8 @@ import org.jgrapht.graph.DefaultEdge;
  * @author ferdinando.villa
  *
  */
-public class Activity extends DefaultEdge implements IActivity {
+public class Activity implements IActivity {
 
-  private static final long serialVersionUID = 2322736753319019967L;
 
   public Activity() {
     // TODO Auto-generated constructor stub
@@ -48,5 +48,23 @@ public class Activity extends DefaultEdge implements IActivity {
     // TODO Auto-generated method stub
     return null;
   }
+
+@Override
+public long getTimestamp() {
+	// TODO Auto-generated method stub
+	return 0;
+}
+
+@Override
+public IProvenance getProvenance() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public boolean isEmpty() {
+	// TODO Auto-generated method stub
+	return false;
+}
 
 }

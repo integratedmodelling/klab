@@ -19,6 +19,7 @@ public class SearchResponse {
 	private List<SearchMatch> matches = new ArrayList<>();
 	private boolean end;
 	private boolean error;
+	private boolean last;
 	private long elapsedTimeMs = System.currentTimeMillis();
 
 	public String getContextId() {
@@ -67,6 +68,14 @@ public class SearchResponse {
 
 	public void setElapsedTimeMs(long elapsedTimeMs) {
 		this.elapsedTimeMs = elapsedTimeMs;
+	}
+
+	public boolean isLast() {
+		return last;
+	}
+
+	public void setLast(boolean last) {
+		this.last = last;
 	}
 
 	/**

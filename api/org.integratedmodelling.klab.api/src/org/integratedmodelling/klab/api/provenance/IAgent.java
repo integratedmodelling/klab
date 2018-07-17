@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.api.provenance;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 
 /**
  * An agent in k.LAB is anything that can make observations. All such agents have a k.LAB
@@ -27,7 +26,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IAgent extends Node {
+public interface IAgent extends IProvenance.Node {
 
   /**
    * <p>getIdentity.</p>

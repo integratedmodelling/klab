@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -68,7 +70,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author ferdinando.villa
  *
  */
-public class Session implements ISession, UserDetails {
+public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	private static final long serialVersionUID = -1571090827271892549L;
 
@@ -81,6 +83,9 @@ public class Session implements ISession, UserDetails {
 	long lastActivity = System.currentTimeMillis();
 	long creation = System.currentTimeMillis();
 	long lastJoin = System.currentTimeMillis();
+	boolean isDefault = false;
+	
+	Set<String> relayIdentities = new HashSet<>();
 
 	SpatialExtent regionOfInterest = null;
 
@@ -369,9 +374,12 @@ public class Session implements ISession, UserDetails {
 
 				@Override
 				public void run() {
+					
 					SearchResponse response = new SearchResponse();
 					response.setContextId(contextId);
 					response.setRequestId(request.getRequestId());
+					response.setLast(true);
+					
 					final Pair<Context, List<Match>> context = searchContexts.get(contextId);
 					List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
@@ -395,13 +403,13 @@ public class Session implements ISession, UserDetails {
 
 	@MessageHandler
 	private void handleObservationRequest(ObservationRequest request) {
-		
+
 		/*
 		 * TODO do all this in a thread
 		 */
 		/*
-		 * TODO if we have no context in the request but we have a ROI, create the context from the ROI and
-		 * block the thread until it's observed
+		 * TODO if we have no context in the request but we have a ROI, create the
+		 * context from the ROI and block the thread until it's observed
 		 */
 		/*
 		 * TODO observe the URN in the request
@@ -426,6 +434,15 @@ public class Session implements ISession, UserDetails {
 					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0));
 		}
 		return ret;
+	}
+
+	@Override
+	public Collection<String> getRelayIdentities() {
+		return relayIdentities;
+	}
+
+	public void addRelayId(String relayId) {
+		relayIdentities.add(relayId);
 	}
 
 }

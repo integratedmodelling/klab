@@ -2,12 +2,17 @@ package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.PingResponse;
+import org.integratedmodelling.klab.utils.IPUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,12 +58,17 @@ public class KlabController {
 
 	@RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD })
 	@ResponseBody
-	public String ping() {
+	public PingResponse ping(Principal user, HttpServletRequest request) {
+
+		PingResponse ret = new PingResponse();
 		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
-		if (engine == null) {
-			return "0";
+		ret.setOnline(engine != null);
+		ret.setUptime(System.currentTimeMillis() - engine.getBootTime().getTime());
+		if (IPUtils.isLocal(request.getRemoteAddr())) {
+			
 		}
-		return "" + (System.currentTimeMillis() - engine.getBootTime().getTime());
+		
+		return ret;
 	}
 
 }

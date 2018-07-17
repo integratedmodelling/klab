@@ -3,12 +3,12 @@ package org.integratedmodelling.klab.engine.rest.controllers.engine;
 import java.security.Principal;
 
 import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.AuthorizeSessionResponse;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured({ Roles.ENGINE_USER, Roles.ADMIN })
 public class EngineController {
 
-	@RequestMapping(value = API.ENGINE.SESSION.AUTHORIZE, params = "join", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = API.ENGINE.SESSION.AUTHORIZE, params = { "join",
+			"relay" }, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public AuthorizeSessionResponse openSession(@RequestParam(name = "join") String previousToJoin, Principal principal) {
+	public AuthorizeSessionResponse openSession(@RequestParam(name = "join") String previousToJoin,
+			@RequestParam(name = "relay", required = false) String relayId, Principal principal) {
 
 		IIdentity user = Authentication.INSTANCE.getIdentity(principal);
 		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
@@ -47,6 +49,10 @@ public class EngineController {
 			info = "requested session was unavailable: returning a new session";
 		}
 
+		if (relayId != null) {
+			((Session)session).addRelayId(relayId);
+		}
+		
 		AuthorizeSessionResponse ret = new AuthorizeSessionResponse();
 		ret.setInfo(info);
 		ret.setSessionId(session.getId());

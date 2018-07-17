@@ -30,7 +30,6 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -46,8 +45,11 @@ import org.integratedmodelling.klab.utils.Range;
  * enables simpler handling of provenance, as each observation activity returns
  * one artifact, possibly iterable as a group.
  * <p>
+ * From an OPM perspective, IArtifact is the equivalent of Entity, including
+ * its specialization into Bundle if size() > 1. 
+ * <p>
  * Each artifact exposes the provenance graph it's part of, allowing all k.LAB
- * tasks to simply return an {@code IArtifact} and provide full information on
+ * tasks to simply return any {@code IArtifact} and provide full information on
  * what happened.
  * <p>
  * The API to use a {@link IKimModel} as an artifact ({@link IModelArtifact}) is
@@ -57,7 +59,7 @@ import org.integratedmodelling.klab.utils.Range;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IArtifact extends Node, Iterable<IArtifact> {
+public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 
 	/**
 	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now, should be
