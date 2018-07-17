@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
+import org.apache.log4j.Logger;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
@@ -58,7 +59,9 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -796,5 +799,16 @@ public enum Resources implements IResourceService {
 					Klab.INSTANCE.getRootMonitor());
 		}
 
+	}
+
+	public void synchronize(File rdir) {
+		File rdef = new File(rdir + File.separator + "resource.json");
+		if (rdef.exists()) {
+			ResourceReference rref = JsonUtils.load(rdef, ResourceReference.class);
+			if (!getLocalResourceCatalog().containsKey(rref.getUrn())) {
+				Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
+				getLocalResourceCatalog().put(rref.getUrn(), new Resource(rref));
+			}
+		}
 	}
 }

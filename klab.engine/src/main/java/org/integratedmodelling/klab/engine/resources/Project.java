@@ -23,6 +23,18 @@ public class Project implements IProject {
         } else {
           this.workspace = Resources.INSTANCE.getWorkspace(project.getWorkspace().getName());
         }
+        synchronizeResources();
+    }
+    
+    public void synchronizeResources() {
+    	File resourceDir = new File(getRoot() + File.separator + "resources");
+    	if (resourceDir.exists() && resourceDir.isDirectory()) {
+    		for (File rdir : resourceDir.listFiles()) {
+    			if (rdir.isDirectory()) {
+    				Resources.INSTANCE.synchronize(rdir);
+    			}
+    		}
+    	}
     }
 
     @Override
