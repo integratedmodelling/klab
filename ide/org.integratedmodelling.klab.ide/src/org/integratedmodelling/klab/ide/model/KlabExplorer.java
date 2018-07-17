@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.kim;
+package org.integratedmodelling.klab.ide.model;
 
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.rest.SpatialExtent;

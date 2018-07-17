@@ -120,7 +120,7 @@ public interface IMessage {
 		/*
 		 * --- Task lifecycle ---
 		 */
-		TaskStarted, TaskFinished, TaskAborted, DataflowCompiled,
+		ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled,
 
 		/*
 		 * --- Search-class types ---

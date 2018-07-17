@@ -179,11 +179,23 @@ public class EngineMonitor {
 		getBus(identity).subscribe(object);
 	}
 
+	public void unsubscribe(String identity, Object object) {
+		StompMessageBus bus = buses.get(identity);
+		if (bus != null) {
+			bus.getReceivers().remove(object);
+			if (bus.getReceivers().size() == 0) {
+				buses.remove(identity);
+			}
+		}
+	}
+
 	private IMessageBus getBus(String identity) {
 		StompMessageBus bus = buses.get(identity);
 		if (bus == null) {
-			buses.put(identity, bus = new StompMessageBus(
-					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", identity));
+			buses.put(identity,
+					bus = new StompMessageBus(
+							engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message",
+							identity));
 		}
 		return bus;
 	}
@@ -194,6 +206,10 @@ public class EngineMonitor {
 
 	public void post(IMessage message, Consumer<IMessage> responseHandler) {
 		getBus(message.getIdentity()).post(message, responseHandler);
+	}
+
+	public void unsubscribe(String identity) {
+		buses.remove(identity);
 	}
 
 }

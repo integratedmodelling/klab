@@ -17,10 +17,9 @@ import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
-import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.ide.kim.KimData;
-import org.integratedmodelling.klab.ide.kim.KlabExplorer;
-import org.integratedmodelling.klab.ide.kim.KlabSession;
+import org.integratedmodelling.klab.ide.model.KlabExplorer;
+import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -167,6 +166,24 @@ public class Activator extends AbstractUIPlugin {
 	public void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (engineStatusMonitor.isRunning()) {
 			engineStatusMonitor.post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
+		}
+	}
+
+	public void subscribe(String identity, Object receiver) {
+		if (engineStatusMonitor.isRunning()) {
+			engineStatusMonitor.subscribe(identity, receiver);
+		}
+	}
+
+	public void unsubscribe(String identity, Object receiver) {
+		if (engineStatusMonitor.isRunning()) {
+			engineStatusMonitor.unsubscribe(identity, receiver);
+		}
+	}
+
+	public void unsubscribe(String identity) {
+		if (engineStatusMonitor.isRunning()) {
+			engineStatusMonitor.unsubscribe(identity);
 		}
 	}
 

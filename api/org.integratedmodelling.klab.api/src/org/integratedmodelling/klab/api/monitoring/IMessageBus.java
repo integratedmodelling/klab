@@ -4,17 +4,20 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
- * A message bus is created by the runtime and exposed on request. Objects may
- * register with it as receivers. Messages are sent to the bus using the
- * IMonitor API in the engine, which formats any passed object into a proper
- * message.
+ * A message bus is created by the runtime linked to a specific identity and
+ * exposed on request. Additional objects can be register with it as receivers.
+ * Messages are sent to the bus using the IMonitor API in the engine, which
+ * formats any passed object into a proper message. In a back-end message bus,
+ * the running application should have a specific object tied to the identity,
+ * and automatically create a subscription for the identity of reference.
  * <p>
  * Several implementations may exist, from a local, non-RPC channel to one based
- * on RPC such as multicast or websockets.
+ * on RPC such as multicast or websockets. A client-side bus will simply "tune
+ * in" to the back-end identity using its ID and may subscribe any reactors it
+ * wishes to see messages from it.
  * <p>
- * The ID of the engine or node returned by the capabilities is the main channel
- * prefix for the communicating server. Subchannels will be prefixed by the same
- * ID and separated by slashes.
+ * A full-fledged engine client will probably have multiple buses and handle
+ * them according to the posting/receiving identity.
  * 
  * @author ferdinando.villa
  *

@@ -6,12 +6,12 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 
-
 public class SearchMatch {
 
 	private String name;
 	private String id;
 	private String description;
+	private IKimConcept.Type mainSemanticType;
 	private Set<IKimConcept.Type> semanticType = EnumSet.noneOf(IKimConcept.Type.class);
 	private IIndexingService.Match.Type matchType;
 
@@ -79,6 +79,14 @@ public class SearchMatch {
 
 	public void setMatchType(IIndexingService.Match.Type matchType) {
 		this.matchType = matchType;
+	}
+
+	public IKimConcept.Type getMainSemanticType() {
+		return mainSemanticType;
+	}
+
+	public void setMainSemanticType(IKimConcept.Type mainSemanticType) {
+		this.mainSemanticType = mainSemanticType;
 	}
 
 }

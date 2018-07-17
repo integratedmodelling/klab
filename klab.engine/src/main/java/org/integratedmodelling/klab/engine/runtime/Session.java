@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Indexing;
@@ -386,6 +387,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					for (Match match : matches) {
 						SearchMatch m = new SearchMatch();
 						m.getSemanticType().addAll(match.getConceptType());
+						m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
 						m.setMatchType(match.getMatchType());
 						m.setName(match.getName());
 						m.setId(match.getId());
