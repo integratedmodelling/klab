@@ -53,11 +53,11 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * The responsibility for Activities is attributed to Agents, which may be a
  * {@link IUserIdentity} (in acknowledgments), the AI in k.LAB (for attribution
  * of plans) or {@link IModel models}. Model agents are associated with the
- * correspondent model artifact, which holds further provenance info.
- * <p>
- * TODO figure out how to associate a model with its model artifact - could be a
- * plan but that's a pain. In the k.LAB graph the two can just be coalesced as
- * IModel contains its statement.
+ * correspondent model artifact, which holds further provenance info. In the
+ * k.LAB graph the model agent and the model artifact are just coalesced, as
+ * IModel contains its statement. In the full OPM graph, the model artifact is
+ * the plan that was followed, by the model agent, in executing the computation
+ * activity that created other artifacts.
  * <p>
  * The models' sequential execution is driven by a {@link IDataflow}, which is
  * an entity of type Plan, attributed to the AI in k.LAB, an agent representing
