@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -55,6 +54,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
 		WebSocketClient transport = new SockJsClient(transports);
 		WebSocketStompClient stompClient = new WebSocketStompClient(transport);
+		stompClient.setInboundMessageSizeLimit(102400 * 1024);
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 		try {
 			this.session = stompClient.connect(url, this).get();
