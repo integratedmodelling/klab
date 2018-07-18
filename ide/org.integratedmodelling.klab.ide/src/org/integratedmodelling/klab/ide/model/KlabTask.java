@@ -16,6 +16,4 @@ public class KlabTask {
 		System.out.println("TASK NOTIFICATION " + type + ": " + string);
 		// TODO
 	}
-
-
 }

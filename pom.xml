@@ -97,7 +97,7 @@
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
 			2.0.0 -->
 		<spring-boot-version>2.0.0.RELEASE</spring-boot-version>
-		<spring-version>5.0.4.RELEASE</spring-version>
+		<spring-version>5.0.5.RELEASE</spring-version>
 		<junit-version>4.12</junit-version>
 		<jackson-version>2.9.5</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
@@ -122,45 +122,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>com.github.ekryd.sortpom</groupId>
-				<artifactId>sortpom-maven-plugin</artifactId>
-				<version>2.8.0</version>
-				<executions>
-					<execution>
-						<phase>clean</phase>
-						<goals>
-							<goal>sort</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<keepBlankLines>1</keepBlankLines>
-					<sortProperties>true</sortProperties>
-					<nrOfIndentSpace>4</nrOfIndentSpace>
-					<sortDependencies>scope,groupId,artifactId</sortDependencies>
-					<createBackupFile>false</createBackupFile>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.marvinformatics.formatter</groupId>
-				<artifactId>formatter-maven-plugin</artifactId>
-				<version>1.8.1</version>
-				<executions>
-					<execution>
-						<phase>clean</phase>
-						<goals>
-							<goal>format</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<configFile>etc/JavaFormatterSettings.xml</configFile>
-					<configJsFile>etc/JavascriptFormatterSettings.xml</configJsFile>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
 
 	<profiles>

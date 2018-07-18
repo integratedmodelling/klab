@@ -9,6 +9,7 @@ package org.integratedmodelling.klab.rest;
  */
 public class PingResponse {
 
+	private String engineId;
 	private String localSessionId;
 	private boolean online;
 	private long uptime;
@@ -35,6 +36,14 @@ public class PingResponse {
 
 	public void setUptime(long uptime) {
 		this.uptime = uptime;
+	}
+
+	public void setEngineId(String engineId) {
+		this.engineId = engineId;
+	}
+
+	public String getEngineId() {
+		return engineId;
 	}
 
 }

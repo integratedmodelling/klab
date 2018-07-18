@@ -68,7 +68,7 @@ public interface IMessageBus {
 	 * @param identity
 	 * @return a receiver object, or null.
 	 */
-	Collection<Object> getReceivers();
+	Collection<Object> getReceivers(String identity);
 
 	/**
 	 * Explicitly subscribe an object to the message bus. Will use its annotated
@@ -78,6 +78,10 @@ public interface IMessageBus {
 	 * @param receiver
 	 * @see MessageHandler
 	 */
-	void subscribe(Object receiver);
+	void subscribe(String identity, Object receiver);
+
+	void unsubscribe(String identity);
+
+	void unsubscribe(String identity, Object receiver);
 
 }

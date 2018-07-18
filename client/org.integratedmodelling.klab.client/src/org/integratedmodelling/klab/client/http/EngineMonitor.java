@@ -1,9 +1,6 @@
 package org.integratedmodelling.klab.client.http;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -11,7 +8,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.rest.PingResponse;
@@ -37,11 +33,7 @@ public class EngineMonitor {
 	protected long recheckSecondsWhenOffline = 15;
 	long uptime = -1;
 	Client client;
-
-	/**
-	 * As many buses as identities we're serving
-	 */
-	Map<String, StompMessageBus> buses = new HashMap<>();
+	StompMessageBus bus;
 
 	String sessionId;
 
@@ -141,75 +133,35 @@ public class EngineMonitor {
 		 */
 
 		PingResponse ping = client.heartbeat();
-
+		this.engineKey = ping.getEngineId();
 		this.sessionId = client.openSession(this.sessionId != null ? this.sessionId : ping.getLocalSessionId(),
 				relayId);
 
 		if (this.sessionId != null) {
-			buses.put(this.sessionId, new StompMessageBus(
-					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message", sessionId));
-			if (relayId != null) {
-				buses.put(relayId,
-						new StompMessageBus(
-								engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message",
-								relayId));
-			}
-			/*
-			 * call user notifier
-			 */
+			this.bus = new StompMessageBus(engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message");
 			onEngineUp.run();
-
 		} else {
 			stop();
 			throw new RuntimeException("engine session negotiation failed");
 		}
 	}
 
+	public String getEngineId() {
+		return this.engineKey;
+	}
+	
 	/**
 	 * Ops performed when an engine goes down.
 	 */
 	private void engineDown() {
-		// TODO other cleanup ops. Don't null the sessionId as we may be able to
-		// reconnect.
 		onEngineDown.run();
-		buses.clear();
+		bus.stop();
+		bus = null;
 	}
 
-	public void subscribe(String identity, Object object) {
-		getBus(identity).subscribe(object);
-	}
-
-	public void unsubscribe(String identity, Object object) {
-		StompMessageBus bus = buses.get(identity);
-		if (bus != null) {
-			bus.getReceivers().remove(object);
-			if (bus.getReceivers().size() == 0) {
-				buses.remove(identity);
-			}
-		}
-	}
-
-	private IMessageBus getBus(String identity) {
-		StompMessageBus bus = buses.get(identity);
-		if (bus == null) {
-			buses.put(identity,
-					bus = new StompMessageBus(
-							engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message",
-							identity));
-		}
+	public IMessageBus getBus() {
 		return bus;
 	}
 
-	public void post(IMessage message) {
-		getBus(message.getIdentity()).post(message);
-	}
-
-	public void post(IMessage message, Consumer<IMessage> responseHandler) {
-		getBus(message.getIdentity()).post(message, responseHandler);
-	}
-
-	public void unsubscribe(String identity) {
-		buses.remove(identity);
-	}
 
 }

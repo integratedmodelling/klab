@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -38,7 +39,7 @@ public class Activator extends AbstractUIPlugin {
 	/*
 	 * identity for relaying messages sent from Web UI to session
 	 */
-	String relayId = NameGenerator.shortUUID();
+	String relayId = "relay"+NameGenerator.shortUUID();
 
 	/**
 	 * The constructor
@@ -135,9 +136,12 @@ public class Activator extends AbstractUIPlugin {
 	private void engineOn() {
 
 		String sessionId = this.engineStatusMonitor.getSessionId();
-		
-		this.engineStatusMonitor.subscribe(sessionId, new KlabSession(sessionId));
-		this.engineStatusMonitor.subscribe(relayId, new KlabExplorer(relayId));
+		/**
+		 * Add communication peers for engine, session and explorer
+		 */
+		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), new KlabEngine());
+		this.engineStatusMonitor.getBus().subscribe(sessionId, new KlabSession(sessionId));
+		this.engineStatusMonitor.getBus().subscribe(relayId, new KlabExplorer(relayId));
 
 		// TODO remove/improve
 		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
@@ -159,31 +163,31 @@ public class Activator extends AbstractUIPlugin {
 
 	public void post(Object... object) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.post(Message.create(engineStatusMonitor.getSessionId(), object));
+			engineStatusMonitor.getBus().post(Message.create(engineStatusMonitor.getSessionId(), object));
 		}
 	}
 
 	public void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
+			engineStatusMonitor.getBus().post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
 		}
 	}
 
 	public void subscribe(String identity, Object receiver) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.subscribe(identity, receiver);
+			engineStatusMonitor.getBus().subscribe(identity, receiver);
 		}
 	}
 
 	public void unsubscribe(String identity, Object receiver) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.unsubscribe(identity, receiver);
+			engineStatusMonitor.getBus().unsubscribe(identity, receiver);
 		}
 	}
 
 	public void unsubscribe(String identity) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.unsubscribe(identity);
+			engineStatusMonitor.getBus().unsubscribe(identity);
 		}
 	}
 

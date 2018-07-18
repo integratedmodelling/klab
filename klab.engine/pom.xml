@@ -140,12 +140,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-websocket</artifactId>
-			<version>5.0.5.RELEASE</version>
+			<version>${spring-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-messaging</artifactId>
-			<version>5.0.5.RELEASE</version>
+			<version>${spring-version}</version>
 		</dependency>
 
 		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 

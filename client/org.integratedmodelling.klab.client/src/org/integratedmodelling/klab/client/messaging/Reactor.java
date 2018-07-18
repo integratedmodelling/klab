@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
+import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.client.messaging.Reactor.ReceiverDescription.MethodDescriptor;
@@ -23,7 +24,12 @@ public class Reactor {
 
 	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
 	ObjectMapper objectMapper = new ObjectMapper();
-
+	IMessageBus bus;
+	
+	public Reactor(IMessageBus bus) {
+		this.bus = bus;
+	}
+	
 	class ReceiverDescription {
 
 		private Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
@@ -87,16 +93,21 @@ public class Reactor {
 						params.add(message.getType());
 					} else if (cls.isAssignableFrom(String.class)) {
 						params.add(payload.toString());
+					} else if (IMessageBus.class.isAssignableFrom(cls)) {
+						params.add(bus);
 					} else {
 						params.add(null);
 					}
 				}
 
 				try {
-					this.method.invoke(identity, params.toArray());
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					// TODO log error
-					System.err.println(e.getStackTrace());
+					Object ret = this.method.invoke(identity, params.toArray());
+					if (ret instanceof Boolean && !((Boolean)ret)) {
+						bus.unsubscribe(message.getIdentity());
+					}
+				} catch (Throwable e) {
+					// TODO log, don't throw
+					throw new RuntimeException(e);
 				}
 			}
 
@@ -138,8 +149,7 @@ public class Reactor {
 			}
 
 		} catch (Throwable e) {
-			// TODO log error
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
 	}

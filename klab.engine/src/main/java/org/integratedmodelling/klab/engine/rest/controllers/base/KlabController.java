@@ -63,14 +63,17 @@ public class KlabController {
 		PingResponse ret = new PingResponse();
 		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
 		ret.setOnline(engine != null);
-		ret.setUptime(System.currentTimeMillis() - engine.getBootTime().getTime());
-		if (IPUtils.isLocal(request.getRemoteAddr())) {
-			ISession session = Authentication.INSTANCE.getDefaultSession();
-			if (session != null) {
-				ret.setLocalSessionId(session.getId());
+		if (engine != null) {
+			ret.setUptime(System.currentTimeMillis() - engine.getBootTime().getTime());
+			ret.setEngineId(engine.getId());
+			if (IPUtils.isLocal(request.getRemoteAddr())) {
+				ISession session = Authentication.INSTANCE.getDefaultSession();
+				if (session != null) {
+					ret.setLocalSessionId(session.getId());
+				}
 			}
 		}
-		
+
 		return ret;
 	}
 

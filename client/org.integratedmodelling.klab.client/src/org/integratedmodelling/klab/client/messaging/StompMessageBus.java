@@ -17,8 +17,10 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSession.Subscription;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -31,9 +33,9 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
  * A websockets-driven message bus. The messages to be exchanged should be
  * defined in the k.IM package.
  * 
- * FIXME this should be revised so that multiple identities can be subscribed. At
- * the moment it allows subscribers with different identities but only handles
- * STOMP messages from a single one.
+ * FIXME this should be revised so that multiple identities can be subscribed.
+ * At the moment it allows subscribers with different identities but only
+ * handles STOMP messages from a single one.
  * 
  * @author ferdinando.villa
  *
@@ -42,14 +44,13 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	static String URL = "ws://localhost:8283/modeler/message";
 
-	StompSession session;
-	String sessionId;
-	Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
-	Set<Object> subscribers = Collections.synchronizedSet(new HashSet<>());
-	Reactor reactor = new Reactor();
+	private StompSession session;
+	private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Subscription> subscriptions = Collections.synchronizedMap(new HashMap<>());
+	private Reactor reactor = new Reactor(this);
 
-	public StompMessageBus(String url, String sessionId) {
-		this.sessionId = sessionId;
+	public StompMessageBus(String url) {
 		List<Transport> transports = new ArrayList<>(1);
 		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
 		WebSocketClient transport = new SockJsClient(transports);
@@ -57,22 +58,15 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 		try {
 			this.session = stompClient.connect(url, this).get();
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-		this.session = session;
-		session.subscribe("/message/" + sessionId, this);
-	}
-
-	@Override
 	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
 			Throwable exception) {
-		// TODO
-		System.err.println("Got an exception: " + exception.getMessage());
+		throw new RuntimeException("STOMP exception: " + exception.getMessage());
 	}
 
 	@Override
@@ -82,26 +76,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
-
-		Message message = (Message) payload;
-
-		System.out.println(message.getClass() + "/" + message.getType() + " from " + message.getIdentity() + " with " + message.getPayloadClass());
-
-		if (message.getInResponseTo() != null) {
-			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
-			if (responder != null) {
-				responder.accept(message);
-				return;
-			}
-		}
-
-		/*
-		 * If the identity is known at our end, check if it has a handler for our
-		 * specific payload type. If so, turn the payload into that and dispatch it.
-		 */
-		for (Object identity : getReceivers()) {
-			reactor.dispatchMessage(message, identity);
-		}
+		System.out.println("GOT A FUCKA PAYLOAD " + payload);
 	}
 
 	@Override
@@ -116,13 +91,85 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	}
 
 	@Override
-	public void subscribe(Object receiver) {
-		subscribers.add(receiver);
+	public Collection<Object> getReceivers(String identity) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret == null) {
+			ret = new HashSet<>();
+		}
+		return ret;
 	}
 
 	@Override
-	public Collection<Object> getReceivers() {
-		return subscribers;
+	public void subscribe(String identity, Object receiver) {
+
+		Set<Object> ret = receivers.get(identity);
+
+		if (ret == null) {
+			ret = new HashSet<>();
+			Subscription subscription = session.subscribe("/message/" + identity, new StompFrameHandler() {
+
+				@Override
+				public synchronized void handleFrame(StompHeaders arg0, Object payload) {
+
+					try {
+						final Message message = (Message) payload;
+						
+						System.out.println("RECEIVED " + message.getMessageClass() + "/" + message.getType() + " from "
+								+ message.getIdentity() + " with " + message.getPayloadClass());
+
+						if (message.getInResponseTo() != null) {
+							Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
+							if (responder != null) {
+								responder.accept(message);
+								return;
+							}
+						}
+
+						/*
+						 * If the identity is known at our end, check if it has a handler for our
+						 * specific payload type. If so, turn the payload into that and dispatch it.
+						 */
+						for (Object identity : getReceivers(message.getIdentity())) {
+							reactor.dispatchMessage(message, identity);
+						}
+					} catch (Throwable e) {
+						throw new RuntimeException(e);
+					}
+				}
+
+				@Override
+				public Type getPayloadType(StompHeaders arg0) {
+					return Message.class;
+				}
+			});
+			subscriptions.put(identity, subscription);
+			receivers.put(identity, ret);
+		}
+		ret.add(receiver);
+	}
+
+	@Override
+	public void unsubscribe(String identity) {
+		subscriptions.get(identity).unsubscribe();
+		receivers.remove(identity);
+		subscriptions.remove(identity);
+	}
+
+	@Override
+	public void unsubscribe(String identity, Object receiver) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret != null) {
+			ret.remove(receiver);
+			if (ret.isEmpty()) {
+				unsubscribe(identity);
+			}
+		}
+	}
+
+	public void stop() {
+		for (Subscription subscription : subscriptions.values()) {
+			subscription.unsubscribe();
+		}
 	}
 
 }
