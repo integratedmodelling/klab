@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.GitUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
 
@@ -17,8 +19,6 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
         
         delegate = new KimWorkspace(root, overridingProjects) {
 
-            private static final long serialVersionUID = -7032365312926466996L;
-
             @Override
             public void readProjects() throws IOException {
                 
@@ -28,7 +28,11 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                         try {
                             GitUtils.requireUpdatedRepository(url, getRoot());
                         } catch (KlabException e) {
-                            throw new IOException(e);
+                            if (new File(root + File.separator + MiscUtilities.getURLBaseName(url) + File.separator + ".git").exists()) {
+                                Logging.INSTANCE.error("cannot sync existing repository "  + url + ": skipping");
+                            } else {
+                                throw new IOException(e);
+                            }
                         }
                     }
                 }

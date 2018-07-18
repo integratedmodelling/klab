@@ -49,4 +49,10 @@ public class TaskReference {
 		this.error = error;
 	}
 
+    @Override
+    public String toString() {
+        return "TaskReference [id=" + id + ", description=" + description + "]";
+    }
+
+	
 }
