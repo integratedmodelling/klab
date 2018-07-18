@@ -113,10 +113,14 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 					try {
 						final Message message = (Message) payload;
-						
+
 						System.out.println("RECEIVED " + message.getMessageClass() + "/" + message.getType() + " from "
 								+ message.getIdentity() + " with " + message.getPayloadClass());
 
+						if (message.getType() == IMessage.Type.DataflowCompiled) {
+							System.out.println("FOZASA");
+						}
+						
 						if (message.getInResponseTo() != null) {
 							Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
 							if (responder != null) {
@@ -142,6 +146,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 					return Message.class;
 				}
 			});
+			
 			subscriptions.put(identity, subscription);
 			receivers.put(identity, ret);
 		}
@@ -167,9 +172,12 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	}
 
 	public void stop() {
-		for (Subscription subscription : subscriptions.values()) {
-			subscription.unsubscribe();
+		if (session.isConnected()) {
+			for (Subscription subscription : subscriptions.values()) {
+				subscription.unsubscribe();
+			}
 		}
+		subscriptions.clear();
 	}
 
 }

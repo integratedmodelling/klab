@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
- * Usage:
- * from JS:
+ * Usage: from JS:
+ * 
  * <pre>
     var socket = new SockJS('/modeler/message');
     stompClient = Stomp.over(socket);
@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     Sending:
     
     stompClient.send("/klab/message", {}, JSON.stringify({ 'name': name}
-    
+ * 
  * </pre>
  * 
  * @author ferdinando.villa
@@ -47,56 +47,60 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebSocketMessageBroker
 public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer {
 
-    @Autowired
-    ObjectMapper objectMapper;
+	@Autowired
+	ObjectMapper objectMapper;
 
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(API.MESSAGE).withSockJS();
-    }
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint(API.MESSAGE).withSockJS();
+	}
 
-    @Override
-    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-        registration.setSendTimeLimit(15 * 1000).setSendBufferSizeLimit(512 * 1024);
-    }
+	@Override
+	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+		registration
+			.setSendTimeLimit(15 * 1000)
+			.setMessageSizeLimit(256 * 1024)
+			.setSendBufferSizeLimit(2048 * 1024);
+	}
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-    }
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+	}
 
-    @Override
-    public void configureClientOutboundChannel(ChannelRegistration registration) {
-        registration.taskExecutor().corePoolSize(4).maxPoolSize(10);
-    }
+	@Override
+	public void configureClientOutboundChannel(ChannelRegistration registration) {
+		registration.taskExecutor().corePoolSize(4).maxPoolSize(10);
+	}
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        // TODO: ?? 
-    }
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		// TODO: ??
+	}
 
-    @Override
-    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-        // TODO: ?? 
-    }
+	@Override
+	public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+		// TODO: ??
+	}
 
-    @Override
-    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-        // Workaround for issue 2445: https://github.com/spring-projects/spring-boot/issues/2445 
-        DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
-        resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setObjectMapper(objectMapper);
-        converter.setContentTypeResolver(resolver);
-        messageConverters.add(converter);
-        return false;
-    }
+	@Override
+	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+		// Workaround for issue 2445:
+		// https://github.com/spring-projects/spring-boot/issues/2445
+		DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
+		resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
+		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+		converter.setObjectMapper(objectMapper);
+		converter.setContentTypeResolver(resolver);
+		messageConverters.add(converter);
+		return false;
+	}
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry configurer) {
-        // Prefix for messages FROM server TO client
-        configurer.enableSimpleBroker(API.MESSAGE);
-        // Prefix for messages FROM client TO server, sent to /klab/message: : 
-        configurer.setApplicationDestinationPrefixes("/klab");
-    }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry configurer) {
+		// Prefix for messages FROM server TO client
+		configurer.enableSimpleBroker(API.MESSAGE);
+		// Prefix for messages FROM client TO server, sent to /klab/message: :
+		configurer.setApplicationDestinationPrefixes("/klab");
+	}
 
 }
