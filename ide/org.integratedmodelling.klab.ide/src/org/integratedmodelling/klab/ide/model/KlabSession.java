@@ -4,7 +4,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
-import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
@@ -40,19 +39,19 @@ public class KlabSession {
 		 * TODO notify the views
 		 */
 		System.out.println("TASK START " + task.getId());
-//		bus.subscribe(task.getId(), new KlabTask(task.getId()));
+		bus.subscribe(task.getId(), new KlabTask(task.getId()));
 	}
 
 	@MessageHandler(type = Type.TaskFinished)
 	public void finishTask(TaskReference task, IMessageBus bus) {
 		System.out.println("TASK FINISHED " + task.getId());
-//		bus.unsubscribe(task.getId());
+		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler(type = Type.TaskAborted)
 	public void abortTask(TaskReference task, IMessageBus bus) {
 		System.out.println("TASK FUBAR " + task.getId());
-//		bus.unsubscribe(task.getId());
+		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler

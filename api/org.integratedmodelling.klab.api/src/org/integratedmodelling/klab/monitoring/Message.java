@@ -110,6 +110,11 @@ public class Message implements IMessage, Serializable {
 
 		return ret;
 	}
+	
+	@Override
+	public String toString() {
+	    return "{" + identity + ": " + messageClass + "/" + type + ": " + payload + "}";
+	}
 
 	public Message inResponseTo(IMessage message) {
 		this.inResponseTo = ((Message) message).id;
