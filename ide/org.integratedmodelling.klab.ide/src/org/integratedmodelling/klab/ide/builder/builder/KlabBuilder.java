@@ -22,38 +22,43 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class KlabBuilder extends IncrementalProjectBuilder {
 
+	public static final String BUILDER_ID = "org.integratedmodelling.ide.klabBuilder";
+
 	class SampleDeltaVisitor implements IResourceDeltaVisitor {
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
+				System.out.println("added " + resource);
 				// handle added resource
-				checkXML(resource);
+				// checkXML(resource);
 				break;
 			case IResourceDelta.REMOVED:
+				System.out.println("removed " + resource);
 				// handle removed resource
 				break;
 			case IResourceDelta.CHANGED:
+				System.out.println("changed " + resource);
 				// handle changed resource
-				checkXML(resource);
+				// checkXML(resource);
 				break;
 			}
-			//return true to continue visiting children.
+			// return true to continue visiting children.
 			return true;
 		}
 	}
 
 	class SampleResourceVisitor implements IResourceVisitor {
 		public boolean visit(IResource resource) {
-			checkXML(resource);
-			//return true to continue visiting children.
+//			checkXML(resource);
+			// return true to continue visiting children.
 			return true;
 		}
 	}
 
 	class XMLErrorHandler extends DefaultHandler {
-		
+
 		private IFile file;
 
 		public XMLErrorHandler(IFile file) {
@@ -61,8 +66,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		}
 
 		private void addMarker(SAXParseException e, int severity) {
-			KlabBuilder.this.addMarker(file, e.getMessage(), e
-					.getLineNumber(), severity);
+			KlabBuilder.this.addMarker(file, e.getMessage(), e.getLineNumber(), severity);
 		}
 
 		public void error(SAXParseException exception) throws SAXException {
@@ -78,14 +82,11 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	public static final String BUILDER_ID = "org.integratedmodelling.klab.ide.builder.klabBuilder";
-
 	private static final String MARKER_TYPE = "org.integratedmodelling.klab.ide.builder.klabProblem";
 
 	private SAXParserFactory parserFactory;
 
-	private void addMarker(IFile file, String message, int lineNumber,
-			int severity) {
+	private void addMarker(IFile file, String message, int lineNumber, int severity) {
 		try {
 			IMarker marker = file.createMarker(MARKER_TYPE);
 			marker.setAttribute(IMarker.MESSAGE, message);
@@ -99,8 +100,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 	}
 
 	@Override
-	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
-			throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (kind == FULL_BUILD) {
 			fullBuild(monitor);
 		} else {
@@ -138,24 +138,21 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	protected void fullBuild(final IProgressMonitor monitor)
-			throws CoreException {
+	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		try {
 			getProject().accept(new SampleResourceVisitor());
 		} catch (CoreException e) {
 		}
 	}
 
-	private SAXParser getParser() throws ParserConfigurationException,
-			SAXException {
+	private SAXParser getParser() throws ParserConfigurationException, SAXException {
 		if (parserFactory == null) {
 			parserFactory = SAXParserFactory.newInstance();
 		}
 		return parserFactory.newSAXParser();
 	}
 
-	protected void incrementalBuild(IResourceDelta delta,
-			IProgressMonitor monitor) throws CoreException {
+	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
 		delta.accept(new SampleDeltaVisitor());
 	}

@@ -18,11 +18,11 @@ public interface IMessage {
 	 */
 	enum MessageClass {
 
-	    /**
-	     * Only for no-op defaults in the message handler annotation
-	     */
-	    Void,
-	    
+		/**
+		 * Only for no-op defaults in the message handler annotation
+		 */
+		Void,
+
 		/**
 		 * 
 		 */
@@ -31,6 +31,10 @@ public interface IMessage {
 		 * 
 		 */
 		EngineLifecycle,
+		/**
+		 * 
+		 */
+		ProjectLifecycle,
 		/**
 		 * 
 		 */
@@ -60,7 +64,7 @@ public interface IMessage {
 		 * Query messages are sent by the back end upon receiving Search-class messages.
 		 */
 		Query,
-		
+
 		/**
 		 * Run-class messages start scripts and tests.
 		 */
@@ -75,11 +79,11 @@ public interface IMessage {
 	 */
 	enum Type {
 
-	    /**
-	     * Only used as a default for the MessageClass annotation.
-	     */
-	    Void,
-	    
+		/**
+		 * Only used as a default for the MessageClass annotation.
+		 */
+		Void,
+
 		/*
 		 * UserContextChange-class types.
 		 */
@@ -92,6 +96,26 @@ public interface IMessage {
 		 * F->B.
 		 */
 		PeriodOfInterest,
+
+		/**
+		 * B->F: notification for projects in user workspace when they are opened.UIs
+		 * may not be aware of them and want to offer to import them. The backend does
+		 * not modify or delete projects.
+		 * <p>
+		 * F->B: notification for projects in IDE workspace that are opened and the
+		 * engine may not be aware of.
+		 */
+		UserProjectOpened,
+
+		/**
+		 * F->B: sent when a project is modified, with details about the modification.
+		 */
+		UserProjectModified,
+
+		/**
+		 * F->B: sent when a project is modified, with details about the modification.
+		 */
+		UserProjectDeleted,
 
 		/*
 		 * --- Notification-class types ---
@@ -131,12 +155,12 @@ public interface IMessage {
 		 * --- Query-class types ---
 		 */
 		QueryResult,
-		
+
 		/*
 		 * --- Run-class types
 		 */
 		RunScript, RunTest, DebugScript, DebugTest
-		
+
 		/*
 		 * 
 		 */
@@ -172,7 +196,7 @@ public interface IMessage {
 	 * @return
 	 */
 	long getTimestamp();
-	
+
 	/**
 	 * Get the payload of the message, ensuring it is of type T.
 	 * 

@@ -11,7 +11,7 @@ public class KlabNature implements IProjectNature {
 	/**
 	 * ID of this project nature
 	 */
-	public static final String NATURE_ID = "org.integratedmodelling.klab.ide.builder.klabNature";
+	public static final String NATURE_ID = "org.integratedmodelling.klab.klabNature";
 
 	private IProject project;
 

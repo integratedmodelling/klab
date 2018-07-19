@@ -15,13 +15,29 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 
 	static String[] projectDirectories = new String[] { "META-INF", "apps", "resources", "dataflows", "src" };
 
-	static String projectTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + "<projectDescription>\r\n"
-			+ "	<name>__PROJECT__</name>\r\n" + "	<comment></comment>\r\n" + "	<projects>\r\n" + "	</projects>\r\n"
-			+ "	<buildSpec>\r\n" + "		<buildCommand>\r\n"
-			+ "			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>\r\n" + "			<arguments>\r\n"
-			+ "			</arguments>\r\n" + "		</buildCommand>\r\n" + "	</buildSpec>\r\n" + "	<natures>\r\n"
-			+ "		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>\r\n" + "	</natures>\r\n"
-			+ "</projectDescription>";
+	static String projectTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + 
+			"<projectDescription>\r\n" + 
+			"	<name>__PROJECT__</name>\r\n" + 
+			"	<comment></comment>\r\n" + 
+			"	<projects>\r\n" + 
+			"	</projects>\r\n" + 
+			"	<buildSpec>\r\n" + 
+			"		<buildCommand>\r\n" + 
+			"			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>\r\n" + 
+			"			<arguments>\r\n" + 
+			"			</arguments>\r\n" + 
+			"		</buildCommand>\r\n" + 
+			"		<buildCommand>\r\n" + 
+			"			<name>org.integratedmodelling.ide.klabBuilder</name>\r\n" + 
+			"			<arguments>\r\n" + 
+			"			</arguments>\r\n" + 
+			"		</buildCommand>\r\n" + 
+			"	</buildSpec>\r\n" + 
+			"	<natures>\r\n" + 
+			"		<nature>org.integratedmodelling.ide.klabNature</nature>\r\n" + 
+			"		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>\r\n" + 
+			"	</natures>\r\n" + 
+			"</projectDescription>";
 
 	static String resourceTemplate = "{\n}";
 	static String propertiesTemplate = "";
@@ -55,8 +71,8 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 					new File(dir + File.separator + "META-INF" + File.separator + "klab.properties"),
 					propertiesTemplate, false);
 			FileUtils.writeStringToFile(
-					new File(dir + File.separator + "resources" + File.separator + "resources.json"),
-					resourceTemplate, false);
+					new File(dir + File.separator + "resources" + File.separator + "resources.json"), resourceTemplate,
+					false);
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
