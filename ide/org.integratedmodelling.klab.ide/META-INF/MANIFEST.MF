@@ -30,9 +30,8 @@ Require-Bundle: javax.inject,
  org.eclipse.ui.navigator.resources,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.util,
- org.integratedmodelling.klab.client,
  org.integratedmodelling.klab.api,
- org.integratedmodelling.klab.ide.navigator
+ org.integratedmodelling.klab.client
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"
@@ -40,5 +39,8 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.integratedmodelling.klab.ide,
  org.integratedmodelling.klab.ide.kim,
  org.integratedmodelling.klab.ide.model,
+ org.integratedmodelling.klab.ide.navigator.e3,
+ org.integratedmodelling.klab.ide.navigator.model,
+ org.integratedmodelling.klab.ide.navigator.utils,
  org.integratedmodelling.klab.ide.perspective,
  org.integratedmodelling.klab.ide.views

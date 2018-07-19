@@ -18,7 +18,7 @@
 	</properties>
 	<modules>
 		<module>org.integratedmodelling.klab.ide</module>
-		<module>org.integratedmodelling.klab.ide.navigator</module>
+		
 	</modules>
 	<build>
 		<plugins>

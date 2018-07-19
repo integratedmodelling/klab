@@ -10,7 +10,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
-import org.integratedmodelling.klab.ide.navigator.Activator;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 
 public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {

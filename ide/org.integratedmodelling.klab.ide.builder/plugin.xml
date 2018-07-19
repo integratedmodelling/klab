@@ -4,7 +4,7 @@
 
    <extension
          id="sampleBuilder"
-         name="Sample Project Builder"
+         name="k.LAB Builder"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">

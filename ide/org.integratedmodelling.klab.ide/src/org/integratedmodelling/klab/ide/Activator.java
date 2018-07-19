@@ -1,11 +1,16 @@
 package org.integratedmodelling.klab.ide;
 
+import java.io.File;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -14,6 +19,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
+import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
@@ -40,6 +46,7 @@ public class Activator extends AbstractUIPlugin {
 	 * identity for relaying messages sent from Web UI to session
 	 */
 	String relayId = "relay"+NameGenerator.shortUUID();
+	private KimWorkspace kimWorkspace;
 
 	/**
 	 * The constructor
@@ -119,6 +126,34 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId);
 
+		// TODO this is a caret listener for the k.IM editors - somehow the 
+//		workbenchWindow.getActivePage().addPartListener(new PartListener() {
+//		    public void partOpened(IWorkbenchPartReference partRef) {
+//		        //Check if this is an editor and its input is what I need
+//		        AbstractTextEditor e =
+//		            (AbstractTextEditor)((IEditorReference) partRef).getEditor(false);
+//		        ((StyledText)e.getAdapter(Control.class)).addCaretListener(l);
+//		    }
+//		});
+		
+		plugin = this;
+
+		URI uri = ResourcesPlugin.getWorkspace().getRoot().getLocationURI();
+		List<File> projectRoots = new ArrayList<>();
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			projectRoots.add(project.getLocation().toFile());
+		}
+
+		/**
+		 * TODO presync the worldview. Use an interval and lock file to avoid multiple
+		 * loads from engine or new instances.
+		 */
+
+		/**
+		 * Preload the workspace so that the navigator can work right away.
+		 */
+		this.kimWorkspace = Kim.INSTANCE.loadWorkspace(uri.toString(), projectRoots);
+		
 		this.engineStatusMonitor.start(relayId);
 
 	}
