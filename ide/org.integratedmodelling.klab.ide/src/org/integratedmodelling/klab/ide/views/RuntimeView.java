@@ -12,7 +12,6 @@ import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 public class RuntimeView extends ViewPart {
 
 	public static final String ID = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
-	// private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 
 	private KlabPeer klab;
 
@@ -26,8 +25,8 @@ public class RuntimeView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
+
 		Composite container = new Composite(parent, SWT.NONE);
-		// toolkit.paintBordersFor(container);
 
 		createActions();
 		initializeToolBar();
@@ -37,7 +36,7 @@ public class RuntimeView extends ViewPart {
 	}
 
 	public void dispose() {
-		// toolkit.dispose();
+		klab.dispose();
 		super.dispose();
 	}
 

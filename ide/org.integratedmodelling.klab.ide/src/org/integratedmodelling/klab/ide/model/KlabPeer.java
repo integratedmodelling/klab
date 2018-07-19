@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
@@ -24,6 +25,7 @@ public class KlabPeer {
 	}
 
 	private Sender sender;
+	private ServiceRegistration<EventHandler> registration;
 
 	protected KlabPeer(Sender type) {
 		this.sender = type;
@@ -41,7 +43,7 @@ public class KlabPeer {
 		Dictionary<String, String> properties = new Hashtable<String, String>();
 		properties.put(EventConstants.EVENT_TOPIC, type == Sender.ANY ? "*" : (type.name() + "/*"));
 		BundleContext ctx = FrameworkUtil.getBundle(Activator.class).getBundleContext();
-		ctx.registerService(EventHandler.class, new EventHandler() {
+		this.registration = ctx.registerService(EventHandler.class, new EventHandler() {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.getProperty("KlabMessage") != null) {
@@ -59,6 +61,15 @@ public class KlabPeer {
 		}
 		eventAdmin.sendEvent(
 				new Event(sender + "/" + message.getType(), Collections.singletonMap("KlabMessage", message)));
+	}
+
+	/**
+	 * Call to remove the event registration when finished using.
+	 */
+	public void dispose() {
+		if (this.registration != null) {
+			this.registration.unregister();
+		}
 	}
 
 }
