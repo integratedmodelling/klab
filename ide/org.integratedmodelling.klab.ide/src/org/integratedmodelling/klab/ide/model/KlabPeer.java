@@ -16,6 +16,15 @@ import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
+/**
+ * A peer for the connected k.LAB engine or any of its peer objects, such as the
+ * explorer, sessions, scripts and tasks. Used as a receiver for messages,
+ * either automatically installed by the runtime when peers are notified, or
+ * within a UI element to handle k.LAB events.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class KlabPeer {
 
 	static EventAdmin eventAdmin = null;
@@ -41,7 +50,8 @@ public class KlabPeer {
 	public KlabPeer(final Sender type, final Consumer<IMessage> messageHandler) {
 		this(type);
 		Dictionary<String, String> properties = new Hashtable<String, String>();
-		properties.put(EventConstants.EVENT_TOPIC, type == Sender.ANY ? "*" : (type.name() + "/*"));
+		properties.put(EventConstants.EVENT_TOPIC,
+				"org/integratedmodelling/klab/" + (type == Sender.ANY ? "*" : (type.name() + "/*")));
 		BundleContext ctx = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 		this.registration = ctx.registerService(EventHandler.class, new EventHandler() {
 			@Override
@@ -59,8 +69,8 @@ public class KlabPeer {
 			ServiceReference<EventAdmin> ref = ctx.getServiceReference(EventAdmin.class);
 			eventAdmin = ctx.getService(ref);
 		}
-		eventAdmin.sendEvent(
-				new Event(sender + "/" + message.getType(), Collections.singletonMap("KlabMessage", message)));
+		eventAdmin.sendEvent(new Event("org/integratedmodelling/klab/" + sender + "/" + message.getType(),
+				Collections.singletonMap("KlabMessage", message)));
 	}
 
 	/**
