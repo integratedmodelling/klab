@@ -25,7 +25,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	private static final long serialVersionUID = 8447771460330621498L;
 
 	protected String name;
-	protected Parameters<String> parameters = new Parameters();
+	protected Parameters<String> parameters = new Parameters<>();
 
 	protected KimServiceCall(EObject object, IKimStatement parent) {
 		super(object, parent);

@@ -173,9 +173,7 @@ public class ContextView extends ViewPart {
 					// BookmarkTransfer.getInstance(),
 					TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() });
 			DragSource dragSource = new DragSource(dropImage, DND.DROP_MOVE | DND.DROP_COPY);
-			dragSource.setTransfer(new Transfer[] { TextTransfer.getInstance()/*
-																				 * , BookmarkTransfer.getInstance()
-																				 */ });
+			dragSource.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 
 			tableViewer = new TableViewer(dropArea, SWT.BORDER | SWT.FULL_SELECTION);
 			queryResults = tableViewer.getTable();

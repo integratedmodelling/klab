@@ -20,7 +20,6 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
-import org.integratedmodelling.klab.utils.Utils;
 
 public class KimProject implements IKimProject {
 

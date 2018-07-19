@@ -33,7 +33,6 @@ public class KlabSession extends KlabPeer {
 	@MessageHandler
 	public void handleSearchResponse(IMessage message, SearchResponse response) {
 		send(message);
-		System.out.println("Search response: " + response);
 	}
 
 	@MessageHandler(type = Type.TaskStarted)
@@ -56,7 +55,6 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler
 	public void handleDataflow(IMessage message, DataflowReference dataflow) {
-//		System.out.println("GOT DATAFLOW");
-		// TODO notify. Task ID is in the dataflow - this may need to change
+		send(message);
 	}
 }

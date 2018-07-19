@@ -157,6 +157,7 @@ public class EngineMonitor {
 		onEngineDown.run();
 		bus.stop();
 		bus = null;
+		sessionId = null;
 	}
 
 	public IMessageBus getBus() {

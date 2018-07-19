@@ -36,8 +36,6 @@ import com.google.inject.Injector;
 
 public class KimWorkspace implements IKimWorkspace {
 
-	private static final long serialVersionUID = -6601950097333987803L;
-
 	private File root;
 	private URL url;
 	private String name;
