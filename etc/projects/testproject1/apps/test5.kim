@@ -16,6 +16,10 @@ model geography:Elevation by im:Level
 		im:High     otherwise;
 
 model geography:Elevation by im:Level
+	// This should lookup only private (data reduction -> private) and not finding, lookup a 
+	// normalization model, then use it after observing elevation. Can have both deps if needed
+	// and compute min/max etc the same way
+	observing im:Normalized geography:Elevation
 	using gis.terrain()
 	lookup (self, *, ?) into 
 		  elevation | concept                 | magnitude
@@ -24,4 +28,8 @@ model geography:Elevation by im:Level
 	      < 1500    | geography:Slope         | im:Moderate,
 	         *      | infrastructure:Road     | im:High,
 	         #      | infrastructure:Building | agriculture:Manure
-;		
+;
+
+// special handling for data reduction trait, otherwise must be a classification. Need the category in 
+// the core ontologies.
+model im:Normalized using di.normalize();		

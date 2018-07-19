@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.engine.rest.messaging.WebsocketsMessageBus.ReceiverDescription.MethodDescriptor;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -155,7 +156,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 	@MessageMapping(API.MESSAGE)
 	public void handleTask(Message message) {
 
-		// System.out.println(JsonUtils.printAsJson(message));
+		System.out.println(JsonUtils.printAsJson(message));
 
 		if (message.getInResponseTo() != null) {
 			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());

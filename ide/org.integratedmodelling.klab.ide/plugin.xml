@@ -268,5 +268,30 @@
             value="true">
       </persistent>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.integratedmodelling.klab.ide.KlabApplicationLauncher"
+            icon="icons/k-lab-icon-16.gif"
+            id="org.integratedmodelling.klab.ide.klabApp"
+            label="k.LAB Application"
+            modes="org.integratedmodelling.klab.ide.klabApp,org.integratedmodelling.klab.ide.klabTest,,org.integratedmodelling.klab.ide.klabCalibration">
+         <contextualLaunch>
+            <contextLabel
+                  label="Application"
+                  mode="org.integratedmodelling.klab.ide.klabApp">
+            </contextLabel>
+            <contextLabel
+                  label="Calibration"
+                  mode="org.integratedmodelling.klab.ide.klabCalibration">
+            </contextLabel>
+            <contextLabel
+                  label="Test Case"
+                  mode="org.integratedmodelling.klab.ide.klabTest">
+            </contextLabel>
+         </contextualLaunch>
+         <enablement></enablement>
+      </shortcut>
+   </extension>
 
 </plugin>
