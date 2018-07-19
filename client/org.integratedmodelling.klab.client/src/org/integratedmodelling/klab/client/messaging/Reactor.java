@@ -1,14 +1,15 @@
 package org.integratedmodelling.klab.client.messaging;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
@@ -25,21 +26,24 @@ public class Reactor {
 	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
 	ObjectMapper objectMapper = new ObjectMapper();
 	IMessageBus bus;
-	
+
 	public Reactor(IMessageBus bus) {
 		this.bus = bus;
 	}
-	
+
 	class ReceiverDescription {
 
-		private Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
+		private Map<Class<?>, Set<MethodDescriptor>> handlers = new HashMap<>();
 
 		public ReceiverDescription(Class<?> cls) {
 			for (Method method : cls.getDeclaredMethods()) {
 				for (Annotation annotation : method.getDeclaredAnnotations()) {
 					if (annotation instanceof MessageHandler) {
 						MethodDescriptor mdesc = new MethodDescriptor(method, (MessageHandler) annotation);
-						this.handlers.put(mdesc.payloadType, mdesc);
+						if (!this.handlers.containsKey(mdesc.payloadType)) {
+							this.handlers.put(mdesc.payloadType, new HashSet<>());
+						}
+						this.handlers.get(mdesc.payloadType).add(mdesc);
 					}
 				}
 			}
@@ -102,12 +106,12 @@ public class Reactor {
 
 				try {
 					Object ret = this.method.invoke(identity, params.toArray());
-					if (ret instanceof Boolean && !((Boolean)ret)) {
+					if (ret instanceof Boolean && !((Boolean) ret)) {
 						bus.unsubscribe(message.getIdentity());
 					}
 				} catch (Throwable e) {
 					// TODO log, don't throw
-					throw new RuntimeException(e);
+					throw new RuntimeException("error while dispatching message to handler: " + e.getMessage());
 				}
 			}
 
@@ -116,13 +120,12 @@ public class Reactor {
 						&& (mtype == null || mtype == message.getType());
 			}
 		}
-
 	}
 
-	public void dispatchMessage(Message message, Object identity) {
+	public synchronized void dispatchMessage(Message message, Object identity) {
 
 		try {
-			
+
 			/*
 			 * 1. Determine payload type
 			 */
@@ -141,15 +144,19 @@ public class Reactor {
 			/*
 			 * 3. If there is a method, invoke it.
 			 */
-			MethodDescriptor mdesc = rdesc.handlers.get(cls);
-			if (mdesc != null && mdesc.appliesTo(message)) {
-				Object payload = cls == String.class ? message.getPayload().toString()
-						: objectMapper.convertValue(message.getPayload(), cls);
-				mdesc.handle(identity, payload, message);
+			if (rdesc.handlers.containsKey(cls)) {
+				for (MethodDescriptor mdesc : rdesc.handlers.get(cls)) {
+					if (mdesc.appliesTo(message)) {
+						Object payload = cls == String.class ? message.getPayload().toString()
+								: objectMapper.convertValue(message.getPayload(), cls);
+						mdesc.handle(identity, payload, message);
+					}
+				}
 			}
 
 		} catch (Throwable e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("internal error: converting payload of message " + message.getId()
+			+ "  for payload type " + message.getPayloadClass());
 		}
 
 	}

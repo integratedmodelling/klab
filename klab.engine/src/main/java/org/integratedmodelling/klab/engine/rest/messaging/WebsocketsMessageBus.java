@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engine.rest.messaging;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,227 +41,233 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class WebsocketsMessageBus implements IMessageBus {
 
-    static public String URL = "ws://localhost:8283/modeler/message";
+	static public String URL = "ws://localhost:8283/modeler/message";
 
-    private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
 
-    class ReceiverDescription {
+	class ReceiverDescription {
 
-        public ReceiverDescription(Class<?> cls) {
-            for (Method method : cls.getDeclaredMethods()) {
-                for (Annotation annotation : method.getDeclaredAnnotations()) {
-                    if (annotation instanceof MessageHandler) {
-                        MethodDescriptor mdesc = new MethodDescriptor(method, (MessageHandler) annotation);
-                        this.handlers.put(mdesc.payloadType, mdesc);
-                    }
-                }
-            }
-            receiverTypes.put(cls, this);
-        }
+		private Map<Class<?>, Set<MethodDescriptor>> handlers = new HashMap<>();
 
-        class MethodDescriptor {
+		public ReceiverDescription(Class<?> cls) {
+			for (Method method : cls.getDeclaredMethods()) {
+				for (Annotation annotation : method.getDeclaredAnnotations()) {
+					if (annotation instanceof MessageHandler) {
+						MethodDescriptor mdesc = new MethodDescriptor(method, (MessageHandler) annotation);
+						if (!this.handlers.containsKey(mdesc.payloadType)) {
+							this.handlers.put(mdesc.payloadType, new HashSet<>());
+						}
+						this.handlers.get(mdesc.payloadType).add(mdesc);
+					}
+				}
+			}
+			receiverTypes.put(cls, this);
+		}
 
-            Method method;
-            Class<?> payloadType;
-            IMessage.MessageClass mclass = null;
-            IMessage.Type mtype = null;
+		class MethodDescriptor {
 
-            public MethodDescriptor(Method method, MessageHandler handler) {
+			Method method;
+			Class<?> payloadType;
+			IMessage.MessageClass mclass = null;
+			IMessage.Type mtype = null;
 
-                this.method = method;
-                this.method.setAccessible(true);
-                for (Class<?> cls : method.getParameterTypes()) {
-                    if (!IMessage.Type.class.isAssignableFrom(cls) && !IMessage.MessageClass.class.isAssignableFrom(cls)
-                            && !IMessage.class.isAssignableFrom(cls)) {
-                        this.payloadType = cls;
-                        break;
-                    }
-                }
-                if (this.payloadType == null) {
-                    throw new IllegalStateException(
-                            "wrong usage of @MessageHandler: the annotated method must have a parameter for the payload"
-                                    + IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
-                }
-                if (handler.type() != IMessage.Type.Void) {
-                    this.mtype = handler.type();
-                }
-                if (handler.messageClass() != IMessage.MessageClass.Void) {
-                    this.mclass = handler.messageClass();
-                }
-            }
+			public MethodDescriptor(Method method, MessageHandler handler) {
 
-            void handle(Object identity, Object payload, IMessage message) {
+				this.method = method;
+				this.method.setAccessible(true);
+				for (Class<?> cls : method.getParameterTypes()) {
+					if (!IMessage.Type.class.isAssignableFrom(cls) && !IMessage.MessageClass.class.isAssignableFrom(cls)
+							&& !IMessage.class.isAssignableFrom(cls)) {
+						this.payloadType = cls;
+						break;
+					}
+				}
+				if (this.payloadType == null) {
+					throw new IllegalStateException(
+							"wrong usage of @MessageHandler: the annotated method must have a parameter for the payload"
+									+ IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
+				}
+				if (handler.type() != IMessage.Type.Void) {
+					this.mtype = handler.type();
+				}
+				if (handler.messageClass() != IMessage.MessageClass.Void) {
+					this.mclass = handler.messageClass();
+				}
+			}
 
-                List<Object> params = new ArrayList<>();
-                for (Class<?> cls : method.getParameterTypes()) {
-                    if (cls.isAssignableFrom(this.payloadType)) {
-                        params.add(payload);
-                    } else if (cls.isAssignableFrom(IMessage.class)) {
-                        params.add(message);
-                    } else if (cls.isAssignableFrom(Date.class)) {
-                        params.add(new Date(message.getTimestamp()));
-                    } else if (cls.isAssignableFrom(MessageClass.class)) {
-                        params.add(message.getMessageClass());
-                    } else if (cls.isAssignableFrom(IMessage.Type.class)) {
-                        params.add(message.getType());
-                    } else if (cls.isAssignableFrom(String.class)) {
-                        params.add(payload.toString());
-                    } else {
-                        params.add(null);
-                    }
-                }
+			void handle(Object identity, Object payload, IMessage message) {
 
-                try {
-                    this.method.invoke(identity, params.toArray());
-                } catch (Throwable e) {
-                    Logging.INSTANCE.error("error while dispatching message to handler: " + e.getMessage());
-                }
-            }
+				List<Object> params = new ArrayList<>();
+				for (Class<?> cls : method.getParameterTypes()) {
+					if (cls.isAssignableFrom(this.payloadType)) {
+						params.add(payload);
+					} else if (cls.isAssignableFrom(IMessage.class)) {
+						params.add(message);
+					} else if (cls.isAssignableFrom(Date.class)) {
+						params.add(new Date(message.getTimestamp()));
+					} else if (cls.isAssignableFrom(MessageClass.class)) {
+						params.add(message.getMessageClass());
+					} else if (cls.isAssignableFrom(IMessage.Type.class)) {
+						params.add(message.getType());
+					} else if (cls.isAssignableFrom(String.class)) {
+						params.add(payload.toString());
+					} else {
+						params.add(null);
+					}
+				}
 
-            public boolean appliesTo(Message message) {
-                return (mclass == null || mclass == message.getMessageClass())
-                        && (mtype == null || mtype == message.getType());
-            }
-        }
+				try {
+					this.method.invoke(identity, params.toArray());
+				} catch (Throwable e) {
+					Logging.INSTANCE.error("error while dispatching message to handler: " + e.getMessage());
+				}
+			}
 
-        Map<Class<?>, MethodDescriptor> handlers = new HashMap<>();
-    }
+			public boolean appliesTo(Message message) {
+				return (mclass == null || mclass == message.getMessageClass())
+						&& (mtype == null || mtype == message.getType());
+			}
+		}
 
-    private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
+	}
 
-    @Autowired
-    ObjectMapper objectMapper;
+	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
 
-    @Autowired
-    private SimpMessagingTemplate webSocket;
+	@Autowired
+	ObjectMapper objectMapper;
 
-    @PostConstruct
-    public void publishMessageBus() {
-        Logging.INSTANCE.info("Setting up message bus on " + URL);
-        Klab.INSTANCE.setMessageBus(this);
-    }
+	@Autowired
+	private SimpMessagingTemplate webSocket;
 
-    /**
-     * This gets messages sent to /klab/message from the javascript side of the
-     * dataviewer.
-     * 
-     * @param message
-     */
-    @MessageMapping(API.MESSAGE)
-    public void handleTask(Message message) {
+	@PostConstruct
+	public void publishMessageBus() {
+		Logging.INSTANCE.info("Setting up message bus on " + URL);
+		Klab.INSTANCE.setMessageBus(this);
+	}
 
-        // System.out.println(JsonUtils.printAsJson(message));
+	/**
+	 * This gets messages sent to /klab/message from the javascript side of the
+	 * dataviewer.
+	 * 
+	 * @param message
+	 */
+	@MessageMapping(API.MESSAGE)
+	public void handleTask(Message message) {
 
-        if (message.getInResponseTo() != null) {
-            Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
-            if (responder != null) {
-                responder.accept(message);
-                return;
-            }
-        }
+		// System.out.println(JsonUtils.printAsJson(message));
 
-        /*
-         * If the identity is known at our end, check if it has a handler for our
-         * specific payload type. If so, turn the payload into that and dispatch it.
-         */
-        IIdentity auth = Authentication.INSTANCE.getIdentity(message.getIdentity(), IIdentity.class);
-        if (auth != null) {
-            dispatchMessage(message, auth);
-        }
-        /*
-         * Any other subscribed object
-         */
-        for (Object identity : getReceivers(message.getIdentity())) {
-            dispatchMessage(message, identity);
-        }
-    }
+		if (message.getInResponseTo() != null) {
+			Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
+			if (responder != null) {
+				responder.accept(message);
+				return;
+			}
+		}
 
-    private void dispatchMessage(Message message, Object identity) {
+		/*
+		 * If the identity is known at our end, check if it has a handler for our
+		 * specific payload type. If so, turn the payload into that and dispatch it.
+		 */
+		IIdentity auth = Authentication.INSTANCE.getIdentity(message.getIdentity(), IIdentity.class);
+		if (auth != null) {
+			dispatchMessage(message, auth);
+		}
+		/*
+		 * Any other subscribed object
+		 */
+		for (Object identity : getReceivers(message.getIdentity())) {
+			dispatchMessage(message, identity);
+		}
+	}
 
-        try {
-            /*
-             * 1. Determine payload type
-             */
-            Class<?> cls = message.getPayloadClass().equals("String") ? String.class
-                    : Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "." + message.getPayloadClass());
+	private void dispatchMessage(Message message, Object identity) {
 
-            /*
-             * 2. Determine if the object has a method to react to it, caching the result
-             * and the parameter sequence.
-             */
-            ReceiverDescription rdesc = receiverTypes.get(identity.getClass());
-            if (rdesc == null) {
-                rdesc = new ReceiverDescription(identity.getClass());
-            }
+		try {
+			/*
+			 * 1. Determine payload type
+			 */
+			Class<?> cls = message.getPayloadClass().equals("String") ? String.class
+					: Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "." + message.getPayloadClass());
 
-            /*
-             * 3. If there is a method, invoke it.
-             */
-            MethodDescriptor mdesc = rdesc.handlers.get(cls);
-            if (mdesc != null && mdesc.appliesTo(message)) {
-                Object payload = cls == String.class ? message.getPayload().toString()
-                        : objectMapper.convertValue(message.getPayload(), cls);
-                mdesc.handle(identity, payload, message);
-                if (identity instanceof IMessageBus.Relay) {
-                    for (String relayId : ((IMessageBus.Relay) identity).getRelayIdentities()) {
-                        post(message.copyWithIdentity(relayId));
-                    }
-                }
-            }
+			/*
+			 * 2. Determine if the object has a method to react to it, caching the result
+			 * and the parameter sequence.
+			 */
+			ReceiverDescription rdesc = receiverTypes.get(identity.getClass());
+			if (rdesc == null) {
+				rdesc = new ReceiverDescription(identity.getClass());
+			}
 
-        } catch (Throwable e) {
-            Logging.INSTANCE.error("internal error: converting payload of message " + message.getId()
-                    + "  for payload type " + message.getPayloadClass());
-        }
+			/*
+			 * 3. If there is a method, invoke it.
+			 */
+			if (rdesc.handlers.containsKey(cls)) {
+				for (MethodDescriptor mdesc : rdesc.handlers.get(cls)) {
+					if (mdesc.appliesTo(message)) {
+						Object payload = cls == String.class ? message.getPayload().toString()
+								: objectMapper.convertValue(message.getPayload(), cls);
+						mdesc.handle(identity, payload, message);
+						if (identity instanceof IMessageBus.Relay) {
+							for (String relayId : ((IMessageBus.Relay) identity).getRelayIdentities()) {
+								post(message.copyWithIdentity(relayId));
+							}
+						}
+					}
+				}
+			}
 
-    }
+		} catch (Throwable e) {
+			Logging.INSTANCE.error("internal error: converting payload of message " + message.getId()
+					+ "  for payload type " + message.getPayloadClass());
+		}
 
-    @Override
-    public synchronized void post(IMessage message) {
-        webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
-        System.err.println("POSTING " + message.getType() + " TO " + message.getIdentity());
-    }
+	}
 
-    @Override
-    public synchronized void post(IMessage message, Consumer<IMessage> responder) {
-        responders.put(((Message) message).getId(), responder);
-        post(message);
-    }
+	@Override
+	public synchronized void post(IMessage message) {
+		webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
+	}
 
-    @Override
-    public Collection<Object> getReceivers(String identity) {
-        Set<Object> ret = receivers.get(identity);
-        if (ret == null) {
-            ret = new HashSet<>();
-            receivers.put(identity, ret);
-        }
-        return ret;
-    }
+	@Override
+	public synchronized void post(IMessage message, Consumer<IMessage> responder) {
+		responders.put(((Message) message).getId(), responder);
+		post(message);
+	}
 
-    @Override
-    public void subscribe(String identity, Object receiver) {
-        Set<Object> ret = receivers.get(identity);
-        if (ret == null) {
-            ret = new HashSet<>();
-            receivers.put(identity, ret);
-        }
-        ret.add(receiver);
-    }
+	@Override
+	public Collection<Object> getReceivers(String identity) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret == null) {
+			ret = new HashSet<>();
+			receivers.put(identity, ret);
+		}
+		return ret;
+	}
 
-    @Override
-    public void unsubscribe(String identity) {
-        receivers.remove(identity);
-    }
+	@Override
+	public void subscribe(String identity, Object receiver) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret == null) {
+			ret = new HashSet<>();
+			receivers.put(identity, ret);
+		}
+		ret.add(receiver);
+	}
 
-    @Override
-    public void unsubscribe(String identity, Object receiver) {
-        Set<Object> ret = receivers.get(identity);
-        if (ret == null) {
-            ret = new HashSet<>();
-            receivers.put(identity, ret);
-        }
-        ret.remove(receiver);
-    }
+	@Override
+	public void unsubscribe(String identity) {
+		receivers.remove(identity);
+	}
+
+	@Override
+	public void unsubscribe(String identity, Object receiver) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret == null) {
+			ret = new HashSet<>();
+			receivers.put(identity, ret);
+		}
+		ret.remove(receiver);
+	}
 
 }

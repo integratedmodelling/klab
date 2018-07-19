@@ -24,7 +24,7 @@ public class KlabSession {
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
 	public void handleNotification(String string, IMessage.Type type) {
-		System.out.println("SESSION NOTIFICATION " + type + ": " + string);
+		System.out.println("SESSION NOTIFICATION " + type /*+ ": " + string*/);
 		// TODO
 	}
 

@@ -13,7 +13,7 @@ public class KlabTask {
 	
 	@MessageHandler(messageClass=IMessage.MessageClass.Notification)
 	public void handleNotification(String string, IMessage.Type type) {
-		System.out.println("TASK NOTIFICATION " + type + ": " + string);
+		System.out.println("TASK NOTIFICATION " + type /*+ ": " + string*/);
 		// TODO
 	}
 }
