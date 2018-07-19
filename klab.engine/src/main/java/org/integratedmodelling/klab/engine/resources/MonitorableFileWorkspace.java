@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.DirectoryWatcher;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -28,13 +30,13 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 			"			</arguments>\r\n" + 
 			"		</buildCommand>\r\n" + 
 			"		<buildCommand>\r\n" + 
-			"			<name>org.integratedmodelling.ide.klabBuilder</name>\r\n" + 
+			"			<name>org.integratedmodelling.klab.ide.klabBuilder</name>\r\n" + 
 			"			<arguments>\r\n" + 
 			"			</arguments>\r\n" + 
 			"		</buildCommand>\r\n" + 
 			"	</buildSpec>\r\n" + 
 			"	<natures>\r\n" + 
-			"		<nature>org.integratedmodelling.ide.klabNature</nature>\r\n" + 
+			"		<nature>org.integratedmodelling.klab.ide.klabNature</nature>\r\n" + 
 			"		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>\r\n" + 
 			"	</natures>\r\n" + 
 			"</projectDescription>";
@@ -50,7 +52,7 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 	}
 
 	@Override
-	public IProject createProject(String projectId) {
+	public IProject createProject(String projectId, IMonitor monitor) {
 
 		if (getProjectNames().contains(projectId)) {
 			throw new IllegalStateException(
@@ -79,6 +81,8 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 
 		delegate.loadProject(dir);
 
+//		monitor.send(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.UserProjectOpened, new Project);
+		
 		return getProject(projectId);
 
 	}

@@ -3,6 +3,7 @@
  */
 package org.integratedmodelling.klab.ogc.test;
 
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -35,7 +36,8 @@ public class VectorValidationTests extends TestSetup {
 		engine = Engine.start();
 		testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.ogc.vector");
 		if (testProject == null) {
-			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.vector");
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.ogc.vector",
+					Klab.INSTANCE.getRootMonitor());
 		}
 		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
 	}

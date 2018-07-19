@@ -521,7 +521,7 @@ public class CoreOntology extends AbstractWorkspace {
 	}
 
 	@Override
-	public IProject createProject(String projectId) {
+	public IProject createProject(String projectId, IMonitor monitor) {
 		throw new IllegalStateException("The core ontology space is read-only");
 	}
 

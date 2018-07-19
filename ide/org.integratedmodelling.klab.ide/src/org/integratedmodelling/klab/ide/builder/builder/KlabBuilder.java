@@ -22,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class KlabBuilder extends IncrementalProjectBuilder {
 
-	public static final String BUILDER_ID = "org.integratedmodelling.ide.klabBuilder";
+	public static final String BUILDER_ID = "org.integratedmodelling.klab.ide.klabBuilder";
 
 	class SampleDeltaVisitor implements IResourceDeltaVisitor {
 		@Override
@@ -53,6 +53,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		public boolean visit(IResource resource) {
 //			checkXML(resource);
 			// return true to continue visiting children.
+			System.out.println("Visiting " + resource);
 			return true;
 		}
 	}

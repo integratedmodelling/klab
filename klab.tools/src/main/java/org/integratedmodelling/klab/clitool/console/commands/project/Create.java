@@ -20,7 +20,7 @@ public class Create implements ICommand {
 		
 		String ret = "";
 		for (Object projectId : ((List<?>) call.getParameters().get("arguments"))) {
-			if (Resources.INSTANCE.getLocalWorkspace().createProject(projectId.toString()) == null) {
+			if (Resources.INSTANCE.getLocalWorkspace().createProject(projectId.toString(), session.getMonitor()) == null) {
 				throw new KlabInternalErrorException("unknown error creating project " + projectId);
 			}
 			ret +=(ret.isEmpty() ? "" : "\n") + "Empty project '" + projectId + "' created in local workspace";

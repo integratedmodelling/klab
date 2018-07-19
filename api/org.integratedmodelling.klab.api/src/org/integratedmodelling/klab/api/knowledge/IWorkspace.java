@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -71,10 +70,11 @@ public interface IWorkspace {
      * Create an empty project in this workspace.
      * 
      * @param projectId
+     * @param a monitor 
      * @return the new project
      * @throws IllegalStateException if the project already exists in the workspace.
      */
-	IProject createProject(String projectId);
+	IProject createProject(String projectId, IMonitor monitor);
 
 	/**
 	 * Retrieve the named project.

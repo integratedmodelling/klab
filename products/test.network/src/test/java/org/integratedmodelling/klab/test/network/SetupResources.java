@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -54,7 +55,7 @@ public class SetupResources {
 		if (!loaded) {
 			IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test.network");
 			if (testProject == null) {
-				testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.network");
+				testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test.network", Klab.INSTANCE.getRootMonitor());
 			}
 			setupWCSResources(testProject);
 		}

@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.ogc.test;
 
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.engine.Engine;
@@ -55,7 +56,7 @@ public class OGCModelTests {
 
 		IProject testProject = Resources.INSTANCE.getLocalWorkspace().getProject("test");
 		if (testProject == null) {
-			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test");
+			testProject = Resources.INSTANCE.getLocalWorkspace().createProject("test", Klab.INSTANCE.getRootMonitor());
 		}
 		
 		Resources.INSTANCE.getLocalResourceCatalog().clearOnly(testProject);
