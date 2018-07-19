@@ -70,8 +70,7 @@ public class Reactor {
 				}
 				if (this.payloadType == null) {
 					throw new IllegalStateException(
-							"wrong usage of @MessageHandler: the annotated method must have a parameter for the payload"
-									+ IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
+							"wrong usage of @MessageHandler: the annotated method must have a parameter with the type of the payload");
 				}
 				if (handler.type() != IMessage.Type.Void) {
 					this.mtype = handler.type();
@@ -155,8 +154,9 @@ public class Reactor {
 			}
 
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new RuntimeException("internal error: converting payload of message " + message.getId()
-			+ "  for payload type " + message.getPayloadClass());
+					+ "  for payload type " + message.getPayloadClass());
 		}
 
 	}

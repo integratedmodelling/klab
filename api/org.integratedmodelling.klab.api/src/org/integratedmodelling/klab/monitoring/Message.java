@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * Typed message with potential payload to be transferred through a message bus.
@@ -228,5 +229,13 @@ public class Message implements IMessage, Serializable {
 		ret.inResponseTo = this.inResponseTo;
 		ret.timestamp = this.timestamp;
 		return ret;
+	}
+
+	@Override
+	public <T> T getPayload(Class<? extends T> cls) {
+		if (payload == null) {
+			return null;
+		}
+		return Utils.asType(payload, cls);
 	}
 }

@@ -124,12 +124,6 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 					try {
 						final Message message = (Message) payload;
 
-//						System.out.println("RECEIVED " + message);
-
-						if (message.getType() == IMessage.Type.TaskFinished) {
-							System.out.println("   GOT FINISHED");
-						}
-						
 						new Thread() {
 
 							@Override
@@ -143,13 +137,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 								}
 
 								for (Object identity : getReceivers(message.getIdentity())) {
-									if (message.getType() == IMessage.Type.TaskFinished) {
-										System.out.println("   DISPATCHING FINISHED");
-									}
 									reactor.dispatchMessage(message, identity);
-									if (message.getType() == IMessage.Type.TaskFinished) {
-										System.out.println("   DISPATCHED FINISHED");
-									}
 								}
 							}							
 						}.start();

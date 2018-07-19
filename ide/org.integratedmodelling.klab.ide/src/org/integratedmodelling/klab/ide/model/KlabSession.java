@@ -14,49 +14,49 @@ import org.integratedmodelling.klab.rest.TaskReference;
  * @author ferdinando.villa
  *
  */
-public class KlabSession {
+public class KlabSession extends KlabPeer {
 
 	String sessionId;
 
 	public KlabSession(String sessionId) {
+		super(Sender.SESSION);
 		this.sessionId = sessionId;
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
-	public void handleNotification(String string, IMessage.Type type) {
-		System.out.println("SESSION NOTIFICATION " + type /*+ ": " + string*/);
-		// TODO
+	public void handleNotification(IMessage message, String notification) {
+		if (message.getType() != IMessage.Type.Debug) {
+			send(message);
+		}
 	}
 
 	@MessageHandler
-	public void handleSearchResponse(SearchResponse response) {
+	public void handleSearchResponse(IMessage message, SearchResponse response) {
+		send(message);
 		System.out.println("Search response: " + response);
 	}
 
 	@MessageHandler(type = Type.TaskStarted)
-	public void handleTaskStarted(TaskReference task, IMessageBus bus) {
-		/*
-		 * TODO notify the views
-		 */
-		System.out.println("TASK START " + task.getId());
+	public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
+		send(message);
 		bus.subscribe(task.getId(), new KlabTask(task.getId()));
 	}
 
 	@MessageHandler(type = Type.TaskFinished)
-	public void finishTask(TaskReference task, IMessageBus bus) {
-		System.out.println("TASK FINISHED " + task.getId());
+	public void finishTask(IMessage message, TaskReference task, IMessageBus bus) {
+		send(message);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler(type = Type.TaskAborted)
-	public void abortTask(TaskReference task, IMessageBus bus) {
-		System.out.println("TASK FUBAR " + task.getId());
+	public void abortTask(IMessage message, TaskReference task, IMessageBus bus) {
+		send(message);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler
-	public void handleDataflow(DataflowReference dataflow) {
-		System.out.println("GOT DATAFLOW");
+	public void handleDataflow(IMessage message, DataflowReference dataflow) {
+//		System.out.println("GOT DATAFLOW");
 		// TODO notify. Task ID is in the dataflow - this may need to change
 	}
 }

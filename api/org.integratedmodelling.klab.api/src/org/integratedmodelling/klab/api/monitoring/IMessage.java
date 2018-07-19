@@ -172,4 +172,12 @@ public interface IMessage {
 	 * @return
 	 */
 	long getTimestamp();
+	
+	/**
+	 * Get the payload of the message, ensuring it is of type T.
+	 * 
+	 * @param cls
+	 * @return the payload
+	 */
+	<T> T getPayload(Class<? extends T> cls);
 }
