@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
-public class EResourceFolder extends ENavigatorItem {
+public class ETestFolder extends ENavigatorItem {
 
-	public EResourceFolder() {
+	public ETestFolder() {
 		// TODO Auto-generated constructor stub
 	}
 

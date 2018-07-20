@@ -9,16 +9,21 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.Kim;
 
 public class EModel extends EKimObject implements IKimModel {
 
 	private static final long serialVersionUID = -5791991801230456655L;
 
 	IKimModel delegate;
-	
+
 	EModel(IKimModel statement) {
 		super(statement);
 		this.delegate = statement;
+	}
+
+	public IKimConcept.Type getCoreObservableType() {
+		return Kim.INSTANCE.getFundamentalType(delegate.getObservables().get(0).getMain().getType());
 	}
 
 	public Optional<IKimConcept> getReinterpretingRole() {
@@ -89,8 +94,8 @@ public class EModel extends EKimObject implements IKimModel {
 		return delegate.getContextualization();
 	}
 
-    @Override
-    public String getDocstring() {
-        return delegate.getDocstring();
-    }	
+	@Override
+	public String getDocstring() {
+		return delegate.getDocstring();
+	}
 }

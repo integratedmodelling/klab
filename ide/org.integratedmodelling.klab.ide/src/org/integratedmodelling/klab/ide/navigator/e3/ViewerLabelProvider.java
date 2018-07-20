@@ -11,6 +11,8 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 
 public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {
@@ -30,7 +32,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			}
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/namespace-checked.png");
 		}
-		if (element instanceof IKimConceptStatement) {
+		if (element instanceof EConcept) {
+			/*
+			 * TODO decorations!
+			 */
 			IKimConceptStatement concept = (IKimConceptStatement) element;
 			if (concept.getType().contains(Type.QUALITY)) {
 				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/quality.png");
@@ -63,8 +68,45 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/configuration.png");
 			}
 		}
-		if (element instanceof IKimModel) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png");
+		if (element instanceof EModel) {
+			
+			/*
+			 * TODO handle non-semantic first
+			 */
+			
+			switch (((EModel) element).getCoreObservableType()) {
+			/*
+			 * TODO decoration
+			 */
+			case CONFIGURATION:
+				break;
+			case EVENT:
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+						((EModel) element).isInstantiator() ? "icons/event_instantiator.png"
+								: "icons/event_resolver.png");
+			case IDENTITY:
+				break;
+			case NOTHING:
+				break;
+			case PROCESS:
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/process_resolver.png");
+			case QUALITY:
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/quality_resolver.png");
+			case REALM:
+				break;
+			case RELATIONSHIP:
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+						((EModel) element).isInstantiator() ? "icons/relationship_instantiator.png"
+								: "icons/relationship_resolver.png");
+			case ROLE:
+				break;
+			case SUBJECT:
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+						((EModel) element).isInstantiator() ? "icons/subject_instantiator.png"
+								: "icons/subject_resolver.png");
+			default:
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png");
+			}
 		}
 		if (element instanceof IKimObserver) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/realm.png");

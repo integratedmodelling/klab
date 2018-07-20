@@ -20,7 +20,7 @@
  * 330, Boston, MA 02111-1307, USA. The license is also available at:
  * https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.klab.ide;
+package org.integratedmodelling.klab.ide.ui;
 
 import java.util.HashMap;
 

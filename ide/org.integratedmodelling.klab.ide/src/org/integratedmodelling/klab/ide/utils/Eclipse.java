@@ -8,12 +8,17 @@ import java.util.HashMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
@@ -92,11 +97,45 @@ public enum Eclipse {
 
 	private void error(Exception e) {
 		// TODO Auto-generated method stub
-		System.out.println("SHIT HANDLE ME " + e);
+		System.out.println("SHIT, HANDLE ME: " + e);
 	}
 
 	public void openFile(String filename) throws KlabException {
 		openFile(filename, 0);
+	}
+
+	/**
+	 * Import an Eclipse project programmatically into the workspace. Does not check
+	 * for existence and overwrites whatever is there.
+	 * 
+	 * @param baseDir
+	 * @return
+	 */
+	public IProject importExistingProject(File baseDir) {
+
+		IProject project = null;
+
+		try {
+			IProjectDescription description = ResourcesPlugin.getWorkspace()
+					.loadProjectDescription(new Path(baseDir.getPath() + "/.project"));
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(description.getName());
+			project.create(description, null);
+
+			IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
+				public String queryOverwrite(String file) {
+					return ALL;
+				}
+			};
+
+			ImportOperation importOperation = new ImportOperation(project.getFullPath(), baseDir,
+					FileSystemStructureProvider.INSTANCE, overwriteQuery);
+			importOperation.setCreateContainerStructure(false);
+			importOperation.run(new NullProgressMonitor());
+
+		} catch (Exception e) {
+			error(e);
+		}
+		return project;
 	}
 
 }

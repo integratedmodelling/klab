@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMetadata;
@@ -18,7 +17,13 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
-public abstract class EKimObject implements IKimStatement, IAdaptable {
+/**
+ * Root class for tree elements that are linked to a k.IM statement.
+ * 
+ * @author ferdinando.villa
+ *
+ */
+public abstract class EKimObject extends ENavigatorItem implements IKimStatement {
 
 	private static final long serialVersionUID = -3445237513834410884L;
 
@@ -133,15 +138,7 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 		return ret;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends EKimObject> T getEParent(Class<T> cls) {
-		if (cls.isAssignableFrom(this.getClass())) {
-			return (T) this;
-		}
-		EKimObject parent = getEParent();
-		return parent == null ? null : parent.getEParent(cls);
-	}
-
+	@Override
 	public EKimObject getEParent() {
 
 		IKimStatement parent = delegate_.getParent();
@@ -159,5 +156,17 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 		}
 		return null;
 	}
+//
+//	@Override
+//	public int hashCode() {
+//		return (delegate_ == null || delegate_.getURI() == null) ? super.hashCode()
+//				: delegate_.getURI().toString().hashCode();
+//	}
+//
+//	@Override
+//	public boolean equals(Object o) {
+//		return this == o || (delegate_ != null && o instanceof EKimObject
+//				&& delegate_.getURI().toString().equals(((EKimObject) o).getURI().toString()));
+//	}
 
 }
