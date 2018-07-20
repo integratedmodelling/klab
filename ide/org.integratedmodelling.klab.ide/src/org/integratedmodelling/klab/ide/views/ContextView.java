@@ -47,6 +47,8 @@ import org.integratedmodelling.klab.ide.ResourceManager;
 import org.integratedmodelling.klab.ide.SWTResourceManager;
 
 public class ContextView extends ViewPart {
+	public ContextView() {
+	}
 
 	private Composite container;
 	private Button searchModeButton;
@@ -65,6 +67,7 @@ public class ContextView extends ViewPart {
 	public void createPartControl(Composite parent) {
 
 		container = new Composite(parent, SWT.NONE);
+		container.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		GridLayout gl_container = new GridLayout(1, false);
 		gl_container.horizontalSpacing = 0;
 		gl_container.verticalSpacing = 0;
@@ -73,6 +76,7 @@ public class ContextView extends ViewPart {
 		container.setLayout(gl_container);
 		{
 			Composite ccombo = new Composite(container, SWT.NONE);
+			ccombo.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 			// ccombo.setBackground(SWTResourceManager
 			// .getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			ccombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -91,7 +95,7 @@ public class ContextView extends ViewPart {
 				}
 			});
 			searchModeButton
-					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.thinkcap", "icons/Database.png"));
+					.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Database.png"));
 			// toolkit.adapt(searchModeButton, true, true);
 			{
 				subjectLabel = new Text(ccombo, SWT.NONE);
@@ -140,7 +144,7 @@ public class ContextView extends ViewPart {
 					}
 				});
 				btnNewButton
-						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.thinkcap", "icons/Tree.png"));
+						.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Tree.png"));
 				// toolkit.adapt(btnNewButton, true, true);
 			}
 		}
@@ -166,7 +170,7 @@ public class ContextView extends ViewPart {
 				}
 			});
 			dropImage.setToolTipText("Drop a subject to define the context.");
-			dropImage.setImage(ResourceManager.getPluginImage("org.integratedmodelling.thinkcap", "icons/ndrop.png"));
+			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
 			// toolkit.adapt(dropImage, true, true);
 			DropTarget dropTarget = new DropTarget(dropImage, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
 			dropTarget.setTransfer(new Transfer[] {
@@ -223,7 +227,7 @@ public class ContextView extends ViewPart {
 			// toolkit.adapt(label, true, true);
 			{
 				Composite labelContainer = new Composite(container, SWT.NONE);
-				labelContainer.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+				labelContainer.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				GridLayout gl_labelContainer = new GridLayout(3, false);
 				gl_labelContainer.verticalSpacing = 0;
 				gl_labelContainer.marginWidth = 0;
@@ -234,6 +238,7 @@ public class ContextView extends ViewPart {
 				// toolkit.paintBordersFor(labelContainer);
 
 				Label lblNewLabel = new Label(labelContainer, SWT.NONE);
+				lblNewLabel.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				lblNewLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 				GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 				gd_lblNewLabel.widthHint = 62;
@@ -243,6 +248,7 @@ public class ContextView extends ViewPart {
 				lblNewLabel.setText("Scenarios");
 				{
 					scenariosLabel = new CLabel(labelContainer, SWT.NONE);
+					scenariosLabel.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 					scenariosLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
 					scenariosLabel.setText("No scenarios active");
 					scenariosLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -264,11 +270,12 @@ public class ContextView extends ViewPart {
 						public void mouseUp(MouseEvent e) {
 						}
 					});
-					btnNewButtonSC.setImage(ResourceManager.getPluginImage("org.integratedmodelling.thinkcap",
+					btnNewButtonSC.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID,
 							"icons/Player Record.png"));
 					// toolkit.adapt(btnNewButtonSC, true, true);
 				}
 				Label lblNewLabel_1 = new Label(labelContainer, SWT.NONE);
+				lblNewLabel_1.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				lblNewLabel_1.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 				GridData gd_lblNewLabel_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 				gd_lblNewLabel_1.widthHint = 62;
@@ -280,7 +287,7 @@ public class ContextView extends ViewPart {
 				spatialContext.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
 				// spatialContext.setText(Environment.get().getSpatialForcing().toString());
 				spatialContext.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BORDER));
-				spatialContext.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+				spatialContext.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				spatialContext.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 				// toolkit.adapt(spatialContext, true, true);
 
@@ -318,11 +325,12 @@ public class ContextView extends ViewPart {
 						}
 					});
 					btnNewButtonSp.setImage(
-							ResourceManager.getPluginImage("org.integratedmodelling.thinkcap", "icons/Globe.png"));
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Globe.png"));
 					// toolkit.adapt(btnNewButtonSp, true, true);
 				}
 
 				Label lblNewLabel_3 = new Label(labelContainer, SWT.NONE);
+				lblNewLabel_3.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				lblNewLabel_3.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 				GridData gd_lblNewLabel_3 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 				gd_lblNewLabel_3.widthHint = 62;
@@ -334,7 +342,7 @@ public class ContextView extends ViewPart {
 				temporalContext.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
 				temporalContext.setText("No temporal context");
 				temporalContext.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BORDER));
-				temporalContext.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+				temporalContext.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				temporalContext.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 				// toolkit.adapt(temporalContext, true, true);
 
@@ -372,7 +380,7 @@ public class ContextView extends ViewPart {
 						}
 					});
 					btnNewButtonT.setImage(
-							ResourceManager.getPluginImage("org.integratedmodelling.thinkcap", "icons/Clock.png"));
+							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Clock.png"));
 					// toolkit.adapt(btnNewButtonT, true, true);
 				}
 			}

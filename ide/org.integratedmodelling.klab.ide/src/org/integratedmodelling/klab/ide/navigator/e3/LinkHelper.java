@@ -11,6 +11,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.navigator.ILinkHelper;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
+import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public class LinkHelper implements ILinkHelper {
 
@@ -33,16 +36,17 @@ public class LinkHelper implements ILinkHelper {
 
 	@Override
 	public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
-		System.out.println("shittuuu " + aSelection);
+
+		if (aSelection == null || aSelection.isEmpty())
+			return;
 		
-//		if (aSelection == null || aSelection.isEmpty())
-//			return;
-//		if (aSelection.getFirstElement() instanceof IFile) {
-//			IEditorInput fileInput = new FileEditorInput((IFile) aSelection.getFirstElement());
-//			IEditorPart editor = null;
-//			if ((editor = aPage.findEditor(fileInput)) != null)
-//				aPage.bringToTop(editor);
-//		}
+		if (aSelection.getFirstElement() instanceof ENamespace) {
+			Eclipse.INSTANCE.openFile(((ENamespace)aSelection.getFirstElement()).getAdapter(IFile.class), 0);
+		} else if (aSelection.getFirstElement() instanceof EKimObject) {
+			EKimObject kob = (EKimObject)aSelection.getFirstElement();
+			ENamespace kns = kob.getEParent(ENamespace.class);
+			Eclipse.INSTANCE.openFile(kns.getAdapter(IFile.class), kob.getFirstLine());
+		}
 	}
 
 }

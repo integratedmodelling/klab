@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.client.http;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nullable;
@@ -8,10 +10,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.PingResponse;
+import org.integratedmodelling.klab.rest.ProjectReference;
 
 /**
  * Engine monitor that checks the engine status at regular intervals, notifying
@@ -48,6 +52,8 @@ public class EngineMonitor {
 	 * Explorer to the engine can be relayed to it.
 	 */
 	private String relayId;
+
+	private Capabilities capabilities;
 
 	public EngineMonitor(String url, Runnable onEngineUp, Runnable onEngineDown, @Nullable String initialSessionId) {
 		engineUrl = url;
@@ -123,24 +129,26 @@ public class EngineMonitor {
 	}
 
 	/**
-	 * Ops performed when an engine appears online. Rejoin of a previous session is
-	 * automatic within an instance, but the sessionId is saved across instances
-	 * only if configured.
+	 * Ops performed when an engine appears online.
 	 */
 	private void engineUp() {
 
 		/*
-		 * TODO if engine is not local, must authenticate with stored username/password
+		 * TODO if engine is not local, must first authenticate with stored username/password
 		 */
-
-		PingResponse ping = client.heartbeat();
+		PingResponse ping = client.get(API.PING, PingResponse.class);
 		this.engineKey = ping.getEngineId();
-//		this.capabilities = client.get(Capabilities.class);
+		this.capabilities = client.get(API.CAPABILITIES, Capabilities.class);
 		this.sessionId = client.openSession(this.sessionId != null ? this.sessionId : ping.getLocalSessionId(),
 				relayId);
 
 		if (this.sessionId != null) {
-			this.bus = new StompMessageBus(engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message");
+			if (this.bus != null) {
+				// shouldn't happen
+				this.bus.stop();
+			}
+			this.bus = new StompMessageBus(
+					engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message");
 			onEngineUp.run();
 		} else {
 			stop();
@@ -152,6 +160,15 @@ public class EngineMonitor {
 		return this.engineKey;
 	}
 	
+	/**
+	 * Return all local projects known to the engine.
+	 * 
+	 * @return reference beans for each project
+	 */
+	public List<ProjectReference> getLocalProjects() {
+		return capabilities == null ? new ArrayList<>() : capabilities.getLocalWorkspaceProjects();
+	}
+
 	/**
 	 * Ops performed when an engine goes down.
 	 */
@@ -165,6 +182,5 @@ public class EngineMonitor {
 	public IMessageBus getBus() {
 		return bus;
 	}
-
 
 }

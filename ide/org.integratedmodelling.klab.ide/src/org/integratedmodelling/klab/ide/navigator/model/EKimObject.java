@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -30,27 +30,30 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 	}
 
 	public static IFile getNamespaceIFile(IKimNamespace namespace) {
-
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(namespace.getName());
+		IProject project = root.getProject(namespace.getProject().getName());
 		String rpath = namespace.getName().replace('.', '/') + ".kim";
-		rpath = namespace.getProject().getRoot() + "/src/" + rpath;
+		rpath = "src/" + rpath;
 		return project.getFile(rpath);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (!(this instanceof ENamespace) && IMarker.class.isAssignableFrom(adapter)) {
-			// return (T)getNamespaceIFile(((ENamespace)this).delegate);
-		}
+		
+//		if (!(this instanceof ENamespace) && IMarker.class.isAssignableFrom(adapter)) {
+//			// return (T)getNamespaceIFile(((ENamespace)this).delegate);
+//		}
 
-		if (IFile.class.isAssignableFrom(adapter)) {
+		if (IResource.class.isAssignableFrom(adapter)) {
 			if (this instanceof ENamespace) {
 				return (T) getNamespaceIFile(((ENamespace) this).delegate);
 			} else {
 			}
 		}
+
+//		System.out.println("TRYING to adapt " + this + " to " + adapter.getCanonicalName());
+		
 		return null;
 	}
 
@@ -133,6 +136,15 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T extends EKimObject> T getEParent(Class<T> cls) {
+		if (cls.isAssignableFrom(this.getClass())) {
+			return (T)this;
+		}
+		EKimObject parent = getEParent();
+		return parent == null ? null : parent.getEParent(cls);
+	}
+	
 	public EKimObject getEParent() {
 		
 		IKimStatement parent = delegate_.getParent();

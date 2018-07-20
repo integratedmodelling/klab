@@ -128,23 +128,6 @@ public class Client extends RestTemplate {
 	}
 
 	/**
-	 * Another ping with a more detailed response.
-	 * 
-	 * @return
-	 */
-	public PingResponse heartbeat() {
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("Content-Type", "text/plain");
-			ResponseEntity<PingResponse> response = exchange(url + API.PING, HttpMethod.GET,
-					new HttpEntity<PingResponse>(headers), PingResponse.class);
-			return response.getBody();
-		} catch (Throwable e) {
-			return null;
-		}
-	}
-
-	/**
 	 * Open a session with the engine.
 	 * 
 	 * @param rejoinSession
@@ -154,9 +137,7 @@ public class Client extends RestTemplate {
 	 */
 	public String openSession(@Nullable String rejoinSession, @Nullable String relayId) {
 
-		AuthorizeSessionResponse response = get(
-				url 
-					+ API.ENGINE.SESSION.AUTHORIZE 
+		AuthorizeSessionResponse response = get(API.ENGINE.SESSION.AUTHORIZE 
 					+ (rejoinSession == null ? "" : ("?join=" + rejoinSession))
 					+ (relayId == null ? "" : ((rejoinSession == null? "?relay=" : "&relay=") + relayId)),
 				AuthorizeSessionResponse.class);
@@ -264,7 +245,7 @@ public class Client extends RestTemplate {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
+	public <T extends Object> T post(String endpoint, Object data, Class<? extends T> cls) {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
@@ -277,14 +258,14 @@ public class Client extends RestTemplate {
 
 		try {
 
-			ResponseEntity<Map> response = exchange(url, HttpMethod.POST, entity, Map.class);
+			ResponseEntity<Map> response = exchange(url + endpoint, HttpMethod.POST, entity, Map.class);
 
 			switch (response.getStatusCodeValue()) {
 			case 302:
 			case 403:
-				throw new KlabAuthorizationException("unauthorized request " + url);
+				throw new KlabAuthorizationException("unauthorized request " + url + endpoint);
 			case 404:
-				throw new IllegalStateException("internal: request " + url + " was not accepted");
+				throw new IllegalStateException("internal: request " + url + endpoint + " was not accepted");
 			}
 
 			if (response.getBody() == null) {
@@ -305,7 +286,7 @@ public class Client extends RestTemplate {
 		}
 	}
 
-	public boolean download(String url, File output) {
+	public boolean download(String endpoint, File output) {
 
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
@@ -320,14 +301,14 @@ public class Client extends RestTemplate {
 		// headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
 		// HttpEntity<String> entity = new HttpEntity<>(headers);
 
-		ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class);
+		ResponseEntity<byte[]> response = restTemplate.exchange(url + endpoint, HttpMethod.GET, entity, byte[].class);
 
 		switch (response.getStatusCodeValue()) {
 		case 302:
 		case 403:
-			throw new KlabAuthorizationException("unauthorized request " + url);
+			throw new KlabAuthorizationException("unauthorized request " + url + endpoint);
 		case 404:
-			throw new IllegalStateException("internal: request " + url + " was not accepted");
+			throw new IllegalStateException("internal: request " + url + endpoint + " was not accepted");
 		}
 
 		if (response.getBody() == null) {
@@ -353,7 +334,7 @@ public class Client extends RestTemplate {
 	 * @param responseType
 	 * @return
 	 */
-	public <T> T upload(String url, File contents, Class<T> responseType) {
+	public <T> T upload(String endpoint, File contents, Class<T> responseType) {
 
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
@@ -362,7 +343,7 @@ public class Client extends RestTemplate {
 
 		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
 				map, headers);
-		ResponseEntity<T> result = exchange(url, HttpMethod.POST, requestEntity, responseType);
+		ResponseEntity<T> result = exchange(url + endpoint, HttpMethod.POST, requestEntity, responseType);
 		return result.getBody();
 	}
 
@@ -380,7 +361,7 @@ public class Client extends RestTemplate {
 	 * @param errorConsumer
 	 * @return
 	 */
-	public <T> void uploadAsynchronous(String url, File contents, Class<T> responseType, Consumer<T> responseConsumer,
+	public <T> void uploadAsynchronous(String endpoint, File contents, Class<T> responseType, Consumer<T> responseConsumer,
 			@Nullable Consumer<String> errorConsumer) {
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
@@ -389,7 +370,7 @@ public class Client extends RestTemplate {
 
 		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
 				map, headers);
-		ResponseEntity<T> response = exchange(url, HttpMethod.POST, requestEntity, responseType);
+		ResponseEntity<T> response = exchange(url + endpoint, HttpMethod.POST, requestEntity, responseType);
 		switch (response.getStatusCodeValue()) {
 		case 200:
 			responseConsumer.accept(response.getBody());
@@ -400,9 +381,9 @@ public class Client extends RestTemplate {
 			break;
 		case 302:
 		case 403:
-			throw new KlabAuthorizationException("unauthorized request " + url);
+			throw new KlabAuthorizationException("unauthorized request " + url + endpoint);
 		case 404:
-			throw new IllegalStateException("internal: request " + url + " was not accepted");
+			throw new IllegalStateException("internal: request " + url + endpoint + " was not accepted");
 		}
 	}
 
@@ -414,7 +395,7 @@ public class Client extends RestTemplate {
 	 * @return the deserialized result
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	public <T> T get(String url, Class<T> cls) {
+	public <T> T get(String endpoint, Class<T> cls) {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
@@ -423,14 +404,14 @@ public class Client extends RestTemplate {
 			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
 		}
 		HttpEntity<String> entity = new HttpEntity<>(headers);
-		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
+		ResponseEntity<Map> response = exchange(url + endpoint, HttpMethod.GET, entity, Map.class);
 
 		switch (response.getStatusCodeValue()) {
 		case 302:
 		case 403:
-			throw new KlabAuthorizationException("unauthorized request " + url);
+			throw new KlabAuthorizationException("unauthorized request " + url + endpoint);
 		case 404:
-			throw new RuntimeException("internal: request " + url + " was not accepted");
+			throw new RuntimeException("internal: request " + url + endpoint + " was not accepted");
 		}
 
 		if (response.getBody() == null) {
@@ -455,8 +436,8 @@ public class Client extends RestTemplate {
 	 * @param urlVariables
 	 * @return the deserialized result
 	 */
-	<T> T get(String url, Class<T> cls, Map<String, ?> urlVariables) {
-		return get(addParameters(url, urlVariables), cls);
+	<T> T get(String endpoint, Class<T> cls, Map<String, ?> urlVariables) {
+		return get(addParameters(endpoint, urlVariables), cls);
 	}
 
 	/**
@@ -467,11 +448,11 @@ public class Client extends RestTemplate {
 	 * @param parameters
 	 * @return the finished url
 	 */
-	public static String addParameters(String url, Map<String, ?> parameters) {
-		String ret = url;
+	public static String addParameters(String endpoint, Map<String, ?> parameters) {
+		String ret = endpoint;
 		if (parameters != null) {
 			for (String key : parameters.keySet()) {
-				if (ret.length() == url.length()) {
+				if (ret.length() == endpoint.length()) {
 					ret += "?";
 				} else {
 					ret += "&";
