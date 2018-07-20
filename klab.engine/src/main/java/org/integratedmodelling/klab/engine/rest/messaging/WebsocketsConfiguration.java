@@ -54,7 +54,7 @@ public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(API.MESSAGE).withSockJS();
+        registry.addEndpoint(API.MESSAGE).setAllowedOrigins("http://localhost:8080").withSockJS();
     }
 
     @Override
