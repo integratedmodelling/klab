@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
@@ -46,21 +45,28 @@ public abstract class AbstractWorkspace implements IWorkspace {
 		delegate.readProjects();
 	}
 
+	/**
+	 * Add a project from a local directory.
+	 * 
+	 * @param root
+	 * @return
+	 */
+	public IProject addProject(File root) {
+		IKimProject ret = delegate.loadProject(root);
+		return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
+	}
+
 	@Override
 	public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
 
 		List<INamespace> ret = new ArrayList<>();
-		try {
-			for (IKimNamespace ns : delegate.load(incremental)) {
-				// the validator callback inserts the namespace into the index, all we do is
-				// retrieve it
-				INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
-				if (namespace != null) {
-					ret.add(namespace);
-				}
+		for (IKimNamespace ns : delegate.load(incremental)) {
+			// the validator callback inserts the namespace into the index, all we do is
+			// retrieve it
+			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
+			if (namespace != null) {
+				ret.add(namespace);
 			}
-		} catch (IOException e) {
-			throw new KlabIOException(e);
 		}
 		return ret;
 	}
@@ -81,7 +87,7 @@ public abstract class AbstractWorkspace implements IWorkspace {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public IProject getProject(String projectId) {
 		IKimProject ret = delegate.getProject(projectId);

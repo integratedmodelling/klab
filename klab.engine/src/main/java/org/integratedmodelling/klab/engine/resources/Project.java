@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
@@ -10,12 +13,14 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class Project implements IProject {
     
     IKimProject delegate;
     IWorkspace workspace;
-   
+    Set<String> localResourceUrns = new HashSet<>();
+    
     public Project(IKimProject project) {
         this.delegate = project;
         if (project.getName().equals(Kim.COMMON_PROJECT_ID)) {
@@ -26,12 +31,20 @@ public class Project implements IProject {
         synchronizeResources();
     }
     
+    @Override
+    public Collection<String> getLocalResourceUrns() {
+    	return localResourceUrns;
+    }
+    
     public void synchronizeResources() {
     	File resourceDir = new File(getRoot() + File.separator + "resources");
     	if (resourceDir.exists() && resourceDir.isDirectory()) {
     		for (File rdir : resourceDir.listFiles()) {
     			if (rdir.isDirectory()) {
-    				Resources.INSTANCE.synchronize(rdir);
+    				ResourceReference rref = Resources.INSTANCE.synchronize(rdir);
+    				if (rref != null) {
+    					localResourceUrns.add(rref.getUrn());
+    				}
     			}
     		}
     	}

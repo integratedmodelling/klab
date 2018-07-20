@@ -190,6 +190,11 @@ public class ObservationReference {
      * Full URN of the observation.
      */
     private String urn;
+    
+    /**
+     * Number of values for states; 0 otherwise
+     */
+	private long valueCount;
 
     public String getId() {
         return id;
@@ -418,5 +423,13 @@ public class ObservationReference {
         return "ObservationReference [id=" + id + ", observable=" + observable + ", semantics=" + semantics
                 + ", siblingCount=" + siblingCount + "]";
     }
+
+	public void setValueCount(long size) {
+		this.valueCount = size;
+	}
+	
+	public long getValueCount() {
+		return this.valueCount;
+	}
 
 }

@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
+import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.PingResponse;
 
 /**
@@ -134,6 +135,7 @@ public class EngineMonitor {
 
 		PingResponse ping = client.heartbeat();
 		this.engineKey = ping.getEngineId();
+//		this.capabilities = client.get(Capabilities.class);
 		this.sessionId = client.openSession(this.sessionId != null ? this.sessionId : ping.getLocalSessionId(),
 				relayId);
 

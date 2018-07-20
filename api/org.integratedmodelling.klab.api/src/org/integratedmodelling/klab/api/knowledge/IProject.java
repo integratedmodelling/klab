@@ -16,7 +16,9 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
+
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.model.INamespace;
 
@@ -29,70 +31,92 @@ import org.integratedmodelling.klab.api.model.INamespace;
  */
 public interface IProject {
 
-    /**
-     * <p>getName.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getName();
+	/**
+	 * <p>
+	 * getName.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getName();
 
-    /**
-     * <p>getRoot.</p>
-     *
-     * @return a {@link java.io.File} object.
-     */
-    File getRoot();
+	/**
+	 * <p>
+	 * getRoot.
+	 * </p>
+	 *
+	 * @return a {@link java.io.File} object.
+	 */
+	File getRoot();
 
-    /**
-     * <p>getNamespaces.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    List<INamespace> getNamespaces();
+	/**
+	 * <p>
+	 * getNamespaces.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	List<INamespace> getNamespaces();
 
-    /**
-     * <p>getPrerequisites.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    List<IProject> getPrerequisites();
+	/**
+	 * <p>
+	 * getPrerequisites.
+	 * </p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	List<IProject> getPrerequisites();
+	
+	/**
+	 * The URNs of all local resources defined in the project.
+	 * 
+	 * @return
+	 */
+	Collection<String> getLocalResourceUrns();
 
-    /**
-     * <p>getVersion.</p>
-     *
-     * @return a {@link org.integratedmodelling.klab.Version} object.
-     */
-    Version getVersion();
+	/**
+	 * <p>
+	 * getVersion.
+	 * </p>
+	 *
+	 * @return a {@link org.integratedmodelling.klab.Version} object.
+	 */
+	Version getVersion();
 
-    /**
-     * This will return a non-null namespace unless the project is a worldview (which will return null). The
-     * "user knowledge" namespace is permitted to have only aliases (defined using "is" which is interpreted
-     * differently) and resides in META_INF/knowledge.kim. Non-worldview projects should only define concepts
-     * this way; having a namespace define concepts makes the namespace "dirty" and the project non-shareable.
-     *
-     * @return the user knowledge namespace. Only null in worldviews.
-     */
-    INamespace getUserKnowledge();
+	/**
+	 * This will return a non-null namespace unless the project is a worldview
+	 * (which will return null). The "user knowledge" namespace is permitted to have
+	 * only aliases (defined using "is" which is interpreted differently) and
+	 * resides in META_INF/knowledge.kim. Non-worldview projects should only define
+	 * concepts this way; having a namespace define concepts makes the namespace
+	 * "dirty" and the project non-shareable.
+	 *
+	 * @return the user knowledge namespace. Only null in worldviews.
+	 */
+	INamespace getUserKnowledge();
 
-    /**
-     * True if the project has no namespaces that define non-worldview knowledge (see
-     * {@link org.integratedmodelling.klab.api.model.INamespace#isCanonical()}).
-     *
-     * @return true if project is canonital
-     */
-    public boolean isCanonical();
+	/**
+	 * True if the project has no namespaces that define non-worldview knowledge
+	 * (except for aliases) and is not using any local resources (see
+	 * {@link org.integratedmodelling.klab.api.model.INamespace#isCanonical()}). A
+	 * canonical project can be published on a node.
+	 *
+	 * @return true if project is canonical
+	 */
+	public boolean isCanonical();
 
-    /**
-     * True if this project originates from a remote node and not from a local workspace.
-     *
-     * @return a boolean.
-     */
-    boolean isRemote();
+	/**
+	 * True if this project originates from a remote node and not from a local
+	 * workspace.
+	 *
+	 * @return a boolean.
+	 */
+	boolean isRemote();
 
-    /**
-     * Name of originating node. Not null implies {@link #isRemote()} == true.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getOriginatingNodeId();
+	/**
+	 * Name of originating node. Not null implies {@link #isRemote()} == true.
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getOriginatingNodeId();
 }

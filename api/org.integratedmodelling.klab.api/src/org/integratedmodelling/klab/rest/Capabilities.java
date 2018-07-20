@@ -1,9 +1,18 @@
 package org.integratedmodelling.klab.rest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Capabilities for now are shared between nodes, hubs and engines. May decide
+ * to split them later.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public class Capabilities {
+
 	private String name;
 	private String version;
 	private String build;
@@ -15,6 +24,11 @@ public class Capabilities {
 	private List<String> mirrors = new ArrayList<>();
 	private long refreshFrequencyMillis;
 	private int loadFactor;
+
+	/*
+	 * these are only communicated to localhost clients
+	 */
+	private List<ProjectReference> localWorkspaceProjects = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -192,5 +206,13 @@ public class Capabilities {
 				+ ", services=" + services + ", authorities=" + authorities + ", staticComponents=" + staticComponents
 				+ ", dynamicComponents=" + dynamicComponents + ", refreshFrequencyMillis=" + refreshFrequencyMillis
 				+ ", loadFactor=" + loadFactor + "]";
+	}
+
+	public List<ProjectReference> getLocalWorkspaceProjects() {
+		return localWorkspaceProjects;
+	}
+
+	public void setLocalWorkspaceProjects(List<ProjectReference> localWorkspaceProjects) {
+		this.localWorkspaceProjects = localWorkspaceProjects;
 	}
 }

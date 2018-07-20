@@ -1,11 +1,12 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
+
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.GitUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
@@ -20,7 +21,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
         delegate = new KimWorkspace(root, overridingProjects) {
 
             @Override
-            public void readProjects() throws IOException {
+            public void readProjects() {
                 
                 if (!synced && (!skipSync || !root.exists())) {
                     synced = true;
@@ -31,7 +32,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                             if (new File(root + File.separator + MiscUtilities.getURLBaseName(url) + File.separator + ".git").exists()) {
                                 Logging.INSTANCE.error("cannot sync existing repository "  + url + ": skipping");
                             } else {
-                                throw new IOException(e);
+                                throw new KlabIOException(e);
                             }
                         }
                     }

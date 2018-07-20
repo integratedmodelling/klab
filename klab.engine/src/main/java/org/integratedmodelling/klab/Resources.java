@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
-import org.apache.log4j.Logger;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
@@ -59,6 +58,8 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.LocalResourceReference;
+import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -801,7 +802,7 @@ public enum Resources implements IResourceService {
 
 	}
 
-	public void synchronize(File rdir) {
+	public ResourceReference synchronize(File rdir) {
 		File rdef = new File(rdir + File.separator + "resource.json");
 		if (rdef.exists()) {
 			ResourceReference rref = JsonUtils.load(rdef, ResourceReference.class);
@@ -809,6 +810,23 @@ public enum Resources implements IResourceService {
 				Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
 				getLocalResourceCatalog().put(rref.getUrn(), new Resource(rref));
 			}
+			return rref;
 		}
+		return null;
+	}
+
+	public ProjectReference createProjectDescriptor(IProject project) {
+		
+		ProjectReference ret = new ProjectReference();
+		ret.setName(project.getName());
+		ret.setRootPath(project.getRoot());
+		for (String urn : project.getLocalResourceUrns()) {
+			LocalResourceReference rref = new LocalResourceReference();
+			rref.setUrn(urn);
+			// TODO
+			rref.setOnline(true);
+			ret.getLocalResources().add(rref);
+		}
+		return ret;
 	}
 }

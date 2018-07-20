@@ -74,8 +74,12 @@ public class KimWorkspace implements IKimWorkspace {
 		return allProjects.get(projectId);
 	}
 
+	@Override
 	public KimProject loadProject(File root) {
 		String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
+		if (projectLocations.contains(root)) {
+			return allProjects.get(pname);
+		}
 		KimProject project = new KimProject(this, pname, overrideIfPresent(root, this.overridingProjects));
 		allProjects.put(pname, project);
 		projectLocations.add(root);
@@ -83,7 +87,8 @@ public class KimWorkspace implements IKimWorkspace {
 		return project;
 	}
 
-	public void readProjects() throws IOException {
+	// not reentrant at the moment.
+	public void readProjects() {
 
 		if (!read) {
 
@@ -178,7 +183,8 @@ public class KimWorkspace implements IKimWorkspace {
 		return url;
 	}
 
-	public List<IKimNamespace> load(boolean incremental) throws IOException {
+	@Override
+	public List<IKimNamespace> load(boolean incremental) {
 
 		List<IKimNamespace> ret = new ArrayList<>();
 
@@ -299,10 +305,6 @@ public class KimWorkspace implements IKimWorkspace {
 
 	public KimProject getProjectForResource(Resource resource) {
 
-		if (resource.getURI().toString().contains("test.ogc.raster")) {
-			System.out.println("xoidu");
-		}
-		
 		KimProject ret = getProjectForURI(resource.getURI().toString());
 		if (ret == null) {
 			try {

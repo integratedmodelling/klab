@@ -350,4 +350,9 @@ public class Component implements IComponent {
         return implementation;
     }
 
+	@Override
+	public Collection<String> getLocalResourceUrns() {
+		throw new IllegalAccessError("components cannot have local resources");
+	}
+
 }

@@ -190,7 +190,7 @@ public enum Observations implements IObservationService {
 		ret.setObservable(observation.getObservable().getType().getDefinition());
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
-
+		
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
 		ITime time = ((IScale) observation.getGeometry()).getTime();
 
@@ -233,9 +233,12 @@ public enum Observations implements IObservationService {
 			}
 		}
 
-		if (observation instanceof IState && observation.getScale().size() == 1) {
+		if (observation instanceof IState) {
+			ret.setValueCount(observation.getScale().size());
+			if (observation.getScale().size() == 1) {
 			ret.setLiteralValue(formatValue(observation.getObservable(),
 					((IState) observation).get(observation.getScale().getLocator(0))));
+			}
 		}
 
 		return ret;

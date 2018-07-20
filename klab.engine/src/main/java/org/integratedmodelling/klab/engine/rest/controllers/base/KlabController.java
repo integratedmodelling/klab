@@ -6,8 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.rest.Capabilities;
@@ -34,8 +36,16 @@ public class KlabController {
 
 	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public Capabilities capabilities(Principal user) {
-		return Klab.INSTANCE.getCapabilities(Authentication.INSTANCE.getIdentity(user));
+	public Capabilities capabilities(Principal user, HttpServletRequest request) {
+		Capabilities ret = Klab.INSTANCE.getCapabilities(Authentication.INSTANCE.getIdentity(user));
+		if (IPUtils.isLocal(request.getRemoteAddr())) {
+			for (IProject project : Resources.INSTANCE.getLocalWorkspace().getProjects()) {
+				if (project.getRoot() != null) {
+					ret.getLocalWorkspaceProjects().add(Resources.INSTANCE.createProjectDescriptor(project));
+				}
+			}
+		}
+		return ret;
 	}
 
 	@RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")

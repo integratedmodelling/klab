@@ -70,10 +70,11 @@ public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {
 			try {
 				// il secondo lo taglia
 				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-				
+
 				// e il terzo gode
-//				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-				
+				// ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD,
+				// new NullProgressMonitor());
+
 			} catch (CoreException e) {
 				// TODO log something
 			}
@@ -87,17 +88,12 @@ public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {
 		// TODO override from ws locations
 		if (!Kim.INSTANCE.isLibraryInitialized()) {
 
-			
 			KimWorkspace lib = Kim.INSTANCE.getLibrary("worldview");
 			if (lib != null) {
-				
-				try {
-					lib.readProjects();
-				} catch (IOException e) {
-					// TODO complain
-				}
-				
-			    ResourceSorter sorter = new ResourceSorter();
+
+				lib.readProjects();
+
+				ResourceSorter sorter = new ResourceSorter();
 				// load and validate all external libraries. The concepts will be resolved in
 				// the catalog and disappear
 				// from the linker.
@@ -111,8 +107,8 @@ public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {
 						if (issue.getSeverity() == Severity.ERROR && issue.isSyntaxError()) {
 							/**
 							 * FIXME this won't resolve the namespace references, for unknown reasons. The
-							 * errors are not reported because of the isSyntaxError() condition. The topological
-							 * sort makes the problem harmless.
+							 * errors are not reported because of the isSyntaxError() condition. The
+							 * topological sort makes the problem harmless.
 							 */
 							Kim.INSTANCE.reportLibraryError(issue);
 						}
@@ -120,10 +116,13 @@ public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {
 				}
 			}
 			Kim.INSTANCE.setLibraryInitialized(true);
-			
-			// You need BOTH this and the one in afterCreatePartControl for dependencies to be solved, I guess for
-			// the same reason as before - linked namespaces are (this time) resolved, but not validated in topological
-			// order. Would be lots easier to find out how to have Xtext validate the imported namespaces instead.
+
+			// You need BOTH this and the one in afterCreatePartControl for dependencies to
+			// be solved, I guess for
+			// the same reason as before - linked namespaces are (this time) resolved, but
+			// not validated in topological
+			// order. Would be lots easier to find out how to have Xtext validate the
+			// imported namespaces instead.
 			try {
 				// il primo solleva il pelo
 				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
@@ -151,7 +150,7 @@ public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {
 			issueProcessor = new AnnotationIssueProcessor(xtextDocument,
 					xtextEditor.getInternalSourceViewer().getAnnotationModel(), issueResolutionProvider);
 		ValidationJob validationJob = new ValidationJob(resourceValidator, xtextDocument, issueProcessor,
-				CheckMode.ALL); 
+				CheckMode.ALL);
 		validationJob.schedule();
 	}
 }
