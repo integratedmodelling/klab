@@ -45,8 +45,9 @@ public class Activator extends AbstractUIPlugin {
 	/*
 	 * identity for relaying messages sent from Web UI to session
 	 */
-	String relayId = "relay"+NameGenerator.shortUUID();
+	String relayId = "relay" + NameGenerator.shortUUID();
 	private KimWorkspace kimWorkspace;
+	private KlabEngine enginePeer;
 
 	/**
 	 * The constructor
@@ -126,16 +127,16 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId);
 
-		// TODO this is a caret listener for the k.IM editors - somehow the 
-//		workbenchWindow.getActivePage().addPartListener(new PartListener() {
-//		    public void partOpened(IWorkbenchPartReference partRef) {
-//		        //Check if this is an editor and its input is what I need
-//		        AbstractTextEditor e =
-//		            (AbstractTextEditor)((IEditorReference) partRef).getEditor(false);
-//		        ((StyledText)e.getAdapter(Control.class)).addCaretListener(l);
-//		    }
-//		});
-		
+		// TODO this is a caret listener for the k.IM editors - somehow the
+		// workbenchWindow.getActivePage().addPartListener(new PartListener() {
+		// public void partOpened(IWorkbenchPartReference partRef) {
+		// //Check if this is an editor and its input is what I need
+		// AbstractTextEditor e =
+		// (AbstractTextEditor)((IEditorReference) partRef).getEditor(false);
+		// ((StyledText)e.getAdapter(Control.class)).addCaretListener(l);
+		// }
+		// });
+
 		plugin = this;
 
 		URI uri = ResourcesPlugin.getWorkspace().getRoot().getLocationURI();
@@ -153,7 +154,7 @@ public class Activator extends AbstractUIPlugin {
 		 * Preload the workspace so that the navigator can work right away.
 		 */
 		this.kimWorkspace = Kim.INSTANCE.loadWorkspace(uri.toString(), projectRoots);
-		
+
 		this.engineStatusMonitor.start(relayId);
 
 	}
@@ -165,6 +166,10 @@ public class Activator extends AbstractUIPlugin {
 	private void engineOff() {
 		// TODO save session data
 		// TODO reassess UI
+		this.enginePeer
+				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
+						IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
+
 		System.out.println("ENGINE WENT OFF");
 	}
 
@@ -174,9 +179,14 @@ public class Activator extends AbstractUIPlugin {
 		/**
 		 * Add communication peers for engine, session and explorer
 		 */
-		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), new KlabEngine());
+		this.enginePeer = new KlabEngine();
+		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), this.enginePeer);
 		this.engineStatusMonitor.getBus().subscribe(sessionId, new KlabSession(sessionId));
 		this.engineStatusMonitor.getBus().subscribe(relayId, new KlabExplorer(relayId));
+
+		this.enginePeer
+				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
+						IMessage.Type.EngineUp, this.engineStatusMonitor.getCapabilities()));
 
 		// TODO remove/improve
 		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
@@ -184,6 +194,9 @@ public class Activator extends AbstractUIPlugin {
 
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		if (this.engineStatusMonitor != null) {
+			this.engineStatusMonitor.stop();
+		}
 		super.stop(context);
 	}
 
@@ -204,7 +217,8 @@ public class Activator extends AbstractUIPlugin {
 
 	public void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.getBus().post(Message.create(engineStatusMonitor.getSessionId(), object), responseHandler);
+			engineStatusMonitor.getBus().post(Message.create(engineStatusMonitor.getSessionId(), object),
+					responseHandler);
 		}
 	}
 

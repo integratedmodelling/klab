@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -39,12 +40,14 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.part.ViewPart;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.ResourceManager;
 import org.integratedmodelling.klab.ide.SWTResourceManager;
+import org.integratedmodelling.klab.ide.model.KlabPeer;
+import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 
 public class ContextView extends ViewPart {
 	public ContextView() {
@@ -62,6 +65,8 @@ public class ContextView extends ViewPart {
 	private Button btnNewButtonSp;
 	private CLabel temporalContext;
 	private Button btnNewButtonT;
+
+	private KlabPeer klab;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -94,8 +99,7 @@ public class ContextView extends ViewPart {
 					// searchMode(searchModeButton.getSelection());
 				}
 			});
-			searchModeButton
-					.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Database.png"));
+			searchModeButton.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Database.png"));
 			// toolkit.adapt(searchModeButton, true, true);
 			{
 				subjectLabel = new Text(ccombo, SWT.NONE);
@@ -143,8 +147,7 @@ public class ContextView extends ViewPart {
 						// }
 					}
 				});
-				btnNewButton
-						.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Tree.png"));
+				btnNewButton.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Tree.png"));
 				// toolkit.adapt(btnNewButton, true, true);
 			}
 		}
@@ -270,8 +273,8 @@ public class ContextView extends ViewPart {
 						public void mouseUp(MouseEvent e) {
 						}
 					});
-					btnNewButtonSC.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-							"icons/Player Record.png"));
+					btnNewButtonSC
+							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Player Record.png"));
 					// toolkit.adapt(btnNewButtonSC, true, true);
 				}
 				Label lblNewLabel_1 = new Label(labelContainer, SWT.NONE);
@@ -324,8 +327,7 @@ public class ContextView extends ViewPart {
 							// ptc.show(btnNewButtonSp.toDisplay(new Point(e.x, e.y - 110)));
 						}
 					});
-					btnNewButtonSp.setImage(
-							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Globe.png"));
+					btnNewButtonSp.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Globe.png"));
 					// toolkit.adapt(btnNewButtonSp, true, true);
 				}
 
@@ -379,8 +381,7 @@ public class ContextView extends ViewPart {
 							// ptc.show(btnNewButtonSp.toDisplay(new Point(e.x, e.y - 110)));
 						}
 					});
-					btnNewButtonT.setImage(
-							ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Clock.png"));
+					btnNewButtonT.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Clock.png"));
 					// toolkit.adapt(btnNewButtonT, true, true);
 				}
 			}
@@ -406,6 +407,75 @@ public class ContextView extends ViewPart {
 			});
 		}
 
+		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
+
+	}
+
+	private void handleMessage(IMessage message) {
+		// TODO handle warnings and errors when they come from tasks
+		switch (message.getType()) {
+		case DataflowCompiled:
+			break;
+		case Debug:
+			break;
+		case DebugScript:
+			break;
+		case DebugTest:
+			break;
+		case EngineDown:
+			Display.getDefault().asyncExec(
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png")));
+			break;
+		case EngineUp:
+			Display.getDefault().asyncExec(
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png")));
+			break;
+		case MatchAction:
+			break;
+		case ModifiedObservation:
+			break;
+		case NewObservation:
+			break;
+		case PeriodOfInterest:
+			break;
+		case QueryResult:
+			break;
+		case RegionOfInterest:
+			break;
+		case RequestObservation:
+			break;
+		case RunScript:
+			break;
+		case RunTest:
+			break;
+		case ScriptStarted:
+			Display.getDefault().asyncExec(
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/orun.png")));
+			break;
+		case SubmitSearch:
+			break;
+		case TaskAborted:
+			Display.getDefault().asyncExec(
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ostop.png")));
+			break;
+		case TaskFinished:
+			Display.getDefault().asyncExec(
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png")));
+			break;
+		case TaskStarted:
+			Display.getDefault().asyncExec(
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/orun.png")));
+			break;
+		case UserProjectDeleted:
+			break;
+		case UserProjectModified:
+			break;
+		case UserProjectOpened:
+			break;
+		default:
+			break;
+
+		}
 	}
 
 	protected void searchObservations(String text) {
@@ -451,8 +521,10 @@ public class ContextView extends ViewPart {
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return element instanceof IContext
-					|| (element instanceof ISubject && ((ISubject) element).getSubjects().size() > 0);
+			return false;
+			// element instanceof IContext
+			// || (element instanceof ISubject && ((ISubject) element).getSubjects().size()
+			// > 0);
 		}
 
 	}

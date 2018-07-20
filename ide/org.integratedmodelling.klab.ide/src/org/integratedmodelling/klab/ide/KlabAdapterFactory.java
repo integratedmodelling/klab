@@ -16,7 +16,7 @@ public class KlabAdapterFactory implements IAdapterFactory {
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		// TODO Auto-generated method stub
-		System.out.println("trying to adapt " + adaptableObject + " to " + adapterType.getCanonicalName());
+//		System.out.println("trying to adapt " + adaptableObject + " to " + adapterType.getCanonicalName());
 		return null;
 	}
 

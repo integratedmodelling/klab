@@ -4,11 +4,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
@@ -18,6 +16,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public abstract class EKimObject implements IKimStatement, IAdaptable {
 
@@ -29,31 +28,29 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 		this.delegate_ = statement;
 	}
 
-	public static IFile getNamespaceIFile(IKimNamespace namespace) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(namespace.getProject().getName());
-		String rpath = namespace.getName().replace('.', '/') + ".kim";
-		rpath = "src/" + rpath;
-		return project.getFile(rpath);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		
-//		if (!(this instanceof ENamespace) && IMarker.class.isAssignableFrom(adapter)) {
-//			// return (T)getNamespaceIFile(((ENamespace)this).delegate);
-//		}
 
-		if (IResource.class.isAssignableFrom(adapter)) {
+		// if (!(this instanceof ENamespace) && IMarker.class.isAssignableFrom(adapter))
+		// {
+		// // return (T)getNamespaceIFile(((ENamespace)this).delegate);
+		// }
+
+		if (IContainer.class == adapter) {
+			// ehm.
+		} else if (IProject.class.isAssignableFrom(adapter)) {
+			// boh
+		} else if (IResource.class.isAssignableFrom(adapter)) {
 			if (this instanceof ENamespace) {
-				return (T) getNamespaceIFile(((ENamespace) this).delegate);
+				return (T) Eclipse.INSTANCE.getNamespaceIFile(this);
 			} else {
 			}
 		}
 
-//		System.out.println("TRYING to adapt " + this + " to " + adapter.getCanonicalName());
-		
+		// System.out.println("TRYING to adapt " + this + " to " +
+		// adapter.getCanonicalName());
+
 		return null;
 	}
 
@@ -139,14 +136,14 @@ public abstract class EKimObject implements IKimStatement, IAdaptable {
 	@SuppressWarnings("unchecked")
 	public <T extends EKimObject> T getEParent(Class<T> cls) {
 		if (cls.isAssignableFrom(this.getClass())) {
-			return (T)this;
+			return (T) this;
 		}
 		EKimObject parent = getEParent();
 		return parent == null ? null : parent.getEParent(cls);
 	}
-	
+
 	public EKimObject getEParent() {
-		
+
 		IKimStatement parent = delegate_.getParent();
 		if (parent instanceof IKimConceptStatement) {
 			return new EConcept((IKimConceptStatement) parent);

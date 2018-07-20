@@ -183,4 +183,8 @@ public class EngineMonitor {
 		return bus;
 	}
 
+	public Capabilities getCapabilities() {
+		return this.capabilities;
+	}
+
 }

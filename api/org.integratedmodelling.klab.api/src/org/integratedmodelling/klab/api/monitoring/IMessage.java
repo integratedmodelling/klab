@@ -157,6 +157,11 @@ public interface IMessage {
 		QueryResult,
 
 		/*
+		 * --- EngineLifecycle ---
+		 */
+		EngineUp, EngineDown,
+		
+		/*
 		 * --- Run-class types
 		 */
 		RunScript, RunTest, DebugScript, DebugTest

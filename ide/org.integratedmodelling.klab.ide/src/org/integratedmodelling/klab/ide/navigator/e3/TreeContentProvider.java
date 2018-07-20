@@ -9,7 +9,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
@@ -58,6 +57,6 @@ public class TreeContentProvider extends WorkbenchContentProvider {
     }
 
     public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
+        return element instanceof IProject ? true : getChildren(element).length > 0;
     }
 }

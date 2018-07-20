@@ -28,7 +28,7 @@ public class LinkHelper implements ILinkHelper {
 		
 		IFile file = ResourceUtil.getFile(anInput);
 		if (file != null) {
-			return new StructuredSelection(file);
+//			return new StructuredSelection(file);
 		}
 		return StructuredSelection.EMPTY;
 //		return null;
