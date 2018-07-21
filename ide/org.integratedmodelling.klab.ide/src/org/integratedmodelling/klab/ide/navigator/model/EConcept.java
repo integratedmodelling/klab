@@ -166,4 +166,9 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
         return delegate.getChildren().size() > 0;
     }
 
+    @Override
+    public <T> T getAdapter(Class<T> adapter) {
+        return null;
+    }
+
 }

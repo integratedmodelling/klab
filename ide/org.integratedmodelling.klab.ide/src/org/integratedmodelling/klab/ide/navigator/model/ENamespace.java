@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -11,6 +14,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ENamespace extends EKimObject implements IKimNamespace {
@@ -100,6 +104,20 @@ public class ENamespace extends EKimObject implements IKimNamespace {
     @Override
     public String getTestCaseId() {
         return delegate.getTestCaseId();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getAdapter(Class<T> adapter) {
+        
+        if (IContainer.class == adapter) {
+            // ehm.
+        } else if (IProject.class.isAssignableFrom(adapter)) {
+            // boh
+        } else if (IResource.class.isAssignableFrom(adapter)) {
+            return (T) Eclipse.INSTANCE.getNamespaceIFile(this);
+        }
+        return null;
     }
 
 }

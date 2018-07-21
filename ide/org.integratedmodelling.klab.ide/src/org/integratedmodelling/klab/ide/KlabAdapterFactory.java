@@ -1,38 +1,34 @@
 package org.integratedmodelling.klab.ide;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.ui.ide.IGotoMarker;
-import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 
 public class KlabAdapterFactory implements IAdapterFactory {
-
-	public KlabAdapterFactory() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@SuppressWarnings("unchecked")
     @Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		// TODO Auto-generated method stub
-		System.out.println("trying to adapt " + adaptableObject + " to " + adapterType.getCanonicalName());
-//		if (adaptableObject instanceof EKimObject && adapterType.equals(IFile.class)) {
-//		    return (T)Eclipse.INSTANCE.getNamespaceIFile((EKimObject)adaptableObject);
-//		}
+		if (adaptableObject instanceof ENavigatorItem) {
+		    if (IResource.class.isAssignableFrom(adapterType)) {
+	            return ((ENavigatorItem)adaptableObject).getAdapter(adapterType);
+		    } else if (EObject.class.isAssignableFrom(adapterType)) {
+		        if (adaptableObject instanceof EKimObject) {
+		            return (T)((EKimObject)adaptableObject).getEObject();
+		        }
+		    }
+		}
 		return null;
 	}
 
 	@Override
 	public Class<?>[] getAdapterList() {
-		// TODO Auto-generated method stub
 		return new Class[] {
-				IFile.class,
-				IGotoMarker.class,
-				IProject.class,
-				ENamespace.class,
-				IKimProject.class
+				IResource.class,
+				ENavigatorItem.class,
+				EObject.class
 		};
 	}
 

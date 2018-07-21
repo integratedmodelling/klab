@@ -154,7 +154,7 @@ public class Activator extends AbstractUIPlugin {
 						IMessage.Type.EngineUp, this.engineStatusMonitor.getCapabilities()));
 
 		// TODO remove/improve
-		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
+//		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
 	}
 
 	public void stop(BundleContext context) throws Exception {

@@ -1,21 +1,14 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IKimAnnotation;
-import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.kim.model.KimStatement;
 
 /**
  * Root class for tree elements that are linked to a k.IM statement.
@@ -32,32 +25,6 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	EKimObject(String id, IKimStatement statement, ENavigatorItem parent) {
 	    super(id, parent);
 		this.delegate_ = statement;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getAdapter(Class<T> adapter) {
-
-		// if (!(this instanceof ENamespace) && IMarker.class.isAssignableFrom(adapter))
-		// {
-		// // return (T)getNamespaceIFile(((ENamespace)this).delegate);
-		// }
-
-		if (IContainer.class == adapter) {
-			// ehm.
-		} else if (IProject.class.isAssignableFrom(adapter)) {
-			// boh
-		} else if (IResource.class.isAssignableFrom(adapter)) {
-			if (this instanceof ENamespace) {
-				return (T) Eclipse.INSTANCE.getNamespaceIFile(this);
-			} else {
-			}
-		}
-
-		// System.out.println("TRYING to adapt " + this + " to " +
-		// adapter.getCanonicalName());
-
-		return null;
 	}
 
 	public int getFirstLine() {
@@ -121,6 +88,10 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	public ENavigatorItem getEParent() {
 		return parent;
 	}
+
+    public EObject getEObject() {
+        return delegate_ == null ? null : ((KimStatement)delegate_).getEObject();
+    }
 
 
 }

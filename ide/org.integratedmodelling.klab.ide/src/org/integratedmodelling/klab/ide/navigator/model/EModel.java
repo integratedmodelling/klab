@@ -108,4 +108,9 @@ public class EModel extends EKimObject implements IKimModel {
     public boolean hasEChildren() {
         return false;
     }
+
+    @Override
+    public <T> T getAdapter(Class<T> adapter) {
+        return null;
+    }
 }

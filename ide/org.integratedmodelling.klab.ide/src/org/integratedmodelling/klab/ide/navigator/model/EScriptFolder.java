@@ -15,9 +15,12 @@ public class EScriptFolder extends ENavigatorItem {
         this.project = parent.delegate;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getAdapter(Class<T> adapter) {
-
+//        if (IFolder.class.isAssignableFrom(adapter)) {
+//            return (T) Eclipse.INSTANCE.getNamespaceIFile(this);
+//        }
         return null;
     }
 

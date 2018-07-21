@@ -35,10 +35,13 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected String sourceCode = null;
     protected IKimStatement parent = null;
 
+    EObject eObject;
+    
     public KimStatement() {
     }
 
     public KimStatement(EObject statement, IKimStatement parent) {
+        this.eObject = statement;
         if (statement != null) {
             setCode(statement);
         }
@@ -46,6 +49,7 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     }
 
     protected void setCode(EObject statement) {
+        this.eObject = statement;
         ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
         this.firstLine = node.getStartLine();
         this.lastLine = node.getEndLine();
@@ -54,6 +58,10 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
         this.uri = EcoreUtil.getURI(statement);
         this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
         sourceCode = node.getText().trim();
+    }
+    
+    public EObject getEObject() {
+        return eObject;
     }
     
     @Override

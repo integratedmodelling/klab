@@ -16,5 +16,5 @@ public interface IKimScope extends Serializable {
     String getLocationDescriptor();
 
 	URI getURI();
-
+	
 }
