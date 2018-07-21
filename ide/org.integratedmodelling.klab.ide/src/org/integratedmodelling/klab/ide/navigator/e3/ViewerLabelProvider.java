@@ -13,7 +13,9 @@ import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
+import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
+import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 
@@ -27,6 +29,12 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
     public Image getImage(Object element) {
         if (element instanceof EProject) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif");
+        }
+        if (element instanceof ETestCase) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
+        }
+        if (element instanceof EScript) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
         }
         if (element instanceof ENamespace) {
             if (((ENamespace) element).isWorldviewBound()) {
@@ -126,6 +134,13 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
     }
 
     public String getText(Object element) {
+
+        if (element instanceof ETestCase) {
+            return ((ETestCase) element).getId();
+        }
+        if (element instanceof EScript) {
+            return ((ETestCase) element).getId();
+        }
         if (element instanceof ENamespace) {
             if (((ENamespace) element).isWorldviewBound()) {
                 // return the name of any test or run annotated or the base name of the resource

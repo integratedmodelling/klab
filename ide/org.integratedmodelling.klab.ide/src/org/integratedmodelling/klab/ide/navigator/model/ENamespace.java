@@ -92,4 +92,14 @@ public class ENamespace extends EKimObject implements IKimNamespace {
         return delegate.getAllStatements();
     }
 
+    @Override
+    public String getScriptId() {
+        return delegate.getScriptId();
+    }
+
+    @Override
+    public String getTestCaseId() {
+        return delegate.getTestCaseId();
+    }
+
 }

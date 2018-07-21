@@ -19,6 +19,10 @@ public abstract class ENavigatorItem implements IAdaptable {
         this.parent = parent;
     }
 
+    public String getId() {
+        return id;
+    }
+    
     @SuppressWarnings("unchecked")
     public <T extends ENavigatorItem> T getEParent(Class<T> cls) {
         if (cls.isAssignableFrom(this.getClass())) {

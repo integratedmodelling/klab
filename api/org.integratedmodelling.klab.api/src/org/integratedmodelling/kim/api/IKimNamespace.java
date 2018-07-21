@@ -26,6 +26,20 @@ public interface IKimNamespace extends IKimStatement {
     boolean isScenario();
 
     /**
+     * If this is a script, return its ID (either specified in a run annotation or the file name). Otherwise return null.
+     * 
+     * @return the script ID or null.
+     */
+    String getScriptId();
+
+    /**
+     * If this is a test case, return its ID (either specified in a run annotation or the file name). Otherwise return null.
+     * 
+     * @return the test case ID or null.
+     */
+    String getTestCaseId();
+
+    /**
      * Bound to a worldview, therefore used as a script or sidecar file.
      * 
      * @return

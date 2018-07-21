@@ -134,20 +134,9 @@
             </or>
          </editorInputEnablement>
          <selectionEnablement>
-           <or>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimNamespace">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimModel">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimObserver">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimConceptStatement">
-               </instanceof>
-            </or>
+            <instanceof
+                  value="org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem">
+            </instanceof>
          </selectionEnablement>
       </linkHelper>
    </extension>

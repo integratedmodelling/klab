@@ -34,6 +34,9 @@ public class LinkHelper implements ILinkHelper {
                 IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
                 if (namespace != null) {
                     Object selection = KimData.INSTANCE.findObjectAt(caret, namespace);
+                    /*
+                     * FIXME Won't do it unless already expanded. Needs treeselection with full path?
+                     */
                     return selection == null ? StructuredSelection.EMPTY : new StructuredSelection(selection);
                 }
             }
@@ -44,8 +47,9 @@ public class LinkHelper implements ILinkHelper {
     @Override
     public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
 
-        if (aSelection == null || aSelection.isEmpty())
+        if (aSelection == null || aSelection.isEmpty()) {
             return;
+        }
 
         if (aSelection.getFirstElement() instanceof ENamespace) {
             Eclipse.INSTANCE.openFile(((ENamespace) aSelection.getFirstElement()).getAdapter(IFile.class), 0);

@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -16,30 +18,34 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KimNamespace extends KimStatement implements IKimNamespace {
 
-    private static final long          serialVersionUID = 7273137353905996543L;
+    private static final long serialVersionUID = 7273137353905996543L;
 
-    private String                     name;
-    private IKimProject                project;
-    private long                       timestamp;
-    private List<IKimNamespace>        imported         = new ArrayList<>();
-    private boolean                    isPrivate        = false;
-    private boolean                    inactive        = false;
-    private boolean                    scenario        = false;
-    private List<Pair<String, String>> owlImports       = new ArrayList<>();
-    private Map<String, Object>        symbolTable      = new HashMap<>();
+    private String name;
+    private IKimProject project;
+    private long timestamp;
+    private List<IKimNamespace> imported = new ArrayList<>();
+    private boolean isPrivate = false;
+    private boolean inactive = false;
+    private boolean scenario = false;
+    private List<Pair<String, String>> owlImports = new ArrayList<>();
+    private Map<String, Object> symbolTable = new HashMap<>();
+    private String scriptId;
+    private String testCaseId;
     private boolean isWorldviewBound = false;
 
+    private boolean annotationsScanned = false;
+    
     public KimNamespace(Namespace namespace, KimProject project) {
         super(namespace, null);
         this.name = KimProject.getNamespaceId(namespace);
         if (namespace.eResource().getURI().isFile()) {
-          File file = new File(namespace.eResource().getURI().toFileString());
-          if (file.exists()) {
-            this.timestamp = file.lastModified();
-          }
+            File file = new File(namespace.eResource().getURI().toFileString());
+            if (file.exists()) {
+                this.timestamp = file.lastModified();
+            }
         }
         if (this.timestamp /* still */ == 0) {
-          this.timestamp = namespace.eResource().getTimeStamp();
+            this.timestamp = namespace.eResource().getTimeStamp();
         }
         this.project = project;
         // worldview-bound anonymous namespaces are private by design.
@@ -55,32 +61,32 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
     @Override
     public boolean isWorldviewBound() {
-		return isWorldviewBound;
-	}
+        return isWorldviewBound;
+    }
 
-	public void setWorldviewBound(boolean isWorldviewBound) {
-		this.isWorldviewBound = isWorldviewBound;
-	}
+    public void setWorldviewBound(boolean isWorldviewBound) {
+        this.isWorldviewBound = isWorldviewBound;
+    }
 
-	public KimNamespace(String id, File file) {
+    public KimNamespace(String id, File file) {
         this.name = id;
         // TODO resource URI from file
     }
 
-	@Override
-	public List<IKimStatement> getAllStatements() {
-	    List<IKimStatement> ret = new ArrayList<>();
-	    getAllStatements_(this, ret);
-	    return ret;
-	}
-	
+    @Override
+    public List<IKimStatement> getAllStatements() {
+        List<IKimStatement> ret = new ArrayList<>();
+        getAllStatements_(this, ret);
+        return ret;
+    }
+
     private void getAllStatements_(KimStatement statement, List<IKimStatement> ret) {
         if (!(statement instanceof IKimNamespace)) {
             ret.add(statement);
         }
         for (IKimScope scope : statement.getChildren()) {
             if (scope instanceof KimStatement) {
-                getAllStatements_((KimStatement)scope, ret);
+                getAllStatements_((KimStatement) scope, ret);
             }
         }
     }
@@ -168,19 +174,57 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
     @Override
     public boolean isInactive() {
-      return inactive;
+        return inactive;
     }
 
     @Override
     public boolean isScenario() {
-      return scenario;
+        return scenario;
     }
 
     public void setInactive(boolean inactive) {
-      this.inactive = inactive;
+        this.inactive = inactive;
     }
 
     public void setScenario(boolean scenario) {
-      this.scenario = scenario;
+        this.scenario = scenario;
+    }
+
+    @Override
+    public String getScriptId() {
+        if (!annotationsScanned) {
+            scanAnnotations();
+        }
+        return scriptId;
+    }
+
+    @Override
+    public String getTestCaseId() {
+        if (!annotationsScanned) {
+            scanAnnotations();
+        }
+        return testCaseId;
+    }
+
+    private void scanAnnotations() {
+        annotationsScanned = true;
+        for (IKimScope child : getChildren()) {
+            if (child instanceof IKimObserver) {
+                for (IKimAnnotation annotation : ((IKimObserver) child).getAnnotations()) {
+                    if (annotation.getName().equals("run")) {
+                        this.scriptId = annotation.getParameters().get("name", String.class);
+                        if (this.scriptId == null) {
+//                            this.scriptId =
+                        }
+                    } else if (annotation.getName().equals("test")) {
+                        this.testCaseId = annotation.getParameters().get("name", String.class);
+                        if (this.testCaseId == null) {
+//                            this.scriptId =
+                        }
+                    }
+                }
+            }
+        }
+        
     }
 }
