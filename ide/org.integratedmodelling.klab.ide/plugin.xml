@@ -66,53 +66,17 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eclipse.core.resources.IWorkspaceRoot">
+                     value="org.eclipse.core.resources.IResource">
                </instanceof>
                <instanceof
-                     value="org.eclipse.core.resources.IFile">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IFolder">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IProject">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimNamespace">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimModel">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimObserver">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimConceptStatement">
+                     value="org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem">
                </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
             <or>
                <instanceof
-                     value="org.eclipse.core.resources.IFile">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IFolder">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IProject">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimNamespace">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimModel">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimObserver">
-               </instanceof>
-               <instanceof
-                     value="org.integratedmodelling.kim.api.IKimConceptStatement">
+                     value="org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem">
                </instanceof>
             </or>
          </possibleChildren>     
@@ -279,7 +243,15 @@
                   mode="org.integratedmodelling.klab.ide.klabTest">
             </contextLabel>
          </contextualLaunch>
-         <enablement></enablement>
+         <enablement>
+            <or>
+               <instanceof
+                     value="org.integratedmodelling.klab.ide.navigator.model.EScript">
+               </instanceof>
+               <instanceof
+                     value="org.integratedmodelling.klab.ide.navigator.model.ETestCase">
+               </instanceof>
+            </or></enablement>
       </shortcut>
    </extension>
    <extension
