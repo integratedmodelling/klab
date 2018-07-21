@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
@@ -24,6 +25,7 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected int lastLine;
     protected int firstCharOffset;
     protected int lastCharOffset;
+    protected int offset;
     protected List<IKimAnnotation> annotations = new ArrayList<>();
     protected KimMetadata metadata;
     protected KimMetadata documentationMetadata;

@@ -16,8 +16,8 @@ public interface IKimNamespace extends IKimStatement {
     long getTimestamp();
 
     IKimProject getProject();
-    
-    List<Pair<String,String>> getOwlImports();
+
+    List<Pair<String, String>> getOwlImports();
 
     Map<String, Object> getSymbolTable();
 
@@ -30,5 +30,13 @@ public interface IKimNamespace extends IKimStatement {
      * 
      * @return
      */
-	boolean isWorldviewBound();	
+    boolean isWorldviewBound();
+
+    /**
+     * Return all the statements in a flat list, in order of definition (their line offset will be 
+     * ordered in increasing order).
+     * 
+     * @return
+     */
+    List<IKimStatement> getAllStatements();
 }

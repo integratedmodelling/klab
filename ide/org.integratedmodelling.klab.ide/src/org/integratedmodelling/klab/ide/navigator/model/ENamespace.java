@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ENamespace extends EKimObject implements IKimNamespace {
@@ -85,6 +85,11 @@ public class ENamespace extends EKimObject implements IKimNamespace {
     @Override
     public boolean hasEChildren() {
         return delegate.getChildren().size() > 0;
+    }
+
+    @Override
+    public List<IKimStatement> getAllStatements() {
+        return delegate.getAllStatements();
     }
 
 }

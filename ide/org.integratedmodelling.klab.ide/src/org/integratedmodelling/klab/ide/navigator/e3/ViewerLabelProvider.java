@@ -5,8 +5,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
@@ -14,6 +12,9 @@ import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
+import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
+import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 
 public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider {
@@ -112,6 +113,15 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
         if (element instanceof IKimObserver) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/realm.png");
         }
+        if (element instanceof EResourceFolder) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Database.png");
+        }
+        if (element instanceof EScriptFolder) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
+        }
+        if (element instanceof ETestFolder) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
+        }
         return delegate.getImage(element);
     }
 
@@ -133,6 +143,15 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
         }
         if (element instanceof EProject) {
             return ((EProject) element).getName();
+        }
+        if (element instanceof EResourceFolder) {
+            return "Resources";
+        }
+        if (element instanceof EScriptFolder) {
+            return "Scripts";
+        }
+        if (element instanceof ETestFolder) {
+            return "Test cases";
         }
         return delegate.getText(element);
     }

@@ -20,7 +20,7 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
     IKimConceptStatement delegate;
     ENamespace namespace;
 
-    EConcept(String id, IKimConceptStatement statement, ENavigatorItem parent, ENamespace namespace) {
+    public EConcept(String id, IKimConceptStatement statement, ENavigatorItem parent, ENamespace namespace) {
         super(id, statement, parent);
         this.delegate = statement;
         this.namespace = namespace;

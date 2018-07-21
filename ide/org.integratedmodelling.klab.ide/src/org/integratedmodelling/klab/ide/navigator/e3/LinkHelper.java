@@ -37,7 +37,6 @@ public class LinkHelper implements ILinkHelper {
                     return selection == null ? StructuredSelection.EMPTY : new StructuredSelection(selection);
                 }
             }
-            //                return null;
         }
         return StructuredSelection.EMPTY;
     }

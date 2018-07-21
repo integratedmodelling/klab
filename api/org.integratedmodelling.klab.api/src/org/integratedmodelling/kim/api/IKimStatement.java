@@ -23,13 +23,13 @@ public interface IKimStatement extends IKimScope {
 
     /**
      * 
-     * @return the start offset in the first line
+     * @return the start offset in the document
      */
     int getFirstCharOffset();
 
     /**
      * 
-     * @return the last offset in the last line
+     * @return the last offset in the document
      */
     int getLastCharOffset();
 

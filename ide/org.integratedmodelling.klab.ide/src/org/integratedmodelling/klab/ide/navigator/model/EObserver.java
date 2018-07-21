@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimBehavior;
-import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
@@ -17,7 +16,7 @@ public class EObserver extends EKimObject implements IKimObserver {
 	IKimObserver delegate;
 	ENamespace namespace;
 	
-	EObserver(String id, IKimObserver statement, ENavigatorItem parent, ENamespace namespace) {
+	public EObserver(String id, IKimObserver statement, ENavigatorItem parent, ENamespace namespace) {
 		super(id, statement, parent);
 		this.delegate = statement;
 		this.namespace = namespace;

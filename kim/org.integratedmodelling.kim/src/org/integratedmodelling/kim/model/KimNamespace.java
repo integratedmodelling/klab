@@ -9,6 +9,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.klab.utils.Pair;
@@ -64,6 +65,24 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public KimNamespace(String id, File file) {
         this.name = id;
         // TODO resource URI from file
+    }
+
+	@Override
+	public List<IKimStatement> getAllStatements() {
+	    List<IKimStatement> ret = new ArrayList<>();
+	    getAllStatements_(this, ret);
+	    return ret;
+	}
+	
+    private void getAllStatements_(KimStatement statement, List<IKimStatement> ret) {
+        if (!(statement instanceof IKimNamespace)) {
+            ret.add(statement);
+        }
+        for (IKimScope scope : statement.getChildren()) {
+            if (scope instanceof KimStatement) {
+                getAllStatements_((KimStatement)scope, ret);
+            }
+        }
     }
 
     void addImport(IKimNamespace importedNamespace) {

@@ -17,7 +17,7 @@ public class EModel extends EKimObject implements IKimModel {
 
 	IKimModel delegate;
 
-	EModel(String id, IKimModel statement, ENavigatorItem parent) {
+	public EModel(String id, IKimModel statement, ENavigatorItem parent) {
 		super(id, statement, parent);
 		this.delegate = statement;
 	}

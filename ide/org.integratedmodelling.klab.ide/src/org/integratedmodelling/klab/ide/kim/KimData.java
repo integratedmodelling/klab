@@ -3,12 +3,19 @@ package org.integratedmodelling.klab.ide.kim;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.common.Prototype;
-import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EModel;
+import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 /**
@@ -49,7 +56,30 @@ public enum KimData {
     }
 
     public Object findObjectAt(int caret, IKimNamespace namespace) {
-        // TODO Auto-generated method stub
+
+        IKimScope focus = namespace;
+
+        for (IKimStatement child : namespace.getAllStatements()) {
+            if (child.getFirstCharOffset() > caret) {
+                break;
+            }
+            focus = child;
+        }
+
+        /*
+         * build screwed-up objects without parent that hopefully will only be used to search for their match in the tree.
+         */
+        if (focus != null) {
+            if (focus instanceof IKimConceptStatement) {
+                return new EConcept(namespace.getName() + ":" + ((IKimConceptStatement) focus).getName(),
+                        ((IKimConceptStatement) focus), null, null);
+            } else if (focus instanceof IKimModel) {
+                return new EModel(namespace.getName() + "." + ((IKimModel) focus).getName(), ((IKimModel) focus), null);
+            } else if (focus instanceof IKimObserver) {
+                return new EObserver(namespace.getName() + "." + ((IKimObserver) focus).getName(),
+                        ((IKimObserver) focus), null, null);
+            }
+        }
         return null;
     }
 
