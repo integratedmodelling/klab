@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 public class EScriptFolder extends ENavigatorItem {
 
-	public EScriptFolder() {
-		// TODO Auto-generated constructor stub
+	public EScriptFolder(EProject parent) {
+        super(parent.id + "#__SCRIPTS__", parent);
 	}
 
 	@Override
@@ -11,5 +11,17 @@ public class EScriptFolder extends ENavigatorItem {
 		
 		return null;
 	}
+
+    @Override
+    public ENavigatorItem[] getEChildren() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasEChildren() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
@@ -142,7 +143,9 @@ public class Activator extends AbstractUIPlugin {
 		URI uri = ResourcesPlugin.getWorkspace().getRoot().getLocationURI();
 		List<File> projectRoots = new ArrayList<>();
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			projectRoots.add(project.getLocation().toFile());
+		    if (Kim.INSTANCE.isKimProject(project.getLocation().toFile())) {
+		        projectRoots.add(project.getLocation().toFile());
+		    }
 		}
 
 		/**
@@ -153,8 +156,13 @@ public class Activator extends AbstractUIPlugin {
 		/**
 		 * Preload the workspace so that the navigator can work right away.
 		 */
-		this.kimWorkspace = Kim.INSTANCE.loadWorkspace(uri.toString(), projectRoots);
-
+		this.kimWorkspace = new KimWorkspace(new File(uri.toURL().getFile()));
+		for (File pRoot : projectRoots) {
+		    this.kimWorkspace.loadProject(pRoot);
+		}
+		
+//		this.kimWorkspace.load(false);
+		
 		this.engineStatusMonitor.start(relayId);
 
 	}
@@ -170,7 +178,7 @@ public class Activator extends AbstractUIPlugin {
 				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
 						IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
 
-		System.out.println("ENGINE WENT OFF");
+		System.out.println("--------------\nEngine went off\n----------------");
 	}
 
 	private void engineOn() {
@@ -207,6 +215,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator get() {
 		return plugin;
+	}
+	
+	public static IKimWorkspace workspace() {
+	    return plugin.kimWorkspace;
 	}
 
 	public void post(Object... object) {

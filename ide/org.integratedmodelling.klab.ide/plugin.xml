@@ -22,7 +22,7 @@
       <builder
             hasNature="true">
          <run
-               class="org.integratedmodelling.klab.ide.builder.builder.KlabBuilder">
+               class="org.integratedmodelling.klab.ide.builder.KlabBuilder">
          </run>
       </builder>
    </extension>
@@ -32,7 +32,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.integratedmodelling.klab.ide.builder.builder.KlabNature">
+               class="org.integratedmodelling.klab.ide.builder.KlabNature">
          </run>
       </runtime>
       <builder
@@ -199,7 +199,7 @@
          point="org.eclipse.ui.commands">
       <command
             name="Add/Remove k.LAB Project Nature"
-            defaultHandler="org.integratedmodelling.klab.ide.builder.builder.AddRemoveKlabNatureHandler"
+            defaultHandler="org.integratedmodelling.klab.ide.builder.AddRemoveKlabNatureHandler"
             id="org.integratedmodelling.klab.ide.builder.addRemoveKlabNature">
       </command>
    </extension>

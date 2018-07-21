@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.builder.builder;
+package org.integratedmodelling.klab.ide.builder;
 
 import java.util.Iterator;
 import org.eclipse.core.commands.*;

@@ -27,11 +27,9 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.CommonNavigator;
-import org.eclipse.ui.part.ShowInContext;
 
 public class KlabNavigator extends CommonNavigator  {
 
@@ -46,7 +44,6 @@ public class KlabNavigator extends CommonNavigator  {
 	}
 
 	public static void refresh() {
-
         if (_viewer != null) {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
@@ -56,34 +53,5 @@ public class KlabNavigator extends CommonNavigator  {
             });
         }
     }
-
-    @Override
-    public void dispose() {
-//        Activator.getDefault().removeThinklabEventListener(this);
-        super.dispose();
-    }
-    
-    @Override
-    public void selectReveal(ISelection selection) {
-        super.selectReveal(selection);
-    }
-
-    @Override
-    public boolean show(ShowInContext context) {
-        return super.show(context);
-    }
-
-    @Override
-    public void setFocus() {
-        super.setFocus();
-        refresh();
-    }
-
-//    @Override
-//    public void handleThinklabEvent(ThinklabEvent event) {
-//        if (event instanceof ModelModifiedEvent) {
-//            refresh();
-//        }
-//    }
 
 }

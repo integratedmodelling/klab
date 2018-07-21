@@ -29,7 +29,8 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 
 	IKimStatement delegate_;
 
-	EKimObject(IKimStatement statement) {
+	EKimObject(String id, IKimStatement statement, ENavigatorItem parent) {
+	    super(id, parent);
 		this.delegate_ = statement;
 	}
 
@@ -61,20 +62,6 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 
 	public int getFirstLine() {
 		return delegate_.getFirstLine();
-	}
-
-	public List<EKimObject> getEChildren() {
-		List<EKimObject> ret = new ArrayList<>();
-		for (IKimScope child : delegate_.getChildren()) {
-			if (child instanceof IKimModel) {
-				ret.add(new EModel((IKimModel) child));
-			} else if (child instanceof IKimConceptStatement) {
-				ret.add(new EConcept((IKimConceptStatement) child));
-			} else if (child instanceof IKimObserver) {
-				ret.add(new EObserver((IKimObserver) child));
-			}
-		}
-		return ret;
 	}
 
 	public List<IKimScope> getChildren() {
@@ -129,44 +116,11 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	public URI getURI() {
 		return delegate_.getURI();
 	}
-
-	public static List<ENamespace> adapt(List<IKimNamespace> namespaces) {
-		List<ENamespace> ret = new ArrayList<>();
-		for (IKimNamespace ns : namespaces) {
-			ret.add(new ENamespace(ns));
-		}
-		return ret;
-	}
-
+	
 	@Override
-	public EKimObject getEParent() {
-
-		IKimStatement parent = delegate_.getParent();
-		if (parent instanceof IKimConceptStatement) {
-			return new EConcept((IKimConceptStatement) parent);
-		}
-		if (parent instanceof IKimNamespace) {
-			return new ENamespace((IKimNamespace) parent);
-		}
-		if (parent instanceof IKimModel) {
-			return new EModel((IKimModel) parent);
-		}
-		if (parent instanceof IKimObserver) {
-			return new EObserver((IKimObserver) parent);
-		}
-		return null;
+	public ENavigatorItem getEParent() {
+		return parent;
 	}
-//
-//	@Override
-//	public int hashCode() {
-//		return (delegate_ == null || delegate_.getURI() == null) ? super.hashCode()
-//				: delegate_.getURI().toString().hashCode();
-//	}
-//
-//	@Override
-//	public boolean equals(Object o) {
-//		return this == o || (delegate_ != null && o instanceof EKimObject
-//				&& delegate_.getURI().toString().equals(((EKimObject) o).getURI().toString()));
-//	}
+
 
 }

@@ -1,28 +1,25 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
-import java.io.File;
-
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
-import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
+import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EWorkspace;
 
 public class TreeContentProvider extends WorkbenchContentProvider {
 
-	public TreeContentProvider() {}
-	
-    File wsRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-
+    @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (KlabNavigator._viewer == null) {
+            KlabNavigator._viewer = viewer;
+        }
+        super.inputChanged(viewer, oldInput, newInput);
     }
 
     public void dispose() {
+        super.dispose();
     }
 
     public Object[] getElements(Object inputElement) {
@@ -30,33 +27,17 @@ public class TreeContentProvider extends WorkbenchContentProvider {
     }
 
     public Object[] getChildren(Object parent) {
-        if (parent instanceof IWorkspaceRoot) {
-            return ((IWorkspaceRoot) parent).getProjects();
-        } else if (parent instanceof IProject) {
-            return getNamespaces(((IProject) parent).getName());
-        } else if (parent instanceof EKimObject) {
-            return ((EKimObject)parent).getEChildren().toArray();
-        } 
-        return new Object[] {};
-    }
-
-    private Object[] getNamespaces(String name) {
-        IKimProject project = Kim.INSTANCE.getProject(name, wsRoot);
-        return project == null ? new Object[] {} : EKimObject.adapt(project.getNamespaces()).toArray();
+        return parent instanceof IWorkspaceRoot ? EWorkspace.INSTANCE.getEChildren()
+                : ((ENavigatorItem) parent).getEChildren();
     }
 
     public Object getParent(Object element) {
-        if (element instanceof IProject) {
-            return ResourcesPlugin.getWorkspace().getRoot();
-        } else if (element instanceof ENamespace) {
-            return ResourcesPlugin.getWorkspace().getRoot().getProject(((IKimNamespace) element).getName());
-        } else if (element instanceof EKimObject) {
-            return ((EKimObject)element).getEParent();
-        }
-        return null;
+        return element instanceof EProject ? ResourcesPlugin.getWorkspace().getRoot()
+                : ((ENavigatorItem) element).getEParent();
     }
 
     public boolean hasChildren(Object element) {
-        return element instanceof IProject ? true : getChildren(element).length > 0;
+        return element instanceof IWorkspaceRoot ? EWorkspace.INSTANCE.hasEChildren()
+                : ((ENavigatorItem) element).hasEChildren();
     }
 }

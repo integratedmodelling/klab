@@ -116,7 +116,7 @@ public class KimWorkspace implements IKimWorkspace {
 	static Collection<KimWorkspace> getWorkspaces() {
 		return workspacesByURI.values();
 	}
-
+	
 	/**
 	 * Constructor for a file-based workspace. This one will be able to enumerate
 	 * its projects and Kim resources after construction. You can pass any number of
@@ -150,7 +150,7 @@ public class KimWorkspace implements IKimWorkspace {
 		}
 		return url2;
 	}
-
+	
 	private File overrideIfPresent(File dir, File[] overridingProjects) {
 		// TODO check if the project is overridden and if so, returning the overriding
 		// path.
@@ -371,14 +371,14 @@ public class KimWorkspace implements IKimWorkspace {
 	}
 
 //	@Override
-	protected String getStringRepresentation(int offset) {
-		return null;
-	}
+//	protected String getStringRepresentation(int offset) {
+//		return null;
+//	}
 
 //	@Override
-	public String getLocationDescriptor() {
-		return root.toString();
-	}
+//	public String getLocationDescriptor() {
+//		return root.toString();
+//	}
 
 	public void registerProject(KimProject project, URL projectUrl) {
 		projectsByURI.put(projectUrl.toString(), project);

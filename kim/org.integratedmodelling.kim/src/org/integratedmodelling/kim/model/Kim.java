@@ -45,6 +45,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -122,6 +123,17 @@ public enum Kim {
 	 * common workspace for test and sidecar namespaces.
 	 */
 	private KimWorkspace commonWorkspace;
+	
+	/*
+	 * All namespaces get registered here. They don't get removed currently, so they may be
+	 * obsoleted.
+	 */
+	Map<String, IKimNamespace> namespaceRegistry = new HashMap<>();
+	
+	/*
+	 * Same with projects
+	 */
+	Map<String, IKimProject> projectRegistry = new HashMap<>();
 
 	/*
 	 * flags for resources and URNs
@@ -1238,6 +1250,27 @@ public enum Kim {
             return t.iterator().next();
         }
         return null;
+    }
+
+    public void registerNamespace(KimNamespace kimNamespace) {
+        this.namespaceRegistry.put(kimNamespace.getName(), kimNamespace);
+    }
+    
+    public IKimNamespace getNamespace(String id) {
+        return this.namespaceRegistry.get(id);
+    }
+    
+    public void registerProject(KimProject kimProject) {
+        this.projectRegistry.put(kimProject.getName(), kimProject);
+    }
+    
+    public IKimProject getProject(String id) {
+        return this.projectRegistry.get(id);
+    }
+
+    public boolean isKimProject(File file) {
+        File props = new File(file + File.separator + "META-INF" + File.separator + "klab.properties");
+        return props.exists() && props.isFile();
     }
 
 }

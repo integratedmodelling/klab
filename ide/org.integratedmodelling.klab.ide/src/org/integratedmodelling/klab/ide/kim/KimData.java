@@ -2,9 +2,14 @@ package org.integratedmodelling.klab.ide.kim;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.common.Prototype;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 /**
  * A singleton holding all synchronized k.IM-relevant data that come from the engine, such as
@@ -36,6 +41,16 @@ public enum KimData {
 
     public IPrototype getAnnotationPrototype(String name) {
         return annotations.get(name);
+    }
+
+    public IKimNamespace getNamespace(IFile file) {
+        String nsId = Eclipse.INSTANCE.getNamespaceIdFromIFile(file);
+        return nsId == null ? null : Kim.INSTANCE.getNamespace(nsId);
+    }
+
+    public Object findObjectAt(int caret, IKimNamespace namespace) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

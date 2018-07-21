@@ -17,8 +17,8 @@ public class EModel extends EKimObject implements IKimModel {
 
 	IKimModel delegate;
 
-	EModel(IKimModel statement) {
-		super(statement);
+	EModel(String id, IKimModel statement, ENavigatorItem parent) {
+		super(id, statement, parent);
 		this.delegate = statement;
 	}
 
@@ -98,4 +98,14 @@ public class EModel extends EKimObject implements IKimModel {
 	public String getDocstring() {
 		return delegate.getDocstring();
 	}
+
+    @Override
+    public ENavigatorItem[] getEChildren() {
+        return new ENavigatorItem[] {};
+    }
+
+    @Override
+    public boolean hasEChildren() {
+        return false;
+    }
 }

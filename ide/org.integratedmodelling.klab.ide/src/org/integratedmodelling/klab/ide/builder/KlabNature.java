@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.builder.builder;
+package org.integratedmodelling.klab.ide.builder;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;

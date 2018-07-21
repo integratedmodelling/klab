@@ -44,10 +44,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.ResourceManager;
-import org.integratedmodelling.klab.ide.SWTResourceManager;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
+import org.integratedmodelling.klab.ide.navigator.utils.SWTResourceManager;
 
 public class ContextView extends ViewPart {
 	public ContextView() {
@@ -95,7 +96,7 @@ public class ContextView extends ViewPart {
 			searchModeButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					Activator.get().post("DioCane");
+				    KlabNavigator.refresh();
 					// searchMode(searchModeButton.getSelection());
 				}
 			});

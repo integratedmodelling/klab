@@ -26,116 +26,138 @@ import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 
 public enum Eclipse {
 
-	INSTANCE;
+    INSTANCE;
 
-	/**
-	 * Open a file in the editor at the passed line number.
-	 * 
-	 * @param filename
-	 * @param lineNumber
-	 * @throws KlabException
-	 */
-	public void openFile(String filename, int lineNumber) throws KlabException {
+    /**
+     * Open a file in the editor at the passed line number.
+     * 
+     * @param filename
+     * @param lineNumber
+     * @throws KlabException
+     */
+    public void openFile(String filename, int lineNumber) throws KlabException {
 
-		/*
-		 * open as workspace file - otherwise xtext gives an exception
-		 */
-		IFile file = null;
-		if (filename.startsWith("file:")) {
-			URL url = null;
-			try {
-				url = new URL(filename);
-			} catch (MalformedURLException e) {
-				throw new KlabIOException(e);
-			}
-			filename = url.getFile().toString();
-		}
-		File dfile = new File(filename);
-		if (dfile.exists()) {
-			// full file path
-			IFile[] ff = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(dfile.toURI());
-			if (ff != null && ff.length > 0) {
-				file = ff[0];
-			}
-		} else {
-			Path path = new Path(filename);
-			file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		}
-		openFile(file, lineNumber);
-	}
+        /*
+         * open as workspace file - otherwise xtext gives an exception
+         */
+        IFile file = null;
+        if (filename.startsWith("file:")) {
+            URL url = null;
+            try {
+                url = new URL(filename);
+            } catch (MalformedURLException e) {
+                throw new KlabIOException(e);
+            }
+            filename = url.getFile().toString();
+        }
+        File dfile = new File(filename);
+        if (dfile.exists()) {
+            // full file path
+            IFile[] ff = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(dfile.toURI());
+            if (ff != null && ff.length > 0) {
+                file = ff[0];
+            }
+        } else {
+            Path path = new Path(filename);
+            file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+        }
+        openFile(file, lineNumber);
+    }
 
-	public void openFile(IFile file, int lineNumber) {
+    public void openFile(IFile file, int lineNumber) {
 
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		try {
-			if (lineNumber > 0) {
-				HashMap<String, Object> map = new HashMap<>();
-				map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-				IMarker marker = file.createMarker(IMarker.TEXT);
-				marker.setAttributes(map);
-				IDE.openEditor(page, marker);
-				marker.delete();
-			} else {
-				IDE.openEditor(page, file);
-			}
-		} catch (Exception e) {
-			error(e);
-		}
-	}
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        try {
+            if (lineNumber > 0) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+                IMarker marker = file.createMarker(IMarker.TEXT);
+                marker.setAttributes(map);
+                IDE.openEditor(page, marker);
+                marker.delete();
+            } else {
+                IDE.openEditor(page, file);
+            }
+        } catch (Exception e) {
+            error(e);
+        }
+    }
 
-	public IFile getNamespaceIFile(EKimObject object) {
-		ENamespace namespace = object.getEParent(ENamespace.class);
-		if (namespace != null) {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IProject project = root.getProject(namespace.getProject().getName());
-			String rpath = namespace.getName().replace('.', '/') + ".kim";
-			rpath = "src/" + rpath;
-			return project.getFile(rpath);
-		}
-		return null;
-	}
+    public IFile getNamespaceIFile(EKimObject object) {
+        ENamespace namespace = object.getEParent(ENamespace.class);
+        if (namespace != null) {
+            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+            IProject project = root.getProject(namespace.getProject().getName());
+            String rpath = namespace.getName().replace('.', '/') + ".kim";
+            rpath = "src/" + rpath;
+            return project.getFile(rpath);
+        }
+        return null;
+    }
 
-	private void error(Exception e) {
-		// TODO Auto-generated method stub
-		System.out.println("SHIT, HANDLE ME: " + e);
-	}
+    public String getNamespaceIdFromIFile(IFile file) {
+        if (file.toString().endsWith(".kim")) {
+            if (file.getProject() == null) {
+                return null;
+            }
+            String project = file.getProject().getName();
+            String kimPrefix = "";
+            if (file.toString().contains("src")) {
+                kimPrefix = "src";
+            } else if (file.toString().contains("apps")) {
+                kimPrefix = "apps";
+            } else if (file.toString().contains("tests")) {
+                kimPrefix = "tests";
+            }
+            kimPrefix = project + "/" + kimPrefix + "/";
+            String ret = file.toString().substring(file.toString().indexOf(kimPrefix) + kimPrefix.length());
+            return ret.substring(0, ret.length() - 4).replaceAll("\\/", ".");
+        }
+        return null;
+    }
 
-	public void openFile(String filename) throws KlabException {
-		openFile(filename, 0);
-	}
+    private void error(Exception e) {
+        // TODO Auto-generated method stub
+        System.out.println("SHIT, HANDLE ME: " + e);
+    }
 
-	/**
-	 * Import an Eclipse project programmatically into the workspace. Does not check
-	 * for existence and overwrites whatever is there.
-	 * 
-	 * @param baseDir
-	 * @return
-	 */
-	public IProject importExistingProject(File baseDir) {
+    public void openFile(String filename) throws KlabException {
+        openFile(filename, 0);
+    }
 
-		IProject project = null;
+    /**
+     * Import an Eclipse project programmatically into the workspace. Does not check
+     * for existence and overwrites whatever is there.
+     * 
+     * @param baseDir
+     * @return
+     */
+    public IProject importExistingProject(File baseDir) {
 
-		try {
-			IProjectDescription description = ResourcesPlugin.getWorkspace()
-					.loadProjectDescription(new Path(baseDir.getPath() + "/.project"));
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(description.getName());
-			project.create(description, null);
+        IProject project = null;
 
-			IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
-				public String queryOverwrite(String file) {
-					return ALL;
-				}
-			};
+        try {
+            IProjectDescription description = ResourcesPlugin.getWorkspace()
+                    .loadProjectDescription(new Path(baseDir.getPath() + "/.project"));
+            project = ResourcesPlugin.getWorkspace().getRoot().getProject(description.getName());
+            project.create(description, null);
 
-			ImportOperation importOperation = new ImportOperation(project.getFullPath(), baseDir,
-					FileSystemStructureProvider.INSTANCE, overwriteQuery);
-			importOperation.setCreateContainerStructure(false);
-			importOperation.run(new NullProgressMonitor());
+            IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
 
-		} catch (Exception e) {
-			error(e);
-		}
-		return project;
-	}
+                public String queryOverwrite(String file) {
+                    return ALL;
+                }
+            };
+
+            ImportOperation importOperation = new ImportOperation(project.getFullPath(), baseDir,
+                    FileSystemStructureProvider.INSTANCE, overwriteQuery);
+            importOperation.setCreateContainerStructure(false);
+            importOperation.run(new NullProgressMonitor());
+
+        } catch (Exception e) {
+            error(e);
+        }
+        return project;
+    }
 
 }

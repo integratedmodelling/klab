@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 public class ETestFolder extends ENavigatorItem {
 
-	public ETestFolder() {
-		// TODO Auto-generated constructor stub
+	public ETestFolder(EProject parent) {
+        super(parent.id + "#__RESOURCES__", parent);
 	}
 
 	@Override
@@ -11,5 +11,17 @@ public class ETestFolder extends ENavigatorItem {
 		
 		return null;
 	}
+
+    @Override
+    public ENavigatorItem[] getEChildren() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasEChildren() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

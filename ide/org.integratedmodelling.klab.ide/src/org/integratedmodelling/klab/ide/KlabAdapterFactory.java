@@ -13,10 +13,14 @@ public class KlabAdapterFactory implements IAdapterFactory {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		// TODO Auto-generated method stub
-//		System.out.println("trying to adapt " + adaptableObject + " to " + adapterType.getCanonicalName());
+		System.out.println("trying to adapt " + adaptableObject + " to " + adapterType.getCanonicalName());
+//		if (adaptableObject instanceof EKimObject && adapterType.equals(IFile.class)) {
+//		    return (T)Eclipse.INSTANCE.getNamespaceIFile((EKimObject)adaptableObject);
+//		}
 		return null;
 	}
 

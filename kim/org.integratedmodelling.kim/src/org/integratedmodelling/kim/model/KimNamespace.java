@@ -49,6 +49,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         for (OwlImport imp : namespace.getOwlImports()) {
             owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
         }
+        Kim.INSTANCE.registerNamespace(this);
     }
 
     @Override

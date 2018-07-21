@@ -67,4 +67,11 @@ public interface IKimWorkspace {
 	 * @return
 	 */
 	IKimProject loadProject(File root);
+
+	/**
+	 * Find the named namespace in all the projects this workspace manages.
+	 * @param id
+	 * @return the namespace or null
+	 */
+    IKimNamespace findNamespace(String id);
 }

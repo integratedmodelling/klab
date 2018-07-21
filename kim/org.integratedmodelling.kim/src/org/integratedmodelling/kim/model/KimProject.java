@@ -53,6 +53,7 @@ public class KimProject implements IKimProject {
                 // TODO log error
             }
         }
+        Kim.INSTANCE.registerProject(this);
     }
 
     public KimProject(String projectName, KimWorkspace workspace, Properties properties) {
@@ -60,6 +61,7 @@ public class KimProject implements IKimProject {
         this.workspace = workspace;
         this.properties = properties;
         this.root = new File(workspace.getRoot() + File.separator + projectName);
+        Kim.INSTANCE.registerProject(this);
     }
 
     @Override
@@ -75,6 +77,7 @@ public class KimProject implements IKimProject {
     public void removeNamespace(Namespace namespace) {
         namespaces.remove(EcoreUtil.getURI(namespace));
         namespacesbyId.remove(getNamespaceId(namespace));
+        Kim.INSTANCE.namespaceRegistry.remove(getNamespaceId(namespace));
     }
 
     /**

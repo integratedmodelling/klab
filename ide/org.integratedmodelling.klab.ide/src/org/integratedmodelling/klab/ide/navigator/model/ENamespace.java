@@ -1,62 +1,90 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ENamespace extends EKimObject implements IKimNamespace {
 
-	private static final long serialVersionUID = 7664920082549474716L;
+    private static final long serialVersionUID = 7664920082549474716L;
 
-	IKimNamespace delegate;
+    IKimNamespace delegate;
 
-	ENamespace(IKimNamespace statement) {
-		super(statement);
-		this.delegate = statement;
-	}
-	
-	public String getName() {
-		return delegate.getName();
-	}
+    ENamespace(IKimNamespace statement, ENavigatorItem parent) {
+        super(statement.getName(), statement, parent);
+        this.delegate = statement;
+    }
 
-	public boolean isPrivate() {
-		return delegate.isPrivate();
-	}
-	
-	public List<IKimNamespace> getImported() {
-		return delegate.getImported();
-	}
+    public String getName() {
+        return delegate.getName();
+    }
 
-	public long getTimestamp() {
-		return delegate.getTimestamp();
-	}
+    public boolean isPrivate() {
+        return delegate.isPrivate();
+    }
 
-	public IKimProject getProject() {
-		return delegate.getProject();
-	}
-	
-	public List<Pair<String, String>> getOwlImports() {
-		return delegate.getOwlImports();
-	}
+    public List<IKimNamespace> getImported() {
+        return delegate.getImported();
+    }
 
-	public Map<String, Object> getSymbolTable() {
-		return delegate.getSymbolTable();
-	}
+    public long getTimestamp() {
+        return delegate.getTimestamp();
+    }
 
-	public boolean isInactive() {
-		return delegate.isInactive();
-	}
+    public IKimProject getProject() {
+        return delegate.getProject();
+    }
 
-	public boolean isScenario() {
-		return delegate.isScenario();
-	}
+    public List<Pair<String, String>> getOwlImports() {
+        return delegate.getOwlImports();
+    }
 
-	@Override
-	public boolean isWorldviewBound() {
-		return delegate.isWorldviewBound();
-	}
+    public Map<String, Object> getSymbolTable() {
+        return delegate.getSymbolTable();
+    }
+
+    public boolean isInactive() {
+        return delegate.isInactive();
+    }
+
+    public boolean isScenario() {
+        return delegate.isScenario();
+    }
+
+    @Override
+    public boolean isWorldviewBound() {
+        return delegate.isWorldviewBound();
+    }
+
+    @Override
+    public ENavigatorItem[] getEChildren() {
+        List<ENavigatorItem> ret = new ArrayList<>(delegate.getChildren().size());
+        for (IKimScope child : delegate.getChildren()) {
+            if (child instanceof IKimConceptStatement) {
+                ret.add(new EConcept(delegate.getName() + ":" + ((IKimConceptStatement) child).getName(),
+                        (IKimConceptStatement) child, this, this));
+            } else if (child instanceof IKimModel) {
+                ret.add(new EModel(delegate.getName() + ":" + ((IKimModel) child).getName(), (IKimModel) child, this));
+            } else if (child instanceof IKimObserver) {
+                ret.add(new EObserver(delegate.getName() + "." + ((IKimObserver) child).getName(), (IKimObserver) child,
+                        this, this));
+            }
+        }
+        return ret.toArray(new ENavigatorItem[ret.size()]);
+    }
+
+    @Override
+    public boolean hasEChildren() {
+        return delegate.getChildren().size() > 0;
+    }
 
 }
