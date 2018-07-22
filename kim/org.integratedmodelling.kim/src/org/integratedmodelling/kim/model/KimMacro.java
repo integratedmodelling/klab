@@ -344,4 +344,9 @@ public class KimMacro implements IKimMacro {
 	public String getDocstring() {
 		return delegate.getDocstring();
 	}
+
+    @Override
+    public String getResourceId() {
+        return delegate.getResourceId();
+    }
 }

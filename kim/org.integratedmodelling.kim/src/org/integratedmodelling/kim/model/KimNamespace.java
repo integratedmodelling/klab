@@ -32,6 +32,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     private String scriptId;
     private String testCaseId;
     private boolean isWorldviewBound = false;
+    private File file;
 
     private boolean annotationsScanned = false;
     
@@ -39,7 +40,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         super(namespace, null);
         this.name = KimProject.getNamespaceId(namespace);
         if (namespace.eResource().getURI().isFile()) {
-            File file = new File(namespace.eResource().getURI().toFileString());
+            this.file = new File(namespace.eResource().getURI().toFileString());
             if (file.exists()) {
                 this.timestamp = file.lastModified();
             }
@@ -63,6 +64,11 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     public boolean isWorldviewBound() {
         return isWorldviewBound;
     }
+    
+    @Override
+    public File getFile() {
+        return this.file;
+    }
 
     public void setWorldviewBound(boolean isWorldviewBound) {
         this.isWorldviewBound = isWorldviewBound;
@@ -70,6 +76,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
     public KimNamespace(String id, File file) {
         this.name = id;
+        this.file = file;
         // TODO resource URI from file
     }
 

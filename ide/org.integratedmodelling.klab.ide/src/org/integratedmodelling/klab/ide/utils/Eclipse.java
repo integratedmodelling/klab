@@ -88,8 +88,20 @@ public enum Eclipse {
         if (namespace != null) {
             IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
             IProject project = root.getProject(namespace.getProject().getName());
-            String rpath = namespace.getName().replace('.', '/') + ".kim";
-            rpath = "src/" + rpath;
+            String rpath = null;
+            if (namespace.isWorldviewBound()) {
+                String kimPrefix = "/";
+                if (namespace.getScriptId() != null) {
+                    kimPrefix = "apps/";
+                } else if (namespace.getTestCaseId() != null) {
+                    kimPrefix = "tests/";
+                } else {
+                    // oh fuck
+                }
+                rpath = kimPrefix + namespace.getResourceId().substring(namespace.getResourceId().lastIndexOf('/')+1);
+            } else {
+                rpath = "src/" + namespace.getName().replace('.', '/') + ".kim";
+            }
             return project.getFile(rpath);
         }
         return null;

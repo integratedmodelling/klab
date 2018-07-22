@@ -174,5 +174,10 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected String getStringRepresentation(int offset) {
         return sourceCode;
     }
+    
+    @Override
+    public String getResourceId() {
+        return resource;
+    }
 
 }

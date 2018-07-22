@@ -1,5 +1,6 @@
 package org.integratedmodelling.kim.api;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,13 @@ public interface IKimNamespace extends IKimStatement {
     boolean isInactive();
 
     boolean isScenario();
+
+    /**
+     * If the namespace was read from a file, return it.
+     * 
+     * @return the local file or null
+     */
+    File getFile();
 
     /**
      * If this is a script, return its ID (either specified in a run annotation or the file name). Otherwise return null.

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,16 @@ public class ENamespace extends EKimObject implements IKimNamespace {
             return (T) Eclipse.INSTANCE.getNamespaceIFile(this);
         }
         return null;
+    }
+
+    @Override
+    public File getFile() {
+        return delegate.getFile();
+    }
+
+    @Override
+    public String getResourceId() {
+        return delegate.getResourceId();
     }
 
 }

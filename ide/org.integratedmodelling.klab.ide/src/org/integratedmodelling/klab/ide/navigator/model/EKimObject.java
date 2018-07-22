@@ -93,5 +93,10 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
         return delegate_ == null ? null : ((KimStatement)delegate_).getEObject();
     }
 
+    @Override
+    public String getResourceId() {
+        return delegate_ == null ? null : delegate_.getResourceId();
+    }
+
 
 }

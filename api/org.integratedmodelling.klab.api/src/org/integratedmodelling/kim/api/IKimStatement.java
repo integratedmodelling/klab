@@ -79,4 +79,11 @@ public interface IKimStatement extends IKimScope {
      */
     IKimStatement getParent();
 
+    /**
+     * Name of the resource path this statement was read from.
+     * 
+     * @return
+     */
+    String getResourceId();
+
 }
