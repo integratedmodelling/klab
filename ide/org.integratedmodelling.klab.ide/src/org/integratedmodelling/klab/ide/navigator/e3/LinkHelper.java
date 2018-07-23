@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public class LinkHelper implements ILinkHelper {

@@ -11,7 +11,7 @@
 	<name>k.LAB node server</name>
 	<dependencies>
 
-		<!--  unzip uploaded resources -->
+		<!-- unzip uploaded resources -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
 			<artifactId>zip4j</artifactId>
@@ -24,13 +24,13 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-        <!-- JWT token generation -->
-        <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-            <version>0.6.3</version>
-        </dependency>
-        
+		<!-- JWT token generation -->
+		<dependency>
+			<groupId>org.bitbucket.b_c</groupId>
+			<artifactId>jose4j</artifactId>
+			<version>0.6.3</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>

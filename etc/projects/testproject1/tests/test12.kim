@@ -1,7 +1,7 @@
 worldview im;
 
 @test(
-	name = "tests.hypothetical.hydrology",
+	name = "tests.hypothetical.hydrology.noop",
 	description  = "Simplest multi-extent state contextualization",
 	observations = ("geography:Elevation")
 )

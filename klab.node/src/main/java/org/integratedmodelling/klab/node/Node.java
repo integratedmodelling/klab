@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
@@ -12,11 +13,11 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
+import org.integratedmodelling.klab.utils.URLUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -35,10 +36,22 @@ public class Node {
 	private IPartnerIdentity owner;
 	private ICertificate certificate;
 
+	static final String GITWAR = "gitblit-1.8.0.war";
+	static File gitWarPath;
+
 	public Node(INodeStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		this.owner = NodeAuthenticationManager.INSTANCE.authenticate(certificate, options);
 		// in engine: setRootIdentity(this.owner);
+
+		/*
+		 * copy the Gitblit war to its home directory
+		 */
+//		File gitDirectory = Configuration.INSTANCE.getDataPath("git");
+//		gitWarPath = new File(gitDirectory + File.separator + GITWAR);
+//		if (!gitWarPath.exists()) {
+//			URLUtils.copyChanneled(this.getClass().getClassLoader().getResource(GITWAR), gitWarPath);
+//		}
 	}
 
 	public String getLocalAddress() {

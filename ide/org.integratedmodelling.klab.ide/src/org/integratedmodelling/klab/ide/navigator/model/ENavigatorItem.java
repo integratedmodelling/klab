@@ -17,6 +17,9 @@ public abstract class ENavigatorItem implements IAdaptable {
     protected ENavigatorItem(String id, ENavigatorItem parent) {
         this.id = id;
         this.parent = parent;
+        if (this.id == null) {
+        	System.out.println("DIO STRAPORCO INCULATO");
+        }
     }
 
     public String getId() {
