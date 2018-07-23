@@ -79,7 +79,18 @@
                      value="org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem">
                </instanceof>
             </or>
-         </possibleChildren>     
+         </possibleChildren>
+         <commonSorter
+               class="org.integratedmodelling.klab.ide.navigator.e3.KlabViewerComparator">
+         </commonSorter>
+         <actionProvider
+               class="org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActionProvider">
+         </actionProvider>
+         <dropAssistant
+               class="org.integratedmodelling.klab.ide.navigator.e3.KlabDropAssistant"
+               id="org.integratedmodelling.klab.ide.dropAssistant1">
+            <possibleDropTargets></possibleDropTargets>
+         </dropAssistant>     
 		</navigatorContent>
    </extension>
    <extension
