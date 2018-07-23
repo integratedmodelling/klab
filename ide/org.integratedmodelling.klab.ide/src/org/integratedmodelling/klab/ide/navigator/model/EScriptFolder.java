@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -20,7 +21,7 @@ public class EScriptFolder extends ENavigatorItem {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-        if (IResource.class.isAssignableFrom(adapter)) {
+        if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
             return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).getFolder(IKimProject.SCRIPT_FOLDER);
         }
         return null;

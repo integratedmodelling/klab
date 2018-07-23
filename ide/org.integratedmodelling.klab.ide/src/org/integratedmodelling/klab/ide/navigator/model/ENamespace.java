@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -110,12 +108,12 @@ public class ENamespace extends EKimObject implements IKimNamespace {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getAdapter(Class<T> adapter) {
-        
+       /* 
         if (IContainer.class == adapter) {
             // ehm.
         } else if (IProject.class.isAssignableFrom(adapter)) {
             // boh
-        } else if (IResource.class.isAssignableFrom(adapter)) {
+        } else*/ if (IFile.class.isAssignableFrom(adapter)) {
             return (T) Eclipse.INSTANCE.getNamespaceIFile(this);
         }
         return null;

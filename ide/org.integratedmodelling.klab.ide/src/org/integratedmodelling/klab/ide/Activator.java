@@ -165,6 +165,10 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
+	public static EngineMonitor engine() {
+		return get().engineStatusMonitor;
+	}
+	
 	/**
 	 * Returns the shared instance
 	 *

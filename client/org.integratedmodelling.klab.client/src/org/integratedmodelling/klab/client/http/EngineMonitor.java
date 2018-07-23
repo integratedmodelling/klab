@@ -173,6 +173,7 @@ public class EngineMonitor {
      * Ops performed when an engine goes down.
      */
     private void engineDown() {
+    	uptime = 0;
         onEngineDown.run();
         bus.stop();
         bus = null;

@@ -134,15 +134,15 @@ public interface IModelService {
    */
   INamespace load(File file, IMonitor monitor) throws KlabException;
 
-  /**
-   * Load a single model file from a stream. Namespace must have no dependencies and name a
-   * worldview at the top.
-   *
-   * @param input a {@link java.io.InputStream} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @return the namespace loaded
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  INamespace load(InputStream input, IMonitor monitor) throws KlabException;
+//  /**
+//   * Load a single model file from a stream. Namespace must have no dependencies and name a
+//   * worldview at the top.
+//   *
+//   * @param input a {@link java.io.InputStream} object.
+//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+//   * @return the namespace loaded
+//   * @throws org.integratedmodelling.klab.exceptions.KlabException
+//   */
+//  INamespace load(InputStream input, IMonitor monitor) throws KlabException;
 
 }

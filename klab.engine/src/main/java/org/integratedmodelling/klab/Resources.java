@@ -202,13 +202,13 @@ public enum Resources implements IResourceService {
 		return false;
 	}
 
-	public IWorkspace getCommonWorkspace() {
-		if (common == null) {
-			IKimWorkspace cw = Kim.INSTANCE.getCommonWorkspace();
-			common = new MonitorableFileWorkspace(cw.getRoot());
-		}
-		return common;
-	}
+//	public IWorkspace getCommonWorkspace() {
+//		if (common == null) {
+//			IKimWorkspace cw = Kim.INSTANCE.getCommonWorkspace();
+//			common = new MonitorableFileWorkspace(cw.getRoot());
+//		}
+//		return common;
+//	}
 
 	/*
 	 * Initialize (index but do not load) the local workspace from the passed path.

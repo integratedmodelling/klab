@@ -36,6 +36,7 @@ public class KlabNavigator extends CommonNavigator  {
     static Viewer _viewer;
 
     public KlabNavigator() {
+    	
     }
     
     @Override

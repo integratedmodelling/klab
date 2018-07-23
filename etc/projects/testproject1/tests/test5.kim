@@ -8,18 +8,18 @@ worldview im;
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
 	
-model geography:Elevation by im:Level
-	using local:anonymous:test:dem90m
-	classified into
-		im:Low      if < 500,
-		im:Moderate if < 1500,
-		im:High     otherwise;
-
-model geography:Elevation by im:Level
+model geography:Slope by im:Level
 	// This should lookup only private (data reduction -> private) and not finding, lookup a 
 	// normalization model, then use it after observing elevation. Can have both deps if needed
 	// and compute min/max etc the same way
 	observing im:Normalized geography:Elevation
+	using local:anonymous:test:dem90m
+	classified into
+		im:Low      if < 5,
+		im:Moderate if < 25,
+		im:High     otherwise;
+
+model geography:Elevation by im:Level
 	using gis.terrain()
 	lookup (self, *, ?) into 
 		  elevation | concept                 | magnitude

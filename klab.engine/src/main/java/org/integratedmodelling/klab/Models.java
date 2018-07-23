@@ -3,13 +3,13 @@ package org.integratedmodelling.klab;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
@@ -71,7 +71,7 @@ public enum Models implements IModelService {
 	@Override
 	public INamespace load(URL url, IMonitor monitor) throws KlabException {
 		try (InputStream stream = url.openStream()) {
-			return load(stream, monitor);
+			return load(url.toURI(), stream, monitor);
 		} catch (Exception e) {
 			throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
 		}
@@ -80,14 +80,13 @@ public enum Models implements IModelService {
 	@Override
 	public INamespace load(File file, IMonitor monitor) throws KlabException {
 		try (InputStream stream = new FileInputStream(file)) {
-			return load(stream, monitor);
+			return load(file.toURI(), stream, monitor);
 		} catch (Exception e) {
 			throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
 		}
 	}
 
-	@Override
-	public Namespace load(InputStream input, IMonitor monitor) throws KlabException {
+	public Namespace load(URI uri, InputStream input, IMonitor monitor) throws KlabException {
 
 		Namespace ret = null;
 		try {
@@ -95,6 +94,9 @@ public enum Models implements IModelService {
 			Model model = modelParser.parse(definition);
 
 			if (model != null && model.getNamespace() != null) {
+				// treat as orphan
+				Kim.INSTANCE.eraseOrphanNamespace(uri.toString());
+				model.getNamespace().eResource().setURI(org.eclipse.emf.common.util.URI.createURI(uri.toString()));
 				List<Issue> issues = validator.validate(model.eResource(), CheckMode.ALL, CancelIndicator.NullImpl);
 				for (Issue issue : issues) {
 					if (issue.getSeverity() == Severity.ERROR) {
@@ -103,8 +105,8 @@ public enum Models implements IModelService {
 				}
 
 				// recover the namespace that was parsed
-				IKimNamespace namespace = Kim.INSTANCE.getCommonProject()
-						.getNamespace(EcoreUtil.getURI(model.getNamespace()), model.getNamespace(), true);
+				IKimNamespace namespace = Kim.INSTANCE/*.getCommonProject()*/
+						.getNamespace(model.getNamespace(), true);
 
 				if (namespace != null) {
 					for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
@@ -153,7 +155,7 @@ public enum Models implements IModelService {
 	public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
 
 		Integer storingNamespace = recheckModelNS.remove(namespace.getId());
-		if (storingNamespace != null && storingNamespace > 0 && !(namespace.getProject().isRemote())) {
+		if (storingNamespace != null && storingNamespace > 0 && (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
 			try {
 				kbox.store(namespace, monitor);
 			} catch (Exception e) {

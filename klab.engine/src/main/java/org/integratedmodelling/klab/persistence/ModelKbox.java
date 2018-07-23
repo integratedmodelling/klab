@@ -165,8 +165,8 @@ public class ModelKbox extends ObservableKbox {
 		 * use previously resolved
 		 * 
 		 * TODO check use of contains(): overlaps() would be more correct but then we
-		 * would need to continue resolving, which misses the whole point of caching, and
-		 * limit the resolution to "other" models.
+		 * would need to continue resolving, which misses the whole point of caching,
+		 * and limit the resolution to "other" models.
 		 */
 		if (preResolved != null && preResolved.getFirst().contains(context.getCoverage())) {
 
@@ -623,9 +623,11 @@ public class ModelKbox extends ObservableKbox {
 			m.setId(model.getId());
 			m.setName(model.getName());
 			m.setNamespaceId(model.getNamespace().getId());
-			m.setProjectId(model.getNamespace().getProject().getName());
-			if (model.getNamespace().getProject().isRemote()) {
-				m.setServerId(model.getNamespace().getProject().getOriginatingNodeId());
+			if (model.getNamespace().getProject() != null) {
+				m.setProjectId(model.getNamespace().getProject().getName());
+				if (model.getNamespace().getProject().isRemote()) {
+					m.setServerId(model.getNamespace().getProject().getOriginatingNodeId());
+				}
 			}
 
 			m.setTimeEnd(timeEnd);

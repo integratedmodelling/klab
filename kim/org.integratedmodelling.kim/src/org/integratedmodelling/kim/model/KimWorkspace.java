@@ -323,6 +323,11 @@ public class KimWorkspace implements IKimWorkspace {
 				// just leave the workspace null
 			}
 		}
+		
+		if (ret == null) {
+			// file outside of any project
+		}
+		
 		return ret;
 	}
 
