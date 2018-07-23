@@ -12,11 +12,8 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
  */
 public class KlabExplorer extends KlabPeer {
 
-	String sessionId;
-
-	public KlabExplorer(String sessionId) {
-		super(Sender.EXPLORER);
-		this.sessionId = sessionId;
+	public KlabExplorer(String relayId) {
+		super(Sender.EXPLORER, relayId);
 	}
 
 	@MessageHandler(type = IMessage.Type.RegionOfInterest)

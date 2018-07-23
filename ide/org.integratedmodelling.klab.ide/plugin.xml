@@ -40,7 +40,7 @@
       </builder>
    </extension>
    <extension
-         id="org.integratedmodelling.klab.ide.navigator"
+         id="org.integratedmodelling.thinkcap.ide.navigator"
          point="org.eclipse.ui.navigator.viewer">
       <viewer
             viewerId="org.integratedmodelling.thinkcap.ide.navigator">
@@ -55,7 +55,7 @@
             </includes>
       </viewerContentBinding>
       <dragAssistant
-            class="org.integratedmodelling.klab.ide.navigator.e3.KlabDragAdapter"
+            class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
             viewerId="org.integratedmodelling.thinkcap.ide.navigator">
       </dragAssistant>
    </extension>

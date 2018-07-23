@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -35,9 +36,11 @@ public class KlabPeer {
 
 	private Sender sender;
 	private ServiceRegistration<EventHandler> registration;
+	private String identity;
 
-	protected KlabPeer(Sender type) {
+	protected KlabPeer(Sender type, String identity) {
 		this.sender = type;
+		this.identity = identity;
 	}
 
 	/**
@@ -48,7 +51,7 @@ public class KlabPeer {
 	 * @param messageHandler
 	 */
 	public KlabPeer(final Sender type, final Consumer<IMessage> messageHandler) {
-		this(type);
+		this(type, "*");
 		Dictionary<String, String> properties = new Hashtable<String, String>();
 		properties.put(EventConstants.EVENT_TOPIC,
 				"org/integratedmodelling/klab/" + (type == Sender.ANY ? "*" : (type.name() + "/*")));
@@ -63,12 +66,13 @@ public class KlabPeer {
 		}, properties);
 	}
 
-	public void send(IMessage message) {
+	public void send(Object... messages) {
 		if (eventAdmin == null) {
 			BundleContext ctx = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 			ServiceReference<EventAdmin> ref = ctx.getServiceReference(EventAdmin.class);
 			eventAdmin = ctx.getService(ref);
 		}
+		IMessage message = Message.create(identity, messages);
 		eventAdmin.sendEvent(new Event("org/integratedmodelling/klab/" + sender + "/" + message.getType(),
 				Collections.singletonMap("KlabMessage", message)));
 	}

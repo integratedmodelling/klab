@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.io.File;
+
 import org.integratedmodelling.kim.api.IKimNamespace;
 
 public class EScript extends ENamespace {
@@ -9,6 +11,11 @@ public class EScript extends ENamespace {
     EScript(IKimNamespace statement, ENavigatorItem parent) {
         super(statement, parent);
         this.id = statement.getScriptId();
+    }
+        
+    public File getScriptFile() {
+        getKimStatement().getURI();
+        return null;
     }
 
 }

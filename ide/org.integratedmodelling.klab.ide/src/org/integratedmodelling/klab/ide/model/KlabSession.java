@@ -16,11 +16,8 @@ import org.integratedmodelling.klab.rest.TaskReference;
  */
 public class KlabSession extends KlabPeer {
 
-	String sessionId;
-
 	public KlabSession(String sessionId) {
-		super(Sender.SESSION);
-		this.sessionId = sessionId;
+		super(Sender.SESSION, sessionId);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)

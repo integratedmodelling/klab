@@ -27,6 +27,10 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 		this.delegate_ = statement;
 	}
 
+	protected IKimStatement getKimStatement() {
+	    return this.delegate_;
+	}
+	
 	public int getFirstLine() {
 		return delegate_.getFirstLine();
 	}

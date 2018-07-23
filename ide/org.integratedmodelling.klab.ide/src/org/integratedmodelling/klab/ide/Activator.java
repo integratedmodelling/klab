@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.osgi.framework.BundleContext;
@@ -40,7 +39,9 @@ public class Activator extends AbstractUIPlugin {
 	 * identity for relaying messages sent from Web UI to session
 	 */
 	String relayId = "relay" + NameGenerator.shortUUID();
-	private KlabEngine enginePeer;
+	private KlabEngine engine;
+    private KlabExplorer explorer;
+    private KlabSession session;
 
 	/**
 	 * The constructor
@@ -131,7 +132,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	private void engineOff() {
-		this.enginePeer
+		this.engine
 				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
 						IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
 
@@ -144,17 +145,15 @@ public class Activator extends AbstractUIPlugin {
 		/**
 		 * Add communication peers for engine, session and explorer
 		 */
-		this.enginePeer = new KlabEngine();
-		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), this.enginePeer);
-		this.engineStatusMonitor.getBus().subscribe(sessionId, new KlabSession(sessionId));
-		this.engineStatusMonitor.getBus().subscribe(relayId, new KlabExplorer(relayId));
-
-		this.enginePeer
+		this.engine = new KlabEngine(this.engineStatusMonitor.getEngineId());
+		this.session = new KlabSession(sessionId);
+		this.explorer = new KlabExplorer(relayId);
+		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), this.engine);
+		this.engineStatusMonitor.getBus().subscribe(sessionId, this.session);
+		this.engineStatusMonitor.getBus().subscribe(relayId, this.explorer);
+		this.engine
 				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
 						IMessage.Type.EngineUp, this.engineStatusMonitor.getCapabilities()));
-
-		// TODO remove/improve
-//		BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session=" + sessionId + "&mode=ide");
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -165,10 +164,22 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	public static EngineMonitor engine() {
+	public static EngineMonitor engineMonitor() {
 		return get().engineStatusMonitor;
 	}
 	
+    public static KlabEngine engine() {
+        return get().engine;
+    }
+
+    public static KlabSession session() {
+        return get().session;
+    }
+
+    public static KlabExplorer explorer() {
+        return get().explorer;
+    }
+
 	/**
 	 * Returns the shared instance
 	 *

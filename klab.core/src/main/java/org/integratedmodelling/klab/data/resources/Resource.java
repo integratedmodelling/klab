@@ -74,6 +74,7 @@ public class Resource implements IResource {
 	List<IResource> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
 	String projectName;
+	String localName;
 
 	// folder where all the resource files were uploaded, only for the publisher
 	File uploadFolder = null;
@@ -88,6 +89,8 @@ public class Resource implements IResource {
 		this.localPaths.addAll(reference.getLocalPaths());
 		this.geometry = Geometry.create(reference.getGeometry());
 		this.projectName = reference.getProjectName();
+		this.localName = reference.getLocalName();
+		
 		for (ResourceReference ref : reference.getHistory()) {
 			this.history.add(new Resource(ref));
 		}
@@ -114,6 +117,7 @@ public class Resource implements IResource {
 		ret.getLocalPaths().addAll(this.localPaths);
 		ret.setResourceTimestamp(this.resourceTimestamp);
 		ret.setProjectName(this.projectName);
+		ret.setLocalName(this.localName);
 		ret.setType(this.type);
 		
 		for (IResource h : this.history) {
@@ -278,6 +282,11 @@ public class Resource implements IResource {
 	@Override
 	public IArtifact.Type getType() {
 		return type;
+	}
+	
+	@Override
+	public String getLocalName() {
+	    return localName;
 	}
 
 }

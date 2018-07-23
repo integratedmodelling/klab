@@ -202,14 +202,6 @@ public enum Resources implements IResourceService {
 		return false;
 	}
 
-//	public IWorkspace getCommonWorkspace() {
-//		if (common == null) {
-//			IKimWorkspace cw = Kim.INSTANCE.getCommonWorkspace();
-//			common = new MonitorableFileWorkspace(cw.getRoot());
-//		}
-//		return common;
-//	}
-
 	/*
 	 * Initialize (index but do not load) the local workspace from the passed path.
 	 */
@@ -264,12 +256,10 @@ public enum Resources implements IResourceService {
 		return Urns.KLAB_URN_PREFIX + "knowledge:" + INSTANCE.getWorldview().getName() + ":";
 	}
 
-	// @Override
 	public IResourceAdapter getResourceAdapter(String id) {
 		return resourceAdapters.get(id);
 	}
 
-	// @Override
 	public List<IResourceAdapter> getResourceAdapter(File resource, IParameters<String> parameters) {
 		List<IResourceAdapter> ret = new ArrayList<>();
 		for (IResourceAdapter adapter : resourceAdapters.values()) {

@@ -1,6 +1,7 @@
 
 package org.integratedmodelling.klab.ide.views;
 
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -9,6 +10,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -47,8 +49,10 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 import org.integratedmodelling.klab.ide.navigator.utils.SWTResourceManager;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public class ContextView extends ViewPart {
 	public ContextView() {
@@ -168,6 +172,9 @@ public class ContextView extends ViewPart {
 
 				@Override
 				public void mouseDown(MouseEvent e) {
+				    /*
+				     * TODO act as an interrupt button when the task is running
+				     */
 					// if (_taskId >= 0) {
 					// showData(e.x, e.y);
 					// }
@@ -393,6 +400,17 @@ public class ContextView extends ViewPart {
 
 					boolean addToContext = (event.detail & DND.DROP_COPY) == DND.DROP_COPY;
 
+					System.out.println("DROPPED " + event.data);
+					
+					if (!Activator.engineMonitor().isRunning()) {
+					    Eclipse.INSTANCE.beep();
+					} else {
+					    
+					    if (event.data instanceof TreeSelection && ((TreeSelection)event.data).getFirstElement() instanceof ETestCase) {
+					        File diocan = ((ETestCase)((TreeSelection)event.data).getFirstElement()).getScriptFile();
+					    }
+					}
+					
 					// if (Activator.engine()
 					// .handleObservationAction(event.data, addToContext)) {
 					//

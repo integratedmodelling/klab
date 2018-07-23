@@ -5,11 +5,8 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 
 public class KlabTask extends KlabPeer {
 
-	String taskId;
-
 	public KlabTask(String taskId) {
-		super(Sender.TASK);
-		this.taskId = taskId;
+		super(Sender.TASK, taskId);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)

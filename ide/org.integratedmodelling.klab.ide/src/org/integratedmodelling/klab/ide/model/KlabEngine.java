@@ -5,8 +5,8 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 
 public class KlabEngine extends KlabPeer {
 	
-	public KlabEngine() {
-		super(Sender.ENGINE);
+	public KlabEngine(String identity) {
+		super(Sender.ENGINE, identity);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
