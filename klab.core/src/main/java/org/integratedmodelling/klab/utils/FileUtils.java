@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class FileUtils extends org.apache.commons.io.FileUtils {
+public class FileUtils  extends org.apache.commons.io.FileUtils {
 
     /**
      * Create a md5sum file digest for a directory in a directory.

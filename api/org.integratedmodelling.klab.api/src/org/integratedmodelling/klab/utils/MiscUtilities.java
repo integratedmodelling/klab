@@ -70,9 +70,6 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.UUID;
 
-import org.integratedmodelling.klab.utils.Escape;
-import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -164,58 +161,8 @@ public class MiscUtilities {
                 + MiscUtilities.getFileBaseName(originalFile) + suffixAndExtension;
         return new File(baseName);
     }
+    
 
-	private static Collection<Class<?>> findSubclasses(ArrayList<Class<?>> ret, Class<?> mainClass, String pckgname,
-			ClassLoader cloader) {
-
-		if (ret == null)
-			ret = new ArrayList<>();
-
-		// Translate the package name into an absolute path
-		String name = new String(pckgname).replace('.', '/');
-
-		// Get a File object for the package
-		URL url = cloader.getResource(name);
-
-		if (url == null)
-			return ret;
-
-		File directory = new File(Escape.fromURL(url.getFile()));
-
-		if (directory.exists()) {
-
-			// Get the list of the files contained in the package
-			String[] files = directory.list();
-
-			for (int i = 0; i < files.length; i++) {
-
-				// we are only interested in .class files
-				if (files[i].endsWith(".class")) {
-					// removes the .class extension
-					String classname = files[i].substring(0, files[i].length() - 6);
-					try {
-						Class<?> clls = Class.forName(pckgname + "." + classname, true, cloader);
-						if (mainClass.isAssignableFrom(clls)) {
-							ret.add(clls);
-						}
-					} catch (ClassNotFoundException e) {
-					  Logging.INSTANCE.warn("task class " + pckgname + "." + classname + " could not be created: "
-								+ e.getMessage());
-					}
-				} else {
-
-					File ff = new File(Escape.fromURL(url.getFile()) + "/" + files[i]);
-
-					if (ff.isDirectory()) {
-						String ppk = pckgname + "." + files[i];
-						findSubclasses(ret, mainClass, ppk, cloader);
-					}
-				}
-			}
-		}
-
-		return ret;
-	}
 
 	/**
 	 * Read a properties file into a properties object without making life painful. Silently returns
@@ -237,20 +184,6 @@ public class MiscUtilities {
 		return ret;
 	}
 
-	/**
-	 * Return all subclasses of given class in given package. Uses file structure in classpath as
-	 * seen by passed classloader. Loads ALL classes in package in the process. Use with caution -
-	 * it's sort of dirty, but it's the only way to obtain the class structure without preloading
-	 * classes.
-	 *
-	 * @param mainClass the main class
-	 * @param pckgname the pckgname
-	 * @param cloader the cloader
-	 * @return subclasses
-	 */
-	public static Collection<Class<?>> findSubclasses(Class<?> mainClass, String pckgname, ClassLoader cloader) {
-		return findSubclasses(null, mainClass, pckgname, cloader);
-	}
 
 	/**
 	 * This encoding is not supported by Java, yet it is useful. A UTF-8 file

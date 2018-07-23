@@ -96,7 +96,7 @@ public class KimProject implements IKimProject {
 
         final String PLATFORM_URI_PREFIX = "platform:/resource/";
         String ret = null;
-        String sourceDir = properties.getProperty(KLAB_CONFIGURATION_SOURCE_FOLDER, "src");
+        String sourceDir = SOURCE_FOLDER;
         String kuri = workspace.getURL() + "/" + name + "/META-INF/knowledge.kim";
         String wuri = o.eResource().getURI().toString(); // THIS GETS platform for workspace files even
                                                          // if they are the same.

@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.ide.navigator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 
@@ -15,10 +17,13 @@ public class ETestFolder extends ENavigatorItem {
         this.project = parent.delegate;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		
-		return null;
+        if (IResource.class.isAssignableFrom(adapter)) {
+            return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName()).getFolder(IKimProject.TESTS_FOLDER);
+        }
+        return null;
 	}
 
     @Override

@@ -23,7 +23,6 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.OS;
 
 // TODO: Auto-generated Javadoc
@@ -74,7 +73,7 @@ public enum Configuration implements IConfigurationService {
 		File pFile = new File(dataPath + File.separator + "klab.properties");
 		if (!pFile.exists()) {
 			try {
-				FileUtils.touch(pFile);
+				pFile.createNewFile();
 			} catch (IOException e) {
 				throw new KlabIOException("cannot write to configuration directory");
 			}

@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class KimNamespace extends KimStatement implements IKimNamespace {
@@ -221,12 +222,12 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
                     if (annotation.getName().equals("run")) {
                         this.scriptId = annotation.getParameters().get("name", String.class);
                         if (this.scriptId == null) {
-//                            this.scriptId =
+                            this.scriptId = MiscUtilities.getFileBaseName(this.resource);
                         }
                     } else if (annotation.getName().equals("test")) {
                         this.testCaseId = annotation.getParameters().get("name", String.class);
                         if (this.testCaseId == null) {
-//                            this.scriptId =
+                            this.scriptId = MiscUtilities.getFileBaseName(this.resource);
                         }
                     }
                 }

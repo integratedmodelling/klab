@@ -19,6 +19,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
@@ -92,9 +93,9 @@ public enum Eclipse {
             if (namespace.isWorldviewBound()) {
                 String kimPrefix = "/";
                 if (namespace.getScriptId() != null) {
-                    kimPrefix = "apps/";
+                    kimPrefix = IKimProject.SCRIPT_FOLDER + "/";
                 } else if (namespace.getTestCaseId() != null) {
-                    kimPrefix = "tests/";
+                    kimPrefix = IKimProject.TESTS_FOLDER + "/";
                 } else {
                     // oh fuck
                 }
@@ -114,12 +115,12 @@ public enum Eclipse {
             }
             String project = file.getProject().getName();
             String kimPrefix = "";
-            if (file.toString().contains("src")) {
-                kimPrefix = "src";
-            } else if (file.toString().contains("apps")) {
-                kimPrefix = "apps";
-            } else if (file.toString().contains("tests")) {
-                kimPrefix = "tests";
+            if (file.toString().contains(IKimProject.SOURCE_FOLDER)) {
+                kimPrefix = IKimProject.SOURCE_FOLDER;
+            } else if (file.toString().contains(IKimProject.SCRIPT_FOLDER)) {
+                kimPrefix = IKimProject.SCRIPT_FOLDER;
+            } else if (file.toString().contains(IKimProject.TESTS_FOLDER)) {
+                kimPrefix = IKimProject.TESTS_FOLDER;
             }
             kimPrefix = project + "/" + kimPrefix + "/";
             String ret = file.toString().substring(file.toString().indexOf(kimPrefix) + kimPrefix.length());

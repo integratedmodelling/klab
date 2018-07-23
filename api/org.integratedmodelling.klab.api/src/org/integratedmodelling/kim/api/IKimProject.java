@@ -6,26 +6,30 @@ import java.util.Properties;
 
 public interface IKimProject {
 
-    static final String KLAB_CONFIGURATION_SOURCE_FOLDER        = "klab.source.folder";
-    static final String KLAB_CONFIGURATION_DEFINED_WORLDVIEW_ID = "klab.defined.worldview";
-    static final String KLAB_CONFIGURATION_WORLDVIEW_ID         = "klab.worldview";
+	static final String KLAB_CONFIGURATION_DEFINED_WORLDVIEW_ID = "klab.defined.worldview";
+	static final String KLAB_CONFIGURATION_WORLDVIEW_ID = "klab.worldview";
 
-    String getDefinedWorldview();
+	static public final String SOURCE_FOLDER = "src";
+	static public final String SCRIPT_FOLDER = "apps";
+	static public final String TESTS_FOLDER = "tests";
+	static public final String RESOURCE_FOLDER = "resources";
 
-    List<File> getSourceFiles();
+	String getDefinedWorldview();
 
-    IKimNamespace getNamespace(String id);
+	List<File> getSourceFiles();
 
-    IKimWorkspace getWorkspace();
+	IKimNamespace getNamespace(String id);
 
-    String getName();
+	IKimWorkspace getWorkspace();
 
-    String getWorldview();
+	String getName();
 
-    File getRoot();
+	String getWorldview();
 
-    Properties getProperties();
+	File getRoot();
 
-    List<IKimNamespace> getNamespaces();
+	Properties getProperties();
+
+	List<IKimNamespace> getNamespaces();
 
 }

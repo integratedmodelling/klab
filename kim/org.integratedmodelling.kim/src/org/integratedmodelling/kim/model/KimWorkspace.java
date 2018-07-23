@@ -27,9 +27,11 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
 import org.integratedmodelling.kim.utils.ResourceSorter;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 import com.google.inject.Injector;
@@ -116,7 +118,7 @@ public class KimWorkspace implements IKimWorkspace {
 	static Collection<KimWorkspace> getWorkspaces() {
 		return workspacesByURI.values();
 	}
-	
+
 	/**
 	 * Constructor for a file-based workspace. This one will be able to enumerate
 	 * its projects and Kim resources after construction. You can pass any number of
@@ -150,7 +152,7 @@ public class KimWorkspace implements IKimWorkspace {
 		}
 		return url2;
 	}
-	
+
 	private File overrideIfPresent(File dir, File[] overridingProjects) {
 		// TODO check if the project is overridden and if so, returning the overriding
 		// path.
@@ -205,7 +207,7 @@ public class KimWorkspace implements IKimWorkspace {
 		for (File file : getAllKimResources()) {
 			sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
 		}
-		List<Resource> sort = sorter.getResources();
+		List<Resource> sort = CollectionUtils.join(sorter.getResources(), getNondependentResources(resourceSet));
 		for (Resource resource : sort) {
 			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 			for (Issue issue : issues) {
@@ -229,6 +231,31 @@ public class KimWorkspace implements IKimWorkspace {
 			}
 		}
 
+		return ret;
+	}
+
+	/**
+	 * Return all the k.IM files that are not knowledge but scripts, tests and
+	 * sidecar files. These can just depend on the knowledge in the workspace and
+	 * are loaded after it.
+	 * 
+	 * @param resourceSet
+	 * @return
+	 */
+	private List<Resource> getNondependentResources(XtextResourceSet resourceSet) {
+		List<Resource> ret = new ArrayList<>();
+		for (KimProject project : allProjects.values()) {
+			for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
+				File pdir = new File(project.getRoot() + File.separator + subdir);
+				if (pdir.exists() && pdir.isDirectory()) {
+					for (File f : pdir.listFiles()) {
+						if (f.toString().endsWith(".kim")) {
+							ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
+						}
+					}
+				}
+			}
+		}
 		return ret;
 	}
 
@@ -370,15 +397,15 @@ public class KimWorkspace implements IKimWorkspace {
 		return null;
 	}
 
-//	@Override
-//	protected String getStringRepresentation(int offset) {
-//		return null;
-//	}
+	// @Override
+	// protected String getStringRepresentation(int offset) {
+	// return null;
+	// }
 
-//	@Override
-//	public String getLocationDescriptor() {
-//		return root.toString();
-//	}
+	// @Override
+	// public String getLocationDescriptor() {
+	// return root.toString();
+	// }
 
 	public void registerProject(KimProject project, URL projectUrl) {
 		projectsByURI.put(projectUrl.toString(), project);

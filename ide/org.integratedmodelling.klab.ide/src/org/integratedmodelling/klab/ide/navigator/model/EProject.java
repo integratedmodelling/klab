@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -20,7 +20,7 @@ public class EProject extends ENavigatorItem {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getAdapter(Class<T> adapter) {
-        if (IProject.class.isAssignableFrom(adapter)) {
+        if (IResource.class.isAssignableFrom(adapter)) {
             return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(delegate.getName());
         }
         return null;
@@ -43,8 +43,14 @@ public class EProject extends ENavigatorItem {
             ret.add(new EScriptFolder(this));
             ret.add(new ETestFolder(this));
         }
-        ret.add(new EResourceFolder(this));
-
+        
+        /*
+         * we don't let worldview have resources
+         */
+        if (delegate.getDefinedWorldview() == null) {
+        	ret.add(new EResourceFolder(this));
+        }
+        
         return ret.toArray(new ENavigatorItem[ret.size()]);
     }
 
