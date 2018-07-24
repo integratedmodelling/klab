@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.ide.utils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
@@ -17,11 +19,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -37,6 +43,19 @@ import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 public enum Eclipse {
 
 	INSTANCE;
+
+	public Shell getShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				return windows[0].getShell();
+			}
+		} else {
+			return window.getShell();
+		}
+		return null;
+	}
 
 	/**
 	 * Open a file in the editor at the passed line number.
@@ -209,6 +228,47 @@ public enum Eclipse {
 		MessageDialog.openInformation(shell, "Information", message);
 	}
 
+	public <T> T chooseOne(String question, Collection<T> alternatives) {
+		return null;
+	}
+
+	public <T> Collection<T> chooseMany(String question, Collection<T> alternatives) {
+
+		CheckedTreeSelectionDialog dialog = new CheckedTreeSelectionDialog(Eclipse.INSTANCE.getShell(),
+				new LabelProvider(), new ITreeContentProvider() {
+
+					@Override
+					public boolean hasChildren(Object element) {
+						return element instanceof Collection;
+					}
+
+					@Override
+					public Object getParent(Object element) {
+						return element instanceof Collection ? null : alternatives;
+					}
+
+					@Override
+					public Object[] getElements(Object inputElement) {
+						return getChildren(inputElement);
+					}
+
+					@Override
+					public Object[] getChildren(Object parentElement) {
+						return parentElement instanceof Collection ? alternatives.toArray() : null;
+					}
+				});
+		
+		dialog.setTitle("Choose one or more");
+		dialog.setMessage(question);
+		dialog.setInput(alternatives);
+		if (dialog.open() != Window.OK) {
+			return new ArrayList<T>();
+		}
+		Object[] result = dialog.getResult();
+		System.out.println("foccka foccka " + result);
+		return null;
+	}
+
 	public void error(Object message) {
 		if (message instanceof Throwable) {
 			handleException((Throwable) message);
@@ -230,6 +290,10 @@ public enum Eclipse {
 		} else {
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
 		}
+	}
+
+	public IProject getProject(String name) {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 	}
 
 }

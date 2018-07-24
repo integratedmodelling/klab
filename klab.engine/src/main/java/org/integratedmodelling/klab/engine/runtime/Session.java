@@ -443,10 +443,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler
 	private void handleRunScriptRequest(final RunScriptRequest request) {
-		final Engine engine = getParentIdentity(Engine.class);
-		if (engine != null) {
-			engine.run(request.getScriptUrl());
-		}
+		run(request.getScriptUrl());
 	}
 
 	@MessageHandler

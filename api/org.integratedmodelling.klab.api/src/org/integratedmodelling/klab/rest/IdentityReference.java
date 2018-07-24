@@ -75,5 +75,12 @@ public class IdentityReference {
             return false;
         return true;
     }
+
+	@Override
+	public String toString() {
+		return "IdentityReference [id=" + id + ", email=" + email + ", lastLogin=" + lastLogin + "]";
+	}
+    
+    
     
 }

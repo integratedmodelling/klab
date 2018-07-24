@@ -247,7 +247,7 @@ public class Engine extends Server implements IEngine, UserDetails {
         return createSession(getDefaultEngineUser());
     }
 
-    private IEngineUserIdentity getDefaultEngineUser() {
+    public IEngineUserIdentity getDefaultEngineUser() {
         if (defaultEngineUser == null) {
             IKlabUserIdentity owner = this.getParentIdentity(IKlabUserIdentity.class);
             if (owner == null) {

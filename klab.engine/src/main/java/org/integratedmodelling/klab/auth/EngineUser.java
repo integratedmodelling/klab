@@ -81,8 +81,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 
     @Override
     public Date getLastLogin() {
-        // TODO Auto-generated method stub
-        return null;
+        return lastLogin.toDate();
     }
 
     @Override

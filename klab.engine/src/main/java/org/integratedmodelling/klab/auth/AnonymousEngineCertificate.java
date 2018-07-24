@@ -46,6 +46,8 @@ public class AnonymousEngineCertificate implements ICertificate {
 			return "http://127.0.0.1:8284/klab";
 		case KEY_CERTIFICATE_LEVEL:
 			return ICertificate.Level.ANONYMOUS.name();
+		case KEY_USERNAME:
+			return "anonymous";
 		}
 		return null;
 	}

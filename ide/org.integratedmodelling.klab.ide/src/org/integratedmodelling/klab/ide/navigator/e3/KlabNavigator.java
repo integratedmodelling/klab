@@ -26,20 +26,44 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.ide.navigator.e3;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.ide.model.KlabPeer;
+import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.ProjectReference;
 
 public class KlabNavigator extends CommonNavigator  {
 
     static Viewer _viewer;
-
+    KlabPeer klab;
+    
     public KlabNavigator() {
-    	
+		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
     }
     
-    @Override
+    private void handleMessage(IMessage message) {
+    	switch (message.getType()) {
+		case EngineDown:
+			final Capabilities capabilities = message.getPayload(Capabilities.class);
+			for (ProjectReference project : capabilities.getLocalWorkspaceProjects()) {
+				IProject p = Eclipse.INSTANCE.getProject(project.getName());
+			}
+			break;
+		case EngineUp:
+			break;
+		default:
+			break;
+    	
+    	}
+	}
+
+	@Override
 	protected Object getInitialInput() {
     	return ResourcesPlugin.getWorkspace().getRoot();
 	}

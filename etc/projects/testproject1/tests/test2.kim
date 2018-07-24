@@ -12,5 +12,5 @@ worldview im;
 observe earth:Terrestrial earth:Region named tanzania-grr
 	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km");
      
-// within the test project, just say "model dem90m as geography:Elevation in m"
+// within the same project, just say "model dem90m as geography:Elevation in m"
 model local:anonymous:test.network:global.dem90m as geography:Elevation in m;

@@ -10,9 +10,11 @@ import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
@@ -43,13 +45,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
-import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
@@ -107,7 +109,7 @@ public class ContextView extends ViewPart {
 			searchModeButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					KlabNavigator.refresh();
+					//					KlabNavigator.refresh();
 					// searchMode(searchModeButton.getSelection());
 				}
 			});

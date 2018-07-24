@@ -37,5 +37,12 @@ public class ProjectReference {
 		this.localResources = localResources;
 	}
 
+	@Override
+	public String toString() {
+		return "ProjectReference [name=" + name + "]";
+	}
+	
+	
+
 
 }

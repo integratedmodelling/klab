@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.rest;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +23,7 @@ public class Capabilities {
 	private List<String> mirrors = new ArrayList<>();
 	private long refreshFrequencyMillis;
 	private int loadFactor;
+	private boolean online;
 
 	/*
 	 * these are only communicated to localhost clients
@@ -125,6 +125,14 @@ public class Capabilities {
 
 	public void setMirrors(List<String> mirrors) {
 		this.mirrors = mirrors;
+	}
+
+	public boolean isOnline() {
+		return online;
+	}
+
+	public void setOnline(boolean online) {
+		this.online = online;
 	}
 
 	@Override
