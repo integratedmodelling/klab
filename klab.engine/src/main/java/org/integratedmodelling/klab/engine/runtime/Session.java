@@ -28,6 +28,8 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -42,6 +44,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -51,6 +54,8 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
@@ -85,7 +90,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	long creation = System.currentTimeMillis();
 	long lastJoin = System.currentTimeMillis();
 	boolean isDefault = false;
-	
+
 	Set<String> relayIdentities = new HashSet<>();
 
 	SpatialExtent regionOfInterest = null;
@@ -327,6 +332,28 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 
 	@MessageHandler
+	private void importResource(final ResourceImportRequest request) {
+		IProject project = Resources.INSTANCE.getLocalWorkspace().getProject(request.getProjectName());
+		if (project != null) {
+			monitor.error("cannot import resource: project " + request.getProjectName() + " is unknown");
+		} else {
+
+			new Thread() {
+
+				@Override
+				public void run() {
+					IResource resource = Resources.INSTANCE.importResource(request.getImportUrl(), project);
+					if (resource != null) {
+						monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+								((Resource) resource).getReference());
+					}
+				}
+
+			}.start();
+		}
+	}
+
+	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
 		monitor.debug("setting ROI = " + extent);
 		this.regionOfInterest = extent;
@@ -371,16 +398,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			/*
 			 * spawn search thread, which will respond when done.
 			 */
-			new Runnable() {
+			new Thread() {
 
 				@Override
 				public void run() {
-					
+
 					SearchResponse response = new SearchResponse();
 					response.setContextId(contextId);
 					response.setRequestId(request.getRequestId());
 					response.setLast(true);
-					
+
 					final Pair<Context, List<Match>> context = searchContexts.get(contextId);
 					List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
@@ -399,13 +426,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 							response.signalEndTime()).inResponseTo(message));
 				}
 
-			}.run();
+			}.start();
 		}
 	}
-	
+
 	/**
-	 * Flag the session as default. The effect is that engine pings from localhost will receive
-	 * the session ID so they can choose to join it.
+	 * Flag the session as default. The effect is that engine pings from localhost
+	 * will receive the session ID so they can choose to join it.
 	 * 
 	 * @return
 	 */
@@ -415,11 +442,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	}
 
 	@MessageHandler
-	private void handleObservationRequest(ObservationRequest request) {
+	private void handleRunScriptRequest(final RunScriptRequest request) {
+		final Engine engine = getParentIdentity(Engine.class);
+		if (engine != null) {
+			engine.run(request.getScriptUrl());
+		}
+	}
 
-		/*
-		 * TODO do all this in a thread
-		 */
+	@MessageHandler
+	private void handleObservationRequest(final ObservationRequest request) {
+
 		/*
 		 * TODO if we have no context in the request but we have a ROI, create the
 		 * context from the ROI and block the thread until it's observed

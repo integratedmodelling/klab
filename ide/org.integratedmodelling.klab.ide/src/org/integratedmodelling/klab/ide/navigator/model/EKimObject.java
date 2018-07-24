@@ -1,8 +1,12 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.io.File;
 import java.net.URI;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimMetadata;
@@ -101,6 +105,25 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
     public String getResourceId() {
         return delegate_ == null ? null : delegate_.getResourceId();
     }
+    
+    public IFile getIFile() {
+        org.eclipse.emf.common.util.URI uri = ((KimStatement)delegate_).getEObject().eResource().getURI();
+        System.out.println("URI is " + uri);
+        if (uri.toString().startsWith("platform:/resource/")) {
+        	String uriPath = uri.toString().substring("platform:/resource/".length());
+        	IResource ret = ResourcesPlugin.getWorkspace().getRoot().findMember(uriPath);
+        	if (ret instanceof IFile) {
+        		return (IFile)ret;
+        	}
+    	}
+        return null;
+    }
+
+	public File getPhysicalFile() {
+		IFile ifile = getIFile();
+		return ifile == null ? null : ifile.getLocation().toFile();
+	}
+
 
 
 }

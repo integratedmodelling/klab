@@ -15,7 +15,7 @@ public class CollectionUtils {
 		return ret;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SafeVarargs
 	public static <T> List<T> join(List<T>... resources) {
 		List<T> ret = new ArrayList<>();
 		for (List<T> list : resources) {

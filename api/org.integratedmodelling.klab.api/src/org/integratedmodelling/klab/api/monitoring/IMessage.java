@@ -31,6 +31,12 @@ public interface IMessage {
 		 * 
 		 */
 		EngineLifecycle,
+
+		/**
+		 * 
+		 */
+		ResourceLifecycle,
+
 		/**
 		 * 
 		 */
@@ -160,16 +166,21 @@ public interface IMessage {
 		 * --- EngineLifecycle ---
 		 */
 		EngineUp, EngineDown,
-		
+
 		/*
 		 * --- Run-class types
 		 */
-		RunScript, RunTest, DebugScript, DebugTest
+		RunScript, RunTest, DebugScript, DebugTest,
 
 		/*
-		 * 
+		 * --- ResourceLifecycle-class types, F->B
 		 */
+		ImportResource, DeleteResource, UpdateResource, ValidateResource, PreviewResource,
 
+		/*
+		 * --- ResourceLifecycle-class types, B->F
+		 */
+		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated
 	}
 
 	/**

@@ -11,8 +11,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -21,11 +24,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 
@@ -113,6 +118,7 @@ public enum Eclipse {
 	}
 
 	public String getNamespaceIdFromIFile(IFile file) {
+
 		if (file.toString().endsWith(".kim")) {
 			if (file.getProject() == null) {
 				return null;
@@ -203,7 +209,27 @@ public enum Eclipse {
 		MessageDialog.openInformation(shell, "Information", message);
 	}
 
+	public void error(Object message) {
+		if (message instanceof Throwable) {
+			handleException((Throwable) message);
+		} else {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message.toString()));
+		}
+	}
+
 	public void beep() {
 		PlatformUI.getWorkbench().getDisplay().beep();
 	}
+
+	public void handleException(Throwable e) {
+		if (e instanceof CoreException) {
+			StatusManager.getManager().handle((CoreException) e, Activator.PLUGIN_ID);
+		} else if (e instanceof KlabException) {
+			alert(e.getMessage());
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
+		} else {
+			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
+		}
+	}
+
 }

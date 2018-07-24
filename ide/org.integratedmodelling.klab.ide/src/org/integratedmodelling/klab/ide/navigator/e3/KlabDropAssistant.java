@@ -16,6 +16,8 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
     public KlabDropAssistant() {
     }
+    
+    
 
     @Override
     public IStatus validateDrop(Object target, int operation, TransferData transferType) {
@@ -27,15 +29,21 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
     @Override
     public IStatus handleDrop(CommonDropAdapter aDropAdapter, DropTargetEvent event, Object target) {
+    	
         if (target instanceof EResourceFolder && event.data instanceof String[]) {
             File file = new File(((String[]) event.data)[0]);
             if (file.exists() && file.isFile()) {
                 if (Activator.engineMonitor().isRunning()) {
                     // TODO initiate import
-                    return Status.OK_STATUS;
+                	Activator.session().importFileResource(file);
+                	return Status.OK_STATUS;
                 } else {
                     Eclipse.INSTANCE.alert("You must be connected to an engine to import resources.");
                 }
+            } else {
+            	/*
+            	 * Check for URL - either 
+            	 */
             }
         }
         return Status.CANCEL_STATUS;

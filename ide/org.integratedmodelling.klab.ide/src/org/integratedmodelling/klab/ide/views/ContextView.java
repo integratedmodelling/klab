@@ -2,6 +2,7 @@
 package org.integratedmodelling.klab.ide.views;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -49,10 +50,16 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
+import org.integratedmodelling.klab.ide.navigator.model.EModel;
+import org.integratedmodelling.klab.ide.navigator.model.EObserver;
+import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
 import org.integratedmodelling.klab.ide.navigator.utils.SWTResourceManager;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class ContextView extends ViewPart {
 	public ContextView() {
@@ -100,7 +107,7 @@ public class ContextView extends ViewPart {
 			searchModeButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-				    KlabNavigator.refresh();
+					KlabNavigator.refresh();
 					// searchMode(searchModeButton.getSelection());
 				}
 			});
@@ -172,9 +179,9 @@ public class ContextView extends ViewPart {
 
 				@Override
 				public void mouseDown(MouseEvent e) {
-				    /*
-				     * TODO act as an interrupt button when the task is running
-				     */
+					/*
+					 * TODO act as an interrupt button when the task is running
+					 */
 					// if (_taskId >= 0) {
 					// showData(e.x, e.y);
 					// }
@@ -400,22 +407,37 @@ public class ContextView extends ViewPart {
 
 					boolean addToContext = (event.detail & DND.DROP_COPY) == DND.DROP_COPY;
 
-					System.out.println("DROPPED " + event.data);
-					
 					if (!Activator.engineMonitor().isRunning()) {
-					    Eclipse.INSTANCE.beep();
+						Eclipse.INSTANCE.alert("Please ensure the engine is running before making observations.");
 					} else {
-					    
-					    if (event.data instanceof TreeSelection && ((TreeSelection)event.data).getFirstElement() instanceof ETestCase) {
-					        File diocan = ((ETestCase)((TreeSelection)event.data).getFirstElement()).getScriptFile();
-					    }
+
+						Object dropped = event.data instanceof TreeSelection
+								? ((TreeSelection) event.data).getFirstElement()
+								: null;
+
+						if (dropped instanceof ETestCase || dropped instanceof EScript) {
+							File file = ((EKimObject) dropped).getPhysicalFile();
+							if (file != null) {
+								try {
+									if (dropped instanceof ETestCase) {
+										Activator.session().launchTest(file.toURI().toURL());
+									} else {
+										Activator.session().launchScript(file.toURI().toURL());
+									}
+								} catch (MalformedURLException e) {
+									Eclipse.INSTANCE.handleException(e);
+								}
+							}
+							
+						} else if (dropped instanceof EModel || dropped instanceof EConcept) {
+							Activator.session().observe((EKimObject) dropped);
+						} else if (dropped instanceof EObserver) {
+							Activator.session().observe((EObserver) dropped, addToContext);
+						} else if (dropped instanceof ResourceReference) {
+							Activator.session().previewResource((ResourceReference) dropped);
+						}
 					}
-					
-					// if (Activator.engine()
-					// .handleObservationAction(event.data, addToContext)) {
-					//
-					// action_1.setEnabled(true);
-					//
+
 					// /*
 					// * reset forcings to default
 					// */
@@ -431,7 +453,7 @@ public class ContextView extends ViewPart {
 	}
 
 	private void handleMessage(IMessage message) {
-		// TODO handle warnings and errors when they come from tasks
+
 		switch (message.getType()) {
 		case DataflowCompiled:
 			break;
@@ -653,7 +675,7 @@ public class ContextView extends ViewPart {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void dispose() {
 		klab.dispose();

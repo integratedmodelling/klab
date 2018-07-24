@@ -189,34 +189,34 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	public void post(Object... object) {
-		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.getBus().post(Message.create(engineStatusMonitor.getSessionId(), object));
+	public static void post(Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object));
 		}
 	}
 
-	public void post(Consumer<IMessage> responseHandler, Object... object) {
-		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.getBus().post(Message.create(engineStatusMonitor.getSessionId(), object),
+	public static void post(Consumer<IMessage> responseHandler, Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object),
 					responseHandler);
 		}
 	}
 
-	public void subscribe(String identity, Object receiver) {
-		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.getBus().subscribe(identity, receiver);
+	public static void subscribe(String identity, Object receiver) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().subscribe(identity, receiver);
 		}
 	}
 
-	public void unsubscribe(String identity, Object receiver) {
-		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.getBus().unsubscribe(identity, receiver);
+	public static void unsubscribe(String identity, Object receiver) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().unsubscribe(identity, receiver);
 		}
 	}
 
-	public void unsubscribe(String identity) {
-		if (engineStatusMonitor.isRunning()) {
-			engineStatusMonitor.getBus().unsubscribe(identity);
+	public static void unsubscribe(String identity) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().unsubscribe(identity);
 		}
 	}
 

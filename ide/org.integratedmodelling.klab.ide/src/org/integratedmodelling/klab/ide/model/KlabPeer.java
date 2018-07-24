@@ -67,12 +67,17 @@ public class KlabPeer {
 	}
 
 	public void send(Object... messages) {
+
 		if (eventAdmin == null) {
 			BundleContext ctx = FrameworkUtil.getBundle(Activator.class).getBundleContext();
 			ServiceReference<EventAdmin> ref = ctx.getServiceReference(EventAdmin.class);
 			eventAdmin = ctx.getService(ref);
 		}
-		IMessage message = Message.create(identity, messages);
+		
+		IMessage message = (messages.length == 1 && messages[0] instanceof IMessage) 
+				? (IMessage) messages[0]
+				: Message.create(identity, messages);
+				
 		eventAdmin.sendEvent(new Event("org/integratedmodelling/klab/" + sender + "/" + message.getType(),
 				Collections.singletonMap("KlabMessage", message)));
 	}

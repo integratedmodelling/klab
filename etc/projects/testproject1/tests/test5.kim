@@ -1,7 +1,7 @@
 worldview im;
 
 @test(
-	name = "tests.core.classification.simplest",
+	name = "tests.hypothetical.classifications.lookup",
 	description  = "Simplest classification test",
 	observations = ("geography:Elevation by im:Level")
 )
