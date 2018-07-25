@@ -13,7 +13,7 @@
  * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
  * in author tags. All rights reserved.
  */
-package org.integratedmodelling.klab.utils;
+package org.integratedmodelling.klab.client.utils;
 
 import java.io.File;
 import java.net.URL;
@@ -29,8 +29,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+// TODO: Auto-generated Javadoc
 /**
- * Obvious JSON utilities.
+ * The Class JsonUtils.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -103,7 +104,7 @@ public class JsonUtils {
 		return defaultMapper.convertValue(node, new TypeReference<Set<T>>() {
 		});
 	}
-
+	
 	/**
 	 * Load an object from a file.
 	 * 
@@ -112,14 +113,14 @@ public class JsonUtils {
 	 * @return the object
 	 * @throws KlabIOException
 	 */
-	public static <T> T load(File file, Class<T> cls) throws KlabIOException {
+	public static <T> T load(File file, Class<T> cls)  throws KlabIOException {
 		try {
 			return defaultMapper.readValue(file, cls);
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
 	}
-
+	
 	/**
 	 * Load an object from a URL.
 	 * 
@@ -128,14 +129,15 @@ public class JsonUtils {
 	 * @return the object
 	 * @throws KlabIOException
 	 */
-	public static <T> T load(URL url, Class<T> cls) throws KlabIOException {
+	public static <T> T load(URL url, Class<T> cls)  throws KlabIOException {
 		try {
 			return defaultMapper.readValue(url, cls);
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
 	}
-
+	
+	
 	/**
 	 * Serialize an object to a file.
 	 * 

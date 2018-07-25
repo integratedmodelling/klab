@@ -17,4 +17,8 @@ public class Organizer extends TypedContainer {
 		this.folders = folders;
 	}
 
+	public Item findItem(String id) {
+		return null;
+	}
+	
 }

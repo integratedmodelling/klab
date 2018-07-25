@@ -111,17 +111,12 @@ public interface IMessage {
 		 * F->B: notification for projects in IDE workspace that are opened and the
 		 * engine may not be aware of.
 		 */
-		UserProjectOpened,
-
+		UserProjectOpened, UserProjectModified, UserProjectDeleted,
+		
 		/**
-		 * F->B: sent when a project is modified, with details about the modification.
+		 * F->B: notification when files are changed, added or deleted
 		 */
-		UserProjectModified,
-
-		/**
-		 * F->B: sent when a project is modified, with details about the modification.
-		 */
-		UserProjectDeleted,
+		ProjectFileAdded, ProjectFileModified, ProjectFileDeleted,
 
 		/*
 		 * --- Notification-class types ---

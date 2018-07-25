@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
-import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
-import org.integratedmodelling.klab.ide.navigator.utils.SWTResourceManager;
 import org.integratedmodelling.klab.rest.Capabilities;
 
 public class RuntimeView extends ViewPart {

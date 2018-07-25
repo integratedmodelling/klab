@@ -3,8 +3,13 @@ package org.integratedmodelling.klab.ide.model;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -14,23 +19,51 @@ import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
 
 /**
- * Front-end session proxy and receiver for session messages.
+ * Front-end session proxy and receiver for session messages. Maintains and
+ * manages state for the session, including the list of available resources and
+ * the history of user actions and their consequences.
  * 
  * @author ferdinando.villa
  *
  */
 public class KlabSession extends KlabPeer {
 
+	private AtomicLong queryCounter = new AtomicLong();
+	
+	/*
+	 * All resources read or imported, along with their status, indexed by URN. Used
+	 * by the navigator and the Resources view.
+	 */
+	private Map<String, ResourceReference> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * all tasks in the session, indexed by ID of root context. Each task reference
+	 * is linked to child descriptors for dataflow, artifacts produced and log
+	 * entries. Used to populate the task tree in the runtime view. Maintains
+	 * chronological order.
+	 */
+	private Map<String, List<TaskReference>> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
 	}
+
+	/*
+	 * --- State management
+	 */
+
+	/*
+	 * --- Front-end action triggers ---
+	 */
 
 	public void importFileResource(File file) {
 		try {
@@ -62,9 +95,24 @@ public class KlabSession extends KlabPeer {
 		// TODO Auto-generated method stub
 	}
 
+	public long startQuery(String query) {
+		
+		long queryIndex = queryCounter.getAndIncrement();
+		
+		SearchRequest request = new SearchRequest();
+		request.setRequestId(queryIndex);
+		request.setQueryString(query);
+		
+		return queryIndex;
+	}
+
+	// nah, use the response feature in the message bus and make it right
+	public void continueQuery(String query, long previous) {
+		// 
+	}
 
 	/*
-	 * ----- Message handlers -----
+	 * ----- Back-end message handlers -----
 	 */
 
 	/*
@@ -97,15 +145,25 @@ public class KlabSession extends KlabPeer {
 	}
 
 	@MessageHandler(type = Type.TaskFinished)
-	public void finishTask(IMessage message, TaskReference task, IMessageBus bus) {
+	public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler(type = Type.TaskAborted)
-	public void abortTask(IMessage message, TaskReference task, IMessageBus bus) {
+	public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
 		bus.unsubscribe(task.getId());
+	}
+	
+	@MessageHandler
+	public void handleSearchResponse(SearchResponse response) {
+		
+	}
+	
+	@MessageHandler
+	public void handleObservation(ObservationReference observation) {
+		
 	}
 
 	@MessageHandler

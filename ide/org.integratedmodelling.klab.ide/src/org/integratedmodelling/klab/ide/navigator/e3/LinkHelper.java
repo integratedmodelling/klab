@@ -53,11 +53,11 @@ public class LinkHelper implements ILinkHelper {
         }
 
         if (aSelection.getFirstElement() instanceof ENamespace) {
-            Eclipse.INSTANCE.openFile(((ENamespace) aSelection.getFirstElement()).getAdapter(IFile.class), 0);
+            Eclipse.INSTANCE.openFile(((ENamespace) aSelection.getFirstElement()).getIFile(), 0);
         } else if (aSelection.getFirstElement() instanceof EKimObject) {
             EKimObject kob = (EKimObject) aSelection.getFirstElement();
             ENamespace kns = kob.getEParent(ENamespace.class);
-            Eclipse.INSTANCE.openFile(kns.getAdapter(IFile.class), kob.getFirstLine());
+            Eclipse.INSTANCE.openFile(kns.getIFile(), kob.getFirstLine());
         }
     }
 

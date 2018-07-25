@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
-import org.integratedmodelling.klab.ide.navigator.utils.SWTResourceManager;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 
 public class Badge extends Canvas {

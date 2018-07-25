@@ -4,8 +4,4 @@ import org.eclipse.ui.navigator.CommonActionProvider;
 
 public class KlabNavigatorActionProvider extends CommonActionProvider {
 
-	public KlabNavigatorActionProvider() {
-		// TODO Auto-generated constructor stub
-	}
-
 }

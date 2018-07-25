@@ -42,5 +42,6 @@ Export-Package: org.integratedmodelling.kdl.api,
  org.integratedmodelling.klab.common,
  org.integratedmodelling.klab.exceptions,
  org.integratedmodelling.klab.monitoring,
+ org.integratedmodelling.klab.organizer,
  org.integratedmodelling.klab.rest,
  org.integratedmodelling.klab.utils
