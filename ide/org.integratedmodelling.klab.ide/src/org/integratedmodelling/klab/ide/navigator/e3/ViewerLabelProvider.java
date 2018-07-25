@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;

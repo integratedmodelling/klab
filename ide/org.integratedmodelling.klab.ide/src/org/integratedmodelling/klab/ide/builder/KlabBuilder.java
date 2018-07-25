@@ -122,6 +122,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
     protected void clean(IProgressMonitor monitor) throws CoreException {
         // delete markers set and files created
         getProject().deleteMarkers(MARKER_TYPE, true, IResource.DEPTH_INFINITE);
+        KlabNavigator.refresh();
     }
 
     void checkXML(IResource resource) {

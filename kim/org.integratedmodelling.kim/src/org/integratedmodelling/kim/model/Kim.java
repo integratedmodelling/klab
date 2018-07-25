@@ -29,11 +29,21 @@ import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.generator.GeneratorDelegate;
+import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
+import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IConceptDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -45,7 +55,6 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -54,6 +63,7 @@ import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
@@ -66,6 +76,9 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
+import org.xml.sax.helpers.NamespaceSupport;
+
+import com.google.inject.Injector;
 
 /**
  * Parsing functions and interfaces. Holds the state of the knowledge base as
@@ -1293,38 +1306,30 @@ public enum Kim {
 		return props.exists() && props.isFile();
 	}
 
-	// /**
-	// * Load an individual namespace, without dependencies or imports.
-	// *
-	// * @param file
-	// * @return
-	// */
-	// public IKimNamespace load(File file) {
-	//
-	//
-	// Injector injector = new
-	// KimStandaloneSetup().createInjectorAndDoEMFRegistration();
-	// XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-	// resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-	// IResourceValidator validator =
-	// injector.getInstance(IResourceValidator.class);
-	// InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-	// Resource resource =
-	// resourceSet.getResource(URI.createFileURI(file.toString()), true);
-	// List<Issue> issues = validator.validate(resource, CheckMode.ALL,
-	// CancelIndicator.NullImpl);
-	// for (Issue issue : issues) {
-	// if (issue.getSeverity() == Severity.ERROR) {
-	// Kim.INSTANCE.reportLibraryError(issue);
-	// }
-	// }
-	// Model model = (Model) resource.getContents().get(0);
-	// GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
-	// generator.doGenerate(resource, fsa);
-	// return
-	// getCommonProject().getNamespace(EcoreUtil.getURI(model.getNamespace()),
-	// model.getNamespace(), true);
-	//
-	// }
+	/**
+	 * Load an individual namespace, without dependencies or imports.
+	 *
+	 * @param file
+	 * @return
+	 */
+	public IKimNamespace load(File file) {
+
+		Injector injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
+		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
+		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		IResourceValidator validator = injector.getInstance(IResourceValidator.class);
+		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+		Resource resource = resourceSet.getResource(URI.createFileURI(file.toString()), true);
+		List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+		for (Issue issue : issues) {
+			if (issue.getSeverity() == Severity.ERROR) {
+				Kim.INSTANCE.reportLibraryError(issue);
+			}
+		}
+		Model model = (Model) resource.getContents().get(0);
+		GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
+		generator.doGenerate(resource, fsa);
+		return getNamespace(model.getNamespace(), true);
+	}
 
 }

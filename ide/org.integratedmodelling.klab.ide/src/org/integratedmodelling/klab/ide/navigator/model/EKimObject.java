@@ -124,6 +124,4 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 		return ifile == null ? null : ifile.getLocation().toFile();
 	}
 
-
-
 }

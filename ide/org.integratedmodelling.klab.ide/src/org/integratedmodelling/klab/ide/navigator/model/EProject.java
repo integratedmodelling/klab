@@ -12,7 +12,7 @@ public class EProject extends ENavigatorItem {
 
     IKimProject delegate;
 
-    protected EProject(IKimProject project, ENavigatorItem parent) {
+    public EProject(IKimProject project, ENavigatorItem parent) {
         super(project.getName(), parent);
         this.delegate = project;
     }

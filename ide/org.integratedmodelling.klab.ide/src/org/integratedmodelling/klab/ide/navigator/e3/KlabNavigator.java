@@ -27,13 +27,13 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.navigator.model.EWorkspace;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.ProjectReference;
@@ -65,7 +65,7 @@ public class KlabNavigator extends CommonNavigator  {
 
 	@Override
 	protected Object getInitialInput() {
-    	return ResourcesPlugin.getWorkspace().getRoot();
+    	return EWorkspace.INSTANCE;
 	}
 
 	public static void refresh() {
@@ -73,7 +73,7 @@ public class KlabNavigator extends CommonNavigator  {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    _viewer.refresh();
+                    _viewer.setInput(EWorkspace.INSTANCE);
                 }
             });
         }

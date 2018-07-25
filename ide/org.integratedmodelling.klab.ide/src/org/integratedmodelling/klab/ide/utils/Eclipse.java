@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -22,6 +24,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -196,9 +199,12 @@ public enum Eclipse {
 			importOperation.setCreateContainerStructure(false);
 			importOperation.run(new NullProgressMonitor());
 
+			project.open(new NullProgressMonitor());
+
 		} catch (Exception e) {
 			error(e);
 		}
+		
 		return project;
 	}
 
@@ -232,10 +238,16 @@ public enum Eclipse {
 		return null;
 	}
 
-	public <T> Collection<T> chooseMany(String question, Collection<T> alternatives) {
+	@SuppressWarnings("unchecked")
+	public <T> Collection<T> chooseMany(String question, Collection<T> alternatives, Function<T, Image> imageProvider) {
 
 		CheckedTreeSelectionDialog dialog = new CheckedTreeSelectionDialog(Eclipse.INSTANCE.getShell(),
-				new LabelProvider(), new ITreeContentProvider() {
+				new LabelProvider() {
+					@Override
+					public Image getImage(Object element) {
+						return imageProvider.apply((T) element);
+					}
+				}, new ITreeContentProvider() {
 
 					@Override
 					public boolean hasChildren(Object element) {
@@ -257,16 +269,20 @@ public enum Eclipse {
 						return parentElement instanceof Collection ? alternatives.toArray() : null;
 					}
 				});
-		
+
 		dialog.setTitle("Choose one or more");
 		dialog.setMessage(question);
 		dialog.setInput(alternatives);
+		List<T> ret = new ArrayList<T>();
+
 		if (dialog.open() != Window.OK) {
-			return new ArrayList<T>();
+			return ret;
 		}
 		Object[] result = dialog.getResult();
-		System.out.println("foccka foccka " + result);
-		return null;
+		for (Object o : result) {
+			ret.add((T)o);
+		}
+		return ret;
 	}
 
 	public void error(Object message) {
@@ -292,8 +308,16 @@ public enum Eclipse {
 		}
 	}
 
+	/**
+	 * A more idiomatic getProject that will return null if the project does not
+	 * exist.
+	 * 
+	 * @param name
+	 * @return an Eclipse project or null
+	 */
 	public IProject getProject(String name) {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		return project.exists() ? project : null;
 	}
 
 }

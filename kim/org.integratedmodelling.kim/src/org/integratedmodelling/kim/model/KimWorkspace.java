@@ -115,7 +115,7 @@ public class KimWorkspace implements IKimWorkspace {
 		}
 	}
 
-	static Collection<KimWorkspace> getWorkspaces() {
+	public static Collection<KimWorkspace> getWorkspaces() {
 		return workspacesByURI.values();
 	}
 

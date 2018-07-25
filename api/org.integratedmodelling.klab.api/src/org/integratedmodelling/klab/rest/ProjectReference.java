@@ -39,7 +39,7 @@ public class ProjectReference {
 
 	@Override
 	public String toString() {
-		return "ProjectReference [name=" + name + "]";
+		return name;
 	}
 	
 	

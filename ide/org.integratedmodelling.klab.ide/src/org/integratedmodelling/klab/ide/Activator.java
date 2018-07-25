@@ -1,11 +1,14 @@
 package org.integratedmodelling.klab.ide;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -14,6 +17,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
+import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
@@ -21,7 +25,10 @@ import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
+import org.integratedmodelling.klab.ide.navigator.utils.ResourceManager;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.osgi.framework.BundleContext;
@@ -40,8 +47,8 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	String relayId = "relay" + NameGenerator.shortUUID();
 	private KlabEngine engine;
-    private KlabExplorer explorer;
-    private KlabSession session;
+	private KlabExplorer explorer;
+	private KlabSession session;
 
 	/**
 	 * The constructor
@@ -132,9 +139,8 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	private void engineOff() {
-		this.engine
-				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
-						IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
+		this.engine.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
+				IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
 
 		System.out.println("--------------\nEngine went off\n----------------");
 	}
@@ -151,9 +157,31 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), this.engine);
 		this.engineStatusMonitor.getBus().subscribe(sessionId, this.session);
 		this.engineStatusMonitor.getBus().subscribe(relayId, this.explorer);
-		this.engine
-				.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
-						IMessage.Type.EngineUp, this.engineStatusMonitor.getCapabilities()));
+		this.engine.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
+				IMessage.Type.EngineUp, this.engineStatusMonitor.getCapabilities()));
+
+		/*
+		 * offer to import any k.LAB local projects that are not in the workspace. TODO
+		 * may also offer to import the worldview for developers.
+		 */
+		Display.getDefault().asyncExec(() -> {
+			
+			List<ProjectReference> missingProjects = new ArrayList<>();
+			for (ProjectReference project : this.engineStatusMonitor.getCapabilities().getLocalWorkspaceProjects()) {
+				if (Eclipse.INSTANCE.getProject(project.getName()) == null) {
+					missingProjects.add(project);
+				}
+			}
+			if (missingProjects.size() > 0) {
+				Collection<ProjectReference> choices = Eclipse.INSTANCE.chooseMany(
+						"The following projects are in k.LAB but not in the workspace. Do you want to import them?",
+						missingProjects,
+						(project) -> ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif"));
+				for (ProjectReference choice : choices) {
+					Eclipse.INSTANCE.importExistingProject(choice.getRootPath());
+				}
+			}
+		});
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -167,18 +195,18 @@ public class Activator extends AbstractUIPlugin {
 	public static EngineMonitor engineMonitor() {
 		return get().engineStatusMonitor;
 	}
-	
-    public static KlabEngine engine() {
-        return get().engine;
-    }
 
-    public static KlabSession session() {
-        return get().session;
-    }
+	public static KlabEngine engine() {
+		return get().engine;
+	}
 
-    public static KlabExplorer explorer() {
-        return get().explorer;
-    }
+	public static KlabSession session() {
+		return get().session;
+	}
+
+	public static KlabExplorer explorer() {
+		return get().explorer;
+	}
 
 	/**
 	 * Returns the shared instance

@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -27,12 +26,12 @@ public class TreeContentProvider extends WorkbenchContentProvider {
     }
 
     public Object[] getChildren(Object parent) {
-        return parent instanceof IWorkspaceRoot ? EWorkspace.INSTANCE.getEChildren()
+        return parent instanceof EWorkspace ? EWorkspace.INSTANCE.getEChildren()
                 : ((ENavigatorItem) parent).getEChildren();
     }
 
     public Object getParent(Object element) {
-        return element instanceof EProject ? ResourcesPlugin.getWorkspace().getRoot()
+        return element instanceof EProject ? EWorkspace.INSTANCE
                 : ((ENavigatorItem) element).getEParent();
     }
 

@@ -158,7 +158,7 @@ public class RuntimeView extends ViewPart {
 
             verLabel = new Label(grpStatus, SWT.NONE);
             verLabel.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
-            GridData gd_verLabel = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+            GridData gd_verLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
             gd_verLabel.widthHint = 96;
             verLabel.setLayoutData(gd_verLabel);
 
@@ -170,7 +170,7 @@ public class RuntimeView extends ViewPart {
 
             memLabel = new Label(grpStatus, SWT.NONE);
             memLabel.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
-            GridData gd_memLabel = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+            GridData gd_memLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
             gd_memLabel.widthHint = 85;
             memLabel.setLayoutData(gd_memLabel);
 
@@ -182,7 +182,7 @@ public class RuntimeView extends ViewPart {
 
             upLabel = new Label(grpStatus, SWT.NONE);
             upLabel.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
-            GridData gd_upLabel = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+            GridData gd_upLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
             gd_upLabel.widthHint = 96;
             upLabel.setLayoutData(gd_upLabel);
 

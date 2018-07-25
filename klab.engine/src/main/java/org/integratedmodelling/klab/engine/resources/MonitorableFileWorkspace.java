@@ -31,6 +31,7 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 
 	static String resourceTemplate = "{\n}";
 	static String propertiesTemplate = "klab.version = 0.0.1\n";
+	static String knowledgeTemplate = "namespace __PROJECT__;\n\n";
 
 	MonitorableFileWorkspace() {
 	}
@@ -60,6 +61,8 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
 			FileUtils.writeStringToFile(
 					new File(dir + File.separator + "META-INF" + File.separator + "klab.properties"),
 					propertiesTemplate, false);
+			FileUtils.writeStringToFile(new File(dir + File.separator + "META-INF" + File.separator + "knowledge.kim"),
+					knowledgeTemplate.replaceAll("__PROJECT__", projectId), false);
 			FileUtils.writeStringToFile(
 					new File(dir + File.separator + "resources" + File.separator + "resources.json"), resourceTemplate,
 					false);
