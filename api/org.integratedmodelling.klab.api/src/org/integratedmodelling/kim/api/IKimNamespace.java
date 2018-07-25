@@ -61,4 +61,11 @@ public interface IKimNamespace extends IKimStatement {
      * @return
      */
     List<IKimStatement> getAllStatements();
+
+    /**
+     * True if this is the META-INF/knowledge.kim file for the project.
+     *  
+     * @return
+     */
+	boolean isProjectKnowledge();
 }

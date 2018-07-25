@@ -135,4 +135,9 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.getResourceId();
 	}
 
+	@Override
+	public boolean isProjectKnowledge() {
+		return delegate.isProjectKnowledge();
+	}
+
 }

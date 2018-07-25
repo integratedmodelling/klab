@@ -32,14 +32,15 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     private Map<String, Object> symbolTable = new HashMap<>();
     private String scriptId;
     private String testCaseId;
-    private boolean isWorldviewBound = false;
+    private boolean worldviewBound = false;
     private File file;
-
+    private boolean projectKnowledge;
     private boolean annotationsScanned = false;
     
     public KimNamespace(Namespace namespace, KimProject project) {
         super(namespace, null);
         this.name = KimProject.getNamespaceId(namespace);
+        this.projectKnowledge = namespace.eResource().getURI().toString().contains("META-INF/knowledge.kim");
         if (namespace.eResource().getURI().isFile()) {
             this.file = new File(namespace.eResource().getURI().toFileString());
             if (file.exists()) {
@@ -51,7 +52,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         }
         this.project = project;
         // worldview-bound anonymous namespaces are private by design.
-        this.isWorldviewBound = namespace.isWorldviewBound();
+        this.worldviewBound = namespace.isWorldviewBound();
         this.isPrivate = namespace.isPrivate() | namespace.isWorldviewBound();
         this.inactive = namespace.isInactive();
         this.scenario = namespace.isScenario();
@@ -63,7 +64,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
     @Override
     public boolean isWorldviewBound() {
-        return isWorldviewBound;
+        return worldviewBound;
     }
     
     @Override
@@ -72,7 +73,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     }
 
     public void setWorldviewBound(boolean isWorldviewBound) {
-        this.isWorldviewBound = isWorldviewBound;
+        this.worldviewBound = isWorldviewBound;
     }
 
     public KimNamespace(String id, File file) {
@@ -235,4 +236,9 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         }
         
     }
+
+	@Override
+	public boolean isProjectKnowledge() {
+		return projectKnowledge;
+	}
 }
