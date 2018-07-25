@@ -251,7 +251,7 @@ public class Actuator implements IActuator {
 							IMessage.Type.NewObservation,
 							Observations.INSTANCE.createArtifactDescriptor((IObservation) ret,
 									ctx.getContextObservation().equals(ret) ? null : ctx.getContextObservation(),
-									ITime.INITIALIZATION, -1)));
+									ITime.INITIALIZATION, -1).withTaskId(ctx.getMonitor().getIdentity().getId())));
 		}
 
 		/*

@@ -283,6 +283,20 @@ public class KimWorkspace implements IKimWorkspace {
 		KimWorkspace ret = getWorkspaceForURI(resourceURI.toString());
 
 		if (ret == null) {
+
+			/*
+			 * TRY FIRST OF ALL TO USE A URNRESOLVER and if available, lookup the workspace
+			 * using the URI of the WS FILE. IF NOT AVAILABLE, DO THE THINGY BELOW.
+			 */
+			// UriResolver resolver = Kim.INSTANCE.getUriResolver(resourceURI.scheme());
+			// if (resolver != null) {
+			// File wsFile =
+			// resolver.resolveResourceUriToWorkspaceRootDirectory(resourceURI);
+			// if (wsFile != null) {
+			// ret = new KimWorkspace(wsFile, wsFile);
+			// }
+			// }
+
 			try {
 				URL url = new URL(resourceURI.toString());
 				String path = url.getPath();
@@ -323,11 +337,11 @@ public class KimWorkspace implements IKimWorkspace {
 				// just leave the workspace null
 			}
 		}
-		
+
 		if (ret == null) {
 			// file outside of any project
 		}
-		
+
 		return ret;
 	}
 
@@ -393,6 +407,14 @@ public class KimWorkspace implements IKimWorkspace {
 		return null;
 	}
 
+	/*
+	 * FIXME ensure that only FILE uris end up in worskpaceByURI. That's it - on
+	 * Eclipse use the platform helper, otherwise just leave as is.
+	 * 
+	 * @param resUri
+	 * 
+	 * @return
+	 */
 	private static KimWorkspace getWorkspaceForURI(String resUri) {
 		for (String uri : workspacesByURI.keySet()) {
 			if (resUri.startsWith(uri)) {
@@ -401,16 +423,6 @@ public class KimWorkspace implements IKimWorkspace {
 		}
 		return null;
 	}
-
-	// @Override
-	// protected String getStringRepresentation(int offset) {
-	// return null;
-	// }
-
-	// @Override
-	// public String getLocationDescriptor() {
-	// return root.toString();
-	// }
 
 	public void registerProject(KimProject project, URL projectUrl) {
 		projectsByURI.put(projectUrl.toString(), project);

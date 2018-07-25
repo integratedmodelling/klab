@@ -165,7 +165,6 @@ public enum Kim {
 	 * now, k.LAB requires all resources to be filesystem based.
 	 */
 	public static interface UriResolver {
-
 		File resolveResourceUriToWorkspaceRootDirectory(URI uri);
 	}
 

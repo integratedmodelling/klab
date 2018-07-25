@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,10 @@ public class EProject extends ENavigatorItem {
 
 	public String getName() {
 		return delegate.getName();
+	}
+
+	public File getRoot() {
+		return delegate.getRoot();
 	}
 
 }
