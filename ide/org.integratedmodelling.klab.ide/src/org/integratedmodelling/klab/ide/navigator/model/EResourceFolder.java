@@ -1,17 +1,22 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 
 public class EResourceFolder extends ENavigatorItem {
 
-	IKimProject project;
+	EProject project;
 
 	public EResourceFolder(EProject parent) {
 		super(parent.id + "#__RESOURCES__", parent);
-		this.project = parent.delegate;
+		this.project = parent;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -26,14 +31,16 @@ public class EResourceFolder extends ENavigatorItem {
 
 	@Override
 	public ENavigatorItem[] getEChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ENavigatorItem> ret = new ArrayList<>();
+		for (EResourceReference resource : Activator.klab().getProjectResources(project)) {
+			ret.add(new EResource(resource, this));
+		}
+		return ret.toArray(new ENavigatorItem[ret.size()]);
 	}
 
 	@Override
 	public boolean hasEChildren() {
-		// TODO Auto-generated method stub
-		return false;
+		return Activator.klab().getProjectResources(project).size() > 0;
 	}
 
 }

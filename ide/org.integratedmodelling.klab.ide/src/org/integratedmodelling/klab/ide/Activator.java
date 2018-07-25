@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.ide.model.Klab;
 import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
@@ -45,10 +46,11 @@ public class Activator extends AbstractUIPlugin {
 	 * identity for relaying messages sent from Web UI to session
 	 */
 	String relayId = "relay" + NameGenerator.shortUUID();
+	private Klab klab = new Klab();
 	private KlabEngine engine;
 	private KlabExplorer explorer;
 	private KlabSession session;
-
+	
 	/**
 	 * The constructor
 	 */
@@ -205,6 +207,10 @@ public class Activator extends AbstractUIPlugin {
 
 	public static KlabExplorer explorer() {
 		return get().explorer;
+	}
+	
+	public static Klab klab() {
+		return get().klab;
 	}
 
 	/**

@@ -3,12 +3,14 @@ package org.integratedmodelling.klab.ide.navigator.e3;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.ide.Activator;
@@ -17,11 +19,13 @@ import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
+import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 
 public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider, IColorProvider, IFontProvider {
 
@@ -134,6 +138,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof ETestFolder) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
 		}
+		if (element instanceof EResource) {
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
+		}
 		return delegate.getImage(element);
 	}
 
@@ -192,7 +199,11 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
 	@Override
 	public Color getForeground(Object element) {
-		// TODO Auto-generated method stub
+		if (element instanceof EResource) {
+			EResourceReference resource = ((EResource) element).getResource();
+			return /* TODO errors in red */ SWTResourceManager
+					.getColor(resource.isOnline() ? SWT.COLOR_DARK_GREEN : SWT.COLOR_DARK_GRAY);
+		}
 		return null;
 	}
 

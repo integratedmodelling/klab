@@ -8,6 +8,17 @@ public class TaskReference {
 	private String description;
 	private String error;
 
+	public TaskReference() {
+	}
+	
+	public TaskReference(TaskReference other) {
+		this.id = other.id;
+		this.parentId = other.parentId;
+		this.urn = other.urn;
+		this.description = other.description;
+		this.error = other.error;
+	}
+	
 	// TODO provenance info - agent, cause etc
 	public String getId() {
 		return id;
@@ -54,5 +65,4 @@ public class TaskReference {
         return "TaskReference [id=" + id + ", description=" + description + "]";
     }
 
-	
 }

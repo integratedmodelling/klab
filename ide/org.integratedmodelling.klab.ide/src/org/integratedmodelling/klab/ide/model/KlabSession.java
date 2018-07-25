@@ -3,11 +3,6 @@ package org.integratedmodelling.klab.ide.model;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -39,20 +34,6 @@ public class KlabSession extends KlabPeer {
 
 	private AtomicLong queryCounter = new AtomicLong();
 	
-	/*
-	 * All resources read or imported, along with their status, indexed by URN. Used
-	 * by the navigator and the Resources view.
-	 */
-	private Map<String, ResourceReference> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
-
-	/*
-	 * all tasks in the session, indexed by ID of root context. Each task reference
-	 * is linked to child descriptors for dataflow, artifacts produced and log
-	 * entries. Used to populate the task tree in the runtime view. Maintains
-	 * chronological order.
-	 */
-	private Map<String, List<TaskReference>> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
-
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
 	}

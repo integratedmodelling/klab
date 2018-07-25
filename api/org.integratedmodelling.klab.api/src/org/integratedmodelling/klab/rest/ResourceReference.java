@@ -26,7 +26,29 @@ public class ResourceReference {
     private List<ResourceReference> history = new ArrayList<>();
     private List<Notification> notifications = new ArrayList<>();
 
-    public String getUrn() {
+    public ResourceReference() {
+    }
+
+    public ResourceReference(ResourceReference other) {
+		this.urn = other.urn;
+		this.version = other.version;
+		this.adapterType = other.adapterType;
+		this.localPath = other.localPath;
+		this.geometry = other.geometry;
+		this.projectName = other.projectName;
+		this.localName = other.localName;
+		this.type = other.type;
+		this.resourceTimestamp = other.resourceTimestamp;
+		this.metadata = other.metadata;
+		this.parameters = other.parameters;
+		this.localPaths = other.localPaths;
+		this.history = other.history;
+		this.notifications = other.notifications;
+	}
+
+
+
+	public String getUrn() {
         return urn;
     }
 
