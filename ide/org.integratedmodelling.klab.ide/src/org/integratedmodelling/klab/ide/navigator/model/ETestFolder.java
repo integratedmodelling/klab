@@ -1,13 +1,14 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.Kim;
 
 public class ETestFolder extends ENavigatorItem {
 
@@ -31,10 +32,12 @@ public class ETestFolder extends ENavigatorItem {
 	@Override
 	public ENavigatorItem[] getEChildren() {
 		List<ENavigatorItem> ret = new ArrayList<>();
-		for (IKimNamespace child : project.getNamespaces()) {
-			if (child.isWorldviewBound() && child.getTestCaseId() != null) {
-				ret.add(new ETestCase(child, this));
-			}
+		File folder = new File(project.getRoot() + File.separator + IKimProject.TESTS_FOLDER);
+		for (File script : folder.listFiles()) {
+		    if (script.toString().endsWith(".kim")) {
+		        // TODO find a way to not reload if it was loaded before
+		        ret.add(new ETestCase(Kim.INSTANCE.load(script), this));
+		    }
 		}
 		return ret.toArray(new ENavigatorItem[ret.size()]);
 	}

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -115,6 +116,14 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
         	if (ret instanceof IFile) {
         		return (IFile)ret;
         	}
+    	} else if (uri.toString().startsWith("file:/")) {
+            try {
+                IFile[] ret = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new java.net.URI(uri.toString()));
+                if (ret != null && ret.length > 0) {
+                    return ret[0];
+                }
+            } catch (URISyntaxException e) {
+            }
     	}
         return null;
     }

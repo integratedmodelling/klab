@@ -179,7 +179,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof ETestFolder) {
 			return "Test cases";
 		}
-		return delegate.getText(element);
+        if (element instanceof EResource) {
+            return ((EResource)element).getId();
+        }
+        return delegate.getText(element);
 	}
 
 	@Override

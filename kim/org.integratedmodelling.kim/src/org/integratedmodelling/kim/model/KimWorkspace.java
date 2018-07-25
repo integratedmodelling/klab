@@ -38,395 +38,355 @@ import com.google.inject.Injector;
 
 public class KimWorkspace implements IKimWorkspace {
 
-	private File root;
-	private URL url;
-	private String name;
-	private boolean read;
-	private File[] overridingProjects;
-	private Set<File> projectLocations = new HashSet<>();
-	private Set<String> projectNames = new HashSet<>();
+    private File root;
+    private URL url;
+    private String name;
+    private boolean read;
+    private File[] overridingProjects;
+    private Set<File> projectLocations = new HashSet<>();
+    private Set<String> projectNames = new HashSet<>();
 
-	// projects are indexed by name and URI prefix
-	private Map<String, KimProject> allProjects = new HashMap<>();
-	private Map<String, KimProject> projectsByURI = new HashMap<>();
+    // projects are indexed by name and URI prefix
+    private Map<String, KimProject> allProjects = new HashMap<>();
+    private Map<String, KimProject> projectsByURI = new HashMap<>();
 
-	private static Map<String, KimWorkspace> workspacesByURI = new HashMap<>();
+    private static Map<String, KimWorkspace> workspacesByURI = new HashMap<>();
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Collection<File> getProjectLocations() {
-		return projectLocations;
-	}
+    public Collection<File> getProjectLocations() {
+        return projectLocations;
+    }
 
-	public Collection<String> getProjectNames() {
-		return projectNames;
-	}
+    public Collection<String> getProjectNames() {
+        return projectNames;
+    }
 
-	public Collection<KimProject> getProjects() {
-		return allProjects.values();
-	}
+    public Collection<KimProject> getProjects() {
+        return allProjects.values();
+    }
 
-	public KimProject getProject(String projectId) {
-		return allProjects.get(projectId);
-	}
+    public KimProject getProject(String projectId) {
+        return allProjects.get(projectId);
+    }
 
-	@Override
-	public KimProject loadProject(File root) {
-		String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
-		if (projectLocations.contains(root)) {
-			return allProjects.get(pname);
-		}
-		KimProject project = new KimProject(this, pname, overrideIfPresent(root, this.overridingProjects));
-		allProjects.put(pname, project);
-		projectLocations.add(root);
-		projectNames.add(pname);
-		return project;
-	}
+    @Override
+    public KimProject loadProject(File root) {
+        
+        String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
+        if (projectLocations.contains(root)) {
+            return allProjects.get(pname);
+        }
+        KimProject project = new KimProject(this, pname, overrideIfPresent(root, this.overridingProjects));
+        allProjects.put(pname, project);
+        projectLocations.add(root);
+        projectNames.add(pname);
+        return project;
+    }
 
-	// not reentrant at the moment.
-	public void readProjects() {
+    // not reentrant at the moment.
+    public void readProjects() {
 
-		if (!read) {
+        if (!read) {
 
-			this.name = Utils.getFileBaseName(this.root);
+            this.name = Utils.getFileBaseName(this.root);
 
-			try {
-				this.url = normalize(root.toURI().toURL());
-			} catch (MalformedURLException e) {
-				throw new RuntimeException(e);
-			}
-			if (root.exists()) {
-				for (File dir : root.listFiles()) {
-					if (dir.isDirectory()
-							&& new File(dir + File.separator + "META-INF" + File.separator + "klab.properties")
-									.exists()) {
-						loadProject(dir);
-					}
-				}
-			}
+            try {
+                this.url = normalize(root.toURI().toURL());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            if (root.exists()) {
+                for (File dir : root.listFiles()) {
+                    if (dir.isDirectory()
+                            && new File(dir + File.separator + "META-INF" + File.separator + "klab.properties")
+                                    .exists()) {
+                        loadProject(dir);
+                    }
+                }
+            }
 
-			read = true;
-		}
-	}
+            read = true;
+        }
+    }
 
-	public static Collection<KimWorkspace> getWorkspaces() {
-		return workspacesByURI.values();
-	}
+    public static Collection<KimWorkspace> getWorkspaces() {
+        return workspacesByURI.values();
+    }
 
-	/**
-	 * Constructor for a file-based workspace. This one will be able to enumerate
-	 * its projects and Kim resources after construction. You can pass any number of
-	 * project directories that will override the ones in the library if they
-	 * specify a project of the same name.
-	 * 
-	 * @param root
-	 * @param overridingProjects
-	 */
-	public KimWorkspace(File root, File... overridingProjects) {
-		this.root = root;
-		try {
-			this.url = normalize(root.toURI().toURL());
-		} catch (MalformedURLException e) {
-			// aaaargh
-			throw new RuntimeException(e);
-		}
-		this.overridingProjects = overridingProjects;
-		workspacesByURI.put(this.url.toString(), this);
-	}
+    /**
+     * Constructor for a file-based workspace. This one will be able to enumerate
+     * its projects and Kim resources after construction. You can pass any number of
+     * project directories that will override the ones in the library if they
+     * specify a project of the same name.
+     * 
+     * @param root
+     * @param overridingProjects
+     */
+    public KimWorkspace(File root, File... overridingProjects) {
+        this.root = root;
+        try {
+            this.url = normalize(root.toURI().toURL());
+        } catch (MalformedURLException e) {
+            // aaaargh
+            throw new RuntimeException(e);
+        }
+        this.overridingProjects = overridingProjects;
+        workspacesByURI.put(this.url.toString(), this);
+    }
 
-	private URL normalize(URL url2) {
-		String us = url2.toString();
-		if (us.endsWith("/")) {
-			us = us.substring(0, us.length() - 1);
-			try {
-				url2 = new URL(us);
-			} catch (MalformedURLException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return url2;
-	}
+    private URL normalize(URL url2) {
+        String us = url2.toString();
+        if (us.endsWith("/")) {
+            us = us.substring(0, us.length() - 1);
+            try {
+                url2 = new URL(us);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return url2;
+    }
 
-	private File overrideIfPresent(File dir, File[] overridingProjects) {
-		// TODO check if the project is overridden and if so, returning the overriding
-		// path.
-		return dir;
-	}
+    private File overrideIfPresent(File dir, File[] overridingProjects) {
+        // TODO check if the project is overridden and if so, returning the overriding
+        // path.
+        return dir;
+    }
 
-	/**
-	 * Constructor for a URL-based workspace. Needs one resource so that it can
-	 * infer the resource set and compute the dependency tree. Does not know its
-	 * projects until after validation, and the projects won't know their resources
-	 * until after validation.
-	 * 
-	 * @param workspaceUrl
-	 * @param root
-	 */
-	public KimWorkspace(URL workspaceUrl, File root) {
-		this.url = normalize(workspaceUrl);
-		this.name = Utils.getURLBaseName(workspaceUrl.toString());
-		this.root = root;
-		workspacesByURI.put(this.url.toString(), this);
-	}
+    @Override
+    public File getRoot() {
+        return root;
+    }
 
-	@Override
-	public File getRoot() {
-		return root;
-	}
+    @Override
+    public URL getURL() {
+        return url;
+    }
 
-	@Override
-	public URL getURL() {
-		return url;
-	}
+    @Override
+    public List<IKimNamespace> load(boolean incremental) {
 
-	@Override
-	public List<IKimNamespace> load(boolean incremental) {
+        List<IKimNamespace> ret = new ArrayList<>();
 
-		List<IKimNamespace> ret = new ArrayList<>();
+        // new StandaloneSetup().setPlatformUri(root.toString());
 
-		// new StandaloneSetup().setPlatformUri(root.toString());
+        readProjects();
 
-		readProjects();
+        Injector injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
 
-		Injector injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
+        // obtain a resourceset from the injector
+        XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
+        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 
-		// obtain a resourceset from the injector
-		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+        IResourceValidator validator = injector.getInstance(IResourceValidator.class);
+        InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+        ResourceSorter sorter = new ResourceSorter(this);
 
-		IResourceValidator validator = injector.getInstance(IResourceValidator.class);
-		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-		ResourceSorter sorter = new ResourceSorter(this);
+        for (File file : getAllKimResources()) {
+            sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
+        }
+        List<Resource> sort = CollectionUtils.join(sorter.getResources(), getNondependentResources(resourceSet));
+        for (Resource resource : sort) {
+            List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+            for (Issue issue : issues) {
+                if (issue.getSeverity() == Severity.ERROR) {
+                    Kim.INSTANCE.reportLibraryError(issue);
+                }
+            }
+        }
 
-		for (File file : getAllKimResources()) {
-			sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
-		}
-		List<Resource> sort = CollectionUtils.join(sorter.getResources(), getNondependentResources(resourceSet));
-		for (Resource resource : sort) {
-			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-			for (Issue issue : issues) {
-				if (issue.getSeverity() == Severity.ERROR) {
-					Kim.INSTANCE.reportLibraryError(issue);
-				}
-			}
-		}
+        GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
+        for (Resource resource : sort) {
+            generator.doGenerate(resource, fsa);
+        }
 
-		GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
-		for (Resource resource : sort) {
-			generator.doGenerate(resource, fsa);
-		}
+        for (String nsId : sorter.getSortedNamespaceIds()) {
+            KimNamespace namespace = findNamespace(nsId);
+            if (namespace != null) {
+                ret.add(namespace);
+            } else {
+                Kim.INSTANCE.warn("namespace " + nsId + " was declared but not generated");
+            }
+        }
 
-		for (String nsId : sorter.getSortedNamespaceIds()) {
-			KimNamespace namespace = findNamespace(nsId);
-			if (namespace != null) {
-				ret.add(namespace);
-			} else {
-				Kim.INSTANCE.warn("namespace " + nsId + " was declared but not generated");
-			}
-		}
+        return ret;
+    }
 
-		return ret;
-	}
+    /**
+     * Return all the k.IM files that are not knowledge but scripts, tests and
+     * sidecar files. These can just depend on the knowledge in the workspace and
+     * are loaded after it.
+     * 
+     * @param resourceSet
+     * @return
+     */
+    private List<Resource> getNondependentResources(XtextResourceSet resourceSet) {
+        List<Resource> ret = new ArrayList<>();
+        for (KimProject project : allProjects.values()) {
+            for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
+                File pdir = new File(project.getRoot() + File.separator + subdir);
+                if (pdir.exists() && pdir.isDirectory()) {
+                    for (File f : pdir.listFiles()) {
+                        if (f.toString().endsWith(".kim")) {
+                            ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
-	/**
-	 * Return all the k.IM files that are not knowledge but scripts, tests and
-	 * sidecar files. These can just depend on the knowledge in the workspace and
-	 * are loaded after it.
-	 * 
-	 * @param resourceSet
-	 * @return
-	 */
-	private List<Resource> getNondependentResources(XtextResourceSet resourceSet) {
-		List<Resource> ret = new ArrayList<>();
-		for (KimProject project : allProjects.values()) {
-			for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
-				File pdir = new File(project.getRoot() + File.separator + subdir);
-				if (pdir.exists() && pdir.isDirectory()) {
-					for (File f : pdir.listFiles()) {
-						if (f.toString().endsWith(".kim")) {
-							ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
-						}
-					}
-				}
-			}
-		}
-		return ret;
-	}
+    public KimNamespace findNamespace(String id) {
 
-	public KimNamespace findNamespace(String id) {
+        for (KimProject project : allProjects.values()) {
+            KimNamespace ret = project.getNamespace(id);
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return null;
+    }
 
-		for (KimProject project : allProjects.values()) {
-			KimNamespace ret = project.getNamespace(id);
-			if (ret != null) {
-				return ret;
-			}
-		}
-		return null;
-	}
+    public List<File> getAllKimResources() {
+        List<File> ret = new ArrayList<>();
+        for (KimProject project : allProjects.values()) {
+            ret.addAll(project.getSourceFiles());
+        }
+        return ret;
+    }
 
-	public List<File> getAllKimResources() {
-		List<File> ret = new ArrayList<>();
-		for (KimProject project : allProjects.values()) {
-			ret.addAll(project.getSourceFiles());
-		}
-		return ret;
-	}
+    public static KimWorkspace getWorkspaceForResourceURI(URI resourceURI) {
 
-	public static KimWorkspace getWorkspaceForResourceURI(URI resourceURI) {
+        File wsFile = null;
+        UriResolver resolver = Kim.INSTANCE.getUriResolver(resourceURI.scheme());
+        if (resolver != null) {
+            wsFile = resolver.resolveResourceUriToWorkspaceRootDirectory(resourceURI);
+        }
 
-		KimWorkspace ret = getWorkspaceForURI(resourceURI.toString());
+        try {
+            if (wsFile == null) {
+                URL url = new URL(resourceURI.toString());
+                String path = url.getPath();
+                Properties properties = null;
+                URL purl = null;
+                while ((path = chopLastPathElement(path)) != null) {
+                    purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+                            path + "/META-INF/klab.properties");
+                    try (InputStream is = purl.openStream()) {
+                        properties = new Properties();
+                        properties.load(is);
+                        break;
+                    } catch (IOException exception) {
+                        continue;
+                    }
+                }
+                if (properties != null) {
+                    String workspacePrefix = path.substring(0, path.lastIndexOf('/'));
+                    int upos = url.toString().indexOf(workspacePrefix + "/") + workspacePrefix.length();
+                    URL workspaceUrl = new URL(url.toString().substring(0, upos));
+                    if (workspaceUrl.toString().startsWith("file:")) {
+                        wsFile = new File(workspaceUrl.getFile());
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            // leave it null
+        }
 
-		if (ret == null) {
+        if (wsFile == null) {
+            return null;
+        }
 
-			/*
-			 * TRY FIRST OF ALL TO USE A URNRESOLVER and if available, lookup the workspace
-			 * using the URI of the WS FILE. IF NOT AVAILABLE, DO THE THINGY BELOW.
-			 */
-			// UriResolver resolver = Kim.INSTANCE.getUriResolver(resourceURI.scheme());
-			// if (resolver != null) {
-			// File wsFile =
-			// resolver.resolveResourceUriToWorkspaceRootDirectory(resourceURI);
-			// if (wsFile != null) {
-			// ret = new KimWorkspace(wsFile, wsFile);
-			// }
-			// }
+        KimWorkspace ret = getWorkspaceForURI(wsFile.toURI().toString());
+        if (ret == null) {
+            ret = new KimWorkspace(wsFile);
+        }
 
-			try {
-				URL url = new URL(resourceURI.toString());
-				String path = url.getPath();
-				Properties properties = null;
-				URL purl = null;
-				while ((path = chopLastPathElement(path)) != null) {
-					purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
-							path + "/META-INF/klab.properties");
-					try (InputStream is = purl.openStream()) {
-						properties = new Properties();
-						properties.load(is);
-						break;
-					} catch (IOException exception) {
-						continue;
-					}
-				}
+        return ret;
+    }
 
-				if (properties != null) {
-					String workspacePrefix = path.substring(0, path.lastIndexOf('/'));
-					int upos = url.toString().indexOf(workspacePrefix + "/") + workspacePrefix.length();
-					URL workspaceUrl = new URL(url.toString().substring(0, upos));
-					File dioFile = null;
-					if (workspaceUrl.toString().startsWith("file:")) {
-						dioFile = new File(workspaceUrl.getFile());
-					} else {
-						UriResolver resolver = Kim.INSTANCE.getUriResolver(resourceURI.scheme());
-						if (resolver != null) {
-							dioFile = resolver.resolveResourceUriToWorkspaceRootDirectory(resourceURI);
-						} else {
-							throw new RuntimeException(
-									"cannot resolve workspace location for resource URI " + resourceURI
-											+ "; please install a UriResolver for scheme " + resourceURI.scheme());
-						}
-					}
-					ret = new KimWorkspace(workspaceUrl, dioFile);
-				}
-			} catch (MalformedURLException e) {
-				// just leave the workspace null
-			}
-		}
+    public static KimWorkspace getWorkspaceForResource(Resource resource) {
+        return getWorkspaceForResourceURI(resource.getURI());
+    }
 
-		if (ret == null) {
-			// file outside of any project
-		}
+    public KimProject getProjectForResource(Resource resource) {
 
-		return ret;
-	}
+        KimProject ret = getProjectForURI(resource.getURI().toString());
+        if (ret == null) {
+            try {
+                URL url = new URL(resource.getURI().toString());
+                String path = url.getPath();
+                Properties properties = null;
+                URL purl = null;
+                while ((path = chopLastPathElement(path)) != null) {
+                    purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+                            path + "/META-INF/klab.properties");
+                    try (InputStream is = purl.openStream()) {
+                        properties = new Properties();
+                        properties.load(is);
+                        break;
+                    } catch (IOException exception) {
+                        continue;
+                    }
+                }
 
-	public static KimWorkspace getWorkspaceForResource(Resource resource) {
-		return getWorkspaceForResourceURI(resource.getURI());
-	}
+                if (properties != null) {
+                    String projectName = path.substring(path.lastIndexOf('/') + 1);
+                    KimWorkspace workspace = getWorkspaceForResource(resource);
+                    ret = allProjects.get(projectName);
+                    if (ret == null) {
+                        ret = new KimProject(projectName, workspace, properties);
+                        projectsByURI.put(workspace.getURL() + "/" + projectName, ret);
+                        allProjects.put(url.getPath(), ret);
+                    }
+                }
+            } catch (MalformedURLException e) {
+                // just leave the project null
+            }
+        }
+        return ret;
+    }
 
-	public KimProject getProjectForResource(Resource resource) {
+    private static String chopLastPathElement(String path) {
+        int idx = path.lastIndexOf('/');
+        if (idx <= 0) {
+            return null;
+        }
+        return path.substring(0, idx);
+    }
 
-		KimProject ret = getProjectForURI(resource.getURI().toString());
-		if (ret == null) {
-			try {
-				URL url = new URL(resource.getURI().toString());
-				String path = url.getPath();
-				Properties properties = null;
-				URL purl = null;
-				while ((path = chopLastPathElement(path)) != null) {
-					purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
-							path + "/META-INF/klab.properties");
-					try (InputStream is = purl.openStream()) {
-						properties = new Properties();
-						properties.load(is);
-						break;
-					} catch (IOException exception) {
-						continue;
-					}
-				}
+    private KimProject getProjectForURI(String resUri) {
 
-				if (properties != null) {
-					String projectName = path.substring(path.lastIndexOf('/') + 1);
-					KimWorkspace workspace = getWorkspaceForResource(resource);
-					ret = allProjects.get(projectName);
-					if (ret == null) {
-						ret = new KimProject(projectName, workspace, properties);
-						projectsByURI.put(workspace.getURL() + "/" + projectName, ret);
-						allProjects.put(url.getPath(), ret);
-					}
-				}
-			} catch (MalformedURLException e) {
-				// just leave the project null
-			}
-		}
-		return ret;
-	}
+        for (String uri : projectsByURI.keySet()) {
+            // platform:/resource/im == platform:/resource/im.aries/src/es/aesthetics.kim;
+            // check for '/' after subtracting URI
+            if (resUri.startsWith(uri) && resUri.substring(uri.length()).startsWith("/")) {
+                return projectsByURI.get(uri);
+            }
+        }
+        return null;
+    }
 
-	private static String chopLastPathElement(String path) {
-		int idx = path.lastIndexOf('/');
-		if (idx <= 0) {
-			return null;
-		}
-		return path.substring(0, idx);
-	}
+    private static KimWorkspace getWorkspaceForURI(String resUri) {
+        for (String uri : workspacesByURI.keySet()) {
+            if (resUri.startsWith(uri)) {
+                return workspacesByURI.get(uri);
+            }
+        }
+        return null;
+    }
 
-	private KimProject getProjectForURI(String resUri) {
-
-		for (String uri : projectsByURI.keySet()) {
-			// platform:/resource/im == platform:/resource/im.aries/src/es/aesthetics.kim;
-			// check for '/' after subtracting URI
-			if (resUri.startsWith(uri) && resUri.substring(uri.length()).startsWith("/")) {
-				return projectsByURI.get(uri);
-			}
-		}
-		return null;
-	}
-
-	/*
-	 * FIXME ensure that only FILE uris end up in worskpaceByURI. That's it - on
-	 * Eclipse use the platform helper, otherwise just leave as is.
-	 * 
-	 * @param resUri
-	 * 
-	 * @return
-	 */
-	private static KimWorkspace getWorkspaceForURI(String resUri) {
-		for (String uri : workspacesByURI.keySet()) {
-			if (resUri.startsWith(uri)) {
-				return workspacesByURI.get(uri);
-			}
-		}
-		return null;
-	}
-
-	public void registerProject(KimProject project, URL projectUrl) {
-		projectsByURI.put(projectUrl.toString(), project);
-		allProjects.put(projectUrl.getPath(), project);
-	}
+    public void registerProject(KimProject project, URL projectUrl) {
+        projectsByURI.put(projectUrl.toString(), project);
+        allProjects.put(projectUrl.getPath(), project);
+    }
 
 }
