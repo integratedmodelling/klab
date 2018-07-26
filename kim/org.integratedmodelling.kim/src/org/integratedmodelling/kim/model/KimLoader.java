@@ -129,12 +129,47 @@ public class KimLoader implements IKimLoader {
 
     @Override
     public List<IKimNamespace> touch(Object namespaceProxy) {
+    	
+    	File resource = null;
+    	
+    	if (namespaceProxy instanceof File) {
+    		resource = (File)namespaceProxy;
+    	};
+    	
         List<IKimNamespace> ret = new ArrayList<>();
-        // TODO
+        
+        if (resource == null) {
+        	return ret;
+        }
+        
+        boolean loaded = false;
+        IKimNamespace ours = getNamespace(resource);
+        if (ours != null) {
+        	IKimNamespace publ = Kim.INSTANCE.getNamespace(ours.getName());
+        	if (publ != null && publ.getTimestamp() > resource.lastModified()) {
+        		System.out.println("FOXXKA " + resource);
+        		NsInfo info = getNamespaceInfo(resource);
+        		info.namespace = publ;
+        		loaded = true;
+        	}
+        }
+        
+        // TODO save current dependencies
+        
+        if (!loaded) {
+        	// TODO reload
+        }
+        // TODO reload all the formerly dependent 
+
+        // TODO rebuild deps
+        
+        // TODO add each reloaded to returned result
+        
         return ret;
     }
 
-    @Override
+
+	@Override
     public List<IKimNamespace> delete(Object namespaceProxy) {
         // TODO Auto-generated method stub
         // TODO if project, remove all files

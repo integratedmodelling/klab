@@ -23,7 +23,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
     private String name;
     private IKimProject project;
-    private long timestamp;
+    private long timestamp = System.currentTimeMillis();
     private List<IKimNamespace> imported = new ArrayList<>();
     private boolean isPrivate = false;
     private boolean inactive = false;
