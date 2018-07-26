@@ -61,7 +61,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
         }
         Kim.INSTANCE.registerNamespace(this);
     }
-
+    
     @Override
     public boolean isWorldviewBound() {
         return worldviewBound;

@@ -18,14 +18,14 @@ public abstract class ENavigatorItem implements IAdaptable {
         this.id = id;
         this.parent = parent;
         if (this.id == null) {
-        	System.out.println("DIO STRAPORCO INCULATO");
+            System.out.println("DIO STRAPORCO INCULATO");
         }
     }
 
     public String getId() {
         return id;
     }
-    
+
     @SuppressWarnings("unchecked")
     public <T extends ENavigatorItem> T getEParent(Class<T> cls) {
         if (cls.isAssignableFrom(this.getClass())) {
@@ -45,27 +45,12 @@ public abstract class ENavigatorItem implements IAdaptable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
+        return id.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ENavigatorItem other = (ENavigatorItem) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+        return this == obj || this.getClass() == obj.getClass() && ((ENavigatorItem) obj).id.equals(id);
     }
 
 }

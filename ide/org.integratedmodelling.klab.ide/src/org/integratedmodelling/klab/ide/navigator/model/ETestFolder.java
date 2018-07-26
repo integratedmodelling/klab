@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.Activator;
 
 public class ETestFolder extends ENavigatorItem {

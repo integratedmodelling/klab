@@ -12,13 +12,13 @@ public class KlabAdapterFactory implements IAdapterFactory {
     @Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof ENavigatorItem) {
-		    if (IResource.class.isAssignableFrom(adapterType)) {
+		    /*if (IResource.class.isAssignableFrom(adapterType)) {*/
 	            return ((ENavigatorItem)adaptableObject).getAdapter(adapterType);
-		    } else if (EObject.class.isAssignableFrom(adapterType)) {
+	            /*  } else if (EObject.class.isAssignableFrom(adapterType)) {
 		        if (adaptableObject instanceof EKimObject) {
 		            return (T)((EKimObject)adaptableObject).getEObject();
 		        }
-		    }
+		    }*/
 		}
 		return null;
 	}
@@ -27,8 +27,8 @@ public class KlabAdapterFactory implements IAdapterFactory {
 	public Class<?>[] getAdapterList() {
 		return new Class[] {
 				IResource.class,
-				ENavigatorItem.class,
-				EObject.class
+				ENavigatorItem.class/*,
+				EObject.class*/
 		};
 	}
 

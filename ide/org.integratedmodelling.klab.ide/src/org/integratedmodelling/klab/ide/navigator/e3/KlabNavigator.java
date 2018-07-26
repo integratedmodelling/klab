@@ -73,7 +73,7 @@ public class KlabNavigator extends CommonNavigator  {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    _viewer.setInput(EWorkspace.INSTANCE);
+                    _viewer.refresh();
                 }
             });
         }
