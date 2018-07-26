@@ -66,94 +66,94 @@ public class KimNatureAddingEditorCallback extends NatureAddingEditorCallback {
     @Override
     public void afterSetInput(XtextEditor xtextEditor) {
         super.afterSetInput(xtextEditor);
-        if (!Kim.INSTANCE.initialBuildDone()) {
-            /*
-             * Force a full build so that each known namespace is validated at least once
-             * and all concepts are known before we start.
-             */
-            try {
-                // il secondo lo taglia
-                ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-
-                // e il terzo gode
-                // ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD,
-                // new NullProgressMonitor());
-
-            } catch (CoreException e) {
-                // TODO log something
-            }
-            Kim.INSTANCE.setInitialBuildDone(true);
-        }
+//        if (!Kim.INSTANCE.initialBuildDone()) {
+//            /*
+//             * Force a full build so that each known namespace is validated at least once
+//             * and all concepts are known before we start.
+//             */
+//            try {
+//                // il secondo lo taglia
+//                ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+//
+//                // e il terzo gode
+//                // ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD,
+//                // new NullProgressMonitor());
+//
+//            } catch (CoreException e) {
+//                // TODO log something
+//            }
+//            Kim.INSTANCE.setInitialBuildDone(true);
+//        }
     }
 
     @Override
     public void beforeSetInput(XtextEditor xtextEditor) {
 
-        // TODO override from ws locations
-        if (!Kim.INSTANCE.isLibraryInitialized()) {
-
-            KimWorkspace lib = Kim.INSTANCE.getLibrary("worldview");
-            if (lib != null) {
-
-                lib.readProjects();
-
-                ResourceSorter sorter = new ResourceSorter();
-                // load and validate all external libraries. The concepts will be resolved in
-                // the catalog and disappear
-                // from the linker.
-                resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-                for (File file : lib.getAllKimResources()) {
-                    sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
-                }
-                List<Resource> sort = CollectionUtils.join(sorter.getResources(),
-                        getNondependentResources(resourceSet, lib));
-                for (Resource resource : sort) {
-                    List<Issue> issues = resourceValidator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-                    for (Issue issue : issues) {
-                        if (issue.getSeverity() == Severity.ERROR && issue.isSyntaxError()) {
-                            /**
-                             * FIXME this won't resolve the namespace references, for unknown reasons. The
-                             * errors are not reported because of the isSyntaxError() condition. The
-                             * topological sort makes the problem harmless.
-                             */
-                            Kim.INSTANCE.reportLibraryError(issue);
-                        }
-                    }
-                }
-            }
-            Kim.INSTANCE.setLibraryInitialized(true);
-
-            // You need BOTH this and the one in afterCreatePartControl for dependencies to
-            // be solved, I guess for
-            // the same reason as before - linked namespaces are (this time) resolved, but
-            // not validated in topological
-            // order. Would be lots easier to find out how to have Xtext validate the
-            // imported namespaces instead.
-            try {
-                // il primo solleva il pelo
-                ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-            } catch (CoreException e) {
-                // TODO log something
-            }
-        }
+//        // TODO override from ws locations
+//        if (!Kim.INSTANCE.isLibraryInitialized()) {
+//
+//            KimWorkspace lib = Kim.INSTANCE.getLibrary("worldview");
+//            if (lib != null) {
+//
+//                lib.readProjects();
+//
+//                ResourceSorter sorter = new ResourceSorter();
+//                // load and validate all external libraries. The concepts will be resolved in
+//                // the catalog and disappear
+//                // from the linker.
+//                resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+//                for (File file : lib.getAllKimResources()) {
+//                    sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
+//                }
+//                List<Resource> sort = CollectionUtils.join(sorter.getResources(),
+//                        getNondependentResources(resourceSet, lib));
+//                for (Resource resource : sort) {
+//                    List<Issue> issues = resourceValidator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+//                    for (Issue issue : issues) {
+//                        if (issue.getSeverity() == Severity.ERROR && issue.isSyntaxError()) {
+//                            /**
+//                             * FIXME this won't resolve the namespace references, for unknown reasons. The
+//                             * errors are not reported because of the isSyntaxError() condition. The
+//                             * topological sort makes the problem harmless.
+//                             */
+//                            Kim.INSTANCE.reportLibraryError(issue);
+//                        }
+//                    }
+//                }
+//            }
+//            Kim.INSTANCE.setLibraryInitialized(true);
+//
+//            // You need BOTH this and the one in afterCreatePartControl for dependencies to
+//            // be solved, I guess for
+//            // the same reason as before - linked namespaces are (this time) resolved, but
+//            // not validated in topological
+//            // order. Would be lots easier to find out how to have Xtext validate the
+//            // imported namespaces instead.
+//            try {
+//                // il primo solleva il pelo
+//                ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+//            } catch (CoreException e) {
+//                // TODO log something
+//            }
+//        }
     }
 
-    private List<Resource> getNondependentResources(XtextResourceSet resourceSet, KimWorkspace lib) {
-        List<Resource> ret = new ArrayList<>();
-        for (KimProject project : lib.getProjects()) {
-            for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
-                File pdir = new File(project.getRoot() + File.separator + subdir);
-                if (pdir.exists() && pdir.isDirectory()) {
-                    for (File f : pdir.listFiles()) {
-                        if (f.toString().endsWith(".kim")) {
-                            ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
-                        }
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+//    private List<Resource> getNondependentResources(XtextResourceSet resourceSet, KimWorkspace lib) {
+//        List<Resource> ret = new ArrayList<>();
+//        for (IKimProject project : lib.getProjects()) {
+//            for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
+//                File pdir = new File(project.getRoot() + File.separator + subdir);
+//                if (pdir.exists() && pdir.isDirectory()) {
+//                    for (File f : pdir.listFiles()) {
+//                        if (f.toString().endsWith(".kim")) {
+//                            ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return ret;
+//    }
 
     private void validate(XtextEditor xtextEditor) {
 

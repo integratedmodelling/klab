@@ -108,8 +108,8 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
     }
     
     public IFile getIFile() {
-        org.eclipse.emf.common.util.URI uri = ((KimStatement)delegate_).getEObject().eResource().getURI();
-        System.out.println("URI is " + uri);
+
+    	org.eclipse.emf.common.util.URI uri = ((KimStatement)delegate_).getEObject().eResource().getURI();
         if (uri.toString().startsWith("platform:/resource/")) {
         	String uriPath = uri.toString().substring("platform:/resource/".length());
         	IResource ret = ResourcesPlugin.getWorkspace().getRoot().findMember(uriPath);

@@ -10,9 +10,9 @@ public class KimLoaderTest {
 
 	@Test
 	public void test() throws IOException {
-		for (IKimNamespace ns : new KimWorkspace(new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "lib"))
-				.load(false)) {
-		    System.out.println(ns.getName());
-		}
+//		for (IKimNamespace ns : new KimWorkspace(new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + "lib"))
+//				.load(false)) {
+//		    System.out.println(ns.getName());
+//		}
 	}
 }

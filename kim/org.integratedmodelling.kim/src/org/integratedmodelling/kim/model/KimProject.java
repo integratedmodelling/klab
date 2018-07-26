@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -31,14 +30,9 @@ public class KimProject implements IKimProject {
 	Properties properties;
 
 	/**
-	 * Namespaces by URI of corresponding statement
-	 */
-	private Map<URI, KimNamespace> namespaces = new HashMap<>();
-
-	/**
 	 * Namespaces by namespace ID
 	 */
-	private Map<String, KimNamespace> namespacesbyId = new HashMap<>();
+	private Map<String, KimNamespace> namespaces = new HashMap<>();
 
 	public KimProject(KimWorkspace workspace, String name, File dir) {
 		this.workspace = workspace;
@@ -71,15 +65,9 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public KimNamespace getNamespace(String id) {
-		return namespacesbyId.get(id);
+		return namespaces.get(id);
 	}
-
-	public void removeNamespace(Namespace namespace) {
-		namespaces.remove(EcoreUtil.getURI(namespace));
-		namespacesbyId.remove(getNamespaceId(namespace));
-		Kim.INSTANCE.namespaceRegistry.remove(getNamespaceId(namespace));
-	}
-
+	
 	/**
 	 * Return the stated name, adding "|" and the resource URI if it's
 	 * anonymous/sidecar file, counting on the fact that the latter are always
@@ -187,13 +175,11 @@ public class KimProject implements IKimProject {
 		return properties;
 	}
 
-	public KimNamespace getNamespace(URI uri, Namespace namespace, boolean createIfAbsent) {
-		KimNamespace ret = namespaces.get(uri);
+	public KimNamespace getNamespace(String name, Namespace namespace, boolean createIfAbsent) {
+		KimNamespace ret = namespaces.get(name);
 		if (ret == null && createIfAbsent) {
 			ret = new KimNamespace(namespace, this);
-			namespaces.put(EcoreUtil.getURI(namespace), ret);
-			namespacesbyId.put(getNamespaceId(namespace), ret);
-			Kim.INSTANCE.initializeNamespaceRegisters(getNamespaceId(namespace));
+			namespaces.put(getNamespaceId(namespace), ret);
 		}
 		return ret;
 	}
@@ -209,6 +195,14 @@ public class KimProject implements IKimProject {
 			}
 		});
 		return ret;
+	}
+
+	public void removeNamespace(String name) {
+		this.namespaces.remove(name);
+	}
+
+	public void addNamespace(IKimNamespace namespace) {
+		namespaces.put(namespace.getName(), (KimNamespace)namespace);
 	}
 
 }

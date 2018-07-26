@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.ide.Activator;
 
 public class ETestFolder extends ENavigatorItem {
 
@@ -33,11 +34,12 @@ public class ETestFolder extends ENavigatorItem {
 	public ENavigatorItem[] getEChildren() {
 		List<ENavigatorItem> ret = new ArrayList<>();
 		File folder = new File(project.getRoot() + File.separator + IKimProject.TESTS_FOLDER);
-		for (File script : folder.listFiles()) {
-		    if (script.toString().endsWith(".kim")) {
-		        // TODO find a way to not reload if it was loaded before
-		        ret.add(new ETestCase(Kim.INSTANCE.load(script), this));
-		    }
+		if (folder.isDirectory()) {
+			for (File script : folder.listFiles()) {
+				if (script.toString().endsWith(".kim")) {
+					ret.add(new ETestCase(Activator.loader().getNamespace(script), this));
+				}
+			}
 		}
 		return ret.toArray(new ENavigatorItem[ret.size()]);
 	}

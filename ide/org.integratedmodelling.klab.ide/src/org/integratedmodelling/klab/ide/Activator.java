@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -8,16 +9,21 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
+import org.integratedmodelling.kim.model.KimLoader;
+import org.integratedmodelling.kim.ui.internal.KimActivator;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
@@ -50,7 +56,8 @@ public class Activator extends AbstractUIPlugin {
 	private KlabEngine engine;
 	private KlabExplorer explorer;
 	private KlabSession session;
-	
+	private KimLoader loader;
+
 	/**
 	 * The constructor
 	 */
@@ -129,10 +136,42 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId);
 
+		/*
+		 * load the workspace
+		 */
+		List<File> projectFiles = new ArrayList<>();
+		for (IProject project : Eclipse.INSTANCE.getProjects()) {
+			projectFiles.add(project.getLocation().toFile());
+		}
+
+		KimLoader worldviewLoader = new KimLoader(
+				KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM));
+		
+		worldviewLoader.loadProjectFiles(getWorldviewFiles());
+		
+		this.loader = new KimLoader(
+				KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM),
+				worldviewLoader);
+		
+		this.loader.loadProjectFiles(projectFiles);
+
 		plugin = this;
 
 		this.engineStatusMonitor.start(relayId);
 
+	}
+
+	private Collection<File> getWorldviewFiles() {
+		List<File> ret = new ArrayList<>();
+		File file = Configuration.INSTANCE.getDataPath("worldview");
+		if (file.isDirectory()) {
+			for (File pfile : file.listFiles()) {
+				if (Kim.INSTANCE.isKimProject(pfile)) {
+					ret.add(pfile);
+				}
+			}
+		}
+		return ret;
 	}
 
 	public String getRelayId() {
@@ -166,7 +205,7 @@ public class Activator extends AbstractUIPlugin {
 		 * may also offer to import the worldview for developers.
 		 */
 		Display.getDefault().asyncExec(() -> {
-			
+
 			List<ProjectReference> missingProjects = new ArrayList<>();
 			for (ProjectReference project : this.engineStatusMonitor.getCapabilities().getLocalWorkspaceProjects()) {
 				if (Eclipse.INSTANCE.getProject(project.getName()) == null) {
@@ -208,9 +247,13 @@ public class Activator extends AbstractUIPlugin {
 	public static KlabExplorer explorer() {
 		return get().explorer;
 	}
-	
+
 	public static Klab klab() {
 		return get().klab;
+	}
+
+	public static IKimLoader loader() {
+		return get().loader;
 	}
 
 	/**

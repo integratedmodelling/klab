@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.KimWorkspace;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public abstract class AbstractWorkspace implements IWorkspace {
 
 	KimWorkspace delegate;
+	private IKimLoader loader;
 
 	AbstractWorkspace() {
 	}
@@ -60,7 +62,8 @@ public abstract class AbstractWorkspace implements IWorkspace {
 	public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
 
 		List<INamespace> ret = new ArrayList<>();
-		for (IKimNamespace ns : delegate.load(incremental)) {
+		this.loader = delegate.load();
+		for (IKimNamespace ns : loader.getNamespaces()) {
 			// the validator callback inserts the namespace into the index, all we do is
 			// retrieve it
 			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());

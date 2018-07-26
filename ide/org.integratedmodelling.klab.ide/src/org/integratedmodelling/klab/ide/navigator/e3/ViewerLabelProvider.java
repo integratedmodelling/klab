@@ -150,7 +150,7 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			return ((ETestCase) element).getId();
 		}
 		if (element instanceof EScript) {
-			return ((ETestCase) element).getId();
+			return ((EScript) element).getId();
 		}
 		if (element instanceof ENamespace) {
 			if (((ENamespace) element).isWorldviewBound()) {

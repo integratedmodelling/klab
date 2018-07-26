@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimBehavior;
@@ -23,7 +25,13 @@ public class EModel extends EKimObject implements IKimModel {
 	}
 
 	public IKimConcept.Type getCoreObservableType() {
-		return Kim.INSTANCE.getFundamentalType(delegate.getObservables().get(0).getMain().getType());
+		IKimConcept main = delegate.getObservables().get(0).getMain();
+		Set<IKimConcept.Type> type = main == null
+				? (delegate.getObservables().get(0).getNonSemanticType() != null 
+						? EnumSet.of(IKimConcept.Type.QUALITY)
+						: null)
+				: main.getType();
+		return type == null ? null : Kim.INSTANCE.getFundamentalType(type);
 	}
 
 	public Optional<IKimConcept> getReinterpretingRole() {
@@ -99,18 +107,18 @@ public class EModel extends EKimObject implements IKimModel {
 		return delegate.getDocstring();
 	}
 
-    @Override
-    public ENavigatorItem[] getEChildren() {
-        return new ENavigatorItem[] {};
-    }
+	@Override
+	public ENavigatorItem[] getEChildren() {
+		return new ENavigatorItem[] {};
+	}
 
-    @Override
-    public boolean hasEChildren() {
-        return false;
-    }
+	@Override
+	public boolean hasEChildren() {
+		return false;
+	}
 
-    @Override
-    public <T> T getAdapter(Class<T> adapter) {
-        return null;
-    }
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		return null;
+	}
 }

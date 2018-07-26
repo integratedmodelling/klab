@@ -51,8 +51,8 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
             this.timestamp = namespace.eResource().getTimeStamp();
         }
         this.project = project;
-        // worldview-bound anonymous namespaces are private by design.
         this.worldviewBound = namespace.isWorldviewBound();
+        // worldview-bound anonymous namespaces are private by design.
         this.isPrivate = namespace.isPrivate() | namespace.isWorldviewBound();
         this.inactive = namespace.isInactive();
         this.scenario = namespace.isScenario();

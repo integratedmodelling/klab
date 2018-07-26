@@ -29,21 +29,10 @@ import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.diagnostics.Severity;
-import org.eclipse.xtext.generator.GeneratorDelegate;
-import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
-import org.eclipse.xtext.util.CancelIndicator;
-import org.eclipse.xtext.validation.CheckMode;
-import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
-import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IConceptDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -55,6 +44,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -63,7 +53,6 @@ import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
-import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
@@ -72,13 +61,11 @@ import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.SemanticType;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
-import org.xml.sax.helpers.NamespaceSupport;
-
-import com.google.inject.Injector;
 
 /**
  * Parsing functions and interfaces. Holds the state of the knowledge base as
@@ -151,6 +138,7 @@ public enum Kim {
 	 * Same with projects
 	 */
 	Map<String, IKimProject> projectRegistry = new HashMap<>();
+	Map<File, IKimProject> projectRootRegistry = new HashMap<>();
 
 	/*
 	 * flags for resources and URNs
@@ -735,7 +723,6 @@ public enum Kim {
 	public Map<String, ConceptDescriptor> initializeNamespaceRegisters(String string) {
 		Map<String, ConceptDescriptor> ret = new HashMap<>();
 		namespaceRegister.put(string, ret);
-		// namespaceModels.put(string, new HashMap<>());
 		return ret;
 	}
 
@@ -963,18 +950,18 @@ public enum Kim {
 		Namespace namespace = KimValidator.getNamespace(statement);
 
 		if (namespace != null) {
+			String name = KimProject.getNamespaceId(namespace);
+			if (namespaceRegistry.containsKey(name)) {
+				return (KimNamespace) namespaceRegistry.get(name);
+			}
+
 			KimProject project = null;
 			KimWorkspace workspace = KimWorkspace.getWorkspaceForResource(namespace.eResource());
 			if (workspace != null) {
 				project = workspace.getProjectForResource(namespace.eResource());
 			}
 			if (project != null) {
-				ret = project.getNamespace(EcoreUtil.getURI(namespace), namespace, createIfAbsent);
-				// } else if (createIfAbsent) {
-				// // it's a project-less namespace, e.g. a sidecar file
-				// project = getCommonProject();
-				// ret = project.getNamespace(EcoreUtil.getURI(namespace), namespace,
-				// createIfAbsent);
+				ret = project.getNamespace(name, namespace, createIfAbsent);
 			} else if (namespace.isWorldviewBound()) {
 				// projectless and with modified URI
 				String uri = namespace.eResource().getURI().toString();
@@ -1036,11 +1023,11 @@ public enum Kim {
 	 *            returned.
 	 * @return the project or null
 	 */
-	public KimProject getProject(String id, File workspaceRoot) {
+	public IKimProject getProject(String id, File workspaceRoot) {
 
-		KimProject ret = null;
+		IKimProject ret = null;
 		for (KimWorkspace workspace : getWorkspaces()) {
-			for (KimProject project : workspace.getProjects()) {
+			for (IKimProject project : workspace.getProjects()) {
 				if (project.getName().equals(id)) {
 					if (workspaceRoot == null) {
 						return project;
@@ -1064,7 +1051,7 @@ public enum Kim {
 		// }
 
 		if (project != null) {
-			project.removeNamespace(namespace);
+			project.removeNamespace(KimProject.getNamespaceId(namespace));
 		}
 	}
 
@@ -1294,41 +1281,28 @@ public enum Kim {
 
 	public void registerProject(KimProject kimProject) {
 		this.projectRegistry.put(kimProject.getName(), kimProject);
+		this.projectRootRegistry.put(kimProject.getRoot(), kimProject);
 	}
 
 	public IKimProject getProject(String id) {
 		return this.projectRegistry.get(id);
 	}
 
+	public IKimProject getProjectIn(File root, boolean createIfAbsent) {
+		IKimProject ret = this.projectRootRegistry.get(root);
+		if (ret == null && createIfAbsent) {
+			KimWorkspace workspace = KimWorkspace.getWorkspaceForProjectFile(root);
+			String pname = MiscUtilities.getFileBaseName(root);
+			ret = new KimProject(workspace, pname, root);
+			this.projectRegistry.put(pname, ret);
+			this.projectRootRegistry.put(root, ret);
+		}
+		return ret;
+	}
+
 	public boolean isKimProject(File file) {
 		File props = new File(file + File.separator + "META-INF" + File.separator + "klab.properties");
 		return props.exists() && props.isFile();
-	}
-
-	/**
-	 * Load an individual namespace, without dependencies or imports.
-	 *
-	 * @param file
-	 * @return
-	 */
-	public IKimNamespace load(File file) {
-
-		Injector injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
-		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		IResourceValidator validator = injector.getInstance(IResourceValidator.class);
-		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-		Resource resource = resourceSet.getResource(URI.createFileURI(file.toString()), true);
-		List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-		for (Issue issue : issues) {
-			if (issue.getSeverity() == Severity.ERROR) {
-				Kim.INSTANCE.reportLibraryError(issue);
-			}
-		}
-		Model model = (Model) resource.getContents().get(0);
-		GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
-		generator.doGenerate(resource, fsa);
-		return getNamespace(model.getNamespace(), true);
 	}
 
 }

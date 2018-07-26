@@ -26,12 +26,14 @@ import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.KimStandaloneSetup;
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
 import org.integratedmodelling.kim.utils.ResourceSorter;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Utils;
 
 import com.google.inject.Injector;
@@ -47,8 +49,8 @@ public class KimWorkspace implements IKimWorkspace {
     private Set<String> projectNames = new HashSet<>();
 
     // projects are indexed by name and URI prefix
-    private Map<String, KimProject> allProjects = new HashMap<>();
-    private Map<String, KimProject> projectsByURI = new HashMap<>();
+    private Map<String, IKimProject> allProjects = new HashMap<>();
+    private Map<String, IKimProject> projectsByURI = new HashMap<>();
 
     private static Map<String, KimWorkspace> workspacesByURI = new HashMap<>();
 
@@ -68,16 +70,16 @@ public class KimWorkspace implements IKimWorkspace {
         return projectNames;
     }
 
-    public Collection<KimProject> getProjects() {
+    public Collection<IKimProject> getProjects() {
         return allProjects.values();
     }
 
-    public KimProject getProject(String projectId) {
+    public IKimProject getProject(String projectId) {
         return allProjects.get(projectId);
     }
 
     @Override
-    public KimProject loadProject(File root) {
+    public IKimProject loadProject(File root) {
         
         String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
         if (projectLocations.contains(root)) {
@@ -170,84 +172,91 @@ public class KimWorkspace implements IKimWorkspace {
         return url;
     }
 
-    @Override
-    public List<IKimNamespace> load(boolean incremental) {
-
-        List<IKimNamespace> ret = new ArrayList<>();
-
-        // new StandaloneSetup().setPlatformUri(root.toString());
-
-        readProjects();
-
-        Injector injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
-
-        // obtain a resourceset from the injector
-        XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-
-        IResourceValidator validator = injector.getInstance(IResourceValidator.class);
-        InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-        ResourceSorter sorter = new ResourceSorter(this);
-
-        for (File file : getAllKimResources()) {
-            sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
-        }
-        List<Resource> sort = CollectionUtils.join(sorter.getResources(), getNondependentResources(resourceSet));
-        for (Resource resource : sort) {
-            List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-            for (Issue issue : issues) {
-                if (issue.getSeverity() == Severity.ERROR) {
-                    Kim.INSTANCE.reportLibraryError(issue);
-                }
-            }
-        }
-
-        GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
-        for (Resource resource : sort) {
-            generator.doGenerate(resource, fsa);
-        }
-
-        for (String nsId : sorter.getSortedNamespaceIds()) {
-            KimNamespace namespace = findNamespace(nsId);
-            if (namespace != null) {
-                ret.add(namespace);
-            } else {
-                Kim.INSTANCE.warn("namespace " + nsId + " was declared but not generated");
-            }
-        }
-
-        return ret;
+    public IKimLoader load() {
+    	readProjects();
+    	IKimLoader ret = new KimLoader();
+    	ret.load(allProjects.values());
+    	return ret;
     }
-
-    /**
-     * Return all the k.IM files that are not knowledge but scripts, tests and
-     * sidecar files. These can just depend on the knowledge in the workspace and
-     * are loaded after it.
-     * 
-     * @param resourceSet
-     * @return
-     */
-    private List<Resource> getNondependentResources(XtextResourceSet resourceSet) {
-        List<Resource> ret = new ArrayList<>();
-        for (KimProject project : allProjects.values()) {
-            for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
-                File pdir = new File(project.getRoot() + File.separator + subdir);
-                if (pdir.exists() && pdir.isDirectory()) {
-                    for (File f : pdir.listFiles()) {
-                        if (f.toString().endsWith(".kim")) {
-                            ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
-                        }
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+    
+//    @Override
+//    public List<IKimNamespace> load(boolean incremental) {
+//
+//        List<IKimNamespace> ret = new ArrayList<>();
+//
+//        // new StandaloneSetup().setPlatformUri(root.toString());
+//
+//        readProjects();
+//
+//        Injector injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
+//
+//        // obtain a resourceset from the injector
+//        XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
+//        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+//
+//        IResourceValidator validator = injector.getInstance(IResourceValidator.class);
+//        InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+//        ResourceSorter sorter = new ResourceSorter(this);
+//
+//        for (File file : getAllKimResources()) {
+//            sorter.add(resourceSet.getResource(URI.createFileURI(file.toString()), true));
+//        }
+//        List<Resource> sort = CollectionUtils.join(sorter.getResources(), getNondependentResources(resourceSet));
+//        for (Resource resource : sort) {
+//            List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+//            for (Issue issue : issues) {
+//                if (issue.getSeverity() == Severity.ERROR) {
+//                    Kim.INSTANCE.reportLibraryError(issue);
+//                }
+//            }
+//        }
+//
+//        GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
+//        for (Resource resource : sort) {
+//            generator.doGenerate(resource, fsa);
+//        }
+//
+//        for (String nsId : sorter.getSortedNamespaceIds()) {
+//            KimNamespace namespace = findNamespace(nsId);
+//            if (namespace != null) {
+//                ret.add(namespace);
+//            } else {
+//                Kim.INSTANCE.warn("namespace " + nsId + " was declared but not generated");
+//            }
+//        }
+//
+//        return ret;
+//    }
+//
+//    /**
+//     * Return all the k.IM files that are not knowledge but scripts, tests and
+//     * sidecar files. These can just depend on the knowledge in the workspace and
+//     * are loaded after it.
+//     * 
+//     * @param resourceSet
+//     * @return
+//     */
+//    private List<Resource> getNondependentResources(XtextResourceSet resourceSet) {
+//        List<Resource> ret = new ArrayList<>();
+//        for (IKimProject project : allProjects.values()) {
+//            for (String subdir : new String[] { IKimProject.SCRIPT_FOLDER, IKimProject.TESTS_FOLDER }) {
+//                File pdir = new File(project.getRoot() + File.separator + subdir);
+//                if (pdir.exists() && pdir.isDirectory()) {
+//                    for (File f : pdir.listFiles()) {
+//                        if (f.toString().endsWith(".kim")) {
+//                            ret.add(resourceSet.getResource(URI.createFileURI(f.toString()), true));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return ret;
+//    }
 
     public KimNamespace findNamespace(String id) {
 
-        for (KimProject project : allProjects.values()) {
-            KimNamespace ret = project.getNamespace(id);
+        for (IKimProject project : allProjects.values()) {
+            KimNamespace ret = (KimNamespace) project.getNamespace(id);
             if (ret != null) {
                 return ret;
             }
@@ -257,7 +266,7 @@ public class KimWorkspace implements IKimWorkspace {
 
     public List<File> getAllKimResources() {
         List<File> ret = new ArrayList<>();
-        for (KimProject project : allProjects.values()) {
+        for (IKimProject project : allProjects.values()) {
             ret.addAll(project.getSourceFiles());
         }
         return ret;
@@ -312,6 +321,15 @@ public class KimWorkspace implements IKimWorkspace {
 
         return ret;
     }
+    
+    public static KimWorkspace getWorkspaceForProjectFile(File projectRoot) {
+    	File wsFile = MiscUtilities.getPath(projectRoot.toString());
+    	KimWorkspace ret = getWorkspaceForURI(wsFile.toURI().toString());
+        if (ret == null) {
+            ret = new KimWorkspace(wsFile);
+        }
+        return ret;
+    }
 
     public static KimWorkspace getWorkspaceForResource(Resource resource) {
         return getWorkspaceForResourceURI(resource.getURI());
@@ -341,7 +359,7 @@ public class KimWorkspace implements IKimWorkspace {
                 if (properties != null) {
                     String projectName = path.substring(path.lastIndexOf('/') + 1);
                     KimWorkspace workspace = getWorkspaceForResource(resource);
-                    ret = allProjects.get(projectName);
+                    ret = (KimProject) allProjects.get(projectName);
                     if (ret == null) {
                         ret = new KimProject(projectName, workspace, properties);
                         projectsByURI.put(workspace.getURL() + "/" + projectName, ret);
@@ -369,7 +387,7 @@ public class KimWorkspace implements IKimWorkspace {
             // platform:/resource/im == platform:/resource/im.aries/src/es/aesthetics.kim;
             // check for '/' after subtracting URI
             if (resUri.startsWith(uri) && resUri.substring(uri.length()).startsWith("/")) {
-                return projectsByURI.get(uri);
+                return (KimProject) projectsByURI.get(uri);
             }
         }
         return null;

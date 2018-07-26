@@ -1,10 +1,8 @@
 package org.integratedmodelling.kim.api;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 
 public interface IKimWorkspace {
 
@@ -17,15 +15,23 @@ public interface IKimWorkspace {
 	String getName();
 
 	/**
-	 * Load or re-load all the projects we manage.
+	 * Load all projects in namespace from scratch.
 	 * 
-	 * @param incremental
-	 *            if true, load everything from scratch, otherwise just load what
-	 *            changed and their dependencies.
-	 * @return a list of the namespaces in the projects contained in this workspace.
-	 * @throws IOException
+	 * @return a loader that can be used to manage changes in workspaces.
 	 */
-	List<IKimNamespace> load(boolean incremental);
+	IKimLoader load();
+
+	// /**
+	// * Load or re-load all the projects we manage.
+	// *
+	// * @param incremental
+	// * if true, load everything from scratch, otherwise just load what
+	// * changed and their dependencies.
+	// * @return a list of the namespaces in the projects contained in this
+	// workspace.
+	// * @throws IOException
+	// */
+	// List<IKimNamespace> load(boolean incremental);
 
 	/**
 	 * Directories on the local filesystem where each project managed under this
@@ -70,8 +76,9 @@ public interface IKimWorkspace {
 
 	/**
 	 * Find the named namespace in all the projects this workspace manages.
+	 * 
 	 * @param id
 	 * @return the namespace or null
 	 */
-    IKimNamespace findNamespace(String id);
+	IKimNamespace findNamespace(String id);
 }

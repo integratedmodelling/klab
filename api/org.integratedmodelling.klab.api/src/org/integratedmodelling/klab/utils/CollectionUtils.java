@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CollectionUtils {
@@ -16,9 +17,9 @@ public class CollectionUtils {
 	}
 
 	@SafeVarargs
-	public static <T> List<T> join(List<T>... resources) {
+	public static <T> List<T> join(Collection<T>... resources) {
 		List<T> ret = new ArrayList<>();
-		for (List<T> list : resources) {
+		for (Collection<T> list : resources) {
 			ret.addAll(list);
 		}
 		return ret;

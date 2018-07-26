@@ -1218,6 +1218,7 @@ class KimValidator extends AbstractKimValidator {
 //			notify(notification, ann, KimPackage.Literals.ANNOTATION__NAME, 0)
 //		}
 //	}
+
 	def KimConceptStatement validateConceptBody(ConceptStatementBody concept, KimNamespace namespace,
 		KimConceptStatement parent, EnumSet<Type> type) {
 

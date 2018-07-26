@@ -320,4 +320,8 @@ public enum Eclipse {
 		return project.exists() ? project : null;
 	}
 
+	public IProject[] getProjects() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+	}
+
 }
