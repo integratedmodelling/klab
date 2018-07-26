@@ -34,7 +34,9 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected String deprecation = null;
     protected String sourceCode = null;
     protected IKimStatement parent = null;
-
+    protected boolean errors = false;
+    protected boolean warnings = false;
+    
     EObject eObject;
     
     public KimStatement() {
@@ -178,6 +180,24 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     @Override
     public String getResourceId() {
         return resource;
+    }
+
+    @Override
+    public boolean isErrors() {
+    	return this.errors;
+    }
+    
+    public void setErrors(boolean b) {
+    	this.errors = b;
+    }
+
+    @Override
+    public boolean isWarnings() {
+    	return this.warnings;
+    }
+    
+    public void setWarnings(boolean b) {
+    	this.warnings = b;
     }
 
 }

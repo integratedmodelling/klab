@@ -60,7 +60,7 @@ public interface IKimLoader {
 	 * 
 	 * @param namespaceProxy
 	 */
-	IKimNamespace delete(Object namespaceProxy);
+	List<IKimNamespace> delete(Object namespaceProxy);
 
 	/**
 	 * 

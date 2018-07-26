@@ -28,14 +28,14 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	IKimStatement delegate_;
 
 	EKimObject(String id, IKimStatement statement, ENavigatorItem parent) {
-	    super(id, parent);
+		super(id, parent);
 		this.delegate_ = statement;
 	}
 
 	protected IKimStatement getKimStatement() {
-	    return this.delegate_;
+		return this.delegate_;
 	}
-	
+
 	public int getFirstLine() {
 		return delegate_.getFirstLine();
 	}
@@ -92,45 +92,54 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	public URI getURI() {
 		return delegate_.getURI();
 	}
-	
+
 	@Override
 	public ENavigatorItem getEParent() {
 		return parent;
 	}
 
-    public EObject getEObject() {
-        return delegate_ == null ? null : ((KimStatement)delegate_).getEObject();
-    }
+	public EObject getEObject() {
+		return delegate_ == null ? null : ((KimStatement) delegate_).getEObject();
+	}
 
-    @Override
-    public String getResourceId() {
-        return delegate_ == null ? null : delegate_.getResourceId();
-    }
-    
-    public IFile getIFile() {
+	@Override
+	public String getResourceId() {
+		return delegate_ == null ? null : delegate_.getResourceId();
+	}
 
-    	org.eclipse.emf.common.util.URI uri = ((KimStatement)delegate_).getEObject().eResource().getURI();
-        if (uri.toString().startsWith("platform:/resource/")) {
-        	String uriPath = uri.toString().substring("platform:/resource/".length());
-        	IResource ret = ResourcesPlugin.getWorkspace().getRoot().findMember(uriPath);
-        	if (ret instanceof IFile) {
-        		return (IFile)ret;
-        	}
-    	} else if (uri.toString().startsWith("file:/")) {
-            try {
-                IFile[] ret = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new java.net.URI(uri.toString()));
-                if (ret != null && ret.length > 0) {
-                    return ret[0];
-                }
-            } catch (URISyntaxException e) {
-            }
-    	}
-        return null;
-    }
+	public IFile getIFile() {
+
+		org.eclipse.emf.common.util.URI uri = ((KimStatement) delegate_).getEObject().eResource().getURI();
+		if (uri.toString().startsWith("platform:/resource/")) {
+			String uriPath = uri.toString().substring("platform:/resource/".length());
+			IResource ret = ResourcesPlugin.getWorkspace().getRoot().findMember(uriPath);
+			if (ret instanceof IFile) {
+				return (IFile) ret;
+			}
+		} else if (uri.toString().startsWith("file:/")) {
+			try {
+				IFile[] ret = ResourcesPlugin.getWorkspace().getRoot()
+						.findFilesForLocationURI(new java.net.URI(uri.toString()));
+				if (ret != null && ret.length > 0) {
+					return ret[0];
+				}
+			} catch (URISyntaxException e) {
+			}
+		}
+		return null;
+	}
 
 	public File getPhysicalFile() {
 		IFile ifile = getIFile();
 		return ifile == null ? null : ifile.getLocation().toFile();
+	}
+
+	public boolean isErrors() {
+		return delegate_.isErrors();
+	}
+
+	public boolean isWarnings() {
+		return delegate_.isWarnings();
 	}
 
 }

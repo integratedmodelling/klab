@@ -137,28 +137,34 @@ public class Activator extends AbstractUIPlugin {
 				() -> engineOff(), initialSessionId);
 
 		/*
-		 * load the workspace
+		 * load the workspace. This is the only point where the ECore -> k.IM
+		 * translation is invoked.
 		 */
-		List<File> projectFiles = new ArrayList<>();
-		for (IProject project : Eclipse.INSTANCE.getProjects()) {
-			projectFiles.add(project.getLocation().toFile());
-		}
 
+		// get the worldview first
 		KimLoader worldviewLoader = new KimLoader(
-				KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM));
-		
-		worldviewLoader.loadProjectFiles(getWorldviewFiles());
-		
-		this.loader = new KimLoader(
 				KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM),
-				worldviewLoader);
-		
-		this.loader.loadProjectFiles(projectFiles);
+				getWorldviewFiles());
+
+		// set the worldview as the external knowledge repo for the workspace
+		this.loader = new KimLoader(
+				KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM), worldviewLoader);
+
+		// load the workspace, which may include the worldview
+		this.loader.loadProjectFiles(getProjectFiles());
 
 		plugin = this;
 
 		this.engineStatusMonitor.start(relayId);
 
+	}
+
+	private Collection<File> getProjectFiles() {
+		List<File> projectFiles = new ArrayList<>();
+		for (IProject project : Eclipse.INSTANCE.getProjects()) {
+			projectFiles.add(project.getLocation().toFile());
+		}
+		return projectFiles;
 	}
 
 	private Collection<File> getWorldviewFiles() {

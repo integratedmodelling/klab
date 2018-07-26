@@ -349,4 +349,14 @@ public class KimMacro implements IKimMacro {
     public String getResourceId() {
         return delegate.getResourceId();
     }
+
+	@Override
+	public boolean isErrors() {
+		return delegate.isErrors();
+	}
+
+	@Override
+	public boolean isWarnings() {
+		return delegate.isWarnings();
+	}
 }

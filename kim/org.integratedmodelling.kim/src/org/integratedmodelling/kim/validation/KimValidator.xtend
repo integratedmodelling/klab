@@ -85,6 +85,7 @@ class KimValidator extends AbstractKimValidator {
 	def checkNamespace(Namespace namespace) {
 		// check domain
 		if (!namespace.worldviewBound) {
+
 			var ns = Kim.INSTANCE.getNamespace(namespace, true)
 
 			var project = ns.project
@@ -93,9 +94,11 @@ class KimValidator extends AbstractKimValidator {
 				warning(
 					'This namespace is in a non-standard file location: name uniqueness and cross-referencing are not guaranteed',
 					namespace, KimPackage.Literals.NAMESPACE__NAME)
+				ns.warnings = true
 			} else if (project !== null && !namespace.name.equals(expectedId)) {
 				error("The name of this namespace does not match its file location: expecting '" + expectedId + "'",
 					namespace, KimPackage.Literals.NAMESPACE__NAME, BAD_NAMESPACE_ID)
+				ns.errors = true
 			}
 		}
 		if (namespace.parameters !== null && !namespace.isScenario) {
@@ -120,13 +123,6 @@ class KimValidator extends AbstractKimValidator {
 					statement, null, NO_NAMESPACE)
 			}
 		}
-	}
-
-	@Check(EXPENSIVE)
-	def recheckUrn(Urn urn) {
-		/*
-		 * TODO provide a validation (EXPENSIVE) action to re-check all URNs from the server
-		 */
 	}
 
 	@Check
@@ -339,7 +335,7 @@ class KimValidator extends AbstractKimValidator {
 		/*
 		 * create model descriptor if top-level, no errors, for the generator to publish.
 		 */
-		if (ok && statement !== null) {
+		if (statement !== null) {
 
 			if (namespace !== null) {
 
@@ -347,6 +343,12 @@ class KimValidator extends AbstractKimValidator {
 				var ns = Kim.INSTANCE.getNamespace(namespace, true)
 
 				var descriptor = new KimModel(statement, ns);
+				
+				if (!ok) {
+					descriptor.errors = true;
+					ns.errors = true;
+				}
+				
 				descriptor.observables.addAll(observables)
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator
@@ -467,7 +469,6 @@ class KimValidator extends AbstractKimValidator {
 
 				ns.getChildren().add(descriptor)
 			}
-
 		}
 	}
 

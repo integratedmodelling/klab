@@ -130,8 +130,11 @@ public class KimLoader implements IKimLoader {
 	}
 
 	@Override
-	public IKimNamespace delete(Object namespaceProxy) {
+	public List<IKimNamespace> delete(Object namespaceProxy) {
 		// TODO Auto-generated method stub
+		// TODO if project, remove all files
+		// TODO if file or URL or namespace, remove that and reload all
+		// dependents
 		return null;
 	}
 

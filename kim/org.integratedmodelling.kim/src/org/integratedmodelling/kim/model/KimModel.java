@@ -221,5 +221,5 @@ public class KimModel extends KimStatement implements IKimModel {
     public void setDocstring(String docstring) {
         this.docstring = docstring;
     }
-
+	
 }

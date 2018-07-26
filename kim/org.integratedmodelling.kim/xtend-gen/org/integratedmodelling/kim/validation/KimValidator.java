@@ -16,7 +16,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
@@ -125,9 +124,11 @@ public class KimValidator extends AbstractKimValidator {
       if ((expectedId == null)) {
         this.warning(
           "This namespace is in a non-standard file location: name uniqueness and cross-referencing are not guaranteed", namespace, KimPackage.Literals.NAMESPACE__NAME);
+        ns.setWarnings(true);
       } else {
         if (((project != null) && (!namespace.getName().equals(expectedId)))) {
           this.error((("The name of this namespace does not match its file location: expecting \'" + expectedId) + "\'"), namespace, KimPackage.Literals.NAMESPACE__NAME, KimValidator.BAD_NAMESPACE_ID);
+          ns.setErrors(true);
         }
       }
     }
@@ -153,11 +154,6 @@ public class KimValidator extends AbstractKimValidator {
           "Statements can only be defined within a named namespace: please add a namespace instruction at the top of the file", statement, null, KimValidator.NO_NAMESPACE);
       }
     }
-  }
-  
-  @Check(CheckType.EXPENSIVE)
-  public Object recheckUrn(final Urn urn) {
-    return null;
   }
   
   @Check
@@ -422,13 +418,17 @@ public class KimValidator extends AbstractKimValidator {
       for (final ValueAssignment contextualizer : _contextualizers) {
       }
       boolean _xifexpression_3 = false;
-      if ((ok && (statement != null))) {
+      if ((statement != null)) {
         boolean _xifexpression_4 = false;
         if ((namespace != null)) {
           boolean _xblockexpression_1 = false;
           {
             KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
             KimModel descriptor = new KimModel(statement, ns);
+            if ((!ok)) {
+              descriptor.setErrors(true);
+              ns.setErrors(true);
+            }
             descriptor.getObservables().addAll(observables);
             descriptor.getDependencies().addAll(dependencies);
             descriptor.setInstantiator(model.isInstantiator());

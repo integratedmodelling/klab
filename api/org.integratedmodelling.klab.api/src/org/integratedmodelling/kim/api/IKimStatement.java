@@ -85,5 +85,11 @@ public interface IKimStatement extends IKimScope {
      * @return
      */
     String getResourceId();
+    
+	boolean isErrors();
+
+	boolean isWarnings();
+	
+	
 
 }

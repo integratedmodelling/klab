@@ -41,7 +41,9 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 				break;
 			case IResourceDelta.REMOVED:
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
-					IKimNamespace namespace = Activator.loader().delete(((IFile) resource).getLocation().toFile());
+					for (IKimNamespace namespace : Activator.loader().delete(((IFile) resource).getLocation().toFile())) {
+						Eclipse.INSTANCE.getIFile(namespace.getFile()).touch(new NullProgressMonitor());
+					}
 					// TODO send to engine
 				}
 				break;

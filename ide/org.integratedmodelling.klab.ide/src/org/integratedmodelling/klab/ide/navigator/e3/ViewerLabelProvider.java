@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
@@ -32,9 +33,29 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 	public ViewerLabelProvider() {
 	}
 
+	Image errorMarker = ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources",
+			"/icons/full/ovr16/error_co.gif");
+	Image warningMarker = ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources",
+			"/icons/full/ovr16/warning_co.gif");
 	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
 
 	public Image getImage(Object element) {
+
+		Image ret = getBaseImage(element);
+
+		if (element instanceof EKimObject) {
+			if (((EKimObject) element).isErrors()) {
+				ret = ResourceManager.decorateImage(ret, errorMarker, SWTResourceManager.BOTTOM_LEFT);
+			} else if (((EKimObject) element).isWarnings()) {
+				ret = ResourceManager.decorateImage(ret, warningMarker, SWTResourceManager.BOTTOM_LEFT);
+			}
+		}
+
+		return ret;
+	}
+
+	public Image getBaseImage(Object element) {
+
 		if (element instanceof EProject) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif");
 		}
@@ -179,10 +200,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof ETestFolder) {
 			return "Test cases";
 		}
-        if (element instanceof EResource) {
-            return ((EResource)element).getId();
-        }
-        return delegate.getText(element);
+		if (element instanceof EResource) {
+			return ((EResource) element).getId();
+		}
+		return delegate.getText(element);
 	}
 
 	@Override
