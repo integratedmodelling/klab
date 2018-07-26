@@ -324,4 +324,12 @@ public enum Eclipse {
 		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
 	}
 
+	public IFile getIFile(File file) {
+		return null;
+	}
+
+	public File getFile(IFile file) {
+		return file.getLocation().toFile();
+	}
+
 }

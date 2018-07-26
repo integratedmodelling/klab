@@ -109,6 +109,12 @@ public class KimLoader implements IKimLoader {
 	}
 
 	@Override
+	public void reload() {
+		// TODO remove anyth NsInfo that's not external
+		// TODO reload all projects loaded so far
+	}
+	
+	@Override
 	public void load(Collection<IKimProject> projects) {
 		for (IKimProject project : projects) {
 			loadResources(project);
@@ -117,20 +123,22 @@ public class KimLoader implements IKimLoader {
 	}
 
 	@Override
-	public void touch(Object namespaceProxy) {
-
+	public List<IKimNamespace> touch(Object namespaceProxy) {
+		List<IKimNamespace> ret = new ArrayList<>();
+		// TODO
+		return ret;
 	}
 
 	@Override
-	public void delete(Object namespaceProxy) {
+	public IKimNamespace delete(Object namespaceProxy) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public void add(Object namespaceResource) {
+	public IKimNamespace add(Object namespaceResource) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override

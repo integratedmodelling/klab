@@ -1290,7 +1290,7 @@ public enum Kim {
 		IKimProject ret = this.projectRootRegistry.get(root);
 		if (ret == null && createIfAbsent) {
 			KimWorkspace workspace = KimWorkspace.getWorkspaceForProjectFile(root);
-			String pname = MiscUtilities.getFileBaseName(root);
+			String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
 			ret = new KimProject(workspace, pname, root);
 			this.projectRegistry.put(pname, ret);
 			this.projectRootRegistry.put(root, ret);

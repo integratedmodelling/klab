@@ -3,6 +3,7 @@ package org.integratedmodelling.kim.api;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A k.IM loader ingests projects and ensures they are loaded and up to date. It
@@ -49,23 +50,24 @@ public interface IKimLoader {
 	 * 
 	 * @param namespaceProxy
 	 *            a file, namespace or URI that identifies an existing namespace.
+	 * @return all the namespaces affected by the change and reloaded
 	 * @throws IllegalArgumentException
 	 *             if the passed object does not identify a namespace.
 	 */
-	void touch(Object namespaceProxy);
+	List<IKimNamespace> touch(Object namespaceProxy);
 
 	/**
 	 * 
 	 * @param namespaceProxy
 	 */
-	void delete(Object namespaceProxy);
+	IKimNamespace delete(Object namespaceProxy);
 
 	/**
 	 * 
 	 * @param namespaceResource
 	 *            a file or URL
 	 */
-	void add(Object namespaceResource);
+	IKimNamespace add(Object namespaceResource);
 
 	/**
 	 * Retrieve the namespace pointed to by the passed object.
@@ -82,6 +84,11 @@ public interface IKimLoader {
 	 * @return
 	 */
 	Iterable<IKimNamespace> getNamespaces();
+
+	/**
+	 * Perform a full clean reload of everything.
+	 */
+	void reload();
 
 
 }

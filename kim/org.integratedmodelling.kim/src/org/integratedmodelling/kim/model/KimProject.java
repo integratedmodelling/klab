@@ -50,14 +50,6 @@ public class KimProject implements IKimProject {
 		Kim.INSTANCE.registerProject(this);
 	}
 
-	public KimProject(String projectName, KimWorkspace workspace, Properties properties) {
-		this.name = projectName;
-		this.workspace = workspace;
-		this.properties = properties;
-		this.root = new File(workspace.getRoot() + File.separator + projectName);
-		Kim.INSTANCE.registerProject(this);
-	}
-
 	@Override
 	public List<File> getSourceFiles() {
 		return getSourceFiles(root);
@@ -130,6 +122,10 @@ public class KimProject implements IKimProject {
 			} else if (f.isDirectory()) {
 				result.addAll(getSourceFiles(f));
 			}
+		}
+		File kkim = new File(root + File.separator + "META-INF" + File.separator + "knowledge.kim");
+		if (kkim.isFile()) {
+			result.add(kkim);
 		}
 		return result;
 	}
