@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
+import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 import org.integratedmodelling.kim.validation.KimValidator;
 import com.google.inject.Inject;
@@ -117,7 +118,7 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 
 							if (!text.contains(":")) {
 								Namespace namespace = KimValidator.getNamespace(node.getSemanticElement());
-								text = (namespace == null ? "UNDEFINED" : namespace.getName()) + ":" + text;
+								text = (namespace == null ? "UNDEFINED" : KimProject.getNamespaceId(namespace)) + ":" + text;
 							}
 
 							ConceptDescriptor cdesc = Kim.INSTANCE.getConceptDescriptor(text);

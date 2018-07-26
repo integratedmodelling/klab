@@ -1313,7 +1313,7 @@ public class KimValidator extends AbstractKimValidator {
             if ((namespace == null)) {
               _xifexpression = "UNDEFINED";
             } else {
-              _xifexpression = namespace.getName();
+              _xifexpression = KimProject.getNamespaceId(namespace);
             }
             String _plus = (_xifexpression + ":");
             String _name_2 = concept.getName().getName();

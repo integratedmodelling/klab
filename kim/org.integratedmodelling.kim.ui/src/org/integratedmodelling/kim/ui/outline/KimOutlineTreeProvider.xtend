@@ -47,7 +47,7 @@ class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		if (project !== null) {
 			pnode = getProjectNode(pnode, project)
 			if (model.namespace !== null) {
-				pnode = getNamespaceNode(pnode, project.getNamespace(model.namespace.name))
+				pnode = getNamespaceNode(pnode, project.getNamespace(KimProject.getNamespaceId(model.namespace)))
 			}
 		}
 

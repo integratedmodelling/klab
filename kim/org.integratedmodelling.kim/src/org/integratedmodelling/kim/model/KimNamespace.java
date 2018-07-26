@@ -241,4 +241,8 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public boolean isProjectKnowledge() {
 		return projectKnowledge;
 	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
 }

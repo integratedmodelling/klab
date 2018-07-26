@@ -50,7 +50,7 @@ public class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
       Namespace _namespace = model.getNamespace();
       boolean _tripleNotEquals = (_namespace != null);
       if (_tripleNotEquals) {
-        pnode = this.getNamespaceNode(pnode, project.getNamespace(model.getNamespace().getName()));
+        pnode = this.getNamespaceNode(pnode, project.getNamespace(KimProject.getNamespaceId(model.getNamespace())));
       }
     }
     EList<EObject> _eContents = model.eContents();

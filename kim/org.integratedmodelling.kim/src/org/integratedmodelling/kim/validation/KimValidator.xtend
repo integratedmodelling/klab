@@ -1016,7 +1016,7 @@ class KimValidator extends AbstractKimValidator {
 
 				if (!concept.name.name.contains(":")) {
 					var namespace = KimValidator.getNamespace(concept);
-					concept.name.name = (if(namespace === null) "UNDEFINED" else namespace.getName()) + ":" +
+					concept.name.name = (if(namespace === null) "UNDEFINED" else KimProject.getNamespaceId(namespace)) + ":" +
 						concept.name.name
 				}
 

@@ -170,7 +170,7 @@ public class KimLoader implements IKimLoader {
 		}
 	}
 
-	public synchronized void doLoad() {
+	private synchronized void doLoad() {
 
 		if (injector == null) {
 			injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -180,8 +180,6 @@ public class KimLoader implements IKimLoader {
 		
 		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		IResourceValidator validator = injector.getInstance(IResourceValidator.class);
-		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		ResourceSorter sorter = new ResourceSorter();
 		Map<URI, File> fileMap = new HashMap<>();
 
@@ -199,14 +197,24 @@ public class KimLoader implements IKimLoader {
 		}
 		
 		List<Resource> sortedResources = CollectionUtils.join(sorter.getResources(), nondep);
+		
+		loadResources(sortedResources, fileMap);
+	}
+
+	private void loadResources(List<Resource> sortedResources, Map<URI, File> fileMap) {
+		
+		IResourceValidator validator = injector.getInstance(IResourceValidator.class);
+		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+
 		for (Resource resource : sortedResources) {
-			
+			Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());
 			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 			String name = KimProject.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
 			NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
 			info.issues.addAll(issues);
 			info.name = name;
 			info.namespace = Kim.INSTANCE.getNamespace(name);
+			((KimNamespace)info.namespace).setFile(fileMap.get(resource.getURI()));
 			((KimProject)info.project).addNamespace(info.namespace);
 			this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
 			this.sortedNames.add(name);

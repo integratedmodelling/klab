@@ -975,7 +975,7 @@ public enum Kim {
 
 		return ret;
 	}
-	
+
 	public void eraseOrphanNamespace(String uri) {
 		orphanNamespaceRegistry.remove(uri);
 	}
@@ -1042,17 +1042,15 @@ public enum Kim {
 
 	public void removeNamespace(Namespace namespace) {
 
+		String name = KimProject.getNamespaceId(namespace);
 		KimProject project = null;
-		// if (namespace.isWorldviewBound()) {
-		// project = getCommonWorkspace().getProjects().iterator().next();
-		// } else {
 		KimWorkspace workspace = KimWorkspace.getWorkspaceForResource(namespace.eResource());
 		project = workspace == null ? null : workspace.getProjectForResource(namespace.eResource());
-		// }
-
 		if (project != null) {
-			project.removeNamespace(KimProject.getNamespaceId(namespace));
+			project.removeNamespace(name);
 		}
+		namespaceRegistry.remove(name);
+		orphanNamespaceRegistry.remove(name);
 	}
 
 	public void handleAddition(String relativePath) {
