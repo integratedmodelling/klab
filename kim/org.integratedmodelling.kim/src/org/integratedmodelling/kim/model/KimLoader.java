@@ -279,6 +279,10 @@ public class KimLoader implements IKimLoader {
 
 		for (Resource resource : sortedResources) {
 			try {
+				/*
+				 * TODO don't add if it's there and was loaded after the resource modification, unless
+				 * a force flag was set
+				 */
 				Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());
 				List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 				String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
