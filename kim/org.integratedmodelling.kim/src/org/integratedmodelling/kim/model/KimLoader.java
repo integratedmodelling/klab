@@ -244,15 +244,25 @@ public class KimLoader implements IKimLoader {
 
 		for (File file : dependentResources.keySet()) {
 			URI uri = URI.createFileURI(file.toString());
-			sorter.add(resourceSet.getResource(uri, true));
-			fileMap.put(uri, file);
+			Resource resource = resourceSet.getResource(uri, true);
+			if (resource != null) {
+				sorter.add(resource);
+				fileMap.put(uri, file);
+			} else {
+				System.out.println("PORCATA IN " + file);
+			}
 		}
 
 		List<Resource> nondep = new ArrayList<>();
 		for (File file : nonDependentResources.keySet()) {
 			URI uri = URI.createFileURI(file.toString());
-			nondep.add(resourceSet.getResource(uri, true));
-			fileMap.put(uri, file);
+			Resource resource = resourceSet.getResource(uri, true);
+			if (resource != null) {
+				nondep.add(resource);
+				fileMap.put(uri, file);
+			} else {
+				System.out.println("PORCATA IN " + file);
+			}
 		}
 
 		List<Resource> sortedResources = CollectionUtils.join(sorter.getResources(), nondep);
@@ -266,17 +276,21 @@ public class KimLoader implements IKimLoader {
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 
 		for (Resource resource : sortedResources) {
-			Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());
-			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-			String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
-			NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
-			info.issues.addAll(issues);
-			info.name = name;
-			info.namespace = Kim.INSTANCE.getNamespace(name);
-			((KimNamespace) info.namespace).setFile(fileMap.get(resource.getURI()));
-			((KimProject) info.project).addNamespace(info.namespace);
-			this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
-			this.sortedNames.add(name);
+			try {
+				Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());
+				List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+				String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
+				NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
+				info.issues.addAll(issues);
+				info.name = name;
+				info.namespace = Kim.INSTANCE.getNamespace(name);
+				((KimNamespace) info.namespace).setFile(fileMap.get(resource.getURI()));
+				((KimProject) info.project).addNamespace(info.namespace);
+				this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
+				this.sortedNames.add(name);
+			} catch (Throwable e) {
+				System.out.println("PORCATE: " + resource);
+			}
 		}
 
 		GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);

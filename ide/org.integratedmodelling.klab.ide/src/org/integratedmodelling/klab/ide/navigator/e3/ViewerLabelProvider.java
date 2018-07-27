@@ -75,12 +75,11 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/test.gif");
 		}
 		if (element instanceof EScript) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
+			return ResourceManager.decorateImage(
+					ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif"), getRunMarker(),
+					SWTResourceManager.TOP_LEFT);
 		}
 		if (element instanceof ENamespace) {
-			if (((ENamespace) element).isWorldviewBound()) {
-				// return the icon for a script or semantic annotation
-			}
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/namespace-checked.png");
 		}
 		if (element instanceof EConcept) {
@@ -233,7 +232,12 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
 	@Override
 	public Font getFont(Object element) {
-		// TODO Auto-generated method stub
+		if (element instanceof EResource) {
+			EResourceReference resource = ((EResource) element).getResource();
+			if (resource.isOnline()) {
+				return SWTResourceManager.getBoldFont(KlabNavigator.getViewerFont());
+			}
+		}
 		return null;
 	}
 

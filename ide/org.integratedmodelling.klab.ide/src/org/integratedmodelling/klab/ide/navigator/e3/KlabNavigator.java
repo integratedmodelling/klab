@@ -28,6 +28,7 @@ package org.integratedmodelling.klab.ide.navigator.e3;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -68,6 +69,10 @@ public class KlabNavigator extends CommonNavigator  {
     	return EWorkspace.INSTANCE;
 	}
 
+    public static Font getViewerFont() {
+    	return _viewer.getControl().getFont();
+    }
+    
 	public static void refresh() {
         if (_viewer != null) {
             Display.getDefault().asyncExec(new Runnable() {
