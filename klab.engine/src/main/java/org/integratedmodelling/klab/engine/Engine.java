@@ -470,7 +470,7 @@ public class Engine extends Server implements IEngine, UserDetails {
             /*
              * load component knowledge after all binary content is registered.
              */
-            Resources.INSTANCE.getComponentsWorkspace().load(false, getMonitor());
+            Resources.INSTANCE.getComponentsWorkspace().load(getMonitor());
 
             /*
              * now we can finally load the workspace

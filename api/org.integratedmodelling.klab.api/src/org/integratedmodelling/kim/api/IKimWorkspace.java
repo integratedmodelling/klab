@@ -21,18 +21,14 @@ public interface IKimWorkspace {
 	 */
 	IKimLoader load();
 
-	// /**
-	// * Load or re-load all the projects we manage.
-	// *
-	// * @param incremental
-	// * if true, load everything from scratch, otherwise just load what
-	// * changed and their dependencies.
-	// * @return a list of the namespaces in the projects contained in this
-	// workspace.
-	// * @throws IOException
-	// */
-	// List<IKimNamespace> load(boolean incremental);
-
+	/**
+	 * Like {@link #load()} but with a specified loader.
+	 * 
+	 * @param loader
+	 * @return the same loader passed or another that merges it.
+	 */
+	IKimLoader load(IKimLoader loader);
+	
 	/**
 	 * Directories on the local filesystem where each project managed under this
 	 * workspace. Each project has its own individual location - there is no

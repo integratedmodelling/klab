@@ -7,21 +7,17 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimLoader;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.KimWorkspace;
-import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
 	KimWorkspace delegate;
-	private IKimLoader loader;
 
 	AbstractWorkspace() {
 	}
@@ -59,19 +55,13 @@ public abstract class AbstractWorkspace implements IWorkspace {
 	}
 
 	@Override
-	public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
+	public IKimLoader load(IMonitor monitor) throws KlabException {
+		return delegate.load();
+	}
 
-		List<INamespace> ret = new ArrayList<>();
-		this.loader = delegate.load();
-		for (IKimNamespace ns : loader.getNamespaces()) {
-			// the validator callback inserts the namespace into the index, all we do is
-			// retrieve it
-			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
-			if (namespace != null) {
-				ret.add(namespace);
-			}
-		}
-		return ret;
+	@Override
+	public IKimLoader load(IKimLoader loader, IMonitor monitor) throws KlabException {
+		return delegate.load(loader);
 	}
 
 	@Override

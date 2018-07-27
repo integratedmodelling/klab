@@ -15,10 +15,9 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -85,7 +84,8 @@ public enum Resources implements IResourceService {
 	INSTANCE;
 
 	private ExecutorService resourceTaskExecutor;
-
+	private IKimLoader loader;
+	
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 
 	/**
@@ -159,7 +159,7 @@ public enum Resources implements IResourceService {
 	public boolean loadCoreKnowledge(IMonitor monitor) {
 		try {
 			coreKnowledge = new CoreOntology(Configuration.INSTANCE.getDataPath("knowledge"));
-			coreKnowledge.load(false, monitor);
+			coreKnowledge.load(monitor);
 			workspaces.put(coreKnowledge.getName(), coreKnowledge);
 			return true;
 		} catch (Throwable e) {
@@ -176,7 +176,7 @@ public enum Resources implements IResourceService {
 		try {
 			components = new MonitorableFileWorkspace(Configuration.INSTANCE.getDataPath("components"),
 					localComponentPaths.toArray(new File[localComponentPaths.size()]));
-			components.load(false, monitor);
+			this.loader = components.load(this.loader, monitor);
 			workspaces.put(components.getName(), components);
 			return true;
 		} catch (Throwable e) {
@@ -192,7 +192,7 @@ public enum Resources implements IResourceService {
 	public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
 		try {
 			worldview = certificate.getWorldview();
-			worldview.load(false, monitor);
+			this.loader = worldview.load(this.loader, monitor);
 			workspaces.put(worldview.getName(), worldview);
 
 			return true;
@@ -216,7 +216,7 @@ public enum Resources implements IResourceService {
 	 */
 	public boolean loadLocalWorkspace(IMonitor monitor) {
 		try {
-			getLocalWorkspace().load(false, monitor);
+			this.loader = getLocalWorkspace().load(this.loader, monitor);
 			return true;
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e.getLocalizedMessage());
@@ -818,5 +818,15 @@ public enum Resources implements IResourceService {
 			ret.getLocalResources().add(rref);
 		}
 		return ret;
+	}
+	
+	/**
+	 * Return the loader used to load all the knowledge. Typically this contains knowledge from
+	 * various workspaces, such as worldview, components and user.
+	 * 
+	 * @return the loader. Never null unless boot wasn't called or failed.
+	 */
+	public IKimLoader getLoader() {
+		return loader;
 	}
 }

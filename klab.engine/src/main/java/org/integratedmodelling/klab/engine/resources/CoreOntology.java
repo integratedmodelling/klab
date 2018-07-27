@@ -2,17 +2,17 @@ package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 
@@ -329,10 +328,15 @@ public class CoreOntology extends AbstractWorkspace {
 		 * create and install all the agent types in the same ontology.
 		 */
 	}
+	
+	public IKimLoader load(IKimLoader loader, IMonitor monitor) {
+		load(monitor);
+		return loader;
+	}
 
 	@Override
-	public List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException {
-		List<INamespace> ret = new ArrayList<>();
+	public IKimLoader load(IMonitor monitor) {
+		IKimLoader ret = null;
 		if (!synced) {
 			synced = true;
 			try {
@@ -342,11 +346,6 @@ public class CoreOntology extends AbstractWorkspace {
 			}
 		}
 		OWL.INSTANCE.initialize(getRoot(), monitor);
-
-		for (INamespace ns : OWL.INSTANCE.getNamespaces()) {
-			Namespaces.INSTANCE.registerNamespace((Namespace) ns, monitor);
-			ret.add(ns);
-		}
 
 		/**
 		 * This test is unlikely to fail, but its purpose is primarily to preload the
@@ -362,7 +361,7 @@ public class CoreOntology extends AbstractWorkspace {
 			throw new KlabIOException("core knowledge: can't find known concepts, ontologies are probably corrupted");
 		}
 
-		Logging.INSTANCE.info(ret.size() + " ontologies read from classpath");
+		Logging.INSTANCE.info(OWL.INSTANCE.getOntologies(true).size() + " ontologies read from classpath");
 
 		return ret;
 	}

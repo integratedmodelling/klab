@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.ProjectModification;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchMatch;
@@ -444,6 +445,31 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		run(request.getScriptUrl());
 	}
 
+	/**
+	 * This is all we need to react to UI events modifying the workspace or any of
+	 * its imports.
+	 * 
+	 * @param event
+	 * @param type
+	 */
+	@MessageHandler
+	private void handleProjectEvent(final ProjectModification event, IMessage.Type type) {
+		
+		switch (type) {
+		case ProjectFileAdded:
+			Resources.INSTANCE.getLoader().add(event.getFile());
+			break;
+		case ProjectFileDeleted:
+			Resources.INSTANCE.getLoader().delete(event.getFile());
+			break;
+		case ProjectFileModified:
+			Resources.INSTANCE.getLoader().touch(event.getFile());
+			break;
+		default:
+			break;
+		}
+	}
+	
 	@MessageHandler
 	private void handleObservationRequest(final ObservationRequest request) {
 

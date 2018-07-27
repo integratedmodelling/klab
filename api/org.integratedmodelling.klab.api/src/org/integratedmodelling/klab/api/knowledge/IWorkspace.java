@@ -17,9 +17,8 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
-import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -49,15 +48,22 @@ public interface IWorkspace {
      * Load all the knowledge in the namespace, optionally limited to anything that has
      * changed since last read.
      *
-     * @param incremental if true, only read resources that have changed.
      * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-     * @return the list of namespaces read, excluding those that did not need update.
-     *         Workspaces that keep track of dependencies should return the namespaces
-     *         in dependency order.
+     * @return the loader containing the details of resources and the corresponding namespaces
      * @throws org.integratedmodelling.klab.exceptions.KlabException in case of I/O or other errors. Syntax errors won't cause
      *         exceptions.
      */
-    List<INamespace> load(boolean incremental, IMonitor monitor) throws KlabException;
+    IKimLoader load(IMonitor monitor) throws KlabException;
+    
+    /**
+     * Like {@link #load(IMonitor)} but adding the knowledge of another loader.
+     * 
+     * @param loader. May be null.
+     * @param monitor
+     * @return
+     * @throws KlabException
+     */
+    IKimLoader load(IKimLoader loader, IMonitor monitor) throws KlabException;
     
     /**
      * Get all the projects in the workspace.

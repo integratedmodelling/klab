@@ -164,6 +164,13 @@ public class KimWorkspace implements IKimWorkspace {
     	return ret;
     }
 
+    public IKimLoader load(IKimLoader loader) {
+    	readProjects();
+    	IKimLoader ret = new KimLoader(loader);
+    	ret.load(allProjects.values());
+    	return ret;
+    }
+
     public KimNamespace findNamespace(String id) {
 
         for (IKimProject project : allProjects.values()) {

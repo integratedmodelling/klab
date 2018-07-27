@@ -82,7 +82,9 @@ public class KimLoader implements IKimLoader {
 	}
 
 	public KimLoader(IKimLoader loader) {
-		importLoader(loader);
+		if (loader != null) {
+			importLoader(loader);
+		}
 	}
 
 	private void importLoader(IKimLoader loader) {
