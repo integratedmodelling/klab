@@ -359,5 +359,17 @@
          </adapter>
       </factory>
    </extension>
-
+	<extension
+  		point="org.eclipse.mylyn.commons.notifications.ui.notifications">
+	<event
+    	categoryId="org.eclipse.mylyn.builds.ui.category.Builds"
+    	id="klab.event"
+    	label="k.LAB event"
+    	selected="true"
+    	>
+    	<defaultHandler
+      	sinkId="org.eclipse.mylyn.commons.notifications.sink.Popup">
+    	</defaultHandler>
+  	</event>
+</extension>
 </plugin>

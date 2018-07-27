@@ -340,7 +340,7 @@ public enum Eclipse {
 	@SuppressWarnings("restriction")
 	public void notification(final String label, final String description) {
 
-		AbstractNotification notification = new AbstractNotification("") {
+		AbstractNotification notification = new AbstractNotification("klab.event") {
 
 			public String getLabel() {
 				return label;
