@@ -11,12 +11,18 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 public class EResourceReference extends ResourceReference {
 
 	private boolean online;
-
+	private boolean error;
+	
 	public EResourceReference() {
 	}
 
 	public EResourceReference(ResourceReference other) {
 		super(other);
+	}
+	
+	public EResourceReference(ResourceReference other, boolean online) {
+		super(other);
+		this.online = online;
 	}
 
 	public boolean isOnline() {
@@ -26,5 +32,15 @@ public class EResourceReference extends ResourceReference {
 	public void setOnline(boolean online) {
 		this.online = online;
 	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
+	
+	
 
 }

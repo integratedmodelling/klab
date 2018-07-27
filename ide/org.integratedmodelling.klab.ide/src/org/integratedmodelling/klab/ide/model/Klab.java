@@ -14,9 +14,13 @@ import java.util.Set;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
+import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.LocalResourceReference;
+import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
 /**
@@ -32,7 +36,7 @@ public class Klab {
 
 	/*
 	 * initial resource synchronization, happens once at launch before the engine is
-	 * connected
+	 * connected. These get updated when a Capabilities bean is received.
 	 */
 	Set<String> projectsSynchronized = Collections.synchronizedSet(new HashSet<>());
 
@@ -52,7 +56,11 @@ public class Klab {
 	private Map<String, List<ETaskReference>> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	private void synchronizeProjectResources(EProject project) {
+
 		if (!projectsSynchronized.contains(project.getName())) {
+
+			List<String> urns = new ArrayList<>();
+
 			projectsSynchronized.add(project.getName());
 			File resourceFolder = new File(project.getRoot() + File.separator + "resources");
 			if (resourceFolder.exists()) {
@@ -67,6 +75,7 @@ public class Klab {
 								resourceCatalog.put(project.getName(), catalog);
 							}
 							catalog.put(resource.getUrn(), new EResourceReference(resource));
+							urns.add(resource.getUrn());
 						}
 					}
 				}
@@ -87,11 +96,50 @@ public class Klab {
 	}
 
 	/*
+	 * sync the resource status with the capabilities from the engine
+	 */
+	private void synchronizeProjectResources(List<ProjectReference> localWorkspaceProjects) {
+		for (ProjectReference project : localWorkspaceProjects) {
+			if (resourceCatalog.containsKey(project.getName())) {
+				for (LocalResourceReference resource : project.getLocalResources()) {
+					if (resourceCatalog.get(project.getName()).containsKey(resource.getUrn())) {
+						resourceCatalog.get(project.getName()).get(resource.getUrn()).setOnline(resource.isOnline());
+					}
+				}
+			}
+		}
+	}
+	
+	/*
+	 * called by the session peer, the true receiver for the message
+	 */
+	public void notifyResourceImport(ResourceReference resource) {
+		Map<String, EResourceReference> list = resourceCatalog.get(resource.getProjectName());
+		list.put(resource.getUrn(), new EResourceReference(resource, true));
+		KlabNavigator.refresh();
+	}
+
+	/*
 	 * This does all the work of keeping the books in order, recording any
 	 * modification, and notifying the UI any time a change must be reported.
 	 */
 	private void handleMessage(IMessage message) {
-
+		switch (message.getType()) {
+		case EngineUp:
+			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
+			KlabNavigator.refresh();
+			break;
+		case EngineDown:
+			for (String project : resourceCatalog.keySet()) {
+				for (String urn : resourceCatalog.get(project).keySet()) {
+					resourceCatalog.get(project).get(urn).setOnline(false);
+				}
+			}
+			KlabNavigator.refresh();
+		default:
+			break;
+		}
 	}
+
 
 }

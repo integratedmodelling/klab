@@ -44,7 +44,6 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -61,7 +60,6 @@ import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.SemanticType;
-import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -950,7 +948,8 @@ public enum Kim {
 		Namespace namespace = KimValidator.getNamespace(statement);
 
 		if (namespace != null) {
-			String name = KimProject.getNamespaceId(namespace);
+
+			String name = Kim.getNamespaceId(namespace);
 			if (namespaceRegistry.containsKey(name)) {
 				return (KimNamespace) namespaceRegistry.get(name);
 			}
@@ -961,7 +960,8 @@ public enum Kim {
 				project = workspace.getProjectForResource(namespace.eResource());
 			}
 			if (project != null) {
-				ret = project.getNamespace(name, namespace, createIfAbsent);
+				// it will register itself
+				ret = new KimNamespace(namespace, project);
 			} else if (namespace.isWorldviewBound()) {
 				// projectless and with modified URI
 				String uri = namespace.eResource().getURI().toString();
@@ -1042,7 +1042,7 @@ public enum Kim {
 
 	public void removeNamespace(Namespace namespace) {
 
-		String name = KimProject.getNamespaceId(namespace);
+		String name = Kim.getNamespaceId(namespace);
 		KimProject project = null;
 		KimWorkspace workspace = KimWorkspace.getWorkspaceForResource(namespace.eResource());
 		project = workspace == null ? null : workspace.getProjectForResource(namespace.eResource());
@@ -1301,6 +1301,33 @@ public enum Kim {
 	public boolean isKimProject(File file) {
 		File props = new File(file + File.separator + "META-INF" + File.separator + "klab.properties");
 		return props.exists() && props.isFile();
+	}
+
+	/**
+	 * Return the system name for the namespace. This will be the stated name for
+	 * "regular" namespaces, adding "|" and a normalized, stable transformation of
+	 * the resource URI if it's an anonymous/sidecar file/script/test. The
+	 * normalization copies all path segments backwards until a project name is
+	 * encountered or the path is finished, taking care of different URI prefixes
+	 * between OSGI and the regular filesystem.
+	 * 
+	 * @param namespace
+	 * @return the namespace ID
+	 */
+	public static String getNamespaceId(Namespace namespace) {
+		String ret = namespace.getName();
+		if (namespace.isWorldviewBound()) {
+			String uri = "";
+			String[] path = namespace.eResource().getURI().path().split("/");
+			for (int i = path.length - 1; i >= 0; i--) {
+				uri = path[i] + (uri.isEmpty() ? "" : "/") + uri;
+				if (INSTANCE.getProject(path[i]) != null) {
+					break;
+				}
+			}
+			ret += "|" + uri;
+		}
+		return ret;
 	}
 
 }

@@ -9,7 +9,7 @@ import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.Namespace;
-import org.integratedmodelling.kim.model.KimProject;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.utils.DirectedGraph;
 import org.integratedmodelling.klab.utils.KimCircularDependencyException;
@@ -68,7 +68,7 @@ public class ResourceSorter {
         if (resource instanceof LazyLinkingResource) {
             Model model = (Model) resource.getContents().get(0);
             Namespace ns = model.getNamespace();
-            String nsName = KimProject.getNamespaceId(ns);
+            String nsName = Kim.getNamespaceId(ns);
             graph.addNode(nsName);
             resources.put(nsName, resource);
             for (Import dio : ns.getImported()) {

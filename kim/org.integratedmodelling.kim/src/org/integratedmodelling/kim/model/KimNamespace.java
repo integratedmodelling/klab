@@ -39,7 +39,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     
     public KimNamespace(Namespace namespace, KimProject project) {
         super(namespace, null);
-        this.name = KimProject.getNamespaceId(namespace);
+        this.name = Kim.getNamespaceId(namespace);
         this.projectKnowledge = namespace.eResource().getURI().toString().contains("META-INF/knowledge.kim");
         if (namespace.eResource().getURI().isFile()) {
             this.file = new File(namespace.eResource().getURI().toFileString());
@@ -51,6 +51,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
             this.timestamp = namespace.eResource().getTimeStamp();
         }
         this.project = project;
+        project.addNamespace(this);
         this.worldviewBound = namespace.isWorldviewBound();
         // worldview-bound anonymous namespaces are private by design.
         this.isPrivate = namespace.isPrivate() | namespace.isWorldviewBound();

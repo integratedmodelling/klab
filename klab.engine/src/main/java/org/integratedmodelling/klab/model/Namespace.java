@@ -63,6 +63,9 @@ public class Namespace extends KimObject implements INamespace {
     setDeprecated(namespace.isDeprecated());
   }
 
+  /*
+   * This is ONLY for OWL namespaces
+   */
   public Namespace(String id, @Nullable File file, Ontology ontology) {
     super(null);
     setStatement(new KimNamespace(id, file));

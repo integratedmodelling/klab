@@ -16,9 +16,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.ProjectModification;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,7 +29,14 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 
 	public static final String BUILDER_ID = "org.integratedmodelling.klab.ide.klabBuilder";
 
-	class SampleDeltaVisitor implements IResourceDeltaVisitor {
+	/**
+	 * This keeps the Xtext internal model in sync with the loader and ensures that
+	 * dependencies, which are handled outside of Xtext, are refreshed.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	class KlabDeltaVisitor implements IResourceDeltaVisitor {
 
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
@@ -35,25 +44,38 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
-					IKimNamespace namespace = Activator.loader().add(((IFile) resource).getLocation().toFile());
-					// TODO send to engine
+					Activator.loader().add(((IFile) resource).getLocation().toFile());
+					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
+							new ProjectModification(ProjectModification.Type.ADDITION,
+									((IFile) resource).getLocation().toFile()));
 				}
 				break;
 			case IResourceDelta.REMOVED:
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
-					for (IKimNamespace namespace : Activator.loader().delete(((IFile) resource).getLocation().toFile())) {
+					// SEE same warning as below
+					for (IKimNamespace namespace : Activator.loader()
+							.delete(((IFile) resource).getLocation().toFile())) {
 						Eclipse.INSTANCE.getIFile(namespace.getFile()).touch(new NullProgressMonitor());
 					}
-					// TODO send to engine
+					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
+							new ProjectModification(ProjectModification.Type.DELETION,
+									((IFile) resource).getLocation().toFile()));
 				}
 				break;
 			case IResourceDelta.CHANGED:
-				System.out.println("changed " + resource);
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
 					for (IKimNamespace ns : Activator.loader().touch(((IFile) resource).getLocation().toFile())) {
+						// ACHTUNG this will probably call back here, unleashing a linear but useless
+						// chain of multiple
+						// reloads. Should find a way to prevent more touching besides refresh of the
+						// loader's contents. Use a thread with
+						// a context setting to control the recurse parameter in the loader so that the
+						// inner touch() only affects one resource at a time.
 						Eclipse.INSTANCE.getIFile(ns.getFile()).touch(new NullProgressMonitor());
 					}
-					// TODO send change to engine
+					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
+							new ProjectModification(ProjectModification.Type.CHANGE,
+									((IFile) resource).getLocation().toFile()));
 				}
 				break;
 			}
@@ -98,8 +120,6 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 	}
 
 	private static final String MARKER_TYPE = "org.integratedmodelling.klab.ide.builder.klabProblem";
-
-	private SAXParserFactory parserFactory;
 
 	private void addMarker(IFile file, String message, int lineNumber, int severity) {
 		try {
@@ -147,12 +167,12 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 	// }
 	// }
 
-	private void deleteMarkers(IFile file) {
-		try {
-			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ZERO);
-		} catch (CoreException ce) {
-		}
-	}
+//	private void deleteMarkers(IFile file) {
+//		try {
+//			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ZERO);
+//		} catch (CoreException ce) {
+//		}
+//	}
 
 	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		try {
@@ -163,7 +183,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 
 	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
-		delta.accept(new SampleDeltaVisitor());
+		delta.accept(new KlabDeltaVisitor());
 	}
 
 	public boolean isRelevant(IFile resource) {

@@ -25,10 +25,9 @@ public class EModel extends EKimObject implements IKimModel {
 	}
 
 	public IKimConcept.Type getCoreObservableType() {
-		IKimConcept main = delegate.getObservables().get(0).getMain();
+		IKimConcept main = delegate.getObservables().size() > 0 ? delegate.getObservables().get(0).getMain() : null;
 		Set<IKimConcept.Type> type = main == null
-				? (delegate.getObservables().get(0).getNonSemanticType() != null 
-						? EnumSet.of(IKimConcept.Type.QUALITY)
+				? (delegate.getObservables().get(0).getNonSemanticType() != null ? EnumSet.of(IKimConcept.Type.QUALITY)
 						: null)
 				: main.getType();
 		return type == null ? null : Kim.INSTANCE.getFundamentalType(type);

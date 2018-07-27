@@ -6,18 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
 
 public class KimProject implements IKimProject {
@@ -30,9 +26,9 @@ public class KimProject implements IKimProject {
 	Properties properties;
 
 	/**
-	 * Namespaces by namespace ID
+	 * Namespace IDs. The actual namespaces are held in Kim.INSTANCE.
 	 */
-	private Map<String, KimNamespace> namespaces = new HashMap<>();
+	private Set<String> namespaces = new HashSet<>();
 
 	public KimProject(KimWorkspace workspace, String name, File dir) {
 		this.workspace = workspace;
@@ -57,24 +53,9 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public KimNamespace getNamespace(String id) {
-		return namespaces.get(id);
-	}
-	
-	/**
-	 * Return the stated name, adding "|" and the resource URI if it's
-	 * anonymous/sidecar file, counting on the fact that the latter are always
-	 * parsed one at a time and should never provide storeable knowledge.
-	 * 
-	 * @param namespace
-	 * @return the namespace ID
-	 */
-	public static String getNamespaceId(Namespace namespace) {
-		return namespace.getName() + (namespace.isWorldviewBound()
-				? ("|" + EcoreUtil.getRootContainer(namespace).eResource().getURI().path())
-				: "");
+		return (KimNamespace) Kim.INSTANCE.getNamespace(id);
 	}
 
-	// @Override
 	public String getNamespaceIdFor(EObject o) {
 
 		final String PLATFORM_URI_PREFIX = "platform:/resource/";
@@ -171,25 +152,12 @@ public class KimProject implements IKimProject {
 		return properties;
 	}
 
-	public KimNamespace getNamespace(String name, Namespace namespace, boolean createIfAbsent) {
-		KimNamespace ret = namespaces.get(name);
-		if (ret == null && createIfAbsent) {
-			ret = new KimNamespace(namespace, this);
-			namespaces.put(getNamespaceId(namespace), ret);
-		}
-		return ret;
-	}
-
 	@Override
 	public List<IKimNamespace> getNamespaces() {
 		List<IKimNamespace> ret = new ArrayList<>();
-		ret.addAll(namespaces.values());
-		Collections.sort(ret, new Comparator<IKimNamespace>() {
-			@Override
-			public int compare(IKimNamespace o1, IKimNamespace o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+		for (String namespace : namespaces) {
+			ret.add(Kim.INSTANCE.getNamespace(namespace));
+		}
 		return ret;
 	}
 
@@ -198,7 +166,7 @@ public class KimProject implements IKimProject {
 	}
 
 	public void addNamespace(IKimNamespace namespace) {
-		namespaces.put(namespace.getName(), (KimNamespace)namespace);
+		namespaces.add(namespace.getName());
 	}
 
 }

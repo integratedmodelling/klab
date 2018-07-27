@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.rest.TaskReference;
 public class KlabSession extends KlabPeer {
 
 	private AtomicLong queryCounter = new AtomicLong();
-	
+
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
 	}
@@ -46,10 +46,10 @@ public class KlabSession extends KlabPeer {
 	 * --- Front-end action triggers ---
 	 */
 
-	public void importFileResource(File file) {
+	public void importFileResource(File file, String project) {
 		try {
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ImportResource,
-					new ResourceImportRequest(file.toURI().toURL()));
+					new ResourceImportRequest(file.toURI().toURL(), project));
 		} catch (MalformedURLException e) {
 			// dio petardo
 			Eclipse.INSTANCE.handleException(e);
@@ -77,19 +77,19 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public long startQuery(String query) {
-		
+
 		long queryIndex = queryCounter.getAndIncrement();
-		
+
 		SearchRequest request = new SearchRequest();
 		request.setRequestId(queryIndex);
 		request.setQueryString(query);
-		
+
 		return queryIndex;
 	}
 
 	// nah, use the response feature in the message bus and make it right
 	public void continueQuery(String query, long previous) {
-		// 
+		//
 	}
 
 	/*
@@ -104,6 +104,13 @@ public class KlabSession extends KlabPeer {
 		/*
 		 * TODO
 		 */
+		switch (type) {
+		case ResourceImported:
+			Activator.klab().notifyResourceImport(resource);
+			break;
+		default:
+			break;
+		}
 		System.out.println("GOT RESOURCE " + type + ": " + resource);
 	}
 
@@ -136,15 +143,15 @@ public class KlabSession extends KlabPeer {
 		send(message);
 		bus.unsubscribe(task.getId());
 	}
-	
+
 	@MessageHandler
 	public void handleSearchResponse(SearchResponse response) {
-		
+
 	}
-	
+
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
-		
+
 	}
 
 	@MessageHandler

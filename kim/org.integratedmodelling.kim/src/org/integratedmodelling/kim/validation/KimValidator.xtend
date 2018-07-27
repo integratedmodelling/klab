@@ -76,7 +76,7 @@ class KimValidator extends AbstractKimValidator {
 	def initializeRegisters(Model model) {
 		var namespace = getNamespace(model)
 		if (namespace !== null) {
-			Kim.INSTANCE.initializeNamespaceRegisters(KimProject.getNamespaceId(namespace))
+			Kim.INSTANCE.initializeNamespaceRegisters(Kim.getNamespaceId(namespace))
 			Kim.INSTANCE.removeNamespace(namespace);
 		}
 	}
@@ -189,7 +189,7 @@ class KimValidator extends AbstractKimValidator {
 		 */
 		var firstObservable = if (nonSemanticModels.contains(statement.model) && namespace !== null) {
 				Kim.INSTANCE.createNonSemanticObservable(statement.model,
-					KimProject.getNamespaceId(namespace) + "." + model.name);
+					Kim.getNamespaceId(namespace) + "." + model.name);
 			} else if (model.observables.size() > 0) {
 				Kim.INSTANCE.declareObservable(model.observables.get(0))
 			}
@@ -429,7 +429,7 @@ class KimValidator extends AbstractKimValidator {
 				// set the reference of the model name in the first observable so it will work across calls
 				if (nonSemanticModels.contains(statement.model) && descriptor.observables.size() > 0) {
 					(descriptor.observables.get(0) as KimObservable).setModelReference(
-						KimProject.getNamespaceId(namespace) + "." + descriptor.name)
+						Kim.getNamespaceId(namespace) + "." + descriptor.name)
 					// important! Name should be the same as the model's.
 					(descriptor.observables.get(0) as KimObservable).setFormalName(descriptor.name)
 				}
@@ -1017,7 +1017,7 @@ class KimValidator extends AbstractKimValidator {
 
 				if (!concept.name.name.contains(":")) {
 					var namespace = KimValidator.getNamespace(concept);
-					concept.name.name = (if(namespace === null) "UNDEFINED" else KimProject.getNamespaceId(namespace)) + ":" +
+					concept.name.name = (if(namespace === null) "UNDEFINED" else Kim.getNamespaceId(namespace)) + ":" +
 						concept.name.name
 				}
 

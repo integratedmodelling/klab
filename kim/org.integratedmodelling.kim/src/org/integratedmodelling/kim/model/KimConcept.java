@@ -385,7 +385,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
                 ret.name = concept.getName().getName();
                 if (ret.name != null && !ret.name.contains(":")) {
                     Namespace namespace = KimValidator.getNamespace(concept);
-                    ret.name = (namespace == null ? "UNDEFINED" : KimProject.getNamespaceId(namespace)) + ":" + ret.name;
+                    ret.name = (namespace == null ? "UNDEFINED" : Kim.getNamespaceId(namespace)) + ":" + ret.name;
                 }
             }
             ret.negated = concept.isNegated();

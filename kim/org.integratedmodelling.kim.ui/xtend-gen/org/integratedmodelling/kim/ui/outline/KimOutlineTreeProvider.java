@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Statement;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimWorkspace;
@@ -50,7 +51,7 @@ public class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
       Namespace _namespace = model.getNamespace();
       boolean _tripleNotEquals = (_namespace != null);
       if (_tripleNotEquals) {
-        pnode = this.getNamespaceNode(pnode, project.getNamespace(KimProject.getNamespaceId(model.getNamespace())));
+        pnode = this.getNamespaceNode(pnode, project.getNamespace(Kim.getNamespaceId(model.getNamespace())));
       }
     }
     EList<EObject> _eContents = model.eContents();

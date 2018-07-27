@@ -108,7 +108,7 @@ public class KimValidator extends AbstractKimValidator {
   public void initializeRegisters(final Model model) {
     Namespace namespace = KimValidator.getNamespace(model);
     if ((namespace != null)) {
-      Kim.INSTANCE.initializeNamespaceRegisters(KimProject.getNamespaceId(namespace));
+      Kim.INSTANCE.initializeNamespaceRegisters(Kim.getNamespaceId(namespace));
       Kim.INSTANCE.removeNamespace(namespace);
     }
   }
@@ -242,7 +242,7 @@ public class KimValidator extends AbstractKimValidator {
       KimObservable _xifexpression_1 = null;
       if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (namespace != null))) {
         String _model = statement.getModel();
-        String _namespaceId = KimProject.getNamespaceId(namespace);
+        String _namespaceId = Kim.getNamespaceId(namespace);
         String _plus = (_namespaceId + ".");
         String _name = model.getName();
         String _plus_1 = (_plus + _name);
@@ -565,7 +565,7 @@ public class KimValidator extends AbstractKimValidator {
             }
             if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (descriptor.getObservables().size() > 0))) {
               IKimObservable _get_1 = descriptor.getObservables().get(0);
-              String _namespaceId_1 = KimProject.getNamespaceId(namespace);
+              String _namespaceId_1 = Kim.getNamespaceId(namespace);
               String _plus_4 = (_namespaceId_1 + ".");
               String _plus_5 = (_plus_4 + descriptor.name);
               ((KimObservable) _get_1).setModelReference(_plus_5);
@@ -1313,7 +1313,7 @@ public class KimValidator extends AbstractKimValidator {
             if ((namespace == null)) {
               _xifexpression = "UNDEFINED";
             } else {
-              _xifexpression = KimProject.getNamespaceId(namespace);
+              _xifexpression = Kim.getNamespaceId(namespace);
             }
             String _plus = (_xifexpression + ":");
             String _name_2 = concept.getName().getName();

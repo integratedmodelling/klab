@@ -32,6 +32,10 @@ import org.integratedmodelling.klab.ide.model.Klab;
 import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
+import org.integratedmodelling.klab.ide.model.KlabUser;
+import org.integratedmodelling.klab.ide.model.KlabUser;
+import org.integratedmodelling.klab.ide.model.KlabUser;
+import org.integratedmodelling.klab.ide.model.KlabUser;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ProjectReference;
@@ -57,6 +61,7 @@ public class Activator extends AbstractUIPlugin {
 	private KlabExplorer explorer;
 	private KlabSession session;
 	private KimLoader loader;
+	private KlabUser user = new KlabUser();
 
 	/**
 	 * The constructor
@@ -262,6 +267,10 @@ public class Activator extends AbstractUIPlugin {
 		return get().loader;
 	}
 
+	public static KlabUser user() {
+		return get().user;
+	}
+	
 	/**
 	 * Returns the shared instance
 	 *

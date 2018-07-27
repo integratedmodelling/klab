@@ -11,8 +11,9 @@ public class ResourceImportRequest {
 	public ResourceImportRequest() {
 	}
 
-	public ResourceImportRequest(URL url) {
+	public ResourceImportRequest(URL url, String project) {
 		this.importUrl = url;
+		this.projectName = project;
 	}
 	
 	public URL getImportUrl() {

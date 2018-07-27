@@ -106,7 +106,7 @@ public class ContextView extends ViewPart {
 			searchModeButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					//					KlabNavigator.refresh();
+					// KlabNavigator.refresh();
 					// searchMode(searchModeButton.getSelection());
 				}
 			});
@@ -187,7 +187,8 @@ public class ContextView extends ViewPart {
 				}
 			});
 			dropImage.setToolTipText("Drop a subject to define the context.");
-			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
+			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+					(Activator.engineMonitor().isRunning() ? "icons/odrop.png" : "icons/ndrop.png")));
 			// toolkit.adapt(dropImage, true, true);
 			DropTarget dropTarget = new DropTarget(dropImage, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
 			dropTarget.setTransfer(new Transfer[] {
@@ -427,7 +428,7 @@ public class ContextView extends ViewPart {
 									Eclipse.INSTANCE.handleException(e);
 								}
 							}
-							
+
 						} else if (dropped instanceof EModel || dropped instanceof EConcept) {
 							Activator.session().observe((EKimObject) dropped);
 						} else if (dropped instanceof EObserver) {
@@ -496,7 +497,7 @@ public class ContextView extends ViewPart {
 			break;
 		case TaskAborted:
 			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ostop.png")));
+					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/estop.png")));
 			break;
 		case TaskFinished:
 			Display.getDefault().asyncExec(

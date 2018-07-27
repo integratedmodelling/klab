@@ -33,10 +33,14 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 	public ViewerLabelProvider() {
 	}
 
-	Image errorMarker = ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources",
-			"/icons/full/ovr16/error_co.gif");
-	Image warningMarker = ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources",
-			"/icons/full/ovr16/warning_co.gif");
+	Image getErrorMarker() {
+		return ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources", "/icons/full/ovr16/error_co.png");
+	}
+
+	Image getWarningMarker() {
+		return ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources", "/icons/full/ovr16/warning_co.png");
+	}
+
 	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
 
 	public Image getImage(Object element) {
@@ -45,9 +49,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
 		if (element instanceof EKimObject) {
 			if (((EKimObject) element).isErrors()) {
-				ret = ResourceManager.decorateImage(ret, errorMarker, SWTResourceManager.BOTTOM_LEFT);
+				ret = ResourceManager.decorateImage(ret, getErrorMarker(), SWTResourceManager.BOTTOM_LEFT);
 			} else if (((EKimObject) element).isWarnings()) {
-				ret = ResourceManager.decorateImage(ret, warningMarker, SWTResourceManager.BOTTOM_LEFT);
+				ret = ResourceManager.decorateImage(ret, getWarningMarker(), SWTResourceManager.BOTTOM_LEFT);
 			}
 		}
 
