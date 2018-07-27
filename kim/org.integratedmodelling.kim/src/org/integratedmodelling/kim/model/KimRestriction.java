@@ -1,7 +1,6 @@
 package org.integratedmodelling.kim.model;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.DataType;

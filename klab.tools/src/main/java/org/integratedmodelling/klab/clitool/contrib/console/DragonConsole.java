@@ -44,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.AbstractDocument;
@@ -1554,7 +1555,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 		final JScrollBar vBar = consoleScrollPane.getVerticalScrollBar();
 		final DragonConsole console = this;
 		if (isScrollBarAtMax) {
-			new Thread() {
+			SwingUtilities.invokeLater(new Thread() {
 
 				@Override
 				public void run() {
@@ -1570,7 +1571,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 								"Error Caught", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-			}.start();
+			});
 		}
 	}
 

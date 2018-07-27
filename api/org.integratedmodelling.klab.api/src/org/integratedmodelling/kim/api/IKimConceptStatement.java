@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.klab.utils.Pair;
 
 public interface IKimConceptStatement extends IKimStatement {
@@ -83,8 +82,6 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimConcept> getQualitiesAffected();
 
-//    List<ApplicableConcept> getSubjectsLinked();
-
     List<IKimConcept> getCountablesCreated();
 
     List<IKimConcept> getConstituentParticipants();
@@ -107,8 +104,6 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimRestriction> getRestrictions();
 
-//    List<ParentConcept> getParents();
-
     boolean isAlias();
 
     boolean isAbstract();
@@ -120,15 +115,6 @@ public interface IKimConceptStatement extends IKimStatement {
     boolean isMacro();
 
     List<Pair<IKimConcept, DescriptionType>> getObservablesDescribed();
-
-//    List<ApplicableConcept> getAppliesTo();
-
-    /**
-     * Visit every declaration in the concept with the passed visitor.
-     * 
-     * @param visitor
-     */
-    void visitDeclarations(Visitor visitor);
 
     List<IKimObservable> getTraitsExposed();
 

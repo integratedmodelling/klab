@@ -28,6 +28,8 @@ package org.integratedmodelling.klab.common;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+
+
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 
 /**
@@ -85,6 +87,10 @@ public final class SemanticType implements Serializable {
         localName = ss[1];
     }
 
+    public static SemanticType create(String s) {
+    	return new SemanticType(s);
+    }
+    
     /**
      * Split the identifier string into conceptSpace and localName. Validate during processing,
      * and return null if not valid.

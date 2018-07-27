@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -138,6 +139,15 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	@Override
 	public boolean isProjectKnowledge() {
 		return delegate.isProjectKnowledge();
+	}
+	
+	public void visit(Visitor visitor) {
+		delegate.visit(visitor);
+	}
+
+	@Override
+	public Collection<String> getImportedNamespaceIds(boolean scanUsages) {
+		return delegate.getImportedNamespaceIds(scanUsages);
 	}
 
 }

@@ -41,6 +41,14 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		return ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources", "/icons/full/ovr16/warning_co.png");
 	}
 
+	Image getRunMarker() {
+		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/run_co.gif");
+	}
+
+	Image getTestMarker() {
+		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/template_co.gif");
+	}
+
 	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
 
 	public Image getImage(Object element) {
@@ -64,7 +72,7 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif");
 		}
 		if (element instanceof ETestCase) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/test.gif");
 		}
 		if (element instanceof EScript) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
@@ -158,13 +166,17 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Database.png");
 		}
 		if (element instanceof EScriptFolder) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
+			return ResourceManager.decorateImage(
+					ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif"), getRunMarker(),
+					SWTResourceManager.TOP_LEFT);
 		}
 		if (element instanceof ETestFolder) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
+			return ResourceManager.decorateImage(
+					ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif"), getTestMarker(),
+					SWTResourceManager.TOP_LEFT);
 		}
 		if (element instanceof EResource) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif");
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
 		}
 		return delegate.getImage(element);
 	}

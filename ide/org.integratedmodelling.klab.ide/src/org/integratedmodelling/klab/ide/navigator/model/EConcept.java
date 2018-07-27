@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimRestriction;
@@ -122,8 +121,8 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
         return delegate.getObservablesDescribed();
     }
 
-    public void visitDeclarations(Visitor visitor) {
-        delegate.visitDeclarations(visitor);
+    public void visit(Visitor visitor) {
+        delegate.visit(visitor);
     }
 
     public List<IKimObservable> getTraitsExposed() {

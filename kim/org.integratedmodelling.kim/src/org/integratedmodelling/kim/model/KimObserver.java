@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimScope.Visitor;
 
 public class KimObserver extends KimStatement implements IKimObserver {
 
@@ -79,5 +80,13 @@ public class KimObserver extends KimStatement implements IKimObserver {
     public void setDocstring(String docstring) {
         this.docstring = docstring;
     }
-
+    
+	@Override
+	public void visit(Visitor visitor) {
+		visitor.visitObserver(this);
+		observable.visit(visitor);
+		for (IKimScope child : getChildren()) {
+			child.visit(visitor);
+		}
+	}
 }

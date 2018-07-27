@@ -8,7 +8,6 @@ import java.util.List;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimRestriction;
@@ -421,7 +420,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	}
 
 	@Override
-	public void visitDeclarations(Visitor visitor) {
+	public void visit(Visitor visitor) {
 
 		for (ApplicableConcept applicable : appliesTo) {
 			((ApplicableConceptImpl) applicable).visit(visitor);

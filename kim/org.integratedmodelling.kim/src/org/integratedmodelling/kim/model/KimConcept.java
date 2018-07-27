@@ -743,9 +743,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
     public void visit(Visitor visitor) {
 
         if (name != null) {
-            visitor.onReference(name, type, validParent);
+            visitor.visitReference(name, type, validParent);
         } else if (observable != null) {
-            visitor.onDeclaration(observable);
+            visitor.visitDeclaration(observable);
         }
 
         if (observable != null) {
@@ -753,7 +753,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
         }
 
         if (authority != null) {
-            visitor.onAuthority(authority, authorityTerm);
+            visitor.visitAuthority(authority, authorityTerm);
         }
 
         if (context != null) {

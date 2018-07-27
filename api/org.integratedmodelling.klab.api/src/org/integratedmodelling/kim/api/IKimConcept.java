@@ -14,19 +14,6 @@ import java.util.List;
  */
 public interface IKimConcept extends IKimStatement {
 
-    /**
-     * Visitor allows traversing all concept declarations and references.
-     * 
-     */
-    public static interface Visitor {
-
-        void onAuthority(String authority, String term);
-
-        void onDeclaration(IKimConcept declaration);
-
-        void onReference(String conceptName, EnumSet<Type> type, IKimConcept validParent);
-    }
-
     enum Expression {
         SINGLETON,
         UNION,

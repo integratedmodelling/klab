@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.kim.Model
 import org.integratedmodelling.kim.kim.Namespace
 import org.integratedmodelling.kim.kim.ObservableSemantics
 import org.integratedmodelling.kim.kim.Statement
+import org.integratedmodelling.kim.model.Kim
 import org.integratedmodelling.kim.model.KimNamespace
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimWorkspace
@@ -47,7 +48,7 @@ class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		if (project !== null) {
 			pnode = getProjectNode(pnode, project)
 			if (model.namespace !== null) {
-				pnode = getNamespaceNode(pnode, project.getNamespace(KimProject.getNamespaceId(model.namespace)))
+				pnode = getNamespaceNode(pnode, project.getNamespace(Kim.getNamespaceId(model.namespace)))
 			}
 		}
 

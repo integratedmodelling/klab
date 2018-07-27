@@ -147,6 +147,7 @@ public class KimLoader implements IKimLoader {
 			IKimNamespace publ = Kim.INSTANCE.getNamespace(ours.getName());
 			if (publ != null && publ.getTimestamp() > resource.lastModified()) {
 				setNamespace(resource, publ);
+				System.out.println(publ.getImportedNamespaceIds(true));
 				loaded = true;
 			}
 		}

@@ -221,5 +221,13 @@ public class KimModel extends KimStatement implements IKimModel {
     public void setDocstring(String docstring) {
         this.docstring = docstring;
     }
+
+	@Override
+	public void visit(Visitor visitor) {
+		visitor.visitModel(this);
+		for (IKimObservable observable : getObservables()) {
+			observable.visit(visitor);
+		}
+	}
 	
 }

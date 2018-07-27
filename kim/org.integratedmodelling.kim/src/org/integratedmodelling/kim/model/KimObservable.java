@@ -4,7 +4,9 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimScope.Visitor;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
@@ -247,4 +249,16 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		this.modelReference = modelReference;
 	}
 
+	@Override
+	public void visit(Visitor visitor) {
+		if (main != null) {
+			main.visit(visitor);
+		}
+		if (by != null) {
+			by.visit(visitor);
+		}
+		if (downTo != null) {
+			downTo.visit(visitor);
+		}
+	}
 }

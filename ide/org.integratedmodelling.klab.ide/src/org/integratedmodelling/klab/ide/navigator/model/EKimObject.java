@@ -141,5 +141,9 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	public boolean isWarnings() {
 		return delegate_.isWarnings();
 	}
+	
+	public void visit(Visitor visitor) {
+		delegate_.visit(visitor);
+	}
 
 }

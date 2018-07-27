@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
@@ -109,7 +110,7 @@ public class Klab {
 			}
 		}
 	}
-	
+
 	/*
 	 * called by the session peer, the true receiver for the message
 	 */
@@ -117,6 +118,10 @@ public class Klab {
 		Map<String, EResourceReference> list = resourceCatalog.get(resource.getProjectName());
 		list.put(resource.getUrn(), new EResourceReference(resource, true));
 		KlabNavigator.refresh();
+		Eclipse.INSTANCE.notification("New resource imported",
+				"The resource with URN " + resource.getUrn()
+						+ " is now available and online. It can be referenced within the " + resource.getProjectName()
+						+ " project as " + resource.getLocalName());
 	}
 
 	/*
@@ -140,6 +145,5 @@ public class Klab {
 			break;
 		}
 	}
-
 
 }

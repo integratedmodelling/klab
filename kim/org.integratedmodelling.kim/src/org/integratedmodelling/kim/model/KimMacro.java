@@ -10,11 +10,13 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConcept.Visitor;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimMetadata;
+import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -75,10 +77,10 @@ public class KimMacro implements IKimMacro {
          */
         if (statement != null) {
 
-            Visitor visitor = new Visitor() {
+            Visitor visitor = new DefaultVisitor() {
 
                 @Override
-                public void onReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
+                public void visitReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
                     if (conceptName.startsWith("$") || conceptName.startsWith("#")) {
                         Field field = Field.valueOf(Field.class, conceptName.substring(1).toUpperCase());
                         if (field != null) {
@@ -89,17 +91,9 @@ public class KimMacro implements IKimMacro {
                         }
                     }
                 }
-
-                @Override
-                public void onDeclaration(IKimConcept declaration) {
-                }
-
-                @Override
-                public void onAuthority(String authority, String term) {
-                }
             };
 
-            statement.visitDeclarations(visitor);
+            statement.visit(visitor);
         }
     }
 
@@ -284,12 +278,7 @@ public class KimMacro implements IKimMacro {
     public void set(IKimConceptStatement statement) {
         setDelegate(statement);
     }
-
-    @Override
-    public void visitDeclarations(Visitor visitor) {
-        this.delegate.visitDeclarations(visitor);
-    }
-
+    
     @Override
     public String getAuthority() {
         return delegate.getAuthority();
@@ -358,5 +347,10 @@ public class KimMacro implements IKimMacro {
 	@Override
 	public boolean isWarnings() {
 		return delegate.isWarnings();
+	}
+
+	@Override
+	public void visit(Visitor visitor) {
+		delegate.visit(visitor);
 	}
 }

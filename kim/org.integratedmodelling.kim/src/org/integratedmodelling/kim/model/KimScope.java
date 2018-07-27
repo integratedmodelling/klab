@@ -35,4 +35,8 @@ public abstract class KimScope implements IKimScope {
         return ret;
     }
 
+    public void visit(Visitor visitor) {
+    	
+    }
+    
 }
