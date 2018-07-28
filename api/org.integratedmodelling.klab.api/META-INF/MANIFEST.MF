@@ -6,7 +6,22 @@ Bundle-Version: 0.10.0.qualifier
 Automatic-Module-Name: org.integratedmodelling.klab.api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: javax.annotation;bundle-version="1.2.0"
-Export-Package: org.integratedmodelling.kdl.api,
+Export-Package: org.integratedmodelling.contrib,
+ org.integratedmodelling.contrib.jgrapht,
+ org.integratedmodelling.contrib.jgrapht.alg,
+ org.integratedmodelling.contrib.jgrapht.alg.connectivity,
+ org.integratedmodelling.contrib.jgrapht.alg.cycle,
+ org.integratedmodelling.contrib.jgrapht.alg.interfaces,
+ org.integratedmodelling.contrib.jgrapht.alg.shortestpath,
+ org.integratedmodelling.contrib.jgrapht.alg.util,
+ org.integratedmodelling.contrib.jgrapht.event,
+ org.integratedmodelling.contrib.jgrapht.generate,
+ org.integratedmodelling.contrib.jgrapht.graph,
+ org.integratedmodelling.contrib.jgrapht.graph.builder,
+ org.integratedmodelling.contrib.jgrapht.graph.specifics,
+ org.integratedmodelling.contrib.jgrapht.traverse,
+ org.integratedmodelling.contrib.jgrapht.util,
+ org.integratedmodelling.kdl.api,
  org.integratedmodelling.kim.api,
  org.integratedmodelling.klab,
  org.integratedmodelling.klab.api,

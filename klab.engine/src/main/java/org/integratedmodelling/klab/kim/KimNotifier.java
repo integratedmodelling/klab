@@ -16,13 +16,13 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
-import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -37,13 +37,63 @@ public class KimNotifier implements Kim.Notifier {
     private IMonitor monitor;
 
     /*
+     * wraps the normal monitor to collect all logical errors and send them to
+     * any subscribing UI in one shot at the end of validation.
+     */
+    private class ErrorNotifyingMonitor implements IMonitor {
+
+        IMonitor delegate;
+
+        ErrorNotifyingMonitor(IMonitor monitor) {
+            this.delegate = monitor;
+        }
+
+        private Object scanArguments(Object[] info) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public void info(Object... info) {
+            delegate.info(scanArguments(info));
+        }
+
+        public void warn(Object... o) {
+            delegate.warn(scanArguments(o));
+        }
+
+        public void error(Object... o) {
+            delegate.error(o);
+        }
+
+        public void debug(Object... o) {
+            delegate.debug(o);
+        }
+
+        public void send(Object... message) {
+            delegate.send(message);
+        }
+
+        public IIdentity getIdentity() {
+            return delegate.getIdentity();
+        }
+
+        public boolean isInterrupted() {
+            return delegate.isInterrupted();
+        }
+
+        public boolean hasErrors() {
+            return delegate.hasErrors();
+        }
+    }
+
+    /*
      * holds the mapping between the actual ontology ID and the declared one in root
      * domains where "import <coreUrl> as <prefix>" was used.
      */
     Map<String, String> corePrefixTranslation = new HashMap<>();
 
     public KimNotifier(IMonitor monitor) {
-        this.monitor = monitor;
+        this.monitor = new ErrorNotifyingMonitor(monitor);
     }
 
     public KimNotifier with(IMonitor monitor) {
@@ -67,7 +117,7 @@ public class KimNotifier implements Kim.Notifier {
                 monitor.error(e);
             }
         }
-        
+
         ns = new Namespace(namespace);
 
         for (Pair<String, String> imp : namespace.getOwlImports()) {

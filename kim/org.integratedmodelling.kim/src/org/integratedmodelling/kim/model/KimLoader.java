@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -17,6 +19,9 @@ import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.contrib.jgrapht.Graph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -69,6 +74,7 @@ public class KimLoader implements IKimLoader {
     private XtextResourceSet resourceSet;
     private IResourceValidator validator;
     private GeneratorDelegate generator;
+    private Graph<File, DefaultEdge> dependencyGraph;
 
     public KimLoader() {
     }
@@ -102,10 +108,12 @@ public class KimLoader implements IKimLoader {
         for (File file : ((KimLoader) loader).dependentResources.keySet()) {
             NsInfo info = ((KimLoader) loader).dependentResources.get(file);
             this.dependentResources.put(file, info.copyAsExternal());
+            namespaceFiles.put(info.name, file);
         }
         for (File file : ((KimLoader) loader).nonDependentResources.keySet()) {
             NsInfo info = ((KimLoader) loader).nonDependentResources.get(file);
             this.nonDependentResources.put(file, info.copyAsExternal());
+            namespaceFiles.put(info.name, file);
         }
     }
 
@@ -160,17 +168,12 @@ public class KimLoader implements IKimLoader {
             IKimNamespace publ = Kim.INSTANCE.getNamespace(ours.getName());
             if (publ != null && publ.getTimestamp() > file.lastModified()) {
                 setNamespace(file, publ);
-                System.out.println(publ.getImportedNamespaceIds(true));
                 loaded = true;
             }
         }
 
-        // TODO save current dependencies
         List<File> dependencies = new ArrayList<>();
         if (!loaded && ours != null) {
-
-            System.out.println("MUST RELOAD THIS SHIT: " + namespaceProxy);
-
             // collect dependencies before we reload
             dependencies.add(file);
             if (recurseDependencies) {
@@ -212,7 +215,27 @@ public class KimLoader implements IKimLoader {
 
     private List<File> collectDependencies(IKimNamespace namespace) {
         List<File> ret = new ArrayList<>();
+        Set<File> visited = new HashSet<>();
+        collectDependencies(namespace.getFile(), ret, visited);
         return ret;
+    }
+
+    private void collectDependencies(File file, List<File> ret, Set<File> visited) {
+        if (dependencyGraph.containsVertex(file)) {
+            // proceed breadth-first to ensure proper reloading
+            List<File> added = new ArrayList<>();
+            for (DefaultEdge edge : dependencyGraph.outgoingEdgesOf(file)) {
+                File dependent = dependencyGraph.getEdgeTarget(edge);
+                if (!visited.contains(dependent)) {
+                    visited.add(dependent);
+                    ret.add(dependent);
+                    added.add(dependent);
+                }
+            }
+            for (File f : added) {
+                collectDependencies(f, ret, visited);
+            }
+        }
     }
 
     @Override
@@ -287,7 +310,7 @@ public class KimLoader implements IKimLoader {
         this.sortedNames.clear();
 
         XtextResourceSet resourceSet = getResourceSet();
-        
+
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
         ResourceSorter sorter = new ResourceSorter();
         Map<URI, File> fileMap = new HashMap<>();
@@ -373,6 +396,8 @@ public class KimLoader implements IKimLoader {
             generator.doGenerate(resource, fsa);
         }
 
+        computeDependencies();
+
         return ret;
     }
 
@@ -405,6 +430,28 @@ public class KimLoader implements IKimLoader {
             System.out.println("ISSUE " + issue);
         }
         return ret;
+    }
+
+    private void computeDependencies() {
+
+        this.dependencyGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+        for (IKimNamespace namespace : getNamespaces()) {
+            if (namespace.getFile() != null) {
+                this.dependencyGraph.addVertex(namespace.getFile());
+                for (String s : namespace.getImportedNamespaceIds(true)) {
+                    if (namespaceFiles.containsKey(s)) {
+                        File f = namespaceFiles.get(s);
+                        if (!f.equals(namespace.getFile())) {
+                            // we just trust that no file in catalog means the dependency is on a core ontology.
+                            this.dependencyGraph.addVertex(f);
+                            this.dependencyGraph.addEdge(f, namespace.getFile());
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 }
