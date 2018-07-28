@@ -5,6 +5,8 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
+
 /**
  * A k.IM loader ingests projects and ensures they are loaded and up to date. It
  * keeps a catalog of all resource URIs and file names and a graph of internal
@@ -89,6 +91,16 @@ public interface IKimLoader {
 	 * Perform a full clean reload of everything.
 	 */
 	void reload();
+
+
+	/**
+	 * Get all the issues raised during compilation, validation and generation of the
+	 * passed namespace.
+	 * 
+	 * @param namespaceProxy
+	 * @return all issues in k.LAB format
+	 */
+    Collection<ICompileNotification> getIssues(Object namespaceProxy);
 
 
 }

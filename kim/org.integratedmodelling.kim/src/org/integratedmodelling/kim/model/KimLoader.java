@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.utils.ResourceSorter;
+import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 
 import com.google.inject.Injector;
@@ -65,12 +66,22 @@ public class KimLoader implements IKimLoader {
     private Map<File, NsInfo> nonDependentResources = new HashMap<>();
     private Map<String, File> namespaceFiles = new HashMap<>();
     private List<String> sortedNames = new ArrayList<>();
+    private XtextResourceSet resourceSet;
+    private IResourceValidator validator;
+    private GeneratorDelegate generator;
 
     public KimLoader() {
     }
 
     public KimLoader(Injector injector) {
         setInjector(injector);
+    }
+
+    private Injector getInjector() {
+        if (this.injector == null) {
+            this.injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
+        }
+        return this.injector;
     }
 
     /**
@@ -138,35 +149,69 @@ public class KimLoader implements IKimLoader {
         return touch(namespaceProxy, true);
     }
 
-    public List<IKimNamespace> touch(Object namespaceProxy, boolean recurseDependencies) {
+    public synchronized List<IKimNamespace> touch(Object namespaceProxy, boolean recurseDependencies) {
 
-        File resource = getFile(namespaceProxy);
+        File file = getFile(namespaceProxy);
         List<IKimNamespace> ret = new ArrayList<>();
 
         boolean loaded = false;
-        IKimNamespace ours = getNamespace(resource);
+        IKimNamespace ours = getNamespace(file);
         if (ours != null) {
             IKimNamespace publ = Kim.INSTANCE.getNamespace(ours.getName());
-            if (publ != null && publ.getTimestamp() > resource.lastModified()) {
-                setNamespace(resource, publ);
+            if (publ != null && publ.getTimestamp() > file.lastModified()) {
+                setNamespace(file, publ);
                 System.out.println(publ.getImportedNamespaceIds(true));
                 loaded = true;
             }
         }
 
         // TODO save current dependencies
+        List<File> dependencies = new ArrayList<>();
+        if (!loaded && ours != null) {
 
-        if (!loaded) {
-            // TODO reload
+            System.out.println("MUST RELOAD THIS SHIT: " + namespaceProxy);
+
+            // collect dependencies before we reload
+            dependencies.add(file);
+            if (recurseDependencies) {
+                dependencies.addAll(collectDependencies(ours));
+            }
+            ret.addAll(loadFiles(dependencies));
         }
 
-        if (recurseDependencies) {
-            // TODO reload all the formerly dependent
+        return ret;
+    }
 
-            // TODO rebuild deps
+    private Collection<? extends IKimNamespace> loadFiles(Collection<File> files) {
 
-            // TODO add each reloaded to returned result
+        Map<URI, File> fileMap = new HashMap<>();
+        XtextResourceSet resourceSet = getResourceSet();
+        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+        List<Resource> resources = new ArrayList<>();
+
+        for (File file : files) {
+            URI uri = URI.createFileURI(file.toString());
+            Resource resource = resourceSet.getResource(uri, true);
+            if (resource != null) {
+                resources.add(resource);
+                fileMap.put(uri, file);
+            } else {
+                System.out.println("PORCATA IN " + file);
+            }
         }
+
+        return loadResources(resources, fileMap, true);
+    }
+
+    private XtextResourceSet getResourceSet() {
+        if (this.resourceSet == null) {
+            this.resourceSet = getInjector().getInstance(XtextResourceSet.class);
+        }
+        return this.resourceSet;
+    }
+
+    private List<File> collectDependencies(IKimNamespace namespace) {
+        List<File> ret = new ArrayList<>();
         return ret;
     }
 
@@ -237,15 +282,12 @@ public class KimLoader implements IKimLoader {
         }
     }
 
-    private synchronized void doLoad(boolean forceUpdate) {
-
-        if (injector == null) {
-            injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
-        }
+    private synchronized List<IKimNamespace> doLoad(boolean forceUpdate) {
 
         this.sortedNames.clear();
 
-        XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
+        XtextResourceSet resourceSet = getResourceSet();
+        
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
         ResourceSorter sorter = new ResourceSorter();
         Map<URI, File> fileMap = new HashMap<>();
@@ -285,7 +327,7 @@ public class KimLoader implements IKimLoader {
 
         List<Resource> sortedResources = CollectionUtils.join(sorter.getResources(), nondep);
 
-        loadResources(sortedResources, fileMap);
+        return loadResources(sortedResources, fileMap, false);
     }
 
     private boolean isUpToDate(File file) {
@@ -298,9 +340,11 @@ public class KimLoader implements IKimLoader {
         return false;
     }
 
-    private void loadResources(List<Resource> sortedResources, Map<URI, File> fileMap) {
+    private List<IKimNamespace> loadResources(List<Resource> sortedResources, Map<URI, File> fileMap,
+            boolean reloading) {
 
-        IResourceValidator validator = injector.getInstance(IResourceValidator.class);
+        List<IKimNamespace> ret = new ArrayList<>();
+        IResourceValidator validator = getValidator();
         InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 
         for (Resource resource : sortedResources) {
@@ -314,17 +358,36 @@ public class KimLoader implements IKimLoader {
                 info.namespace = Kim.INSTANCE.getNamespace(name);
                 ((KimNamespace) info.namespace).setFile(fileMap.get(resource.getURI()));
                 ((KimProject) info.project).addNamespace(info.namespace);
-                this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
-                this.sortedNames.add(name);
+                if (!reloading) {
+                    this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
+                    this.sortedNames.add(name);
+                }
+                ret.add(info.namespace);
             } catch (Throwable e) {
                 System.out.println("PORCATE: " + resource);
             }
         }
 
-        GeneratorDelegate generator = injector.getInstance(GeneratorDelegate.class);
+        GeneratorDelegate generator = getGenerator();
         for (Resource resource : sortedResources) {
             generator.doGenerate(resource, fsa);
         }
+
+        return ret;
+    }
+
+    private GeneratorDelegate getGenerator() {
+        if (this.generator == null) {
+            this.generator = getInjector().getInstance(GeneratorDelegate.class);
+        }
+        return this.generator;
+    }
+
+    private IResourceValidator getValidator() {
+        if (this.validator == null) {
+            this.validator = getInjector().getInstance(IResourceValidator.class);
+        }
+        return this.validator;
     }
 
     private NsInfo getNamespaceInfo(File file) {
@@ -332,6 +395,16 @@ public class KimLoader implements IKimLoader {
             return dependentResources.get(file);
         }
         return nonDependentResources.get(file);
+    }
+
+    @Override
+    public Collection<ICompileNotification> getIssues(Object namespaceProxy) {
+        List<ICompileNotification> ret = new ArrayList<>();
+        NsInfo info = getNamespaceInfo(getFile(namespaceProxy));
+        for (Issue issue : info.issues) {
+            System.out.println("ISSUE " + issue);
+        }
+        return ret;
     }
 
 }

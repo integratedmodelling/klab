@@ -132,7 +132,6 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	private String upperConceptDefined;
 	private String authorityDefined;
 	private String authorityRequired;
-	private boolean Abstract;
 	private boolean alias;
 	private boolean macro;
 	private String authority;
@@ -272,11 +271,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 
 	@Override
 	public boolean isAbstract() {
-		return Abstract;
-	}
-
-	public void setAbstract(boolean isAbstract) {
-		this.Abstract = isAbstract;
+		return type.contains(Type.ABSTRACT);
 	}
 
 	@Override

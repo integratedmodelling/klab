@@ -2,8 +2,6 @@ package org.integratedmodelling.klab.ide.builder;
 
 import java.util.Map;
 
-import javax.xml.parsers.SAXParserFactory;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -14,12 +12,10 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
-import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ProjectModification;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -55,7 +51,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 					// SEE same warning as below
 					for (IKimNamespace namespace : Activator.loader()
 							.delete(((IFile) resource).getLocation().toFile())) {
-						Eclipse.INSTANCE.getIFile(namespace.getFile()).touch(new NullProgressMonitor());
+//						Eclipse.INSTANCE.getIFile(namespace.getFile()).touch(new NullProgressMonitor());
 					}
 					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
 							new ProjectModification(ProjectModification.Type.DELETION,
@@ -64,14 +60,19 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 				break;
 			case IResourceDelta.CHANGED:
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
-					for (IKimNamespace ns : Activator.loader().touch(((IFile) resource).getLocation().toFile())) {
+				    int i = 0;
+				    for (IKimNamespace ns : Activator.loader().touch(((IFile) resource).getLocation().toFile())) {
+					    if (i++ == 0) {
+					        // don't reload the first
+					        continue;
+					    }
 						// ACHTUNG this will probably call back here, unleashing a linear but useless
 						// chain of multiple
 						// reloads. Should find a way to prevent more touching besides refresh of the
 						// loader's contents. Use a thread with
 						// a context setting to control the recurse parameter in the loader so that the
 						// inner touch() only affects one resource at a time.
-						Eclipse.INSTANCE.getIFile(ns.getFile()).touch(new NullProgressMonitor());
+//						Eclipse.INSTANCE.getIFile(ns.getFile()).touch(new NullProgressMonitor());
 					}
 					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
 							new ProjectModification(ProjectModification.Type.CHANGE,
