@@ -36,9 +36,7 @@ Require-Bundle: javax.inject,
  org.eclipse.debug.core;bundle-version="3.11.0",
  org.eclipse.debug.ui;bundle-version="3.12.50",
  org.eclipse.ui.ide.application;bundle-version="1.2.0",
- org.eclipse.ui.forms;bundle-version="3.7.101",
- org.eclipse.mylyn.commons.notifications.core;bundle-version="1.15.0",
- org.eclipse.mylyn.commons.notifications.ui;bundle-version="1.15.0"
+ org.eclipse.ui.forms;bundle-version="3.7.101"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"
@@ -50,3 +48,4 @@ Export-Package: org.integratedmodelling.klab.ide,
  org.integratedmodelling.klab.ide.navigator.model,
  org.integratedmodelling.klab.ide.perspective,
  org.integratedmodelling.klab.ide.views
+Automatic-Module-Name: org.integratedmodelling.klab.ide

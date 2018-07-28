@@ -5,8 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -26,8 +24,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.mylyn.commons.notifications.core.AbstractNotification;
-import org.eclipse.mylyn.internal.commons.notifications.ui.NotificationsPlugin;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -40,7 +36,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.eclipse.xtext.util.Notifications;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -337,32 +332,33 @@ public enum Eclipse {
 		return file.getLocation().toFile();
 	}
 
-	@SuppressWarnings("restriction")
 	public void notification(final String label, final String description) {
 
-		AbstractNotification notification = new AbstractNotification("klab.event") {
-
-			public String getLabel() {
-				return label;
-			}
-
-			public String getDescription() {
-				return description;
-			}
-
-			@Override
-			public <T> T getAdapter(Class<T> adapter) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Date getDate() {
-				// TODO Auto-generated method stub
-				return new Date();
-			}
-		};
-		NotificationsPlugin.getDefault().getService().notify(Collections.singletonList(notification));
+	    System.out.println("NOTIFICATION: " + label + "\n" + description);
+	    
+//		AbstractNotification notification = new AbstractNotification("klab.event") {
+//
+//			public String getLabel() {
+//				return label;
+//			}
+//
+//			public String getDescription() {
+//				return description;
+//			}
+//
+//			@Override
+//			public <T> T getAdapter(Class<T> adapter) {
+//				// TODO Auto-generated method stub
+//				return null;
+//			}
+//
+//			@Override
+//			public Date getDate() {
+//				// TODO Auto-generated method stub
+//				return new Date();
+//			}
+//		};
+//		NotificationsPlugin.getDefault().getService().notify(Collections.singletonList(notification));
 	}
 
 }

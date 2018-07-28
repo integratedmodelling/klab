@@ -359,7 +359,7 @@
          </adapter>
       </factory>
    </extension>
-	<extension
+	<!-- <extension
   		point="org.eclipse.mylyn.commons.notifications.ui.notifications">
 	<event
     	categoryId="org.eclipse.mylyn.builds.ui.category.Builds"
@@ -371,5 +371,5 @@
       	sinkId="org.eclipse.mylyn.commons.notifications.sink.Popup">
     	</defaultHandler>
   	</event>
-</extension>
+</extension>  -->
 </plugin>

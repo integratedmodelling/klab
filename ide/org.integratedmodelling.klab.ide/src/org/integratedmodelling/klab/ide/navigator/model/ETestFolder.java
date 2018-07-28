@@ -7,45 +7,46 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.ide.Activator;
 
 public class ETestFolder extends ENavigatorItem {
 
-	IKimProject project;
+    EProject project;
+    File folder;
 
-	public ETestFolder(EProject parent) {
-		super(parent.id + "#__TESTCASES__", parent);
-		this.project = parent.delegate;
-	}
+    public ETestFolder(EProject project, ENavigatorItem parent, File folder) {
+        super(parent.id + folder, parent);
+        this.project = project;
+        this.folder = folder;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getAdapter(Class<T> adapter) {
-		if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
-			return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName())
-					.getFolder(IKimProject.TESTS_FOLDER);
-		}
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getAdapter(Class<T> adapter) {
+        if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
+            return (T) ResourcesPlugin.getWorkspace().getRoot().findMember(folder.toString());
+        }
+        return null;
+    }
 
-	@Override
-	public ENavigatorItem[] getEChildren() {
-		List<ENavigatorItem> ret = new ArrayList<>();
-		File folder = new File(project.getRoot() + File.separator + IKimProject.TESTS_FOLDER);
-		if (folder.isDirectory()) {
-			for (File script : folder.listFiles()) {
-				if (script.toString().endsWith(".kim")) {
-					ret.add(new ETestCase(Activator.loader().getNamespace(script), this));
-				}
-			}
-		}
-		return ret.toArray(new ENavigatorItem[ret.size()]);
-	}
+    @Override
+    public ENavigatorItem[] getEChildren() {
+        List<ENavigatorItem> ret = new ArrayList<>();
+        if (folder.isDirectory()) {
+            for (File script : folder.listFiles()) {
+                if (script.isDirectory()) {
+                    ret.add(new EScriptFolder(project, this, script));
+                } else if (script.toString().endsWith(".kim")) {
+                    ret.add(new ETestCase(Activator.loader().getNamespace(script), this));
+                }
+            }
+        }
+        return ret.toArray(new ENavigatorItem[ret.size()]);
+    }
 
-	@Override
-	public boolean hasEChildren() {
-		return getEChildren().length > 0;
-	}
+    @Override
+    public boolean hasEChildren() {
+        return getEChildren().length > 0;
+    }
 
 }
