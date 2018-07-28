@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.ConceptStatement;
@@ -40,50 +41,33 @@ public class KimNotifier implements Kim.Notifier {
      * wraps the normal monitor to collect all logical errors and send them to
      * any subscribing UI in one shot at the end of validation.
      */
-    private class ErrorNotifyingMonitor implements IMonitor {
+    private class ErrorNotifyingMonitor extends Engine.Monitor {
 
-        IMonitor delegate;
-
-        ErrorNotifyingMonitor(IMonitor monitor) {
-            this.delegate = monitor;
+        ErrorNotifyingMonitor(Monitor monitor) {
+            super(monitor);
         }
 
         private Object scanArguments(Object[] info) {
             // TODO Auto-generated method stub
-            return null;
+            return info;
         }
 
         public void info(Object... info) {
-            delegate.info(scanArguments(info));
+            super.info(scanArguments(info));
         }
 
         public void warn(Object... o) {
-            delegate.warn(scanArguments(o));
+            super.warn(scanArguments(o));
         }
 
         public void error(Object... o) {
-            delegate.error(o);
+            super.error(o);
         }
 
         public void debug(Object... o) {
-            delegate.debug(o);
+            super.debug(o);
         }
 
-        public void send(Object... message) {
-            delegate.send(message);
-        }
-
-        public IIdentity getIdentity() {
-            return delegate.getIdentity();
-        }
-
-        public boolean isInterrupted() {
-            return delegate.isInterrupted();
-        }
-
-        public boolean hasErrors() {
-            return delegate.hasErrors();
-        }
     }
 
     /*
@@ -93,7 +77,7 @@ public class KimNotifier implements Kim.Notifier {
     Map<String, String> corePrefixTranslation = new HashMap<>();
 
     public KimNotifier(IMonitor monitor) {
-        this.monitor = new ErrorNotifyingMonitor(monitor);
+        this.monitor = new ErrorNotifyingMonitor((Monitor) monitor);
     }
 
     public KimNotifier with(IMonitor monitor) {

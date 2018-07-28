@@ -38,7 +38,6 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
@@ -97,13 +96,23 @@ public class Engine extends Server implements IEngine, UserDetails {
     private long sessionCheckMinutes = 15l;
     private ScheduledFuture<?> sessionClosingTask;
 
-    public class Monitor implements IMonitor {
+    public static class Monitor implements IMonitor {
 
-        private IIdentity identity = Engine.this;
+        private IIdentity identity;
         private int errorCount = 0;
         private AtomicBoolean isInterrupted = new AtomicBoolean(false);
         List<Listener> listeners = new ArrayList<>();
 
+        protected Monitor(IIdentity engine) {
+            this.identity = engine;
+        }
+        
+        protected Monitor(Monitor monitor) {
+            this.identity = monitor.identity;
+            this.listeners.addAll(monitor.listeners);
+            this.errorCount = monitor.errorCount;
+        }
+        
         public List<Listener> getListeners() {
             return listeners;
         }
@@ -180,8 +189,7 @@ public class Engine extends Server implements IEngine, UserDetails {
         }
 
         public Monitor get(IIdentity identity) {
-            Monitor ret = new Monitor();
-            ret.identity = identity;
+            Monitor ret = new Monitor(identity);
             return ret;
         }
 
@@ -403,7 +411,7 @@ public class Engine extends Server implements IEngine, UserDetails {
                     "Engine.boot() was called before a valid certificate was read. Exiting.");
         }
 
-        this.monitor = new Monitor();
+        this.monitor = new Monitor(this);
 
         /*
          * load annotation prototypes declared in this package

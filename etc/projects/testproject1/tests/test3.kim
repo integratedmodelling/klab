@@ -6,6 +6,7 @@ worldview im;
 	observations = ("policy:State earth:Region"),
 	resources = ("local:anonymous:test:states")
 )
+// TODO add observe states.shp#alabama as earth:Region;
 observe earth:Region named test
    over space(shape = "EPSG:4326 POLYGON ((-124.73142200000001 24.955967, -66.969849 24.955967, -66.969849 49.371735, -124.73142200000001 49.371735, -124.73142200000001 24.955967))");
 
