@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.rest.CompileNotificationReference;
 
 public enum Eclipse {
 
@@ -372,8 +373,7 @@ public enum Eclipse {
      * @param file
      * @throws CoreException
      */
-    public void updateMarkersForNamespace(final List<ICompileNotification> notifications, final IFile file)
-            throws CoreException {
+    public void updateMarkersForNamespace(final List<CompileNotificationReference> notifications, final IFile file) {
 
         WorkspaceJob job = new WorkspaceJob("") {
 
@@ -388,23 +388,23 @@ public enum Eclipse {
                     file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
                 }
 
-                HashSet<ICompileNotification> ln = new HashSet<>();
+//                HashSet<ICompileNotification> ln = new HashSet<>();
 
-                for (ICompileNotification inot : notifications) {
+                for (CompileNotificationReference inot : notifications) {
 
-                    if (ln.contains(inot)) {
-                        continue;
-                    }
+//                    if (ln.contains(inot)) {
+//                        continue;
+//                    }
+//
+//                    ln.add(inot);
 
-                    ln.add(inot);
-
-                    if (inot.getLevel().equals(Level.SEVERE)) {
-                        addMarker(file, inot.getMessage(), inot.getStatement().getFirstLine(), IMarker.SEVERITY_ERROR);
-                    } else if (inot.getLevel().equals(Level.WARNING)) {
-                        addMarker(file, inot.getMessage(), inot.getStatement().getFirstLine(),
+                    if (inot.getLevel() == Level.SEVERE.intValue()) {
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
+                    } else if (inot.getLevel() == Level.WARNING.intValue()) {
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(),
                                 IMarker.SEVERITY_WARNING);
-                    } else if (inot.getLevel().equals(Level.INFO)) {
-                        addMarker(file, inot.getMessage(), inot.getStatement().getFirstLine(), IMarker.SEVERITY_INFO);
+                    } else if (inot.getLevel() == Level.INFO.intValue()) {
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_INFO);
                     }
                 }
                 return Status.OK_STATUS;

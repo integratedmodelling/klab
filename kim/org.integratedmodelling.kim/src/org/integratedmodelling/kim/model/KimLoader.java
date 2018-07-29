@@ -37,14 +37,6 @@ import org.integratedmodelling.klab.utils.CollectionUtils;
 
 import com.google.inject.Injector;
 
-/**
- * TODO loaders must subscribe with Kim, so that reloads changes initiated by
- * external code (e.g. Eclipse builders) will pick up the changes and recompute
- * the dependency graph.
- * 
- * @author Ferd
- *
- */
 public class KimLoader implements IKimLoader {
 
     private Injector injector;
