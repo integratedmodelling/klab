@@ -58,7 +58,7 @@ public class KimNotifier implements Kim.Notifier {
         ErrorNotifyingMonitor(Monitor monitor, INamespace namespace) {
             super(monitor);
             this.namespace = namespace;
-            this.notifications.addAll(Resources.INSTANCE.getLoader().getIssues(namespace));
+            this.notifications.addAll(namespace.getStatement().getLoader().getIssues(namespace));
         }
 
         private Object[] scanArguments(Level level, Object[] args) {

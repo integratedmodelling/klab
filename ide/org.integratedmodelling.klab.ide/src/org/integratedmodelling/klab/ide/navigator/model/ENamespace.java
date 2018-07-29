@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
@@ -149,5 +150,10 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public Collection<String> getImportedNamespaceIds(boolean scanUsages) {
 		return delegate.getImportedNamespaceIds(scanUsages);
 	}
+
+    @Override
+    public IKimLoader getLoader() {
+        return delegate.getLoader();
+    }
 
 }

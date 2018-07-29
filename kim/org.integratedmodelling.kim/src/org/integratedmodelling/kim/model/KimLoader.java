@@ -285,19 +285,19 @@ public class KimLoader implements IKimLoader {
     private File getFile(Object namespaceProxy) {
 
         if (namespaceProxy instanceof String) {
-            namespaceProxy = namespaceFiles.get((String)namespaceProxy);
+            namespaceProxy = namespaceFiles.get((String) namespaceProxy);
         } else if (namespaceProxy instanceof IKimNamespace) {
-            namespaceProxy = namespaceFiles.get(((IKimNamespace)namespaceProxy).getName());
+            namespaceProxy = namespaceFiles.get(((IKimNamespace) namespaceProxy).getName());
         } else if (namespaceProxy instanceof Namespace) {
-            namespaceProxy = namespaceFiles.get(Kim.getNamespaceId((Namespace)namespaceProxy));
+            namespaceProxy = namespaceFiles.get(Kim.getNamespaceId((Namespace) namespaceProxy));
         } else if (namespaceProxy instanceof INamespace) {
-            namespaceProxy = namespaceFiles.get(((INamespace)namespaceProxy).getName());
+            namespaceProxy = namespaceFiles.get(((INamespace) namespaceProxy).getName());
         }
-        
+
         if (!(namespaceProxy instanceof File)) {
             throw new IllegalArgumentException("cannot infer a namespace file from " + namespaceProxy);
         }
-        
+
         return (File) namespaceProxy;
     }
 
@@ -418,6 +418,7 @@ public class KimLoader implements IKimLoader {
                             "namespace is null after validation. This should never happen.");
                 }
 
+                ((KimNamespace) info.namespace).setLoader(this);
                 ((KimNamespace) info.namespace).setFile(fileMap.get(resource.getURI()));
                 ((KimProject) info.project).addNamespace(info.namespace);
 

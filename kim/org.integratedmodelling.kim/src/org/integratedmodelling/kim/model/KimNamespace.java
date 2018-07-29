@@ -12,6 +12,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -43,7 +44,8 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private boolean projectKnowledge;
 	private boolean annotationsScanned = false;
 	private Set<String> importsScanned = null;
-
+	private IKimLoader loader;
+	
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
 		this.name = Kim.getNamespaceId(namespace);
@@ -294,4 +296,13 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public void setFile(File file) {
 		this.file = file;
 	}
+
+    @Override
+    public IKimLoader getLoader() {
+        return loader;
+    }
+    
+    public void setLoader(IKimLoader loader) {
+        this.loader = loader;
+    }
 }

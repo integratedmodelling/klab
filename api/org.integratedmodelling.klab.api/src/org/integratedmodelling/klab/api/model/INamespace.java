@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
@@ -256,5 +257,8 @@ public interface INamespace extends IKimObject {
      * @return true if project-wide knowledge space
      */
     boolean isProjectKnowledge();
+    
+    @Override
+    IKimNamespace getStatement();
 
 }
