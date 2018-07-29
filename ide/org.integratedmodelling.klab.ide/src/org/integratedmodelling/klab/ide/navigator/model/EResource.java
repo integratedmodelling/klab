@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference
 
 public class EResource extends ENavigatorItem {
 
-	EResourceReference resource;
+	private EResourceReference resource;
 	
 	protected EResource(EResourceReference resource, ENavigatorItem parent) {
 		super(resource.getUrn(), parent);

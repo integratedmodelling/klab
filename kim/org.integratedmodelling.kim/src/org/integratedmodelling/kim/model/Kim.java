@@ -1309,7 +1309,7 @@ public enum Kim {
 	 * the resource URI if it's an anonymous/sidecar file/script/test. The
 	 * normalization copies all path segments backwards until a project name is
 	 * encountered or the path is finished, taking care of different URI prefixes
-	 * between OSGI and the regular filesystem.
+	 * between OSGI and the regular filesystem and removing any .kim extension.
 	 * 
 	 * @param namespace
 	 * @return the namespace ID
@@ -1324,6 +1324,10 @@ public enum Kim {
 				if (INSTANCE.getProject(path[i]) != null) {
 					break;
 				}
+			}
+			if (uri.endsWith(".kim")) {
+			    // these wreak havoc in finding model objects
+			    uri = uri.substring(0, uri.length() - 4);
 			}
 			ret += "|" + uri;
 		}

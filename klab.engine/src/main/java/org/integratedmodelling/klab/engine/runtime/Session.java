@@ -34,7 +34,6 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -55,6 +54,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectModification;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
@@ -495,6 +495,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
         } else {
             observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
         }
+    }
+    
+    @MessageHandler
+    private void handleProjectLoadRequest(final ProjectLoadRequest request) {
+        new Thread() {
+
+            @Override
+            public void run() {
+                Resources.INSTANCE.getLoader().loadProjectFiles(request.getProjectLocations());;
+            }
+            
+        }.start();
     }
 
     /*

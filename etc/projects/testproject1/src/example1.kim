@@ -5,4 +5,4 @@ model geography:Elevation
 	// must check that 1. all symbols are resolved (by deps); 2. all reqs are satisfied either as params or deps; model must
 	// produce what it declares in KDL and have semantics for that (check after initialization that names are in symbol table when they're not the
 	// main artifact, e.g. in a process).
-	using gis.fuckup(artifact = slope);
+	using gis.terrain();

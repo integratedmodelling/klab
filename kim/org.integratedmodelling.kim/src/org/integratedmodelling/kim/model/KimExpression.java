@@ -8,7 +8,7 @@ public class KimExpression implements IKimExpression {
 	private String language;
 
 	public KimExpression(String code, String language) {
-		this.code = code;
+		this.code = code.substring(1, code.length() - 1);
 		this.language = language;
 	}
 	

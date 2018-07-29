@@ -131,6 +131,7 @@ public class Klab {
 	private void handleMessage(IMessage message) {
 		switch (message.getType()) {
 		case EngineUp:
+		    System.out.println("SYNCING RESOURCES - SHOULD BE GREEN AFTER THIS");
 			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
 			KlabNavigator.refresh();
 			break;
@@ -141,6 +142,7 @@ public class Klab {
 				}
 			}
 			KlabNavigator.refresh();
+			break;
 		default:
 			break;
 		}

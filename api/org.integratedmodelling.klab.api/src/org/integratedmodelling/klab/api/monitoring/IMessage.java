@@ -114,9 +114,9 @@ public interface IMessage {
 		UserProjectOpened, UserProjectModified, UserProjectDeleted,
 		
 		/**
-		 * F->B: notification when files are changed, added or deleted
+		 * F->B: notification when files are changed, added or deleted; notify projects to load
 		 */
-		ProjectFileAdded, ProjectFileModified, ProjectFileDeleted,
+		ProjectFileAdded, ProjectFileModified, ProjectFileDeleted, NotifyProjects,
 
 		/*
 		 * --- Notification-class types ---

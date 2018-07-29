@@ -75,7 +75,8 @@ public class KimLoader implements IKimLoader {
     private IResourceValidator validator;
     private GeneratorDelegate generator;
     private Graph<File, DefaultEdge> dependencyGraph;
-
+    private Set<File> projectLocations = new HashSet<>();
+    
     public KimLoader() {
     }
 
@@ -115,6 +116,7 @@ public class KimLoader implements IKimLoader {
             this.nonDependentResources.put(file, info.copyAsExternal());
             namespaceFiles.put(info.name, file);
         }
+        projectLocations.addAll(((KimLoader)loader).projectLocations);
     }
 
     public KimLoader(Injector injector, IKimLoader loader) {
@@ -131,10 +133,14 @@ public class KimLoader implements IKimLoader {
     public void loadProjectFiles(Collection<File> projectRoots) {
         List<IKimProject> projects = new ArrayList<>();
         for (File root : projectRoots) {
-            IKimProject project = Kim.INSTANCE.getProjectIn(root, true);
-            projects.add(project);
+            if (!projectLocations.contains(root)) {
+                IKimProject project = Kim.INSTANCE.getProjectIn(root, true);
+                projects.add(project);
+            }
         }
-        load(projects);
+        if (!projects.isEmpty()) {
+            load(projects);
+        }
     }
 
     @Override
@@ -146,10 +152,17 @@ public class KimLoader implements IKimLoader {
 
     @Override
     public void load(Collection<IKimProject> projects) {
+        boolean trivial = true;
         for (IKimProject project : projects) {
-            loadResources(project);
+            if (!projectLocations.contains(project.getRoot())) {
+                projectLocations.add(project.getRoot());
+                loadResources(project);
+                trivial = false;
+            }
         }
-        doLoad(false);
+        if (!trivial) {
+            doLoad(false);
+        }
     }
 
     @Override
