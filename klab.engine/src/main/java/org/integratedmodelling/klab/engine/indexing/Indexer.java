@@ -71,7 +71,13 @@ public enum Indexer {
     }
 
     public Match index(IKimStatement object, String namespaceId) {
+        
         SearchMatch ret = null;
+        
+        if (object.isErrors()) {
+            return null;
+        }
+        
         if (object instanceof IKimConceptStatement) {
 
             ret = new SearchMatch(Match.Type.CONCEPT, ((IKimConceptStatement) object).getType());

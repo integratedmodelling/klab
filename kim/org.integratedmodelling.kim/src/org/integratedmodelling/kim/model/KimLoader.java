@@ -76,7 +76,7 @@ public class KimLoader implements IKimLoader {
     private GeneratorDelegate generator;
     private Graph<File, DefaultEdge> dependencyGraph;
     private Set<File> projectLocations = new HashSet<>();
-    
+
     public KimLoader() {
     }
 
@@ -116,7 +116,7 @@ public class KimLoader implements IKimLoader {
             this.nonDependentResources.put(file, info.copyAsExternal());
             namespaceFiles.put(info.name, file);
         }
-        projectLocations.addAll(((KimLoader)loader).projectLocations);
+        projectLocations.addAll(((KimLoader) loader).projectLocations);
     }
 
     public KimLoader(Injector injector, IKimLoader loader) {
@@ -401,6 +401,7 @@ public class KimLoader implements IKimLoader {
                 ret.add(info.namespace);
             } catch (Throwable e) {
                 System.out.println("PORCATE: " + resource);
+                e.printStackTrace();
             }
         }
 
@@ -439,8 +440,12 @@ public class KimLoader implements IKimLoader {
     public Collection<ICompileNotification> getIssues(Object namespaceProxy) {
         List<ICompileNotification> ret = new ArrayList<>();
         NsInfo info = getNamespaceInfo(getFile(namespaceProxy));
-        for (Issue issue : info.issues) {
-            System.out.println("ISSUE " + issue);
+        if (info != null) {
+            for (Issue issue : info.issues) {
+                System.out.println("ISSUE " + issue);
+            }
+        } else {
+            System.out.println("HOSTIA I GOT NULL INFO FOR " + namespaceProxy);
         }
         return ret;
     }
@@ -464,7 +469,6 @@ public class KimLoader implements IKimLoader {
                 }
             }
         }
-
     }
 
 }

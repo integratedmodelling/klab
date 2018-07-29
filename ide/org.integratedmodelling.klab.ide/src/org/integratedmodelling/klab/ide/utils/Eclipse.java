@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -41,9 +42,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.klab.api.errormanagement.ICompileError;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
-import org.integratedmodelling.klab.api.errormanagement.ICompileWarning;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.Activator;
@@ -399,12 +398,12 @@ public enum Eclipse {
 
                     ln.add(inot);
 
-                    if (inot instanceof ICompileError) {
+                    if (inot.getLevel().equals(Level.SEVERE)) {
                         addMarker(file, inot.getMessage(), inot.getStatement().getFirstLine(), IMarker.SEVERITY_ERROR);
-                    } else if (inot instanceof ICompileWarning) {
+                    } else if (inot.getLevel().equals(Level.WARNING)) {
                         addMarker(file, inot.getMessage(), inot.getStatement().getFirstLine(),
                                 IMarker.SEVERITY_WARNING);
-                    } else {
+                    } else if (inot.getLevel().equals(Level.INFO)) {
                         addMarker(file, inot.getMessage(), inot.getStatement().getFirstLine(), IMarker.SEVERITY_INFO);
                     }
                 }

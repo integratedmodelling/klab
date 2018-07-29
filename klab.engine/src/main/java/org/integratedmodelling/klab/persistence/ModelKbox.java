@@ -520,11 +520,19 @@ public class ModelKbox extends ObservableKbox {
 	 * @return the models implied by the statement
 	 */
 	public static Collection<ModelReference> inferModels(Model model, IMonitor monitor) {
-		List<ModelReference> ret = new ArrayList<>();
-
+		
+	    List<ModelReference> ret = new ArrayList<>();
+        
+        // happens in error
+        if (model.getObservables().size() == 0 || model.getObservables().get(0) == null) {
+            return ret;
+        }
+        
 		for (ModelReference m : getModelDescriptors(model, monitor)) {
 			ret.add(m);
 		}
+
+		
 		if (ret.size() > 0) {
 			/*
 			 * the observer come out of getAttributeObservers() with their inherent type

@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.errormanagement;
 
+import java.util.logging.Level;
+
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.api.model.INamespace;
 
@@ -28,6 +30,13 @@ import org.integratedmodelling.klab.api.model.INamespace;
 public abstract interface ICompileNotification {
 
     /**
+     * Level of the notification. 
+     * 
+     * @return
+     */
+    Level getLevel();
+    
+    /**
      * May be null (e.g. for code snippets read from the console). Usually isn't.
      *
      * @return the namespace for the notification
@@ -35,12 +44,13 @@ public abstract interface ICompileNotification {
     INamespace getNamespace();
 
     /**
-     * Get the most specific statement where the notification originated.
+     * Get the most specific statement where the notification originated. May be an incomplete proxy in
+     * notifications sent over the wire, only mentioning coordinates in the originating document.
      *
      * @return a {@link org.integratedmodelling.kim.api.IKimStatement} object.
      */
     IKimStatement getStatement();
-    
+
     /**
      * <p>getMessage.</p>
      *

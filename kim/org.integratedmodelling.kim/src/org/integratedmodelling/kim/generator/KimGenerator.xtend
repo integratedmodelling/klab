@@ -34,7 +34,8 @@ class KimGenerator extends AbstractGenerator {
 			}
 
 		} catch (Throwable e) {
-			println("PPORCO: " + e.getMessage() + " [" + e.getClass().getCanonicalName() + "]")
+			println("EXCEPTION IN GENERATOR! SHOULD NEVER HAPPEN!");
+			e.printStackTrace();
 		}
 	}
 }

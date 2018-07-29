@@ -32,6 +32,8 @@ public interface IMessage {
 		 */
 		EngineLifecycle,
 
+		KimLifecycle,
+		
 		/**
 		 * 
 		 */
@@ -122,6 +124,11 @@ public interface IMessage {
 		 * --- Notification-class types ---
 		 */
 		Debug, Info, Warning, Error,
+		
+		/*
+		 * --- KimLifecycle: one-off compile notifications at the namespace or project level
+		 */
+		NamespaceCompilationIssues,
 
 		/*
 		 * --- Observation lifecycle ---
