@@ -8,17 +8,15 @@ public class ObservationRequest {
     private String urn;
     private String contextId;
     private String searchContextId;
-    private boolean addToContext;
     private List<String> scenarios = new ArrayList<>();
-    
+
     public ObservationRequest() {
     }
 
-    public ObservationRequest(String urn, String contextId, String contextSearchId, boolean addToContext) {
+    public ObservationRequest(String urn, String contextId, String contextSearchId) {
         this.urn = urn;
         this.contextId = contextId;
         this.searchContextId = contextSearchId;
-        this.addToContext = addToContext;
     }
 
     public String getUrn() {
@@ -45,22 +43,12 @@ public class ObservationRequest {
         this.contextId = contextId;
     }
 
-    public boolean isAddToContext() {
-        return addToContext;
-    }
-
-    public void setAddToContext(boolean addToContext) {
-        this.addToContext = addToContext;
-    }
-
     public List<String> getScenarios() {
         return scenarios;
     }
 
-    
     public void setScenarios(List<String> scenarios) {
         this.scenarios = scenarios;
     }
 
-    
 }

@@ -48,13 +48,6 @@ public class Klab {
 	 */
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
 
-	/*
-	 * all tasks in the session, indexed by ID of root context. Each task reference
-	 * is linked to child descriptors for dataflow, artifacts produced and log
-	 * entries. Used to populate the task tree in the runtime view. Maintains
-	 * chronological order.
-	 */
-	private Map<String, List<ETaskReference>> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	private void synchronizeProjectResources(EProject project) {
 

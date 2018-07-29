@@ -91,7 +91,6 @@
 		<nd4j.version>1.0.0-alpha</nd4j.version>
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.12.0</xtextVersion>
-		<kotlin.version>1.2.31</kotlin.version>
 
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 

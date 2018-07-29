@@ -3,6 +3,12 @@ package org.integratedmodelling.klab.ide.model;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -12,6 +18,7 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
+import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -35,14 +42,56 @@ public class KlabSession extends KlabPeer {
 
     private AtomicLong queryCounter = new AtomicLong();
 
+    /*
+     * all tasks in the session, indexed by ID of root context. Each task reference
+     * is linked to child descriptors for dataflow, artifacts produced and log
+     * entries. Used to populate the task tree in the runtime view. Maintains
+     * chronological order.
+     */
+    private Map<String, List<ETaskReference>> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+    private Map<String, ObservationReference> observationCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+    private String currentContextId;
+    private List<String> contexts = Collections.synchronizedList(new LinkedList<>());
+
     public KlabSession(String sessionId) {
         super(Sender.SESSION, sessionId);
     }
 
     /*
+     * --- public methods ---
+     */
+    
+    /**
+     * The latest observation made, or the one set by the user.
+     * 
+     * @return
+     */
+    public ObservationReference getCurrentContext() {
+        return currentContextId == null ? null : observationCatalog.get(currentContextId);
+    }
+
+    /**
+     * All the observations made in this session, last observed first. May be filled on startup after rejoining a 
+     * session.
+     * 
+     * @return
+     */
+    public List<ObservationReference> getContexts() {
+        List<ObservationReference> ret = new ArrayList<>();
+        for (String id : contexts) {
+            ret.add(observationCatalog.get(id));
+        }
+        return ret;
+    }
+
+    /*
      * --- State management
      */
-
+    private void setNewContext(ObservationReference observation) {
+        this.currentContextId = observation.getId();
+        observationCatalog.put(observation.getId(), observation);
+        contexts.add(0, observation.getId());
+    }
     /*
      * --- Front-end action triggers ---
      */
@@ -67,12 +116,12 @@ public class KlabSession extends KlabPeer {
 
     public void observe(EKimObject dropped) {
         Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-                new ObservationRequest(dropped.getId(), null, null, false));
+                new ObservationRequest(dropped.getId(), currentContextId, null));
     }
 
     public void observe(EObserver dropped, boolean addToContext) {
         Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-                new ObservationRequest(dropped.getId(), null, null, true));
+                new ObservationRequest(dropped.getId(), addToContext ? currentContextId : null, null));
     }
 
     public void previewResource(ResourceReference dropped) {
@@ -154,7 +203,9 @@ public class KlabSession extends KlabPeer {
 
     @MessageHandler
     public void handleObservation(ObservationReference observation) {
-
+        if (observation.getParentId() == null) {
+            setNewContext(observation);
+        }
     }
 
     @MessageHandler
