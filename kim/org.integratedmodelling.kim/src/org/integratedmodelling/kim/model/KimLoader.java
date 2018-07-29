@@ -398,6 +398,8 @@ public class KimLoader implements IKimLoader {
                 NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
                 info.name = name;
                 info.namespace = Kim.INSTANCE.getNamespace(name);
+                info.issues.clear();
+                
                 for (Issue issue : issues) {
                     ICompileNotification notification = getNotification(info.namespace, issue);
                     if (notification != null) {

@@ -15,7 +15,11 @@ import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
  * <p>
  * Each {@link IKimWorkspace} uses one of these to manage loading.
  * Implementations should provide loaders that can be initialized with the
- * contents of another.
+ * contents of another, in a nested fashion. During code generation and beyond,
+ * the loader for a namespace can be retrieved using
+ * {@link IKimNamespace#getLoader()}. Implementations using multiple workspaces
+ * should endeavor to expose a top-level loader including the union of all those
+ * created for each workspace.
  * <p>
  * k.IM projects are entirely file-based and depend strictly on their file
  * organization. Passing a non well-formed project can cause unpredictable
@@ -39,7 +43,8 @@ public interface IKimLoader {
 	void load(Collection<IKimProject> projects);
 
 	/**
-	 * Same as {@link #load(IKimProject...)} but starting from project file locations.
+	 * Same as {@link #load(IKimProject...)} but starting from project file
+	 * locations.
 	 * 
 	 * @param projectRoots
 	 */
@@ -92,15 +97,13 @@ public interface IKimLoader {
 	 */
 	void reload();
 
-
 	/**
-	 * Get all the issues raised during compilation, validation and generation of the
-	 * passed namespace.
+	 * Get all the issues raised during compilation, validation and generation of
+	 * the passed namespace.
 	 * 
 	 * @param namespaceProxy
 	 * @return all issues in k.LAB format
 	 */
-    Collection<ICompileNotification> getIssues(Object namespaceProxy);
-
+	Collection<ICompileNotification> getIssues(Object namespaceProxy);
 
 }
