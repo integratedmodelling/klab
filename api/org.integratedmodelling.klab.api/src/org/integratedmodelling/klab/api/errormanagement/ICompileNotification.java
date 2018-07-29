@@ -18,7 +18,6 @@ package org.integratedmodelling.klab.api.errormanagement;
 import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.klab.api.model.INamespace;
 
 /**
  * Base class for anything that needs to be notified linked to a line of k.IM code - info, error, warning.
@@ -39,9 +38,9 @@ public abstract interface ICompileNotification {
     /**
      * May be null (e.g. for code snippets read from the console). Usually isn't.
      *
-     * @return the namespace for the notification
+     * @return the namespace ID for the notification
      */
-    INamespace getNamespace();
+    String getNamespaceId();
 
     /**
      * Get the most specific statement where the notification originated. May be an incomplete proxy in

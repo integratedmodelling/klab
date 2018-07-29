@@ -3,18 +3,10 @@
  */
 package org.integratedmodelling.kim.generator;
 
-import java.util.List;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.AbstractGenerator;
 import org.eclipse.xtext.generator.IFileSystemAccess2;
 import org.eclipse.xtext.generator.IGeneratorContext;
-import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
-import org.integratedmodelling.kim.kim.Model;
-import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.kim.model.KimNamespace;
 
 /**
  * Generates code from your model files on save.
@@ -25,27 +17,5 @@ import org.integratedmodelling.kim.model.KimNamespace;
 public class KimGenerator extends AbstractGenerator {
   @Override
   public void doGenerate(final Resource resource, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
-    try {
-      EList<EObject> _contents = resource.getContents();
-      for (final EObject r : _contents) {
-        if (((r instanceof Model) && (((Model) r).getNamespace() != null))) {
-          KimNamespace namespace = Kim.INSTANCE.getNamespace(((Model) r).getNamespace(), true);
-          if ((namespace != null)) {
-            List<Kim.Notifier> _notifiers = Kim.INSTANCE.getNotifiers();
-            for (final Kim.Notifier notifier : _notifiers) {
-              notifier.synchronizeNamespaceWithRuntime(namespace);
-            }
-          }
-        }
-      }
-    } catch (final Throwable _t) {
-      if (_t instanceof Throwable) {
-        final Throwable e = (Throwable)_t;
-        InputOutput.<String>println("EXCEPTION IN GENERATOR! SHOULD NEVER HAPPEN!");
-        e.printStackTrace();
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
   }
 }

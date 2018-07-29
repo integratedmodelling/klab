@@ -8,11 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.generator.GeneratorDelegate;
-import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.CancelIndicator;
@@ -27,8 +26,13 @@ import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.kim.Model;
+import org.integratedmodelling.kim.kim.Namespace;
+import org.integratedmodelling.kim.model.Kim.Notifier;
 import org.integratedmodelling.kim.utils.ResourceSorter;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
+import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.common.CompileNotification;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 
 import com.google.inject.Injector;
@@ -48,7 +52,7 @@ public class KimLoader implements IKimLoader {
     class NsInfo {
 
         IKimNamespace namespace;
-        List<Issue> issues = new ArrayList<>();
+        List<ICompileNotification> issues = new ArrayList<>();
         String name;
         IKimProject project;
         boolean external;
@@ -73,7 +77,6 @@ public class KimLoader implements IKimLoader {
     private List<String> sortedNames = new ArrayList<>();
     private XtextResourceSet resourceSet;
     private IResourceValidator validator;
-    private GeneratorDelegate generator;
     private Graph<File, DefaultEdge> dependencyGraph;
     private Set<File> projectLocations = new HashSet<>();
 
@@ -280,10 +283,21 @@ public class KimLoader implements IKimLoader {
     }
 
     private File getFile(Object namespaceProxy) {
-        // TODO turn the proxy to a file
+
+        if (namespaceProxy instanceof String) {
+            namespaceProxy = namespaceFiles.get((String)namespaceProxy);
+        } else if (namespaceProxy instanceof IKimNamespace) {
+            namespaceProxy = namespaceFiles.get(((IKimNamespace)namespaceProxy).getName());
+        } else if (namespaceProxy instanceof Namespace) {
+            namespaceProxy = namespaceFiles.get(Kim.getNamespaceId((Namespace)namespaceProxy));
+        } else if (namespaceProxy instanceof INamespace) {
+            namespaceProxy = namespaceFiles.get(((INamespace)namespaceProxy).getName());
+        }
+        
         if (!(namespaceProxy instanceof File)) {
             throw new IllegalArgumentException("cannot infer a namespace file from " + namespaceProxy);
         }
+        
         return (File) namespaceProxy;
     }
 
@@ -381,33 +395,50 @@ public class KimLoader implements IKimLoader {
 
         List<IKimNamespace> ret = new ArrayList<>();
         IResourceValidator validator = getValidator();
-        InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 
         for (Resource resource : sortedResources) {
             try {
+
                 Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());
                 List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
                 String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
+
                 NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
-                info.issues.addAll(issues);
                 info.name = name;
                 info.namespace = Kim.INSTANCE.getNamespace(name);
+                for (Issue issue : issues) {
+                    ICompileNotification notification = getNotification(info.namespace, issue);
+                    if (notification != null) {
+                        info.issues.add(notification);
+                    }
+                }
+
+                if (info.namespace == null) {
+                    throw new KlabInternalErrorException(
+                            "namespace is null after validation. This should never happen.");
+                }
+
                 ((KimNamespace) info.namespace).setFile(fileMap.get(resource.getURI()));
                 ((KimProject) info.project).addNamespace(info.namespace);
+
                 if (!reloading) {
                     this.namespaceFiles.put(name, fileMap.get(resource.getURI()));
                     this.sortedNames.add(name);
                 }
+
                 ret.add(info.namespace);
+
             } catch (Throwable e) {
-                System.out.println("PORCATE: " + resource);
+                System.out.println("ALTRE PORCATE: " + resource);
                 e.printStackTrace();
             }
         }
 
-        GeneratorDelegate generator = getGenerator();
-        for (Resource resource : sortedResources) {
-            generator.doGenerate(resource, fsa);
+        for (IKimNamespace namespace : ret) {
+            // call notifiers for k.LAB model generation
+            for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+                notifier.synchronizeNamespaceWithRuntime(namespace);
+            }
         }
 
         computeDependencies();
@@ -415,11 +446,31 @@ public class KimLoader implements IKimLoader {
         return ret;
     }
 
-    private GeneratorDelegate getGenerator() {
-        if (this.generator == null) {
-            this.generator = getInjector().getInstance(GeneratorDelegate.class);
+    private ICompileNotification getNotification(IKimNamespace namespace, Issue issue) {
+
+        Level level = null;
+        ICompileNotification ret = null;
+
+        switch (issue.getSeverity()) {
+        case ERROR:
+            level = Level.SEVERE;
+            break;
+        case INFO:
+            level = Level.INFO;
+            break;
+        case WARNING:
+            level = Level.WARNING;
+            break;
+        default:
+            break;
         }
-        return this.generator;
+
+        if (level != null) {
+            ret = CompileNotification.create(level, issue.getMessage(), namespace.getName(),
+                    KimStatement.createDummy(issue));
+        }
+
+        return ret;
     }
 
     private IResourceValidator getValidator() {
@@ -438,16 +489,8 @@ public class KimLoader implements IKimLoader {
 
     @Override
     public Collection<ICompileNotification> getIssues(Object namespaceProxy) {
-        List<ICompileNotification> ret = new ArrayList<>();
         NsInfo info = getNamespaceInfo(getFile(namespaceProxy));
-        if (info != null) {
-            for (Issue issue : info.issues) {
-                System.out.println("ISSUE " + issue);
-            }
-        } else {
-            System.out.println("HOSTIA I GOT NULL INFO FOR " + namespaceProxy);
-        }
-        return ret;
+        return info == null ? new ArrayList<>() : info.issues;
     }
 
     private void computeDependencies() {

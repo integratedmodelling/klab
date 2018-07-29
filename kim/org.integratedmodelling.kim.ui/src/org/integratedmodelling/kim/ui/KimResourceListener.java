@@ -5,26 +5,18 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.integratedmodelling.kim.model.Kim;
 
 public class KimResourceListener implements IResourceChangeListener {
 
     class DeltaPrinter implements IResourceDeltaVisitor {
         public boolean visit(IResourceDelta delta) {
-            IResource res = delta.getResource();
+//            IResource res = delta.getResource();
             switch (delta.getKind()) {
             case IResourceDelta.ADDED:
-                Kim.INSTANCE.handleAddition(res.getFullPath().toString());
                 break;
             case IResourceDelta.REMOVED:
-                Kim.INSTANCE.handleDeletion(res.getFullPath().toString());
                 break;
             case IResourceDelta.CHANGED:
-            	/*
-            	 * TODO ask for the dependency closure and touch the corresponding
-            	 * IFiles (IResource.touch()).
-            	 */
-                Kim.INSTANCE.handleChange(res.getFullPath().toString());
                 break;
             }
             return true; // visit the children

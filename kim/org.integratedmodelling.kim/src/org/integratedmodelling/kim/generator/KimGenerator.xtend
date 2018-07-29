@@ -7,9 +7,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import org.integratedmodelling.kim.kim.Model
-import org.integratedmodelling.kim.model.Kim
-import org.integratedmodelling.kim.model.Kim.Notifier
 
 /**
  * Generates code from your model files on save.
@@ -19,23 +16,23 @@ import org.integratedmodelling.kim.model.Kim.Notifier
 class KimGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-
-		// the workspace is the root scope
-		try {
-			for (r : resource.contents) {
-				if (r instanceof Model && (r as Model).namespace !== null) {
-					var namespace = Kim.INSTANCE.getNamespace((r as Model).namespace, true)
-					if (namespace !== null) {
-						for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
-							notifier.synchronizeNamespaceWithRuntime(namespace)
-						}
-					}
-				}
-			}
-
-		} catch (Throwable e) {
-			println("EXCEPTION IN GENERATOR! SHOULD NEVER HAPPEN!");
-			e.printStackTrace();
-		}
+// screw this - the loader does it, so it can work with the same object that was just validated.
+//		// the workspace is the root scope
+//		try {
+//			for (r : resource.contents) {
+//				if (r instanceof Model && (r as Model).namespace !== null) {
+//					var namespace = Kim.INSTANCE.getNamespace((r as Model).namespace, true)
+//					if (namespace !== null) {
+//						for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+//							notifier.synchronizeNamespaceWithRuntime(namespace)
+//						}
+//					}
+//				}
+//			}
+//
+//		} catch (Throwable e) {
+//			println("EXCEPTION IN GENERATOR! SHOULD NEVER HAPPEN!");
+//			e.printStackTrace();
+//		}
 	}
 }

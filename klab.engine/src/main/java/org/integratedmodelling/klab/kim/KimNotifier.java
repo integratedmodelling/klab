@@ -58,6 +58,7 @@ public class KimNotifier implements Kim.Notifier {
         ErrorNotifyingMonitor(Monitor monitor, INamespace namespace) {
             super(monitor);
             this.namespace = namespace;
+            this.notifications.addAll(Resources.INSTANCE.getLoader().getIssues(namespace));
         }
 
         private Object[] scanArguments(Level level, Object[] args) {
@@ -78,7 +79,7 @@ public class KimNotifier implements Kim.Notifier {
                 }
 
                 if (statement != null) {
-                    notifications.add(CompileNotification.create(level, message, namespace, statement));
+                    notifications.add(CompileNotification.create(level, message, namespace.getName(), statement));
                 }
 
             }
@@ -151,9 +152,6 @@ public class KimNotifier implements Kim.Notifier {
         ns = new Namespace(namespace);
 
         ErrorNotifyingMonitor monitor = new ErrorNotifyingMonitor((Monitor) this.monitor, ns);
-
-        // ADD BACK
-//        Resources.INSTANCE.getLoader().getIssues(namespace.getName());
         
         for (Pair<String, String> imp : namespace.getOwlImports()) {
             String prefix = Resources.INSTANCE.getUpperOntology().importOntology(imp.getFirst(), imp.getSecond());

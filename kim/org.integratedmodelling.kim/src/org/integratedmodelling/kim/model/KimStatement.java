@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimStatement;
 
@@ -16,7 +17,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
  * @author ferdinando.villa
  *
  */
-public abstract class KimStatement extends KimScope implements IKimStatement {
+public class KimStatement extends KimScope implements IKimStatement {
 
     private static final long serialVersionUID = -1426788695739147795L;
 
@@ -36,9 +37,9 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected IKimStatement parent = null;
     protected boolean errors = false;
     protected boolean warnings = false;
-    
+
     EObject eObject;
-    
+
     public KimStatement() {
     }
 
@@ -61,11 +62,11 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
         this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
         sourceCode = node.getText().trim();
     }
-    
+
     public EObject getEObject() {
         return eObject;
     }
-    
+
     @Override
     public IKimStatement getParent() {
         return parent;
@@ -176,7 +177,7 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
     protected String getStringRepresentation(int offset) {
         return sourceCode;
     }
-    
+
     @Override
     public String getResourceId() {
         return resource;
@@ -184,20 +185,34 @@ public abstract class KimStatement extends KimScope implements IKimStatement {
 
     @Override
     public boolean isErrors() {
-    	return this.errors;
+        return this.errors;
     }
-    
+
     public void setErrors(boolean b) {
-    	this.errors = b;
+        this.errors = b;
     }
 
     @Override
     public boolean isWarnings() {
-    	return this.warnings;
+        return this.warnings;
     }
-    
+
     public void setWarnings(boolean b) {
-    	this.warnings = b;
+        this.warnings = b;
+    }
+
+    /**
+     * Create a dummy statement uniquely to carry the line numbers for a compile notification.
+     * 
+     * @param issue
+     * @return
+     */
+    public static IKimStatement createDummy(Issue issue) {
+        KimStatement ret = new KimStatement(null, null);
+        ret.setFirstLine(issue.getLineNumber());
+        ret.setFirstCharOffset(issue.getOffset());
+        ret.setLastCharOffset(issue.getOffset() + issue.getLength());
+        return ret;
     }
 
 }

@@ -154,6 +154,7 @@ public enum Indexer {
             @Override
             public void run() {
                 try {
+                    System.out.println("TODO: DELETE NAMESPACE FROM INDEX BEFORE REINDEXING!");
                     // delete everything within namespace
                     // reindex namespace
 //                    for (int i = 0; i < 100000; ++i) {
