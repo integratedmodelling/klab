@@ -90,7 +90,7 @@ public class KimLoader implements IKimLoader {
      * Call this to use an appropriate injector if calling from a non-standalone
      * setup.
      */
-    public void setInjector(Injector injector) {
+    private void setInjector(Injector injector) {
         this.injector = injector;
     }
 
@@ -139,7 +139,7 @@ public class KimLoader implements IKimLoader {
     }
 
     @Override
-    public void reload() {
+    public void rescan(boolean clean) {
         // TODO remove anyth NsInfo that's not external AND whose file has time of
         // update > the namespace's.
         // TODO reload all projects loaded so far
@@ -197,7 +197,6 @@ public class KimLoader implements IKimLoader {
 
         Map<URI, File> fileMap = new HashMap<>();
         XtextResourceSet resourceSet = getResourceSet();
-        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
         List<Resource> resources = new ArrayList<>();
 
         for (File file : files) {
@@ -217,6 +216,7 @@ public class KimLoader implements IKimLoader {
     private XtextResourceSet getResourceSet() {
         if (this.resourceSet == null) {
             this.resourceSet = getInjector().getInstance(XtextResourceSet.class);
+            this.resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
         }
         return this.resourceSet;
     }
@@ -329,8 +329,6 @@ public class KimLoader implements IKimLoader {
         this.sortedNames.clear();
 
         XtextResourceSet resourceSet = getResourceSet();
-
-        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
         ResourceSorter sorter = new ResourceSorter();
         Map<URI, File> fileMap = new HashMap<>();
 

@@ -27,6 +27,7 @@
 package org.integratedmodelling.klab.ide.ui.wizards;
 
 import java.io.File;
+import java.util.Collections;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
@@ -35,6 +36,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
@@ -64,11 +66,12 @@ public class NewNamespaceWizard extends Wizard {
 		if (validate(nspc, target)) {
 			Activator.post((message) -> {
 				File file = message.getPayload(ProjectModificationNotification.class).getFile();
-				// TODO load it
+				Activator.loader().add(file);
 				Display.getDefault().asyncExec(() -> {
 				    Eclipse.INSTANCE.openFile(
 						Eclipse.INSTANCE.getIFile(file),
 						0);
+				    KlabNavigator.refresh();
 				});
 			}, IMessage.MessageClass.ProjectLifecycle,
 					isScenario ? IMessage.Type.CreateScenario : IMessage.Type.CreateNamespace,

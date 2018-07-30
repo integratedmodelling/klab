@@ -122,5 +122,10 @@ public class Project implements IProject {
 		return ret;
 
 	}
+	
+	@Override
+	public IKimProject getStatement() {
+		return delegate;
+	}
 
 }

@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
@@ -68,6 +69,7 @@ import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.security.core.GrantedAuthority;
@@ -456,7 +458,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		Project project = Resources.INSTANCE.getProject(request.getProjectId());
 
-		if (project == null) {
+		if (project == null && message.getType() != IMessage.Type.CreateProject) {
 			throw new IllegalArgumentException("project " + request.getProjectId() + " could not be found");
 		}
 
@@ -465,17 +467,25 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			break;
 		case CreateNamespace:
 			File file = project.createNamespace(request.getAssetId(), false);
+			Resources.INSTANCE.getLoader().add(file);
 			monitor.send(Message
 					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.QueryResult,
 							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
 					.inResponseTo(message));
 			break;
 		case CreateProject:
+			project = (Project) Resources.INSTANCE.getLocalWorkspace().createProject(request.getProjectId(), monitor);
+			Resources.INSTANCE.getLoader().add(project.getStatement());
+			monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
+					new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
+							project.getRoot()))
+					.inResponseTo(message));
 			break;
 		case CreateScenario:
 			file = project.createNamespace(request.getAssetId(), true);
+			Resources.INSTANCE.getLoader().add(file);
 			monitor.send(Message
-					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.QueryResult,
+					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
 							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
 					.inResponseTo(message));
 			break;
@@ -483,13 +493,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			break;
 		case DeleteLocalResource:
 			break;
+		case DeleteScript:
 		case DeleteNamespace:
+		case DeleteTestCase:
+			IKimNamespace ns = Kim.INSTANCE.getNamespace(request.getAssetId());
+			if (ns != null) {
+				Resources.INSTANCE.getLoader().delete(ns.getFile());
+				FileUtils.deleteQuietly(ns.getFile());
+			}
 			break;
 		case DeleteProject:
 			break;
 		case DeleteResource:
-			break;
-		case DeleteScript:
 			break;
 		default:
 			break;

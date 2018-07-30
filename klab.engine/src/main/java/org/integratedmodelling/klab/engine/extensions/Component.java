@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
@@ -353,6 +354,12 @@ public class Component implements IComponent {
 	@Override
 	public Collection<String> getLocalResourceUrns() {
 		throw new IllegalAccessError("components cannot have local resources");
+	}
+
+	@Override
+	public IKimProject getStatement() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

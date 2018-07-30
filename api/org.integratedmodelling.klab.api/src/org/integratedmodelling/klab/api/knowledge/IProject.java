@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.model.INamespace;
 
@@ -119,4 +120,10 @@ public interface IProject {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getOriginatingNodeId();
+
+	/**
+	 * 
+	 * @return the originating k.IM project
+	 */
+	IKimProject getStatement();
 }

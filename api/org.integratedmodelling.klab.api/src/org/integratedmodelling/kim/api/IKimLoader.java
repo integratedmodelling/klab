@@ -93,9 +93,13 @@ public interface IKimLoader {
 	Iterable<IKimNamespace> getNamespaces();
 
 	/**
-	 * Perform a full clean reload of everything.
+	 * Rescan the projects to pick up changes; optionally perform a full clean
+	 * reload of everything.
+	 * 
+	 * @param clean
+	 *            if true, throw away any state and rebuild from scratch.
 	 */
-	void reload();
+	void rescan(boolean clean);
 
 	/**
 	 * Get all the issues raised during compilation, validation and generation of

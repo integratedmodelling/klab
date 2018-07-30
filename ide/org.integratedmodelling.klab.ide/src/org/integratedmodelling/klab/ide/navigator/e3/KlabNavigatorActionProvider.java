@@ -185,6 +185,10 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 
 		@Override
 		public boolean isEnabled() {
+			
+			if (!Activator.engineMonitor().isRunning()) {
+				return false;
+			}
 			if (descriptor.action != null) {
 				ISelection selection = provider.getSelection();
 				if (!selection.isEmpty()) {

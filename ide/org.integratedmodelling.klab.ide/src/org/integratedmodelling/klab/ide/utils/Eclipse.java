@@ -397,17 +397,11 @@ public enum Eclipse {
                     file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
                 }
 
-                //                HashSet<ICompileNotification> ln = new HashSet<>();
-
                 for (CompileNotificationReference inot : notifications) {
 
-                    //                    if (ln.contains(inot)) {
-                    //                        continue;
-                    //                    }
-                    //
-                    //                    ln.add(inot);
-
-                    if (inot.getLevel() == Level.SEVERE.intValue()) {
+                	System.out.println("UPDATING MARKERS " + file + ": " + inot);
+                	
+                	if (inot.getLevel() == Level.SEVERE.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
                     } else if (inot.getLevel() == Level.WARNING.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_WARNING);

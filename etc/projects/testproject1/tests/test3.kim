@@ -4,7 +4,7 @@ worldview im;
 	name = "tests.core.vector.usstates",
 	description  = "Spatial data generation from vanilla WCS",
 	observations = ("policy:State earth:Region"),
-	resources = ("local:anonymous:test:states")
+	resources = ("local:ferdinando.villa:test.network:states")
 )
 // TODO add observe states.shp#alabama as earth:Region;
 observe earth:Region named test

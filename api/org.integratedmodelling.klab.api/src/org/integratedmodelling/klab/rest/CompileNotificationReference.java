@@ -75,4 +75,11 @@ public class CompileNotificationReference {
         this.level = level;
     }
 
+	@Override
+	public String toString() {
+		return "CompileNotificationReference [statementUrn=" + statementUrn + ", namespaceId=" + namespaceId
+				+ ", message=" + message + ", firstLine=" + firstLine + ", level=" + level + "]";
+	}
+
+    
 }
