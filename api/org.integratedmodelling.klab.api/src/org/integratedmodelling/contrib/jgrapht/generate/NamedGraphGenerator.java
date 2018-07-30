@@ -64,7 +64,7 @@ public class NamedGraphGenerator<V, E>
 
     /**
      * Generates a <a href="http://mathworld.wolfram.com/DoyleGraph.html">Doyle Graph</a>. The Doyle
-     * graph, sometimes also known as the Holt graph (Marušič et al. 2005), is the quartic symmetric
+     * graph, sometimes also known as the Holt graph (MaruFFiFF et al. 2005), is the quartic symmetric
      * graph on 27 nodes
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
@@ -148,26 +148,26 @@ public class NamedGraphGenerator<V, E>
         generateGeneralizedPetersenGraph(targetGraph, 5, 2);
     }
 
-    // -------------Dürer Graph-----------//
+    // -------------Duerer Graph-----------//
     /**
-     * @see #generateDürerGraph
-     * @return Dürer Graph
+     * @see #generateDuererGraph
+     * @return Duerer Graph
      */
-    public static Graph<Integer, DefaultEdge> dürerGraph()
+    public static Graph<Integer, DefaultEdge> DuererGraph()
     {
         return generalizedPetersenGraph(6, 2);
     }
 
     /**
-     * Generates a <a href="http://mathworld.wolfram.com/DuererGraph.html">Dürer Graph</a>. The
-     * Dürer graph is the skeleton of Dürer's solid, which is the generalized Petersen graph
+     * Generates a <a href="http://mathworld.wolfram.com/DuererGraph.html">Duerer Graph</a>. The
+     * Duerer graph is the skeleton of Duerer's solid, which is the generalized Petersen graph
      * $GP(6,2)$.
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateDürerGraph(Graph<V, E> targetGraph)
+    public void generateDuererGraph(Graph<V, E> targetGraph)
     {
         generateGeneralizedPetersenGraph(targetGraph, 6, 2);
     }
@@ -245,18 +245,18 @@ public class NamedGraphGenerator<V, E>
         generateGeneralizedPetersenGraph(targetGraph, 12, 5);
     }
 
-    // -------------Möbius-Kantor Graph-----------//
+    // -------------Moebius-Kantor Graph-----------//
     /**
-     * @see #generateMöbiusKantorGraph
-     * @return Möbius-Kantor Graph
+     * @see #generateMoebiusKantorGraph
+     * @return Moebius-Kantor Graph
      */
-    public static Graph<Integer, DefaultEdge> möbiusKantorGraph()
+    public static Graph<Integer, DefaultEdge> moebiusKantorGraph()
     {
         return generalizedPetersenGraph(8, 3);
     }
 
     /**
-     * Generates a <a href="http://mathworld.wolfram.com/Moebius-KantorGraph.html">Möbius-Kantor
+     * Generates a <a href="http://mathworld.wolfram.com/Moebius-KantorGraph.html">Moebius-Kantor
      * Graph</a>. The unique cubic symmetric graph on 16 nodes. It is the generalized Petersen graph
      * $GP(8,3)$
      * 
@@ -264,7 +264,7 @@ public class NamedGraphGenerator<V, E>
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateMöbiusKantorGraph(Graph<V, E> targetGraph)
+    public void generateMoebiusKantorGraph(Graph<V, E> targetGraph)
     {
         generateGeneralizedPetersenGraph(targetGraph, 8, 3);
     }
@@ -451,31 +451,31 @@ public class NamedGraphGenerator<V, E>
         }
     }
 
-    // -------------Grötzsch Graph-----------//
+    // -------------Groetzsch Graph-----------//
     /**
-     * @see #generateGrötzschGraph
-     * @return Grötzsch Graph
+     * @see #generateGroetzschGraph
+     * @return Groetzsch Graph
      */
-    public static Graph<Integer, DefaultEdge> grötzschGraph()
+    public static Graph<Integer, DefaultEdge> groetzschGraph()
     {
         Graph<Integer,
             DefaultEdge> g = GraphTypeBuilder
                 .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
                 .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
                 .buildGraph();
-        new NamedGraphGenerator<Integer, DefaultEdge>().generateGrötzschGraph(g);
+        new NamedGraphGenerator<Integer, DefaultEdge>().generateGroetzschGraph(g);
         return g;
     }
 
     /**
-     * Generates a <a href="http://mathworld.wolfram.com/GroetzschGraph.html">Grötzsch Graph</a>.
-     * The Grötzsch graph is smallest triangle-free graph with chromatic number four.
+     * Generates a <a href="http://mathworld.wolfram.com/GroetzschGraph.html">Groetzsch Graph</a>.
+     * The Groetzsch graph is smallest triangle-free graph with chromatic number four.
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateGrötzschGraph(Graph<V, E> targetGraph)
+    public void generateGroetzschGraph(Graph<V, E> targetGraph)
     {
         vertexMap.clear();
         for (int i = 1; i < 6; i++)
@@ -827,8 +827,8 @@ public class NamedGraphGenerator<V, E>
 
     /**
      * Generates the <a href="http://mathworld.wolfram.com/ChvatalGraph.html">Chvatal Graph</a>. The
-     * Chvátal graph is an undirected graph with 12 vertices and 24 edges, discovered by Václav
-     * Chvátal (1970)
+     * ChvFFtal graph is an undirected graph with 12 vertices and 24 edges, discovered by VFFclav
+     * ChvFFtal (1970)
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
      *        the result will be a disconnected graph since generated elements will not be connected
@@ -975,7 +975,7 @@ public class NamedGraphGenerator<V, E>
     /**
      * Generates the
      * <a href="http://mathworld.wolfram.com/Ellingham-HortonGraphs.html">Ellingham-Horton 54
-     * Graph</a>. The Ellingham–Horton graph is a 3-regular bicubic graph of 54 vertices
+     * Graph</a>. The EllinghamFFFHorton graph is a 3-regular bicubic graph of 54 vertices
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
      *        the result will be a disconnected graph since generated elements will not be connected
@@ -1019,7 +1019,7 @@ public class NamedGraphGenerator<V, E>
     /**
      * Generates the
      * <a href="http://mathworld.wolfram.com/Ellingham-HortonGraphs.html">Ellingham-Horton 78
-     * Graph</a>. The Ellingham–Horton graph is a 3-regular graph of 78 vertices
+     * Graph</a>. The EllinghamFFFHorton graph is a 3-regular graph of 78 vertices
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
      *        the result will be a disconnected graph since generated elements will not be connected
@@ -1562,31 +1562,31 @@ public class NamedGraphGenerator<V, E>
             addEdge(targetGraph, edge[0], edge[1]);
     }
 
-    // -------------Schläfli Graph-----------//
+    // -------------SchlFFfli Graph-----------//
     /**
-     * @see #generateSchläfliGraph
-     * @return Schläfli Graph
+     * @see #generateSchlFFfliGraph
+     * @return SchlFFfli Graph
      */
-    public static Graph<Integer, DefaultEdge> schläfliGraph()
+    public static Graph<Integer, DefaultEdge> schlFFfliGraph()
     {
         Graph<Integer,
             DefaultEdge> g = GraphTypeBuilder
                 .undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
                 .vertexSupplier(SupplierUtil.createIntegerSupplier()).edgeClass(DefaultEdge.class)
                 .buildGraph();
-        new NamedGraphGenerator<Integer, DefaultEdge>().generateSchläfliGraph(g);
+        new NamedGraphGenerator<Integer, DefaultEdge>().generateSchlFFfliGraph(g);
         return g;
     }
 
     /**
-     * Generates the <a href="http://mathworld.wolfram.com/SchlaefliGraph.html">Schläfli Graph</a>.
-     * The Schläfli graph is a strongly regular graph on 27 nodes
+     * Generates the <a href="http://mathworld.wolfram.com/SchlaefliGraph.html">SchlFFfli Graph</a>.
+     * The SchlFFfli graph is a strongly regular graph on 27 nodes
      * 
      * @param targetGraph receives the generated edges and vertices; if this is non-empty on entry,
      *        the result will be a disconnected graph since generated elements will not be connected
      *        to existing elements
      */
-    public void generateSchläfliGraph(Graph<V, E> targetGraph)
+    public void generateSchlFFfliGraph(Graph<V, E> targetGraph)
     {
         vertexMap.clear();
         int[][] edges = { { 0, 11 }, { 0, 12 }, { 0, 13 }, { 0, 14 }, { 0, 15 }, { 0, 16 },
