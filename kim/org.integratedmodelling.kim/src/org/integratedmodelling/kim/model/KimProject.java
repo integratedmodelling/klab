@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,13 +17,13 @@ import org.integratedmodelling.kim.model.Kim.UriResolver;
 
 public class KimProject implements IKimProject {
 
-	public String name;
-	public KimWorkspace workspace;
-	File root;
-	URL url;
-	String pathPrefix;
-	Properties properties;
-
+	private String name;
+	private KimWorkspace workspace;
+	private File root;
+	private Properties properties;
+	int errors = 0;
+	int warnings = 0;
+	
 	/**
 	 * Namespace IDs. The actual namespaces are held in Kim.INSTANCE.
 	 */
@@ -162,11 +161,35 @@ public class KimProject implements IKimProject {
 	}
 
 	public void removeNamespace(String name) {
+		IKimNamespace ns = Kim.INSTANCE.getNamespace(name);
+		if (ns != null) {
+			if (ns.isErrors()) {
+				errors--;
+			}
+			if (ns.isWarnings()) {
+				warnings--;
+			}
+		}
 		this.namespaces.remove(name);
 	}
 
 	public void addNamespace(IKimNamespace namespace) {
 		namespaces.add(namespace.getName());
+		if (namespace.isErrors()) {
+			errors++;
+		}
+		if (namespace.isWarnings()) {
+			warnings ++;
+		}
 	}
 
+	@Override
+	public boolean isErrors() {
+		return errors > 0;
+	}
+	
+	@Override
+	public boolean isWarnings() {
+		return warnings > 0;
+	}
 }

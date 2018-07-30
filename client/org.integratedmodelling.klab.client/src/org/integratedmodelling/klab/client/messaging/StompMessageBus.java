@@ -128,6 +128,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 							@Override
 							public void run() {
+								
 								if (message.getInResponseTo() != null) {
 									Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
 									if (responder != null) {

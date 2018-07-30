@@ -9,6 +9,7 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 
 /**
@@ -200,6 +201,20 @@ public class KimStatement extends KimScope implements IKimStatement {
     public void setWarnings(boolean b) {
         this.warnings = b;
     }
+    
+    @Override
+    public void addChild(IKimScope child) {
+    	children.add(child);
+    	if (child instanceof IKimStatement) {
+    		if (((IKimStatement)child).isErrors()) {
+    			errors = true;
+    		}
+    		if (((IKimStatement)child).isWarnings()) {
+    			warnings = true;
+    		}
+    	}
+    }
+    
 
     /**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.

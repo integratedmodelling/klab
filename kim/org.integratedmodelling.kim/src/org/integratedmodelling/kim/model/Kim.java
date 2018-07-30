@@ -1311,6 +1311,8 @@ public enum Kim {
 	 * encountered or the path is finished, taking care of different URI prefixes
 	 * between OSGI and the regular filesystem and removing any .kim extension.
 	 * 
+	 * TODO will need testing on MacOS to ensure proper behavior.
+	 * 
 	 * @param namespace
 	 * @return the namespace ID
 	 */
@@ -1332,6 +1334,14 @@ public enum Kim {
 			ret += "|" + uri;
 		}
 		return ret;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Collection<IKimProject> getProjects() {
+		return this.projectRegistry.values();
 	}
 
 }

@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimLoader;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -229,6 +229,12 @@ public enum Resources implements IResourceService {
         return workspaces.get(name);
     }
 
+    @Override
+    public Project getProject(String name) {
+    	IKimProject project = Kim.INSTANCE.getProject(name);
+    	return project == null ? null : retrieveOrCreate(project);
+    }
+    
     /**
      * Return the IProject wrapper for a IKimProject, creating it if it does not
      * exist. Project names are unique within a workspace.
@@ -236,7 +242,7 @@ public enum Resources implements IResourceService {
      * @param project
      * @return the IProject wrapper.
      */
-    public IProject retrieveOrCreate(IKimProject project) {
+    public Project retrieveOrCreate(IKimProject project) {
 
         String workspace = project.getWorkspace().getName();
 

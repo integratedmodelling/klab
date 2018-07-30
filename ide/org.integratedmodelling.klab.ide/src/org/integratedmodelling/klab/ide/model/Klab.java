@@ -136,6 +136,9 @@ public class Klab {
 			}
 			KlabNavigator.refresh();
 			break;
+		case ProjectFileAdded:
+			
+			break;
 		default:
 			break;
 		}

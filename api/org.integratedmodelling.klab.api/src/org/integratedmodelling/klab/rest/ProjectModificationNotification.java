@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.rest;
 
 import java.io.File;
 
-public class ProjectModification {
+public class ProjectModificationNotification {
 
 	public enum Type {
 		CHANGE, ADDITION, DELETION
@@ -11,10 +11,10 @@ public class ProjectModification {
 	private Type type;
 	private File file;
 
-	public ProjectModification() {
+	public ProjectModificationNotification() {
 	}
 
-	public ProjectModification(Type type, File file) {
+	public ProjectModificationNotification(Type type, File file) {
 		this.type = type;
 		this.file = file;
 	}

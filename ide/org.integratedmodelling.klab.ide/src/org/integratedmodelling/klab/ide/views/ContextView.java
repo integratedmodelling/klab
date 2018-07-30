@@ -5,6 +5,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -61,7 +62,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.eclipse.jface.action.Action;
+import org.integratedmodelling.klab.utils.BrowserUtils;
 
 public class ContextView extends ViewPart {
 	public ContextView() {
@@ -110,12 +111,13 @@ public class ContextView extends ViewPart {
 			searchModeButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-				    Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
+					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
 					// KlabNavigator.refresh();
 					// searchMode(searchModeButton.getSelection());
 				}
 			});
-			searchModeButton.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Database.png"));
+			searchModeButton
+					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Database.png"));
 			// toolkit.adapt(searchModeButton, true, true);
 			{
 				subjectLabel = new Text(ccombo, SWT.NONE);
@@ -163,7 +165,8 @@ public class ContextView extends ViewPart {
 						// }
 					}
 				});
-				btnNewButton.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Tree.png"));
+				btnNewButton
+						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Tree.png"));
 				// toolkit.adapt(btnNewButton, true, true);
 			}
 		}
@@ -293,8 +296,8 @@ public class ContextView extends ViewPart {
 						public void mouseUp(MouseEvent e) {
 						}
 					});
-					btnNewButtonSC
-							.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Player Record.png"));
+					btnNewButtonSC.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide",
+							"icons/Player Record.png"));
 					// toolkit.adapt(btnNewButtonSC, true, true);
 				}
 				Label lblNewLabel_1 = new Label(labelContainer, SWT.NONE);
@@ -347,7 +350,8 @@ public class ContextView extends ViewPart {
 							// ptc.show(btnNewButtonSp.toDisplay(new Point(e.x, e.y - 110)));
 						}
 					});
-					btnNewButtonSp.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Globe.png"));
+					btnNewButtonSp.setImage(
+							ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Globe.png"));
 					// toolkit.adapt(btnNewButtonSp, true, true);
 				}
 
@@ -401,7 +405,8 @@ public class ContextView extends ViewPart {
 							// ptc.show(btnNewButtonSp.toDisplay(new Point(e.x, e.y - 110)));
 						}
 					});
-					btnNewButtonT.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Clock.png"));
+					btnNewButtonT.setImage(
+							ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Clock.png"));
 					// toolkit.adapt(btnNewButtonT, true, true);
 				}
 			}
@@ -454,10 +459,10 @@ public class ContextView extends ViewPart {
 		}
 
 		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
-		
+
 		createActions();
-        initializeToolBar();
-        initializeMenu();
+		initializeToolBar();
+		initializeMenu();
 	}
 
 	private void handleMessage(IMessage message) {
@@ -472,12 +477,16 @@ public class ContextView extends ViewPart {
 		case DebugTest:
 			break;
 		case EngineDown:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png")));
+			Display.getDefault().asyncExec(() -> {
+				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
+				action.setEnabled(false);
+			});
 			break;
 		case EngineUp:
-			Display.getDefault().asyncExec(
-					() -> dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png")));
+			Display.getDefault().asyncExec(() -> {
+				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png"));
+				action.setEnabled(true);
+			});
 			break;
 		case MatchAction:
 			break;
@@ -690,35 +699,41 @@ public class ContextView extends ViewPart {
 		super.dispose();
 	}
 
-    /**
-     * Create the actions.
-     */
-    private void createActions() {
-    	
-    	{
-    		action = new Action("Open new viewer") {
+	/**
+	 * Create the actions.
+	 */
+	private void createActions() {
+
+		{
+			action = new Action("Open new viewer") {
 
 				@Override
 				public void run() {
-					// 
-				}
-    		};
-    		action.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
-    	}
-    }
-    
-    /**
-     * Initialize the toolbar.
-     */
-    private void initializeToolBar() {
-        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-        tbm.add(action);
-    }
+					if (Activator.engineMonitor().isRunning()) {
+						BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
+								+ Activator.engineMonitor().getSessionId() + "&mode=ide");
+					}
+				}
 
-    /**
-     * Initialize the menu.
-     */
-    private void initializeMenu() {
-        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
-    }
+			};
+			action.setEnabled(Activator.engineMonitor().isRunning());
+			action.setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
+		}
+	}
+
+	/**
+	 * Initialize the toolbar.
+	 */
+	private void initializeToolBar() {
+		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		tbm.add(action);
+	}
+
+	/**
+	 * Initialize the menu.
+	 */
+	private void initializeMenu() {
+		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+	}
 }

@@ -2,6 +2,36 @@ package org.integratedmodelling.klab.ide.utils;
 
 public class StringUtils {
 
+    public static final int WHITESPACE = 0x0001;
+    public static final int NONLETTERS = 0x0002;
+    public static final int UPPERCASE  = 0x0004;
+	
+    public static String percent(double d) {
+        return (int) (Math.round(d * 100.0)) + "%";
+    }
+
+
+    public static boolean containsAny(String nspc, int flags) {
+
+        for (int i = 0; i < nspc.length(); i++) {
+            char c = nspc.charAt(i);
+            if ((flags | NONLETTERS) != 0) {
+                if ((c < 'A' || c > 'z') && !(c == '.' || c == '_'))
+                    return true;
+            }
+            if ((flags | UPPERCASE) != 0) {
+                if (c >= 'A' && c <= 'Z')
+                    return true;
+            }
+            if ((flags | WHITESPACE) != 0) {
+                if (Character.isWhitespace(c))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
     /**
      * Return the max line length and the number of lines in the passed paragraph.
      *

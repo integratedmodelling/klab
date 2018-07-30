@@ -233,6 +233,7 @@ public class Message implements IMessage, Serializable {
 
 	@Override
 	public <T> T getPayload(Class<? extends T> cls) {
+		
 		if (payload == null) {
 			return null;
 		}

@@ -32,4 +32,8 @@ public interface IKimProject {
 
 	List<IKimNamespace> getNamespaces();
 
+	boolean isErrors();
+
+	boolean isWarnings();
+
 }

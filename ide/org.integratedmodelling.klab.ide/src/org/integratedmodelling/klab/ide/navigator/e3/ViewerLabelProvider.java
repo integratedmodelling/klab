@@ -55,12 +55,21 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
         Image ret = getBaseImage(element);
 
+        boolean errors = false;
+        boolean warnings = false;
+        
         if (element instanceof EKimObject) {
-            if (((EKimObject) element).isErrors()) {
-                ret = ResourceManager.decorateImage(ret, getErrorMarker(), SWTResourceManager.BOTTOM_LEFT);
-            } else if (((EKimObject) element).isWarnings()) {
-                ret = ResourceManager.decorateImage(ret, getWarningMarker(), SWTResourceManager.BOTTOM_LEFT);
-            }
+        	errors = ((EKimObject) element).isErrors();
+        	warnings = ((EKimObject) element).isWarnings();
+        } else if (element instanceof EProject) {
+        	errors = ((EProject) element).isErrors();
+        	warnings = ((EProject) element).isWarnings();
+        }
+
+        if (errors) {
+            ret = ResourceManager.decorateImage(ret, getErrorMarker(), SWTResourceManager.TOP_RIGHT);
+        } else if (warnings) {
+            ret = ResourceManager.decorateImage(ret, getWarningMarker(), SWTResourceManager.TOP_RIGHT);
         }
 
         return ret;

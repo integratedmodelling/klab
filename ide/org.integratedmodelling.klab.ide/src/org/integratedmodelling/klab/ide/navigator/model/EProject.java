@@ -65,4 +65,16 @@ public class EProject extends ENavigatorItem {
         return delegate.getRoot();
     }
 
+	public boolean isErrors() {
+		return delegate.isErrors();
+	}
+
+	public boolean isWarnings() {
+		return delegate.isWarnings();
+	}
+	
+	public IKimProject getProject() {
+		return delegate;
+	}
+
 }

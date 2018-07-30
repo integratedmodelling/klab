@@ -39,4 +39,8 @@ public abstract class KimScope implements IKimScope {
     	
     }
     
+    public void addChild(IKimScope child) {
+    	children.add(child);
+    }
+    
 }

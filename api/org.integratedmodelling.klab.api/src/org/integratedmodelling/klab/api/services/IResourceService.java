@@ -255,4 +255,12 @@ public interface IResourceService {
 	 */
 	IResolvable getResolvableResource(String urn);
 
+	/**
+	 * Return the project with the passed name as a k.LAB wrapper.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	IProject getProject(String name);
+
 }

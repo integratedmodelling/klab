@@ -467,7 +467,7 @@ class KimValidator extends AbstractKimValidator {
 				// reset for outline
 				model.name = descriptor.name
 
-				ns.getChildren().add(descriptor)
+				ns.addChild(descriptor)
 			}
 		}
 	}
@@ -501,7 +501,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 				i++
 			}
-			ns.getChildren().add(obs)
+			ns.addChild(obs)
 		}
 	}
 
@@ -531,7 +531,7 @@ class KimValidator extends AbstractKimValidator {
 		for (obs : observation.observations) {
 			var child = checkObservation(obs, ret)
 			if (ret !== null) {
-				ret.getChildren().add(child)
+				ret.addChild(child)
 			} else {
 				ok = false
 			}
@@ -561,7 +561,7 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 
-		ret.errors = ok
+		ret.errors = !ok
 
 		// TODO contextualization
 		// TODO if event, ensure we have a time extent 
@@ -1385,7 +1385,7 @@ class KimValidator extends AbstractKimValidator {
 					if (childsc === null) {
 						ok = false
 					} else {
-						ret.getChildren().add(childsc)
+						ret.addChild(childsc)
 					}
 				}
 			}
@@ -1792,7 +1792,7 @@ class KimValidator extends AbstractKimValidator {
 						KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME)
 
 				} else {
-					namespace.getChildren().add(ret)
+					namespace.addChild(ret)
 				}
 
 			}

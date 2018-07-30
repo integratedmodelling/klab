@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.rest.ProjectModification;
+import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -45,7 +45,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {
 					Activator.loader().add(((IFile) resource).getLocation().toFile());
 					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
-							new ProjectModification(ProjectModification.Type.ADDITION,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
 									((IFile) resource).getLocation().toFile()));
 				}
 				break;
@@ -57,7 +57,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 //						Eclipse.INSTANCE.getIFile(namespace.getFile()).touch(new NullProgressMonitor());
 					}
 					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
-							new ProjectModification(ProjectModification.Type.DELETION,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.DELETION,
 									((IFile) resource).getLocation().toFile()));
 				}
 				break;
@@ -90,7 +90,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 //					    }
 					}
 					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
-							new ProjectModification(ProjectModification.Type.CHANGE,
+							new ProjectModificationNotification(ProjectModificationNotification.Type.CHANGE,
 									((IFile) resource).getLocation().toFile()));
 				}
 				break;

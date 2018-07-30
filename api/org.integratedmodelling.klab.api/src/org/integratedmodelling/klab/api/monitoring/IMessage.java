@@ -33,7 +33,7 @@ public interface IMessage {
 		EngineLifecycle,
 
 		KimLifecycle,
-		
+
 		/**
 		 * 
 		 */
@@ -114,9 +114,16 @@ public interface IMessage {
 		 * engine may not be aware of.
 		 */
 		UserProjectOpened, UserProjectModified, UserProjectDeleted,
-		
+
+		/*
+		 * F->B: ask engine to modify or delete projects or project assets
+		 */
+		CreateNamespace, CreateScenario, CreateCalibration, DeleteNamespace, DeleteLocalResource, 
+		CreateProject, DeleteProject, CreateScript, DeleteScript,
+
 		/**
-		 * F->B: notification when files are changed, added or deleted; notify projects to load
+		 * F->B: notification when files are explicitly changed, added or deleted;
+		 * notify projects to load and respond to project lifecycle requests
 		 */
 		ProjectFileAdded, ProjectFileModified, ProjectFileDeleted, NotifyProjects,
 
@@ -124,9 +131,10 @@ public interface IMessage {
 		 * --- Notification-class types ---
 		 */
 		Debug, Info, Warning, Error,
-		
+
 		/*
-		 * --- KimLifecycle: one-off compile notifications at the namespace or project level
+		 * --- KimLifecycle: one-off compile notifications at the namespace or project
+		 * level
 		 */
 		NamespaceCompilationIssues,
 

@@ -214,408 +214,396 @@ public class KimValidator extends AbstractKimValidator {
   }
   
   @Check
-  public boolean checkModelDefinition(final ModelBodyStatement model) {
-    boolean _xblockexpression = false;
-    {
-      ModelStatement statement = null;
-      List<KimObservable> observables = CollectionLiterals.<KimObservable>newArrayList();
-      List<KimObservable> dependencies = CollectionLiterals.<KimObservable>newArrayList();
-      boolean ok = true;
-      EObject _eContainer = model.eContainer();
-      if ((_eContainer instanceof ModelStatement)) {
-        EObject _eContainer_1 = model.eContainer();
-        statement = ((ModelStatement) _eContainer_1);
-        if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (model.getName() == null))) {
-          this.error("Non-semantic models should have a lowercase ID as observable", 
-            KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, KimValidator.INVALID_NONSEMANTIC_MODEL);
+  public void checkModelDefinition(final ModelBodyStatement model) {
+    ModelStatement statement = null;
+    List<KimObservable> observables = CollectionLiterals.<KimObservable>newArrayList();
+    List<KimObservable> dependencies = CollectionLiterals.<KimObservable>newArrayList();
+    boolean ok = true;
+    EObject _eContainer = model.eContainer();
+    if ((_eContainer instanceof ModelStatement)) {
+      EObject _eContainer_1 = model.eContainer();
+      statement = ((ModelStatement) _eContainer_1);
+      if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (model.getName() == null))) {
+        this.error("Non-semantic models should have a lowercase ID as observable", 
+          KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, KimValidator.INVALID_NONSEMANTIC_MODEL);
+        ok = false;
+      }
+    }
+    Namespace _xifexpression = null;
+    if ((statement != null)) {
+      _xifexpression = KimValidator.getNamespace(statement);
+    } else {
+      _xifexpression = null;
+    }
+    Namespace namespace = _xifexpression;
+    final boolean isPrivate = ((statement.isPrivate() || namespace.isPrivate()) || namespace.isWorldviewBound());
+    KimObservable _xifexpression_1 = null;
+    if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (namespace != null))) {
+      String _model = statement.getModel();
+      String _namespaceId = Kim.getNamespaceId(namespace);
+      String _plus = (_namespaceId + ".");
+      String _name = model.getName();
+      String _plus_1 = (_plus + _name);
+      _xifexpression_1 = Kim.INSTANCE.createNonSemanticObservable(_model, _plus_1);
+    } else {
+      KimObservable _xifexpression_2 = null;
+      int _size = model.getObservables().size();
+      boolean _greaterThan = (_size > 0);
+      if (_greaterThan) {
+        _xifexpression_2 = Kim.INSTANCE.declareObservable(model.getObservables().get(0));
+      }
+      _xifexpression_1 = _xifexpression_2;
+    }
+    KimObservable firstObservable = _xifexpression_1;
+    KimObservable interpretedRole = null;
+    boolean _and = false;
+    Kim.ConceptDescriptor _descriptor = null;
+    if (firstObservable!=null) {
+      _descriptor=firstObservable.getDescriptor();
+    }
+    boolean _tripleNotEquals = (_descriptor != null);
+    if (!_tripleNotEquals) {
+      _and = false;
+    } else {
+      boolean _is = firstObservable.getDescriptor().is(IKimConcept.Type.ROLE);
+      _and = _is;
+    }
+    if (_and) {
+      ObservableSemantics _concept = model.getConcept();
+      boolean _tripleEquals = (_concept == null);
+      if (_tripleEquals) {
+        this.error(
+          "Models that specify a role to interpret their observable must declare a valid observable concept before \'as\'", 
+          KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, 0, KimValidator.INVALID_NONSEMANTIC_MODEL);
+        ok = false;
+      } else {
+        interpretedRole = firstObservable;
+        firstObservable = Kim.INSTANCE.declareObservable(model.getConcept());
+        boolean _isUndefined = firstObservable.getDescriptor().isUndefined();
+        if (_isUndefined) {
+          this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__CONCEPT, 
+            KimValidator.BAD_OBSERVABLE);
           ok = false;
         }
       }
-      Namespace _xifexpression = null;
-      if ((statement != null)) {
-        _xifexpression = KimValidator.getNamespace(statement);
-      } else {
-        _xifexpression = null;
-      }
-      Namespace namespace = _xifexpression;
-      final boolean isPrivate = ((statement.isPrivate() || namespace.isPrivate()) || namespace.isWorldviewBound());
-      KimObservable _xifexpression_1 = null;
-      if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (namespace != null))) {
-        String _model = statement.getModel();
-        String _namespaceId = Kim.getNamespaceId(namespace);
-        String _plus = (_namespaceId + ".");
-        String _name = model.getName();
-        String _plus_1 = (_plus + _name);
-        _xifexpression_1 = Kim.INSTANCE.createNonSemanticObservable(_model, _plus_1);
-      } else {
-        KimObservable _xifexpression_2 = null;
-        int _size = model.getObservables().size();
-        boolean _greaterThan = (_size > 0);
-        if (_greaterThan) {
-          _xifexpression_2 = Kim.INSTANCE.declareObservable(model.getObservables().get(0));
+    }
+    if (((firstObservable != null) && KimValidator.nonSemanticModels.contains(statement.getModel()))) {
+      observables.add(firstObservable);
+    }
+    for (int obsIdx = 0; (obsIdx < model.getObservables().size()); obsIdx++) {
+      {
+        KimObservable _xifexpression_3 = null;
+        if (((obsIdx == 0) && (firstObservable != null))) {
+          _xifexpression_3 = firstObservable;
+        } else {
+          _xifexpression_3 = Kim.INSTANCE.declareObservable(model.getObservables().get(obsIdx));
         }
-        _xifexpression_1 = _xifexpression_2;
-      }
-      KimObservable firstObservable = _xifexpression_1;
-      KimObservable interpretedRole = null;
-      boolean _and = false;
-      Kim.ConceptDescriptor _descriptor = null;
-      if (firstObservable!=null) {
-        _descriptor=firstObservable.getDescriptor();
-      }
-      boolean _tripleNotEquals = (_descriptor != null);
-      if (!_tripleNotEquals) {
-        _and = false;
-      } else {
-        boolean _is = firstObservable.getDescriptor().is(IKimConcept.Type.ROLE);
-        _and = _is;
-      }
-      if (_and) {
-        ObservableSemantics _concept = model.getConcept();
-        boolean _tripleEquals = (_concept == null);
-        if (_tripleEquals) {
-          this.error(
-            "Models that specify a role to interpret their observable must declare a valid observable concept before \'as\'", 
-            KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, 0, KimValidator.INVALID_NONSEMANTIC_MODEL);
+        KimObservable observable = _xifexpression_3;
+        Kim.ConceptDescriptor definition = observable.getDescriptor();
+        if ((definition.isUndefined() && ((obsIdx > 0) || (interpretedRole == null)))) {
+          this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
           ok = false;
         } else {
-          interpretedRole = firstObservable;
-          firstObservable = Kim.INSTANCE.declareObservable(model.getConcept());
-          boolean _isUndefined = firstObservable.getDescriptor().isUndefined();
-          if (_isUndefined) {
-            this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__CONCEPT, 
-              KimValidator.BAD_OBSERVABLE);
-            ok = false;
-          }
-        }
-      }
-      if (((firstObservable != null) && KimValidator.nonSemanticModels.contains(statement.getModel()))) {
-        observables.add(firstObservable);
-      }
-      for (int obsIdx = 0; (obsIdx < model.getObservables().size()); obsIdx++) {
-        {
-          KimObservable _xifexpression_3 = null;
-          if (((obsIdx == 0) && (firstObservable != null))) {
-            _xifexpression_3 = firstObservable;
-          } else {
-            _xifexpression_3 = Kim.INSTANCE.declareObservable(model.getObservables().get(obsIdx));
-          }
-          KimObservable observable = _xifexpression_3;
-          Kim.ConceptDescriptor definition = observable.getDescriptor();
-          if ((definition.isUndefined() && ((obsIdx > 0) || (interpretedRole == null)))) {
-            this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
+          if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && 
+            (!definition.is(IKimConcept.Type.CONFIGURATION)))) {
+            this.error("Models can only describe observables, configurations or traits", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
             ok = false;
           } else {
-            if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && 
-              (!definition.is(IKimConcept.Type.CONFIGURATION)))) {
-              this.error("Models can only describe observables, configurations or traits", 
+            if (((((obsIdx == 0) && (statement != null)) && model.isInstantiator()) && (!definition.is(IKimConcept.Type.COUNTABLE)))) {
+              this.error(
+                "The first observable in an instantiator model (\'model each\') must be countable: subject, event or relationship", 
                 KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
-              if (((((obsIdx == 0) && (statement != null)) && model.isInstantiator()) && (!definition.is(IKimConcept.Type.COUNTABLE)))) {
-                this.error(
-                  "The first observable in an instantiator model (\'model each\') must be countable: subject, event or relationship", 
+              if ((((statement != null) && definition.is(IKimConcept.Type.SUBJECTIVE)) && (!isPrivate))) {
+                this.error("A model producing subjective observables must be private", 
                   KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
                 ok = false;
               } else {
-                if ((((statement != null) && definition.is(IKimConcept.Type.SUBJECTIVE)) && (!isPrivate))) {
-                  this.error("A model producing subjective observables must be private", 
-                    KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
-                  ok = false;
-                } else {
-                  observables.add(observable);
-                }
+                observables.add(observable);
               }
             }
           }
         }
       }
-      int i = 0;
-      EList<Dependency> _dependencies = model.getDependencies();
-      for (final Dependency cd : _dependencies) {
-        {
-          KimObservable _xifexpression_3 = null;
-          ObservableSemantics _observable = cd.getObservable();
-          boolean _tripleNotEquals_1 = (_observable != null);
-          if (_tripleNotEquals_1) {
-            _xifexpression_3 = Kim.INSTANCE.declareObservable(cd.getObservable());
+    }
+    int i = 0;
+    EList<Dependency> _dependencies = model.getDependencies();
+    for (final Dependency cd : _dependencies) {
+      {
+        KimObservable _xifexpression_3 = null;
+        ObservableSemantics _observable = cd.getObservable();
+        boolean _tripleNotEquals_1 = (_observable != null);
+        if (_tripleNotEquals_1) {
+          _xifexpression_3 = Kim.INSTANCE.declareObservable(cd.getObservable());
+        } else {
+          _xifexpression_3 = Kim.INSTANCE.declareModelReference(model, cd.getModelReference());
+        }
+        KimObservable observable = _xifexpression_3;
+        String _modelReference = cd.getModelReference();
+        boolean _tripleNotEquals_2 = (_modelReference != null);
+        if (_tripleNotEquals_2) {
+          if ((observable == null)) {
+            String _modelReference_1 = cd.getModelReference();
+            String _plus_2 = ("Model reference " + _modelReference_1);
+            String _plus_3 = (_plus_2 + " is unresolved: please");
+            String _xifexpression_4 = null;
+            boolean _contains = cd.getModelReference().contains(".");
+            if (_contains) {
+              _xifexpression_4 = "import";
+            } else {
+              _xifexpression_4 = "declare";
+            }
+            String _plus_4 = (_plus_3 + _xifexpression_4);
+            String _plus_5 = (_plus_4 + " this model");
+            this.error(_plus_5, 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+            ok = false;
           } else {
-            _xifexpression_3 = Kim.INSTANCE.declareModelReference(model, cd.getModelReference());
+            dependencies.add(observable);
           }
-          KimObservable observable = _xifexpression_3;
-          String _modelReference = cd.getModelReference();
-          boolean _tripleNotEquals_2 = (_modelReference != null);
-          if (_tripleNotEquals_2) {
-            if ((observable == null)) {
-              String _modelReference_1 = cd.getModelReference();
-              String _plus_2 = ("Model reference " + _modelReference_1);
-              String _plus_3 = (_plus_2 + " is unresolved: please");
-              String _xifexpression_4 = null;
-              boolean _contains = cd.getModelReference().contains(".");
-              if (_contains) {
-                _xifexpression_4 = "import";
-              } else {
-                _xifexpression_4 = "declare";
-              }
-              String _plus_4 = (_plus_3 + _xifexpression_4);
-              String _plus_5 = (_plus_4 + " this model");
-              this.error(_plus_5, 
+        }
+        ObservableSemantics _observable_1 = cd.getObservable();
+        boolean _tripleNotEquals_3 = (_observable_1 != null);
+        if (_tripleNotEquals_3) {
+          Kim.ConceptDescriptor definition = observable.getDescriptor();
+          boolean _isUndefined_1 = definition.isUndefined();
+          if (_isUndefined_1) {
+            this.error("Dependency has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+            ok = false;
+          } else {
+            if (((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT)))) {
+              this.error("Models can only consume observables or traits", 
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
               dependencies.add(observable);
             }
           }
-          ObservableSemantics _observable_1 = cd.getObservable();
-          boolean _tripleNotEquals_3 = (_observable_1 != null);
-          if (_tripleNotEquals_3) {
-            Kim.ConceptDescriptor definition = observable.getDescriptor();
-            boolean _isUndefined_1 = definition.isUndefined();
-            if (_isUndefined_1) {
-              this.error("Dependency has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
-              ok = false;
-            } else {
-              if (((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT)))) {
-                this.error("Models can only consume observables or traits", 
-                  KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
-                ok = false;
-              } else {
-                dependencies.add(observable);
-              }
-            }
-          }
-          i++;
         }
+        i++;
       }
-      Classification _classification = model.getClassification();
-      boolean _tripleNotEquals_1 = (_classification != null);
-      if (_tripleNotEquals_1) {
-        List<KimConcept> classifiers = null;
-        classifiers = CollectionLiterals.<KimConcept>newArrayList();
-        EnumSet<IKimConcept.Type> type = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
-        boolean cchecked = false;
-        EList<Classifier> _classifiers = model.getClassification().getClassifiers();
-        for (final Classifier classifier : _classifiers) {
-          {
-            KimConcept decl = Kim.INSTANCE.declareConcept(classifier.getDeclaration());
-            boolean _equals = Objects.equal(type, Integer.valueOf(0));
-            if (_equals) {
-              type = decl.getType();
-            } else {
-            }
-            if ((((!Objects.equal(Boolean.valueOf(decl.is(IKimConcept.Type.SUBJECTIVE)), Integer.valueOf(0))) && (!isPrivate)) && (!cchecked))) {
-              this.error("A model producing subjective observables must be private", classifier, 
-                KimPackage.Literals.CLASSIFIER__DECLARATION, KimValidator.BAD_OBSERVABLE);
-              ok = false;
-              cchecked = true;
-            }
-          }
-        }
-      }
-      if (((model.getLookupTable() != null) || (model.getLookupTableId() != null))) {
-      }
-      EList<ValueAssignment> _contextualizers = model.getContextualizers();
-      for (final ValueAssignment contextualizer : _contextualizers) {
-      }
-      boolean _xifexpression_3 = false;
-      if ((statement != null)) {
-        boolean _xifexpression_4 = false;
-        if ((namespace != null)) {
-          boolean _xblockexpression_1 = false;
-          {
-            KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
-            KimModel descriptor = new KimModel(statement, ns);
-            if ((!ok)) {
-              descriptor.setErrors(true);
-              ns.setErrors(true);
-            }
-            descriptor.getObservables().addAll(observables);
-            descriptor.getDependencies().addAll(dependencies);
-            descriptor.setInstantiator(model.isInstantiator());
-            descriptor.setDocstring(model.getDocstring());
-            if ((interpretedRole != null)) {
-              descriptor.setInterpreter(true);
-              descriptor.setReinterpretingRole(interpretedRole.getMain());
-            }
-            EList<Urn> _urns = model.getUrns();
-            for (final Urn urn : _urns) {
-              descriptor.getResourceUrns().add(urn.getName());
-            }
-            Function _function = model.getFunction();
-            boolean _tripleNotEquals_2 = (_function != null);
-            if (_tripleNotEquals_2) {
-              Function _function_1 = model.getFunction();
-              KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
-              descriptor.setResourceFunction(_kimServiceCall);
-              IServiceCall _get = descriptor.getResourceFunction().get();
-              List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
-              for (final KimNotification notification : _validateUsage) {
-                this.notify(notification, model.getFunction(), KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION);
-              }
-            } else {
-              String _boolean = model.getBoolean();
-              boolean _tripleNotEquals_3 = (_boolean != null);
-              if (_tripleNotEquals_3) {
-                descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
-              } else {
-                org.integratedmodelling.kim.kim.Number _number = model.getNumber();
-                boolean _tripleNotEquals_4 = (_number != null);
-                if (_tripleNotEquals_4) {
-                  descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
-                }
-              }
-            }
-            descriptor.setPrivate((statement.isPrivate() || ns.isPrivate()));
-            descriptor.setAssessmentModel(statement.getModel().equals("assess"));
-            descriptor.setLearningModel(statement.getModel().equals("learn"));
-            IKimModel.Type _switchResult = null;
-            String _model_1 = statement.getModel();
-            if (_model_1 != null) {
-              switch (_model_1) {
-                case "number":
-                  _switchResult = IKimModel.Type.NUMBER;
-                  break;
-                case "text":
-                  _switchResult = IKimModel.Type.TEXT;
-                  break;
-                case "boolean":
-                  _switchResult = IKimModel.Type.BOOLEAN;
-                  break;
-                default:
-                  _switchResult = IKimModel.Type.SEMANTIC;
-                  break;
-              }
-            } else {
-              _switchResult = IKimModel.Type.SEMANTIC;
-            }
-            descriptor.setType(_switchResult);
-            i = 0;
-            EList<ActionSpecification> _actions = model.getActions();
-            for (final ActionSpecification action : _actions) {
-              {
-                IKimBehavior _behavior = descriptor.getBehavior();
-                List<KimNotification> _addAction = ((KimBehavior) _behavior).addAction(action, descriptor);
-                for (final KimNotification notification_1 : _addAction) {
-                  this.notify(notification_1, model, KimPackage.Literals.MODEL_BODY_STATEMENT__ACTIONS, i);
-                }
-                i++;
-              }
-            }
-            EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
-            for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
-              List<IComputableResource> _contextualization = descriptor.getContextualization();
-              ComputableResource _computableResource = new ComputableResource(contextualizer_1, descriptor);
-              _contextualization.add(_computableResource);
-            }
-            Classification _classification_1 = model.getClassification();
-            boolean _tripleNotEquals_5 = (_classification_1 != null);
-            if (_tripleNotEquals_5) {
-              List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
-              Classification _classification_2 = model.getClassification();
-              boolean _isDiscretization = model.isDiscretization();
-              ComputableResource _computableResource_1 = new ComputableResource(_classification_2, _isDiscretization, descriptor);
-              _contextualization_1.add(_computableResource_1);
-            }
-            Table _lookupTable = model.getLookupTable();
-            boolean _tripleNotEquals_6 = (_lookupTable != null);
-            if (_tripleNotEquals_6) {
-              List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
-              Table _lookupTable_1 = model.getLookupTable();
-              EList<String> _lookupTableArgs = model.getLookupTableArgs();
-              ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_1, _lookupTableArgs, descriptor);
-              _contextualization_2.add(_computableResource_2);
-            }
-            String _lookupTableId = model.getLookupTableId();
-            boolean _tripleNotEquals_7 = (_lookupTableId != null);
-            if (_tripleNotEquals_7) {
-              List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
-              String _lookupTableId_1 = model.getLookupTableId();
-              ComputableResource _computableResource_3 = new ComputableResource(descriptor, _lookupTableId_1);
-              _contextualization_3.add(_computableResource_3);
-            }
-            String _name_1 = model.getName();
-            boolean _tripleNotEquals_8 = (_name_1 != null);
-            if (_tripleNotEquals_8) {
-              descriptor.name = model.getName();
-            } else {
-              int _size_1 = descriptor.getObservables().size();
-              boolean _greaterThan_1 = (_size_1 > 0);
-              if (_greaterThan_1) {
-                String _formalName = descriptor.getObservables().get(0).getFormalName();
-                boolean _tripleNotEquals_9 = (_formalName != null);
-                if (_tripleNotEquals_9) {
-                  descriptor.name = observables.get(0).getFormalName();
-                } else {
-                  String _xifexpression_5 = null;
-                  boolean _isInstantiator = model.isInstantiator();
-                  if (_isInstantiator) {
-                    _xifexpression_5 = "instantiator";
-                  } else {
-                    _xifexpression_5 = "contextualizer";
-                  }
-                  String name = _xifexpression_5;
-                  String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
-                  SemanticType st = new SemanticType(_name_2);
-                  String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');
-                  String _plus_2 = (_lowerCase + "-");
-                  String _plus_3 = (_plus_2 + name);
-                  descriptor.name = _plus_3;
-                }
-              }
-            }
-            if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (descriptor.getObservables().size() > 0))) {
-              IKimObservable _get_1 = descriptor.getObservables().get(0);
-              String _namespaceId_1 = Kim.getNamespaceId(namespace);
-              String _plus_4 = (_namespaceId_1 + ".");
-              String _plus_5 = (_plus_4 + descriptor.name);
-              ((KimObservable) _get_1).setModelReference(_plus_5);
-              IKimObservable _get_2 = descriptor.getObservables().get(0);
-              ((KimObservable) _get_2).setFormalName(descriptor.name);
-            }
-            Metadata _metadata = model.getMetadata();
-            boolean _tripleNotEquals_10 = (_metadata != null);
-            if (_tripleNotEquals_10) {
-              Metadata _metadata_1 = model.getMetadata();
-              KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
-              descriptor.setMetadata(_kimMetadata);
-            }
-            Documentation _documentation = model.getDocumentation();
-            boolean _tripleNotEquals_11 = (_documentation != null);
-            if (_tripleNotEquals_11) {
-            }
-            int n = 0;
-            List<IKimScope> _children = ns.getChildren();
-            for (final IKimScope object : _children) {
-              if (((object instanceof KimModel) && ((KimModel) object).name.startsWith(descriptor.name))) {
-                n++;
-              }
-            }
-            if ((n > 0)) {
-              descriptor.name = ((descriptor.name + "-") + Integer.valueOf(n));
-            }
-            i = 0;
-            EList<Annotation> _annotations = statement.getAnnotations();
-            for (final Annotation annotation : _annotations) {
-              {
-                KimAnnotation ann = new KimAnnotation(annotation, ns, descriptor);
-                descriptor.getAnnotations().add(ann);
-                List<KimNotification> _validateUsage_1 = ann.validateUsage(descriptor);
-                for (final KimNotification notification_1 : _validateUsage_1) {
-                  this.notify(notification_1, statement, KimPackage.Literals.MODEL_STATEMENT__ANNOTATIONS, i);
-                }
-                i++;
-              }
-            }
-            model.setName(descriptor.name);
-            _xblockexpression_1 = ns.getChildren().add(descriptor);
-          }
-          _xifexpression_4 = _xblockexpression_1;
-        }
-        _xifexpression_3 = _xifexpression_4;
-      }
-      _xblockexpression = _xifexpression_3;
     }
-    return _xblockexpression;
+    Classification _classification = model.getClassification();
+    boolean _tripleNotEquals_1 = (_classification != null);
+    if (_tripleNotEquals_1) {
+      List<KimConcept> classifiers = null;
+      classifiers = CollectionLiterals.<KimConcept>newArrayList();
+      EnumSet<IKimConcept.Type> type = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
+      boolean cchecked = false;
+      EList<Classifier> _classifiers = model.getClassification().getClassifiers();
+      for (final Classifier classifier : _classifiers) {
+        {
+          KimConcept decl = Kim.INSTANCE.declareConcept(classifier.getDeclaration());
+          boolean _equals = Objects.equal(type, Integer.valueOf(0));
+          if (_equals) {
+            type = decl.getType();
+          } else {
+          }
+          if ((((!Objects.equal(Boolean.valueOf(decl.is(IKimConcept.Type.SUBJECTIVE)), Integer.valueOf(0))) && (!isPrivate)) && (!cchecked))) {
+            this.error("A model producing subjective observables must be private", classifier, 
+              KimPackage.Literals.CLASSIFIER__DECLARATION, KimValidator.BAD_OBSERVABLE);
+            ok = false;
+            cchecked = true;
+          }
+        }
+      }
+    }
+    if (((model.getLookupTable() != null) || (model.getLookupTableId() != null))) {
+    }
+    EList<ValueAssignment> _contextualizers = model.getContextualizers();
+    for (final ValueAssignment contextualizer : _contextualizers) {
+    }
+    if ((statement != null)) {
+      if ((namespace != null)) {
+        KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+        KimModel descriptor = new KimModel(statement, ns);
+        if ((!ok)) {
+          descriptor.setErrors(true);
+          ns.setErrors(true);
+        }
+        descriptor.getObservables().addAll(observables);
+        descriptor.getDependencies().addAll(dependencies);
+        descriptor.setInstantiator(model.isInstantiator());
+        descriptor.setDocstring(model.getDocstring());
+        if ((interpretedRole != null)) {
+          descriptor.setInterpreter(true);
+          descriptor.setReinterpretingRole(interpretedRole.getMain());
+        }
+        EList<Urn> _urns = model.getUrns();
+        for (final Urn urn : _urns) {
+          descriptor.getResourceUrns().add(urn.getName());
+        }
+        Function _function = model.getFunction();
+        boolean _tripleNotEquals_2 = (_function != null);
+        if (_tripleNotEquals_2) {
+          Function _function_1 = model.getFunction();
+          KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
+          descriptor.setResourceFunction(_kimServiceCall);
+          IServiceCall _get = descriptor.getResourceFunction().get();
+          List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
+          for (final KimNotification notification : _validateUsage) {
+            this.notify(notification, model.getFunction(), KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION);
+          }
+        } else {
+          String _boolean = model.getBoolean();
+          boolean _tripleNotEquals_3 = (_boolean != null);
+          if (_tripleNotEquals_3) {
+            descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
+          } else {
+            org.integratedmodelling.kim.kim.Number _number = model.getNumber();
+            boolean _tripleNotEquals_4 = (_number != null);
+            if (_tripleNotEquals_4) {
+              descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
+            }
+          }
+        }
+        descriptor.setPrivate((statement.isPrivate() || ns.isPrivate()));
+        descriptor.setAssessmentModel(statement.getModel().equals("assess"));
+        descriptor.setLearningModel(statement.getModel().equals("learn"));
+        IKimModel.Type _switchResult = null;
+        String _model_1 = statement.getModel();
+        if (_model_1 != null) {
+          switch (_model_1) {
+            case "number":
+              _switchResult = IKimModel.Type.NUMBER;
+              break;
+            case "text":
+              _switchResult = IKimModel.Type.TEXT;
+              break;
+            case "boolean":
+              _switchResult = IKimModel.Type.BOOLEAN;
+              break;
+            default:
+              _switchResult = IKimModel.Type.SEMANTIC;
+              break;
+          }
+        } else {
+          _switchResult = IKimModel.Type.SEMANTIC;
+        }
+        descriptor.setType(_switchResult);
+        i = 0;
+        EList<ActionSpecification> _actions = model.getActions();
+        for (final ActionSpecification action : _actions) {
+          {
+            IKimBehavior _behavior = descriptor.getBehavior();
+            List<KimNotification> _addAction = ((KimBehavior) _behavior).addAction(action, descriptor);
+            for (final KimNotification notification_1 : _addAction) {
+              this.notify(notification_1, model, KimPackage.Literals.MODEL_BODY_STATEMENT__ACTIONS, i);
+            }
+            i++;
+          }
+        }
+        EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
+        for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
+          List<IComputableResource> _contextualization = descriptor.getContextualization();
+          ComputableResource _computableResource = new ComputableResource(contextualizer_1, descriptor);
+          _contextualization.add(_computableResource);
+        }
+        Classification _classification_1 = model.getClassification();
+        boolean _tripleNotEquals_5 = (_classification_1 != null);
+        if (_tripleNotEquals_5) {
+          List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
+          Classification _classification_2 = model.getClassification();
+          boolean _isDiscretization = model.isDiscretization();
+          ComputableResource _computableResource_1 = new ComputableResource(_classification_2, _isDiscretization, descriptor);
+          _contextualization_1.add(_computableResource_1);
+        }
+        Table _lookupTable = model.getLookupTable();
+        boolean _tripleNotEquals_6 = (_lookupTable != null);
+        if (_tripleNotEquals_6) {
+          List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
+          Table _lookupTable_1 = model.getLookupTable();
+          EList<String> _lookupTableArgs = model.getLookupTableArgs();
+          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_1, _lookupTableArgs, descriptor);
+          _contextualization_2.add(_computableResource_2);
+        }
+        String _lookupTableId = model.getLookupTableId();
+        boolean _tripleNotEquals_7 = (_lookupTableId != null);
+        if (_tripleNotEquals_7) {
+          List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
+          String _lookupTableId_1 = model.getLookupTableId();
+          ComputableResource _computableResource_3 = new ComputableResource(descriptor, _lookupTableId_1);
+          _contextualization_3.add(_computableResource_3);
+        }
+        String _name_1 = model.getName();
+        boolean _tripleNotEquals_8 = (_name_1 != null);
+        if (_tripleNotEquals_8) {
+          descriptor.name = model.getName();
+        } else {
+          int _size_1 = descriptor.getObservables().size();
+          boolean _greaterThan_1 = (_size_1 > 0);
+          if (_greaterThan_1) {
+            String _formalName = descriptor.getObservables().get(0).getFormalName();
+            boolean _tripleNotEquals_9 = (_formalName != null);
+            if (_tripleNotEquals_9) {
+              descriptor.name = observables.get(0).getFormalName();
+            } else {
+              String _xifexpression_3 = null;
+              boolean _isInstantiator = model.isInstantiator();
+              if (_isInstantiator) {
+                _xifexpression_3 = "instantiator";
+              } else {
+                _xifexpression_3 = "contextualizer";
+              }
+              String name = _xifexpression_3;
+              String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
+              SemanticType st = new SemanticType(_name_2);
+              String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');
+              String _plus_2 = (_lowerCase + "-");
+              String _plus_3 = (_plus_2 + name);
+              descriptor.name = _plus_3;
+            }
+          }
+        }
+        if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (descriptor.getObservables().size() > 0))) {
+          IKimObservable _get_1 = descriptor.getObservables().get(0);
+          String _namespaceId_1 = Kim.getNamespaceId(namespace);
+          String _plus_4 = (_namespaceId_1 + ".");
+          String _plus_5 = (_plus_4 + descriptor.name);
+          ((KimObservable) _get_1).setModelReference(_plus_5);
+          IKimObservable _get_2 = descriptor.getObservables().get(0);
+          ((KimObservable) _get_2).setFormalName(descriptor.name);
+        }
+        Metadata _metadata = model.getMetadata();
+        boolean _tripleNotEquals_10 = (_metadata != null);
+        if (_tripleNotEquals_10) {
+          Metadata _metadata_1 = model.getMetadata();
+          KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
+          descriptor.setMetadata(_kimMetadata);
+        }
+        Documentation _documentation = model.getDocumentation();
+        boolean _tripleNotEquals_11 = (_documentation != null);
+        if (_tripleNotEquals_11) {
+        }
+        int n = 0;
+        List<IKimScope> _children = ns.getChildren();
+        for (final IKimScope object : _children) {
+          if (((object instanceof KimModel) && ((KimModel) object).name.startsWith(descriptor.name))) {
+            n++;
+          }
+        }
+        if ((n > 0)) {
+          descriptor.name = ((descriptor.name + "-") + Integer.valueOf(n));
+        }
+        i = 0;
+        EList<Annotation> _annotations = statement.getAnnotations();
+        for (final Annotation annotation : _annotations) {
+          {
+            KimAnnotation ann = new KimAnnotation(annotation, ns, descriptor);
+            descriptor.getAnnotations().add(ann);
+            List<KimNotification> _validateUsage_1 = ann.validateUsage(descriptor);
+            for (final KimNotification notification_1 : _validateUsage_1) {
+              this.notify(notification_1, statement, KimPackage.Literals.MODEL_STATEMENT__ANNOTATIONS, i);
+            }
+            i++;
+          }
+        }
+        model.setName(descriptor.name);
+        ns.addChild(descriptor);
+      }
+    }
   }
   
   public void notify(final KimNotification notification, final EObject object, final EStructuralFeature cls) {
@@ -645,35 +633,25 @@ public class KimValidator extends AbstractKimValidator {
   }
   
   @Check
-  public boolean checkObservation(final ObserveStatement observation) {
-    boolean _xblockexpression = false;
-    {
-      KimObserver obs = this.checkObservation(observation.getBody(), null);
-      boolean _xifexpression = false;
-      if ((obs != null)) {
-        boolean _xblockexpression_1 = false;
+  public void checkObservation(final ObserveStatement observation) {
+    KimObserver obs = this.checkObservation(observation.getBody(), null);
+    if ((obs != null)) {
+      KimNamespace ns = Kim.INSTANCE.getNamespace(observation, true);
+      int i = 0;
+      EList<Annotation> _annotations = observation.getAnnotations();
+      for (final Annotation annotation : _annotations) {
         {
-          KimNamespace ns = Kim.INSTANCE.getNamespace(observation, true);
-          int i = 0;
-          EList<Annotation> _annotations = observation.getAnnotations();
-          for (final Annotation annotation : _annotations) {
-            {
-              final KimAnnotation ann = new KimAnnotation(annotation, ns, obs);
-              obs.getAnnotations().add(ann);
-              List<KimNotification> _validateUsage = ann.validateUsage(obs);
-              for (final KimNotification notification : _validateUsage) {
-                this.notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT__ANNOTATIONS, i);
-              }
-              i++;
-            }
+          final KimAnnotation ann = new KimAnnotation(annotation, ns, obs);
+          obs.getAnnotations().add(ann);
+          List<KimNotification> _validateUsage = ann.validateUsage(obs);
+          for (final KimNotification notification : _validateUsage) {
+            this.notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT__ANNOTATIONS, i);
           }
-          _xblockexpression_1 = ns.getChildren().add(obs);
+          i++;
         }
-        _xifexpression = _xblockexpression_1;
       }
-      _xblockexpression = _xifexpression;
+      ns.addChild(obs);
     }
-    return _xblockexpression;
   }
   
   public KimObserver checkObservation(final ObserveStatementBody observation, final KimObserver parent) {
@@ -701,7 +679,7 @@ public class KimValidator extends AbstractKimValidator {
       {
         KimObserver child = this.checkObservation(obs, ret);
         if ((ret != null)) {
-          ret.getChildren().add(child);
+          ret.addChild(child);
         } else {
           ok = false;
         }
@@ -741,7 +719,7 @@ public class KimValidator extends AbstractKimValidator {
         i++;
       }
     }
-    ret.setErrors(ok);
+    ret.setErrors((!ok));
     return ret;
   }
   
@@ -1778,7 +1756,7 @@ public class KimValidator extends AbstractKimValidator {
             if ((childsc == null)) {
               ok = false;
             } else {
-              ret.getChildren().add(childsc);
+              ret.addChild(childsc);
             }
           }
         }
@@ -2257,7 +2235,7 @@ public class KimValidator extends AbstractKimValidator {
           this.error("Cannot declare a raw quality without inheriting from a more specific type", concept, 
             KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME);
         } else {
-          namespace.getChildren().add(ret);
+          namespace.addChild(ret);
         }
       }
     }
