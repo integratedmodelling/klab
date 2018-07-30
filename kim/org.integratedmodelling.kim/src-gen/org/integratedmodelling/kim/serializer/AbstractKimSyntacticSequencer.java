@@ -38,7 +38,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
 	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_5_1_a;
-	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_0_4_0_q;
+	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_0_7_0_q;
 	protected AbstractElementAlias match_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_4_1_q;
@@ -62,7 +62,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
 		match_ObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
-		match_ObserveStatementBody_UsingKeyword_0_4_0_q = new TokenAlias(false, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_4_0());
+		match_ObserveStatementBody_UsingKeyword_0_7_0_q = new TokenAlias(false, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_7_0());
 		match_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getRestrictionDefinitionAccess().getAsKeyword_0_3_0_1()), new TokenAlias(false, false, grammarAccess.getRestrictionDefinitionAccess().getForKeyword_0_3_0_0()));
 		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_TableClassifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
@@ -123,8 +123,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Number_PlusSignKeyword_3_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObservableSemantics_RequiredKeyword_3_5_1_a.equals(syntax))
 				emit_ObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_ObserveStatementBody_UsingKeyword_0_4_0_q.equals(syntax))
-				emit_ObserveStatementBody_UsingKeyword_0_4_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObserveStatementBody_UsingKeyword_0_7_0_q.equals(syntax))
+				emit_ObserveStatementBody_UsingKeyword_0_7_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0.equals(syntax))
 				emit_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
@@ -594,33 +594,38 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     'using'?
 	 *
 	 * This ambiguous syntax occurs at:
+	 *     actions+=ActionSpecification (ambiguity) 'with' 'documentation' documentation=Metadata
+	 *     actions+=ActionSpecification (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     actions+=ActionSpecification (ambiguity) (rule end)
+	 *     actions+=ActionSpecification (ambiguity) concept=NamedObservableSemantics
+	 *     actions+=ActionSpecification (ambiguity) urn=Urn
 	 *     concept=NamedObservableSemantics (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     concept=NamedObservableSemantics (ambiguity) 'with' 'metadata' metadata=Metadata
 	 *     concept=NamedObservableSemantics (ambiguity) (rule end)
-	 *     concept=NamedObservableSemantics (ambiguity) actions+=ActionSpecification
 	 *     concept=NamedObservableSemantics (ambiguity) concept=NamedObservableSemantics
+	 *     concept=NamedObservableSemantics (ambiguity) urn=Urn
 	 *     docstring=STRING (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     docstring=STRING (ambiguity) 'with' 'metadata' metadata=Metadata
 	 *     docstring=STRING (ambiguity) (rule end)
-	 *     docstring=STRING (ambiguity) actions+=ActionSpecification
 	 *     docstring=STRING (ambiguity) concept=NamedObservableSemantics
-	 *     observations+=ObserveStatementBody ')' (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     observations+=ObserveStatementBody ')' (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     observations+=ObserveStatementBody ')' (ambiguity) (rule end)
-	 *     observations+=ObserveStatementBody ')' (ambiguity) actions+=ActionSpecification
-	 *     observations+=ObserveStatementBody ')' (ambiguity) concept=NamedObservableSemantics
+	 *     docstring=STRING (ambiguity) urn=Urn
+	 *     observations+=ObserveStatementBody (ambiguity) 'with' 'documentation' documentation=Metadata
+	 *     observations+=ObserveStatementBody (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     observations+=ObserveStatementBody (ambiguity) (rule end)
+	 *     observations+=ObserveStatementBody (ambiguity) concept=NamedObservableSemantics
+	 *     observations+=ObserveStatementBody (ambiguity) urn=Urn
 	 *     parents+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     parents+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
 	 *     parents+=PathName (ambiguity) (rule end)
-	 *     parents+=PathName (ambiguity) actions+=ActionSpecification
 	 *     parents+=PathName (ambiguity) concept=NamedObservableSemantics
+	 *     parents+=PathName (ambiguity) urn=Urn
 	 *     states+=ObservableSemantics (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     states+=ObservableSemantics (ambiguity) 'with' 'metadata' metadata=Metadata
 	 *     states+=ObservableSemantics (ambiguity) (rule end)
-	 *     states+=ObservableSemantics (ambiguity) actions+=ActionSpecification
 	 *     states+=ObservableSemantics (ambiguity) concept=NamedObservableSemantics
+	 *     states+=ObservableSemantics (ambiguity) urn=Urn
 	 */
-	protected void emit_ObserveStatementBody_UsingKeyword_0_4_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ObserveStatementBody_UsingKeyword_0_7_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

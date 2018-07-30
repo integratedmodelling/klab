@@ -129,7 +129,7 @@ class KimValidator extends AbstractKimValidator {
 	def checkUrn(Urn urn) {
 
 		var EObject mo = urn.eContainer?.eContainer;
-		var ModelStatement model = if(mo !== null && mo instanceof ModelStatement) mo as ModelStatement else null;
+		var ModelStatement model = if (mo !== null && mo instanceof ModelStatement) mo as ModelStatement else null;
 		for (u : model.body.urns) {
 			val UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(u.name);
 			if (ud === null || ud.isDead || !ud.isAccessible) {
@@ -513,9 +513,10 @@ class KimValidator extends AbstractKimValidator {
 		if (observation === null) {
 			return null
 		}
+		
 		var semantics = Kim.INSTANCE.declareObservable(observation.concept)
 		if (semantics !== null) {
-			if (semantics.descriptor.is(Type.SUBJECT) == 0 && semantics.descriptor.is(Type.EVENT) == 0) {
+			if (!semantics.descriptor.is(Type.SUBJECT) && !semantics.descriptor.is(Type.EVENT)) {
 				error('Observations can only be created for subjects and events', observation,
 					KimPackage.Literals.OBSERVE_STATEMENT_BODY__CONCEPT, BAD_OBSERVATION)
 				ok = false
@@ -523,6 +524,8 @@ class KimValidator extends AbstractKimValidator {
 				ret = new KimObserver(observation, semantics, parent)
 				ret.docstring = observation.docstring
 			}
+		} else {
+			ok = false
 		}
 
 		for (obs : observation.observations) {
@@ -558,9 +561,11 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 
+		ret.errors = ok
+
 		// TODO contextualization
 		// TODO if event, ensure we have a time extent 
-		return if(ok) ret else null
+		return ret
 	}
 
 	/*

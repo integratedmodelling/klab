@@ -684,7 +684,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     KimObservable semantics = Kim.INSTANCE.declareObservable(observation.getConcept());
     if ((semantics != null)) {
-      if ((Objects.equal(Boolean.valueOf(semantics.getDescriptor().is(IKimConcept.Type.SUBJECT)), Integer.valueOf(0)) && Objects.equal(Boolean.valueOf(semantics.getDescriptor().is(IKimConcept.Type.EVENT)), Integer.valueOf(0)))) {
+      if (((!semantics.getDescriptor().is(IKimConcept.Type.SUBJECT)) && (!semantics.getDescriptor().is(IKimConcept.Type.EVENT)))) {
         this.error("Observations can only be created for subjects and events", observation, 
           KimPackage.Literals.OBSERVE_STATEMENT_BODY__CONCEPT, KimValidator.BAD_OBSERVATION);
         ok = false;
@@ -693,6 +693,8 @@ public class KimValidator extends AbstractKimValidator {
         ret = _kimObserver;
         ret.setDocstring(observation.getDocstring());
       }
+    } else {
+      ok = false;
     }
     EList<ObserveStatementBody> _observations = observation.getObservations();
     for (final ObserveStatementBody obs : _observations) {
@@ -739,13 +741,8 @@ public class KimValidator extends AbstractKimValidator {
         i++;
       }
     }
-    KimObserver _xifexpression = null;
-    if (ok) {
-      _xifexpression = ret;
-    } else {
-      _xifexpression = null;
-    }
-    return _xifexpression;
+    ret.setErrors(ok);
+    return ret;
   }
   
   /**

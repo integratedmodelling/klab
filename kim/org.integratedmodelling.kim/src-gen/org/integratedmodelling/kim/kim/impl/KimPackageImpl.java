@@ -2031,7 +2031,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getObserveStatementBody_Concept()
+  public EReference getObserveStatementBody_Urn()
   {
     return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(0);
   }
@@ -2041,9 +2041,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getObserveStatementBody_Docstring()
+  public EReference getObserveStatementBody_Concept()
   {
-    return (EAttribute)observeStatementBodyEClass.getEStructuralFeatures().get(1);
+    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2051,7 +2051,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getObserveStatementBody_Parents()
+  public EAttribute getObserveStatementBody_Docstring()
   {
     return (EAttribute)observeStatementBodyEClass.getEStructuralFeatures().get(2);
   }
@@ -2061,29 +2061,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getObserveStatementBody_Observations()
+  public EAttribute getObserveStatementBody_Parents()
   {
-    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObserveStatementBody_States()
-  {
-    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObserveStatementBody_Accessor()
-  {
-    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)observeStatementBodyEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -2093,6 +2073,26 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObserveStatementBody_Actions()
   {
+    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getObserveStatementBody_States()
+  {
+    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getObserveStatementBody_Observations()
+  {
     return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(6);
   }
 
@@ -2101,7 +2101,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getObserveStatementBody_Metadata()
+  public EReference getObserveStatementBody_Accessor()
   {
     return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(7);
   }
@@ -2111,9 +2111,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getObserveStatementBody_Documentation()
+  public EReference getObserveStatementBody_Metadata()
   {
     return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getObserveStatementBody_Documentation()
+  {
+    return (EReference)observeStatementBodyEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -4589,13 +4599,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observeStatementEClass, OBSERVE_STATEMENT__BODY);
 
     observeStatementBodyEClass = createEClass(OBSERVE_STATEMENT_BODY);
+    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__URN);
     createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__CONCEPT);
     createEAttribute(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__DOCSTRING);
     createEAttribute(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__PARENTS);
-    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__OBSERVATIONS);
-    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__STATES);
-    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__ACCESSOR);
     createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__ACTIONS);
+    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__STATES);
+    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__OBSERVATIONS);
+    createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__ACCESSOR);
     createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__METADATA);
     createEReference(observeStatementBodyEClass, OBSERVE_STATEMENT_BODY__DOCUMENTATION);
 
@@ -5063,13 +5074,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObserveStatement_Body(), this.getObserveStatementBody(), null, "body", null, 0, 1, ObserveStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(observeStatementBodyEClass, ObserveStatementBody.class, "ObserveStatementBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getObserveStatementBody_Urn(), this.getUrn(), null, "urn", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObserveStatementBody_Concept(), this.getObservableSemantics(), null, "concept", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObserveStatementBody_Docstring(), ecorePackage.getEString(), "docstring", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObserveStatementBody_Parents(), ecorePackage.getEString(), "parents", null, 0, -1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObserveStatementBody_Observations(), this.getObserveStatementBody(), null, "observations", null, 0, -1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObserveStatementBody_States(), this.getObservableSemantics(), null, "states", null, 0, -1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObserveStatementBody_Accessor(), this.getFunction(), null, "accessor", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObserveStatementBody_Actions(), this.getActionSpecification(), null, "actions", null, 0, -1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObserveStatementBody_States(), this.getObservableSemantics(), null, "states", null, 0, -1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObserveStatementBody_Observations(), this.getObserveStatementBody(), null, "observations", null, 0, -1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObserveStatementBody_Accessor(), this.getFunction(), null, "accessor", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObserveStatementBody_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObserveStatementBody_Documentation(), this.getMetadata(), null, "documentation", null, 0, 1, ObserveStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

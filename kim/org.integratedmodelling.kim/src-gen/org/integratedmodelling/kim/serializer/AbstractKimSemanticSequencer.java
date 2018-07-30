@@ -437,16 +437,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -1158,17 +1158,15 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 * Constraint:
 	 *     (
 	 *         (
+	 *             urn=Urn? 
 	 *             concept=NamedObservableSemantics 
 	 *             docstring=STRING? 
 	 *             (parents+=PathName parents+=PathName*)? 
-	 *             (
-	 *                 (observations+=ObserveStatementBody | states+=ObservableSemantics) 
-	 *                 states+=ObservableSemantics? 
-	 *                 (observations+=ObserveStatementBody? states+=ObservableSemantics?)*
-	 *             )? 
+	 *             actions+=ActionSpecification* 
+	 *             (states+=ObservableSemantics states+=ObservableSemantics*)? 
+	 *             (observations+=ObserveStatementBody observations+=ObserveStatementBody*)? 
 	 *             accessor=Function?
 	 *         ) | 
-	 *         actions+=ActionSpecification | 
 	 *         metadata=Metadata | 
 	 *         documentation=Metadata
 	 *     )+
