@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.utils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Map;
 
 public class Utils {
 
@@ -140,6 +141,7 @@ public class Utils {
 				return (T)Boolean.TRUE;
 			}
 		}
+		
 		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
 	}
 

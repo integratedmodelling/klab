@@ -114,7 +114,7 @@ public class Project implements IProject {
 				+ namespaceId.replace('.', File.separatorChar) + ".kim");
 		new File(MiscUtilities.getFilePath(ret.toString())).mkdirs();
 		try (PrintWriter out = new PrintWriter(ret)) {
-			out.print((createScenario ? "namespace " : "scenario ") + namespaceId + ";\n\n");
+			out.print((createScenario ? "scenario " : "namespace ") + namespaceId + ";\n\n");
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}

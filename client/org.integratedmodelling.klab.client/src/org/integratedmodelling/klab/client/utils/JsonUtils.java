@@ -106,6 +106,17 @@ public class JsonUtils {
 	}
 	
 	/**
+	 * Convert a map we already got from a dumb JSON conversion into what we need.
+	 * 
+	 * @param object
+	 * @param cls
+	 * @return result
+	 */
+	public static <T> T convert(Object object, Class<T> cls) {
+	    return defaultMapper.convertValue(object, cls);
+	}
+	
+	/**
 	 * Load an object from a file.
 	 * 
 	 * @param file

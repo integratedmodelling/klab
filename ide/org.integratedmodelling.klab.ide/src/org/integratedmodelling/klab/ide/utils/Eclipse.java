@@ -2,11 +2,11 @@ package org.integratedmodelling.klab.ide.utils;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -42,7 +43,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.Activator;
@@ -333,7 +333,16 @@ public enum Eclipse {
     }
 
     public IFile getIFile(File file) {
-        return null;
+        IFile ret = null;
+        try {
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+                    .findFilesForLocationURI(URIUtil.toURI(file.toURI().toURL()));
+            if (files.length > 0) {
+                ret = files[0];
+            }
+        } catch (MalformedURLException | URISyntaxException e) {
+        }
+        return ret;
     }
 
     public File getFile(IFile file) {
@@ -388,21 +397,20 @@ public enum Eclipse {
                     file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
                 }
 
-//                HashSet<ICompileNotification> ln = new HashSet<>();
+                //                HashSet<ICompileNotification> ln = new HashSet<>();
 
                 for (CompileNotificationReference inot : notifications) {
 
-//                    if (ln.contains(inot)) {
-//                        continue;
-//                    }
-//
-//                    ln.add(inot);
+                    //                    if (ln.contains(inot)) {
+                    //                        continue;
+                    //                    }
+                    //
+                    //                    ln.add(inot);
 
                     if (inot.getLevel() == Level.SEVERE.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
                     } else if (inot.getLevel() == Level.WARNING.intValue()) {
-                        addMarker(file, inot.getMessage(), inot.getFirstLine(),
-                                IMarker.SEVERITY_WARNING);
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_WARNING);
                     } else if (inot.getLevel() == Level.INFO.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_INFO);
                     }

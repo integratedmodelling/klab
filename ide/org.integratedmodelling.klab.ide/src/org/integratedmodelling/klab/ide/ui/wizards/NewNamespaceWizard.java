@@ -29,6 +29,7 @@ package org.integratedmodelling.klab.ide.ui.wizards;
 import java.io.File;
 
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
@@ -64,9 +65,11 @@ public class NewNamespaceWizard extends Wizard {
 			Activator.post((message) -> {
 				File file = message.getPayload(ProjectModificationNotification.class).getFile();
 				// TODO load it
-				Eclipse.INSTANCE.openFile(
+				Display.getDefault().asyncExec(() -> {
+				    Eclipse.INSTANCE.openFile(
 						Eclipse.INSTANCE.getIFile(file),
 						0);
+				});
 			}, IMessage.MessageClass.ProjectLifecycle,
 					isScenario ? IMessage.Type.CreateScenario : IMessage.Type.CreateNamespace,
 					new ProjectModificationRequest(page.getTargetProject().getText(), nspc));
